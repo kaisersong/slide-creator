@@ -5,7 +5,7 @@ version: 1.0.0
 metadata: {"openclaw":{"emoji":"🎞️","os":["darwin","linux"],"homepage":"https://github.com/kaisersong/slide-creator","requires":{"bins":["python3","node"]},"install":[{"id":"pillow","kind":"uv","package":"Pillow","label":"Pillow (image processing)"},{"id":"python-pptx","kind":"uv","package":"python-pptx","label":"python-pptx (PPT import)"},{"id":"puppeteer","kind":"node","package":"puppeteer","bins":["node"],"label":"Puppeteer (PPTX export)"},{"id":"pptxgenjs","kind":"node","package":"pptxgenjs","label":"pptxgenjs (PPTX export)"}]}}
 ---
 
-# Frontend Slides Skill
+# Slide Creator Skill
 
 Create zero-dependency, animation-rich HTML presentations that run entirely in the browser. This skill helps non-designers discover their preferred aesthetic through visual exploration ("show, don't tell"), then generates production-quality slide decks.
 
@@ -1291,7 +1291,7 @@ Your presentation is ready!
 Would you like me to make any adjustments?
 
 **To export as PPTX:**
-Run: `/frontend-slides --export pptx` (requires Node.js ≥ 18)
+Run: `/slide-creator --export pptx` (requires Node.js ≥ 18)
 ```
 
 If the user opted in to inline editing, also include:

@@ -1,9 +1,9 @@
 {
-  "name": "frontend-slides-export",
+  "name": "slide-creator-export",
   "version": "1.0.0",
   "private": true,
   "type": "module",
-  "description": "Export scripts for the frontend-slides skill",
+  "description": "Export scripts for the slide-creator skill",
   "dependencies": {
     "puppeteer": "^24.0.0",
     "pptxgenjs": "^3.12.0"
