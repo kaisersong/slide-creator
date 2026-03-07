@@ -1,6 +1,8 @@
 ---
 name: slide-creator
 description: Create stunning, animation-rich HTML presentations with a two-stage workflow. Use `--plan` to create a structured PLANNING.md outline (reads resources/ folder automatically), `--generate` to produce the final HTML from the plan, and `--export pptx` to convert to PowerPoint. Also supports direct creation, PPT import, and style discovery via visual previews. Use when the user wants to build a presentation, convert a PPT/PPTX to web, or create slides for a talk/pitch.
+version: 1.0.0
+metadata: {"openclaw":{"emoji":"🎞️","os":["darwin","linux"],"homepage":"https://github.com/kaisersong/slide-creator","requires":{"bins":["python3","node"]},"install":[{"id":"pillow","kind":"uv","package":"Pillow","label":"Pillow (image processing)"},{"id":"python-pptx","kind":"uv","package":"python-pptx","label":"python-pptx (PPT import)"},{"id":"puppeteer","kind":"node","package":"puppeteer","bins":["node"],"label":"Puppeteer (PPTX export)"},{"id":"pptxgenjs","kind":"node","package":"pptxgenjs","label":"pptxgenjs (PPTX export)"}]}}
 ---
 
 # Frontend Slides Skill
