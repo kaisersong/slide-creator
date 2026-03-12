@@ -2,7 +2,7 @@
 
 适用于 [Claude Code](https://claude.ai/claude-code) 和 [OpenClaw](https://openclaw.ai) 的演示文稿生成 skill，零依赖、纯浏览器运行的 HTML 幻灯片。
 
-**v1.1.0** — SKILL.md 精简至 250 行（原 1500+ 行），采用渐进式参考加载，优化触发描述，语言表达更清晰。
+**v1.2.0** — PPTX 导出改用纯 Python 方案（python-pptx + BeautifulSoup4），不再需要 Chromium 和 Node.js，导出文件中的文字在 PowerPoint 里可直接编辑。
 
 [English](README.md) | 简体中文
 
@@ -78,14 +78,14 @@ OpenClaw 首次使用时会自动安装依赖（Pillow、python-pptx、puppeteer
 | 依赖 | 用途 | OpenClaw 自动安装 |
 |------|------|------------------|
 | Python 3 + `Pillow` | 图片处理 | ✅ via uv |
-| Python 3 + `python-pptx` | PPT 导入 | ✅ via uv |
-| Node.js + `puppeteer` | PPTX 导出 | ✅ via npm |
-| Node.js + `pptxgenjs` | PPTX 导出 | ✅ via npm |
+| Python 3 + `python-pptx` | PPT 导入 + 导出 | ✅ via uv |
+| Python 3 + `beautifulsoup4` | HTML 解析（PPTX 导出用） | ✅ via uv |
+
+不再需要 Node.js。
 
 **Claude Code 用户** 需手动安装：
 ```bash
-pip install Pillow python-pptx
-# PPTX 导出依赖：首次运行 --export pptx 时自动安装到 scripts/
+pip install Pillow python-pptx beautifulsoup4
 ```
 
 ---

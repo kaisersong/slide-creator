@@ -2,7 +2,7 @@
 
 A skill for [Claude Code](https://claude.ai/claude-code) and [OpenClaw](https://openclaw.ai) that generates stunning, zero-dependency HTML presentations.
 
-**v1.1.0** — Leaner SKILL.md (~250 lines vs 1500+), progressive reference loading, improved triggering description, cleaner language throughout.
+**v1.2.0** — PPTX export now uses pure Python (python-pptx + BeautifulSoup4). No more Chromium, no Node.js required. Produces editable PowerPoint files instead of screenshots.
 
 English | [简体中文](README.zh-CN.md)
 
@@ -60,14 +60,14 @@ OpenClaw will automatically detect and install dependencies (Pillow, python-pptx
 | Dependency | Purpose | Auto-installed (OpenClaw) |
 |-----------|---------|--------------------------|
 | Python 3 + `Pillow` | Image processing | ✅ via uv |
-| Python 3 + `python-pptx` | PPT import | ✅ via uv |
-| Node.js + `puppeteer` | PPTX export | ✅ via npm |
-| Node.js + `pptxgenjs` | PPTX export | ✅ via npm |
+| Python 3 + `python-pptx` | PPT import + export | ✅ via uv |
+| Python 3 + `beautifulsoup4` | HTML parsing for PPTX export | ✅ via uv |
+
+Node.js is no longer required.
 
 **Claude Code users** — install manually:
 ```bash
-pip install Pillow python-pptx
-# PPTX export: auto-installed in scripts/ on first --export pptx run
+pip install Pillow python-pptx beautifulsoup4
 ```
 
 ## Output

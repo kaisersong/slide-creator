@@ -1,8 +1,8 @@
 ---
 name: slide-creator
 description: Create beautiful, animation-rich HTML presentations that run entirely in the browser — no npm, no build tools. Generates polished single-file slide decks with visual style discovery, responsive viewport fitting, and optional PPTX export. Use whenever someone asks to make a presentation, create slides, build a pitch deck, convert a PPT/PPTX to web, or prepare slides for a talk or demo — even if they don't mention HTML. Also use for planning a deck outline first (`--plan`), generating HTML from a plan (`--generate`), or exporting to PowerPoint (`--export pptx`).
-version: 1.1.0
-metadata: {"openclaw":{"emoji":"🎞️","os":["darwin","linux"],"homepage":"https://github.com/kaisersong/slide-creator","requires":{"bins":["python3","node"]},"install":[{"id":"pillow","kind":"uv","package":"Pillow","label":"Pillow (image processing)"},{"id":"python-pptx","kind":"uv","package":"python-pptx","label":"python-pptx (PPT import)"},{"id":"puppeteer","kind":"node","package":"puppeteer","bins":["node"],"label":"Puppeteer (PPTX export)"},{"id":"pptxgenjs","kind":"node","package":"pptxgenjs","label":"pptxgenjs (PPTX export)"}]}}
+version: 1.2.0
+metadata: {"openclaw":{"emoji":"🎞️","os":["darwin","linux"],"homepage":"https://github.com/kaisersong/slide-creator","requires":{"bins":["python3"]},"install":[{"id":"pillow","kind":"uv","package":"Pillow","label":"Pillow (image processing)"},{"id":"python-pptx","kind":"uv","package":"python-pptx","label":"python-pptx (PPT import/export)"},{"id":"beautifulsoup4","kind":"uv","package":"beautifulsoup4","label":"BeautifulSoup4 (HTML parsing for PPTX export)"}]}}
 ---
 
 # Slide Creator
@@ -42,9 +42,10 @@ Parse the invocation to determine mode:
 ## Export Mode (`--export pptx`)
 
 1. Find `*.html` in current directory (prefer most recently modified).
-2. If `<skill-path>/scripts/node_modules/` doesn't exist: `cd <skill-path>/scripts && npm install`
-3. Run: `node <skill-path>/scripts/export-pptx.mjs <presentation.html> [title] [--scale N]` (default scale: 3×)
-4. Report the PPTX file path and slide count.
+2. Run: `python3 <skill-path>/scripts/export-pptx.py <presentation.html> [output.pptx]`
+3. Report the PPTX file path and slide count.
+
+No Node.js or browser required. The script uses python-pptx + BeautifulSoup4 (both pure Python) to parse the HTML and generate editable PowerPoint slides — text remains selectable and editable in PowerPoint, unlike screenshot-based approaches.
 
 ---
 
