@@ -2,6 +2,8 @@
 
 A skill for [Claude Code](https://claude.ai/claude-code) and [OpenClaw](https://openclaw.ai) that generates stunning, zero-dependency HTML presentations.
 
+**v1.1.0** — Leaner SKILL.md (~250 lines vs 1500+), progressive reference loading, improved triggering description, cleaner language throughout.
+
 ## Features
 
 - **Two-stage workflow** — `--plan` to outline, `--generate` to produce
