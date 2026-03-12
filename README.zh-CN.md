@@ -1,0 +1,125 @@
+# slide-creator
+
+适用于 [Claude Code](https://claude.ai/claude-code) 和 [OpenClaw](https://openclaw.ai) 的演示文稿生成 skill，零依赖、纯浏览器运行的 HTML 幻灯片。
+
+**v1.1.0** — SKILL.md 精简至 250 行（原 1500+ 行），采用渐进式参考加载，优化触发描述，语言表达更清晰。
+
+[English](README.md) | 简体中文
+
+## 功能特性
+
+- **两阶段工作流** — `--plan` 生成大纲，`--generate` 输出幻灯片
+- **12 种设计预设** — Bold Signal、Neon Cyber、Dark Botanical 等
+- **视觉风格探索** — 先生成 3 个预览，看图选风格而非描述风格
+- **图片处理流水线** — 自动评估和处理素材（Pillow）
+- **PPT 导入** — 将 `.pptx` 文件转换为网页演示
+- **PPTX 导出** — `--export pptx`，通过 puppeteer + pptxgenjs 导出
+- **浏览器内编辑** — 直接在浏览器中编辑文字，Ctrl+S 保存
+- **视口自适应** — 每张幻灯片精确填充 100vh，永不出现滚动条
+- **中英双语** — 完整支持中文内容
+
+---
+
+## 安装
+
+### Claude Code
+
+```bash
+git clone https://github.com/kaisersong/slide-creator ~/.claude/skills/slide-creator
+```
+
+重启 Claude Code，使用 `/slide-creator` 调用。
+
+### OpenClaw
+
+```bash
+# 通过 ClawHub 安装（推荐）
+clawhub install html-slide-creator
+
+# 或手动克隆
+git clone https://github.com/kaisersong/slide-creator ~/.openclaw/skills/slide-creator
+```
+
+> ClawHub 页面：https://clawhub.ai/skills/html-slide-creator
+
+OpenClaw 首次使用时会自动安装依赖（Pillow、python-pptx、puppeteer、pptxgenjs）。
+
+---
+
+## 使用方法
+
+```
+/slide-creator --plan       # 分析内容和 resources/ 目录，生成 PLANNING.md 大纲
+/slide-creator --generate   # 根据 PLANNING.md 生成 HTML 演示文稿
+/slide-creator --export pptx  # 导出为 PowerPoint
+/slide-creator              # 从零开始（交互式风格探索）
+```
+
+### 典型工作流
+
+**方式一：交互式创建**
+1. 运行 `/slide-creator`，回答目的、长度、内容和图片四个问题
+2. 查看 3 个风格预览，选择喜欢的风格
+3. 生成完整演示文稿，在浏览器中打开
+
+**方式二：两阶段工作流（复杂内容推荐）**
+1. 在项目目录放入素材（`resources/` 文件夹）
+2. 运行 `/slide-creator --plan 我的AI创业公司融资路演`
+3. 审阅 `PLANNING.md` 大纲，确认后运行 `/slide-creator --generate`
+
+**方式三：PPT 转换**
+1. 将 `.pptx` 文件放到当前目录
+2. 运行 `/slide-creator`，Skill 会自动识别并提取内容
+
+---
+
+## 依赖要求
+
+| 依赖 | 用途 | OpenClaw 自动安装 |
+|------|------|------------------|
+| Python 3 + `Pillow` | 图片处理 | ✅ via uv |
+| Python 3 + `python-pptx` | PPT 导入 | ✅ via uv |
+| Node.js + `puppeteer` | PPTX 导出 | ✅ via npm |
+| Node.js + `pptxgenjs` | PPTX 导出 | ✅ via npm |
+
+**Claude Code 用户** 需手动安装：
+```bash
+pip install Pillow python-pptx
+# PPTX 导出依赖：首次运行 --export pptx 时自动安装到 scripts/
+```
+
+---
+
+## 输出文件
+
+- `presentation.html` — 零依赖单文件，直接用浏览器打开
+- `PRESENTATION_SCRIPT.md` — 演讲稿（幻灯片 8 张以上时自动生成）
+- `*.pptx` — 通过 `--export pptx` 导出
+
+---
+
+## 设计预设
+
+| 预设 | 风格 | 适合场景 |
+|------|------|----------|
+| Bold Signal | 自信、强冲击 | 路演、主题演讲 |
+| Electric Studio | 简洁、专业 | 商务演示 |
+| Creative Voltage | 活力、复古现代 | 创意提案 |
+| Dark Botanical | 优雅、精致 | 高端品牌 |
+| Notebook Tabs | 编辑感、有条理 | 报告、评审 |
+| Pastel Geometry | 友好、亲切 | 产品介绍 |
+| Split Pastel | 活泼、现代 | 创意机构 |
+| Vintage Editorial | 个性鲜明 | 个人品牌 |
+| Neon Cyber | 科技感、未来感 | 科技创业 |
+| Terminal Green | 开发者风格 | 开发工具、API |
+| Swiss Modern | 极简、精确 | 企业、数据 |
+| Paper & Ink | 文学、沉思 | 叙事演讲 |
+
+---
+
+## 兼容性
+
+| 平台 | 版本 | 安装路径 |
+|------|------|----------|
+| Claude Code | 任意 | `~/.claude/skills/slide-creator/` |
+| OpenClaw | ≥ 0.9 | `~/.openclaw/skills/slide-creator/` |

@@ -4,6 +4,8 @@ A skill for [Claude Code](https://claude.ai/claude-code) and [OpenClaw](https://
 
 **v1.1.0** — Leaner SKILL.md (~250 lines vs 1500+), progressive reference loading, improved triggering description, cleaner language throughout.
 
+English | [简体中文](README.zh-CN.md)
+
 ## Features
 
 - **Two-stage workflow** — `--plan` to outline, `--generate` to produce
