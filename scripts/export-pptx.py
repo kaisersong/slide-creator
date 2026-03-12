@@ -108,7 +108,7 @@ def find_and_launch_browser(playwright):
         raise SystemExit(1) from e
 
 
-def screenshot_slides(html_path, output_dir, width=1920, height=1080):
+def screenshot_slides(html_path, output_dir, width=1440, height=900):
     """
     Open the HTML presentation in a headless browser, scroll to each .slide,
     and save a screenshot. Returns a list of screenshot paths in slide order.
@@ -169,7 +169,7 @@ def screenshot_slides(html_path, output_dir, width=1920, height=1080):
 
 # ─── Assemble screenshots into PPTX ──────────────────────────────────────────
 
-def assemble_pptx(screenshots, output_path, width=1920, height=1080):
+def assemble_pptx(screenshots, output_path, width=1440, height=900):
     """
     Create a PPTX where each slide is the full-bleed screenshot.
     Aspect ratio matches the screenshot dimensions.
@@ -194,7 +194,7 @@ def assemble_pptx(screenshots, output_path, width=1920, height=1080):
 
 # ─── Main ─────────────────────────────────────────────────────────────────────
 
-def export(html_path, output_path=None, width=1920, height=1080):
+def export(html_path, output_path=None, width=1440, height=900):
     html_path = Path(html_path).resolve()
     if not html_path.exists():
         print(f"Error: file not found: {html_path}")
@@ -225,8 +225,8 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     parser.add_argument("html", help="Path to the HTML presentation")
     parser.add_argument("output", nargs="?", help="Output .pptx path (default: same name as HTML)")
-    parser.add_argument("--width",  type=int, default=1920, help="Viewport width  (default: 1920)")
-    parser.add_argument("--height", type=int, default=1080, help="Viewport height (default: 1080)")
+    parser.add_argument("--width",  type=int, default=1440, help="Viewport width  (default: 1440)")
+    parser.add_argument("--height", type=int, default=900,  help="Viewport height (default: 900)")
     args = parser.parse_args()
     export(args.html, args.output, args.width, args.height)
 
