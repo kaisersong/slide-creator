@@ -71,11 +71,21 @@ def find_and_launch_browser(playwright):
     Try channels in order of preference: use system-installed browsers first
     to avoid downloading anything. Falls back to Playwright's own Chromium
     only as a last resort.
+
+    Linux servers: add --no-sandbox because root/container environments
+    block Chrome's sandboxing by default.
     """
+    import platform
+    is_linux = platform.system() == 'Linux'
+    # --no-sandbox is required in Docker/root/CI environments on Linux
+    extra_args = ['--no-sandbox', '--disable-setuid-sandbox'] if is_linux else []
+
     channels = ['chrome', 'msedge', 'chromium']
     for channel in channels:
         try:
-            browser = playwright.chromium.launch(channel=channel, headless=True)
+            browser = playwright.chromium.launch(
+                channel=channel, headless=True, args=extra_args
+            )
             print(f"  Using browser: {channel}")
             return browser
         except Exception:
@@ -83,13 +93,18 @@ def find_and_launch_browser(playwright):
 
     # Last resort: Playwright's own Chromium (may require: playwright install chromium)
     try:
-        browser = playwright.chromium.launch(headless=True)
+        browser = playwright.chromium.launch(headless=True, args=extra_args)
         print("  Using browser: playwright-chromium")
         return browser
     except Exception as e:
-        print(f"\nNo browser found. Install one of:")
-        print("  - Google Chrome (https://www.google.com/chrome/)")
-        print("  - Or run: playwright install chromium")
+        print("\nNo browser found.")
+        if is_linux:
+            print("  Linux options (pick one):")
+            print("    apt install chromium-browser      # system package (~100MB)")
+            print("    playwright install chromium        # self-contained (~170MB)")
+        else:
+            print("  Install Google Chrome: https://www.google.com/chrome/")
+            print("  Or run: playwright install chromium")
         raise SystemExit(1) from e
 
 
