@@ -2,7 +2,7 @@
 
 适用于 [Claude Code](https://claude.ai/claude-code) 和 [OpenClaw](https://openclaw.ai) 的演示文稿生成 skill，零依赖、纯浏览器运行的 HTML 幻灯片。
 
-**v1.2.0** — PPTX 导出改用纯 Python 方案（python-pptx + BeautifulSoup4），不再需要 Chromium 和 Node.js，导出文件中的文字在 PowerPoint 里可直接编辑。
+**v1.3.0** — PPTX 导出改用 Playwright + 系统已安装的 Chrome，像素级还原幻灯片样式，不下载 Chromium，不需要 Node.js，只需 `pip install playwright python-pptx`。
 
 [English](README.md) | 简体中文
 
@@ -78,14 +78,14 @@ OpenClaw 首次使用时会自动安装依赖（Pillow、python-pptx、puppeteer
 | 依赖 | 用途 | OpenClaw 自动安装 |
 |------|------|------------------|
 | Python 3 + `Pillow` | 图片处理 | ✅ via uv |
-| Python 3 + `python-pptx` | PPT 导入 + 导出 | ✅ via uv |
-| Python 3 + `beautifulsoup4` | HTML 解析（PPTX 导出用） | ✅ via uv |
+| Python 3 + `python-pptx` | PPT 导入/导出 | ✅ via uv |
+| Python 3 + `playwright` | PPTX 导出（使用系统 Chrome） | ✅ via uv |
 
-不再需要 Node.js。
+不再需要 Node.js。PPTX 导出使用你已安装的 Chrome/Edge/Brave，无需下载 300MB 的 Chromium。
 
 **Claude Code 用户** 需手动安装：
 ```bash
-pip install Pillow python-pptx beautifulsoup4
+pip install Pillow python-pptx playwright
 ```
 
 ---

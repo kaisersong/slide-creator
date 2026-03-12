@@ -1,8 +1,8 @@
 ---
 name: slide-creator
 description: Create beautiful, animation-rich HTML presentations that run entirely in the browser — no npm, no build tools. Generates polished single-file slide decks with visual style discovery, responsive viewport fitting, and optional PPTX export. Use whenever someone asks to make a presentation, create slides, build a pitch deck, convert a PPT/PPTX to web, or prepare slides for a talk or demo — even if they don't mention HTML. Also use for planning a deck outline first (`--plan`), generating HTML from a plan (`--generate`), or exporting to PowerPoint (`--export pptx`).
-version: 1.2.0
-metadata: {"openclaw":{"emoji":"🎞️","os":["darwin","linux"],"homepage":"https://github.com/kaisersong/slide-creator","requires":{"bins":["python3"]},"install":[{"id":"pillow","kind":"uv","package":"Pillow","label":"Pillow (image processing)"},{"id":"python-pptx","kind":"uv","package":"python-pptx","label":"python-pptx (PPT import/export)"},{"id":"beautifulsoup4","kind":"uv","package":"beautifulsoup4","label":"BeautifulSoup4 (HTML parsing for PPTX export)"}]}}
+version: 1.3.0
+metadata: {"openclaw":{"emoji":"🎞️","os":["darwin","linux"],"homepage":"https://github.com/kaisersong/slide-creator","requires":{"bins":["python3"]},"install":[{"id":"pillow","kind":"uv","package":"Pillow","label":"Pillow (image processing)"},{"id":"python-pptx","kind":"uv","package":"python-pptx","label":"python-pptx (PPT import/export)"},{"id":"playwright","kind":"uv","package":"playwright","label":"Playwright (pixel-perfect PPTX export via system Chrome)"}]}}
 ---
 
 # Slide Creator
@@ -45,7 +45,7 @@ Parse the invocation to determine mode:
 2. Run: `python3 <skill-path>/scripts/export-pptx.py <presentation.html> [output.pptx]`
 3. Report the PPTX file path and slide count.
 
-No Node.js or browser required. The script uses python-pptx + BeautifulSoup4 (both pure Python) to parse the HTML and generate editable PowerPoint slides — text remains selectable and editable in PowerPoint, unlike screenshot-based approaches.
+The script uses Playwright with the user's **existing system Chrome** (no Chromium download). It captures pixel-perfect screenshots of each slide and assembles them into a PPTX. Only `pip install playwright python-pptx` required — no Node.js, no 300MB browser download.
 
 ---
 

@@ -2,7 +2,7 @@
 
 A skill for [Claude Code](https://claude.ai/claude-code) and [OpenClaw](https://openclaw.ai) that generates stunning, zero-dependency HTML presentations.
 
-**v1.2.0** — PPTX export now uses pure Python (python-pptx + BeautifulSoup4). No more Chromium, no Node.js required. Produces editable PowerPoint files instead of screenshots.
+**v1.3.0** — PPTX export uses Playwright with your existing system Chrome. Pixel-perfect screenshots, no 300MB Chromium download, no Node.js. Just `pip install playwright python-pptx`.
 
 English | [简体中文](README.zh-CN.md)
 
@@ -60,14 +60,14 @@ OpenClaw will automatically detect and install dependencies (Pillow, python-pptx
 | Dependency | Purpose | Auto-installed (OpenClaw) |
 |-----------|---------|--------------------------|
 | Python 3 + `Pillow` | Image processing | ✅ via uv |
-| Python 3 + `python-pptx` | PPT import + export | ✅ via uv |
-| Python 3 + `beautifulsoup4` | HTML parsing for PPTX export | ✅ via uv |
+| Python 3 + `python-pptx` | PPT import/export | ✅ via uv |
+| Python 3 + `playwright` | PPTX export (uses system Chrome) | ✅ via uv |
 
-Node.js is no longer required.
+Node.js is not required. PPTX export uses your existing Chrome/Edge/Brave — no 300MB Chromium download.
 
 **Claude Code users** — install manually:
 ```bash
-pip install Pillow python-pptx beautifulsoup4
+pip install Pillow python-pptx playwright
 ```
 
 ## Output
