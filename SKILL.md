@@ -1,7 +1,7 @@
 ---
 name: slide-creator
 description: Create beautiful, animation-rich HTML presentations that run entirely in the browser — no npm, no build tools. Generates polished single-file slide decks with visual style discovery, responsive viewport fitting, and optional PPTX export. Use whenever someone asks to make a presentation, create slides, build a pitch deck, convert a PPT/PPTX to web, or prepare slides for a talk or demo — even if they don't mention HTML. Also use for planning a deck outline first (`--plan`), generating HTML from a plan (`--generate`), or exporting to PowerPoint (`--export pptx`).
-version: 1.4.0
+version: 1.4.1
 metadata: {"openclaw":{"emoji":"🎞️","os":["darwin","linux"],"homepage":"https://github.com/kaisersong/slide-creator","requires":{"bins":["python3"]},"install":[{"id":"pillow","kind":"uv","package":"Pillow","label":"Pillow (image processing)"},{"id":"python-pptx","kind":"uv","package":"python-pptx","label":"python-pptx (PPT import/export)"},{"id":"playwright","kind":"uv","package":"playwright","label":"Playwright (pixel-perfect PPTX export via system Chrome)"}]}}
 ---
 
@@ -138,7 +138,21 @@ Present the 3 files with a one-sentence description each, then ask via AskUserQu
 
 Generate the presentation based on content from Phase 1 and style from Phase 2. If PLANNING.md exists, it's the source of truth — skip Phases 1 and 2.
 
-**Before writing any HTML, read [references/html-template.md](references/html-template.md)** — it contains the required HTML structure, JavaScript patterns, animation recipes, and edit button implementation.
+### If Blue Sky style is selected → use the starter template
+
+**Read [references/blue-sky-starter.html](references/blue-sky-starter.html) and use it as the base.**
+
+All 10 signature visual elements (orbs, noise texture, grid, glassmorphism, spring-physics horizontal track, gradient text, cloud hero, pill dots, counter, entrance animation) are already implemented in that file. You only need to:
+
+1. Set `--slide-count` in `:root` to your actual slide count
+2. Replace the example slides in `#track` with your content, following the slide-type patterns in the comment block
+3. Fill the `orbPositions` array in JS — one `[l1,t1,s1, l2,t2,s2, l3,t3,s3]` entry per slide
+
+Do **not** rewrite the visual system CSS. Do **not** change the track/slide layout. Content goes inside `.slide` wrappers using the pre-built component classes: `.g` (glass card), `.gt` (gradient text), `.pill`, `.stat`, `.divider`, `.cols2/3/4`, `.ctable`, `.co` (amber callout), `.warn` (red warning), `.info` (blue info), `.layer` (org row), `ul.bl` (bullet list).
+
+### For all other styles → read the standard references
+
+**Read [references/html-template.md](references/html-template.md)** — it contains the required HTML structure, JavaScript patterns, animation recipes, and edit button implementation.
 
 **Also read [STYLE-DESC.md](STYLE-DESC.md)** for viewport fitting CSS, responsive breakpoints, style preset details, and CSS gotchas (especially: never negate CSS functions directly — use `calc(-1 * clamp(...))` not `-clamp(...)`).
 

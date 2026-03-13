@@ -2,15 +2,27 @@
 
 适用于 [Claude Code](https://claude.ai/claude-code) 和 [OpenClaw](https://openclaw.ai) 的演示文稿生成 skill，零依赖、纯浏览器运行的 HTML 幻灯片。
 
-**v1.4.0** — 新增 **Blue Sky** 设计预设（天空渐变 · 玻璃拟态卡片 · 动态光球），共 13 种风格。PPTX 导出使用 Playwright + 系统已安装的 Chrome，像素级还原，无需下载 Chromium 或 Node.js。
+**v1.4.1** — 新增 **Blue Sky** 设计预设（天空渐变 · 玻璃拟态卡片 · 动态光球），共 13 种风格。Blue Sky 现在附带完整 starter 模板，确保任何模型都能正确生成全套视觉效果。PPTX 导出使用 Playwright + 系统已安装的 Chrome，像素级还原，无需下载 Chromium 或 Node.js。
 
 [English](README.md) | 简体中文
+
+## 效果演示
+
+用浏览器直接打开，零安装查看效果：
+
+- 🇨🇳 [slide-creator 介绍（中文）](demos/intro-zh.html) — 功能和使用方式介绍
+- 🇺🇸 [slide-creator intro (English)](demos/intro-en.html) — same in English
+
+以上演示文稿均由 slide-creator 自己生成，使用 Blue Sky 风格。
+
+---
 
 ## 功能特性
 
 - **两阶段工作流** — `--plan` 生成大纲，`--generate` 输出幻灯片
 - **13 种设计预设** — Bold Signal、Blue Sky、Neon Cyber、Dark Botanical 等
 - **视觉风格探索** — 先生成 3 个预览，看图选风格而非描述风格
+- **Blue Sky Starter 模板** — 完整 boilerplate，任何模型都能正确实现全套视觉系统
 - **图片处理流水线** — 自动评估和处理素材（Pillow）
 - **PPT 导入** — 将 `.pptx` 文件转换为网页演示
 - **PPTX 导出** — `--export pptx`，通过 Playwright + 系统 Chrome 导出
@@ -121,6 +133,8 @@ pip install Pillow python-pptx playwright
 天空渐变背景（`#f0f9ff → #e0f2fe`）搭配浮动玻璃拟态卡片与动态环境光球。灵感来自真实的企业 AI 路演文稿（CloudHub V12 MVP），呈现出高空晴日般开阔、自信、精致的视觉气质。
 
 标志性元素：SVG 颗粒噪声纹理叠层 · 3 个按幻灯片类型重新布阵的模糊光球 · `backdrop-filter: blur(24px)` 玻璃拟态卡片 · 40px 科技网格底层 · 弹簧物理横向切换动画 · 封面专属双层流动云朵效果。
+
+附带完整 starter 模板（`references/blue-sky-starter.html`）—— 全部 10 个签名视觉元素预置完毕，模型只需填充幻灯片内容即可。
 
 ---
 

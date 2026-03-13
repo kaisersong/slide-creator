@@ -284,6 +284,8 @@ Before finalizing any presentation, verify:
 
 ### 5. Blue Sky
 
+> **Starter template available:** When generating a Blue Sky presentation, read and use [`references/blue-sky-starter.html`](references/blue-sky-starter.html) as the base file. All visual elements are pre-built — do not reimplement them. See SKILL.md Phase 3 for instructions.
+
 **Vibe:** Clean, airy, enterprise-ready, modern SaaS — inspired by a real enterprise AI pitch deck. Light sky-blue canvas with floating glassmorphism cards and animated ambient orbs. Feels like a high-altitude clear day: open, confident, premium.
 
 **Layout:** Full-bleed sky gradient with 3 animated blur orbs that reposition per slide. Content in centered glassmorphism cards. Horizontal slide transitions (spring physics). Pill pagination dots at bottom. Fullscreen button top-right.
@@ -438,13 +440,39 @@ body::before {
     to   { stroke-dashoffset: 100; }
 }
 
-/* Horizontal slide transition */
+/* ─── Horizontal slide transition — CORRECT layout pattern ───
+ *
+ * CRITICAL: The three values must be consistent or the layout breaks.
+ *
+ *   #stage  : overflow: hidden wrapper, fixed to viewport
+ *   #track  : width = 100vw × N  (NOT 100% × N — percentages resolve differently)
+ *   .slide  : width = 100vw      (NOT 100vw / N — each slide is one full viewport)
+ *   JS      : translateX(-i × 100vw)   where i = 0-based slide index
+ *
+ * Common mistake: writing `width: calc(100vw / N)` for .slide — this makes each
+ * slide 1/N of the viewport and completely collapses the layout.
+ */
+#stage {
+    position: fixed;
+    inset: 0;
+    overflow: hidden;
+    z-index: 1;
+}
 .slides-track {
     display: flex;
     flex-direction: row;
+    width: calc(100vw * var(--slide-count)); /* e.g. 32 slides → 3200vw */
+    height: 100%;
     transition: transform 0.7s cubic-bezier(0.22, 1, 0.36, 1); /* spring feel */
 }
-.slide { flex-shrink: 0; }
+.slide {
+    width: 100vw;          /* each slide = one full viewport, always */
+    flex-shrink: 0;
+    height: 100vh;
+}
+
+/* JS navigation — use vw units, not percentages */
+/* track.style.transform = `translateX(-${currentIndex * 100}vw)`; */
 
 /* Pill pagination dots */
 .sky-nav {
@@ -498,7 +526,7 @@ body::before {
 
 6. **Gradient headline text** — Key hero titles use `sky-title-gradient`: deep navy `#1e3a8a` → bright blue `#3b82f6`.
 
-7. **Spring-physics slide transitions** — Horizontal track, `cubic-bezier(0.22, 1, 0.36, 1)` easing. Feels like a physical carousel, not a CSS fade.
+7. **Spring-physics slide transitions** — Horizontal track, `cubic-bezier(0.22, 1, 0.36, 1)` easing. Feels like a physical carousel, not a CSS fade. **Use the correct layout pattern in the CSS block above**: `#stage` fixed wrapper → `#track` at `100vw × N` → `.slide` at `100vw` → JS `translateX(-i * 100vw)`. Never use `calc(100vw / N)` for slide width.
 
 8. **Pill badge** (hero slides only) — Small white pill above the main title announcing the theme/category.
 
