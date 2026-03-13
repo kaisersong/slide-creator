@@ -282,7 +282,251 @@ Before finalizing any presentation, verify:
 
 ## Light Themes
 
-### 5. Notebook Tabs
+### 5. Blue Sky
+
+**Vibe:** Clean, airy, enterprise-ready, modern SaaS — inspired by a real enterprise AI pitch deck. Light sky-blue canvas with floating glassmorphism cards and animated ambient orbs. Feels like a high-altitude clear day: open, confident, premium.
+
+**Layout:** Full-bleed sky gradient with 3 animated blur orbs that reposition per slide. Content in centered glassmorphism cards. Horizontal slide transitions (spring physics). Pill pagination dots at bottom. Fullscreen button top-right.
+
+**Typography:**
+- System fonts: `-apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Roboto, sans-serif`
+- All labels: `letter-spacing: 0.2em; text-transform: uppercase; font-weight: 600`
+- Headlines: Bold/Black weight
+- Body: `font-weight: 300` (light)
+- Gradient headline: `#1e3a8a` → `#3b82f6` (deep navy to bright blue)
+
+**Colors:**
+```css
+:root {
+    /* Background — sky gradient */
+    --bg-from: #f0f9ff;         /* sky-50 */
+    --bg-to:   #e0f2fe;         /* sky-100 */
+
+    /* Text */
+    --text-primary:   #0f172a;  /* slate-900 */
+    --text-secondary: #64748b;  /* slate-500 */
+    --text-accent:    #2563eb;  /* blue-600 */
+
+    /* Glassmorphism cards */
+    --card-bg:     rgba(255, 255, 255, 0.70);
+    --card-border: rgba(255, 255, 255, 0.90);
+    --card-shadow: 0 10px 40px -10px rgba(37, 99, 235, 0.08), 0 1px 3px rgba(0,0,0,0.02);
+    --card-radius: 24px;
+    --card-blur:   blur(24px);
+
+    /* Ambient orbs */
+    --orb-blue:   rgba(37,  99,  235, 0.30);  /* blue-700 */
+    --orb-indigo: rgba(79,  70,  229, 0.25);  /* indigo-600 */
+    --orb-sky:    rgba(56,  189, 248, 0.25);  /* sky-400 */
+}
+```
+
+**CSS Implementation:**
+```css
+/* === BLUE SKY BASE === */
+body {
+    background: linear-gradient(135deg, var(--bg-from) 0%, var(--bg-to) 100%);
+    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Roboto, sans-serif;
+    -webkit-font-smoothing: antialiased;
+}
+
+/* Grainy noise texture — adds tactile depth */
+body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    z-index: 1;
+    pointer-events: none;
+    opacity: 0.35;
+    mix-blend-mode: overlay;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+/* Tech grid underlay — 40px lines, fades to edges */
+.sky-grid {
+    position: absolute;
+    inset: 0;
+    background-image:
+        linear-gradient(to right, rgba(14,165,233,0.08) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(14,165,233,0.08) 1px, transparent 1px);
+    background-size: 40px 40px;
+    -webkit-mask-image: radial-gradient(ellipse 80% 50% at 50% 50%, #000 70%, transparent 100%);
+    mask-image: radial-gradient(ellipse 80% 50% at 50% 50%, #000 70%, transparent 100%);
+    pointer-events: none;
+}
+
+/* Ambient orb — placed with CSS custom props */
+.sky-orb {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(80px);
+    pointer-events: none;
+    transition: all 1.8s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* Glassmorphism card */
+.glass-card {
+    background: var(--card-bg);
+    backdrop-filter: var(--card-blur);
+    -webkit-backdrop-filter: var(--card-blur);
+    border: 1px solid var(--card-border);
+    box-shadow: var(--card-shadow);
+    border-radius: var(--card-radius);
+}
+.glass-card:hover {
+    background: rgba(255, 255, 255, 0.85);
+    box-shadow: 0 20px 60px -15px rgba(37, 99, 235, 0.12), 0 2px 6px rgba(0,0,0,0.03);
+    transform: translateY(-2px);
+    transition: all 0.3s ease;
+}
+
+/* Section label (small caps above headline) */
+.sky-label {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-size: clamp(0.65rem, 1vw, 0.75rem);
+    font-weight: 600;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--text-accent);
+}
+.sky-label::before {
+    content: '';
+    width: 8px; height: 8px;
+    background: #3b82f6;
+    border-radius: 50%;
+}
+
+/* Gradient headline */
+.sky-title-gradient {
+    background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+/* Pill badge (top of hero slide) */
+.sky-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 20px;
+    border-radius: 9999px;
+    background: rgba(255,255,255,0.8);
+    backdrop-filter: blur(12px);
+    border: 1px solid rgba(147,197,253,0.5);
+    font-size: clamp(0.65rem, 1vw, 0.75rem);
+    font-weight: 600;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: #2563eb;
+    box-shadow: 0 2px 8px rgba(37,99,235,0.08);
+}
+.sky-badge::before {
+    content: '';
+    width: 8px; height: 8px;
+    background: #3b82f6;
+    border-radius: 50%;
+}
+
+/* Animated connection lines (SVG, use in decorative layer) */
+/* Example: <path stroke="url(#sky-line)" stroke-dasharray="10 15"
+              style="animation: dash-flow 4s linear infinite" /> */
+@keyframes dash-flow {
+    from { stroke-dashoffset: 0; }
+    to   { stroke-dashoffset: 100; }
+}
+
+/* Horizontal slide transition */
+.slides-track {
+    display: flex;
+    flex-direction: row;
+    transition: transform 0.7s cubic-bezier(0.22, 1, 0.36, 1); /* spring feel */
+}
+.slide { flex-shrink: 0; }
+
+/* Pill pagination dots */
+.sky-nav {
+    position: fixed;
+    bottom: clamp(1rem, 2vw, 2rem);
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 12px;
+    z-index: 50;
+}
+.sky-dot {
+    height: 6px;
+    border-radius: 9999px;
+    background: rgba(147,197,253,0.5);
+    transition: all 0.5s ease;
+    width: 6px;
+    cursor: pointer;
+    border: none;
+}
+.sky-dot.active {
+    background: #2563eb;
+    width: 32px;
+}
+
+/* Scrollbar for content-heavy slides */
+.sky-scroll {
+    overflow-y: auto;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(147,197,253,0.5) transparent;
+}
+.sky-scroll::-webkit-scrollbar { width: 6px; }
+.sky-scroll::-webkit-scrollbar-track { background: transparent; }
+.sky-scroll::-webkit-scrollbar-thumb {
+    background: rgba(147,197,253,0.5);
+    border-radius: 10px;
+}
+```
+
+**Signature Elements:**
+
+1. **Animated ambient orbs** — 3 blurred radial-gradient circles (blue/indigo/sky). They reposition smoothly between slides to match content mood. Typical orb size 40–60% viewport width, `blur(80px)`, `mix-blend-mode` not needed on light bg. Animate `top`/`left`/`transform: scale()` with CSS transitions or JS.
+
+2. **Glassmorphism cards** (`glass-card`) — `rgba(255,255,255,0.7)` + `backdrop-filter: blur(24px)`. Every content block lives in one. Use `border-radius: 24px`, white border, and subtle blue-tinted shadow.
+
+3. **Grainy noise texture** — SVG `feTurbulence` overlay (fixed, `mix-blend-mode: overlay`, opacity ~0.35). Adds premium tactile depth without photos or illustrations.
+
+4. **Tech grid underlay** — 40px CSS grid lines at 8% opacity, masked with radial gradient so it fades to edges. Evokes a clean data visualization canvas.
+
+5. **Section label + headline pairing** — Always pair: small-caps blue label above → bold dark headline below. Gap ~8px. Label must have the dot prefix.
+
+6. **Gradient headline text** — Key hero titles use `sky-title-gradient`: deep navy `#1e3a8a` → bright blue `#3b82f6`.
+
+7. **Spring-physics slide transitions** — Horizontal track, `cubic-bezier(0.22, 1, 0.36, 1)` easing. Feels like a physical carousel, not a CSS fade.
+
+8. **Pill badge** (hero slides only) — Small white pill above the main title announcing the theme/category.
+
+9. **Flowing SVG connection lines** (optional, decorative layer) — Animated `stroke-dashoffset` paths over gradient `linearGradient` stroke, opacity 0.3. Creates a sense of data flow without heavy graphics.
+
+10. **Cloud hero effect** (title slide only) — CSS blur-circle clusters anchored to `bottom: 0`, animated with `translateX` (two-layer loop: slow back layer + fast front layer). Use SVG `feTurbulence/feDisplacementMap` filter for organic edges. Creates an "above the clouds" launch moment.
+
+**Orb Positioning Guide (per slide type):**
+```
+Hero/Title:      orb1 center-bottom(large), orb2 left-low, orb3 right-mid
+Data/Split:      orb1 far-left-mid, orb2 far-right-mid, orb3 top-center(small)
+Architecture:    orb1 top-center, orb2 bottom-left, orb3 bottom-right (triangle)
+Grid/Cards:      orb1 top-left(large), orb2 bottom-right(large), orb3 center(mid)
+Stats/Numbers:   orb1 center(very large), orb2 top-left(small), orb3 bottom-right(small)
+Timeline:        orb1 left-mid, orb2 center-mid, orb3 right-mid (horizontal row)
+```
+
+**Animation Timings:**
+- Slide entry: `0.8s ease [0.22, 1, 0.36, 1]`, stagger children by `0.15s`
+- Orb transitions: `1.8s cubic-bezier(0.22, 1, 0.36, 1)`
+- Hover effects: `0.3s ease`
+- Floating orbs (continuous): `20–28s easeInOut infinite`
+- Connection lines: `4–6s linear infinite`
+- Cloud layers: back `30s linear infinite`, front `18s linear infinite`
+
+---
+
+### 6. Notebook Tabs
 
 **Vibe:** Editorial, organized, elegant, tactile
 
@@ -314,7 +558,7 @@ Before finalizing any presentation, verify:
 
 ---
 
-### 6. Pastel Geometry
+### 7. Pastel Geometry
 
 **Vibe:** Friendly, organized, modern, approachable
 
@@ -345,7 +589,7 @@ Before finalizing any presentation, verify:
 
 ---
 
-### 7. Split Pastel
+### 8. Split Pastel
 
 **Vibe:** Playful, modern, friendly, creative
 
@@ -375,7 +619,7 @@ Before finalizing any presentation, verify:
 
 ---
 
-### 8. Vintage Editorial
+### 9. Vintage Editorial
 
 **Vibe:** Witty, confident, editorial, personality-driven
 
@@ -405,7 +649,7 @@ Before finalizing any presentation, verify:
 
 ## Specialty Themes
 
-### 9. Neon Cyber
+### 10. Neon Cyber
 
 **Vibe:** Futuristic, techy, confident
 
@@ -417,7 +661,7 @@ Before finalizing any presentation, verify:
 
 ---
 
-### 10. Terminal Green
+### 11. Terminal Green
 
 **Vibe:** Developer-focused, hacker aesthetic
 
@@ -429,7 +673,7 @@ Before finalizing any presentation, verify:
 
 ---
 
-### 11. Swiss Modern
+### 12. Swiss Modern
 
 **Vibe:** Clean, precise, Bauhaus-inspired
 
@@ -441,7 +685,7 @@ Before finalizing any presentation, verify:
 
 ---
 
-### 12. Paper & Ink
+### 13. Paper & Ink
 
 **Vibe:** Editorial, literary, thoughtful
 
@@ -461,6 +705,7 @@ Before finalizing any presentation, verify:
 | Electric Studio | Manrope | Manrope | Google |
 | Creative Voltage | Syne | Space Mono | Google |
 | Dark Botanical | Cormorant | IBM Plex Sans | Google |
+| Blue Sky | System / SF Pro | System / SF Pro | System |
 | Notebook Tabs | Bodoni Moda | DM Sans | Google |
 | Pastel Geometry | Plus Jakarta Sans | Plus Jakarta Sans | Google |
 | Split Pastel | Outfit | Outfit | Google |
