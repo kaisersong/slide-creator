@@ -2,18 +2,18 @@
 
 适用于 [Claude Code](https://claude.ai/claude-code) 和 [OpenClaw](https://openclaw.ai) 的演示文稿生成 skill，零依赖、纯浏览器运行的 HTML 幻灯片。
 
-**v1.3.0** — PPTX 导出改用 Playwright + 系统已安装的 Chrome，像素级还原幻灯片样式，不下载 Chromium，不需要 Node.js，只需 `pip install playwright python-pptx`。
+**v1.4.0** — 新增 **Blue Sky** 设计预设（天空渐变 · 玻璃拟态卡片 · 动态光球），共 13 种风格。PPTX 导出使用 Playwright + 系统已安装的 Chrome，像素级还原，无需下载 Chromium 或 Node.js。
 
 [English](README.md) | 简体中文
 
 ## 功能特性
 
 - **两阶段工作流** — `--plan` 生成大纲，`--generate` 输出幻灯片
-- **12 种设计预设** — Bold Signal、Neon Cyber、Dark Botanical 等
+- **13 种设计预设** — Bold Signal、Blue Sky、Neon Cyber、Dark Botanical 等
 - **视觉风格探索** — 先生成 3 个预览，看图选风格而非描述风格
 - **图片处理流水线** — 自动评估和处理素材（Pillow）
 - **PPT 导入** — 将 `.pptx` 文件转换为网页演示
-- **PPTX 导出** — `--export pptx`，通过 puppeteer + pptxgenjs 导出
+- **PPTX 导出** — `--export pptx`，通过 Playwright + 系统 Chrome 导出
 - **浏览器内编辑** — 直接在浏览器中编辑文字，Ctrl+S 保存
 - **视口自适应** — 每张幻灯片精确填充 100vh，永不出现滚动条
 - **中英双语** — 完整支持中文内容
@@ -42,7 +42,7 @@ git clone https://github.com/kaisersong/slide-creator ~/.openclaw/skills/slide-c
 
 > ClawHub 页面：https://clawhub.ai/skills/html-slide-creator
 
-OpenClaw 首次使用时会自动安装依赖（Pillow、python-pptx、puppeteer、pptxgenjs）。
+OpenClaw 首次使用时会自动安装依赖（Pillow、python-pptx、playwright）。
 
 ---
 
@@ -102,18 +102,25 @@ pip install Pillow python-pptx playwright
 
 | 预设 | 风格 | 适合场景 |
 |------|------|----------|
-| Bold Signal | 自信、强冲击 | 路演、主题演讲 |
-| Electric Studio | 简洁、专业 | 商务演示 |
-| Creative Voltage | 活力、复古现代 | 创意提案 |
-| Dark Botanical | 优雅、精致 | 高端品牌 |
-| Notebook Tabs | 编辑感、有条理 | 报告、评审 |
-| Pastel Geometry | 友好、亲切 | 产品介绍 |
-| Split Pastel | 活泼、现代 | 创意机构 |
-| Vintage Editorial | 个性鲜明 | 个人品牌 |
-| Neon Cyber | 科技感、未来感 | 科技创业 |
-| Terminal Green | 开发者风格 | 开发工具、API |
-| Swiss Modern | 极简、精确 | 企业、数据 |
-| Paper & Ink | 文学、沉思 | 叙事演讲 |
+| **Bold Signal** | 自信、强冲击 | 路演、主题演讲 |
+| **Electric Studio** | 简洁、专业 | 商务演示 |
+| **Creative Voltage** | 活力、复古现代 | 创意提案 |
+| **Dark Botanical** | 优雅、精致 | 高端品牌 |
+| **Blue Sky** ✨ | 清透、企业 SaaS | 产品发布、科技路演 |
+| **Notebook Tabs** | 编辑感、有条理 | 报告、评审 |
+| **Pastel Geometry** | 友好、亲切 | 产品介绍 |
+| **Split Pastel** | 活泼、现代 | 创意机构 |
+| **Vintage Editorial** | 个性鲜明 | 个人品牌 |
+| **Neon Cyber** | 科技感、未来感 | 科技创业 |
+| **Terminal Green** | 开发者风格 | 开发工具、API |
+| **Swiss Modern** | 极简、精确 | 企业、数据 |
+| **Paper & Ink** | 文学、沉思 | 叙事演讲 |
+
+### Blue Sky
+
+天空渐变背景（`#f0f9ff → #e0f2fe`）搭配浮动玻璃拟态卡片与动态环境光球。灵感来自真实的企业 AI 路演文稿（CloudHub V12 MVP），呈现出高空晴日般开阔、自信、精致的视觉气质。
+
+标志性元素：SVG 颗粒噪声纹理叠层 · 3 个按幻灯片类型重新布阵的模糊光球 · `backdrop-filter: blur(24px)` 玻璃拟态卡片 · 40px 科技网格底层 · 弹簧物理横向切换动画 · 封面专属双层流动云朵效果。
 
 ---
 

@@ -2,18 +2,18 @@
 
 A skill for [Claude Code](https://claude.ai/claude-code) and [OpenClaw](https://openclaw.ai) that generates stunning, zero-dependency HTML presentations.
 
-**v1.3.0** — PPTX export uses Playwright with your existing system Chrome. Pixel-perfect screenshots, no 300MB Chromium download, no Node.js. Just `pip install playwright python-pptx`.
+**v1.4.0** — 13 design presets including the new **Blue Sky** style (light sky gradient, glassmorphism cards, animated ambient orbs). PPTX export uses Playwright with your existing system Chrome — no 300MB Chromium download, no Node.js.
 
 English | [简体中文](README.zh-CN.md)
 
 ## Features
 
 - **Two-stage workflow** — `--plan` to outline, `--generate` to produce
-- **12 design presets** — Bold Signal, Neon Cyber, Dark Botanical, and more
+- **13 design presets** — Bold Signal, Blue Sky, Neon Cyber, Dark Botanical, and more
 - **Style discovery** — Generate 3 visual previews before committing to a style
 - **Image pipeline** — Auto-evaluate and process assets (Pillow)
 - **PPT import** — Convert `.pptx` files to web presentations
-- **PPTX export** — `--export pptx` via puppeteer + pptxgenjs
+- **PPTX export** — `--export pptx` via Playwright + system Chrome
 - **Inline editing** — Edit text in-browser, Ctrl+S to save
 - **Viewport fitting** — Every slide fits exactly in 100vh, no scrolling ever
 - **Bilingual** — Chinese / English support
@@ -42,7 +42,7 @@ git clone https://github.com/kaisersong/slide-creator ~/.openclaw/skills/slide-c
 
 > ClawHub page: https://clawhub.ai/skills/html-slide-creator
 
-OpenClaw will automatically detect and install dependencies (Pillow, python-pptx, puppeteer, pptxgenjs) on first use.
+OpenClaw will automatically detect and install dependencies (Pillow, python-pptx, playwright) on first use.
 
 ---
 
@@ -75,6 +75,34 @@ pip install Pillow python-pptx playwright
 Single-file `presentation.html` — zero dependencies, runs entirely in the browser.
 
 Optionally exports `PRESENTATION_SCRIPT.md` (speaker notes) and `.pptx`.
+
+---
+
+## Design Presets
+
+13 curated styles — no generic AI aesthetics.
+
+| Preset | Vibe | Best For |
+|--------|------|----------|
+| **Bold Signal** | Confident, high-impact | Pitch decks, keynotes |
+| **Electric Studio** | Clean, professional | Agency presentations |
+| **Creative Voltage** | Energetic, retro-modern | Creative pitches |
+| **Dark Botanical** | Elegant, sophisticated | Premium brands |
+| **Blue Sky** ✨ | Airy, enterprise SaaS | Product launches, tech decks |
+| **Notebook Tabs** | Editorial, organized | Reports, reviews |
+| **Pastel Geometry** | Friendly, approachable | Product overviews |
+| **Split Pastel** | Playful, modern | Creative agencies |
+| **Vintage Editorial** | Witty, personality-driven | Personal brands |
+| **Neon Cyber** | Futuristic, techy | Tech startups |
+| **Terminal Green** | Developer-focused | Dev tools, APIs |
+| **Swiss Modern** | Minimal, precise | Corporate, data |
+| **Paper & Ink** | Literary, thoughtful | Storytelling |
+
+### Blue Sky
+
+Light sky-blue gradient background (`#f0f9ff → #e0f2fe`) with floating glassmorphism cards and animated ambient orbs. Inspired by a real enterprise AI pitch deck — the CloudHub V12 MVP presentation. Feels like a high-altitude clear day: open, confident, premium.
+
+Signature elements: grainy noise texture overlay · 3 animated blur orbs repositioning per slide · glassmorphism cards with backdrop-filter · 40px tech grid with radial mask · spring-physics horizontal slide transitions · cloud hero effect on title slides.
 
 ---
 
