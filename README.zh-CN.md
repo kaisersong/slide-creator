@@ -2,7 +2,7 @@
 
 适用于 [Claude Code](https://claude.ai/claude-code) 和 [OpenClaw](https://openclaw.ai) 的演示文稿生成 skill，零依赖、纯浏览器运行的 HTML 幻灯片。
 
-**v1.4.1** — 新增 **Blue Sky** 设计预设（天空渐变 · 玻璃拟态卡片 · 动态光球），共 13 种风格。Blue Sky 现在附带完整 starter 模板，确保任何模型都能正确生成全套视觉效果。PPTX 导出使用 Playwright + 系统已安装的 Chrome，像素级还原，无需下载 Chromium 或 Node.js。
+**v1.4.2** — 新增 **Blue Sky** 设计预设（天空渐变 · 玻璃拟态卡片 · 动态光球），共 13 种风格。Blue Sky 现在附带完整 starter 模板，确保任何模型都能正确生成全套视觉效果。PPTX 导出使用 Playwright + 系统已安装的 Chrome，像素级还原，无需下载 Chromium 或 Node.js。
 
 [English](README.md) | 简体中文
 

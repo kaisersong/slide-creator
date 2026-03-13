@@ -2,7 +2,7 @@
 
 A skill for [Claude Code](https://claude.ai/claude-code) and [OpenClaw](https://openclaw.ai) that generates stunning, zero-dependency HTML presentations.
 
-**v1.4.1** — 13 design presets including **Blue Sky** (light sky gradient, glassmorphism cards, animated ambient orbs). Blue Sky now ships with a complete starter template so any model generates the full visual system correctly. PPTX export uses Playwright with your existing system Chrome — no 300MB Chromium download, no Node.js.
+**v1.4.2** — 13 design presets including **Blue Sky** (light sky gradient, glassmorphism cards, animated ambient orbs). Blue Sky now ships with a complete starter template so any model generates the full visual system correctly. PPTX export uses Playwright with your existing system Chrome — no 300MB Chromium download, no Node.js.
 
 English | [简体中文](README.zh-CN.md)
 
