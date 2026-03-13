@@ -90,6 +90,25 @@ Optionally exports `PRESENTATION_SCRIPT.md` (speaker notes) and `.pptx`.
 
 ---
 
+## Inline Editing
+
+Every generated presentation includes a built-in text editor — no need to touch the HTML file.
+
+**How to enter edit mode:**
+
+- Hover the **top-left corner** of the screen → an edit button appears, click it
+- Or press **`E`** on your keyboard
+
+**In edit mode:**
+
+- Click any text on the slide to edit it directly
+- **`Ctrl+S`** (or `Cmd+S` on Mac) — save changes back to the HTML file
+- **`Escape`** — exit edit mode without saving
+
+**To enable inline editing**, answer "Yes" when slide-creator asks during setup (it's the recommended default). If you generated a presentation without it, just re-run `/slide-creator --generate` and opt in.
+
+---
+
 ## Design Presets
 
 13 curated styles — no generic AI aesthetics.
