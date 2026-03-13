@@ -10,8 +10,8 @@
 
 用浏览器直接打开，零安装查看效果：
 
-- 🇨🇳 [slide-creator 介绍（中文）](demos/intro-zh.html) — 功能和使用方式介绍
-- 🇺🇸 [slide-creator intro (English)](demos/intro-en.html) — same in English
+- 🇨🇳 [slide-creator 介绍（中文）](https://kaisersong.github.io/slide-creator/demos/intro-zh.html) — 功能和使用方式介绍
+- 🇺🇸 [slide-creator intro (English)](https://kaisersong.github.io/slide-creator/demos/intro-en.html) — same in English
 
 以上演示文稿均由 slide-creator 自己生成，使用 Blue Sky 风格。
 
