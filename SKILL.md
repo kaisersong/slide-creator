@@ -207,17 +207,17 @@ Read [references/pptx-extraction.md](references/pptx-extraction.md) for the Pyth
 1. Run the extraction script to get slides_data (title, content, images, notes per slide)
 2. Present extracted structure to user, confirm it looks right
 3. Run Phase 2 (Style Discovery) with extracted content in mind
-4. Generate HTML preserving all text, images (from `assets/`), and slide order. Add speaker notes as HTML comments if present.
+4. Generate HTML preserving all text, images (from `assets/`), and slide order. Put speaker notes in `data-notes` attributes on each `.slide` section (not HTML comments) so they work in Presenter Mode.
 
 ---
 
 ## Phase 5: Delivery
 
 1. **Clean up:** delete `.claude-design/slide-previews/` if it exists.
-2. **Generate speaker notes** if deck has 8+ slides or was created from PLANNING.md:
-   - Create `PRESENTATION_SCRIPT.md` with 2-4 sentences per slide: what to say, emphasis points, transition cue.
-3. **Open:** `open [filename].html`
-4. **Summarize:**
+2. **Embed speaker notes in HTML** — every `.slide` section must have a `data-notes="..."` attribute with 2-4 sentences (what to say, key emphasis, transition cue). These power the built-in Presenter Mode.
+3. **Generate `PRESENTATION_SCRIPT.md`** if deck has 8+ slides or was created from PLANNING.md (same notes content, formatted as a readable document).
+4. **Open:** `open [filename].html`
+5. **Summarize:**
 
 ```
 Your presentation is ready!
@@ -227,6 +227,7 @@ Your presentation is ready!
 📊 Slides: [count]
 
 Navigation: Arrow keys or Space · Scroll or swipe · Click dots to jump
+Presenter Mode: press P to open the presenter window (notes + timer + controls)
 
 To customize: edit :root variables at the top of the CSS for colors, fonts, and spacing.
 

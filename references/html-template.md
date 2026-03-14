@@ -168,14 +168,17 @@ Every presentation follows this structure:
     </nav>
 
     <!-- Slides -->
-    <section class="slide title-slide" aria-label="Title slide">
+    <!-- IMPORTANT: Always add data-notes="..." to every slide section.
+         Notes appear in Presenter Mode (P key). Keep to 2-4 sentences.
+         Example: data-notes="Introduce the problem. Pause after the headline." -->
+    <section class="slide title-slide" data-notes="Welcome the audience. Briefly introduce yourself and what this talk covers." aria-label="Title slide">
         <div class="slide-content">
             <h1 class="reveal">Presentation Title</h1>
             <p class="reveal">Subtitle or author</p>
         </div>
     </section>
 
-    <section class="slide" aria-label="Slide 2">
+    <section class="slide" data-notes="Walk through each point slowly. The second bullet tends to surprise people — give it a beat." aria-label="Slide 2">
         <div class="slide-content">
             <h2 class="reveal">Slide Title</h2>
             <ul class="reveal bullet-list">
@@ -188,20 +191,21 @@ Every presentation follows this structure:
     <script>
         /* ===========================================
            SLIDE PRESENTATION CONTROLLER
-           Handles navigation, animations, progress bar, and nav dots.
-           Keyboard: arrows, space. Touch: swipe. Mouse: wheel.
+           Navigation: arrow keys, space, swipe, scroll wheel.
+           Presenter Mode: press P to open presenter window.
            =========================================== */
         class SlidePresentation {
             constructor() {
                 this.slides = document.querySelectorAll('.slide');
                 this.currentSlide = 0;
-                this.isScrolling = false;
+                this.channel = new BroadcastChannel('slide-creator-presenter');
 
                 this.setupNavDots();
                 this.setupObserver();
                 this.setupKeyboard();
                 this.setupTouch();
                 this.setupWheel();
+                this.setupPresenter();
                 this.updateProgress();
             }
 
@@ -226,6 +230,7 @@ Every presentation follows this structure:
                             this.currentSlide = [...this.slides].indexOf(entry.target);
                             this.updateProgress();
                             this.updateDots();
+                            this.broadcastState();
                         }
                     });
                 }, { threshold: 0.5 });
@@ -239,6 +244,10 @@ Every presentation follows this structure:
                         e.preventDefault(); this.next();
                     } else if (e.key === 'ArrowUp' || e.key === 'ArrowLeft') {
                         e.preventDefault(); this.prev();
+                    } else if (e.key === 'p' || e.key === 'P') {
+                        /* Open presenter window — same file, ?presenter param */
+                        const url = location.href.split('?')[0] + '?presenter';
+                        window.open(url, 'slide-presenter', 'width=1100,height=680,menubar=no,toolbar=no,location=no');
                     }
                 });
             }
@@ -253,12 +262,35 @@ Every presentation follows this structure:
             }
 
             setupWheel() {
-                document.addEventListener('wheel', (e) => {
-                    if (this.isScrolling) return;
-                    this.isScrolling = true;
-                    e.deltaY > 0 ? this.next() : this.prev();
-                    setTimeout(() => { this.isScrolling = false; }, 800);
+                /* Debounce-reset pattern: first event navigates and locks;
+                   subsequent inertia events only reset the 180ms timer;
+                   unlock only after 180ms of silence. Prevents trackpad
+                   inertia from skipping multiple slides. */
+                let locked = false, timer = null;
+                document.addEventListener('wheel', e => {
+                    clearTimeout(timer);
+                    if (!locked) { locked = true; e.deltaY > 0 ? this.next() : this.prev(); }
+                    timer = setTimeout(() => { locked = false; }, 180);
                 }, { passive: true });
+            }
+
+            setupPresenter() {
+                /* Listen for navigation commands from the presenter window */
+                this.channel.addEventListener('message', e => {
+                    if (e.data.type === 'nav-next') this.next();
+                    else if (e.data.type === 'nav-prev') this.prev();
+                    else if (e.data.type === 'request-state') this.broadcastState();
+                });
+            }
+
+            broadcastState() {
+                const slide = this.slides[this.currentSlide];
+                this.channel.postMessage({
+                    type: 'state',
+                    index: this.currentSlide,
+                    total: this.slides.length,
+                    notes: slide?.dataset.notes || ''
+                });
             }
 
             goTo(index) {
@@ -281,7 +313,91 @@ Every presentation follows this structure:
             }
         }
 
-        new SlidePresentation();
+        /* ===========================================
+           PRESENTER MODE
+           Activated when URL contains ?presenter.
+           Shows notes, timer, and nav controls.
+           Syncs with the main window via BroadcastChannel.
+           =========================================== */
+        if (new URLSearchParams(location.search).has('presenter')) {
+            document.title = 'Presenter — ' + document.title;
+            document.body.innerHTML = `
+            <style>
+                * { box-sizing: border-box; margin: 0; }
+                body { background: #111; color: #fff; font-family: system-ui, sans-serif; height: 100vh; overflow: hidden; }
+                #pv { display: grid; grid-template-rows: 1fr 72px; height: 100vh; padding: 1.25rem; gap: 1rem; }
+                #pv-main { display: grid; grid-template-columns: 1fr 300px; gap: 1.25rem; min-height: 0; }
+                .pv-panel { background: #1e1e1e; border-radius: 12px; padding: 1.5rem; overflow: hidden; }
+                #pv-label { font-size: 0.65rem; letter-spacing: 0.18em; text-transform: uppercase; color: #555; margin-bottom: 0.75rem; }
+                #pv-notes { font-size: 1.1rem; line-height: 1.85; color: #d0d0d0; overflow-y: auto; height: calc(100% - 2rem); }
+                #pv-right { display: flex; flex-direction: column; gap: 1rem; }
+                #pv-counter { text-align: center; display: flex; flex-direction: column; align-items: center; justify-content: center; flex: 1; }
+                #pv-num { font-size: 3.5rem; font-weight: 700; font-variant-numeric: tabular-nums; line-height: 1; }
+                #pv-of { color: #555; font-size: 0.85rem; margin-top: 0.4rem; }
+                #pv-timer-box { text-align: center; padding: 1.25rem; }
+                #pv-timer-label { font-size: 0.65rem; letter-spacing: 0.18em; text-transform: uppercase; color: #555; margin-bottom: 0.4rem; }
+                #pv-timer { font-size: 2rem; font-weight: 700; font-family: monospace; font-variant-numeric: tabular-nums; }
+                #pv-controls { display: flex; align-items: center; justify-content: center; gap: 1rem; }
+                .pv-btn { padding: 0 2rem; height: 48px; border-radius: 8px; font-size: 1rem; cursor: pointer; border: 1px solid #333; background: #1e1e1e; color: #fff; transition: background 0.15s; }
+                .pv-btn:hover { background: #2a2a2a; }
+                .pv-btn.primary { background: #4f46e5; border-color: #4f46e5; }
+                .pv-btn.primary:hover { background: #4338ca; }
+            </style>
+            <div id="pv">
+                <div id="pv-main">
+                    <div class="pv-panel">
+                        <div id="pv-label">Speaker Notes</div>
+                        <div id="pv-notes">Waiting for main window…</div>
+                    </div>
+                    <div id="pv-right">
+                        <div class="pv-panel" id="pv-counter">
+                            <div id="pv-num">—</div>
+                            <div id="pv-of">/ — slides</div>
+                        </div>
+                        <div class="pv-panel" id="pv-timer-box">
+                            <div id="pv-timer-label">Elapsed</div>
+                            <div id="pv-timer">0:00</div>
+                        </div>
+                    </div>
+                </div>
+                <div id="pv-controls">
+                    <button class="pv-btn" id="pv-prev">← Prev</button>
+                    <button class="pv-btn primary" id="pv-next">Next →</button>
+                </div>
+            </div>`;
+
+            const ch = new BroadcastChannel('slide-creator-presenter');
+            let startTime = null;
+
+            ch.addEventListener('message', e => {
+                if (e.data.type !== 'state') return;
+                if (!startTime) startTime = Date.now();
+                document.getElementById('pv-notes').textContent = e.data.notes || '(no notes for this slide)';
+                document.getElementById('pv-num').textContent = e.data.index + 1;
+                document.getElementById('pv-of').textContent = `/ ${e.data.total} slides`;
+            });
+
+            /* Request current state from main window */
+            ch.postMessage({ type: 'request-state' });
+
+            /* Elapsed timer */
+            setInterval(() => {
+                if (!startTime) return;
+                const s = Math.floor((Date.now() - startTime) / 1000);
+                document.getElementById('pv-timer').textContent =
+                    `${Math.floor(s / 60)}:${String(s % 60).padStart(2, '0')}`;
+            }, 1000);
+
+            /* Nav buttons send commands to main window */
+            document.getElementById('pv-prev').addEventListener('click', () => ch.postMessage({ type: 'nav-prev' }));
+            document.getElementById('pv-next').addEventListener('click', () => ch.postMessage({ type: 'nav-next' }));
+            document.addEventListener('keydown', e => {
+                if (e.key === 'ArrowRight' || e.key === ' ') ch.postMessage({ type: 'nav-next' });
+                else if (e.key === 'ArrowLeft') ch.postMessage({ type: 'nav-prev' });
+            });
+        } else {
+            new SlidePresentation();
+        }
     </script>
 </body>
 </html>
