@@ -823,3 +823,325 @@ Test at these viewport sizes:
 - **Landscape phone:** 667×375, 896×414
 
 Use browser DevTools responsive mode to quickly test multiple sizes.
+---
+
+## New Styles (v1.5)
+
+### 14. Aurora Mesh
+
+**Vibe:** Vibrant, forward-looking, premium tech — inspired by Linear.app, Vercel, Stripe marketing pages
+
+**Layout:** Centered hero title + content area below. No columns. Full-bleed animated gradient background.
+
+**Typography:**
+- Display: `Inter` 700 or system-ui (exception: Inter is appropriate for modern SaaS aesthetic)
+- Body: system-ui / -apple-system
+- Title: `letter-spacing: -0.02em`, pure white
+- Body: `rgba(255,255,255,0.7)`
+
+**Colors:**
+```css
+:root {
+    --bg-primary: #0a0a1a;
+    --accent: #00f5c4;        /* cyan-green for emphasis */
+    --text-primary: #ffffff;
+    --text-secondary: rgba(255,255,255,0.7);
+    --card-bg: rgba(255,255,255,0.05);
+    --card-border: rgba(255,255,255,0.1);
+}
+```
+
+**Background mesh:**
+```css
+body {
+    background:
+        radial-gradient(ellipse at 20% 50%, rgba(120,40,200,0.4) 0%, transparent 60%),
+        radial-gradient(ellipse at 80% 20%, rgba(0,180,255,0.3) 0%, transparent 50%),
+        radial-gradient(ellipse at 60% 80%, rgba(0,255,180,0.2) 0%, transparent 50%),
+        #0a0a1a;
+    animation: meshDrift 20s ease-in-out infinite alternate;
+}
+@keyframes meshDrift {
+    0%   { background-position: 0% 50%; }
+    100% { background-position: 100% 50%; }
+}
+```
+
+**Signature Elements:**
+- Animated multi-layer radial-gradient background that slowly drifts (20s cycle)
+- Light glassmorphism cards: `rgba(255,255,255,0.05)` + `backdrop-filter: blur(12px)` + `border: 1px solid rgba(255,255,255,0.1)` — subtle, doesn't compete with background
+- Cyan-green `#00f5c4` accent for emphasis text and divider lines
+- `1px rgba(255,255,255,0.15)` separator lines
+- Chinese font fallback: `"PingFang SC", "Noto Sans CJK SC", "Microsoft YaHei", system-ui`
+
+**Reference:** [references/aurora-mesh.md](references/aurora-mesh.md)
+
+---
+
+### 15. Enterprise Dark
+
+**Vibe:** Authoritative, data-driven, trustworthy — McKinsey dark deck meets Bloomberg Terminal
+
+**Layout:** Left title column + right content area (consulting split), or full-width with structured sections
+
+**Typography:**
+- Display: system-ui / `"PingFang SC"` for Chinese, `-apple-system` for English
+- `font-feature-settings: "tnum"` (tabular nums) on all numeric content
+- Title: `#e6edf3`, weight 600
+- Body: `#8b949e`
+- KPI numbers: 48px+, bold, `#e6edf3`
+- KPI labels: 11px, uppercase, `letter-spacing: 0.1em`, `#8b949e`
+
+**Colors:**
+```css
+:root {
+    --bg-primary: #0d1117;
+    --bg-secondary: #161b22;
+    --border: #30363d;
+    --text-primary: #e6edf3;
+    --text-secondary: #8b949e;
+    --accent-blue: #388bfd;
+    --accent-green: #3fb950;   /* positive data */
+    --accent-red: #f85149;     /* negative data */
+}
+```
+
+**Signature Elements:**
+- `1px #30363d` borders everywhere — thin, precise
+- Background grid overlay: `opacity: 0.03` — density without distraction
+- KPI card: large number + uppercase label + optional trend arrow SVG
+- Table style: no outer border, `1px #30363d` row dividers, `#21262d` header bg
+- Progress bars: `2px` height, `#388bfd`
+- Animations: none or 300ms fade-in max
+- Chinese titles: `"PingFang SC", "Source Han Sans SC", system-ui`
+
+**Reference:** [references/enterprise-dark.md](references/enterprise-dark.md)
+
+---
+
+### 16. Glassmorphism
+
+**Vibe:** Light, translucent, modern — Apple WWDC slides, iOS Control Center
+
+**Layout:** Centered content in frosted glass cards, layered over colorful blurred orb background
+
+**Typography:**
+- Display: system-ui / `"SF Pro Display"` / `-apple-system`
+- Body: system-ui
+- Dark text on light cards: `#1a1a2e`
+- Light text variant: `rgba(255,255,255,0.9)`
+
+**Colors:**
+```css
+/* Background option A (cool) */
+background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+
+/* Background option B (warm) */
+background: linear-gradient(135deg, #f8cdda 0%, #1d6fa4 100%);
+```
+
+**Main Card:**
+```css
+.glass-card {
+    background: rgba(255, 255, 255, 0.15);
+    backdrop-filter: blur(20px) saturate(1.5);
+    -webkit-backdrop-filter: blur(20px) saturate(1.5);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    border-radius: 16px;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+}
+.glass-card-secondary {
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 12px;
+}
+```
+
+**Signature Elements:**
+- Blurred color orbs behind the cards (large radial-gradients, low opacity) — required for backdrop-filter to be visible
+- Main card at `rgba(255,255,255,0.15)`, secondary cards at `rgba(255,255,255,0.08)`
+- SF Symbols-style thin-line circle icons (CSS only)
+- **PPTX export note:** Glass effect degrades to flat semi-transparent fill. Mention this in speaker notes when generating.
+- Chinese font: `"PingFang SC", "Noto Sans CJK SC", system-ui`
+
+**Reference:** [references/glassmorphism.md](references/glassmorphism.md)
+
+---
+
+### 17. Neo-Brutalism
+
+**Vibe:** Bold, uncompromising, anti-aesthetic — Gumroad rebrand, indie dev manifesto
+
+**Layout:** Asymmetric blocks, slightly rotated elements, large type dominates
+
+**Typography:**
+- Display: `Space Grotesk` 900 / `Plus Jakarta Sans` 800 — UPPERCASE or Title Case, very large
+- Body: `Space Grotesk` 400
+- All text: `#000000` — no exceptions on light variants
+
+**Colors:**
+```css
+:root {
+    /* Pick one background per presentation */
+    --bg-yellow: #FFEB3B;
+    --bg-orange: #FF5733;
+    --bg-mint: #E8F5E9;
+    --bg-white: #FAFAFA;
+    --text: #000000;
+    --btn-bg: #000000;
+    --btn-text: #FFEB3B; /* or background color */
+}
+```
+
+**Signature Elements:**
+```css
+/* Brutalist card — hard shadow, no radius */
+.brute-card {
+    border: 3px solid #000;
+    border-radius: 0;
+    box-shadow: 4px 4px 0 #000;
+    background: white;
+}
+/* Stripe fill decoration */
+.stripe-fill {
+    background: repeating-linear-gradient(
+        -45deg, #000 0px, #000 2px, transparent 2px, transparent 10px
+    );
+}
+/* Slight rotation for handmade feel */
+.rotated { transform: rotate(-1.5deg); }
+/* Button */
+.brute-btn {
+    background: #000; color: #FFEB3B;
+    border: 3px solid #000; border-radius: 0;
+    box-shadow: 3px 3px 0 #000; padding: 12px 24px;
+}
+```
+- No transitions on hover — instant `transform: translate(2px,2px)` + reduced shadow
+- Chinese font: `"PingFang SC", "Noto Sans CJK SC", system-ui`
+
+**Reference:** [references/neo-brutalism.md](references/neo-brutalism.md)
+
+---
+
+### 18. Japanese Zen
+
+**Vibe:** Still, focused, contemplative — Kenya Hara design language, MUJI visual system
+
+**Layout:** Narrow centered column (max 600px), extreme whitespace, asymmetric breathing room
+
+**Typography:**
+- Chinese: `"Noto Serif CJK SC", "Source Han Serif SC", "STSong", Georgia, serif`
+- English: `"EB Garamond", "Crimson Text", Georgia, serif`
+- Weight: 300–400 (light), reserve 400 for important content only
+- Line height: 1.8–2.0
+- Paragraph spacing: 40px+
+- `font-feature-settings: "palt"` for Chinese punctuation compression
+
+**Colors:**
+```css
+/* Light variant */
+:root {
+    --bg: #FAFAF8;           /* warm paper white */
+    --text: #1a1a18;         /* warm ink black */
+    --accent: #C41E3A;       /* vermilion — used sparingly */
+    --accent-alt: #1B3A6B;   /* indigo — alternative accent */
+}
+/* Dark variant */
+:root.dark {
+    --bg: #1a1a18;
+    --text: #f0ede8;
+}
+```
+
+**Signature Elements:**
+- Content width capped at 600px regardless of screen size
+- 80px+ top margin above headings
+- Max 1 decorative element per slide: thin 1px line, 4–6px dot, or a large ghost kanji `opacity: 0.06` as background texture
+- Optional: vertical title with `writing-mode: vertical-rl`
+- No gradients, no multi-color, no high-saturation blocks — ever
+- Accent color used for single emphasis word only
+- 800ms ease fade-in animation
+- Chinese: `"Noto Serif CJK SC", "Source Han Serif SC", "STSong", Georgia, serif`
+
+**Reference:** [references/japanese-zen.md](references/japanese-zen.md)
+
+---
+
+## Font Pairing Quick Reference (updated)
+
+| Preset | Display Font | Body Font | Source |
+|--------|--------------|-----------|--------|
+| Bold Signal | Archivo Black | Space Grotesk | Google |
+| Electric Studio | Manrope | Manrope | Google |
+| Creative Voltage | Syne | Space Mono | Google |
+| Dark Botanical | Cormorant | IBM Plex Sans | Google |
+| Blue Sky | System / SF Pro | System / SF Pro | System |
+| Notebook Tabs | Bodoni Moda | DM Sans | Google |
+| Pastel Geometry | Plus Jakarta Sans | Plus Jakarta Sans | Google |
+| Split Pastel | Outfit | Outfit | Google |
+| Vintage Editorial | Fraunces | Work Sans | Google |
+| Neon Cyber | Clash Display | Satoshi | Fontshare |
+| Terminal Green | JetBrains Mono | JetBrains Mono | JetBrains |
+| Swiss Modern | Archivo | Nunito | Google |
+| Paper & Ink | Cormorant Garamond | Source Serif 4 | Google |
+| Aurora Mesh | Inter / system-ui | system-ui | System/Google |
+| Enterprise Dark | system-ui / PingFang SC | system-ui | System |
+| Glassmorphism | system-ui / SF Pro | system-ui | System |
+| Neo-Brutalism | Space Grotesk | Space Grotesk | Google |
+| Japanese Zen | Noto Serif CJK SC / EB Garamond | Noto Serif CJK SC | Google |
+| Data Story | Inter / Noto Sans SC | Inter / Noto Sans SC | System/Google |
+
+---
+
+### 19. Data Story
+
+**Vibe:** Clear, precise, persuasive — Figma Annual Report, Stripe Report, Bloomberg Businessweek data viz
+
+**Layout:** Multiple layout templates: full-screen KPI, 2-column KPI+chart, full-screen bar chart, 2×2 comparison matrix
+
+**Typography:**
+- English: Inter (or system-ui) with `font-variant-numeric: tabular-nums` on all numbers
+- Chinese: `"Noto Sans SC", "PingFang SC", system-ui` with tabular-nums
+- KPI number: 72–96px, weight 800, color by data sentiment
+- KPI label: 11px, uppercase, `letter-spacing: 0.12em`, `#64748b`
+
+**Colors:**
+```css
+:root {
+    /* Dark variant */
+    --bg: #0f1117;
+    --text: #e2e8f0;
+    --text-muted: #64748b;
+    --positive: #00d4aa;     /* up / good */
+    --negative: #ff6b6b;     /* down / bad */
+    --neutral: #e2e8f0;
+    --chart-primary: #3b82f6;
+    --chart-secondary: #8b5cf6;
+    --chart-tertiary: #10b981;
+    --grid-line: #1e293b;    /* dashed */
+    --axis-line: #334155;
+}
+/* Light variant: swap bg=#f8f9fc, grid-line=#e2e8f0, axis=#cbd5e1 */
+```
+
+**Chart Style (pure CSS + SVG, zero library dependency):**
+```css
+/* Axis: 1px, no arrowhead */
+/* Grid: 1px dashed, low opacity */
+/* Bar: border-radius 4px top only */
+/* Line: stroke-width 2.5, + 10% opacity area fill */
+/* Colors: primary #3b82f6, secondary #8b5cf6, tertiary #10b981 */
+```
+
+**Signature Elements:**
+- Large KPI number as visual anchor — this IS the slide
+- Trend arrows: SVG `▲`/`▼` in green/red next to comparison figures
+- Pure CSS+SVG charts — no Chart.js, no D3, no external dependencies
+- Layout templates to choose from per slide:
+  1. **Hero number** — one giant KPI fills 60% of slide
+  2. **KPI row + chart** — 2-column: left KPI cards, right SVG line chart
+  3. **Bar chart** — full-width bars + insight pullquote
+  4. **2×2 matrix** — comparison grid with labels
+
+**Reference:** [references/data-story.md](references/data-story.md)

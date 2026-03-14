@@ -1,7 +1,7 @@
 ---
 name: slide-creator
 description: Create beautiful, animation-rich HTML presentations that run entirely in the browser — no npm, no build tools. Generates polished single-file slide decks with visual style discovery, responsive viewport fitting, and optional PPTX export. Use whenever someone asks to make a presentation, create slides, build a pitch deck, convert a PPT/PPTX to web, or prepare slides for a talk or demo — even if they don't mention HTML. Also use for planning a deck outline first (`--plan`), generating HTML from a plan (`--generate`), or exporting to PowerPoint (`--export pptx`).
-version: 1.4.4
+version: 1.5.0
 metadata: {"openclaw":{"emoji":"🎞️","os":["darwin","linux"],"homepage":"https://github.com/kaisersong/slide-creator","requires":{"bins":["python3"]},"install":[{"id":"pillow","kind":"uv","package":"Pillow","label":"Pillow (image processing)"},{"id":"python-pptx","kind":"uv","package":"python-pptx","label":"python-pptx (PPT import/export)"},{"id":"playwright","kind":"uv","package":"playwright","label":"Playwright (pixel-perfect PPTX export via system Chrome)"}]}}
 ---
 
@@ -112,15 +112,25 @@ Ask via AskUserQuestion:
 | Terminal Green | Developer-focused | Dev tools, APIs |
 | Swiss Modern | Minimal, precise | Corporate, data |
 | Paper & Ink | Literary, thoughtful | Storytelling |
+| Aurora Mesh | Vibrant, premium SaaS | Product launches, VC pitch |
+| Enterprise Dark | Authoritative, data-driven | B2B, investor decks, strategy |
+| Glassmorphism | Light, translucent, modern | Consumer tech, brand launches |
+| Neo-Brutalism | Bold, uncompromising | Indie dev, creative manifesto |
+| Japanese Zen | Still, contemplative | Design philosophy, brand, culture |
+| Data Story | Clear, precise, persuasive | Business review, KPI, analytics |
 
 **Mood → Preset mapping:**
 
 | Mood | Style Options |
 |------|---------------|
-| Impressed/Confident | Bold Signal, Electric Studio, Dark Botanical |
-| Excited/Energized | Creative Voltage, Neon Cyber, Split Pastel |
-| Calm/Focused | Notebook Tabs, Paper & Ink, Swiss Modern |
-| Inspired/Moved | Dark Botanical, Vintage Editorial, Pastel Geometry |
+| Impressed/Confident | Bold Signal, Enterprise Dark, Neo-Brutalism |
+| Excited/Energized | Creative Voltage, Neon Cyber, Aurora Mesh |
+| Calm/Focused | Notebook Tabs, Paper & Ink, Japanese Zen |
+| Inspired/Moved | Dark Botanical, Vintage Editorial, Glassmorphism |
+| Data-Driven | Data Story, Enterprise Dark, Swiss Modern |
+| Playful/Creative | Split Pastel, Pastel Geometry, Neo-Brutalism |
+| Developer-Focused | Terminal Green, Neon Cyber |
+| Editorial/Organized | Notebook Tabs, Vintage Editorial |
 
 ### Generate Previews
 

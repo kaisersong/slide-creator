@@ -2,7 +2,7 @@
 
 适用于 [Claude Code](https://claude.ai/claude-code) 和 [OpenClaw](https://openclaw.ai) 的演示文稿生成 skill，零依赖、纯浏览器运行的 HTML 幻灯片。
 
-**v1.4.4** — 新增 **Blue Sky** 设计预设（天空渐变 · 玻璃拟态卡片 · 动态光球），共 13 种风格。Blue Sky 现在附带完整 starter 模板，确保任何模型都能正确生成全套视觉效果。PPTX 导出使用 Playwright + 系统已安装的 Chrome，像素级还原，无需下载 Chromium 或 Node.js。
+**v1.5.0** — 新增 **Blue Sky** 设计预设（天空渐变 · 玻璃拟态卡片 · 动态光球），共 13 种风格。Blue Sky 现在附带完整 starter 模板，确保任何模型都能正确生成全套视觉效果。PPTX 导出使用 Playwright + 系统已安装的 Chrome，像素级还原，无需下载 Chromium 或 Node.js。
 
 [English](README.md) | 简体中文
 
@@ -13,7 +13,7 @@
 - 🇨🇳 [slide-creator 介绍（中文）](https://kaisersong.github.io/slide-creator/demos/intro-zh.html) — 功能和使用方式介绍
 - 🇺🇸 [slide-creator intro (English)](https://kaisersong.github.io/slide-creator/demos/intro-en.html) — same in English
 
-以上两个演示使用 Blue Sky 风格。13 种设计预设全部有独立演示，使用相同内容，方便直接对比风格差异：
+以上两个演示使用 Blue Sky 风格。19 种设计预设全部有独立演示，使用相同内容，方便直接对比风格差异：
 
 | 预设 | 在线预览 |
 |------|---------|
@@ -38,7 +38,7 @@
 ## 功能特性
 
 - **两阶段工作流** — `--plan` 生成大纲，`--generate` 输出幻灯片
-- **13 种设计预设** — Bold Signal、Blue Sky、Neon Cyber、Dark Botanical 等
+- **19 种设计预设** — Bold Signal、Blue Sky、Neon Cyber、Dark Botanical 等
 - **视觉风格探索** — 先生成 3 个预览，看图选风格而非描述风格
 - **Blue Sky Starter 模板** — 完整 boilerplate，任何模型都能正确实现全套视觉系统
 - **图片处理流水线** — 自动评估和处理素材（Pillow）

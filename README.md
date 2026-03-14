@@ -2,7 +2,7 @@
 
 A skill for [Claude Code](https://claude.ai/claude-code) and [OpenClaw](https://openclaw.ai) that generates stunning, zero-dependency HTML presentations.
 
-**v1.4.4** — 13 design presets including **Blue Sky** (light sky gradient, glassmorphism cards, animated ambient orbs). Blue Sky now ships with a complete starter template so any model generates the full visual system correctly. PPTX export uses Playwright with your existing system Chrome — no 300MB Chromium download, no Node.js.
+**v1.5.0** — 19 design presets including **Blue Sky** (light sky gradient, glassmorphism cards, animated ambient orbs). Blue Sky now ships with a complete starter template so any model generates the full visual system correctly. PPTX export uses Playwright with your existing system Chrome — no 300MB Chromium download, no Node.js.
 
 English | [简体中文](README.zh-CN.md)
 
@@ -13,7 +13,7 @@ See what slide-creator produces — open directly in your browser:
 - 🇺🇸 [slide-creator intro (English)](https://kaisersong.github.io/slide-creator/demos/intro-en.html) — what the skill is and how it works
 - 🇨🇳 [slide-creator 介绍（中文）](https://kaisersong.github.io/slide-creator/demos/intro-zh.html) — 同上，中文版
 
-Both demos above use the Blue Sky style. Compare all 13 design presets side by side:
+Both demos above use the Blue Sky style. Compare all 19 design presets side by side:
 
 | Preset | Live Preview |
 |--------|-------------|
@@ -38,7 +38,7 @@ Every demo uses the same content (slide-creator's own introduction) — making i
 ## Features
 
 - **Two-stage workflow** — `--plan` to outline, `--generate` to produce
-- **13 design presets** — Bold Signal, Blue Sky, Neon Cyber, Dark Botanical, and more
+- **19 design presets** — Bold Signal, Blue Sky, Neon Cyber, Dark Botanical, and more
 - **Style discovery** — Generate 3 visual previews before committing to a style
 - **Blue Sky starter template** — Complete boilerplate so models never mis-implement the visual system
 - **Image pipeline** — Auto-evaluate and process assets (Pillow)
@@ -129,7 +129,7 @@ Every generated presentation includes a built-in text editor — no need to touc
 
 ## Design Presets
 
-13 curated styles — no generic AI aesthetics.
+**19 curated styles — no generic AI aesthetics.
 
 | Preset | Vibe | Best For |
 |--------|------|----------|
