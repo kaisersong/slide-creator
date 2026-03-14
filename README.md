@@ -4,10 +4,10 @@ A skill for [Claude Code](https://claude.ai/claude-code) and [OpenClaw](https://
 
 **v1.7** — Presenter Mode (`P` key opens speaker notes + timer + nav window), inline SVG diagram patterns (flowcharts, timelines, charts — no external libs), and a local custom theme system (`themes/` directory). 19 design presets. PPTX export via Playwright + system Chrome, no Node.js.
 
-English | 简体中文
+English | [简体中文](README.zh-CN.md)
 
 <details>
-<summary>📖 简体中文 / 点击展开中文说明</summary>
+<summary>📖 简体中文 / 点击展开（ClawHub 用户）</summary>
 
 ## slide-creator
 

@@ -474,13 +474,27 @@ class TiltEffect {
 
 ---
 
-## Edit Button (Only When User Opted In)
+## Edit Button + Notes Panel (Only When User Opted In)
 
 The CSS-only hover approach (`hotzone:hover ~ .edit-toggle`) fails because `pointer-events: none` breaks the hover chain — the button disappears before the user can click it. Use JS with a grace period instead.
 
+The notes panel appears at the bottom in edit mode. Users click the header row to collapse/expand it so it doesn't block slide content. Edits to notes are written to `data-notes` in real time and broadcast to any open presenter window.
+
 ```html
 <div class="edit-hotzone"></div>
-<button class="edit-toggle" id="editToggle" title="Edit mode (E)">✏️</button>
+<button class="edit-toggle" id="editToggle" title="Edit mode (E)">✏ Edit</button>
+
+<!-- Notes editor panel — shown only in edit mode -->
+<div id="notes-panel">
+    <div id="notes-panel-header">
+        <div id="notes-panel-label">SPEAKER NOTES — SLIDE 1 / N</div>
+        <div id="notes-drag-hint"></div>
+        <button id="notes-collapse-btn" title="Collapse / expand">▾</button>
+    </div>
+    <div id="notes-body">
+        <textarea id="notes-textarea" placeholder="Add speaker notes for this slide…"></textarea>
+    </div>
+</div>
 ```
 
 ```css
@@ -494,28 +508,155 @@ The CSS-only hover approach (`hotzone:hover ~ .edit-toggle`) fails because `poin
     opacity: 0; pointer-events: none;
     transition: opacity 0.3s ease; z-index: 10001;
 }
-.edit-toggle.show, .edit-toggle.active { opacity: 1; pointer-events: auto; }
+.edit-toggle.show { opacity: 1; pointer-events: auto; }
+.edit-toggle.active { opacity: 1; pointer-events: auto; background: var(--accent, #4f46e5); color: #fff; }
+
+/* Notes panel */
+#notes-panel {
+    display: none; position: fixed; bottom: 0; left: 0; right: 0;
+    z-index: 9998;
+    background: rgba(8, 8, 18, 0.94);
+    backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
+    border-top: 1px solid rgba(255,255,255,0.08);
+}
+#notes-panel.active { display: flex; flex-direction: column; }
+#notes-panel-header {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 0.45rem 1.4rem; cursor: pointer; user-select: none;
+}
+#notes-panel-header:hover { background: rgba(255,255,255,0.03); }
+#notes-panel-label {
+    flex: 1; font-size: 0.58rem; letter-spacing: 0.16em;
+    text-transform: uppercase; color: rgba(255,255,255,0.3);
+}
+#notes-drag-hint { flex: 1; display: flex; justify-content: center; }
+#notes-drag-hint::after {
+    content: ''; display: block; width: 36px; height: 3px;
+    border-radius: 2px; background: rgba(255,255,255,0.25);
+}
+#notes-panel-header:hover #notes-drag-hint::after { background: rgba(255,255,255,0.45); }
+#notes-collapse-btn {
+    flex: 1; text-align: right;
+    font-size: 1rem; color: rgba(255,255,255,0.4);
+    background: none; border: none; cursor: pointer;
+    transition: color 0.15s, transform 0.2s;
+}
+#notes-collapse-btn:hover { color: rgba(255,255,255,0.85); }
+#notes-body { padding: 0 1.4rem 0.75rem; }
+#notes-panel.collapsed #notes-body { display: none; }
+#notes-panel.collapsed #notes-collapse-btn { transform: rotate(180deg); }
+#notes-textarea {
+    width: 100%; height: 72px; min-height: 48px; max-height: 200px;
+    resize: vertical; background: transparent; border: none; outline: none;
+    color: rgba(255,255,255,0.75); font-size: 0.88rem; line-height: 1.65;
+    font-family: system-ui, sans-serif; caret-color: var(--accent, #4f46e5);
+}
+#notes-textarea::placeholder { color: rgba(255,255,255,0.18); }
 ```
 
 ```javascript
-const hotzone = document.querySelector('.edit-hotzone');
-const editToggle = document.getElementById('editToggle');
-let hideTimeout = null;
+// ── Edit mode + notes panel ──────────────────────────────────────
+// Must integrate with SlidePresentation: call setupEditor() in constructor
+// and call updateNotesPanel() from setupObserver() after currentSlide changes.
 
-// Show on hotzone hover with 400ms grace so user can move to button
-hotzone.addEventListener('mouseenter', () => { clearTimeout(hideTimeout); editToggle.classList.add('show'); });
-hotzone.addEventListener('mouseleave', () => { hideTimeout = setTimeout(() => { if (!editor.isActive) editToggle.classList.remove('show'); }, 400); });
-editToggle.addEventListener('mouseenter', () => { clearTimeout(hideTimeout); });
-editToggle.addEventListener('mouseleave', () => { hideTimeout = setTimeout(() => { if (!editor.isActive) editToggle.classList.remove('show'); }, 400); });
+setupEditor() {
+    const panel    = document.getElementById('notes-panel');
+    const label    = document.getElementById('notes-panel-label');
+    const textarea = document.getElementById('notes-textarea');
+    const toggle   = document.getElementById('editToggle');
+    const hotzone  = document.querySelector('.edit-hotzone');
+    let hideTimeout = null;
 
-// Direct click on hotzone or button
-hotzone.addEventListener('click', () => editor.toggleEditMode());
-editToggle.addEventListener('click', () => editor.toggleEditMode());
+    // Show toggle on hotzone hover (400ms grace period)
+    hotzone.addEventListener('mouseenter', () => { clearTimeout(hideTimeout); toggle.classList.add('show'); });
+    hotzone.addEventListener('mouseleave', () => { hideTimeout = setTimeout(() => { if (!this.editor.active) toggle.classList.remove('show'); }, 400); });
+    toggle.addEventListener('mouseenter', () => clearTimeout(hideTimeout));
+    toggle.addEventListener('mouseleave', () => { hideTimeout = setTimeout(() => { if (!this.editor.active) toggle.classList.remove('show'); }, 400); });
+    hotzone.addEventListener('click', () => this.editor.toggle());
+    toggle.addEventListener('click', () => this.editor.toggle());
 
-// Keyboard: E key (skip when editing text)
-document.addEventListener('keydown', (e) => {
-    if ((e.key === 'e' || e.key === 'E') && !e.target.getAttribute('contenteditable')) {
-        editor.toggleEditMode();
-    }
-});
+    // Collapse/expand notes panel by clicking the header row
+    document.getElementById('notes-panel-header').addEventListener('click', () => {
+        panel.classList.toggle('collapsed');
+    });
+
+    // Textarea input → update data-notes in real time + broadcast to presenter
+    textarea.addEventListener('input', () => {
+        const slide = this.slides[this.currentSlide];
+        if (slide) {
+            slide.dataset.notes = textarea.value;
+            this.broadcastState();
+        }
+    });
+
+    // Ctrl+S / Cmd+S save
+    document.addEventListener('keydown', (e) => {
+        if ((e.ctrlKey || e.metaKey) && e.key === 's') {
+            e.preventDefault();
+            this.saveFile();
+        }
+    });
+
+    this.editor = {
+        active: false,
+        toggle: () => this.editor.active ? this.editor.exit() : this.editor.enter(),
+        enter: () => {
+            this.editor.active = true;
+            toggle.classList.add('active');
+            toggle.textContent = '✓ Done';
+            this.slides.forEach(s => {
+                s.querySelectorAll('h1,h2,h3,p,li,span,td,th').forEach(el => {
+                    el.setAttribute('contenteditable', 'true');
+                    el.style.outline = 'none';
+                });
+            });
+            panel.classList.add('active');
+            this.updateNotesPanel();
+        },
+        exit: () => {
+            this.editor.active = false;
+            toggle.classList.remove('active');
+            toggle.textContent = '✏ Edit';
+            this.slides.forEach(s => {
+                s.querySelectorAll('[contenteditable]').forEach(el => {
+                    el.removeAttribute('contenteditable');
+                    el.style.outline = '';
+                });
+            });
+            panel.classList.remove('active');
+        }
+    };
+
+    this._notesLabel    = label;
+    this._notesTextarea = textarea;
+}
+
+updateNotesPanel() {
+    if (!this.editor?.active) return;
+    const slide = this.slides[this.currentSlide];
+    this._notesLabel.textContent =
+        `SPEAKER NOTES — SLIDE ${this.currentSlide + 1} / ${this.slides.length}`;
+    this._notesTextarea.value = slide?.dataset.notes || '';
+}
+
+saveFile() {
+    const html  = '<!DOCTYPE html>\n' + document.documentElement.outerHTML;
+    const bytes = new TextEncoder().encode(html);
+    fetch(location.pathname, {
+        method: 'PUT', body: bytes,
+        headers: { 'Content-Type': 'text/html' }
+    }).catch(() => {
+        // Fallback: download
+        const a = Object.assign(document.createElement('a'), {
+            href: URL.createObjectURL(new Blob([html], { type: 'text/html' })),
+            download: location.pathname.split('/').pop() || 'presentation.html'
+        });
+        a.click(); URL.revokeObjectURL(a.href);
+    });
+}
 ```
+
+**Integration checklist:**
+- Add `this.setupEditor()` to `SlidePresentation` constructor
+- Add `this.updateNotesPanel()` inside `setupObserver()` after `this.broadcastState()`
+- Skip arrow-key navigation when textarea is focused: add `|| e.target.tagName === 'TEXTAREA'` to the keyboard guard in `setupKeyboard()`
