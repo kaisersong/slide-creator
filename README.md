@@ -2,7 +2,7 @@
 
 A skill for [Claude Code](https://claude.ai/claude-code) and [OpenClaw](https://openclaw.ai) that generates stunning, zero-dependency HTML presentations.
 
-**v1.5.0** — 19 design presets including **Blue Sky** (light sky gradient, glassmorphism cards, animated ambient orbs). Blue Sky now ships with a complete starter template so any model generates the full visual system correctly. PPTX export uses Playwright with your existing system Chrome — no 300MB Chromium download, no Node.js.
+**v1.7** — Presenter Mode (`P` key opens speaker notes + timer + nav window), inline SVG diagram patterns (flowcharts, timelines, charts — no external libs), and a local custom theme system (`themes/` directory). 19 design presets. PPTX export via Playwright + system Chrome, no Node.js.
 
 English | 简体中文
 
@@ -18,13 +18,15 @@ English | 简体中文
 - **两阶段工作流** — `--plan` 生成大纲，`--generate` 输出幻灯片
 - **19 种设计预设** — Bold Signal、Blue Sky、Neon Cyber、Dark Botanical 等
 - **视觉风格探索** — 先生成 3 个预览，看图选风格而非描述风格
+- **演讲者模式** — 按 `P` 打开同步演讲者窗口：备注、计时器、页数、翻页导航；窗口高度随备注内容自动调整
+- **内联 SVG 图表** — 流程图、时间轴、条形图、对比矩阵、组织架构图，无需 Mermaid.js 或外部库
+- **自定义主题系统** — 在 `themes/你的主题/` 放入 `reference.md` 即可添加专属设计预设；可选提供 `starter.html`
 - **Blue Sky Starter 模板** — 完整 boilerplate，任何模型都能正确实现全套视觉系统
 - **图片处理流水线** — 自动评估和处理素材（Pillow）
 - **PPT 导入** — 将 `.pptx` 文件转换为网页演示
 - **PPTX 导出** — `--export pptx`，通过 Playwright + 系统 Chrome 导出
 - **浏览器内编辑** — 直接在浏览器中编辑文字，Ctrl+S 保存
 - **视口自适应** — 每张幻灯片精确填充 100vh，永不出现滚动条
-- **演讲者模式** — 按 `P` 打开演讲者窗口（备注 + 计时器 + 导航）
 - **中英双语** — 完整支持中文内容
 
 ## 安装
@@ -195,6 +197,9 @@ Every demo uses the same content (slide-creator's own introduction) — making i
 - **Two-stage workflow** — `--plan` to outline, `--generate` to produce
 - **19 design presets** — Bold Signal, Blue Sky, Neon Cyber, Dark Botanical, and more
 - **Style discovery** — Generate 3 visual previews before committing to a style
+- **Presenter Mode** — Press `P` to open a synced speaker window: notes, timer, slide counter, prev/next nav; window height auto-adapts to notes length
+- **Inline SVG diagrams** — Flowcharts, timelines, bar charts, comparison grids, org charts — no Mermaid.js, no external libs
+- **Custom theme system** — Drop a `reference.md` into `themes/your-theme/` to add your own design preset; `starter.html` optional for complex visual systems
 - **Blue Sky starter template** — Complete boilerplate so models never mis-implement the visual system
 - **Image pipeline** — Auto-evaluate and process assets (Pillow)
 - **PPT import** — Convert `.pptx` files to web presentations
