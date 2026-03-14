@@ -13,23 +13,44 @@ See what slide-creator produces — open directly in your browser:
 - 🇺🇸 [slide-creator intro (English)](https://kaisersong.github.io/slide-creator/demos/intro-en.html) — what the skill is and how it works
 - 🇨🇳 [slide-creator 介绍（中文）](https://kaisersong.github.io/slide-creator/demos/intro-zh.html) — 同上，中文版
 
-Both demos above use the Blue Sky style. Compare all 19 design presets side by side:
+Both demos above use the Blue Sky style. Click any screenshot below to open the live demo:
 
-| Preset | Live Preview |
-|--------|-------------|
-| **Bold Signal** | [Open →](https://kaisersong.github.io/slide-creator/demos/bold-signal.html) |
-| **Electric Studio** | [Open →](https://kaisersong.github.io/slide-creator/demos/electric-studio.html) |
-| **Creative Voltage** | [Open →](https://kaisersong.github.io/slide-creator/demos/creative-voltage.html) |
-| **Dark Botanical** | [Open →](https://kaisersong.github.io/slide-creator/demos/dark-botanical.html) |
-| **Blue Sky** ✨ | [Open →](https://kaisersong.github.io/slide-creator/demos/intro-en.html) |
-| **Notebook Tabs** | [Open →](https://kaisersong.github.io/slide-creator/demos/notebook-tabs.html) |
-| **Pastel Geometry** | [Open →](https://kaisersong.github.io/slide-creator/demos/pastel-geometry.html) |
-| **Split Pastel** | [Open →](https://kaisersong.github.io/slide-creator/demos/split-pastel.html) |
-| **Vintage Editorial** | [Open →](https://kaisersong.github.io/slide-creator/demos/vintage-editorial.html) |
-| **Neon Cyber** | [Open →](https://kaisersong.github.io/slide-creator/demos/neon-cyber.html) |
-| **Terminal Green** | [Open →](https://kaisersong.github.io/slide-creator/demos/terminal-green.html) |
-| **Swiss Modern** | [Open →](https://kaisersong.github.io/slide-creator/demos/swiss-modern.html) |
-| **Paper & Ink** | [Open →](https://kaisersong.github.io/slide-creator/demos/paper-ink.html) |
+<table>
+<tr>
+<td align="center"><a href="https://kaisersong.github.io/slide-creator/demos/intro-en.html"><img src="demos/screenshots/blue-sky.png" width="240" alt="Blue Sky"/><br/><b>Blue Sky</b> ✨</a></td>
+<td align="center"><a href="https://kaisersong.github.io/slide-creator/demos/bold-signal.html"><img src="demos/screenshots/bold-signal.png" width="240" alt="Bold Signal"/><br/><b>Bold Signal</b></a></td>
+<td align="center"><a href="https://kaisersong.github.io/slide-creator/demos/electric-studio.html"><img src="demos/screenshots/electric-studio.png" width="240" alt="Electric Studio"/><br/><b>Electric Studio</b></a></td>
+</tr>
+<tr>
+<td align="center"><a href="https://kaisersong.github.io/slide-creator/demos/creative-voltage.html"><img src="demos/screenshots/creative-voltage.png" width="240" alt="Creative Voltage"/><br/><b>Creative Voltage</b></a></td>
+<td align="center"><a href="https://kaisersong.github.io/slide-creator/demos/dark-botanical.html"><img src="demos/screenshots/dark-botanical.png" width="240" alt="Dark Botanical"/><br/><b>Dark Botanical</b></a></td>
+<td align="center"><a href="https://kaisersong.github.io/slide-creator/demos/notebook-tabs.html"><img src="demos/screenshots/notebook-tabs.png" width="240" alt="Notebook Tabs"/><br/><b>Notebook Tabs</b></a></td>
+</tr>
+<tr>
+<td align="center"><a href="https://kaisersong.github.io/slide-creator/demos/pastel-geometry.html"><img src="demos/screenshots/pastel-geometry.png" width="240" alt="Pastel Geometry"/><br/><b>Pastel Geometry</b></a></td>
+<td align="center"><a href="https://kaisersong.github.io/slide-creator/demos/split-pastel.html"><img src="demos/screenshots/split-pastel.png" width="240" alt="Split Pastel"/><br/><b>Split Pastel</b></a></td>
+<td align="center"><a href="https://kaisersong.github.io/slide-creator/demos/vintage-editorial.html"><img src="demos/screenshots/vintage-editorial.png" width="240" alt="Vintage Editorial"/><br/><b>Vintage Editorial</b></a></td>
+</tr>
+<tr>
+<td align="center"><a href="https://kaisersong.github.io/slide-creator/demos/neon-cyber.html"><img src="demos/screenshots/neon-cyber.png" width="240" alt="Neon Cyber"/><br/><b>Neon Cyber</b></a></td>
+<td align="center"><a href="https://kaisersong.github.io/slide-creator/demos/terminal-green.html"><img src="demos/screenshots/terminal-green.png" width="240" alt="Terminal Green"/><br/><b>Terminal Green</b></a></td>
+<td align="center"><a href="https://kaisersong.github.io/slide-creator/demos/swiss-modern.html"><img src="demos/screenshots/swiss-modern.png" width="240" alt="Swiss Modern"/><br/><b>Swiss Modern</b></a></td>
+</tr>
+<tr>
+<td align="center"><a href="https://kaisersong.github.io/slide-creator/demos/paper-ink.html"><img src="demos/screenshots/paper-ink.png" width="240" alt="Paper &amp; Ink"/><br/><b>Paper &amp; Ink</b></a></td>
+<td align="center"><a href="https://kaisersong.github.io/slide-creator/demos/aurora-mesh.html"><img src="demos/screenshots/aurora-mesh.png" width="240" alt="Aurora Mesh"/><br/><b>Aurora Mesh</b></a></td>
+<td align="center"><a href="https://kaisersong.github.io/slide-creator/demos/enterprise-dark.html"><img src="demos/screenshots/enterprise-dark.png" width="240" alt="Enterprise Dark"/><br/><b>Enterprise Dark</b></a></td>
+</tr>
+<tr>
+<td align="center"><a href="https://kaisersong.github.io/slide-creator/demos/glassmorphism.html"><img src="demos/screenshots/glassmorphism.png" width="240" alt="Glassmorphism"/><br/><b>Glassmorphism</b></a></td>
+<td align="center"><a href="https://kaisersong.github.io/slide-creator/demos/neo-brutalism.html"><img src="demos/screenshots/neo-brutalism.png" width="240" alt="Neo-Brutalism"/><br/><b>Neo-Brutalism</b></a></td>
+<td align="center"><a href="https://kaisersong.github.io/slide-creator/demos/chinese-chan.html"><img src="demos/screenshots/chinese-chan.png" width="240" alt="Chinese Chan"/><br/><b>Chinese Chan</b></a></td>
+</tr>
+<tr>
+<td align="center"><a href="https://kaisersong.github.io/slide-creator/demos/data-story.html"><img src="demos/screenshots/data-story.png" width="240" alt="Data Story"/><br/><b>Data Story</b></a></td>
+<td></td><td></td>
+</tr>
+</table>
 
 Every demo uses the same content (slide-creator's own introduction) — making it easy to compare how the same topic looks across completely different design philosophies.
 
@@ -129,7 +150,7 @@ Every generated presentation includes a built-in text editor — no need to touc
 
 ## Design Presets
 
-**19 curated styles — no generic AI aesthetics.
+**19 curated styles — no generic AI aesthetics.**
 
 | Preset | Vibe | Best For |
 |--------|------|----------|
@@ -146,6 +167,12 @@ Every generated presentation includes a built-in text editor — no need to touc
 | **Terminal Green** | Developer-focused | Dev tools, APIs |
 | **Swiss Modern** | Minimal, precise | Corporate, data |
 | **Paper & Ink** | Literary, thoughtful | Storytelling |
+| **Aurora Mesh** | Vibrant, premium SaaS | Product launches, VC pitch |
+| **Enterprise Dark** | Authoritative, data-driven | B2B, investor decks, strategy |
+| **Glassmorphism** | Light, translucent, modern | Consumer tech, brand launches |
+| **Neo-Brutalism** | Bold, uncompromising | Indie dev, creative manifesto |
+| **Chinese Chan** | Still, contemplative | Design philosophy, brand, culture |
+| **Data Story** | Clear, precise, persuasive | Business review, KPI, analytics |
 
 ### Blue Sky
 

@@ -6,7 +6,7 @@
   <title>Creative Voltage — slide-creator</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=Space+Mono:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=Space+Mono:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     html {
@@ -31,13 +31,13 @@
       display: flex;
     }
 
-    /* Halftone dot texture */
+    /* Halftone dot texture overlay */
     .halftone::before {
       content: '';
       position: absolute;
       inset: 0;
-      background-image: radial-gradient(circle, rgba(255,255,255,0.06) 1px, transparent 1px);
-      background-size: 20px 20px;
+      background-image: radial-gradient(circle, rgba(255,255,255,0.055) 1px, transparent 1px);
+      background-size: 22px 22px;
       pointer-events: none;
       z-index: 0;
     }
@@ -53,7 +53,7 @@
       transition: width 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
     }
 
-    /* Nav dots */
+    /* Nav dots — diamond shape */
     #nav-dots {
       position: fixed;
       right: 20px;
@@ -68,7 +68,7 @@
       width: 8px;
       height: 8px;
       border-radius: 0;
-      background: rgba(212,255,0,0.25);
+      background: rgba(212,255,0,0.22);
       cursor: pointer;
       transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
       transform: rotate(45deg);
@@ -81,19 +81,17 @@
     /* Reveal animations */
     .reveal {
       opacity: 0;
-      transform: translateY(20px);
-      transition: opacity 0.3s cubic-bezier(0.34, 1.56, 0.64, 1),
-                  transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+      transform: translateY(22px);
+      transition: opacity 0.35s cubic-bezier(0.34, 1.56, 0.64, 1),
+                  transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
     }
     .slide.visible .reveal { opacity: 1; transform: translateY(0); }
     .slide.visible .reveal:nth-child(1) { transition-delay: 0.04s; }
-    .slide.visible .reveal:nth-child(2) { transition-delay: 0.10s; }
-    .slide.visible .reveal:nth-child(3) { transition-delay: 0.16s; }
-    .slide.visible .reveal:nth-child(4) { transition-delay: 0.22s; }
-    .slide.visible .reveal:nth-child(5) { transition-delay: 0.28s; }
-    .slide.visible .reveal:nth-child(6) { transition-delay: 0.34s; }
+    .slide.visible .reveal:nth-child(2) { transition-delay: 0.11s; }
+    .slide.visible .reveal:nth-child(3) { transition-delay: 0.18s; }
+    .slide.visible .reveal:nth-child(4) { transition-delay: 0.25s; }
 
-    /* Neon yellow pill */
+    /* Neon yellow pill badge */
     .pill {
       display: inline-block;
       background: #d4ff00;
@@ -101,7 +99,7 @@
       font-family: 'Space Mono', monospace;
       font-size: 10px;
       font-weight: 700;
-      letter-spacing: 0.15em;
+      letter-spacing: 0.16em;
       text-transform: uppercase;
       padding: 5px 14px;
     }
@@ -110,12 +108,9 @@
       border: 1.5px solid #d4ff00;
       color: #d4ff00;
     }
-    .pill.small {
-      font-size: 9px;
-      padding: 4px 10px;
-    }
+    .pill.small { font-size: 9px; padding: 4px 10px; }
 
-    /* Panel layouts */
+    /* Panel primitives */
     .blue-panel {
       background: #0066ff;
       position: relative;
@@ -126,21 +121,25 @@
       position: relative;
       overflow: hidden;
     }
-    .neon-text { color: #d4ff00; }
+    .neon { color: #d4ff00; }
+
     .panel-content {
       position: relative;
       z-index: 2;
       display: flex;
       flex-direction: column;
       justify-content: center;
-      padding: 64px 56px;
+      padding: 60px 52px;
       height: 100%;
     }
 
-    /* ── SLIDE 1: Cover ── */
+    /* ── SLIDE 1: Cover — full blue ── */
     #slide-1 { flex-direction: column; }
-    #slide-1 .blue-panel { flex: 1; width: 100%; }
-    #slide-1 .blue-panel.halftone::before { background-size: 24px 24px; }
+    #slide-1 .bg-full {
+      position: absolute;
+      inset: 0;
+      background: #0066ff;
+    }
     #slide-1 .cover-inner {
       position: relative; z-index: 2;
       display: flex;
@@ -153,49 +152,43 @@
     #slide-1 .eyebrow {
       font-family: 'Space Mono', monospace;
       font-size: 10px;
-      letter-spacing: 0.2em;
+      letter-spacing: 0.22em;
       text-transform: uppercase;
-      color: rgba(255,255,255,0.5);
-      margin-bottom: 20px;
+      color: rgba(255,255,255,0.48);
+      margin-bottom: 22px;
     }
     #slide-1 .main-title {
       font-family: 'Syne', sans-serif;
       font-weight: 800;
-      font-size: clamp(72px, 12vw, 140px);
-      line-height: 0.88;
+      font-size: clamp(72px, 12vw, 142px);
+      line-height: 0.87;
       color: #fff;
-      margin-bottom: 8px;
       letter-spacing: -0.03em;
     }
     #slide-1 .title-accent {
       font-family: 'Syne', sans-serif;
       font-weight: 800;
-      font-size: clamp(72px, 12vw, 140px);
-      line-height: 0.88;
+      font-size: clamp(72px, 12vw, 142px);
+      line-height: 0.87;
       color: #d4ff00;
       letter-spacing: -0.03em;
+      margin-bottom: 28px;
     }
     #slide-1 .subtitle {
       font-family: 'Space Mono', monospace;
       font-size: 13px;
-      color: rgba(255,255,255,0.55);
-      margin-top: 32px;
-      margin-bottom: 32px;
+      color: rgba(255,255,255,0.52);
+      margin-bottom: 36px;
       max-width: 460px;
-      line-height: 1.7;
+      line-height: 1.75;
     }
-    #slide-1 .badges {
-      display: flex;
-      gap: 10px;
-      flex-wrap: wrap;
-    }
-    /* big decorative number */
+    #slide-1 .badges { display: flex; gap: 10px; flex-wrap: wrap; }
     #slide-1 .deco-num {
       position: absolute;
-      right: -20px; bottom: -40px;
+      right: -30px; bottom: -60px;
       font-family: 'Syne', sans-serif;
       font-weight: 800;
-      font-size: 40vw;
+      font-size: 42vw;
       line-height: 1;
       color: rgba(212,255,0,0.04);
       user-select: none;
@@ -203,27 +196,27 @@
       z-index: 1;
     }
 
-    /* ── SLIDE 2: Problem ── */
+    /* ── SLIDE 2: Problem — blue left / dark right ── */
     #slide-2 { flex-direction: row; }
-    #slide-2 .blue-panel { flex: 0 0 38%; }
-    #slide-2 .dark-panel { flex: 0 0 62%; }
-    #slide-2 .blue-number {
+    #slide-2 .blue-panel { flex: 0 0 36%; }
+    #slide-2 .dark-panel { flex: 0 0 64%; }
+    #slide-2 .big-mark {
       font-family: 'Syne', sans-serif;
       font-weight: 800;
-      font-size: 140px;
+      font-size: 130px;
       line-height: 1;
-      color: rgba(212,255,0,0.15);
-      margin-bottom: 0;
+      color: rgba(212,255,0,0.14);
+      margin-bottom: 12px;
     }
     #slide-2 h2 {
       font-family: 'Syne', sans-serif;
       font-weight: 800;
-      font-size: clamp(24px, 2.5vw, 34px);
+      font-size: clamp(22px, 2.4vw, 32px);
       line-height: 1.1;
       color: #fff;
       letter-spacing: -0.02em;
     }
-    .pain-stack { display: flex; flex-direction: column; gap: 0; }
+    .pain-stack { display: flex; flex-direction: column; margin-top: 36px; }
     .pain-row {
       padding: 22px 0;
       border-bottom: 1px solid rgba(255,255,255,0.07);
@@ -250,18 +243,18 @@
     .pain-desc {
       font-family: 'Space Mono', monospace;
       font-size: 11px;
-      color: rgba(255,255,255,0.4);
-      line-height: 1.65;
+      color: rgba(255,255,255,0.38);
+      line-height: 1.7;
     }
 
-    /* ── SLIDE 3: Show Don't Tell ── */
+    /* ── SLIDE 3: Show Don't Tell — dark left / blue right ── */
     #slide-3 { flex-direction: row; }
     #slide-3 .dark-panel { flex: 0 0 55%; }
     #slide-3 .blue-panel { flex: 0 0 45%; }
     #slide-3 h2 {
       font-family: 'Syne', sans-serif;
       font-weight: 800;
-      font-size: clamp(28px, 3.5vw, 44px);
+      font-size: clamp(26px, 3.2vw, 42px);
       line-height: 1.05;
       letter-spacing: -0.02em;
       color: #fff;
@@ -270,21 +263,21 @@
     #slide-3 .body-copy {
       font-family: 'Space Mono', monospace;
       font-size: 12px;
-      color: rgba(255,255,255,0.45);
-      line-height: 1.8;
+      color: rgba(255,255,255,0.42);
+      line-height: 1.85;
       max-width: 360px;
     }
     .steps-cards { display: flex; flex-direction: column; gap: 12px; }
     .step-card {
       background: rgba(212,255,0,0.05);
-      border: 1px solid rgba(212,255,0,0.15);
+      border: 1px solid rgba(212,255,0,0.14);
       padding: 20px 22px;
     }
     .step-tag {
       font-family: 'Space Mono', monospace;
       font-size: 9px;
       color: #d4ff00;
-      letter-spacing: 0.2em;
+      letter-spacing: 0.22em;
       margin-bottom: 8px;
     }
     .step-title {
@@ -294,69 +287,68 @@
       color: #fff;
     }
 
-    /* ── SLIDE 4: Presets ── */
+    /* ── SLIDE 4: Presets — full dark ── */
     #slide-4 { flex-direction: column; background: #1a1a2e; }
-    #slide-4.halftone::before { opacity: 0.5; }
     #slide-4 .slide-header {
-      padding: 44px 64px 28px;
-      border-bottom: 1px solid rgba(212,255,0,0.12);
+      padding: 40px 64px 24px;
+      border-bottom: 1px solid rgba(212,255,0,0.1);
       position: relative; z-index: 2;
     }
     #slide-4 h2 {
       font-family: 'Syne', sans-serif;
       font-weight: 800;
-      font-size: clamp(22px, 2.8vw, 36px);
+      font-size: clamp(20px, 2.6vw, 34px);
       color: #fff;
       letter-spacing: -0.02em;
     }
     #slide-4 .grid-body {
       flex: 1;
-      padding: 28px 64px;
+      padding: 24px 64px;
       position: relative; z-index: 2;
       overflow: hidden;
     }
     .voltage-grid {
       display: grid;
       grid-template-columns: repeat(4, 1fr);
-      gap: 8px;
+      gap: 6px;
     }
     .vg-cell {
-      background: rgba(255,255,255,0.03);
-      border: 1px solid rgba(255,255,255,0.06);
-      padding: 14px 16px;
+      background: rgba(255,255,255,0.025);
+      border: 1px solid rgba(255,255,255,0.055);
+      padding: 12px 14px;
       transition: all 0.2s;
     }
     .vg-cell:hover {
       background: rgba(212,255,0,0.07);
-      border-color: rgba(212,255,0,0.2);
+      border-color: rgba(212,255,0,0.18);
     }
     .vg-name {
       font-family: 'Syne', sans-serif;
       font-weight: 700;
-      font-size: 13px;
+      font-size: 12px;
       color: #fff;
-      margin-bottom: 4px;
+      margin-bottom: 3px;
     }
     .vg-vibe {
       font-family: 'Space Mono', monospace;
-      font-size: 10px;
-      color: rgba(255,255,255,0.3);
+      font-size: 9px;
+      color: rgba(255,255,255,0.28);
     }
     .vg-cell.hot {
-      background: rgba(212,255,0,0.08);
-      border-color: rgba(212,255,0,0.35);
+      background: rgba(212,255,0,0.07);
+      border-color: rgba(212,255,0,0.3);
     }
     .vg-cell.hot .vg-name { color: #d4ff00; }
-    .vg-cell.hot .vg-vibe { color: rgba(212,255,0,0.5); }
+    .vg-cell.hot .vg-vibe { color: rgba(212,255,0,0.45); }
 
-    /* ── SLIDE 5: How It Works ── */
+    /* ── SLIDE 5: How It Works — blue left / dark right ── */
     #slide-5 { flex-direction: row; }
     #slide-5 .blue-panel { flex: 0 0 40%; }
     #slide-5 .dark-panel { flex: 0 0 60%; }
     #slide-5 h2 {
       font-family: 'Syne', sans-serif;
       font-weight: 800;
-      font-size: clamp(28px, 3.5vw, 46px);
+      font-size: clamp(26px, 3.2vw, 44px);
       line-height: 1;
       letter-spacing: -0.025em;
       color: #fff;
@@ -364,14 +356,14 @@
     #slide-5 .intro {
       font-family: 'Space Mono', monospace;
       font-size: 11px;
-      color: rgba(255,255,255,0.45);
+      color: rgba(255,255,255,0.42);
       margin-top: 16px;
-      line-height: 1.7;
+      line-height: 1.75;
     }
     .how-cards { display: flex; flex-direction: column; gap: 2px; }
     .how-card {
       background: rgba(255,255,255,0.03);
-      border-left: 3px solid rgba(212,255,0,0.2);
+      border-left: 3px solid rgba(212,255,0,0.18);
       padding: 20px 24px;
       transition: border-color 0.2s;
     }
@@ -379,8 +371,8 @@
     .how-card-num {
       font-family: 'Syne', sans-serif;
       font-weight: 800;
-      font-size: 32px;
-      color: rgba(212,255,0,0.2);
+      font-size: 30px;
+      color: rgba(212,255,0,0.18);
       line-height: 1;
       margin-bottom: 10px;
     }
@@ -394,18 +386,18 @@
     .how-card-body {
       font-family: 'Space Mono', monospace;
       font-size: 11px;
-      color: rgba(255,255,255,0.4);
-      line-height: 1.7;
+      color: rgba(255,255,255,0.38);
+      line-height: 1.75;
     }
 
-    /* ── SLIDE 6: Features ── */
+    /* ── SLIDE 6: Features — dark left / blue right ── */
     #slide-6 { flex-direction: row; }
-    #slide-6 .dark-panel { flex: 0 0 48%; }
-    #slide-6 .blue-panel { flex: 0 0 52%; }
+    #slide-6 .dark-panel { flex: 0 0 46%; }
+    #slide-6 .blue-panel { flex: 0 0 54%; }
     #slide-6 h2 {
       font-family: 'Syne', sans-serif;
       font-weight: 800;
-      font-size: clamp(26px, 3vw, 40px);
+      font-size: clamp(24px, 2.8vw, 38px);
       line-height: 1.05;
       letter-spacing: -0.02em;
       color: #fff;
@@ -414,45 +406,45 @@
     #slide-6 .subhead {
       font-family: 'Space Mono', monospace;
       font-size: 11px;
-      color: rgba(255,255,255,0.35);
-      line-height: 1.7;
+      color: rgba(255,255,255,0.34);
+      line-height: 1.75;
     }
     .feat-blocks { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
     .feat-block {
-      background: rgba(0,0,0,0.25);
-      padding: 22px 22px;
+      background: rgba(0,0,0,0.22);
+      padding: 20px 20px;
     }
     .feat-block-tag {
       font-family: 'Space Mono', monospace;
       font-size: 9px;
       color: #d4ff00;
-      letter-spacing: 0.15em;
+      letter-spacing: 0.16em;
       text-transform: uppercase;
       margin-bottom: 10px;
     }
     .feat-block-title {
       font-family: 'Syne', sans-serif;
       font-weight: 700;
-      font-size: 16px;
+      font-size: 15px;
       color: #fff;
       margin-bottom: 8px;
     }
     .feat-block-body {
       font-family: 'Space Mono', monospace;
       font-size: 10px;
-      color: rgba(255,255,255,0.4);
-      line-height: 1.7;
+      color: rgba(255,255,255,0.38);
+      line-height: 1.75;
     }
 
-    /* ── SLIDE 7: Install ── */
+    /* ── SLIDE 7: Install — blue left / dark right ── */
     #slide-7 { flex-direction: row; }
-    #slide-7 .blue-panel { flex: 0 0 45%; }
-    #slide-7 .dark-panel { flex: 0 0 55%; }
+    #slide-7 .blue-panel { flex: 0 0 42%; }
+    #slide-7 .dark-panel { flex: 0 0 58%; }
     #slide-7 h2 {
       font-family: 'Syne', sans-serif;
       font-weight: 800;
       font-size: clamp(32px, 4.5vw, 60px);
-      line-height: 0.95;
+      line-height: 0.92;
       letter-spacing: -0.025em;
       color: #fff;
       margin-bottom: 20px;
@@ -460,23 +452,22 @@
     #slide-7 .quick-note {
       font-family: 'Space Mono', monospace;
       font-size: 11px;
-      color: rgba(255,255,255,0.5);
-      line-height: 1.6;
+      color: rgba(255,255,255,0.46);
+      line-height: 1.75;
     }
-    .install-items { display: flex; flex-direction: column; gap: 20px; }
-    .install-item { }
+    .install-items { display: flex; flex-direction: column; gap: 22px; }
     .install-tag {
       font-family: 'Space Mono', monospace;
       font-size: 9px;
-      letter-spacing: 0.2em;
+      letter-spacing: 0.22em;
       text-transform: uppercase;
       color: #d4ff00;
       margin-bottom: 10px;
     }
     .terminal-block {
       background: rgba(0,0,0,0.5);
-      border: 1px solid rgba(212,255,0,0.15);
-      padding: 14px 18px;
+      border: 1px solid rgba(212,255,0,0.14);
+      padding: 13px 16px;
       font-family: 'Space Mono', monospace;
       font-size: 11px;
       color: rgba(255,255,255,0.8);
@@ -490,13 +481,12 @@
     .install-sub {
       font-family: 'Space Mono', monospace;
       font-size: 10px;
-      color: rgba(255,255,255,0.3);
+      color: rgba(255,255,255,0.28);
       margin-top: 6px;
     }
 
-    /* ── SLIDE 8: CTA ── */
+    /* ── SLIDE 8: CTA — full blue ── */
     #slide-8 { flex-direction: column; background: #0066ff; }
-    #slide-8.halftone::before { background-size: 28px 28px; opacity: 0.7; }
     #slide-8 .cta-inner {
       position: relative; z-index: 2;
       display: flex;
@@ -509,8 +499,8 @@
     #slide-8 h2 {
       font-family: 'Syne', sans-serif;
       font-weight: 800;
-      font-size: clamp(44px, 8vw, 100px);
-      line-height: 0.9;
+      font-size: clamp(44px, 8vw, 102px);
+      line-height: 0.88;
       letter-spacing: -0.03em;
       color: #fff;
       margin-bottom: 40px;
@@ -518,33 +508,34 @@
     #slide-8 .h2-accent { color: #d4ff00; }
     #slide-8 .cta-command {
       font-family: 'Space Mono', monospace;
-      font-size: clamp(22px, 3vw, 36px);
+      font-size: clamp(20px, 2.8vw, 34px);
       font-weight: 700;
       background: #d4ff00;
       color: #0a0a14;
       padding: 16px 32px;
       display: inline-block;
       margin-bottom: 28px;
+      letter-spacing: 0.02em;
     }
     #slide-8 .cta-sub {
       font-family: 'Space Mono', monospace;
       font-size: 12px;
-      color: rgba(255,255,255,0.5);
-      line-height: 1.8;
+      color: rgba(255,255,255,0.48);
+      line-height: 1.85;
       max-width: 420px;
     }
     #slide-8 .deco-bg {
       position: absolute;
       right: 0; top: 0; bottom: 0;
-      width: 35%;
-      background: rgba(0,0,0,0.15);
+      width: 34%;
+      background: rgba(0,0,0,0.14);
       display: flex;
       align-items: center;
       justify-content: center;
       font-family: 'Syne', sans-serif;
       font-weight: 800;
       font-size: 180px;
-      color: rgba(212,255,0,0.08);
+      color: rgba(212,255,0,0.07);
       user-select: none;
       pointer-events: none;
     }
@@ -567,12 +558,15 @@
       font-family: 'Space Mono', monospace;
       font-size: 10px;
       font-weight: 700;
-      letter-spacing: 0.1em;
+      letter-spacing: 0.12em;
       cursor: pointer;
       z-index: 2001;
       display: none;
       text-transform: uppercase;
+      opacity: 0;
+      transition: opacity 0.3s;
     }
+    #edit-toggle.visible { opacity: 1; display: block; }
     body.edit-mode [contenteditable] {
       outline: 1px dashed rgba(212,255,0,0.5);
       cursor: text;
@@ -607,49 +601,47 @@
 
 <!-- SLIDE 1: Cover -->
 <section class="slide halftone" id="slide-1">
-  <div class="blue-panel" style="width:100%; height:100%; position:absolute; inset:0;"></div>
+  <div class="bg-full"></div>
+  <div class="deco-num">∞</div>
   <div class="cover-inner">
-    <div class="eyebrow reveal">INTRODUCING</div>
+    <div class="eyebrow reveal">Introducing</div>
     <div class="reveal">
       <div class="main-title" contenteditable="false">slide-</div>
       <div class="title-accent" contenteditable="false">creator</div>
     </div>
-    <p class="subtitle reveal" contenteditable="false">Zero-dependency HTML presentations<br>for Claude Code &amp; OpenClaw.</p>
+    <p class="subtitle reveal" contenteditable="false">Zero-dependency HTML presentations<br>for Claude Code &amp; OpenClaw. Build fast—ship faster.</p>
     <div class="badges reveal">
-      <span class="pill">13 Presets</span>
+      <span class="pill">19 Presets</span>
       <span class="pill outline">0 Dependencies</span>
       <span class="pill outline">∞ Slides</span>
     </div>
   </div>
-  <div class="deco-num">∞</div>
 </section>
 
 <!-- SLIDE 2: Problem -->
 <section class="slide" id="slide-2">
   <div class="blue-panel halftone">
     <div class="panel-content">
-      <div class="reveal">
-        <div class="blue-number">!!</div>
-      </div>
-      <div class="pill reveal" style="margin-top: 16px;">Problem</div>
+      <div class="big-mark reveal">!!</div>
+      <div class="pill small reveal" style="margin-top: 12px;">Problem</div>
     </div>
   </div>
   <div class="dark-panel halftone">
     <div class="panel-content">
       <h2 class="reveal" contenteditable="false">Presentations shouldn't require a build system</h2>
-      <div class="pain-stack" style="margin-top: 36px;">
+      <div class="pain-stack">
         <div class="pain-row reveal">
           <span class="pain-tick">01</span>
           <div>
             <div class="pain-label" contenteditable="false">Complex toolchain</div>
-            <div class="pain-desc" contenteditable="false">npm install. Webpack config. 300MB of node_modules. All that just to move text around.</div>
+            <div class="pain-desc" contenteditable="false">npm install. Webpack config. 300MB of node_modules — just to move text around.</div>
           </div>
         </div>
         <div class="pain-row reveal">
           <span class="pain-tick">02</span>
           <div>
             <div class="pain-label" contenteditable="false">Generic output</div>
-            <div class="pain-desc" contenteditable="false">Every AI deck looks the same. Inter font. Purple gradient. Zero personality, zero recall.</div>
+            <div class="pain-desc" contenteditable="false">Every AI deck looks the same. Inter font. Purple gradient. Zero personality — zero recall.</div>
           </div>
         </div>
         <div class="pain-row reveal">
@@ -670,7 +662,7 @@
     <div class="panel-content">
       <span class="pill small reveal">Style Discovery</span>
       <h2 style="margin-top: 20px;" class="reveal" contenteditable="false">Style discovery that actually works</h2>
-      <p class="body-copy reveal" style="margin-top: 16px;" contenteditable="false">You can't describe design preferences in words. So don't try. slide-creator shows you 3 visual previews — you react, not describe. The "wow moment" before a single line of content is written.</p>
+      <p class="body-copy reveal" style="margin-top: 14px;" contenteditable="false">You can't describe design in words — so don't try. slide-creator generates 3 visual previews. You react, not describe. The "wow moment" lands before a single line of content is written.</p>
     </div>
   </div>
   <div class="blue-panel halftone">
@@ -686,7 +678,7 @@
         </div>
         <div class="step-card">
           <div class="step-tag">STEP_03</div>
-          <div class="step-title" contenteditable="false">Pick the one that feels right</div>
+          <div class="step-title" contenteditable="false">Pick what feels right</div>
         </div>
       </div>
     </div>
@@ -694,10 +686,10 @@
 </section>
 
 <!-- SLIDE 4: Presets -->
-<section class="slide halftone" id="slide-4" style="flex-direction: column;">
+<section class="slide halftone" id="slide-4">
   <div class="slide-header reveal">
-    <span class="pill small">13 Presets</span>
-    <h2 style="margin-top: 16px;" contenteditable="false">13 curated styles. No generic AI aesthetics.</h2>
+    <span class="pill small">19 Presets</span>
+    <h2 style="margin-top: 14px;" contenteditable="false">19 curated styles. No generic AI aesthetics.</h2>
   </div>
   <div class="grid-body reveal">
     <div class="voltage-grid">
@@ -714,6 +706,12 @@
       <div class="vg-cell"><div class="vg-name">Terminal Green</div><div class="vg-vibe">Developer</div></div>
       <div class="vg-cell"><div class="vg-name">Swiss Modern</div><div class="vg-vibe">Precise</div></div>
       <div class="vg-cell"><div class="vg-name">Paper &amp; Ink</div><div class="vg-vibe">Literary</div></div>
+      <div class="vg-cell"><div class="vg-name">Aurora Mesh</div><div class="vg-vibe">Vivid</div></div>
+      <div class="vg-cell"><div class="vg-name">Enterprise Dark</div><div class="vg-vibe">Corporate</div></div>
+      <div class="vg-cell"><div class="vg-name">Glassmorphism</div><div class="vg-vibe">Modern</div></div>
+      <div class="vg-cell"><div class="vg-name">Neo-Brutalism</div><div class="vg-vibe">Bold</div></div>
+      <div class="vg-cell"><div class="vg-name">Japanese Zen</div><div class="vg-vibe">Minimal</div></div>
+      <div class="vg-cell"><div class="vg-name">Data Story</div><div class="vg-vibe">Analytical</div></div>
     </div>
   </div>
 </section>
@@ -724,7 +722,7 @@
     <div class="panel-content">
       <span class="pill small reveal">Process</span>
       <h2 style="margin-top: 20px;" class="reveal" contenteditable="false">Idea to presentation in minutes</h2>
-      <p class="intro reveal" contenteditable="false">Four questions. Three previews. One HTML file. That's the whole workflow.</p>
+      <p class="intro reveal" contenteditable="false">Four questions. Three previews. One HTML file. That's the entire workflow — build fast, ship faster.</p>
     </div>
   </div>
   <div class="dark-panel halftone">
@@ -733,17 +731,17 @@
         <div class="how-card">
           <div class="how-card-num">01</div>
           <div class="how-card-title" contenteditable="false">/slide-creator</div>
-          <div class="how-card-body" contenteditable="false">Answer 4 questions: purpose, length, content, images. Minimal friction intake.</div>
+          <div class="how-card-body" contenteditable="false">Answer 4 questions: purpose, length, content, images. Minimal friction — maximum clarity.</div>
         </div>
         <div class="how-card">
           <div class="how-card-num">02</div>
           <div class="how-card-title" contenteditable="false">Pick your style</div>
-          <div class="how-card-body" contenteditable="false">React to 3 visual previews. Point at the vibe. Don't describe it.</div>
+          <div class="how-card-body" contenteditable="false">React to 3 visual previews. Point at the vibe. Don't describe it — just feel it.</div>
         </div>
         <div class="how-card">
           <div class="how-card-num">03</div>
           <div class="how-card-title" contenteditable="false">Open and present</div>
-          <div class="how-card-body" contenteditable="false">Arrows, Space, swipe, dots. Any browser. Works permanently.</div>
+          <div class="how-card-body" contenteditable="false">Arrows · Space · Swipe · Dots. Any browser. Works permanently. Zero dependencies.</div>
         </div>
       </div>
     </div>
@@ -756,7 +754,7 @@
     <div class="panel-content">
       <span class="pill small reveal">Capabilities</span>
       <h2 style="margin-top: 20px;" class="reveal" contenteditable="false">Everything you need. Nothing you don't.</h2>
-      <p class="subhead reveal" contenteditable="false">Purposefully minimal.<br>Every feature serves the deck, not the product team.</p>
+      <p class="subhead reveal" contenteditable="false">Purposefully minimal—every feature<br>serves the deck, not the product team.</p>
     </div>
   </div>
   <div class="blue-panel halftone">
@@ -764,23 +762,23 @@
       <div class="feat-blocks reveal">
         <div class="feat-block">
           <div class="feat-block-tag">VIEWPORT</div>
-          <div class="feat-block-title" contenteditable="false">Viewport fitting</div>
-          <div class="feat-block-body" contenteditable="false">Every slide fills exactly 100vh. Zero scrolling. Pixel-identical on every screen.</div>
+          <div class="feat-block-title" contenteditable="false">Viewport Fitting</div>
+          <div class="feat-block-body" contenteditable="false">Every slide fills exactly 100vh. Content that overflows gets split — not squished.</div>
         </div>
         <div class="feat-block">
           <div class="feat-block-tag">EDIT</div>
-          <div class="feat-block-title" contenteditable="false">Inline editing</div>
+          <div class="feat-block-title" contenteditable="false">Inline Editing</div>
           <div class="feat-block-body" contenteditable="false">Press E. Click text. Edit live. Ctrl+S saves. No code editor required.</div>
         </div>
         <div class="feat-block">
           <div class="feat-block-tag">EXPORT</div>
-          <div class="feat-block-title" contenteditable="false">PPTX export</div>
-          <div class="feat-block-body" contenteditable="false">--export pptx via Playwright + Chrome. Real PowerPoint, no compromises.</div>
+          <div class="feat-block-title" contenteditable="false">PPTX Export</div>
+          <div class="feat-block-body" contenteditable="false">--export pptx via Playwright + your Chrome. Pixel-perfect PowerPoint output.</div>
         </div>
         <div class="feat-block">
           <div class="feat-block-tag">WORKFLOW</div>
-          <div class="feat-block-title" contenteditable="false">Two-stage flow</div>
-          <div class="feat-block-body" contenteditable="false">--plan for outline review. --generate for final HTML. Review before rendering.</div>
+          <div class="feat-block-title" contenteditable="false">Two-Stage Flow</div>
+          <div class="feat-block-body" contenteditable="false">--plan creates PLANNING.md outline first. --generate renders HTML. Review before rendering.</div>
         </div>
       </div>
     </div>
@@ -792,22 +790,22 @@
   <div class="blue-panel halftone">
     <div class="panel-content">
       <span class="pill small reveal">Install</span>
-      <h2 style="margin-top: 20px;" class="reveal" contenteditable="false">Up in<br><span class="neon-text">30 sec</span></h2>
-      <p class="quick-note reveal" contenteditable="false">Two platforms.<br>One command each.<br>Zero config.</p>
+      <h2 style="margin-top: 20px;" class="reveal" contenteditable="false">Up in<br><span class="neon">30 sec</span></h2>
+      <p class="quick-note reveal" contenteditable="false">Two platforms.<br>One command each.<br>Zero config — ship immediately.</p>
     </div>
   </div>
   <div class="dark-panel halftone">
     <div class="panel-content">
       <div class="install-items reveal">
-        <div class="install-item">
+        <div>
           <div class="install-tag">Claude_Code</div>
           <div class="terminal-block">git clone https://github.com/kaisersong/slide-creator ~/.claude/skills/slide-creator</div>
           <div class="install-sub">Restart Claude Code → /slide-creator</div>
         </div>
-        <div class="install-item">
+        <div>
           <div class="install-tag">OpenClaw</div>
           <div class="terminal-block">clawhub install html-slide-creator</div>
-          <div class="install-sub">Auto-installs everything. No config required.</div>
+          <div class="install-sub">Auto-installs all dependencies. No config required.</div>
         </div>
       </div>
     </div>
@@ -821,14 +819,13 @@
     <span class="pill reveal" style="margin-bottom: 28px;">Get Started</span>
     <h2 class="reveal">Your next<br>presentation<br><span class="h2-accent" contenteditable="false">starts here</span></h2>
     <div class="cta-command reveal" contenteditable="false">/slide-creator</div>
-    <p class="cta-sub reveal" contenteditable="false">Works with Claude Code and OpenClaw.<br>Runs entirely in your browser.<br>No build step. No subscription. Just yours.</p>
+    <p class="cta-sub reveal" contenteditable="false">Works with Claude Code and OpenClaw<br>Runs entirely in your browser · No build step · No subscription</p>
   </div>
 </section>
 
 <script>
   const TOTAL = 8;
-  let currentSlide = 0;
-  let isScrolling = false;
+  let cur = 0;
 
   const slides = Array.from(document.querySelectorAll('.slide'));
   const progressBar = document.getElementById('progress-bar');
@@ -837,22 +834,24 @@
   slides.forEach((_, i) => {
     const dot = document.createElement('div');
     dot.className = 'dot' + (i === 0 ? ' active' : '');
-    dot.addEventListener('click', () => scrollToSlide(i));
+    dot.addEventListener('click', () => goTo(i));
     navDotsContainer.appendChild(dot);
   });
 
   function updateUI(index) {
-    currentSlide = index;
+    cur = index;
     progressBar.style.width = ((index + 1) / TOTAL * 100) + '%';
     document.querySelectorAll('.dot').forEach((d, i) => {
       d.classList.toggle('active', i === index);
     });
   }
 
-  function scrollToSlide(index) {
+  function goTo(index) {
+    if (index < 0 || index >= TOTAL) return;
     slides[index].scrollIntoView({ behavior: 'smooth' });
   }
 
+  // IntersectionObserver — adds .visible, stagger .reveal children
   const observer = new IntersectionObserver((entries) => {
     entries.forEach(entry => {
       if (entry.isIntersecting) {
@@ -864,59 +863,83 @@
 
   slides.forEach(s => observer.observe(s));
 
+  // Keyboard navigation
   document.addEventListener('keydown', (e) => {
-    if (document.body.classList.contains('edit-mode') && e.key !== 'Escape') {
+    if (document.body.classList.contains('edit-mode')) {
       if ((e.ctrlKey || e.metaKey) && e.key === 's') {
         e.preventDefault();
         saveFile();
       }
+      if (e.key === 'e' || e.key === 'E') toggleEditMode();
       return;
     }
     if (e.key === 'ArrowDown' || e.key === 'ArrowRight' || e.key === ' ') {
       e.preventDefault();
-      if (currentSlide < TOTAL - 1) scrollToSlide(currentSlide + 1);
+      goTo(cur + 1);
     } else if (e.key === 'ArrowUp' || e.key === 'ArrowLeft') {
       e.preventDefault();
-      if (currentSlide > 0) scrollToSlide(currentSlide - 1);
+      goTo(cur - 1);
     } else if (e.key === 'e' || e.key === 'E') {
       toggleEditMode();
     }
   });
 
-  let wheelTimeout = null;
-  document.addEventListener('wheel', (e) => {
-    if (isScrolling) return;
-    isScrolling = true;
-    if (e.deltaY > 0 && currentSlide < TOTAL - 1) scrollToSlide(currentSlide + 1);
-    else if (e.deltaY < 0 && currentSlide > 0) scrollToSlide(currentSlide - 1);
-    setTimeout(() => { isScrolling = false; }, 800);
+  // Wheel — debounce-reset lock (NOT time throttle)
+  let wheelLocked = false, wheelTimer = null;
+  document.addEventListener('wheel', e => {
+    clearTimeout(wheelTimer);
+    if (!wheelLocked) {
+      wheelLocked = true;
+      e.deltaY > 0 ? goTo(cur + 1) : goTo(cur - 1);
+    }
+    wheelTimer = setTimeout(() => { wheelLocked = false; }, 180);
   }, { passive: true });
 
+  // Touch swipe
   let touchStartY = 0;
   document.addEventListener('touchstart', (e) => { touchStartY = e.touches[0].clientY; }, { passive: true });
   document.addEventListener('touchend', (e) => {
     const dy = touchStartY - e.changedTouches[0].clientY;
     if (Math.abs(dy) > 50) {
-      if (dy > 0 && currentSlide < TOTAL - 1) scrollToSlide(currentSlide + 1);
-      else if (dy < 0 && currentSlide > 0) scrollToSlide(currentSlide - 1);
+      dy > 0 ? goTo(cur + 1) : goTo(cur - 1);
     }
   }, { passive: true });
 
+  // Edit mode — hotzone 80x80 top-left, button appears on hover (400ms grace)
   let editMode = false;
+  let hotzoneTimer = null;
   const editToggle = document.getElementById('edit-toggle');
   const editHotzone = document.getElementById('edit-hotzone');
 
-  editHotzone.addEventListener('click', toggleEditMode);
+  editHotzone.addEventListener('mouseenter', () => {
+    hotzoneTimer = setTimeout(() => {
+      editToggle.style.display = 'block';
+      editToggle.classList.add('visible');
+    }, 400);
+  });
+  editHotzone.addEventListener('mouseleave', () => {
+    clearTimeout(hotzoneTimer);
+    if (!editMode) {
+      editToggle.classList.remove('visible');
+      setTimeout(() => { if (!editMode) editToggle.style.display = 'none'; }, 300);
+    }
+  });
+
   editToggle.addEventListener('click', toggleEditMode);
 
   function toggleEditMode() {
     editMode = !editMode;
     document.body.classList.toggle('edit-mode', editMode);
-    editToggle.style.display = editMode ? 'block' : 'none';
+    editToggle.style.display = 'block';
+    editToggle.classList.add('visible');
     editToggle.textContent = editMode ? 'EXIT_EDIT' : 'EDIT';
     document.querySelectorAll('[contenteditable]').forEach(el => {
       el.contentEditable = editMode ? 'true' : 'false';
     });
+    if (!editMode) {
+      editToggle.classList.remove('visible');
+      setTimeout(() => { editToggle.style.display = 'none'; }, 300);
+    }
   }
 
   async function saveFile() {

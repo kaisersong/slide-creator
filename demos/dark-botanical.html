@@ -86,7 +86,7 @@
       font-family: 'Cormorant', serif; font-style: italic; font-weight: 400;
       font-size: clamp(11px, 1.2vw, 14px);
       letter-spacing: 0.25em; text-transform: uppercase;
-      color: #9a9590; margin-bottom: clamp(16px, 2.5vw, 28px);
+      color: #c9b896; margin-bottom: clamp(16px, 2.5vw, 28px);
     }
     h1 {
       font-family: 'Cormorant', serif; font-weight: 600;
@@ -138,7 +138,7 @@
       color: #c9b896; margin-bottom: 2px;
     }
 
-    /* Pain points / lists */
+    /* Pain points */
     .pain-list {
       list-style: none; text-align: left;
       margin-top: clamp(24px, 3.5vw, 40px);
@@ -221,6 +221,12 @@
       color: #c9b896; line-height: 1.8;
     }
     .code-comment { color: #4a4540; }
+    .code-label {
+      font-family: 'IBM Plex Sans', sans-serif; font-weight: 300;
+      font-size: clamp(11px, 1.1vw, 13px);
+      color: #5a5550; letter-spacing: 0.1em; text-transform: uppercase;
+      margin-top: clamp(16px, 2.5vw, 24px); margin-bottom: 8px; text-align: left;
+    }
 
     /* CTA */
     .cta-command {
@@ -238,7 +244,7 @@
 
     /* Edit mode */
     #edit-hotzone {
-      position: fixed; top: 0; left: 0; width: 60px; height: 60px;
+      position: fixed; top: 0; left: 0; width: 80px; height: 80px;
       z-index: 200; cursor: default;
     }
     #edit-indicator {
@@ -282,7 +288,7 @@
     <p class="subtitle reveal reveal-3">Zero-dependency HTML presentations<br>for Claude Code &amp; OpenClaw</p>
     <div class="divider reveal reveal-4"></div>
     <div class="badges reveal reveal-5">
-      <div class="badge"><strong>13</strong> Presets</div>
+      <div class="badge"><strong>19</strong> Presets</div>
       <div class="badge"><strong>0</strong> Dependencies</div>
       <div class="badge"><strong>∞</strong> Slides</div>
     </div>
@@ -323,14 +329,14 @@
   </div>
 </section>
 
-<!-- Slide 4: 13 Presets -->
+<!-- Slide 4: 19 Presets -->
 <section class="slide" id="slide-3">
   <div class="orb orb-pink" style="width:500px;height:500px;top:-100px;left:-60px;"></div>
   <div class="orb orb-gold" style="width:450px;height:450px;bottom:-80px;right:-80px;"></div>
   <div class="accent-line"></div>
-  <div class="slide-inner" style="max-width:780px;">
+  <div class="slide-inner" style="max-width:820px;">
     <p class="slide-label reveal reveal-1">Design Presets</p>
-    <h2 class="reveal reveal-2">13 curated styles.<br>No generic AI aesthetics.</h2>
+    <h2 class="reveal reveal-2">19 curated styles.<br>No generic AI aesthetics.</h2>
     <div class="preset-grid reveal reveal-3">
       <span class="preset-tag">Bold Signal</span>
       <span class="preset-tag">Electric Studio</span>
@@ -345,6 +351,12 @@
       <span class="preset-tag">Terminal Green</span>
       <span class="preset-tag">Swiss Modern</span>
       <span class="preset-tag">Paper &amp; Ink</span>
+      <span class="preset-tag">Aurora Mesh</span>
+      <span class="preset-tag">Enterprise Dark</span>
+      <span class="preset-tag">Glassmorphism</span>
+      <span class="preset-tag">Neo-Brutalism</span>
+      <span class="preset-tag">Japanese Zen</span>
+      <span class="preset-tag">Data Story</span>
     </div>
   </div>
 </section>
@@ -356,11 +368,11 @@
   <div class="accent-line"></div>
   <div class="slide-inner">
     <p class="slide-label reveal reveal-1">Workflow</p>
-    <h2 class="reveal reveal-2">From idea to presentation<br>in minutes</h2>
+    <h2 class="reveal reveal-2">From idea to presentation<br>in three unhurried steps</h2>
     <div class="steps reveal reveal-3">
       <div class="step"><span class="step-num">1</span><span><strong>/slide-creator</strong> — Answer four questions: purpose, length, content, images</span></div>
       <div class="step"><span class="step-num">2</span><span><strong>Pick your style</strong> — React to three visual previews, choose the one that resonates</span></div>
-      <div class="step"><span class="step-num">3</span><span><strong>Open your presentation</strong> — Arrow keys · Space · Swipe · Click dots — all navigation included</span></div>
+      <div class="step"><span class="step-num">3</span><span><strong>Open your presentation</strong> — Arrow keys · Space · Swipe · Click dots — navigation included</span></div>
     </div>
   </div>
 </section>
@@ -372,7 +384,7 @@
   <div class="accent-line"></div>
   <div class="slide-inner" style="max-width:800px;">
     <p class="slide-label reveal reveal-1">Features</p>
-    <h2 class="reveal reveal-2">Everything you need,<br>nothing you don't</h2>
+    <h2 class="reveal reveal-2">Crafted for presentations<br>that command a room</h2>
     <div class="feature-grid reveal reveal-3">
       <div class="feature">
         <div class="feature-title">Viewport fitting</div>
@@ -401,9 +413,9 @@
   <div class="accent-line"></div>
   <div class="slide-inner" style="max-width:760px;">
     <p class="slide-label reveal reveal-1">Installation</p>
-    <h2 class="reveal reveal-2">Up in 30 seconds</h2>
+    <h2 class="reveal reveal-2">Up in thirty seconds</h2>
     <div class="reveal reveal-3">
-      <p class="body-text" style="margin-top:20px;text-align:left;max-width:100%;">Claude Code</p>
+      <p class="code-label">Claude Code</p>
       <div class="code-block">
         <span class="code-comment"># Clone to your skills directory</span><br>
         git clone https://github.com/kaisersong/slide-creator \<br>
@@ -413,7 +425,7 @@
       </div>
     </div>
     <div class="reveal reveal-4">
-      <p class="body-text" style="margin-top:20px;text-align:left;max-width:100%;">OpenClaw</p>
+      <p class="code-label">OpenClaw</p>
       <div class="code-block">
         clawhub install html-slide-creator<br>
         <span class="code-comment"># Auto-installs all dependencies</span>
@@ -440,10 +452,9 @@
   const slides = document.querySelectorAll('.slide');
   const dots = document.querySelectorAll('.dot');
   const progressBar = document.getElementById('progress-bar');
-  let currentIndex = 0;
-  let isScrolling = false;
+  let cur = 0;
 
-  // IntersectionObserver
+  // IntersectionObserver — adds .visible and stagger reveals
   const observer = new IntersectionObserver((entries) => {
     entries.forEach(entry => {
       if (entry.isIntersecting) {
@@ -457,41 +468,42 @@
   slides.forEach(slide => observer.observe(slide));
 
   function updateNav(idx) {
-    currentIndex = idx;
+    cur = idx;
     dots.forEach((d, i) => d.classList.toggle('active', i === idx));
     progressBar.style.width = ((idx + 1) / slides.length * 100) + '%';
   }
 
-  function goToSlide(idx) {
+  function goTo(idx) {
     if (idx < 0 || idx >= slides.length) return;
     slides[idx].scrollIntoView({ behavior: 'smooth' });
   }
 
   // Dot clicks
   dots.forEach(dot => {
-    dot.addEventListener('click', () => goToSlide(parseInt(dot.dataset.index)));
+    dot.addEventListener('click', () => goTo(parseInt(dot.dataset.index)));
   });
 
-  // Keyboard navigation
+  // Keyboard nav
   document.addEventListener('keydown', e => {
-    if (editMode && e.key !== 'Escape') {
-      if (e.ctrlKey && e.key === 's') { e.preventDefault(); saveFile(); }
+    if (editMode) {
+      if ((e.ctrlKey || e.metaKey) && e.key === 's') { e.preventDefault(); saveFile(); }
+      if (e.key === 'Escape') toggleEditMode();
       return;
     }
-    if (e.key === 'ArrowDown' || e.key === ' ') { e.preventDefault(); goToSlide(currentIndex + 1); }
-    if (e.key === 'ArrowUp') { e.preventDefault(); goToSlide(currentIndex - 1); }
+    if (e.key === 'ArrowDown' || e.key === 'ArrowRight' || e.key === ' ') { e.preventDefault(); goTo(cur + 1); }
+    if (e.key === 'ArrowUp' || e.key === 'ArrowLeft') { e.preventDefault(); goTo(cur - 1); }
     if (e.key === 'e' || e.key === 'E') toggleEditMode();
-    if (e.key === 'Escape' && editMode) toggleEditMode();
   });
 
-  // Wheel navigation (throttled)
-  let lastWheel = 0;
+  // Wheel — debounce-reset pattern
+  let wheelLocked = false, wheelTimer = null;
   document.addEventListener('wheel', e => {
-    const now = Date.now();
-    if (now - lastWheel < 800) return;
-    lastWheel = now;
-    if (e.deltaY > 0) goToSlide(currentIndex + 1);
-    else goToSlide(currentIndex - 1);
+    clearTimeout(wheelTimer);
+    if (!wheelLocked) {
+      wheelLocked = true;
+      if (e.deltaY > 0) goTo(cur + 1); else goTo(cur - 1);
+    }
+    wheelTimer = setTimeout(() => { wheelLocked = false; }, 180);
   }, { passive: true });
 
   // Touch swipe
@@ -500,8 +512,7 @@
   document.addEventListener('touchend', e => {
     const delta = touchStartY - e.changedTouches[0].clientY;
     if (Math.abs(delta) > 50) {
-      if (delta > 0) goToSlide(currentIndex + 1);
-      else goToSlide(currentIndex - 1);
+      if (delta > 0) goTo(cur + 1); else goTo(cur - 1);
     }
   }, { passive: true });
 

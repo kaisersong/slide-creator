@@ -116,7 +116,7 @@ Ask via AskUserQuestion:
 | Enterprise Dark | Authoritative, data-driven | B2B, investor decks, strategy |
 | Glassmorphism | Light, translucent, modern | Consumer tech, brand launches |
 | Neo-Brutalism | Bold, uncompromising | Indie dev, creative manifesto |
-| Japanese Zen | Still, contemplative | Design philosophy, brand, culture |
+| Chinese Chan | Still, contemplative | Design philosophy, brand, culture |
 | Data Story | Clear, precise, persuasive | Business review, KPI, analytics |
 
 **Mood → Preset mapping:**
@@ -125,7 +125,7 @@ Ask via AskUserQuestion:
 |------|---------------|
 | Impressed/Confident | Bold Signal, Enterprise Dark, Neo-Brutalism |
 | Excited/Energized | Creative Voltage, Neon Cyber, Aurora Mesh |
-| Calm/Focused | Notebook Tabs, Paper & Ink, Japanese Zen |
+| Calm/Focused | Notebook Tabs, Paper & Ink, Chinese Chan |
 | Inspired/Moved | Dark Botanical, Vintage Editorial, Glassmorphism |
 | Data-Driven | Data Story, Enterprise Dark, Swiss Modern |
 | Playful/Creative | Split Pastel, Pastel Geometry, Neo-Brutalism |

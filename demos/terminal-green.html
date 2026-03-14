@@ -27,7 +27,7 @@
         rgba(0,255,65,0.01) 2px, rgba(0,255,65,0.01) 4px
       );
     }
-    /* CRT edge curve */
+    /* CRT edge vignette */
     body::after {
       content: '';
       position: fixed; inset: 0; z-index: 9998;
@@ -65,7 +65,7 @@
     }
     .dot.active { color: #39d353; text-shadow: 0 0 6px #39d353; }
 
-    /* Edit mode indicator */
+    /* Edit mode */
     #edit-indicator {
       position: fixed; bottom: 1rem; right: 1rem; z-index: 1000;
       font-family: 'JetBrains Mono', monospace; font-size: 0.65rem;
@@ -75,8 +75,6 @@
     }
     body.edit-mode #edit-indicator { display: block; }
     body.edit-mode [contenteditable] { outline: 1px dashed rgba(57,211,83,0.5); }
-
-    /* Edit hotzone */
     #hotzone {
       position: fixed; top: 0; left: 0; width: 80px; height: 80px;
       z-index: 999; cursor: pointer;
@@ -86,10 +84,6 @@
     @keyframes blink {
       0%, 100% { opacity: 1; }
       50% { opacity: 0; }
-    }
-    @keyframes typeIn {
-      from { opacity: 0; transform: translateX(-4px); }
-      to { opacity: 1; transform: translateX(0); }
     }
     @keyframes lineReveal {
       from { opacity: 0; max-height: 0; }
@@ -105,15 +99,16 @@
       animation: blink 1s step-end infinite;
     }
 
-    /* Reveal on scroll */
+    /* Reveal stagger */
     .reveal { opacity: 0; transform: translateY(8px); transition: opacity 0.3s ease, transform 0.3s ease; }
     .slide.visible .reveal { opacity: 1; transform: none; }
-    .reveal:nth-child(1) { transition-delay: 0.05s; }
-    .reveal:nth-child(2) { transition-delay: 0.1s; }
-    .reveal:nth-child(3) { transition-delay: 0.15s; }
-    .reveal:nth-child(4) { transition-delay: 0.2s; }
-    .reveal:nth-child(5) { transition-delay: 0.25s; }
-    .reveal:nth-child(6) { transition-delay: 0.3s; }
+    .slide.visible .reveal:nth-child(1) { transition-delay: 0.05s; }
+    .slide.visible .reveal:nth-child(2) { transition-delay: 0.1s; }
+    .slide.visible .reveal:nth-child(3) { transition-delay: 0.15s; }
+    .slide.visible .reveal:nth-child(4) { transition-delay: 0.2s; }
+    .slide.visible .reveal:nth-child(5) { transition-delay: 0.25s; }
+    .slide.visible .reveal:nth-child(6) { transition-delay: 0.3s; }
+    .slide.visible .reveal:nth-child(7) { transition-delay: 0.35s; }
 
     /* Common elements */
     .slide-num {
@@ -152,9 +147,7 @@
       margin-top: clamp(1rem, 2vh, 2rem);
       flex-wrap: wrap;
     }
-    .stat {
-      display: flex; flex-direction: column;
-    }
+    .stat { display: flex; flex-direction: column; }
     .stat-val {
       font-size: clamp(1.2rem, 2.5vw, 1.8rem);
       color: #58a6ff; font-weight: 700;
@@ -163,7 +156,7 @@
       font-size: 0.65rem; color: #39d353; opacity: 0.7; letter-spacing: 0.1em;
     }
 
-    /* Boot sequence */
+    /* Boot sequence — title slide only */
     .boot-lines { margin: clamp(1rem, 2vh, 2rem) 0; }
     .boot-line {
       font-size: clamp(0.75rem, 1.3vw, 0.9rem);
@@ -253,7 +246,7 @@
     }
     .cta-sub { font-size: clamp(0.65rem, 1vw, 0.8rem); color: #8b949e; margin-top: 0.5rem; }
 
-    /* Slide 5 how it works */
+    /* How it works */
     .how-steps {
       display: flex; flex-direction: column; gap: clamp(1rem, 2vh, 1.5rem);
       margin-top: clamp(1rem, 2vh, 1.5rem); max-width: 650px;
@@ -286,15 +279,15 @@
 </div>
 
 <div id="hotzone"></div>
-<div id="edit-indicator">> EDIT_MODE [Ctrl+S to save]</div>
+<div id="edit-indicator">&gt; EDIT_MODE [Ctrl+S to save]</div>
 
 <!-- SLIDE 01: Cover -->
 <section class="slide" id="slide-0">
   <div class="slide-num reveal">[01/08] &gt; BOOT_SEQUENCE</div>
 
   <div class="boot-lines">
-    <div class="boot-line">&gt; initializing slide-creator v1.4.2...</div>
-    <div class="boot-line">&gt; loading 13 design presets... <span class="ok">[OK]</span></div>
+    <div class="boot-line">&gt; initializing slide-creator v1.5.0...</div>
+    <div class="boot-line">&gt; loading 19 design presets... <span class="ok">[OK]</span></div>
     <div class="boot-line">&gt; zero dependencies confirmed... <span class="ok">[OK]</span></div>
     <div class="boot-line">&gt; ready.<span class="cursor">|</span></div>
   </div>
@@ -309,7 +302,7 @@
     </p>
     <div class="stat-row">
       <div class="stat">
-        <span class="stat-val">13</span>
+        <span class="stat-val">19</span>
         <span class="stat-label">&gt; PRESETS</span>
       </div>
       <div class="stat">
@@ -372,11 +365,11 @@
   </div>
 </section>
 
-<!-- SLIDE 04: 13 Presets -->
+<!-- SLIDE 04: 19 Presets -->
 <section class="slide" id="slide-3">
   <div class="slide-num reveal">[04/08] &gt; PRESET_REGISTRY</div>
   <div class="label reveal">&gt; LOADED_MODULES</div>
-  <h2 class="reveal">13 curated styles.<br><span class="accent">No generic AI aesthetics.</span></h2>
+  <h2 class="reveal">19 curated styles.<br><span class="accent">No generic AI aesthetics.</span></h2>
   <hr class="rule reveal">
   <div class="preset-grid reveal">
     <span class="preset-tag">Bold Signal</span>
@@ -392,9 +385,15 @@
     <span class="preset-tag" style="border-color: #39d353; color:#39d353; background: rgba(57,211,83,0.12);">Terminal Green ◀</span>
     <span class="preset-tag">Swiss Modern</span>
     <span class="preset-tag">Paper &amp; Ink</span>
+    <span class="preset-tag">Aurora Mesh</span>
+    <span class="preset-tag">Enterprise Dark</span>
+    <span class="preset-tag">Glassmorphism</span>
+    <span class="preset-tag">Neo-Brutalism</span>
+    <span class="preset-tag">Japanese Zen</span>
+    <span class="preset-tag">Data Story</span>
   </div>
   <p class="reveal" style="margin-top: clamp(1rem,2vh,1.5rem);">
-    <span style="color:#39d353;">// 13 entries loaded.</span> Each ships as a complete, self-contained HTML file.
+    <span style="color:#39d353;">// 19 entries loaded.</span> Each ships as a complete, self-contained HTML file.
   </p>
 </section>
 
@@ -485,7 +484,7 @@
     <div class="cta-sub">Works with Claude Code and OpenClaw.</div>
   </div>
   <p class="reveal" style="margin-top: clamp(1.5rem,3vh,2rem);">
-    <span style="color:#39d353;"># 13 presets loaded. 0 dependencies. ∞ slides.</span><br>
+    <span style="color:#39d353;"># 19 presets loaded. 0 dependencies. ∞ slides.</span><br>
     <span style="color:#484f58;"># Your presentation. Your file. No platform lock-in.</span>
   </p>
 </section>
@@ -494,8 +493,7 @@
   const slides = Array.from(document.querySelectorAll('.slide'));
   const dots = Array.from(document.querySelectorAll('.dot'));
   const progress = document.getElementById('progress');
-  let current = 0;
-  let lastScroll = 0;
+  let cur = 0;
   let editMode = false;
 
   // IntersectionObserver
@@ -511,7 +509,7 @@
   slides.forEach(s => observer.observe(s));
 
   function updateNav(idx) {
-    current = idx;
+    cur = idx;
     dots.forEach((d, i) => d.classList.toggle('active', i === idx));
     progress.style.width = ((idx + 1) / slides.length * 100) + '%';
   }
@@ -531,18 +529,17 @@
     }
     if (editMode && e.key === 'Escape') { toggleEdit(); return; }
     if (document.activeElement.isContentEditable) return;
-    if (e.key === 'ArrowDown' || e.key === ' ') { e.preventDefault(); goTo(current + 1); }
-    if (e.key === 'ArrowUp') { e.preventDefault(); goTo(current - 1); }
+    if (e.key === 'ArrowDown' || e.key === ' ') { e.preventDefault(); goTo(cur + 1); }
+    if (e.key === 'ArrowUp') { e.preventDefault(); goTo(cur - 1); }
     if (e.key === 'e' || e.key === 'E') toggleEdit();
   });
 
-  // Throttled wheel
+  // Wheel — debounce-reset
+  let wheelLocked = false, wheelTimer = null;
   document.addEventListener('wheel', e => {
-    const now = Date.now();
-    if (now - lastScroll < 800) return;
-    lastScroll = now;
-    if (e.deltaY > 0) goTo(current + 1);
-    else goTo(current - 1);
+    clearTimeout(wheelTimer);
+    if (!wheelLocked) { wheelLocked = true; e.deltaY > 0 ? goTo(cur + 1) : goTo(cur - 1); }
+    wheelTimer = setTimeout(() => { wheelLocked = false; }, 180);
   }, { passive: true });
 
   // Touch swipe
@@ -551,7 +548,7 @@
   document.addEventListener('touchend', e => {
     if (!touchStart) return;
     const diff = touchStart - e.changedTouches[0].clientY;
-    if (Math.abs(diff) > 50) { diff > 0 ? goTo(current + 1) : goTo(current - 1); }
+    if (Math.abs(diff) > 50) { diff > 0 ? goTo(cur + 1) : goTo(cur - 1); }
     touchStart = null;
   });
 

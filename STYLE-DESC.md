@@ -1024,7 +1024,7 @@ background: linear-gradient(135deg, #f8cdda 0%, #1d6fa4 100%);
 
 ---
 
-### 18. Japanese Zen
+### 18. Chinese Chan
 
 **Vibe:** Still, focused, contemplative — Kenya Hara design language, MUJI visual system
 
@@ -1064,7 +1064,7 @@ background: linear-gradient(135deg, #f8cdda 0%, #1d6fa4 100%);
 - 800ms ease fade-in animation
 - Chinese: `"Noto Serif CJK SC", "Source Han Serif SC", "STSong", Georgia, serif`
 
-**Reference:** [references/japanese-zen.md](references/japanese-zen.md)
+**Reference:** [references/chinese-chan.md](references/chinese-chan.md)
 
 ---
 
@@ -1089,7 +1089,7 @@ background: linear-gradient(135deg, #f8cdda 0%, #1d6fa4 100%);
 | Enterprise Dark | system-ui / PingFang SC | system-ui | System |
 | Glassmorphism | system-ui / SF Pro | system-ui | System |
 | Neo-Brutalism | Space Grotesk | Space Grotesk | Google |
-| Japanese Zen | Noto Serif CJK SC / EB Garamond | Noto Serif CJK SC | Google |
+| Chinese Chan | Noto Serif CJK SC / EB Garamond | Noto Serif CJK SC | Google |
 | Data Story | Inter / Noto Sans SC | Inter / Noto Sans SC | System/Google |
 
 ---

@@ -4,12 +4,11 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Neon Cyber — slide-creator</title>
-  <link href="https://api.fontshare.com/v2/css?f[]=clash-display@700,800&display=swap" rel="stylesheet">
-  <link href="https://api.fontshare.com/v2/css?f[]=satoshi@400,500&display=swap" rel="stylesheet">
+  <link href="https://api.fontshare.com/v2/css?f[]=clash-display@700,800&f[]=satoshi@400,500&display=swap" rel="stylesheet">
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     html { scroll-snap-type: y mandatory; scroll-behavior: smooth; height: 100%; }
-    body { height: 100%; overflow-x: hidden; font-family: 'Satoshi', sans-serif; background: #0a0f1c; color: #e0e8f0; }
+    body { height: 100%; overflow-x: hidden; font-family: 'Satoshi', sans-serif; background: #0a0f1c; color: #ffffff; }
 
     /* GRID BACKGROUND */
     body::before {
@@ -29,8 +28,8 @@
         0deg,
         transparent,
         transparent 2px,
-        rgba(0,0,0,0.02) 2px,
-        rgba(0,0,0,0.02) 4px
+        rgba(0,255,204,0.01) 2px,
+        rgba(0,255,204,0.01) 4px
       );
     }
 
@@ -110,7 +109,7 @@
       font-family: 'Clash Display', sans-serif;
       font-size: clamp(30px, 5vw, 54px);
       font-weight: 700; line-height: 1.05; letter-spacing: -0.03em;
-      color: #e0e8f0; margin-bottom: 16px;
+      color: #ffffff; margin-bottom: 16px;
     }
     .cyber-heading .accent { color: #00ffcc; animation: neonPulse 3s ease-in-out infinite; }
     .cyber-heading .magenta { color: #ff00aa; animation: magentaPulse 3s ease-in-out infinite; }
@@ -118,7 +117,7 @@
     .body-text {
       font-family: 'Satoshi', sans-serif;
       font-size: clamp(14px, 1.8vw, 17px); font-weight: 400;
-      color: rgba(224,232,240,0.7); line-height: 1.7;
+      color: rgba(255,255,255,0.5); line-height: 1.7;
       max-width: 520px;
     }
 
@@ -153,15 +152,15 @@
     }
     .card-title {
       font-family: 'Clash Display', sans-serif;
-      font-size: clamp(15px, 2vw, 18px); font-weight: 700; color: #e0e8f0; margin-bottom: 4px;
+      font-size: clamp(15px, 2vw, 18px); font-weight: 700; color: #ffffff; margin-bottom: 4px;
     }
-    .card-body { font-size: clamp(12px, 1.5vw, 14px); color: rgba(224,232,240,0.6); line-height: 1.5; }
+    .card-body { font-size: clamp(12px, 1.5vw, 14px); color: rgba(255,255,255,0.5); line-height: 1.5; }
 
     /* CYBER GRID */
-    .cyber-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap: 8px; margin-top: 16px; }
+    .cyber-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(110px, 1fr)); gap: 8px; margin-top: 16px; }
     .cyber-grid-item {
-      border: 1px solid rgba(0,255,204,0.15); padding: 10px 12px;
-      font-size: clamp(10px, 1.3vw, 12px); font-weight: 500; color: rgba(224,232,240,0.7);
+      border: 1px solid rgba(0,255,204,0.15); padding: 9px 11px;
+      font-size: clamp(10px, 1.2vw, 11px); font-weight: 500; color: rgba(255,255,255,0.5);
       background: rgba(0,255,204,0.02); text-align: center;
       transition: all 0.2s;
     }
@@ -186,9 +185,9 @@
     }
     .step-cy-title {
       font-family: 'Clash Display', sans-serif;
-      font-size: clamp(16px, 2.2vw, 20px); font-weight: 700; color: #e0e8f0; margin-bottom: 4px;
+      font-size: clamp(16px, 2.2vw, 20px); font-weight: 700; color: #ffffff; margin-bottom: 4px;
     }
-    .step-cy-body { font-size: clamp(12px, 1.5vw, 14px); color: rgba(224,232,240,0.6); line-height: 1.5; }
+    .step-cy-body { font-size: clamp(12px, 1.5vw, 14px); color: rgba(255,255,255,0.5); line-height: 1.5; }
 
     /* ENTRANCE ANIMATION */
     .cyber-entrance {
@@ -212,7 +211,7 @@
       font-weight: 800; color: #00ffcc; line-height: 1;
       animation: neonPulse 3s ease-in-out infinite;
     }
-    .stat-label { font-size: 10px; font-weight: 500; letter-spacing: 0.15em; text-transform: uppercase; color: rgba(224,232,240,0.4); margin-top: 4px; }
+    .stat-label { font-size: 10px; font-weight: 500; letter-spacing: 0.15em; text-transform: uppercase; color: rgba(255,255,255,0.4); margin-top: 4px; }
 
     /* FEATURES */
     .feature-cyber {
@@ -227,10 +226,10 @@
     .slide.visible .feature-cyber:nth-child(4) { opacity: 1; transform: translateX(0); transition-delay: 0.24s; }
     .feat-name {
       font-family: 'Clash Display', sans-serif;
-      font-size: clamp(15px, 2vw, 18px); font-weight: 700; color: #e0e8f0;
+      font-size: clamp(15px, 2vw, 18px); font-weight: 700; color: #ffffff;
       display: flex; align-items: center; gap: 10px;
     }
-    .feat-name::before { content: '→'; color: #00ffcc; animation: neonPulse 3s ease-in-out infinite; }
+    .feat-name::before { content: '\2192'; color: #00ffcc; animation: neonPulse 3s ease-in-out infinite; }
     .feat-tag {
       font-size: 10px; font-weight: 500; letter-spacing: 0.15em; text-transform: uppercase;
       color: #00ffcc; border: 1px solid rgba(0,255,204,0.3); padding: 3px 10px;
@@ -257,7 +256,7 @@
       border: 1px solid rgba(0,255,204,0.15); padding: 20px;
       background: rgba(0,255,204,0.02);
     }
-    .install-label { font-size: 10px; letter-spacing: 0.2em; text-transform: uppercase; color: rgba(224,232,240,0.4); margin-bottom: 12px; }
+    .install-label { font-size: 10px; letter-spacing: 0.2em; text-transform: uppercase; color: rgba(255,255,255,0.4); margin-bottom: 12px; }
 
     /* CTA */
     .cta-cyber {
@@ -341,10 +340,8 @@
 
 <div id="progress-bar"></div>
 <div id="edit-zone" title="Click or press E to edit"></div>
-<div id="edit-indicator">▸ EDIT MODE · CTRL+S TO SAVE</div>
+<div id="edit-indicator">&#9656; EDIT MODE &middot; CTRL+S TO SAVE</div>
 <div id="nav-dots"></div>
-
-<!-- PARTICLES (injected by JS) -->
 
 <!-- SLIDE 1: COVER -->
 <section class="slide" data-slide="0">
@@ -361,7 +358,7 @@
     </p>
     <div class="stat-row cyber-entrance d4">
       <div class="stat-block">
-        <div class="stat-num">13</div>
+        <div class="stat-num">19</div>
         <div class="stat-label">Presets</div>
       </div>
       <div class="stat-block">
@@ -369,7 +366,7 @@
         <div class="stat-label">Dependencies</div>
       </div>
       <div class="stat-block">
-        <div class="stat-num">∞</div>
+        <div class="stat-num">&#8734;</div>
         <div class="stat-label">Slides</div>
       </div>
     </div>
@@ -387,17 +384,17 @@
     <div class="cyber-rule cyber-entrance d3"></div>
     <div class="cyber-entrance d3">
       <div class="cyber-card" style="animation-delay:0s;">
-        <span class="card-tag">→ PAIN POINT 01</span>
+        <span class="card-tag">&rarr; PAIN POINT 01</span>
         <div class="card-title">Complex toolchain</div>
         <div class="card-body">npm install, webpack config, 300MB node_modules. Just to make slides. Unacceptable.</div>
       </div>
       <div class="cyber-card" style="animation-delay:1.3s;">
-        <span class="card-tag">→ PAIN POINT 02</span>
+        <span class="card-tag">&rarr; PAIN POINT 02</span>
         <div class="card-title">Generic output</div>
-        <div class="card-body">Every AI deck looks the same — Inter font, purple gradients. Zero signal, maximum noise.</div>
+        <div class="card-body">Every AI deck looks the same&mdash;Inter font, purple gradients. Zero signal, maximum noise.</div>
       </div>
       <div class="cyber-card" style="animation-delay:2.6s;">
-        <span class="card-tag">→ PAIN POINT 03</span>
+        <span class="card-tag">&rarr; PAIN POINT 03</span>
         <div class="card-title">No ownership</div>
         <div class="card-body">Closed platforms. Export locks. Monthly fees. Your slides are hostages.</div>
       </div>
@@ -414,7 +411,7 @@
     <div class="cyber-label cyber-entrance d1">// THE INTERFACE</div>
     <h2 class="cyber-heading cyber-entrance d2">Style discovery that<br><span class="magenta">actually works</span></h2>
     <p class="body-text cyber-entrance d3">
-      You can't describe design preferences in words. slide-creator generates 3 visual previews — you react, not describe.
+      You can't describe design preferences in words. slide-creator generates 3 visual previews&mdash;you react, not describe.
     </p>
     <div class="cyber-rule cyber-entrance d3"></div>
     <div>
@@ -443,14 +440,14 @@
   </div>
 </section>
 
-<!-- SLIDE 4: 13 PRESETS -->
+<!-- SLIDE 4: 19 PRESETS -->
 <section class="slide" data-slide="3">
   <div class="corner-tl"></div>
   <div class="corner-br"></div>
   <span class="slide-num">04 / 08</span>
   <div class="content-wrapper">
     <div class="cyber-label cyber-entrance d1">// DESIGN SYSTEM</div>
-    <h2 class="cyber-heading cyber-entrance d2">13 curated styles.<br><span class="accent">No generic AI aesthetics.</span></h2>
+    <h2 class="cyber-heading cyber-entrance d2">19 curated styles.<br><span class="accent">No generic AI aesthetics.</span></h2>
     <p class="body-text cyber-entrance d3">Every preset engineered for a distinct visual language. From brutalist to botanical. Signal over noise.</p>
     <div class="cyber-grid cyber-entrance d4">
       <div class="cyber-grid-item">Bold Signal</div>
@@ -462,10 +459,16 @@
       <div class="cyber-grid-item">Pastel Geometry</div>
       <div class="cyber-grid-item">Split Pastel</div>
       <div class="cyber-grid-item">Vintage Editorial</div>
-      <div class="cyber-grid-item featured">Neon Cyber ✦</div>
-      <div class="cyber-grid-item magenta-feat">Terminal Green</div>
+      <div class="cyber-grid-item featured">Neon Cyber &#10022;</div>
+      <div class="cyber-grid-item">Terminal Green</div>
       <div class="cyber-grid-item">Swiss Modern</div>
       <div class="cyber-grid-item">Paper &amp; Ink</div>
+      <div class="cyber-grid-item">Aurora Mesh</div>
+      <div class="cyber-grid-item">Enterprise Dark</div>
+      <div class="cyber-grid-item">Glassmorphism</div>
+      <div class="cyber-grid-item magenta-feat">Neo-Brutalism</div>
+      <div class="cyber-grid-item">Japanese Zen</div>
+      <div class="cyber-grid-item">Data Story</div>
     </div>
   </div>
 </section>
@@ -484,21 +487,21 @@
         <div class="step-cy-num">01//</div>
         <div>
           <div class="step-cy-title">/SLIDE-CREATOR</div>
-          <div class="step-cy-body">Answer 4 questions. Content, mood, audience, tone. Two minutes max.</div>
+          <div class="step-cy-body">Answer a few questions. Content, mood, audience, tone. Two minutes max.</div>
         </div>
       </div>
       <div class="step-cyber">
         <div class="step-cy-num">02//</div>
         <div>
-          <div class="step-cy-title">PICK YOUR STYLE</div>
-          <div class="step-cy-body">React to 3 visual previews. Gut feeling over color theory.</div>
+          <div class="step-cy-title">PICK FROM 3 PREVIEWS</div>
+          <div class="step-cy-body">React to three visual styles rendered side by side. Gut feeling over color theory.</div>
         </div>
       </div>
       <div class="step-cyber">
         <div class="step-cy-num">03//</div>
         <div>
-          <div class="step-cy-title">OPEN YOUR PRESENTATION</div>
-          <div class="step-cy-body">Arrow keys → Space → Swipe. Any browser. Zero installs.</div>
+          <div class="step-cy-title">OPEN YOUR HTML</div>
+          <div class="step-cy-body">Arrow keys &rarr; Space &rarr; Swipe. Any browser. Zero installs.</div>
         </div>
       </div>
     </div>
@@ -516,20 +519,20 @@
     <div class="cyber-rule cyber-entrance d3"></div>
     <div>
       <div class="feature-cyber">
-        <div class="feat-name">Viewport fitting</div>
+        <div class="feat-name">Viewport Fitting</div>
         <div class="feat-tag">ADAPTIVE</div>
       </div>
       <div class="feature-cyber">
-        <div class="feat-name">Inline editing</div>
+        <div class="feat-name">Inline Editing</div>
         <div class="feat-tag mg">E KEY + CTRL+S</div>
       </div>
       <div class="feature-cyber">
-        <div class="feat-name">PPTX export</div>
+        <div class="feat-name">PPTX Export</div>
         <div class="feat-tag">ONE CLICK</div>
       </div>
       <div class="feature-cyber" style="border-bottom:1px solid rgba(0,255,204,0.08);">
-        <div class="feat-name">Two-stage workflow</div>
-        <div class="feat-tag">--PLAN → --GENERATE</div>
+        <div class="feat-name">Two-Stage Workflow</div>
+        <div class="feat-tag">--PLAN &rarr; --GENERATE</div>
       </div>
     </div>
   </div>
@@ -555,7 +558,7 @@
     </div>
     <div class="cyber-rule cyber-entrance d4"></div>
     <p class="body-text cyber-entrance d4">
-      → Free. → Open source. → MIT license. → No signup. → No tracking.
+      &rarr; Free. &rarr; Open source. &rarr; MIT license. &rarr; No signup. &rarr; No tracking.
     </p>
   </div>
 </section>
@@ -569,14 +572,14 @@
     <div class="cyber-label cyber-entrance d1">// INITIALIZE</div>
     <h2 class="cyber-heading cyber-entrance d2">Your next deck<br><span class="magenta">starts here</span></h2>
     <p class="body-text cyber-entrance d3">
-      Works with Claude Code and OpenClaw. Runs entirely in your browser. Zero installs — maximum output.
+      Works with Claude Code and OpenClaw. Runs entirely in your browser. Zero installs&mdash;maximum output.
     </p>
     <div class="cyber-entrance d3" style="margin-top:20px;">
       <div class="code-block" style="font-size:clamp(18px,3vw,28px); text-align:center; padding:20px 32px; letter-spacing:0.04em;">/slide-creator</div>
     </div>
     <div class="cyber-entrance d4">
-      <button class="cta-cyber" onclick="saveFile()">→ SAVE THIS PRESENTATION</button>
-      <a class="cta-cyber mg" href="https://github.com/kaisersong/slide-creator" target="_blank">→ VIEW ON GITHUB</a>
+      <button class="cta-cyber" onclick="saveFile()">&rarr; SAVE THIS PRESENTATION</button>
+      <a class="cta-cyber mg" href="https://github.com/kaisersong/slide-creator" target="_blank">&rarr; VIEW ON GITHUB</a>
     </div>
   </div>
 </section>
@@ -602,9 +605,7 @@
 
   const slides = document.querySelectorAll('.slide');
   const totalSlides = slides.length;
-  let currentSlide = 0;
-  let lastScrollTime = 0;
-  const scrollThrottle = 800;
+  let cur = 0;
 
   // Nav dots
   const navDotsEl = document.getElementById('nav-dots');
@@ -612,7 +613,7 @@
     const dot = document.createElement('button');
     dot.className = 'nav-dot' + (i === 0 ? ' active' : '');
     dot.setAttribute('aria-label', `Slide ${i + 1}`);
-    dot.addEventListener('click', () => goToSlide(i));
+    dot.addEventListener('click', () => goTo(i));
     navDotsEl.appendChild(dot);
   });
 
@@ -620,14 +621,15 @@
     document.querySelectorAll('.nav-dot').forEach((d, i) => d.classList.toggle('active', i === index));
     const pct = totalSlides > 1 ? (index / (totalSlides - 1)) * 100 : 100;
     document.getElementById('progress-bar').style.width = pct + '%';
-    currentSlide = index;
+    cur = index;
   }
 
-  function goToSlide(index) {
+  function goTo(index) {
     const clamped = Math.max(0, Math.min(totalSlides - 1, index));
     slides[clamped].scrollIntoView({ behavior: 'smooth' });
   }
 
+  // IntersectionObserver
   const observer = new IntersectionObserver((entries) => {
     entries.forEach(entry => {
       if (entry.isIntersecting) {
@@ -638,33 +640,36 @@
   }, { threshold: 0.5 });
   slides.forEach(s => observer.observe(s));
 
+  // Keyboard
   document.addEventListener('keydown', e => {
     if (e.ctrlKey || e.metaKey) {
       if (e.key === 's') { e.preventDefault(); saveFile(); return; }
     }
     if (document.body.classList.contains('edit-mode') && !['ArrowUp','ArrowDown','ArrowLeft','ArrowRight',' '].includes(e.key)) return;
     switch (e.key) {
-      case 'ArrowDown': case 'ArrowRight': case ' ': e.preventDefault(); goToSlide(currentSlide + 1); break;
-      case 'ArrowUp': case 'ArrowLeft': e.preventDefault(); goToSlide(currentSlide - 1); break;
+      case 'ArrowDown': case 'ArrowRight': case ' ': e.preventDefault(); goTo(cur + 1); break;
+      case 'ArrowUp': case 'ArrowLeft': e.preventDefault(); goTo(cur - 1); break;
       case 'e': case 'E': if (!document.body.classList.contains('edit-mode')) toggleEditMode(); break;
     }
   });
 
+  // Wheel — debounce-reset (NOT time throttle)
+  let wheelLocked = false, wheelTimer = null;
   document.addEventListener('wheel', e => {
-    const now = Date.now();
-    if (now - lastScrollTime < scrollThrottle) return;
-    lastScrollTime = now;
-    if (e.deltaY > 0) goToSlide(currentSlide + 1);
-    else goToSlide(currentSlide - 1);
+    clearTimeout(wheelTimer);
+    if (!wheelLocked) { wheelLocked = true; e.deltaY > 0 ? goTo(cur + 1) : goTo(cur - 1); }
+    wheelTimer = setTimeout(() => { wheelLocked = false; }, 180);
   }, { passive: true });
 
+  // Touch swipe
   let touchStartY = 0;
   document.addEventListener('touchstart', e => { touchStartY = e.touches[0].clientY; }, { passive: true });
   document.addEventListener('touchend', e => {
     const dy = touchStartY - e.changedTouches[0].clientY;
-    if (Math.abs(dy) > 50) goToSlide(dy > 0 ? currentSlide + 1 : currentSlide - 1);
+    if (Math.abs(dy) > 50) goTo(dy > 0 ? cur + 1 : cur - 1);
   }, { passive: true });
 
+  // Edit mode
   function toggleEditMode() {
     document.body.classList.toggle('edit-mode');
     const isEdit = document.body.classList.contains('edit-mode');

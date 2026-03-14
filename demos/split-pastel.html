@@ -23,7 +23,7 @@
       background: linear-gradient(to right, #f5e6dc 50%, #e4dff0 50%);
       z-index: 0;
     }
-    /* Dot pattern on right half */
+    /* Dot pattern on right half only */
     .slide::after {
       content: '';
       position: absolute; top: 0; right: 0;
@@ -121,10 +121,10 @@
     .card-body { font-size: clamp(13px, 1.7vw, 15px); color: #666; line-height: 1.5; }
 
     /* GRID */
-    .card-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 10px; width: 100%; }
+    .card-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap: 10px; width: 100%; }
     .grid-item {
       background: #fff; border-radius: 16px; padding: 12px 14px;
-      font-size: clamp(12px, 1.6vw, 13px); font-weight: 600; color: #1a1a1a;
+      font-size: clamp(11px, 1.5vw, 13px); font-weight: 600; color: #1a1a1a;
       box-shadow: 0 2px 8px rgba(0,0,0,0.06); text-align: center;
     }
 
@@ -144,7 +144,7 @@
     .step-num {
       width: 36px; height: 36px; border-radius: 50%; flex-shrink: 0;
       display: flex; align-items: center; justify-content: center;
-      font-weight: 800; font-size: 15px; color: #fff;
+      font-weight: 800; font-size: 15px;
     }
     .step-num-1 { background: #c8f0d8; color: #1a4a2e; }
     .step-num-2 { background: #d4cef5; color: #2a1a5e; }
@@ -235,7 +235,7 @@
 
 <div id="progress-bar"></div>
 <div id="edit-zone" title="Click or press E to edit"></div>
-<div id="edit-indicator">✏ Edit Mode · Ctrl+S to save</div>
+<div id="edit-indicator">&#9998; Edit Mode &middot; Ctrl+S to save</div>
 <div id="nav-dots"></div>
 
 <!-- SLIDE 1: COVER -->
@@ -244,10 +244,10 @@
   <div class="slide-content">
     <div class="eyebrow">Introducing</div>
     <h1 class="title">slide-creator</h1>
-    <p class="subtitle">Zero-dependency HTML presentations for Claude Code &amp; OpenClaw — because your ideas deserve better than a template.</p>
+    <p class="subtitle">Zero-dependency HTML presentations&mdash;because your ideas deserve better than a template.</p>
     <div class="stat-row">
       <div class="stat-pill">
-        <span class="stat-num">13</span>
+        <span class="stat-num">19</span>
         <span class="stat-label">Presets</span>
       </div>
       <div class="stat-pill">
@@ -255,7 +255,7 @@
         <span class="stat-label">Dependencies</span>
       </div>
       <div class="stat-pill">
-        <span class="stat-num">∞</span>
+        <span class="stat-num">&#8734;</span>
         <span class="stat-label">Slides</span>
       </div>
     </div>
@@ -275,17 +275,17 @@
     <h2 class="heading">Presentations shouldn't require a build system</h2>
     <div style="width:100%; display:flex; flex-direction:column; gap:12px; margin-top:8px;">
       <div class="card">
-        <div class="card-icon">📦</div>
+        <div class="card-icon">&#128230;</div>
         <div class="card-title">Complex toolchain</div>
-        <div class="card-body">npm install, webpack config, 300MB node_modules — just to make slides.</div>
+        <div class="card-body">npm install, webpack config, 300MB node_modules&mdash;just to make slides. Absurd.</div>
       </div>
       <div class="card">
-        <div class="card-icon">🎨</div>
+        <div class="card-icon">&#127912;</div>
         <div class="card-title">Generic output</div>
-        <div class="card-body">Every AI deck looks the same — Inter font, purple gradients. Zero personality.</div>
+        <div class="card-body">Every AI deck looks the same&mdash;Inter font, purple gradients. Zero personality.</div>
       </div>
       <div class="card">
-        <div class="card-icon">🔒</div>
+        <div class="card-icon">&#128274;</div>
         <div class="card-title">No ownership</div>
         <div class="card-body">Closed platforms, export locks, monthly fees. Your slides held hostage.</div>
       </div>
@@ -299,7 +299,7 @@
   <div class="slide-content">
     <div class="eyebrow">How It Feels</div>
     <h2 class="heading">Style discovery that actually works</h2>
-    <p class="body-text">You can't describe design preferences in words. slide-creator generates 3 visual previews — you react, not describe.</p>
+    <p class="body-text">You can't describe design preferences in words. slide-creator generates 3 visual previews&mdash;you react, not describe.</p>
     <div class="steps">
       <div class="step">
         <div class="step-num step-num-1">1</div>
@@ -312,7 +312,7 @@
         <div class="step-num step-num-2">2</div>
         <div class="step-text">
           <div class="step-label">Generate 3 mini previews</div>
-          <div class="step-desc">Three distinct visual styles generated instantly — side by side.</div>
+          <div class="step-desc">Three distinct visual styles generated instantly&mdash;side by side.</div>
         </div>
       </div>
       <div class="step">
@@ -326,12 +326,12 @@
   </div>
 </section>
 
-<!-- SLIDE 4: 13 PRESETS -->
+<!-- SLIDE 4: 19 PRESETS -->
 <section class="slide" data-slide="3">
   <span class="slide-num">4 of 8</span>
   <div class="slide-content">
     <div class="eyebrow">Design Library</div>
-    <h2 class="heading">13 curated styles. No generic AI aesthetics.</h2>
+    <h2 class="heading">19 curated styles. No generic AI aesthetics.</h2>
     <div class="card-grid" style="margin-top:20px;">
       <div class="grid-item">Bold Signal</div>
       <div class="grid-item">Electric Studio</div>
@@ -339,13 +339,19 @@
       <div class="grid-item">Dark Botanical</div>
       <div class="grid-item">Blue Sky</div>
       <div class="grid-item">Notebook Tabs</div>
-      <div class="grid-item" style="background:#f0d4e0;">Pastel Geometry</div>
-      <div class="grid-item" style="background:#e4dff0;">Split Pastel ✦</div>
+      <div class="grid-item">Pastel Geometry</div>
+      <div class="grid-item" style="background:#e4dff0;">Split Pastel &#10022;</div>
       <div class="grid-item">Vintage Editorial</div>
-      <div class="grid-item" style="background:#1a1a1a; color:#00ffcc;">Neon Cyber</div>
+      <div class="grid-item" style="background:#0a0f1c; color:#00ffcc;">Neon Cyber</div>
       <div class="grid-item" style="background:#1a1a1a; color:#00ff66;">Terminal Green</div>
       <div class="grid-item">Swiss Modern</div>
       <div class="grid-item" style="background:#f5f3ee;">Paper &amp; Ink</div>
+      <div class="grid-item" style="background:linear-gradient(135deg,#a8edea,#fed6e3); color:#1a1a1a;">Aurora Mesh</div>
+      <div class="grid-item" style="background:#0f1923; color:#c9d4e0;">Enterprise Dark</div>
+      <div class="grid-item" style="background:rgba(255,255,255,0.15); backdrop-filter:blur(4px); color:#1a1a1a; border:1px solid rgba(255,255,255,0.3);">Glassmorphism</div>
+      <div class="grid-item" style="background:#fff; border:3px solid #1a1a1a; color:#1a1a1a;">Neo-Brutalism</div>
+      <div class="grid-item" style="background:#f7f5f0; color:#1a1a1a;">Japanese Zen</div>
+      <div class="grid-item" style="background:#0a192f; color:#64ffda;">Data Story</div>
     </div>
   </div>
 </section>
@@ -361,21 +367,21 @@
         <div class="step-num step-num-1">1</div>
         <div class="step-text">
           <div class="step-label">/slide-creator</div>
-          <div class="step-desc">Answer 4 quick questions about your content and mood.</div>
+          <div class="step-desc">Answer a few quick questions about your content and mood.</div>
         </div>
       </div>
       <div class="step">
         <div class="step-num step-num-2">2</div>
         <div class="step-text">
-          <div class="step-label">Pick your style</div>
-          <div class="step-desc">React to 3 visual previews. No color theory knowledge required.</div>
+          <div class="step-label">Pick from 3 previews</div>
+          <div class="step-desc">React to three visual styles side by side. No color theory required.</div>
         </div>
       </div>
       <div class="step">
         <div class="step-num step-num-3">3</div>
         <div class="step-text">
-          <div class="step-label">Open your presentation</div>
-          <div class="step-desc">Arrow keys · Space · Swipe. Runs in any browser, zero installs.</div>
+          <div class="step-label">Open your HTML</div>
+          <div class="step-desc">Arrow keys &middot; Space &middot; Swipe. Runs in any browser&mdash;zero installs.</div>
         </div>
       </div>
     </div>
@@ -390,23 +396,23 @@
     <h2 class="heading">Everything you need. Nothing you don't.</h2>
     <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px; width:100%; margin-top:16px;">
       <div class="card" style="margin-bottom:0;">
-        <div class="card-icon">📐</div>
-        <div class="card-title">Viewport fitting</div>
-        <div class="card-body">Scales perfectly to any screen — laptop, TV, projector.</div>
+        <div class="card-icon">&#128208;</div>
+        <div class="card-title">Viewport Fitting</div>
+        <div class="card-body">Scales perfectly to any screen&mdash;laptop, TV, projector.</div>
       </div>
       <div class="card" style="margin-bottom:0;">
-        <div class="card-icon">✏️</div>
-        <div class="card-title">Inline editing</div>
+        <div class="card-icon">&#9998;</div>
+        <div class="card-title">Inline Editing</div>
         <div class="card-body">E key activates edit mode. Ctrl+S saves your changes instantly.</div>
       </div>
       <div class="card" style="margin-bottom:0;">
-        <div class="card-icon">📊</div>
-        <div class="card-title">PPTX export</div>
+        <div class="card-icon">&#128202;</div>
+        <div class="card-title">PPTX Export</div>
         <div class="card-body">One click to a proper PowerPoint. No copy-paste needed.</div>
       </div>
       <div class="card" style="margin-bottom:0;">
-        <div class="card-icon">⚡</div>
-        <div class="card-title">Two-stage workflow</div>
+        <div class="card-icon">&#9889;</div>
+        <div class="card-title">Two-Stage Workflow</div>
         <div class="card-body">--plan to outline, --generate to build. Think then make.</div>
       </div>
     </div>
@@ -418,7 +424,7 @@
   <span class="slide-num">7 of 8</span>
   <div class="slide-content">
     <div class="eyebrow">Get It</div>
-    <h2 class="heading">Two ways in — pick yours.</h2>
+    <h2 class="heading">Two ways in&mdash;pick yours.</h2>
     <div class="install-grid" style="margin-top:20px;">
       <div class="install-card">
         <div class="install-platform">Claude Code</div>
@@ -443,7 +449,7 @@
   <div class="slide-content">
     <div class="eyebrow">Let's Go</div>
     <h1 class="title" style="font-size: clamp(40px, 7vw, 80px);">Your next deck starts here</h1>
-    <p class="subtitle">Works with Claude Code and OpenClaw. Runs entirely in your browser. No installs — just results.</p>
+    <p class="subtitle">Works with Claude Code and OpenClaw. Runs entirely in your browser. No installs&mdash;just results.</p>
     <div class="badge-row">
       <span class="badge badge-mint">Claude Code</span>
       <span class="badge badge-lavender">OpenClaw</span>
@@ -459,9 +465,7 @@
 <script>
   const slides = document.querySelectorAll('.slide');
   const totalSlides = slides.length;
-  let currentSlide = 0;
-  let lastScrollTime = 0;
-  const scrollThrottle = 800;
+  let cur = 0;
 
   // Nav dots
   const navDotsEl = document.getElementById('nav-dots');
@@ -469,7 +473,7 @@
     const dot = document.createElement('button');
     dot.className = 'nav-dot' + (i === 0 ? ' active' : '');
     dot.setAttribute('aria-label', `Go to slide ${i + 1}`);
-    dot.addEventListener('click', () => goToSlide(i));
+    dot.addEventListener('click', () => goTo(i));
     navDotsEl.appendChild(dot);
   });
 
@@ -477,10 +481,10 @@
     document.querySelectorAll('.nav-dot').forEach((d, i) => d.classList.toggle('active', i === index));
     const pct = totalSlides > 1 ? (index / (totalSlides - 1)) * 100 : 100;
     document.getElementById('progress-bar').style.width = pct + '%';
-    currentSlide = index;
+    cur = index;
   }
 
-  function goToSlide(index) {
+  function goTo(index) {
     const clamped = Math.max(0, Math.min(totalSlides - 1, index));
     slides[clamped].scrollIntoView({ behavior: 'smooth' });
   }
@@ -504,19 +508,18 @@
     }
     if (document.body.classList.contains('edit-mode') && !['ArrowUp','ArrowDown','ArrowLeft','ArrowRight',' '].includes(e.key)) return;
     switch (e.key) {
-      case 'ArrowDown': case 'ArrowRight': case ' ': e.preventDefault(); goToSlide(currentSlide + 1); break;
-      case 'ArrowUp': case 'ArrowLeft': e.preventDefault(); goToSlide(currentSlide - 1); break;
+      case 'ArrowDown': case 'ArrowRight': case ' ': e.preventDefault(); goTo(cur + 1); break;
+      case 'ArrowUp': case 'ArrowLeft': e.preventDefault(); goTo(cur - 1); break;
       case 'e': case 'E': if (!document.body.classList.contains('edit-mode')) toggleEditMode(); break;
     }
   });
 
-  // Wheel
+  // Wheel — debounce-reset (NOT time throttle)
+  let wheelLocked = false, wheelTimer = null;
   document.addEventListener('wheel', e => {
-    const now = Date.now();
-    if (now - lastScrollTime < scrollThrottle) return;
-    lastScrollTime = now;
-    if (e.deltaY > 0) goToSlide(currentSlide + 1);
-    else goToSlide(currentSlide - 1);
+    clearTimeout(wheelTimer);
+    if (!wheelLocked) { wheelLocked = true; e.deltaY > 0 ? goTo(cur + 1) : goTo(cur - 1); }
+    wheelTimer = setTimeout(() => { wheelLocked = false; }, 180);
   }, { passive: true });
 
   // Touch swipe
@@ -524,7 +527,7 @@
   document.addEventListener('touchstart', e => { touchStartY = e.touches[0].clientY; }, { passive: true });
   document.addEventListener('touchend', e => {
     const dy = touchStartY - e.changedTouches[0].clientY;
-    if (Math.abs(dy) > 50) goToSlide(dy > 0 ? currentSlide + 1 : currentSlide - 1);
+    if (Math.abs(dy) > 50) goTo(dy > 0 ? cur + 1 : cur - 1);
   }, { passive: true });
 
   // Edit mode
@@ -532,7 +535,7 @@
     document.body.classList.toggle('edit-mode');
     const isEdit = document.body.classList.contains('edit-mode');
     if (isEdit) {
-      document.querySelectorAll('.slide-content, .heading, .title, .subtitle, .body-text, .card-title, .card-body, .step-label, .step-desc, .badge, .stat-num, .stat-label, .grid-item, .eyebrow').forEach(el => {
+      document.querySelectorAll('.eyebrow, .title, .heading, .subtitle, .body-text, .card-title, .card-body, .step-label, .step-desc, .badge, .stat-num, .stat-label, .grid-item').forEach(el => {
         el.setAttribute('contenteditable', 'true');
       });
     } else {

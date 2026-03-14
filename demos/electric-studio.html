@@ -6,7 +6,7 @@
   <title>Electric Studio — slide-creator</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;700;800&display=swap" rel="stylesheet">
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     html {
@@ -72,8 +72,8 @@
       top: 20px; left: 28px;
       font-family: 'Manrope', sans-serif;
       font-weight: 800;
-      font-size: 16px;
-      letter-spacing: 0.02em;
+      font-size: 15px;
+      letter-spacing: 0.05em;
       color: #4361ee;
       z-index: 1000;
     }
@@ -81,31 +81,18 @@
     /* Reveal animations */
     .reveal {
       opacity: 0;
-      transition: opacity 0.2s ease, transform 0.2s ease;
+      transform: translateY(18px);
+      transition: opacity 0.4s ease, transform 0.4s ease;
     }
-    .reveal-up {
-      opacity: 0;
-      transform: translateY(16px);
-      transition: opacity 0.25s ease, transform 0.25s ease;
-    }
-    .slide.visible .reveal { opacity: 1; }
-    .slide.visible .reveal-up { opacity: 1; transform: translateY(0); }
-    .slide.visible .reveal:nth-child(1),
-    .slide.visible .reveal-up:nth-child(1) { transition-delay: 0.05s; }
-    .slide.visible .reveal:nth-child(2),
-    .slide.visible .reveal-up:nth-child(2) { transition-delay: 0.12s; }
-    .slide.visible .reveal:nth-child(3),
-    .slide.visible .reveal-up:nth-child(3) { transition-delay: 0.19s; }
-    .slide.visible .reveal:nth-child(4),
-    .slide.visible .reveal-up:nth-child(4) { transition-delay: 0.26s; }
-    .slide.visible .reveal:nth-child(5),
-    .slide.visible .reveal-up:nth-child(5) { transition-delay: 0.33s; }
-    .slide.visible .reveal:nth-child(6),
-    .slide.visible .reveal-up:nth-child(6) { transition-delay: 0.40s; }
+    .slide.visible .reveal { opacity: 1; transform: translateY(0); }
+    .slide.visible .reveal:nth-child(1) { transition-delay: 0.05s; }
+    .slide.visible .reveal:nth-child(2) { transition-delay: 0.13s; }
+    .slide.visible .reveal:nth-child(3) { transition-delay: 0.21s; }
+    .slide.visible .reveal:nth-child(4) { transition-delay: 0.29s; }
 
-    /* Split layout helper */
+    /* Split layout helpers */
     .left-panel {
-      flex: 0 0 60%;
+      flex: 0 0 58%;
       display: flex;
       flex-direction: column;
       justify-content: center;
@@ -113,44 +100,44 @@
       position: relative;
     }
     .right-panel {
-      flex: 0 0 40%;
+      flex: 0 0 42%;
       display: flex;
       flex-direction: column;
       justify-content: center;
       padding: 80px 48px;
       position: relative;
     }
-    /* vertical accent bar between panels */
+    /* 4px vertical accent bar on split edge */
     .left-panel::after {
       content: '';
       position: absolute;
-      right: 0; top: 15%; bottom: 15%;
+      right: 0; top: 12%; bottom: 12%;
       width: 4px;
       background: #4361ee;
     }
-    /* horizontal split helper */
+    /* Horizontal split helpers */
     .top-panel {
-      flex: 0 0 55%;
+      flex: 0 0 52%;
       width: 100%;
       display: flex;
       flex-direction: column;
       justify-content: flex-end;
-      padding: 60px 80px 40px;
+      padding: 56px 80px 40px;
       position: relative;
     }
     .bottom-panel {
-      flex: 0 0 45%;
+      flex: 0 0 48%;
       width: 100%;
       display: flex;
       flex-direction: column;
       justify-content: flex-start;
-      padding: 40px 80px 60px;
+      padding: 40px 80px 56px;
       position: relative;
     }
     .top-panel::after {
       content: '';
       position: absolute;
-      bottom: 0; left: 10%; right: 10%;
+      bottom: 0; left: 8%; right: 8%;
       height: 4px;
       background: #4361ee;
     }
@@ -161,42 +148,47 @@
       bottom: 28px; right: 36px;
       font-size: 11px;
       font-weight: 600;
-      color: rgba(0,0,0,0.2);
+      color: rgba(0,0,0,0.18);
       letter-spacing: 0.1em;
     }
-    .slide-num-label.light { color: rgba(255,255,255,0.25); }
+    .slide-num-label.light { color: rgba(255,255,255,0.2); }
 
     /* Labels */
     .label {
       display: inline-block;
       font-size: 10px;
       font-weight: 700;
-      letter-spacing: 0.2em;
+      letter-spacing: 0.22em;
       text-transform: uppercase;
       color: #4361ee;
       margin-bottom: 16px;
     }
-    .label.white { color: rgba(255,255,255,0.55); }
+    .label.white { color: rgba(255,255,255,0.5); }
 
     /* ── SLIDE 1: Cover — left white / right dark ── */
     #slide-1 { flex-direction: row; }
     #slide-1 .left-panel { background: #ffffff; }
-    #slide-1 .right-panel { background: #0d0d1a; flex-direction: column; justify-content: space-between; padding-top: 100px; }
+    #slide-1 .right-panel {
+      background: #0a0a0a;
+      flex-direction: column;
+      justify-content: space-between;
+      padding-top: 100px;
+    }
     #slide-1 .main-title {
       font-weight: 800;
-      font-size: clamp(52px, 7vw, 88px);
-      line-height: 0.95;
-      color: #0d0d1a;
-      letter-spacing: -0.03em;
+      font-size: clamp(52px, 7vw, 90px);
+      line-height: 0.92;
+      color: #0a0a0a;
+      letter-spacing: -0.035em;
       margin-bottom: 28px;
     }
     #slide-1 .subtitle {
       font-size: 16px;
       font-weight: 400;
-      color: rgba(0,0,0,0.5);
-      line-height: 1.6;
+      color: rgba(0,0,0,0.45);
+      line-height: 1.65;
       max-width: 380px;
-      margin-bottom: 48px;
+      margin-bottom: 44px;
     }
     .badge-row { display: flex; gap: 10px; flex-wrap: wrap; }
     .badge-pill {
@@ -206,43 +198,52 @@
       font-size: 12px;
       font-weight: 600;
       color: #4361ee;
-      letter-spacing: 0.05em;
+      letter-spacing: 0.04em;
     }
+    #slide-1 .stats-block {
+      display: flex;
+      flex-direction: column;
+      gap: 28px;
+    }
+    #slide-1 .stat-item {
+      padding-bottom: 28px;
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+    }
+    #slide-1 .stat-item:last-child { border-bottom: none; padding-bottom: 0; }
     #slide-1 .right-stat {
       font-weight: 800;
-      font-size: clamp(28px, 3.5vw, 42px);
+      font-size: clamp(30px, 3.8vw, 46px);
       color: #fff;
-      line-height: 1.1;
-      margin-bottom: 8px;
+      line-height: 1.05;
+      margin-bottom: 6px;
     }
     #slide-1 .right-stat-sub {
-      font-size: 12px;
-      color: rgba(255,255,255,0.35);
-      letter-spacing: 0.1em;
+      font-size: 11px;
+      color: rgba(255,255,255,0.3);
+      letter-spacing: 0.12em;
       text-transform: uppercase;
       font-weight: 600;
     }
-    #slide-1 .stats-block { display: flex; flex-direction: column; gap: 28px; }
-    #slide-1 .stat-item { padding-bottom: 28px; border-bottom: 1px solid rgba(255,255,255,0.07); }
-    #slide-1 .stat-item:last-child { border-bottom: none; padding-bottom: 0; }
-    #slide-1 .slide-num-label { color: rgba(255,255,255,0.15); }
+    #slide-1 .slide-num-label { color: rgba(255,255,255,0.12); }
 
     /* ── SLIDE 2: Problem — horizontal split ── */
     #slide-2 { flex-direction: column; }
     #slide-2 .top-panel { background: #ffffff; }
-    #slide-2 .bottom-panel { background: #f8f9ff; flex-direction: row; gap: 0; padding: 0; }
+    #slide-2 .bottom-panel {
+      background: #f8f9ff;
+      flex-direction: row;
+      gap: 0;
+      padding: 0;
+    }
     #slide-2 h2 {
       font-weight: 800;
-      font-size: clamp(30px, 4vw, 52px);
+      font-size: clamp(28px, 3.8vw, 50px);
       line-height: 1.05;
-      color: #0d0d1a;
+      color: #0a0a0a;
       letter-spacing: -0.025em;
-      max-width: 700px;
+      max-width: 720px;
     }
-    .pain-cols {
-      display: flex;
-      flex: 1;
-    }
+    .pain-cols { display: flex; flex: 1; }
     .pain-col {
       flex: 1;
       padding: 36px 44px;
@@ -256,53 +257,49 @@
       font-size: 11px;
       font-weight: 700;
       color: #4361ee;
-      letter-spacing: 0.15em;
+      letter-spacing: 0.16em;
       margin-bottom: 12px;
     }
     .pain-head {
       font-weight: 800;
-      font-size: 18px;
-      color: #0d0d1a;
+      font-size: 17px;
+      color: #0a0a0a;
       margin-bottom: 10px;
       line-height: 1.2;
     }
     .pain-text {
       font-size: 13px;
-      color: rgba(0,0,0,0.45);
+      color: rgba(0,0,0,0.42);
       line-height: 1.65;
       font-weight: 400;
     }
-    #slide-2 .slide-num-label { color: rgba(0,0,0,0.15); }
+    #slide-2 .slide-num-label { color: rgba(0,0,0,0.12); }
 
     /* ── SLIDE 3: Show Don't Tell — left white / right dark ── */
     #slide-3 { flex-direction: row; }
     #slide-3 .left-panel { background: #ffffff; }
-    #slide-3 .right-panel { background: #0d0d1a; justify-content: center; }
+    #slide-3 .right-panel { background: #0a0a0a; justify-content: center; }
     #slide-3 h2 {
       font-weight: 800;
-      font-size: clamp(28px, 3.5vw, 44px);
+      font-size: clamp(26px, 3.2vw, 42px);
       line-height: 1.1;
-      color: #0d0d1a;
+      color: #0a0a0a;
       letter-spacing: -0.02em;
       margin-bottom: 20px;
     }
     #slide-3 .body-text {
       font-size: 15px;
-      color: rgba(0,0,0,0.5);
+      color: rgba(0,0,0,0.46);
       line-height: 1.7;
       max-width: 380px;
     }
     .steps-vertical { display: flex; flex-direction: column; gap: 28px; }
-    .step-v {
-      display: flex;
-      align-items: flex-start;
-      gap: 16px;
-    }
+    .step-v { display: flex; align-items: flex-start; gap: 16px; }
     .step-v-num {
       font-weight: 800;
       font-size: 11px;
       color: #4361ee;
-      letter-spacing: 0.15em;
+      letter-spacing: 0.16em;
       padding-top: 3px;
       flex-shrink: 0;
       width: 24px;
@@ -315,23 +312,26 @@
     }
     .step-v-sub {
       font-size: 12px;
-      color: rgba(255,255,255,0.35);
+      color: rgba(255,255,255,0.32);
       margin-top: 4px;
       font-weight: 400;
     }
-    #slide-3 .slide-num-label { color: rgba(255,255,255,0.15); }
+    #slide-3 .slide-num-label { color: rgba(255,255,255,0.12); }
 
     /* ── SLIDE 4: Presets — full white ── */
     #slide-4 { flex-direction: column; background: #fff; }
-    #slide-4 .top-section { padding: 60px 80px 32px; border-bottom: 4px solid #4361ee; }
+    #slide-4 .top-section {
+      padding: 52px 80px 28px;
+      border-bottom: 4px solid #4361ee;
+    }
     #slide-4 h2 {
       font-weight: 800;
-      font-size: clamp(24px, 3vw, 38px);
-      color: #0d0d1a;
+      font-size: clamp(22px, 2.8vw, 36px);
+      color: #0a0a0a;
       letter-spacing: -0.02em;
       max-width: 640px;
     }
-    #slide-4 .grid-section { flex: 1; padding: 36px 80px; overflow: hidden; }
+    #slide-4 .grid-section { flex: 1; padding: 28px 80px; overflow: hidden; }
     .presets-table {
       display: grid;
       grid-template-columns: repeat(4, 1fr);
@@ -340,33 +340,33 @@
     }
     .pt-cell {
       background: #fff;
-      padding: 18px 20px;
+      padding: 16px 20px;
     }
     .pt-name {
       font-weight: 700;
-      font-size: 14px;
-      color: #0d0d1a;
-      margin-bottom: 4px;
+      font-size: 13px;
+      color: #0a0a0a;
+      margin-bottom: 3px;
     }
     .pt-vibe {
-      font-size: 11px;
+      font-size: 10px;
       font-weight: 600;
-      color: rgba(0,0,0,0.3);
+      color: rgba(0,0,0,0.28);
       letter-spacing: 0.1em;
       text-transform: uppercase;
     }
     .pt-cell.featured { background: #4361ee; }
     .pt-cell.featured .pt-name { color: #fff; }
-    .pt-cell.featured .pt-vibe { color: rgba(255,255,255,0.55); }
-    #slide-4 .slide-num-label { color: rgba(0,0,0,0.15); }
+    .pt-cell.featured .pt-vibe { color: rgba(255,255,255,0.52); }
+    #slide-4 .slide-num-label { color: rgba(0,0,0,0.12); }
 
     /* ── SLIDE 5: How It Works — horizontal split ── */
     #slide-5 { flex-direction: column; }
-    #slide-5 .top-panel { background: #0d0d1a; }
+    #slide-5 .top-panel { background: #0a0a0a; }
     #slide-5 .bottom-panel { background: #fff; flex-direction: row; padding: 0; }
     #slide-5 h2 {
       font-weight: 800;
-      font-size: clamp(28px, 3.5vw, 44px);
+      font-size: clamp(26px, 3.2vw, 42px);
       line-height: 1.05;
       color: #fff;
       letter-spacing: -0.02em;
@@ -382,52 +382,52 @@
       font-weight: 800;
       font-size: 36px;
       color: #4361ee;
-      opacity: 0.3;
+      opacity: 0.28;
       line-height: 1;
       margin-bottom: 16px;
     }
     .sc-title {
       font-weight: 800;
-      font-size: 18px;
-      color: #0d0d1a;
+      font-size: 17px;
+      color: #0a0a0a;
       margin-bottom: 10px;
     }
     .sc-body {
       font-size: 13px;
-      color: rgba(0,0,0,0.45);
+      color: rgba(0,0,0,0.42);
       line-height: 1.65;
     }
-    #slide-5 .slide-num-label { color: rgba(255,255,255,0.15); }
+    #slide-5 .slide-num-label { color: rgba(255,255,255,0.12); }
 
     /* ── SLIDE 6: Features — left dark / right white ── */
     #slide-6 { flex-direction: row; }
-    #slide-6 .left-panel { background: #0d0d1a; }
+    #slide-6 .left-panel { background: #0a0a0a; }
     #slide-6 .left-panel::after { background: #4361ee; }
     #slide-6 .right-panel { background: #fff; }
     #slide-6 h2 {
       font-weight: 800;
-      font-size: clamp(28px, 3.5vw, 44px);
+      font-size: clamp(26px, 3.2vw, 42px);
       color: #fff;
       line-height: 1.1;
       letter-spacing: -0.025em;
       margin-bottom: 16px;
     }
     #slide-6 .lead {
-      font-size: 15px;
-      color: rgba(255,255,255,0.4);
-      line-height: 1.6;
+      font-size: 14px;
+      color: rgba(255,255,255,0.36);
+      line-height: 1.65;
       max-width: 320px;
     }
     .features-list { display: flex; flex-direction: column; gap: 0; }
     .feat-item {
-      padding: 22px 0;
+      padding: 20px 0;
       border-bottom: 1px solid rgba(0,0,0,0.07);
     }
     .feat-item:first-child { border-top: 1px solid rgba(0,0,0,0.07); }
     .feat-name {
       font-weight: 700;
       font-size: 15px;
-      color: #0d0d1a;
+      color: #0a0a0a;
       margin-bottom: 6px;
       display: flex;
       align-items: center;
@@ -442,45 +442,43 @@
     }
     .feat-desc {
       font-size: 13px;
-      color: rgba(0,0,0,0.45);
+      color: rgba(0,0,0,0.42);
       line-height: 1.6;
       padding-left: 16px;
     }
-    #slide-6 .slide-num-label { color: rgba(255,255,255,0.15); }
+    #slide-6 .slide-num-label { color: rgba(255,255,255,0.12); }
 
-    /* ── SLIDE 7: Install — full white with code block ── */
+    /* ── SLIDE 7: Install — left white / right tinted ── */
     #slide-7 { flex-direction: row; background: #fff; }
     #slide-7 .left-panel { background: #fff; }
     #slide-7 .left-panel::after { background: #4361ee; }
-    #slide-7 .right-panel { background: #f4f6ff; }
+    #slide-7 .right-panel { background: #f2f4ff; }
     #slide-7 h2 {
       font-weight: 800;
       font-size: clamp(28px, 3.5vw, 46px);
-      color: #0d0d1a;
+      color: #0a0a0a;
       line-height: 1.05;
       letter-spacing: -0.025em;
       margin-bottom: 12px;
     }
     #slide-7 .intro {
       font-size: 15px;
-      color: rgba(0,0,0,0.45);
+      color: rgba(0,0,0,0.4);
       margin-bottom: 36px;
     }
-    .install-option {
-      margin-bottom: 28px;
-    }
+    .install-option { margin-bottom: 28px; }
     .opt-label {
       font-size: 10px;
       font-weight: 700;
-      letter-spacing: 0.2em;
+      letter-spacing: 0.22em;
       text-transform: uppercase;
       color: #4361ee;
       margin-bottom: 10px;
     }
     .code-block {
-      background: #0d0d1a;
-      padding: 16px 20px;
-      margin-bottom: 8px;
+      background: #0a0a0a;
+      padding: 14px 18px;
+      margin-bottom: 6px;
     }
     .code-block code {
       font-family: 'Manrope', monospace;
@@ -492,59 +490,61 @@
     }
     .code-sub {
       font-size: 12px;
-      color: rgba(0,0,0,0.4);
+      color: rgba(0,0,0,0.36);
       padding-left: 4px;
     }
-    /* right panel decorative */
-    .install-visual {
-      display: flex;
-      flex-direction: column;
-      gap: 16px;
-    }
+    .install-visual { display: flex; flex-direction: column; gap: 20px; }
     .iv-label {
       font-size: 10px;
       font-weight: 700;
       letter-spacing: 0.2em;
       text-transform: uppercase;
-      color: rgba(0,0,0,0.35);
+      color: rgba(0,0,0,0.3);
       margin-bottom: 4px;
     }
     .iv-big {
       font-weight: 800;
-      font-size: 40px;
+      font-size: 44px;
       color: #4361ee;
       line-height: 1;
     }
     .iv-sub {
       font-size: 13px;
-      color: rgba(0,0,0,0.4);
+      color: rgba(0,0,0,0.36);
     }
-    .iv-divider { height: 1px; background: rgba(0,0,0,0.08); }
-    #slide-7 .slide-num-label { color: rgba(0,0,0,0.15); }
+    .iv-divider { height: 1px; background: rgba(0,0,0,0.07); }
+    #slide-7 .slide-num-label { color: rgba(0,0,0,0.12); }
 
     /* ── SLIDE 8: CTA — left dark / right blue ── */
     #slide-8 { flex-direction: row; }
-    #slide-8 .left-panel { background: #0d0d1a; flex: 0 0 55%; }
-    #slide-8 .left-panel::after { background: rgba(255,255,255,0.1); }
-    #slide-8 .right-panel { background: #4361ee; flex: 0 0 45%; justify-content: center; align-items: center; text-align: center; padding: 60px 48px; }
+    #slide-8 .left-panel { background: #0a0a0a; flex: 0 0 55%; }
+    #slide-8 .left-panel::after { background: rgba(255,255,255,0.08); }
+    #slide-8 .right-panel {
+      background: #4361ee;
+      flex: 0 0 45%;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      padding: 60px 48px;
+    }
     #slide-8 h2 {
       font-weight: 800;
-      font-size: clamp(32px, 4vw, 54px);
+      font-size: clamp(30px, 3.8vw, 52px);
       color: #fff;
       line-height: 1.05;
       letter-spacing: -0.025em;
       margin-bottom: 24px;
     }
     #slide-8 .left-sub {
-      font-size: 16px;
-      color: rgba(255,255,255,0.4);
-      line-height: 1.6;
+      font-size: 15px;
+      color: rgba(255,255,255,0.36);
+      line-height: 1.65;
       max-width: 360px;
     }
     .cta-pill {
       display: inline-block;
       font-weight: 800;
-      font-size: 28px;
+      font-size: 26px;
       color: #4361ee;
       background: #fff;
       padding: 18px 36px;
@@ -553,10 +553,10 @@
     }
     .cta-note {
       font-size: 13px;
-      color: rgba(255,255,255,0.55);
+      color: rgba(255,255,255,0.52);
       line-height: 1.6;
     }
-    #slide-8 .slide-num-label { color: rgba(255,255,255,0.15); }
+    #slide-8 .slide-num-label { color: rgba(255,255,255,0.12); }
 
     /* Edit mode */
     #edit-hotzone {
@@ -581,7 +581,10 @@
       z-index: 2001;
       display: none;
       text-transform: uppercase;
+      opacity: 0;
+      transition: opacity 0.3s;
     }
+    #edit-toggle.visible { opacity: 1; display: block; }
     body.edit-mode [contenteditable] {
       outline: 1px dashed rgba(67,97,238,0.4);
       cursor: text;
@@ -622,7 +625,7 @@
     <h1 class="main-title reveal" contenteditable="false">slide-<br>creator</h1>
     <p class="subtitle reveal" contenteditable="false">Zero-dependency HTML presentations for Claude Code and OpenClaw.</p>
     <div class="badge-row reveal">
-      <span class="badge-pill">13 Presets</span>
+      <span class="badge-pill">19 Presets</span>
       <span class="badge-pill">0 Dependencies</span>
       <span class="badge-pill">∞ Slides</span>
     </div>
@@ -630,7 +633,7 @@
   <div class="right-panel">
     <div class="stats-block reveal">
       <div class="stat-item">
-        <div class="right-stat">13</div>
+        <div class="right-stat">19</div>
         <div class="right-stat-sub">Design presets</div>
       </div>
       <div class="stat-item">
@@ -679,7 +682,7 @@
   <div class="left-panel">
     <div class="label reveal">Style Discovery</div>
     <h2 class="reveal" contenteditable="false">Style discovery that actually works</h2>
-    <p class="body-text reveal" contenteditable="false">You cannot describe design preferences in words. slide-creator generates three visual previews. You react, not describe. The clarity happens before a single line of content is written.</p>
+    <p class="body-text reveal" contenteditable="false">You cannot describe design in words. slide-creator generates 3 visual previews — you react, not describe. The clarity happens before a single line of content is written.</p>
   </div>
   <div class="right-panel">
     <div class="steps-vertical reveal">
@@ -687,20 +690,20 @@
         <span class="step-v-num">01</span>
         <div>
           <div class="step-v-text" contenteditable="false">Ask mood</div>
-          <div class="step-v-sub" contenteditable="false">A single open question about feel and purpose</div>
+          <div class="step-v-sub" contenteditable="false">One open question about feel and purpose</div>
         </div>
       </div>
       <div class="step-v">
         <span class="step-v-num">02</span>
         <div>
           <div class="step-v-text" contenteditable="false">Generate 3 mini previews</div>
-          <div class="step-v-sub" contenteditable="false">Real slide layouts, real typography, real colour</div>
+          <div class="step-v-sub" contenteditable="false">Real layouts, real typography, real colour</div>
         </div>
       </div>
       <div class="step-v">
         <span class="step-v-num">03</span>
         <div>
-          <div class="step-v-text" contenteditable="false">Pick the one that feels right</div>
+          <div class="step-v-text" contenteditable="false">Pick what feels right</div>
           <div class="step-v-sub" contenteditable="false">Point, don't describe. Content comes next.</div>
         </div>
       </div>
@@ -713,7 +716,7 @@
 <section class="slide" id="slide-4">
   <div class="top-section reveal">
     <div class="label">Design Presets</div>
-    <h2 contenteditable="false">13 curated styles. No generic AI aesthetics.</h2>
+    <h2 contenteditable="false">19 curated styles. No generic AI aesthetics.</h2>
   </div>
   <div class="grid-section reveal">
     <div class="presets-table">
@@ -730,6 +733,12 @@
       <div class="pt-cell"><div class="pt-name">Terminal Green</div><div class="pt-vibe">Developer</div></div>
       <div class="pt-cell"><div class="pt-name">Swiss Modern</div><div class="pt-vibe">Precise</div></div>
       <div class="pt-cell"><div class="pt-name">Paper &amp; Ink</div><div class="pt-vibe">Literary</div></div>
+      <div class="pt-cell"><div class="pt-name">Aurora Mesh</div><div class="pt-vibe">Vivid</div></div>
+      <div class="pt-cell"><div class="pt-name">Enterprise Dark</div><div class="pt-vibe">Corporate</div></div>
+      <div class="pt-cell"><div class="pt-name">Glassmorphism</div><div class="pt-vibe">Modern</div></div>
+      <div class="pt-cell"><div class="pt-name">Neo-Brutalism</div><div class="pt-vibe">Bold</div></div>
+      <div class="pt-cell"><div class="pt-name">Japanese Zen</div><div class="pt-vibe">Minimal</div></div>
+      <div class="pt-cell"><div class="pt-name">Data Story</div><div class="pt-vibe">Analytical</div></div>
     </div>
   </div>
   <span class="slide-num-label">04</span>
@@ -746,17 +755,17 @@
       <div class="step-col">
         <div class="sc-num">01</div>
         <div class="sc-title" contenteditable="false">/slide-creator</div>
-        <div class="sc-body" contenteditable="false">Answer 4 questions: purpose, length, content source, image preference. That is the entire intake process.</div>
+        <div class="sc-body" contenteditable="false">Answer 4 questions: purpose, length, content, images. The entire intake — nothing more.</div>
       </div>
       <div class="step-col">
         <div class="sc-num">02</div>
         <div class="sc-title" contenteditable="false">Pick your style</div>
-        <div class="sc-body" contenteditable="false">React to 3 visual previews. No need to describe design in words. Point at what resonates.</div>
+        <div class="sc-body" contenteditable="false">React to 3 visual previews. No describing design in words. Point at what resonates.</div>
       </div>
       <div class="step-col">
         <div class="sc-num">03</div>
         <div class="sc-title" contenteditable="false">Open and present</div>
-        <div class="sc-body" contenteditable="false">Arrow keys. Space bar. Swipe. Click the dots. Works in any browser, permanently.</div>
+        <div class="sc-body" contenteditable="false">Arrow keys · Space · Swipe · Click dots. Works in any browser, permanently.</div>
       </div>
     </div>
   </div>
@@ -768,25 +777,25 @@
   <div class="left-panel">
     <div class="label white reveal">Capabilities</div>
     <h2 class="reveal" contenteditable="false">Everything you need, nothing you don't</h2>
-    <p class="lead reveal" contenteditable="false">Purposefully minimal. Every feature serves the presentation, nothing serves the product team.</p>
+    <p class="lead reveal" contenteditable="false">Purposefully minimal. Every feature serves the presentation — nothing serves the product team.</p>
   </div>
   <div class="right-panel">
     <div class="features-list reveal">
       <div class="feat-item">
-        <div class="feat-name" contenteditable="false">Viewport fitting</div>
-        <div class="feat-desc" contenteditable="false">Every slide fills exactly 100vh. No scrolling. Consistent on every screen and resolution.</div>
+        <div class="feat-name" contenteditable="false">Viewport Fitting</div>
+        <div class="feat-desc" contenteditable="false">Every slide fills exactly 100vh. Content that overflows gets split — not squished.</div>
       </div>
       <div class="feat-item">
-        <div class="feat-name" contenteditable="false">Inline editing</div>
+        <div class="feat-name" contenteditable="false">Inline Editing</div>
         <div class="feat-desc" contenteditable="false">Press E, click any text, edit directly. Ctrl+S saves without touching a code editor.</div>
       </div>
       <div class="feat-item">
-        <div class="feat-name" contenteditable="false">PPTX export</div>
-        <div class="feat-desc" contenteditable="false">/slide-creator --export pptx via Playwright and your local Chrome. Real PowerPoint output.</div>
+        <div class="feat-name" contenteditable="false">PPTX Export</div>
+        <div class="feat-desc" contenteditable="false">/slide-creator --export pptx via Playwright and your local Chrome. Pixel-perfect output.</div>
       </div>
       <div class="feat-item">
-        <div class="feat-name" contenteditable="false">Two-stage workflow</div>
-        <div class="feat-desc" contenteditable="false">--plan creates the outline for review first. --generate renders the final HTML when ready.</div>
+        <div class="feat-name" contenteditable="false">Two-Stage Workflow</div>
+        <div class="feat-desc" contenteditable="false">--plan creates PLANNING.md outline first. --generate renders final HTML when ready.</div>
       </div>
     </div>
   </div>
@@ -846,7 +855,7 @@
   <div class="right-panel">
     <div class="reveal" style="text-align:center;">
       <div class="cta-pill" contenteditable="false">/slide-creator</div>
-      <div class="cta-note" contenteditable="false">Claude Code and OpenClaw<br>Runs entirely in your browser</div>
+      <div class="cta-note" contenteditable="false">Works with Claude Code and OpenClaw<br>Runs entirely in your browser</div>
     </div>
   </div>
   <span class="slide-num-label light">08</span>
@@ -854,8 +863,7 @@
 
 <script>
   const TOTAL = 8;
-  let currentSlide = 0;
-  let isScrolling = false;
+  let cur = 0;
 
   const slides = Array.from(document.querySelectorAll('.slide'));
   const progressBar = document.getElementById('progress-bar');
@@ -864,22 +872,24 @@
   slides.forEach((_, i) => {
     const dot = document.createElement('div');
     dot.className = 'dot' + (i === 0 ? ' active' : '');
-    dot.addEventListener('click', () => scrollToSlide(i));
+    dot.addEventListener('click', () => goTo(i));
     navDotsContainer.appendChild(dot);
   });
 
   function updateUI(index) {
-    currentSlide = index;
+    cur = index;
     progressBar.style.width = ((index + 1) / TOTAL * 100) + '%';
     document.querySelectorAll('.dot').forEach((d, i) => {
       d.classList.toggle('active', i === index);
     });
   }
 
-  function scrollToSlide(index) {
+  function goTo(index) {
+    if (index < 0 || index >= TOTAL) return;
     slides[index].scrollIntoView({ behavior: 'smooth' });
   }
 
+  // IntersectionObserver — adds .visible, stagger .reveal children
   const observer = new IntersectionObserver((entries) => {
     entries.forEach(entry => {
       if (entry.isIntersecting) {
@@ -891,59 +901,83 @@
 
   slides.forEach(s => observer.observe(s));
 
+  // Keyboard navigation
   document.addEventListener('keydown', (e) => {
-    if (document.body.classList.contains('edit-mode') && e.key !== 'Escape') {
+    if (document.body.classList.contains('edit-mode')) {
       if ((e.ctrlKey || e.metaKey) && e.key === 's') {
         e.preventDefault();
         saveFile();
       }
+      if (e.key === 'e' || e.key === 'E') toggleEditMode();
       return;
     }
     if (e.key === 'ArrowDown' || e.key === 'ArrowRight' || e.key === ' ') {
       e.preventDefault();
-      if (currentSlide < TOTAL - 1) scrollToSlide(currentSlide + 1);
+      goTo(cur + 1);
     } else if (e.key === 'ArrowUp' || e.key === 'ArrowLeft') {
       e.preventDefault();
-      if (currentSlide > 0) scrollToSlide(currentSlide - 1);
+      goTo(cur - 1);
     } else if (e.key === 'e' || e.key === 'E') {
       toggleEditMode();
     }
   });
 
-  let wheelTimeout = null;
-  document.addEventListener('wheel', (e) => {
-    if (isScrolling) return;
-    isScrolling = true;
-    if (e.deltaY > 0 && currentSlide < TOTAL - 1) scrollToSlide(currentSlide + 1);
-    else if (e.deltaY < 0 && currentSlide > 0) scrollToSlide(currentSlide - 1);
-    setTimeout(() => { isScrolling = false; }, 800);
+  // Wheel — debounce-reset lock (NOT time throttle)
+  let wheelLocked = false, wheelTimer = null;
+  document.addEventListener('wheel', e => {
+    clearTimeout(wheelTimer);
+    if (!wheelLocked) {
+      wheelLocked = true;
+      e.deltaY > 0 ? goTo(cur + 1) : goTo(cur - 1);
+    }
+    wheelTimer = setTimeout(() => { wheelLocked = false; }, 180);
   }, { passive: true });
 
+  // Touch swipe
   let touchStartY = 0;
   document.addEventListener('touchstart', (e) => { touchStartY = e.touches[0].clientY; }, { passive: true });
   document.addEventListener('touchend', (e) => {
     const dy = touchStartY - e.changedTouches[0].clientY;
     if (Math.abs(dy) > 50) {
-      if (dy > 0 && currentSlide < TOTAL - 1) scrollToSlide(currentSlide + 1);
-      else if (dy < 0 && currentSlide > 0) scrollToSlide(currentSlide - 1);
+      dy > 0 ? goTo(cur + 1) : goTo(cur - 1);
     }
   }, { passive: true });
 
+  // Edit mode — hotzone 80x80 top-left, button appears on hover (400ms grace)
   let editMode = false;
+  let hotzoneTimer = null;
   const editToggle = document.getElementById('edit-toggle');
   const editHotzone = document.getElementById('edit-hotzone');
 
-  editHotzone.addEventListener('click', toggleEditMode);
+  editHotzone.addEventListener('mouseenter', () => {
+    hotzoneTimer = setTimeout(() => {
+      editToggle.style.display = 'block';
+      editToggle.classList.add('visible');
+    }, 400);
+  });
+  editHotzone.addEventListener('mouseleave', () => {
+    clearTimeout(hotzoneTimer);
+    if (!editMode) {
+      editToggle.classList.remove('visible');
+      setTimeout(() => { if (!editMode) editToggle.style.display = 'none'; }, 300);
+    }
+  });
+
   editToggle.addEventListener('click', toggleEditMode);
 
   function toggleEditMode() {
     editMode = !editMode;
     document.body.classList.toggle('edit-mode', editMode);
-    editToggle.style.display = editMode ? 'block' : 'none';
+    editToggle.style.display = 'block';
+    editToggle.classList.add('visible');
     editToggle.textContent = editMode ? 'Exit Edit' : 'Edit';
     document.querySelectorAll('[contenteditable]').forEach(el => {
       el.contentEditable = editMode ? 'true' : 'false';
     });
+    if (!editMode) {
+      editToggle.classList.remove('visible');
+      setTimeout(() => { editToggle.style.display = 'none'; }, 300);
+    }
   }
 
   async function saveFile() {

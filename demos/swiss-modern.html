@@ -16,14 +16,14 @@
       color: #000000;
     }
 
-    /* Subtle grid lines */
+    /* CSS grid lines background */
     body::before {
       content: '';
       position: fixed; inset: 0; z-index: 0; pointer-events: none;
       background-image:
-        linear-gradient(rgba(0,0,0,0.02) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(0,0,0,0.02) 1px, transparent 1px);
-      background-size: 12.5vw 12.5vw;
+        linear-gradient(rgba(0,0,0,0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0,0,0,0.03) 1px, transparent 1px);
+      background-size: 40px 40px;
     }
 
     .slide {
@@ -35,7 +35,7 @@
       z-index: 1;
     }
 
-    /* Background number */
+    /* Background slide number */
     .bg-num {
       position: absolute; right: clamp(2rem, 5vw, 5rem); top: 0;
       font-family: 'Archivo', sans-serif; font-weight: 900;
@@ -44,7 +44,7 @@
       z-index: 0;
     }
 
-    /* Content layer */
+    /* Content layer above bg-num */
     .content { position: relative; z-index: 1; flex: 1; display: flex; flex-direction: column; }
 
     /* Progress bar */
@@ -76,9 +76,8 @@
     body.edit-mode [contenteditable] { outline: 1px solid rgba(255,51,0,0.3); }
     #hotzone { position: fixed; top: 0; left: 0; width: 80px; height: 80px; z-index: 999; cursor: pointer; }
 
-    /* Animations */
+    /* Animations — instant structural reveals, 0.3s precision fade for content */
     @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-    @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: none; } }
 
     .reveal { opacity: 0; }
     .slide.visible .reveal { animation: fadeIn 0.3s ease forwards; }
@@ -89,6 +88,7 @@
     .slide.visible .reveal:nth-child(5) { animation-delay: 0.25s; }
     .slide.visible .reveal:nth-child(6) { animation-delay: 0.3s; }
     .slide.visible .reveal:nth-child(7) { animation-delay: 0.35s; }
+    .slide.visible .reveal:nth-child(8) { animation-delay: 0.4s; }
 
     /* Typography */
     .eyebrow {
@@ -98,6 +98,7 @@
       color: #000; margin-bottom: clamp(1rem, 2vh, 1.5rem);
     }
 
+    /* Red accent bar — 60px × 8px, no text */
     .red-bar {
       width: 60px; height: 8px; background: #ff3300;
       margin-bottom: clamp(1rem, 2vh, 1.5rem);
@@ -128,7 +129,7 @@
       line-height: 1.65; color: #000; max-width: 56ch;
     }
 
-    /* Stats (cover) */
+    /* Stats */
     .stat-row {
       display: flex; gap: clamp(2rem, 5vw, 4rem);
       margin-top: clamp(2rem, 4vh, 3rem);
@@ -141,7 +142,7 @@
     .stat-label {
       font-family: 'Nunito', sans-serif; font-weight: 600;
       font-size: 0.65rem; letter-spacing: 0.18em;
-      text-transform: uppercase; color: #888; margin-top: 0.3rem; display: block;
+      text-transform: uppercase; color: #9a9a9a; margin-top: 0.3rem; display: block;
     }
 
     /* Pain points */
@@ -163,7 +164,7 @@
     }
     .pain-text strong { font-weight: 600; }
 
-    /* Steps (slide 3) */
+    /* Steps — slide 3 */
     .step-row {
       display: grid; grid-template-columns: 3rem 1fr;
       gap: 1.5rem; align-items: start;
@@ -192,7 +193,7 @@
     }
     .preset-item.active { border-bottom-color: #ff3300; color: #ff3300; }
 
-    /* Features (slide 6) */
+    /* Feature table — slide 6 */
     .feature-list { margin-top: clamp(1.5rem, 3vh, 2rem); }
     .feature-item {
       display: grid; grid-template-columns: 1fr 3fr;
@@ -213,7 +214,7 @@
       color: #333; line-height: 1.5;
     }
 
-    /* Install code */
+    /* Install code blocks */
     .code-block {
       background: #000; color: #fff;
       font-family: 'Courier New', monospace;
@@ -222,7 +223,6 @@
       margin: clamp(0.8rem, 1.5vh, 1.2rem) 0; line-height: 1.7;
     }
     .code-block .comment { color: #888; }
-    .code-block .cmd { color: #fff; }
 
     /* CTA */
     .cta-large {
@@ -236,7 +236,7 @@
       color: #555; margin-top: clamp(0.8rem, 1.5vh, 1.2rem);
     }
 
-    /* How it works */
+    /* How it works — 3-column grid */
     .how-grid {
       display: grid; grid-template-columns: repeat(3, 1fr);
       gap: clamp(1.5rem, 3vw, 3rem);
@@ -255,14 +255,6 @@
       font-size: clamp(0.85rem, 1.4vw, 1rem); margin-bottom: 0.4rem;
     }
     .how-desc { font-family: 'Nunito', sans-serif; font-size: clamp(0.75rem, 1.1vw, 0.88rem); color: #555; line-height: 1.55; }
-
-    /* Slide 2 two-column layout */
-    .two-col {
-      display: grid; grid-template-columns: 1fr 1fr;
-      gap: clamp(2rem, 5vw, 5rem); align-items: start;
-      margin-top: clamp(1rem, 2vh, 1.5rem);
-    }
-    @media (max-width: 700px) { .two-col { grid-template-columns: 1fr; } }
   </style>
 </head>
 <body>
@@ -293,7 +285,7 @@
     <hr class="rule-heavy reveal">
     <div class="stat-row reveal">
       <div>
-        <span class="stat-val">13</span>
+        <span class="stat-val">19</span>
         <span class="stat-label">Presets</span>
       </div>
       <div>
@@ -368,13 +360,13 @@
   </div>
 </section>
 
-<!-- SLIDE 04: 13 Presets -->
+<!-- SLIDE 04: 19 Presets -->
 <section class="slide" id="slide-3">
   <div class="bg-num">04</div>
   <div class="content">
     <div class="eyebrow reveal">Design System</div>
     <div class="red-bar reveal"></div>
-    <h2 class="reveal">13 curated styles.<br><span class="red">No generic AI aesthetics.</span></h2>
+    <h2 class="reveal">19 curated styles.<br><span class="red">No generic AI aesthetics.</span></h2>
     <hr class="rule-heavy reveal">
     <div class="preset-wrap reveal">
       <span class="preset-item">Bold Signal</span>
@@ -390,6 +382,12 @@
       <span class="preset-item">Terminal Green</span>
       <span class="preset-item active">Swiss Modern</span>
       <span class="preset-item">Paper &amp; Ink</span>
+      <span class="preset-item">Aurora Mesh</span>
+      <span class="preset-item">Enterprise Dark</span>
+      <span class="preset-item">Glassmorphism</span>
+      <span class="preset-item">Neo-Brutalism</span>
+      <span class="preset-item">Japanese Zen</span>
+      <span class="preset-item">Data Story</span>
     </div>
     <p class="reveal" style="margin-top: clamp(1.5rem,3vh,2rem); color: #555;">
       Each preset is a complete visual system — typography, layout, color, motion. No mixing, no compromise.
@@ -463,13 +461,13 @@
     <hr class="rule-heavy reveal">
     <div class="eyebrow reveal" style="margin-top: clamp(1rem,2vh,1.5rem); margin-bottom: 0.4rem;">Claude Code</div>
     <div class="code-block reveal">
-      <span class="cmd">git clone https://github.com/kaisersong/slide-creator \</span><br>
-      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="cmd">~/.claude/skills/slide-creator</span><br>
+      <span>git clone https://github.com/kaisersong/slide-creator \</span><br>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span>~/.claude/skills/slide-creator</span><br>
       <span class="comment"># restart Claude Code to activate</span>
     </div>
     <div class="eyebrow reveal" style="margin-bottom: 0.4rem;">OpenClaw</div>
     <div class="code-block reveal">
-      <span class="cmd">clawhub install html-slide-creator</span><br>
+      <span>clawhub install html-slide-creator</span><br>
       <span class="comment"># available immediately</span>
     </div>
   </div>
@@ -484,7 +482,7 @@
     <h2 class="reveal" style="font-size: clamp(1.5rem,3.5vw,2.5rem);">Run the command.</h2>
     <div class="cta-large reveal">/slide-<span style="color:#ff3300;">creator</span></div>
     <hr class="rule-heavy reveal">
-    <p class="cta-sub reveal">Works with Claude Code and OpenClaw. 13 presets. 0 dependencies. Your file, your rules.</p>
+    <p class="cta-sub reveal">Works with Claude Code and OpenClaw. 19 presets. 0 dependencies. Your file, your rules.</p>
   </div>
 </section>
 
@@ -492,8 +490,7 @@
   const slides = Array.from(document.querySelectorAll('.slide'));
   const dots = Array.from(document.querySelectorAll('.dot'));
   const progress = document.getElementById('progress');
-  let current = 0;
-  let lastScroll = 0;
+  let cur = 0;
   let editMode = false;
 
   const observer = new IntersectionObserver(entries => {
@@ -508,7 +505,7 @@
   slides.forEach(s => observer.observe(s));
 
   function updateNav(idx) {
-    current = idx;
+    cur = idx;
     dots.forEach((d, i) => d.classList.toggle('active', i === idx));
     progress.style.width = ((idx + 1) / slides.length * 100) + '%';
   }
@@ -526,17 +523,17 @@
     }
     if (editMode && e.key === 'Escape') { toggleEdit(); return; }
     if (document.activeElement.isContentEditable) return;
-    if (e.key === 'ArrowDown' || e.key === ' ') { e.preventDefault(); goTo(current + 1); }
-    if (e.key === 'ArrowUp') { e.preventDefault(); goTo(current - 1); }
+    if (e.key === 'ArrowDown' || e.key === ' ') { e.preventDefault(); goTo(cur + 1); }
+    if (e.key === 'ArrowUp') { e.preventDefault(); goTo(cur - 1); }
     if (e.key === 'e' || e.key === 'E') toggleEdit();
   });
 
+  // Wheel — debounce-reset
+  let wheelLocked = false, wheelTimer = null;
   document.addEventListener('wheel', e => {
-    const now = Date.now();
-    if (now - lastScroll < 800) return;
-    lastScroll = now;
-    if (e.deltaY > 0) goTo(current + 1);
-    else goTo(current - 1);
+    clearTimeout(wheelTimer);
+    if (!wheelLocked) { wheelLocked = true; e.deltaY > 0 ? goTo(cur + 1) : goTo(cur - 1); }
+    wheelTimer = setTimeout(() => { wheelLocked = false; }, 180);
   }, { passive: true });
 
   let touchStart = null;
@@ -544,7 +541,7 @@
   document.addEventListener('touchend', e => {
     if (!touchStart) return;
     const diff = touchStart - e.changedTouches[0].clientY;
-    if (Math.abs(diff) > 50) { diff > 0 ? goTo(current + 1) : goTo(current - 1); }
+    if (Math.abs(diff) > 50) { diff > 0 ? goTo(cur + 1) : goTo(cur - 1); }
     touchStart = null;
   });
 

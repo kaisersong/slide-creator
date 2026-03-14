@@ -32,9 +32,9 @@
 
     /* Paper card */
     .paper {
-      width: 90vw; height: 90vh;
+      width: 90vw; max-width: 1100px; height: 88vh; max-height: 680px;
       background: #f8f6f1;
-      border-radius: 6px;
+      border-radius: 8px;
       box-shadow: 0 8px 48px rgba(0,0,0,0.5), 0 2px 12px rgba(0,0,0,0.3);
       position: relative; overflow: visible;
       display: flex; align-items: stretch;
@@ -47,12 +47,12 @@
       background-image: repeating-linear-gradient(
         to bottom,
         transparent,
-        transparent 31px,
-        rgba(0,0,0,0.04) 31px,
-        rgba(0,0,0,0.04) 32px
+        transparent 27px,
+        rgba(0,0,0,0.05) 27px,
+        rgba(0,0,0,0.05) 28px
       );
-      background-position: 0 48px;
-      border-radius: 6px;
+      background-position: 0 56px;
+      border-radius: 8px;
       pointer-events: none; z-index: 1;
     }
 
@@ -61,33 +61,32 @@
       position: absolute; left: -16px; top: 0; bottom: 0;
       display: flex; flex-direction: column;
       justify-content: space-evenly; align-items: center;
-      padding: 60px 0;
+      padding: 60px 0; z-index: 10;
     }
     .hole {
-      width: 22px; height: 22px; border-radius: 50%;
+      width: 12px; height: 12px; border-radius: 50%;
       background: #2d2d2d;
-      box-shadow: inset 0 2px 4px rgba(0,0,0,0.4);
+      box-shadow: inset 0 1px 3px rgba(0,0,0,0.5);
     }
 
     /* Tabs on right edge */
     .tabs {
-      position: absolute; right: -44px; top: 0; bottom: 0;
+      position: absolute; right: -52px; top: 0; bottom: 0;
       display: flex; flex-direction: column;
       pointer-events: all;
     }
     .tab {
-      flex: 1; width: 44px;
+      flex: 1; width: 52px;
       display: flex; align-items: center; justify-content: center;
       cursor: pointer;
       writing-mode: vertical-rl;
       text-orientation: mixed;
       font-family: 'DM Sans', sans-serif; font-weight: 500;
-      font-size: 9px; letter-spacing: 0.12em;
+      font-size: clamp(8px, 0.85vw, 10px); letter-spacing: 0.14em;
       text-transform: uppercase;
-      color: rgba(26,26,26,0.55);
+      color: rgba(26,26,26,0.5);
       transition: all 0.3s ease;
       border-radius: 0 4px 4px 0;
-      position: relative;
     }
     .tab:first-child { border-radius: 0 4px 0 0; }
     .tab:last-child  { border-radius: 0 0 4px 0; }
@@ -96,17 +95,18 @@
     .tab[data-color="pink"]     { background: #f4b8c5; }
     .tab[data-color="sky"]      { background: #a8d8ea; }
     .tab[data-color="cream"]    { background: #ffe6a7; }
-    .tab[data-color="orange"]   { background: #f4c4a4; }
-    .tab[data-color="mint2"]    { background: #98d4bb; }
-    .tab[data-color="lavender2"]{ background: #c7b8ea; }
+    .tab[data-color="peach"]    { background: #f4c4a4; }
+    .tab[data-color="sage"]     { background: #b4d4b4; }
+    .tab[data-color="coral"]    { background: #f4b4a4; }
     .tab.active {
-      width: 56px; color: rgba(26,26,26,0.85); font-weight: 500;
+      width: 64px; color: rgba(26,26,26,0.9); font-weight: 500;
       box-shadow: 2px 0 8px rgba(0,0,0,0.15);
     }
+    .tab:not(.active) { opacity: 0.6; width: 52px; }
 
     /* Content area */
     .paper-content {
-      flex: 1; padding: clamp(40px, 5vw, 64px) clamp(36px, 5vw, 60px) clamp(40px, 5vw, 60px) 60px;
+      flex: 1; padding: clamp(36px, 5vw, 60px) clamp(32px, 4.5vw, 56px) clamp(36px, 5vw, 56px) 56px;
       position: relative; z-index: 2; overflow: hidden;
       display: flex; flex-direction: column; justify-content: center;
     }
@@ -129,12 +129,12 @@
     }
     h1 {
       font-family: 'Bodoni Moda', serif; font-weight: 700;
-      font-size: clamp(44px, 6.5vw, 80px);
+      font-size: clamp(44px, 6vw, 76px);
       line-height: 1.0; color: #1a1a1a; letter-spacing: -0.02em;
     }
     h2 {
       font-family: 'Bodoni Moda', serif; font-weight: 700;
-      font-size: clamp(26px, 3.5vw, 44px);
+      font-size: clamp(24px, 3.2vw, 42px);
       line-height: 1.15; color: #1a1a1a; letter-spacing: -0.01em;
     }
     .subtitle {
@@ -144,7 +144,7 @@
     }
     .body-text {
       font-family: 'DM Sans', sans-serif; font-weight: 400;
-      font-size: clamp(13px, 1.35vw, 15px);
+      font-size: clamp(13px, 1.3vw, 15px);
       line-height: 1.75; color: #444;
       margin-top: clamp(14px, 2vw, 22px);
       max-width: 560px;
@@ -157,8 +157,8 @@
 
     /* Stat badges */
     .badges {
-      display: flex; gap: clamp(12px, 2vw, 20px); flex-wrap: wrap;
-      margin-top: clamp(20px, 3vw, 32px);
+      display: flex; gap: clamp(10px, 1.5vw, 18px); flex-wrap: wrap;
+      margin-top: clamp(18px, 2.5vw, 30px);
     }
     .badge {
       padding: 10px 18px;
@@ -192,12 +192,12 @@
 
     /* Steps */
     .steps {
-      display: flex; flex-direction: column; gap: clamp(10px, 1.5vw, 16px);
-      margin-top: clamp(16px, 2.5vw, 28px);
+      display: flex; flex-direction: column; gap: clamp(8px, 1.3vw, 14px);
+      margin-top: clamp(14px, 2.2vw, 26px);
     }
     .step {
       display: flex; align-items: flex-start; gap: 16px;
-      padding: clamp(10px, 1.5vw, 14px) 0;
+      padding: clamp(9px, 1.2vw, 13px) 0;
       border-bottom: 1px solid rgba(0,0,0,0.06);
       font-family: 'DM Sans', sans-serif; font-weight: 400;
       font-size: clamp(12px, 1.3vw, 15px); color: #444; line-height: 1.5;
@@ -212,8 +212,8 @@
 
     /* Preset grid */
     .preset-grid {
-      display: flex; flex-wrap: wrap; gap: 7px;
-      margin-top: clamp(16px, 2.5vw, 28px);
+      display: flex; flex-wrap: wrap; gap: 6px;
+      margin-top: clamp(14px, 2.2vw, 26px);
     }
     .preset-tag {
       font-family: 'DM Sans', sans-serif; font-weight: 400;
@@ -227,11 +227,11 @@
     /* Feature grid */
     .feature-grid {
       display: grid; grid-template-columns: 1fr 1fr;
-      gap: clamp(10px, 1.5vw, 16px);
-      margin-top: clamp(16px, 2.5vw, 28px);
+      gap: clamp(8px, 1.3vw, 14px);
+      margin-top: clamp(14px, 2.2vw, 26px);
     }
     .feature {
-      padding: clamp(12px, 1.5vw, 18px);
+      padding: clamp(11px, 1.4vw, 16px);
       background: #f0ede6; border: 1px solid #e0ddd6;
       border-top: 3px solid;
     }
@@ -250,8 +250,8 @@
 
     /* Code block */
     .code-block {
-      background: #1a1a1a; padding: clamp(12px, 1.8vw, 18px) clamp(14px, 2vw, 22px);
-      margin-top: clamp(10px, 1.5vw, 16px);
+      background: #1a1a1a; padding: clamp(11px, 1.6vw, 16px) clamp(13px, 1.8vw, 20px);
+      margin-top: clamp(8px, 1.2vw, 14px);
       font-family: 'DM Mono', 'Fira Code', monospace;
       font-size: clamp(10px, 1.1vw, 13px);
       color: #98d4bb; line-height: 1.8; border-radius: 3px;
@@ -259,17 +259,17 @@
     .code-comment { color: #5a6560; }
     .code-label {
       font-family: 'DM Sans', sans-serif; font-weight: 500;
-      font-size: clamp(10px, 1.1vw, 13px);
-      color: #9a9590; letter-spacing: 0.06em; text-transform: uppercase;
+      font-size: clamp(10px, 1.1vw, 12px);
+      color: #9a9590; letter-spacing: 0.08em; text-transform: uppercase;
       margin-top: clamp(12px, 1.8vw, 18px); margin-bottom: 6px;
     }
 
     /* CTA */
     .cta-command {
       font-family: 'Bodoni Moda', serif; font-weight: 700;
-      font-size: clamp(36px, 5.5vw, 64px);
-      color: #1a1a1a; margin-top: clamp(16px, 2.5vw, 28px);
-      padding: clamp(12px, 2vw, 20px) clamp(20px, 3vw, 36px);
+      font-size: clamp(34px, 5vw, 60px);
+      color: #1a1a1a; margin-top: clamp(14px, 2.2vw, 26px);
+      padding: clamp(11px, 1.6vw, 18px) clamp(18px, 2.8vw, 32px);
       background: #f4b8c5; display: inline-block;
     }
     .cta-sub {
@@ -280,7 +280,7 @@
 
     /* Edit mode */
     #edit-hotzone {
-      position: fixed; top: 0; left: 0; width: 60px; height: 60px;
+      position: fixed; top: 0; left: 0; width: 80px; height: 80px;
       z-index: 200; cursor: default;
     }
     #edit-indicator {
@@ -315,7 +315,7 @@
       <p class="subtitle reveal reveal-3">Zero-dependency HTML presentations<br>for Claude Code &amp; OpenClaw</p>
       <div class="ruled-divider reveal reveal-4"></div>
       <div class="badges reveal reveal-5">
-        <div class="badge"><strong>13</strong> Presets</div>
+        <div class="badge"><strong>19</strong> Presets</div>
         <div class="badge"><strong>0</strong> Dependencies</div>
         <div class="badge"><strong>∞</strong> Slides</div>
       </div>
@@ -326,9 +326,9 @@
       <div class="tab" data-color="pink" data-index="2">DISCOVERY</div>
       <div class="tab" data-color="sky" data-index="3">PRESETS</div>
       <div class="tab" data-color="cream" data-index="4">WORKFLOW</div>
-      <div class="tab" data-color="orange" data-index="5">FEATURES</div>
-      <div class="tab" data-color="mint2" data-index="6">INSTALL</div>
-      <div class="tab" data-color="lavender2" data-index="7">START</div>
+      <div class="tab" data-color="peach" data-index="5">FEATURES</div>
+      <div class="tab" data-color="sage" data-index="6">INSTALL</div>
+      <div class="tab" data-color="coral" data-index="7">START</div>
     </div>
   </div>
 </section>
@@ -354,9 +354,9 @@
       <div class="tab" data-color="pink" data-index="2">DISCOVERY</div>
       <div class="tab" data-color="sky" data-index="3">PRESETS</div>
       <div class="tab" data-color="cream" data-index="4">WORKFLOW</div>
-      <div class="tab" data-color="orange" data-index="5">FEATURES</div>
-      <div class="tab" data-color="mint2" data-index="6">INSTALL</div>
-      <div class="tab" data-color="lavender2" data-index="7">START</div>
+      <div class="tab" data-color="peach" data-index="5">FEATURES</div>
+      <div class="tab" data-color="sage" data-index="6">INSTALL</div>
+      <div class="tab" data-color="coral" data-index="7">START</div>
     </div>
   </div>
 </section>
@@ -383,14 +383,14 @@
       <div class="tab active" data-color="pink" data-index="2">DISCOVERY</div>
       <div class="tab" data-color="sky" data-index="3">PRESETS</div>
       <div class="tab" data-color="cream" data-index="4">WORKFLOW</div>
-      <div class="tab" data-color="orange" data-index="5">FEATURES</div>
-      <div class="tab" data-color="mint2" data-index="6">INSTALL</div>
-      <div class="tab" data-color="lavender2" data-index="7">START</div>
+      <div class="tab" data-color="peach" data-index="5">FEATURES</div>
+      <div class="tab" data-color="sage" data-index="6">INSTALL</div>
+      <div class="tab" data-color="coral" data-index="7">START</div>
     </div>
   </div>
 </section>
 
-<!-- Slide 4: 13 Presets -->
+<!-- Slide 4: 19 Presets -->
 <section class="slide" id="slide-3">
   <div class="paper">
     <div class="binder-holes">
@@ -398,7 +398,7 @@
     </div>
     <div class="paper-content">
       <p class="slide-label reveal reveal-1">Design Presets</p>
-      <h2 class="reveal reveal-2">13 curated styles.<br>No generic AI aesthetics.</h2>
+      <h2 class="reveal reveal-2">19 curated styles.<br>No generic AI aesthetics.</h2>
       <div class="preset-grid reveal reveal-3">
         <span class="preset-tag">Bold Signal</span>
         <span class="preset-tag">Electric Studio</span>
@@ -413,6 +413,12 @@
         <span class="preset-tag">Terminal Green</span>
         <span class="preset-tag">Swiss Modern</span>
         <span class="preset-tag">Paper &amp; Ink</span>
+        <span class="preset-tag">Aurora Mesh</span>
+        <span class="preset-tag">Enterprise Dark</span>
+        <span class="preset-tag">Glassmorphism</span>
+        <span class="preset-tag">Neo-Brutalism</span>
+        <span class="preset-tag">Japanese Zen</span>
+        <span class="preset-tag">Data Story</span>
       </div>
     </div>
     <div class="tabs">
@@ -421,9 +427,9 @@
       <div class="tab" data-color="pink" data-index="2">DISCOVERY</div>
       <div class="tab active" data-color="sky" data-index="3">PRESETS</div>
       <div class="tab" data-color="cream" data-index="4">WORKFLOW</div>
-      <div class="tab" data-color="orange" data-index="5">FEATURES</div>
-      <div class="tab" data-color="mint2" data-index="6">INSTALL</div>
-      <div class="tab" data-color="lavender2" data-index="7">START</div>
+      <div class="tab" data-color="peach" data-index="5">FEATURES</div>
+      <div class="tab" data-color="sage" data-index="6">INSTALL</div>
+      <div class="tab" data-color="coral" data-index="7">START</div>
     </div>
   </div>
 </section>
@@ -440,7 +446,7 @@
       <div class="steps reveal reveal-3">
         <div class="step"><span class="step-num">1</span><span><strong>/slide-creator</strong> — Answer four questions: purpose, length, content, images</span></div>
         <div class="step"><span class="step-num">2</span><span><strong>Pick your style</strong> — React to three visual previews; choose the one that resonates</span></div>
-        <div class="step"><span class="step-num">3</span><span><strong>Open your presentation</strong> — Arrow keys · Space · Swipe · Click dots — navigation built in</span></div>
+        <div class="step"><span class="step-num">3</span><span><strong>Open your presentation</strong> — Arrow keys · Space · Swipe · Click tabs — navigation built in</span></div>
       </div>
     </div>
     <div class="tabs">
@@ -449,9 +455,9 @@
       <div class="tab" data-color="pink" data-index="2">DISCOVERY</div>
       <div class="tab" data-color="sky" data-index="3">PRESETS</div>
       <div class="tab active" data-color="cream" data-index="4">WORKFLOW</div>
-      <div class="tab" data-color="orange" data-index="5">FEATURES</div>
-      <div class="tab" data-color="mint2" data-index="6">INSTALL</div>
-      <div class="tab" data-color="lavender2" data-index="7">START</div>
+      <div class="tab" data-color="peach" data-index="5">FEATURES</div>
+      <div class="tab" data-color="sage" data-index="6">INSTALL</div>
+      <div class="tab" data-color="coral" data-index="7">START</div>
     </div>
   </div>
 </section>
@@ -490,9 +496,9 @@
       <div class="tab" data-color="pink" data-index="2">DISCOVERY</div>
       <div class="tab" data-color="sky" data-index="3">PRESETS</div>
       <div class="tab" data-color="cream" data-index="4">WORKFLOW</div>
-      <div class="tab active" data-color="orange" data-index="5">FEATURES</div>
-      <div class="tab" data-color="mint2" data-index="6">INSTALL</div>
-      <div class="tab" data-color="lavender2" data-index="7">START</div>
+      <div class="tab active" data-color="peach" data-index="5">FEATURES</div>
+      <div class="tab" data-color="sage" data-index="6">INSTALL</div>
+      <div class="tab" data-color="coral" data-index="7">START</div>
     </div>
   </div>
 </section>
@@ -529,9 +535,9 @@
       <div class="tab" data-color="pink" data-index="2">DISCOVERY</div>
       <div class="tab" data-color="sky" data-index="3">PRESETS</div>
       <div class="tab" data-color="cream" data-index="4">WORKFLOW</div>
-      <div class="tab" data-color="orange" data-index="5">FEATURES</div>
-      <div class="tab active" data-color="mint2" data-index="6">INSTALL</div>
-      <div class="tab" data-color="lavender2" data-index="7">START</div>
+      <div class="tab" data-color="peach" data-index="5">FEATURES</div>
+      <div class="tab active" data-color="sage" data-index="6">INSTALL</div>
+      <div class="tab" data-color="coral" data-index="7">START</div>
     </div>
   </div>
 </section>
@@ -556,9 +562,9 @@
       <div class="tab" data-color="pink" data-index="2">DISCOVERY</div>
       <div class="tab" data-color="sky" data-index="3">PRESETS</div>
       <div class="tab" data-color="cream" data-index="4">WORKFLOW</div>
-      <div class="tab" data-color="orange" data-index="5">FEATURES</div>
-      <div class="tab" data-color="mint2" data-index="6">INSTALL</div>
-      <div class="tab active" data-color="lavender2" data-index="7">START</div>
+      <div class="tab" data-color="peach" data-index="5">FEATURES</div>
+      <div class="tab" data-color="sage" data-index="6">INSTALL</div>
+      <div class="tab active" data-color="coral" data-index="7">START</div>
     </div>
   </div>
 </section>
@@ -566,9 +572,9 @@
 <script>
   const slides = document.querySelectorAll('.slide');
   const progressBar = document.getElementById('progress-bar');
-  let currentIndex = 0;
+  let cur = 0;
 
-  // IntersectionObserver
+  // IntersectionObserver — adds .visible, updates active tab
   const observer = new IntersectionObserver((entries) => {
     entries.forEach(entry => {
       if (entry.isIntersecting) {
@@ -582,44 +588,45 @@
   slides.forEach(slide => observer.observe(slide));
 
   function updateNav(idx) {
-    currentIndex = idx;
+    cur = idx;
     progressBar.style.width = ((idx + 1) / slides.length * 100) + '%';
-    // Update all tab sets
     document.querySelectorAll('.tab').forEach(tab => {
-      tab.classList.toggle('active', parseInt(tab.dataset.index) === idx);
+      const isActive = parseInt(tab.dataset.index) === idx;
+      tab.classList.toggle('active', isActive);
     });
   }
 
-  function goToSlide(idx) {
+  function goTo(idx) {
     if (idx < 0 || idx >= slides.length) return;
     slides[idx].scrollIntoView({ behavior: 'smooth' });
   }
 
-  // Tab clicks
+  // Tab clicks navigate slides
   document.querySelectorAll('.tab').forEach(tab => {
-    tab.addEventListener('click', () => goToSlide(parseInt(tab.dataset.index)));
+    tab.addEventListener('click', () => goTo(parseInt(tab.dataset.index)));
   });
 
-  // Keyboard navigation
+  // Keyboard nav
   document.addEventListener('keydown', e => {
-    if (editMode && e.key !== 'Escape') {
-      if (e.ctrlKey && e.key === 's') { e.preventDefault(); saveFile(); }
+    if (editMode) {
+      if ((e.ctrlKey || e.metaKey) && e.key === 's') { e.preventDefault(); saveFile(); }
+      if (e.key === 'Escape') toggleEditMode();
       return;
     }
-    if (e.key === 'ArrowDown' || e.key === ' ') { e.preventDefault(); goToSlide(currentIndex + 1); }
-    if (e.key === 'ArrowUp') { e.preventDefault(); goToSlide(currentIndex - 1); }
+    if (e.key === 'ArrowDown' || e.key === 'ArrowRight' || e.key === ' ') { e.preventDefault(); goTo(cur + 1); }
+    if (e.key === 'ArrowUp' || e.key === 'ArrowLeft') { e.preventDefault(); goTo(cur - 1); }
     if (e.key === 'e' || e.key === 'E') toggleEditMode();
-    if (e.key === 'Escape' && editMode) toggleEditMode();
   });
 
-  // Wheel navigation
-  let lastWheel = 0;
+  // Wheel — debounce-reset pattern
+  let wheelLocked = false, wheelTimer = null;
   document.addEventListener('wheel', e => {
-    const now = Date.now();
-    if (now - lastWheel < 800) return;
-    lastWheel = now;
-    if (e.deltaY > 0) goToSlide(currentIndex + 1);
-    else goToSlide(currentIndex - 1);
+    clearTimeout(wheelTimer);
+    if (!wheelLocked) {
+      wheelLocked = true;
+      if (e.deltaY > 0) goTo(cur + 1); else goTo(cur - 1);
+    }
+    wheelTimer = setTimeout(() => { wheelLocked = false; }, 180);
   }, { passive: true });
 
   // Touch swipe
@@ -628,8 +635,7 @@
   document.addEventListener('touchend', e => {
     const delta = touchStartY - e.changedTouches[0].clientY;
     if (Math.abs(delta) > 50) {
-      if (delta > 0) goToSlide(currentIndex + 1);
-      else goToSlide(currentIndex - 1);
+      if (delta > 0) goTo(cur + 1); else goTo(cur - 1);
     }
   }, { passive: true });
 

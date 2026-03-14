@@ -81,8 +81,7 @@
     /* Slide number */
     .slide-num {
       position: absolute; top: clamp(20px, 2.5vw, 32px); right: clamp(52px, 5vw, 68px);
-      font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 500;
-      font-size: clamp(11px, 1.1vw, 13px);
+      font-weight: 500; font-size: clamp(11px, 1.1vw, 13px);
       color: #b0bec8; letter-spacing: 0.08em; z-index: 5;
     }
 
@@ -91,15 +90,11 @@
       position: absolute; pointer-events: none; z-index: 1;
       border-radius: 50%; opacity: 0.08;
     }
-    .geo-tri {
-      position: absolute; pointer-events: none; z-index: 1;
-      width: 0; height: 0; opacity: 0.06;
-    }
 
     /* Content area */
     .card-content {
       flex: 1; padding: clamp(36px, 4.5vw, 60px) clamp(28px, 4vw, 56px);
-      padding-right: clamp(48px, 5.5vw, 72px);
+      padding-right: clamp(56px, 6vw, 80px);
       position: relative; z-index: 10;
       display: flex; flex-direction: column; justify-content: center;
     }
@@ -286,14 +281,13 @@
 
     /* Edit mode */
     #edit-hotzone {
-      position: fixed; top: 0; left: 0; width: 60px; height: 60px;
+      position: fixed; top: 0; left: 0; width: 80px; height: 80px;
       z-index: 200; cursor: default;
     }
     #edit-indicator {
       position: fixed; top: 24px; left: 50%; transform: translateX(-50%);
       background: #1a1a1a; color: #faf9f7;
-      font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 500;
-      font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase;
+      font-weight: 500; font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase;
       padding: 7px 18px; border-radius: 20px;
       opacity: 0; transition: opacity 0.3s; pointer-events: none; z-index: 200;
     }
@@ -331,18 +325,14 @@
       <p class="subtitle reveal reveal-3">Zero-dependency HTML presentations<br>for Claude Code &amp; OpenClaw</p>
       <div class="divider reveal reveal-4" style="background:linear-gradient(90deg,#f0b4d4,#9b8dc4);"></div>
       <div class="badges reveal reveal-5">
-        <div class="badge"><strong>13</strong><span>Presets</span></div>
+        <div class="badge"><strong>19</strong><span>Presets</span></div>
         <div class="badge"><strong>0</strong><span>Dependencies</span></div>
         <div class="badge"><strong>∞</strong><span>Slides</span></div>
       </div>
     </div>
     <div class="pills">
-      <div class="pill"></div>
-      <div class="pill"></div>
-      <div class="pill"></div>
-      <div class="pill"></div>
-      <div class="pill"></div>
-      <div class="pill"></div>
+      <div class="pill"></div><div class="pill"></div><div class="pill"></div>
+      <div class="pill"></div><div class="pill"></div><div class="pill"></div>
     </div>
   </div>
 </section>
@@ -356,9 +346,9 @@
       <p class="slide-label reveal reveal-1" style="color:#a8d4c4;">The Problem</p>
       <h2 class="reveal reveal-2">Presentations shouldn't<br>require a build system</h2>
       <ul class="pain-list">
-        <li class="reveal reveal-3"><div class="pill-dot"></div><span><strong>Complex toolchain:</strong> npm install, webpack config, 300MB of node_modules — before writing slide one.</span></li>
+        <li class="reveal reveal-3"><div class="pill-dot"></div><span><strong>Complex toolchain:</strong> npm install, webpack config, 300MB of node_modules — before you write slide one.</span></li>
         <li class="reveal reveal-4"><div class="pill-dot"></div><span><strong>Generic output:</strong> Every AI deck looks the same — Inter font, purple gradients, zero personality.</span></li>
-        <li class="reveal reveal-5"><div class="pill-dot"></div><span><strong>No ownership:</strong> Closed platforms, export locks, and monthly fees for content that's yours.</span></li>
+        <li class="reveal reveal-5"><div class="pill-dot"></div><span><strong>No ownership:</strong> Closed platforms, export locks, monthly fees for content that's yours.</span></li>
       </ul>
     </div>
     <div class="pills">
@@ -375,12 +365,12 @@
     <div class="card-content">
       <span class="slide-num reveal reveal-1">03 / 08</span>
       <p class="slide-label reveal reveal-1" style="color:#f0c4a0;">Discovery</p>
-      <h2 class="reveal reveal-2">Style discovery that<br>actually works</h2>
-      <p class="body-text reveal reveal-3">You can't describe design preferences in words. slide-creator generates 3 visual previews — you react, not describe. The "wow moment" arrives before a single line of content is written.</p>
+      <h2 class="reveal reveal-2">Style discovery that<br>actually works — for you</h2>
+      <p class="body-text reveal reveal-3">You can't describe design preferences in words. slide-creator generates 3 visual previews — you react, not describe. Your "wow moment" arrives before you write a single line of content.</p>
       <div class="steps reveal reveal-4">
         <div class="step"><span class="step-num">1</span><span><strong>Ask mood</strong> — Answer a few simple questions about tone and purpose</span></div>
         <div class="step"><span class="step-num">2</span><span><strong>Generate 3 mini previews</strong> — Three distinct visual directions, rendered instantly</span></div>
-        <div class="step"><span class="step-num">3</span><span><strong>Pick the one that feels right</strong> — Intuition over vocabulary, every time</span></div>
+        <div class="step"><span class="step-num">3</span><span><strong>Pick the one that feels right</strong> — Your intuition over vocabulary, every time</span></div>
       </div>
     </div>
     <div class="pills">
@@ -390,14 +380,14 @@
   </div>
 </section>
 
-<!-- Slide 4: 13 Presets -->
+<!-- Slide 4: 19 Presets -->
 <section class="slide" id="slide-3">
   <div class="card">
     <div class="geo-accent" style="width:180px;height:180px;background:#9b8dc4;top:-50px;right:100px;"></div>
     <div class="card-content">
       <span class="slide-num reveal reveal-1">04 / 08</span>
       <p class="slide-label reveal reveal-1" style="color:#9b8dc4;">Design Presets</p>
-      <h2 class="reveal reveal-2">13 curated styles.<br>No generic AI aesthetics.</h2>
+      <h2 class="reveal reveal-2">19 curated styles.<br>No generic AI aesthetics.</h2>
       <div class="preset-grid reveal reveal-3">
         <span class="preset-tag">Bold Signal</span>
         <span class="preset-tag">Electric Studio</span>
@@ -412,6 +402,12 @@
         <span class="preset-tag">Terminal Green</span>
         <span class="preset-tag">Swiss Modern</span>
         <span class="preset-tag">Paper &amp; Ink</span>
+        <span class="preset-tag">Aurora Mesh</span>
+        <span class="preset-tag">Enterprise Dark</span>
+        <span class="preset-tag">Glassmorphism</span>
+        <span class="preset-tag">Neo-Brutalism</span>
+        <span class="preset-tag">Japanese Zen</span>
+        <span class="preset-tag">Data Story</span>
       </div>
     </div>
     <div class="pills">
@@ -428,11 +424,11 @@
     <div class="card-content">
       <span class="slide-num reveal reveal-1">05 / 08</span>
       <p class="slide-label reveal reveal-1" style="color:#7bb8d4;">Workflow</p>
-      <h2 class="reveal reveal-2">From idea to presentation<br>in minutes</h2>
+      <h2 class="reveal reveal-2">From your idea to<br>a presentation in minutes</h2>
       <div class="steps reveal reveal-3">
         <div class="step"><span class="step-num">1</span><span><strong>/slide-creator</strong> — Answer four questions: purpose, length, content, images</span></div>
-        <div class="step"><span class="step-num">2</span><span><strong>Pick your style</strong> — React to three visual previews, choose the one that clicks</span></div>
-        <div class="step"><span class="step-num">3</span><span><strong>Open your presentation</strong> — Arrow keys · Space · Swipe · Click dots — all built in</span></div>
+        <div class="step"><span class="step-num">2</span><span><strong>Pick your style</strong> — React to three visual previews, choose the one that clicks for you</span></div>
+        <div class="step"><span class="step-num">3</span><span><strong>Open your presentation</strong> — Arrow keys · Space · Swipe · Dots — all navigation built in</span></div>
       </div>
     </div>
     <div class="pills">
@@ -449,27 +445,27 @@
     <div class="card-content">
       <span class="slide-num reveal reveal-1">06 / 08</span>
       <p class="slide-label reveal reveal-1" style="color:#8fad9a;">Features</p>
-      <h2 class="reveal reveal-2">Everything you need,<br>nothing you don't</h2>
+      <h2 class="reveal reveal-2">Everything you need —<br>nothing you don't</h2>
       <div class="feature-grid reveal reveal-3">
         <div class="feature">
           <div class="feature-icon"><div class="feature-dot"></div></div>
           <div class="feature-title">Viewport fitting</div>
-          <p>Every slide fits exactly 100vh. No scrolling, ever.</p>
+          <p>Every slide fits exactly 100vh. No scrolling, ever — for you or your audience.</p>
         </div>
         <div class="feature">
           <div class="feature-icon"><div class="feature-dot"></div></div>
           <div class="feature-title">Inline editing</div>
-          <p>Press E, click any text, Ctrl+S to save. No code editing.</p>
+          <p>Press E, click any text, Ctrl+S to save. No code editing needed.</p>
         </div>
         <div class="feature">
           <div class="feature-icon"><div class="feature-dot"></div></div>
           <div class="feature-title">PPTX export</div>
-          <p>--export pptx via Playwright + your Chrome instance.</p>
+          <p>--export pptx via Playwright + your Chrome. Yours to keep.</p>
         </div>
         <div class="feature">
           <div class="feature-icon"><div class="feature-dot"></div></div>
           <div class="feature-title">Two-stage workflow</div>
-          <p>--plan outlines first. --generate makes the HTML.</p>
+          <p>--plan outlines first. --generate makes the HTML. You review both.</p>
         </div>
       </div>
     </div>
@@ -487,7 +483,7 @@
     <div class="card-content">
       <span class="slide-num reveal reveal-1">07 / 08</span>
       <p class="slide-label reveal reveal-1" style="color:#f0b4d4;">Installation</p>
-      <h2 class="reveal reveal-2">Up in 30 seconds</h2>
+      <h2 class="reveal reveal-2">You're up in 30 seconds</h2>
       <div class="code-section reveal reveal-3">
         <p class="code-label">Claude Code</p>
         <div class="code-block">
@@ -520,11 +516,11 @@
     <div class="card-content">
       <span class="slide-num reveal reveal-1">08 / 08</span>
       <p class="slide-label reveal reveal-1" style="color:#f0b4d4;">Get started</p>
-      <h2 class="reveal reveal-2">Your next presentation<br>starts here</h2>
+      <h2 class="reveal reveal-2">Your next presentation<br>starts right here</h2>
       <div class="reveal reveal-3">
         <p class="cta-command">/slide-creator</p>
       </div>
-      <p class="cta-sub reveal reveal-4">Works with Claude Code and OpenClaw.<br>Runs entirely in your browser — no build step, no install.</p>
+      <p class="cta-sub reveal reveal-4">Works with Claude Code and OpenClaw.<br>Runs entirely in your browser — no build step, no install, no fuss.</p>
     </div>
     <div class="pills">
       <div class="pill"></div><div class="pill"></div><div class="pill"></div>
@@ -537,9 +533,9 @@
   const slides = document.querySelectorAll('.slide');
   const dots = document.querySelectorAll('.dot');
   const progressBar = document.getElementById('progress-bar');
-  let currentIndex = 0;
+  let cur = 0;
 
-  // IntersectionObserver
+  // IntersectionObserver — adds .visible + stagger reveal
   const observer = new IntersectionObserver((entries) => {
     entries.forEach(entry => {
       if (entry.isIntersecting) {
@@ -553,41 +549,42 @@
   slides.forEach(slide => observer.observe(slide));
 
   function updateNav(idx) {
-    currentIndex = idx;
+    cur = idx;
     dots.forEach((d, i) => d.classList.toggle('active', i === idx));
     progressBar.style.width = ((idx + 1) / slides.length * 100) + '%';
   }
 
-  function goToSlide(idx) {
+  function goTo(idx) {
     if (idx < 0 || idx >= slides.length) return;
     slides[idx].scrollIntoView({ behavior: 'smooth' });
   }
 
   // Dot clicks
   dots.forEach(dot => {
-    dot.addEventListener('click', () => goToSlide(parseInt(dot.dataset.index)));
+    dot.addEventListener('click', () => goTo(parseInt(dot.dataset.index)));
   });
 
-  // Keyboard navigation
+  // Keyboard nav
   document.addEventListener('keydown', e => {
-    if (editMode && e.key !== 'Escape') {
-      if (e.ctrlKey && e.key === 's') { e.preventDefault(); saveFile(); }
+    if (editMode) {
+      if ((e.ctrlKey || e.metaKey) && e.key === 's') { e.preventDefault(); saveFile(); }
+      if (e.key === 'Escape') toggleEditMode();
       return;
     }
-    if (e.key === 'ArrowDown' || e.key === ' ') { e.preventDefault(); goToSlide(currentIndex + 1); }
-    if (e.key === 'ArrowUp') { e.preventDefault(); goToSlide(currentIndex - 1); }
+    if (e.key === 'ArrowDown' || e.key === 'ArrowRight' || e.key === ' ') { e.preventDefault(); goTo(cur + 1); }
+    if (e.key === 'ArrowUp' || e.key === 'ArrowLeft') { e.preventDefault(); goTo(cur - 1); }
     if (e.key === 'e' || e.key === 'E') toggleEditMode();
-    if (e.key === 'Escape' && editMode) toggleEditMode();
   });
 
-  // Wheel navigation (throttled 800ms)
-  let lastWheel = 0;
+  // Wheel — debounce-reset pattern (NOT time throttle)
+  let wheelLocked = false, wheelTimer = null;
   document.addEventListener('wheel', e => {
-    const now = Date.now();
-    if (now - lastWheel < 800) return;
-    lastWheel = now;
-    if (e.deltaY > 0) goToSlide(currentIndex + 1);
-    else goToSlide(currentIndex - 1);
+    clearTimeout(wheelTimer);
+    if (!wheelLocked) {
+      wheelLocked = true;
+      if (e.deltaY > 0) goTo(cur + 1); else goTo(cur - 1);
+    }
+    wheelTimer = setTimeout(() => { wheelLocked = false; }, 180);
   }, { passive: true });
 
   // Touch swipe
@@ -596,8 +593,7 @@
   document.addEventListener('touchend', e => {
     const delta = touchStartY - e.changedTouches[0].clientY;
     if (Math.abs(delta) > 50) {
-      if (delta > 0) goToSlide(currentIndex + 1);
-      else goToSlide(currentIndex - 1);
+      if (delta > 0) goTo(cur + 1); else goTo(cur - 1);
     }
   }, { passive: true });
 

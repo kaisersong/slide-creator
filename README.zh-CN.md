@@ -2,7 +2,7 @@
 
 适用于 [Claude Code](https://claude.ai/claude-code) 和 [OpenClaw](https://openclaw.ai) 的演示文稿生成 skill，零依赖、纯浏览器运行的 HTML 幻灯片。
 
-**v1.5.0** — 新增 **Blue Sky** 设计预设（天空渐变 · 玻璃拟态卡片 · 动态光球），共 13 种风格。Blue Sky 现在附带完整 starter 模板，确保任何模型都能正确生成全套视觉效果。PPTX 导出使用 Playwright + 系统已安装的 Chrome，像素级还原，无需下载 Chromium 或 Node.js。
+**v1.5.0** — 新增 6 种设计预设（Aurora Mesh、Enterprise Dark、Glassmorphism、Neo-Brutalism、Chinese Chan、Data Story），共 19 种风格。PPTX 导出使用 Playwright + 系统已安装的 Chrome，像素级还原，无需下载 Chromium 或 Node.js。
 
 [English](README.md) | 简体中文
 
@@ -13,23 +13,44 @@
 - 🇨🇳 [slide-creator 介绍（中文）](https://kaisersong.github.io/slide-creator/demos/intro-zh.html) — 功能和使用方式介绍
 - 🇺🇸 [slide-creator intro (English)](https://kaisersong.github.io/slide-creator/demos/intro-en.html) — same in English
 
-以上两个演示使用 Blue Sky 风格。19 种设计预设全部有独立演示，使用相同内容，方便直接对比风格差异：
+以上两个演示使用 Blue Sky 风格。点击下方任意截图可打开对应的在线演示：
 
-| 预设 | 在线预览 |
-|------|---------|
-| **Bold Signal** | [打开 →](https://kaisersong.github.io/slide-creator/demos/bold-signal.html) |
-| **Electric Studio** | [打开 →](https://kaisersong.github.io/slide-creator/demos/electric-studio.html) |
-| **Creative Voltage** | [打开 →](https://kaisersong.github.io/slide-creator/demos/creative-voltage.html) |
-| **Dark Botanical** | [打开 →](https://kaisersong.github.io/slide-creator/demos/dark-botanical.html) |
-| **Blue Sky** ✨ | [打开 →](https://kaisersong.github.io/slide-creator/demos/intro-zh.html) |
-| **Notebook Tabs** | [打开 →](https://kaisersong.github.io/slide-creator/demos/notebook-tabs.html) |
-| **Pastel Geometry** | [打开 →](https://kaisersong.github.io/slide-creator/demos/pastel-geometry.html) |
-| **Split Pastel** | [打开 →](https://kaisersong.github.io/slide-creator/demos/split-pastel.html) |
-| **Vintage Editorial** | [打开 →](https://kaisersong.github.io/slide-creator/demos/vintage-editorial.html) |
-| **Neon Cyber** | [打开 →](https://kaisersong.github.io/slide-creator/demos/neon-cyber.html) |
-| **Terminal Green** | [打开 →](https://kaisersong.github.io/slide-creator/demos/terminal-green.html) |
-| **Swiss Modern** | [打开 →](https://kaisersong.github.io/slide-creator/demos/swiss-modern.html) |
-| **Paper & Ink** | [打开 →](https://kaisersong.github.io/slide-creator/demos/paper-ink.html) |
+<table>
+<tr>
+<td align="center"><a href="https://kaisersong.github.io/slide-creator/demos/intro-zh.html"><img src="demos/screenshots/blue-sky.png" width="240" alt="Blue Sky"/><br/><b>Blue Sky</b> ✨</a></td>
+<td align="center"><a href="https://kaisersong.github.io/slide-creator/demos/bold-signal.html"><img src="demos/screenshots/bold-signal.png" width="240" alt="Bold Signal"/><br/><b>Bold Signal</b></a></td>
+<td align="center"><a href="https://kaisersong.github.io/slide-creator/demos/electric-studio.html"><img src="demos/screenshots/electric-studio.png" width="240" alt="Electric Studio"/><br/><b>Electric Studio</b></a></td>
+</tr>
+<tr>
+<td align="center"><a href="https://kaisersong.github.io/slide-creator/demos/creative-voltage.html"><img src="demos/screenshots/creative-voltage.png" width="240" alt="Creative Voltage"/><br/><b>Creative Voltage</b></a></td>
+<td align="center"><a href="https://kaisersong.github.io/slide-creator/demos/dark-botanical.html"><img src="demos/screenshots/dark-botanical.png" width="240" alt="Dark Botanical"/><br/><b>Dark Botanical</b></a></td>
+<td align="center"><a href="https://kaisersong.github.io/slide-creator/demos/notebook-tabs.html"><img src="demos/screenshots/notebook-tabs.png" width="240" alt="Notebook Tabs"/><br/><b>Notebook Tabs</b></a></td>
+</tr>
+<tr>
+<td align="center"><a href="https://kaisersong.github.io/slide-creator/demos/pastel-geometry.html"><img src="demos/screenshots/pastel-geometry.png" width="240" alt="Pastel Geometry"/><br/><b>Pastel Geometry</b></a></td>
+<td align="center"><a href="https://kaisersong.github.io/slide-creator/demos/split-pastel.html"><img src="demos/screenshots/split-pastel.png" width="240" alt="Split Pastel"/><br/><b>Split Pastel</b></a></td>
+<td align="center"><a href="https://kaisersong.github.io/slide-creator/demos/vintage-editorial.html"><img src="demos/screenshots/vintage-editorial.png" width="240" alt="Vintage Editorial"/><br/><b>Vintage Editorial</b></a></td>
+</tr>
+<tr>
+<td align="center"><a href="https://kaisersong.github.io/slide-creator/demos/neon-cyber.html"><img src="demos/screenshots/neon-cyber.png" width="240" alt="Neon Cyber"/><br/><b>Neon Cyber</b></a></td>
+<td align="center"><a href="https://kaisersong.github.io/slide-creator/demos/terminal-green.html"><img src="demos/screenshots/terminal-green.png" width="240" alt="Terminal Green"/><br/><b>Terminal Green</b></a></td>
+<td align="center"><a href="https://kaisersong.github.io/slide-creator/demos/swiss-modern.html"><img src="demos/screenshots/swiss-modern.png" width="240" alt="Swiss Modern"/><br/><b>Swiss Modern</b></a></td>
+</tr>
+<tr>
+<td align="center"><a href="https://kaisersong.github.io/slide-creator/demos/paper-ink.html"><img src="demos/screenshots/paper-ink.png" width="240" alt="Paper &amp; Ink"/><br/><b>Paper &amp; Ink</b></a></td>
+<td align="center"><a href="https://kaisersong.github.io/slide-creator/demos/aurora-mesh.html"><img src="demos/screenshots/aurora-mesh.png" width="240" alt="Aurora Mesh"/><br/><b>Aurora Mesh</b></a></td>
+<td align="center"><a href="https://kaisersong.github.io/slide-creator/demos/enterprise-dark.html"><img src="demos/screenshots/enterprise-dark.png" width="240" alt="Enterprise Dark"/><br/><b>Enterprise Dark</b></a></td>
+</tr>
+<tr>
+<td align="center"><a href="https://kaisersong.github.io/slide-creator/demos/glassmorphism.html"><img src="demos/screenshots/glassmorphism.png" width="240" alt="Glassmorphism"/><br/><b>Glassmorphism</b></a></td>
+<td align="center"><a href="https://kaisersong.github.io/slide-creator/demos/neo-brutalism.html"><img src="demos/screenshots/neo-brutalism.png" width="240" alt="Neo-Brutalism"/><br/><b>Neo-Brutalism</b></a></td>
+<td align="center"><a href="https://kaisersong.github.io/slide-creator/demos/chinese-chan.html"><img src="demos/screenshots/chinese-chan.png" width="240" alt="Chinese Chan"/><br/><b>Chinese Chan</b></a></td>
+</tr>
+<tr>
+<td align="center"><a href="https://kaisersong.github.io/slide-creator/demos/data-story.html"><img src="demos/screenshots/data-story.png" width="240" alt="Data Story"/><br/><b>Data Story</b></a></td>
+<td></td><td></td>
+</tr>
+</table>
 
 所有演示文稿内容相同（均为 slide-creator 自我介绍），方便直观感受不同设计哲学的视觉差异。
 
@@ -164,6 +185,12 @@ pip install Pillow python-pptx playwright
 | **Terminal Green** | 开发者风格 | 开发工具、API |
 | **Swiss Modern** | 极简、精确 | 企业、数据 |
 | **Paper & Ink** | 文学、沉思 | 叙事演讲 |
+| **Aurora Mesh** | 鲜明、高端 SaaS | 产品发布、VC 融资路演 |
+| **Enterprise Dark** | 权威、数据驱动 | B2B、投资者 deck、战略 |
+| **Glassmorphism** | 轻盈、毛玻璃、现代 | 消费科技、品牌发布 |
+| **Neo-Brutalism** | 大胆、不妥协 | 独立开发者、创意宣言 |
+| **Chinese Chan** | 静谧、沉思 | 设计哲学、品牌、文化 |
+| **Data Story** | 清晰、精确、说服力 | 业务回顾、KPI、数据分析 |
 
 ### Blue Sky
 
