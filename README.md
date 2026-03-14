@@ -2,7 +2,7 @@
 
 A skill for [Claude Code](https://claude.ai/claude-code) and [OpenClaw](https://openclaw.ai) that generates stunning, zero-dependency HTML presentations.
 
-**v1.7** — Presenter Mode (`P` key opens speaker notes + timer + nav window), inline SVG diagram patterns (flowcharts, timelines, charts — no external libs), and a local custom theme system (`themes/` directory). 19 design presets. PPTX export via Playwright + system Chrome, no Node.js.
+**v1.8** — Presenter Mode (`P` key), notes editing panel (collapsible bottom bar in edit mode, live-syncs to presenter window), inline SVG diagrams, and a local custom theme system (`themes/` directory). 19 design presets. PPTX export via Playwright + system Chrome, no Node.js.
 
 English | [简体中文](README.zh-CN.md)
 

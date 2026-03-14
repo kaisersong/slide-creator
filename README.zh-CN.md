@@ -2,7 +2,7 @@
 
 适用于 [Claude Code](https://claude.ai/claude-code) 和 [OpenClaw](https://openclaw.ai) 的演示文稿生成 skill，零依赖、纯浏览器运行的 HTML 幻灯片。
 
-**v1.5.0** — 新增 6 种设计预设（Aurora Mesh、Enterprise Dark、Glassmorphism、Neo-Brutalism、Chinese Chan、Data Story），共 19 种风格。PPTX 导出使用 Playwright + 系统已安装的 Chrome，像素级还原，无需下载 Chromium 或 Node.js。
+**v1.8** — 演讲者模式（`P` 键打开备注 + 计时器 + 导航窗口）、备注编辑面板（编辑模式下底部可收起/展开的备注编辑栏，实时同步演讲者窗口）、内联 SVG 图表（流程图、时间轴、条形图，无需外部库）、本地自定义主题系统（`themes/` 目录）。共 19 种设计预设。PPTX 导出通过 Playwright + 系统 Chrome，无需 Node.js。
 
 [English](README.md) | 简体中文
 
@@ -61,6 +61,10 @@
 - **两阶段工作流** — `--plan` 生成大纲，`--generate` 输出幻灯片
 - **19 种设计预设** — Bold Signal、Blue Sky、Neon Cyber、Dark Botanical 等
 - **视觉风格探索** — 先生成 3 个预览，看图选风格而非描述风格
+- **演讲者模式** — 按 `P` 打开同步演讲者窗口：备注、计时器、页数、翻页导航；窗口高度随备注自动调整
+- **备注编辑面板** — 编辑模式（`E` 键）下底部出现备注栏，点击标题可收起/展开，输入实时同步到演讲者窗口
+- **内联 SVG 图表** — 流程图、时间轴、条形图、对比矩阵、组织架构图，无需 Mermaid.js 或外部库
+- **自定义主题系统** — 在 `themes/你的主题/` 放入 `reference.md` 即可添加专属设计预设；可选提供 `starter.html`
 - **Blue Sky Starter 模板** — 完整 boilerplate，任何模型都能正确实现全套视觉系统
 - **图片处理流水线** — 自动评估和处理素材（Pillow）
 - **PPT 导入** — 将 `.pptx` 文件转换为网页演示
@@ -161,10 +165,20 @@ pip install Pillow python-pptx playwright
 **编辑模式下：**
 
 - 点击幻灯片上的任意文字，直接修改
-- **`Ctrl+S`**（Mac 上为 `Cmd+S`）— 保存修改到 HTML 文件
+- **底部备注栏** — 可编辑当前幻灯片的演讲备注；点击标题栏中央横线可收起/展开，避免遮挡内容
+- **`Ctrl+S`**（Mac 上为 `Cmd+S`）— 保存所有修改（包括备注）到 HTML 文件
 - **`Escape`** — 退出编辑模式，不保存
 
 **如何开启：** 在 slide-creator 生成时，选择启用「浏览器内编辑」（默认推荐开启）。如果之前没有选，重新执行 `/slide-creator --generate` 并选择开启即可。
+
+## 演讲者模式
+
+按 **`P`** 键打开演讲者窗口，包含：
+
+- 当前幻灯片备注（可在编辑模式下实时修改并同步）
+- 已用时计时器
+- 当前页 / 总页数
+- 上一张 / 下一张导航
 
 ---
 
