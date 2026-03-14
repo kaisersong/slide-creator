@@ -247,7 +247,7 @@ Every presentation follows this structure:
                     } else if (e.key === 'p' || e.key === 'P') {
                         /* Open presenter window — same file, ?presenter param */
                         const url = location.href.split('?')[0] + '?presenter';
-                        window.open(url, 'slide-presenter', 'width=1100,menubar=no,toolbar=no,location=no');
+                        window.open(url, 'slide-presenter-' + Date.now(), 'width=1100,menubar=no,toolbar=no,location=no');
                     }
                 });
             }

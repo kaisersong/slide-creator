@@ -629,7 +629,7 @@
                     } else if (e.key === 'p' || e.key === 'P') {
                         /* Open presenter window / 打开演讲者窗口 */
                         const url = location.href.split('?')[0] + '?presenter';
-                        window.open(url, 'slide-presenter', 'width=1000,menubar=no,toolbar=no,location=no');
+                        window.open(url, 'slide-presenter-' + Date.now(), 'width=1000,menubar=no,toolbar=no,location=no');
                     } else if (e.key === 'e' || e.key === 'E') {
                         this.editor?.toggle();
                     }
