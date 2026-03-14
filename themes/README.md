@@ -48,8 +48,12 @@ If your theme has complex visual elements (animated backgrounds, special layout 
 provide a starter HTML file. Claude will read it and use it as the base instead of
 building from scratch. See `references/blue-sky-starter.html` for an example.
 
-## Examples
+## Example
 
+`_example-coral-dawn/` — a complete sample theme you can copy and adapt.
+Directories starting with `_` are ignored by slide-creator and will not appear in the preset picker.
+
+Also see:
 - `references/chinese-chan.md` — a built-in reference in the same format
 - `references/blue-sky-starter.html` — a full starter template
 

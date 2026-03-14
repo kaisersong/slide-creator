@@ -46,8 +46,12 @@ themes/
 
 如果你的主题包含复杂的视觉元素（动态背景、特殊布局系统等），可以提供一份 `starter.html`。Claude 会直接以它为基础填充内容，而不是从零开始实现视觉系统。可参考 `references/blue-sky-starter.html`。
 
-## 示例参考
+## 样板案例
 
+`_example-coral-dawn/` — 一份完整的样板主题，可以直接复制修改。
+以 `_` 开头的目录会被 slide-creator 自动忽略，不会出现在预设列表中。
+
+也可参考：
 - `references/chinese-chan.md` — 内置风格，格式完全相同
 - `references/blue-sky-starter.html` — 完整的 starter 模板示例
 

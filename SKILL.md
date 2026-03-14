@@ -97,7 +97,8 @@ Ask via AskUserQuestion:
 - **"I know what I want"** → show preset picker (Bold Signal / Dark Botanical / Notebook Tabs / Pastel Geometry — with "Other" option for full list)
 
 **Before showing presets, silently scan `<skill-path>/themes/` for subdirectories.**
-Each subdirectory with a `reference.md` is a custom theme. Append them to the preset list as `Custom: <folder-name>` entries. If any custom themes exist, mention them first: "I also found N custom theme(s) in your themes/ folder."
+Skip any directory whose name starts with `_` (those are examples/templates, not real themes).
+Each remaining subdirectory with a `reference.md` is a custom theme. Append them to the preset list as `Custom: <folder-name>` entries. If any custom themes exist, mention them first: "I also found N custom theme(s) in your themes/ folder."
 
 **Available Presets** (full details in [STYLE-DESC.md](STYLE-DESC.md)):
 
