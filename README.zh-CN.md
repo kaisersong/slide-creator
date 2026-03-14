@@ -1,5 +1,7 @@
 # slide-creator
 
+> 很多人有很好的内容，却无法有效地展现。虽然大模型现在能帮你写 PPT，但输出效果不稳定，多次抽卡又很头疼。Slide-Creator 帮助你简单、稳定地输出演示文稿——根据场景选择喜欢的风格即可，其他的就让大模型去干，喝杯咖啡吧 ☕
+
 适用于 [Claude Code](https://claude.ai/claude-code) 和 [OpenClaw](https://openclaw.ai) 的演示文稿生成 skill，零依赖、纯浏览器运行的 HTML 幻灯片。
 
 **v1.8** — 演讲者模式（`P` 键打开备注 + 计时器 + 导航窗口）、备注编辑面板（编辑模式下底部可收起/展开的备注编辑栏，实时同步演讲者窗口）、内联 SVG 图表（流程图、时间轴、条形图，无需外部库）、本地自定义主题系统（`themes/` 目录）。共 19 种设计预设。PPTX 导出通过 Playwright + 系统 Chrome，无需 Node.js。
