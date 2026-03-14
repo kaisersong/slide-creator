@@ -606,14 +606,15 @@ const orbPositions = [
     if (e.key === 'End')  go(TOTAL - 1);
   });
 
-  /* Wheel */
-  let wheelCooldown = 0;
+  /* Wheel — debounce-reset lock.
+     Inertia events keep resetting the 180ms timer; the lock releases only after
+     the gesture truly ends. Prevents trackpad inertia from double-navigating. */
+  let wheelLocked = false, wheelTimer = null;
   document.addEventListener('wheel', e => {
-    const now = Date.now();
-    if (now - wheelCooldown < 600) return;
-    wheelCooldown = now;
-    e.deltaY > 0 ? go(cur + 1) : go(cur - 1);
-  });
+    clearTimeout(wheelTimer);
+    if (!wheelLocked) { wheelLocked = true; e.deltaY > 0 ? go(cur + 1) : go(cur - 1); }
+    wheelTimer = setTimeout(() => { wheelLocked = false; }, 180);
+  }, { passive: true });
 
   /* Touch swipe */
   let touchStartX = 0;

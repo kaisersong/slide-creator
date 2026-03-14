@@ -545,11 +545,12 @@ const orbPositions = [
     if(e.key==='End')go(TOTAL-1);
   });
 
-  let wt=0;
-  document.addEventListener('wheel',e=>{
-    const now=Date.now();if(now-wt<600)return;wt=now;
-    e.deltaY>0?go(cur+1):go(cur-1);
-  });
+  let wheelLocked = false, wheelTimer = null;
+  document.addEventListener('wheel', e => {
+    clearTimeout(wheelTimer);
+    if (!wheelLocked) { wheelLocked = true; e.deltaY > 0 ? go(cur+1) : go(cur-1); }
+    wheelTimer = setTimeout(() => { wheelLocked = false; }, 180);
+  }, { passive: true });
 
   let tx=0;
   document.addEventListener('touchstart',e=>{tx=e.touches[0].clientX;},{passive:true});
