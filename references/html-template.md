@@ -247,7 +247,7 @@ Every presentation follows this structure:
                     } else if (e.key === 'p' || e.key === 'P') {
                         /* Open presenter window — same file, ?presenter param */
                         const url = location.href.split('?')[0] + '?presenter';
-                        window.open(url, 'slide-presenter', 'width=1100,height=680,menubar=no,toolbar=no,location=no');
+                        window.open(url, 'slide-presenter', 'width=1100,menubar=no,toolbar=no,location=no');
                     }
                 });
             }
@@ -324,57 +324,69 @@ Every presentation follows this structure:
             document.body.innerHTML = `
             <style>
                 * { box-sizing: border-box; margin: 0; }
-                body { background: #111; color: #fff; font-family: system-ui, sans-serif; height: 100vh; overflow: hidden; }
-                #pv { display: grid; grid-template-rows: 1fr 72px; height: 100vh; padding: 1.25rem; gap: 1rem; }
-                #pv-main { display: grid; grid-template-columns: 1fr 300px; gap: 1.25rem; min-height: 0; }
-                .pv-panel { background: #1e1e1e; border-radius: 12px; padding: 1.5rem; overflow: hidden; }
-                #pv-label { font-size: 0.65rem; letter-spacing: 0.18em; text-transform: uppercase; color: #555; margin-bottom: 0.75rem; }
-                #pv-notes { font-size: 1.1rem; line-height: 1.85; color: #d0d0d0; overflow-y: auto; height: calc(100% - 2rem); }
+                body { background: #111; color: #fff; font-family: system-ui, sans-serif; }
+                #pv { display: grid; grid-template-columns: 1fr 220px; gap: 1rem; padding: 1.25rem; align-items: start; }
+                .pv-panel { background: #1e1e1e; border-radius: 12px; padding: 1.25rem; }
+                #pv-label { font-size: 0.6rem; letter-spacing: 0.18em; text-transform: uppercase; color: #555; margin-bottom: 0.6rem; }
+                #pv-notes { font-size: 1.05rem; line-height: 1.85; color: #d0d0d0; }
                 #pv-right { display: flex; flex-direction: column; gap: 1rem; }
-                #pv-counter { text-align: center; display: flex; flex-direction: column; align-items: center; justify-content: center; flex: 1; }
-                #pv-num { font-size: 3.5rem; font-weight: 700; font-variant-numeric: tabular-nums; line-height: 1; }
-                #pv-of { color: #555; font-size: 0.85rem; margin-top: 0.4rem; }
-                #pv-timer-box { text-align: center; padding: 1.25rem; }
-                #pv-timer-label { font-size: 0.65rem; letter-spacing: 0.18em; text-transform: uppercase; color: #555; margin-bottom: 0.4rem; }
-                #pv-timer { font-size: 2rem; font-weight: 700; font-family: monospace; font-variant-numeric: tabular-nums; }
-                #pv-controls { display: flex; align-items: center; justify-content: center; gap: 1rem; }
-                .pv-btn { padding: 0 2rem; height: 48px; border-radius: 8px; font-size: 1rem; cursor: pointer; border: 1px solid #333; background: #1e1e1e; color: #fff; transition: background 0.15s; }
-                .pv-btn:hover { background: #2a2a2a; }
-                .pv-btn.primary { background: #4f46e5; border-color: #4f46e5; }
-                .pv-btn.primary:hover { background: #4338ca; }
+                #pv-nav { display: flex; align-items: center; justify-content: space-between; gap: 0.5rem; }
+                .pv-arrow { width: 32px; height: 32px; border-radius: 6px; border: 1px solid #333; background: #2a2a2a; color: #aaa; font-size: 1rem; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: background 0.15s, color 0.15s; flex-shrink: 0; }
+                .pv-arrow:hover { background: #383838; color: #fff; }
+                #pv-counter { text-align: center; flex: 1; }
+                #pv-num { font-size: 1.6rem; font-weight: 700; font-variant-numeric: tabular-nums; line-height: 1; }
+                #pv-of { color: #555; font-size: 0.75rem; margin-top: 0.2rem; }
+                #pv-timer-box { text-align: center; }
+                #pv-timer-label { font-size: 0.6rem; letter-spacing: 0.18em; text-transform: uppercase; color: #555; margin-bottom: 0.3rem; }
+                #pv-timer { font-size: 1.5rem; font-weight: 700; font-family: monospace; font-variant-numeric: tabular-nums; }
             </style>
             <div id="pv">
-                <div id="pv-main">
-                    <div class="pv-panel">
-                        <div id="pv-label">Speaker Notes</div>
-                        <div id="pv-notes">Waiting for main window…</div>
-                    </div>
-                    <div id="pv-right">
-                        <div class="pv-panel" id="pv-counter">
-                            <div id="pv-num">—</div>
-                            <div id="pv-of">/ — slides</div>
-                        </div>
-                        <div class="pv-panel" id="pv-timer-box">
-                            <div id="pv-timer-label">Elapsed</div>
-                            <div id="pv-timer">0:00</div>
-                        </div>
-                    </div>
+                <div class="pv-panel">
+                    <div id="pv-label">Speaker Notes</div>
+                    <div id="pv-notes">Waiting for main window…</div>
                 </div>
-                <div id="pv-controls">
-                    <button class="pv-btn" id="pv-prev">← Prev</button>
-                    <button class="pv-btn primary" id="pv-next">Next →</button>
+                <div id="pv-right">
+                    <div class="pv-panel">
+                        <div id="pv-nav">
+                            <button class="pv-arrow" id="pv-prev">←</button>
+                            <div id="pv-counter">
+                                <div id="pv-num">—</div>
+                                <div id="pv-of">/ —</div>
+                            </div>
+                            <button class="pv-arrow" id="pv-next">→</button>
+                        </div>
+                    </div>
+                    <div class="pv-panel" id="pv-timer-box">
+                        <div id="pv-timer-label">Elapsed</div>
+                        <div id="pv-timer">0:00</div>
+                    </div>
                 </div>
             </div>`;
 
             const ch = new BroadcastChannel('slide-creator-presenter');
             let startTime = null;
 
+            /* ResizeObserver fires whenever #pv height changes (content update or text rewrap).
+               Only HEIGHT is changed — width stays fixed — so no infinite loop. */
+            const pv = document.getElementById('pv');
+            let lastH = 0, roTimer = null;
+            new ResizeObserver(() => {
+                clearTimeout(roTimer);
+                roTimer = setTimeout(() => {
+                    const h = Math.ceil(pv.getBoundingClientRect().height);
+                    if (h === lastH) return;
+                    lastH = h;
+                    const chrome = window.outerHeight - window.innerHeight;
+                    window.resizeTo(window.outerWidth, Math.max(260, h + chrome + 4));
+                }, 40);
+            }).observe(pv);
+
             ch.addEventListener('message', e => {
                 if (e.data.type !== 'state') return;
                 if (!startTime) startTime = Date.now();
                 document.getElementById('pv-notes').textContent = e.data.notes || '(no notes for this slide)';
                 document.getElementById('pv-num').textContent = e.data.index + 1;
-                document.getElementById('pv-of').textContent = `/ ${e.data.total} slides`;
+                document.getElementById('pv-of').textContent = `/ ${e.data.total}`;
             });
 
             /* Request current state from main window */
@@ -388,7 +400,7 @@ Every presentation follows this structure:
                     `${Math.floor(s / 60)}:${String(s % 60).padStart(2, '0')}`;
             }, 1000);
 
-            /* Nav buttons send commands to main window */
+            /* Nav buttons and keyboard */
             document.getElementById('pv-prev').addEventListener('click', () => ch.postMessage({ type: 'nav-prev' }));
             document.getElementById('pv-next').addEventListener('click', () => ch.postMessage({ type: 'nav-next' }));
             document.addEventListener('keydown', e => {
