@@ -96,6 +96,9 @@ Ask via AskUserQuestion:
 - **"Show me options"** → ask mood question → generate 3 previews based on answer
 - **"I know what I want"** → show preset picker (Bold Signal / Dark Botanical / Notebook Tabs / Pastel Geometry — with "Other" option for full list)
 
+**Before showing presets, silently scan `<skill-path>/themes/` for subdirectories.**
+Each subdirectory with a `reference.md` is a custom theme. Append them to the preset list as `Custom: <folder-name>` entries. If any custom themes exist, mention them first: "I also found N custom theme(s) in your themes/ folder."
+
 **Available Presets** (full details in [STYLE-DESC.md](STYLE-DESC.md)):
 
 | Preset | Vibe | Best For |
@@ -160,6 +163,10 @@ All 10 signature visual elements (orbs, noise texture, grid, glassmorphism, spri
 
 Do **not** rewrite the visual system CSS. Do **not** change the track/slide layout. Content goes inside `.slide` wrappers using the pre-built component classes: `.g` (glass card), `.gt` (gradient text), `.pill`, `.stat`, `.divider`, `.cols2/3/4`, `.ctable`, `.co` (amber callout), `.warn` (red warning), `.info` (blue info), `.layer` (org row), `ul.bl` (bullet list).
 
+### If a custom theme from themes/ is selected
+
+Read the theme's `reference.md` for style constraints. If a `starter.html` exists in the theme folder, use it as the base (same as Blue Sky). Otherwise, follow the standard references below and apply the custom theme's colors, typography, and layout rules.
+
 ### For all other styles → read the standard references
 
 **Read [references/html-template.md](references/html-template.md)** — it contains the required HTML structure, JavaScript patterns, animation recipes, and edit button implementation.
@@ -182,6 +189,26 @@ Each slide must equal exactly one viewport height (`100vh` / `100dvh`). When con
 | Image slide | 1 heading + 1 image (max 60vh height) |
 
 When in doubt → split the slide.
+
+### Diagram Slides (when content calls for a visual relationship)
+
+When a slide needs to show a process, comparison, hierarchy, timeline, or data — generate an **inline SVG diagram** instead of bullet points.
+
+**Read [references/diagram-patterns.md](references/diagram-patterns.md)** for ready-to-use SVG templates:
+
+| Need | Pattern |
+|------|---------|
+| Steps in a process | Horizontal Flowchart |
+| Events over time | Vertical Timeline |
+| Ranking / metrics | Horizontal Bar Chart |
+| Prioritisation | 2×2 Comparison Grid |
+| Team / structure | Org / Hierarchy Chart |
+
+Rules:
+- One diagram per slide, never combined with a bullet list
+- Use `currentColor` so diagrams inherit the slide's text color automatically
+- Apply `--accent` color to the most important element (first step, top bar, highlighted quadrant)
+- **Never use Mermaid.js, Chart.js, or any external library** — inline SVG only
 
 ### Image Pipeline (skip if no images)
 
