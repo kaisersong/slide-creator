@@ -2,7 +2,7 @@
 name: slide-creator
 description: Create beautiful, animation-rich HTML presentations that run entirely in the browser — no npm, no build tools. Generates polished single-file slide decks with visual style discovery, responsive viewport fitting, and optional PPTX export. Use whenever someone asks to make a presentation, create slides, build a pitch deck, convert a PPT/PPTX to web, or prepare slides for a talk or demo — even if they don't mention HTML. Also use for planning a deck outline first (`--plan`), generating HTML from a plan (`--generate`), or exporting to PowerPoint (`--export pptx`).
 version: 1.5.0
-metadata: {"openclaw":{"emoji":"🎞️","os":["darwin","linux","windows"],"homepage":"https://github.com/kaisersong/slide-creator","requires":{"bins":["python3"]},"install":[{"id":"pillow","kind":"uv","package":"Pillow","label":"Pillow (image processing)"},{"id":"python-pptx","kind":"uv","package":"python-pptx","label":"python-pptx (PPT import/export)"},{"id":"playwright","kind":"uv","package":"playwright","label":"Playwright (pixel-perfect PPTX export via system Chrome)"}]}}
+metadata: {"openclaw":{"emoji":"🎞","os":["darwin","linux","windows"],"homepage":"https://github.com/kaisersong/slide-creator","requires":{"bins":["python3"]},"install":[{"id":"pillow","kind":"uv","package":"Pillow","label":"Pillow (image processing)"},{"id":"python-pptx","kind":"uv","package":"python-pptx","label":"python-pptx (PPT import/export)"},{"id":"playwright","kind":"uv","package":"playwright","label":"Playwright (pixel-perfect PPTX export via system Chrome)"}]}}
 ---
 
 # Slide Creator
