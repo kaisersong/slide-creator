@@ -13,7 +13,25 @@
 - 🇨🇳 [slide-creator 介绍（中文）](https://kaisersong.github.io/slide-creator/demos/intro-zh.html) — 功能和使用方式介绍
 - 🇺🇸 [slide-creator intro (English)](https://kaisersong.github.io/slide-creator/demos/intro-en.html) — same in English
 
-以上演示文稿均由 slide-creator 自己生成，使用 Blue Sky 风格。
+以上两个演示使用 Blue Sky 风格。13 种设计预设全部有独立演示，使用相同内容，方便直接对比风格差异：
+
+| 预设 | 在线预览 |
+|------|---------|
+| **Bold Signal** | [打开 →](https://kaisersong.github.io/slide-creator/demos/bold-signal.html) |
+| **Electric Studio** | [打开 →](https://kaisersong.github.io/slide-creator/demos/electric-studio.html) |
+| **Creative Voltage** | [打开 →](https://kaisersong.github.io/slide-creator/demos/creative-voltage.html) |
+| **Dark Botanical** | [打开 →](https://kaisersong.github.io/slide-creator/demos/dark-botanical.html) |
+| **Blue Sky** ✨ | [打开 →](https://kaisersong.github.io/slide-creator/demos/intro-zh.html) |
+| **Notebook Tabs** | [打开 →](https://kaisersong.github.io/slide-creator/demos/notebook-tabs.html) |
+| **Pastel Geometry** | [打开 →](https://kaisersong.github.io/slide-creator/demos/pastel-geometry.html) |
+| **Split Pastel** | [打开 →](https://kaisersong.github.io/slide-creator/demos/split-pastel.html) |
+| **Vintage Editorial** | [打开 →](https://kaisersong.github.io/slide-creator/demos/vintage-editorial.html) |
+| **Neon Cyber** | [打开 →](https://kaisersong.github.io/slide-creator/demos/neon-cyber.html) |
+| **Terminal Green** | [打开 →](https://kaisersong.github.io/slide-creator/demos/terminal-green.html) |
+| **Swiss Modern** | [打开 →](https://kaisersong.github.io/slide-creator/demos/swiss-modern.html) |
+| **Paper & Ink** | [打开 →](https://kaisersong.github.io/slide-creator/demos/paper-ink.html) |
+
+所有演示文稿内容相同（均为 slide-creator 自我介绍），方便直观感受不同设计哲学的视觉差异。
 
 ---
 
