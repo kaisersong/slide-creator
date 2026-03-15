@@ -474,7 +474,7 @@ class TiltEffect {
 
 ---
 
-## Edit Button + Notes Panel (Only When User Opted In)
+## Edit Button + Notes Panel (Included by Default — omit only if user explicitly chose "No")
 
 The CSS-only hover approach (`hotzone:hover ~ .edit-toggle`) fails because `pointer-events: none` breaks the hover chain — the button disappears before the user can click it. Use JS with a grace period instead.
 

@@ -1,7 +1,7 @@
 ---
 name: slide-creator
 description: Create beautiful, animation-rich HTML presentations that run entirely in the browser — no npm, no build tools. Generates polished single-file slide decks with visual style discovery, responsive viewport fitting, and optional PPTX export. Use whenever someone asks to make a presentation, create slides, build a pitch deck, convert a PPT/PPTX to web, or prepare slides for a talk or demo — even if they don't mention HTML. Also use for planning a deck outline first (`--plan`), generating HTML from a plan (`--generate`), or exporting to PowerPoint (`--export pptx`).
-version: 1.5.0
+version: 1.8.0
 metadata: {"openclaw":{"emoji":"🎞","os":["darwin","linux","windows"],"homepage":"https://github.com/kaisersong/slide-creator","requires":{"bins":["python3"]},"install":[{"id":"pillow","kind":"uv","package":"Pillow","label":"Pillow (image processing)"},{"id":"python-pptx","kind":"uv","package":"python-pptx","label":"python-pptx (PPT import/export)"},{"id":"playwright","kind":"uv","package":"playwright","label":"Playwright (pixel-perfect PPTX export via system Chrome)"}]}}
 ---
 
@@ -70,6 +70,8 @@ Then gather everything in a **single AskUserQuestion call with all 5 questions a
 - **Content** (single select): All content ready / Rough notes / Topic only
 - **Images** (single select): No images / ./assets / Other (user types path)
 - **Inline Editing** (single select): Yes — edit text in-browser, auto-save (Recommended) / No — presentation only
+
+> **Default:** Always include inline editing unless user explicitly selects "No". When `--generate` skips Phase 1, include inline editing by default.
 
 If user has content, ask them to share it after submitting the form.
 
@@ -262,7 +264,7 @@ To customize: edit :root variables at the top of the CSS for colors, fonts, and 
 To export as PPTX: run `/slide-creator --export pptx` (requires Python 3 + playwright + python-pptx, no Node.js)
 ```
 
-If inline editing was opted in: mention hovering the top-left corner or pressing `E` to enter edit mode.
+Always mention: hover the top-left corner or press `E` to enter edit mode (included by default unless user explicitly opted out).
 
 ---
 
