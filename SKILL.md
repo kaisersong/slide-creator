@@ -194,7 +194,7 @@ Read the theme's `reference.md` for style constraints. If a `starter.html` exist
 
 **Read [references/html-template.md](references/html-template.md)** — it contains the required HTML structure, JavaScript patterns, animation recipes, and edit button implementation.
 
-> **⚠ MUST READ before writing any HTML.** Do NOT implement the edit button or presenter button from memory. The correct pattern uses a hotzone `<div>` + JS `mouseenter`/`mouseleave` with a 400ms grace period. Using `body:hover` is a known mistake — it makes the button permanently visible. The exact implementation is in `html-template.md`; copy it directly.
+> **IMPORTANT — MUST READ before writing any HTML.** Do NOT implement the edit button or presenter button from memory. The correct pattern uses a hotzone `<div>` + JS `mouseenter`/`mouseleave` with a 400ms grace period. Using `body:hover` is a known mistake — it makes the button permanently visible. The exact implementation is in `html-template.md`; copy it directly.
 
 **Also read [STYLE-DESC.md](STYLE-DESC.md)** for viewport fitting CSS, responsive breakpoints, style preset details, and CSS gotchas (especially: never negate CSS functions directly — use `calc(-1 * clamp(...))` not `-clamp(...)`).
 
