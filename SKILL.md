@@ -1,7 +1,7 @@
 ---
 name: slide-creator
-description: Create beautiful, animation-rich HTML presentations that run entirely in the browser — no npm, no build tools. Generates polished single-file slide decks with visual style discovery, responsive viewport fitting, and optional PPTX export. Use whenever someone asks to make a presentation, create slides, build a pitch deck, convert a PPT/PPTX to web, or prepare slides for a talk or demo — even if they don't mention HTML. Also use for planning a deck outline first (`--plan`), generating HTML from a plan (`--generate`), or exporting to PowerPoint (`--export pptx`).
-version: 1.8.0
+description: Create beautiful, zero-dependency HTML presentations that run entirely in the browser — no npm, no build tools. 21 curated style presets each with named layout variations, visual style discovery with live previews, viewport-fitted slides, inline browser editing, Presenter Mode, and optional PPTX export. Intelligently routes style selection based on content type (pitch deck, dev docs, data report, etc.). Use whenever someone asks to make a presentation, create slides, build a pitch deck, convert a PPT/PPTX to web, or prepare slides for a talk or demo — even if they don't mention HTML. Also use for planning a deck outline first (`--plan`), generating HTML from a plan (`--generate`), or exporting to PowerPoint (`--export pptx`).
+version: 1.9.0
 metadata: {"openclaw":{"emoji":"🎞","os":["darwin","linux","windows"],"homepage":"https://github.com/kaisersong/slide-creator","requires":{"bins":["python3"]},"install":[{"id":"pillow","kind":"uv","package":"Pillow","label":"Pillow (image processing)"},{"id":"python-pptx","kind":"uv","package":"python-pptx","label":"python-pptx (PPT import/export)"},{"id":"playwright","kind":"uv","package":"playwright","label":"Playwright (pixel-perfect PPTX export via system Chrome)"}]}}
 ---
 
@@ -57,6 +57,20 @@ Determine what the user wants:
 - **Mode B — PPT Conversion:** User has a `.ppt/.pptx` file → go to Phase 4.
 - **Mode C — Enhance Existing:** Read the existing HTML, understand its structure, then enhance. When adding content, always check viewport fit — if adding would overflow a slide, split the content rather than cramming it in. Proactively split and inform the user.
 
+**Content-type → Style hints** (use when user hasn't chosen a style):
+
+| Content type | Suggested styles |
+|---|---|
+| Data report / KPI dashboard | Data Story, Enterprise Dark, Swiss Modern |
+| Business pitch / VC deck | Bold Signal, Aurora Mesh, Enterprise Dark |
+| Developer tool / API docs | Terminal Green, Neon Cyber, Neo-Retro Dev Deck |
+| Research / thought leadership | Modern Newspaper, Paper & Ink, Swiss Modern |
+| Creative / personal brand | Vintage Editorial, Split Pastel, Neo-Brutalism |
+| Product launch / SaaS | Aurora Mesh, Glassmorphism, Electric Studio |
+| Education / tutorial | Notebook Tabs, Paper & Ink, Pastel Geometry |
+| Chinese content | Chinese Chan, Aurora Mesh, Blue Sky |
+| Hackathon / indie dev | Neo-Retro Dev Deck, Neo-Brutalism, Terminal Green |
+
 ---
 
 ## Phase 1: Content Discovery
@@ -74,6 +88,8 @@ Then gather everything in a **single AskUserQuestion call with all 5 questions a
 > **Default:** Always include inline editing unless user explicitly selects "No". When `--generate` skips Phase 1, include inline editing by default.
 
 If user has content, ask them to share it after submitting the form.
+
+**Language:** Detect from the user's message — never default to a fixed language. Maintain the detected language throughout all slide text including labels, CTAs, and captions. English may appear as secondary annotation text only when the style calls for it.
 
 ### Image Evaluation
 
@@ -96,7 +112,7 @@ Most people can't articulate design preferences in words. Generate 3 mini visual
 
 Ask via AskUserQuestion:
 - **"Show me options"** → ask mood question → generate 3 previews based on answer
-- **"I know what I want"** → show preset picker (Bold Signal / Dark Botanical / Notebook Tabs / Pastel Geometry — with "Other" option for full list)
+- **"I know what I want"** → show preset picker (Bold Signal / Blue Sky / Modern Newspaper / Neo-Retro Dev Deck — with "Other" option for all 21 presets)
 
 **Before showing presets, silently scan `<skill-path>/themes/` for subdirectories.**
 Skip any directory whose name starts with `_` (those are examples/templates, not real themes).
@@ -110,6 +126,7 @@ Each remaining subdirectory with a `reference.md` is a custom theme. Append them
 | Electric Studio | Clean, professional | Agency presentations |
 | Creative Voltage | Energetic, retro-modern | Creative pitches |
 | Dark Botanical | Elegant, sophisticated | Premium brands |
+| Blue Sky | Clean, airy, enterprise-ready | SaaS pitches, AI/tech decks |
 | Notebook Tabs | Editorial, organized | Reports, reviews |
 | Pastel Geometry | Friendly, approachable | Product overviews |
 | Split Pastel | Playful, modern | Creative agencies |
@@ -124,6 +141,8 @@ Each remaining subdirectory with a `reference.md` is a custom theme. Append them
 | Neo-Brutalism | Bold, uncompromising | Indie dev, creative manifesto |
 | Chinese Chan | Still, contemplative | Design philosophy, brand, culture |
 | Data Story | Clear, precise, persuasive | Business review, KPI, analytics |
+| Modern Newspaper | Punchy, authoritative, editorial | Business reports, thought leadership, research summaries |
+| Neo-Retro Dev Deck | Opinionated, technical, handmade | Dev tool launches, API docs, hackathon presentations |
 
 **Mood → Preset mapping:**
 
@@ -133,10 +152,11 @@ Each remaining subdirectory with a `reference.md` is a custom theme. Append them
 | Excited/Energized | Creative Voltage, Neon Cyber, Aurora Mesh |
 | Calm/Focused | Notebook Tabs, Paper & Ink, Chinese Chan |
 | Inspired/Moved | Dark Botanical, Vintage Editorial, Glassmorphism |
+| Clean/Enterprise | Blue Sky, Electric Studio, Enterprise Dark |
 | Data-Driven | Data Story, Enterprise Dark, Swiss Modern |
 | Playful/Creative | Split Pastel, Pastel Geometry, Neo-Brutalism |
-| Developer-Focused | Terminal Green, Neon Cyber |
-| Editorial/Organized | Notebook Tabs, Vintage Editorial |
+| Developer-Focused | Terminal Green, Neon Cyber, Neo-Retro Dev Deck |
+| Editorial/Organized | Notebook Tabs, Vintage Editorial, Modern Newspaper |
 
 ### Generate Previews
 
@@ -193,6 +213,8 @@ Each slide must equal exactly one viewport height (`100vh` / `100dvh`). When con
 
 When in doubt → split the slide.
 
+**Visual Rhythm:** Alternate between text-heavy and visual-heavy slides. Three or more consecutive slides with the same layout signal low effort. Vary between: headline-dominant → data/diagram → evidence list → quote or visual break → headline-dominant. Every 4–5 slides, one slide should be nearly empty (a single statement, a big number, or a quote).
+
 ### Diagram Slides (when content calls for a visual relationship)
 
 When a slide needs to show a process, comparison, hierarchy, timeline, or data — generate an **inline SVG diagram** instead of bullet points.
@@ -227,6 +249,7 @@ Rules:
 - Semantic HTML (`<section>`, `<nav>`, `<main>`)
 - ARIA labels on nav elements and interactive controls
 - `@media (prefers-reduced-motion: reduce)` support
+- No markdown symbols (`#`, `*`, `**`, `_`) in slide text — use semantic HTML elements (`<strong>`, `<em>`, `<h2>`) for structure and emphasis
 
 ---
 

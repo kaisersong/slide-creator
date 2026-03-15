@@ -4,7 +4,7 @@
 
 A skill for [Claude Code](https://claude.ai/claude-code) and [OpenClaw](https://openclaw.ai) that generates stunning, zero-dependency HTML presentations.
 
-**v1.8** — Presenter Mode (`P` key), notes editing panel (collapsible bottom bar in edit mode, live-syncs to presenter window), inline SVG diagrams, and a local custom theme system (`themes/` directory). 19 design presets. PPTX export via Playwright + system Chrome, no Node.js.
+**v1.9.0** — 21 design presets with named layout variations per style, content-type → style routing, visual rhythm rules for better pacing, language auto-detection, and two new styles: **Modern Newspaper** and **Neo-Retro Dev Deck**. Presenter Mode (`P` key), inline SVG diagrams, custom theme system (`themes/` directory). PPTX export via Playwright + system Chrome, no Node.js.
 
 English | [简体中文](README.zh-CN.md)
 
@@ -50,7 +50,8 @@ Both demos above use the Blue Sky style. Click any screenshot below to open the 
 </tr>
 <tr>
 <td align="center"><a href="https://kaisersong.github.io/slide-creator/demos/data-story.html"><img src="demos/screenshots/data-story.png" width="240" alt="Data Story"/><br/><b>Data Story</b></a></td>
-<td></td><td></td>
+<td align="center"><a href="https://kaisersong.github.io/slide-creator/demos/intro-modern-newspaper.html"><img src="demos/screenshots/modern-newspaper.png" width="240" alt="Modern Newspaper"/><br/><b>Modern Newspaper</b></a></td>
+<td align="center"><a href="https://kaisersong.github.io/slide-creator/demos/intro-neo-retro-dev.html"><img src="demos/screenshots/neo-retro-dev.png" width="240" alt="Neo-Retro Dev Deck"/><br/><b>Neo-Retro Dev Deck</b></a></td>
 </tr>
 </table>
 
@@ -61,7 +62,8 @@ Every demo uses the same content (slide-creator's own introduction) — making i
 ## Features
 
 - **Two-stage workflow** — `--plan` to outline, `--generate` to produce
-- **19 design presets** — Bold Signal, Blue Sky, Neon Cyber, Dark Botanical, and more
+- **21 design presets** — Bold Signal, Blue Sky, Modern Newspaper, Neo-Retro Dev Deck, and more — each with named layout variations
+- **Content-type routing** — Automatically suggests the best style for pitch decks, dev tools, data reports, editorial, and more
 - **Style discovery** — Generate 3 visual previews before committing to a style
 - **Presenter Mode** — Press `P` to open a synced speaker window: notes, timer, slide counter, prev/next nav; window height auto-adapts to notes length
 - **Inline SVG diagrams** — Flowcharts, timelines, bar charts, comparison grids, org charts — no Mermaid.js, no external libs
@@ -155,7 +157,7 @@ Every generated presentation includes a built-in text editor — no need to touc
 
 ## Design Presets
 
-**19 curated styles — no generic AI aesthetics.**
+**21 curated styles — no generic AI aesthetics.**
 
 | Preset | Vibe | Best For |
 |--------|------|----------|
@@ -178,6 +180,8 @@ Every generated presentation includes a built-in text editor — no need to touc
 | **Neo-Brutalism** | Bold, uncompromising | Indie dev, creative manifesto |
 | **Chinese Chan** | Still, contemplative | Design philosophy, brand, culture |
 | **Data Story** | Clear, precise, persuasive | Business review, KPI, analytics |
+| **Modern Newspaper** | Punchy, authoritative, editorial | Business reports, thought leadership |
+| **Neo-Retro Dev Deck** | Opinionated, technical, handmade | Dev tool launches, API docs, hackathons |
 
 ### Blue Sky
 

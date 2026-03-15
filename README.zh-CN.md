@@ -4,7 +4,7 @@
 
 适用于 [Claude Code](https://claude.ai/claude-code) 和 [OpenClaw](https://openclaw.ai) 的演示文稿生成 skill，零依赖、纯浏览器运行的 HTML 幻灯片。
 
-**v1.8** — 演讲者模式（`P` 键打开备注 + 计时器 + 导航窗口）、备注编辑面板（编辑模式下底部可收起/展开的备注编辑栏，实时同步演讲者窗口）、内联 SVG 图表（流程图、时间轴、条形图，无需外部库）、本地自定义主题系统（`themes/` 目录）。共 19 种设计预设。PPTX 导出通过 Playwright + 系统 Chrome，无需 Node.js。
+**v1.9.0** — 21 种设计预设，每种风格包含命名布局变体；新增内容类型 → 风格智能路由；视觉节奏规则让幻灯片层次更分明；语言自动检测；两款全新风格：**Modern Newspaper**（报纸编辑风）和 **Neo-Retro Dev Deck**（复古工程师风）。演讲者模式（`P` 键）、内联 SVG 图表、自定义主题系统（`themes/` 目录）。PPTX 导出通过 Playwright + 系统 Chrome，无需 Node.js。
 
 [English](README.md) | 简体中文
 
@@ -50,7 +50,8 @@
 </tr>
 <tr>
 <td align="center"><a href="https://kaisersong.github.io/slide-creator/demos/data-story.html"><img src="demos/screenshots/data-story.png" width="240" alt="Data Story"/><br/><b>Data Story</b></a></td>
-<td></td><td></td>
+<td align="center"><a href="https://kaisersong.github.io/slide-creator/demos/intro-modern-newspaper.html"><img src="demos/screenshots/modern-newspaper.png" width="240" alt="Modern Newspaper"/><br/><b>Modern Newspaper</b></a></td>
+<td align="center"><a href="https://kaisersong.github.io/slide-creator/demos/intro-neo-retro-dev.html"><img src="demos/screenshots/neo-retro-dev.png" width="240" alt="Neo-Retro Dev Deck"/><br/><b>Neo-Retro Dev Deck</b></a></td>
 </tr>
 </table>
 
@@ -61,7 +62,8 @@
 ## 功能特性
 
 - **两阶段工作流** — `--plan` 生成大纲，`--generate` 输出幻灯片
-- **19 种设计预设** — Bold Signal、Blue Sky、Neon Cyber、Dark Botanical 等
+- **21 种设计预设** — Bold Signal、Blue Sky、Modern Newspaper、Neo-Retro Dev Deck 等，每种风格含命名布局变体
+- **内容类型智能路由** — 根据路演、开发工具、数据报告、编辑内容等自动推荐最匹配的风格
 - **视觉风格探索** — 先生成 3 个预览，看图选风格而非描述风格
 - **演讲者模式** — 按 `P` 打开同步演讲者窗口：备注、计时器、页数、翻页导航；窗口高度随备注自动调整
 - **备注编辑面板** — 编辑模式（`E` 键）下底部出现备注栏，点击标题可收起/展开，输入实时同步到演讲者窗口
@@ -207,6 +209,8 @@ pip install Pillow python-pptx playwright
 | **Neo-Brutalism** | 大胆、不妥协 | 独立开发者、创意宣言 |
 | **Chinese Chan** | 静谧、沉思 | 设计哲学、品牌、文化 |
 | **Data Story** | 清晰、精确、说服力 | 业务回顾、KPI、数据分析 |
+| **Modern Newspaper** | 犀利、权威、编辑感 | 业务报告、思想领导力演讲 |
+| **Neo-Retro Dev Deck** | 有主见、技术感、手作风 | 开发工具发布、API 文档、黑客松 |
 
 ### Blue Sky
 

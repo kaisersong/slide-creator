@@ -190,6 +190,29 @@ Before finalizing any presentation, verify:
 - Navigation breadcrumbs with active/inactive opacity states
 - Grid-based layout for precise alignment
 
+**Named Layout Variations:**
+
+**1. Hero Card**
+Large colored card (`--card-bg`) occupies 60% of width, centered vertically, anchored left. Card: section number `01` small top-left, headline 2–3 lines. Dark background outside card. Ghost section number in 10rem at 8% opacity as texture. Nav breadcrumbs top-right.
+
+**2. Manifesto Statement**
+`01` in 8rem `Archivo Black` top-left, card color. Below: 2-line statement in 3rem. Right half: supporting 3-line body paragraph in muted white `rgba(255,255,255,0.6)`. Bottom-left: next section teaser in 0.75rem mono.
+
+**3. Feature Trio**
+Three full-width horizontal rows, shorter height than a normal card. Active/highlighted row: full `--card-bg` color. Other rows: 20% opacity, outlined. Each row: number left, feature name center-left in 1.3rem, 1-line descriptor right.
+
+**4. Stat + Story**
+Left 40%: single large number `5rem` in `--card-bg` color, label below in 0.75rem uppercase. `1px` vertical rule (card color). Right 55%: 3-line supporting paragraph + 2–3 bullet points with card-colored `▸` markers.
+
+**5. Timeline Track**
+Horizontal numbered steps `01 → 02 → 03 → 04`. Active step: full colored card above the track line. Completed steps: full opacity outlined. Future steps: 30% opacity outlined. Track line: `2px --card-bg`.
+
+**6. Quote Block**
+Full-width colored card (`--card-bg` background). Large `"` in near-black at top-left, barely visible (8% opacity). Quote in `Archivo Black` 2rem, dark text. Attribution bottom-right: `—Name, Role` in small body.
+
+**7. Split Evidence**
+Left 42%: section number in 3rem + headline in 2rem + 1-line sub. `1px` vertical rule (card color). Right 53%: 4–5 bullet list, each bullet: card-colored `▸` + bold lead word + 1-line description.
+
 ---
 
 ### 2. Electric Studio
@@ -679,49 +702,241 @@ Timeline:        orb1 left-mid, orb2 center-mid, orb3 right-mid (horizontal row)
 
 ### 10. Neon Cyber
 
-**Vibe:** Futuristic, techy, confident
+**Vibe:** Futuristic, techy, high-voltage confidence — Tron lightgrid meets hacker conference keynote. Dark canvas, electric glow, engineered precision.
 
-**Typography:** `Clash Display` + `Satoshi` (Fontshare)
+**Layout:** Dark full-bleed background. Content in neon-bordered panels with corner-cut sci-fi geometry. Low-opacity grid overlay as structural depth.
 
-**Colors:** Deep navy (#0a0f1c), cyan accent (#00ffcc), magenta (#ff00aa)
+**Typography:**
+- Display: `Clash Display` (600/700) — geometric, space-age (Fontshare)
+- Body: `Satoshi` (400/500) — clean sans, tech-forward (Fontshare)
+- Mono labels/data: `JetBrains Mono` (400) — coordinates, timestamps, code
+- All section labels: uppercase, `letter-spacing: 0.15em`
 
-**Signature:** Particle backgrounds, neon glow, grid patterns
+**Colors:**
+```css
+:root {
+    --bg: #0a0f1c;
+    --bg-panel: #0e1525;
+    --border-glow: rgba(0, 255, 204, 0.25);
+    --cyan: #00ffcc;
+    --magenta: #ff00aa;
+    --text: #e0f0ff;
+    --text-muted: rgba(224, 240, 255, 0.5);
+    --grid: rgba(0, 255, 204, 0.04);
+}
+```
+
+**Signature Elements:**
+- **Neon glow** — `box-shadow: 0 0 16px rgba(0,255,204,0.35), 0 0 48px rgba(0,255,204,0.1)` on borders and key headings
+- **Grid overlay** — `background-image: linear-gradient(var(--grid) 1px, transparent 1px), linear-gradient(90deg, var(--grid) 1px, transparent 1px)` at 40px spacing, masked to center
+- **Corner-cut panels** — `clip-path: polygon(0 0, calc(100% - 14px) 0, 100% 14px, 100% 100%, 0 100%)` for sci-fi HUD feel
+- **Gradient accent dividers** — `linear-gradient(90deg, var(--cyan), var(--magenta))` for `2px` horizontal rules
+- **Mono metadata** — timestamps / coordinates / system IDs in `JetBrains Mono` 10px at 40% opacity
+- No illustrations. Geometric CSS shapes and inline SVG only.
+
+**Named Layout Variations:**
+
+**1. Launch Screen**
+Title centered in `Clash Display` 7rem, cyan `text-shadow` glow. Subtitle in Satoshi below. Animated particle canvas behind (JS canvas, 60 dots, connecting lines < 120px). Bottom: `2px` gradient rule + mono `PRESS SPACE TO CONTINUE`.
+
+**2. Feature Grid**
+3-column grid (or 2×3). Each panel: `clip-path` corner cut, section number in mono top-right, SVG icon, feature name in Clash Display, 2-line desc in Satoshi. Hover: `border-glow` intensifies with transition.
+
+**3. Data Pulse**
+Left 55%: single KPI number in 8rem cyan with glow. Below: mono uppercase label, SVG trend arrow. Right 45%: inline SVG bar chart (cyan bars, `border-radius: 4px` top only). Faint radial-gradient pulse animation centered on the number.
+
+**4. Signal Timeline**
+Center `2px` vertical line, cyan-to-magenta gradient. Left/right alternating content blocks per milestone. Nodes: `10px` circle, cyan fill, glow. Labels in mono above each node. Line draws in via `stroke-dashoffset` animation on slide entry.
+
+**5. Code Insight**
+Full-slide terminal panel in `JetBrains Mono`. One key line highlighted with `rgba(0,255,204,0.08)` row background. Comments in `--text-muted`. One `/* ← key insight */` SVG callout arrow. Corner-cut panel edges.
+
+**6. Split Focus**
+Left 40%: slightly lighter panel (`--bg-panel`), vertical `2px` cyan rule on right edge, section label + large headline. Right 60%: body text + bullet list with cyan `›` markers. Top-right: `SYS://SECTION_NAME` in mono 10px.
+
+**7. Signal Close**
+Centered headline in cyan glow. Below: 3 CTA/contact panels in a row (bordered, corner-cut). `TRANSMISSION COMPLETE` in mono at very bottom, 30% opacity. Background: particle canvas at reduced opacity.
 
 ---
 
 ### 11. Terminal Green
 
-**Vibe:** Developer-focused, hacker aesthetic
+**Vibe:** Developer-focused, hacker aesthetic — GitHub's dark theme as a presentation. Every slide feels like a genuine terminal session. Content is the interface.
 
-**Typography:** `JetBrains Mono` (monospace only)
+**Layout:** Full-bleed dark background. All content in monospace. Structure through indentation, ASCII conventions, and terminal patterns — zero visual decoration.
 
-**Colors:** GitHub dark (#0d1117), terminal green (#39d353)
+**Typography:**
+- Single font: `JetBrains Mono` (400/700) — no exceptions on any element
+- Headings: 700, uppercase or `$`-prefixed, `letter-spacing: 0.04em`
+- Body: 400, `line-height: 1.75`
+- Sizes: tight — `clamp(0.8rem,1.2vw,1rem)` body, `clamp(1.5rem,3vw,2.5rem)` headings
+- Prompt symbol: `$ ` or `> ` in muted green before "command" text
 
-**Signature:** Scan lines, blinking cursor, code syntax styling
+**Colors:**
+```css
+:root {
+    --bg: #0d1117;
+    --bg-panel: #161b22;
+    --border: #30363d;
+    --green: #39d353;
+    --green-muted: rgba(57, 211, 83, 0.4);
+    --text: #e6edf3;
+    --text-muted: #8b949e;
+    --comment: #6e7681;
+    --yellow: #e3b341;   /* warnings */
+    --red: #f85149;      /* errors */
+    --blue: #79c0ff;     /* info / links */
+}
+```
+
+**Signature Elements:**
+- **Blinking cursor** — `|` with `animation: blink 1s step-end infinite` at end of last line
+- **Scan lines** — `repeating-linear-gradient(transparent, transparent 2px, rgba(0,0,0,0.04) 2px, rgba(0,0,0,0.04) 4px)` fixed overlay at 50% opacity
+- **Prompt prefix** — `$ ` or `> ` in `--green-muted` before any title or command text
+- **Status dots** — `●` in green/yellow/red for process status
+- **Panel borders** — `border: 1px solid var(--border)`, `border-radius: 6px`, no shadows
+- Every element: `font-family: 'JetBrains Mono', 'Fira Code', monospace` — no exceptions
+
+**Named Layout Variations:**
+
+**1. Boot Sequence**
+Title slide. ASCII box border around slide/project name. Below: line-by-line startup log — `[  OK  ] Loaded module...` in small mono. Last line: `> _` with blinking cursor. Feels like system initialization.
+
+**2. Command Output**
+Large `$ command --flags` in `--green` on line 1. Below: multi-line output in `--text`. 2–3 lines highlighted with `--bg-panel` row background. Bottom: next `$ ` prompt + blinking cursor.
+
+**3. Progress Board**
+Section title top. Below: 5–7 rows, each: label left, ASCII bar `[████████░░]` center, `nn%` right. Green = complete, yellow = in-progress, muted = pending. Scan lines at full opacity.
+
+**4. File Tree**
+ASCII directory structure, left-aligned. `├── `, `└── `, `│   ` in `--text-muted`. File names in `--text`. Key file highlighted in `--green`. One annotation `# ← this one` comment on highlighted line.
+
+**5. Diff View**
+`BEFORE` / `AFTER` headers in mono panels side by side. `+` prefix lines in green, unchanged lines in muted. No red deletion lines — frame changes as purely positive.  Column rule `1px --border`.
+
+**6. Log Stream**
+Timestamp column `HH:MM:SS` left in `--comment`, level badge `INFO`/`WARN` center, message right. 8–10 lines. One `WARN` line in yellow. Last line: the key insight in `--green` 700. Scan line overlay.
+
+**7. EOF**
+Minimal closing. Centered. `exit 0` or `^D` in 4rem mono, `--green`. Below: `# thanks` in `--comment`. Blinking cursor. Nothing else. Feels like a respectful shell session ending.
 
 ---
 
 ### 12. Swiss Modern
 
-**Vibe:** Clean, precise, Bauhaus-inspired
+**Vibe:** Clean, precise, Bauhaus-inspired — International Typographic Style as a presentation. Form follows function absolutely. The grid is not a tool; it is the design.
 
-**Typography:** `Archivo` (800) + `Nunito` (400)
+**Layout:** Explicit 12-column grid, faintly visible. Content anchors to grid intersections. Asymmetric placement creates visual tension. Headlines never centered — always left or bottom-left.
 
-**Colors:** Pure white, pure black, red accent (#ff3300)
+**Typography:**
+- Display: `Archivo Black` (900) — geometric, constructed, no-compromise
+- Body: `Nunito` (400/600) — humanist, readable at small sizes
+- Data labels: `Archivo` (700) uppercase, `letter-spacing: 0.08em`
+- Headlines: left-aligned only, `line-height: 1.0`, no sentence case — always uppercase or title case
+- Body: `line-height: 1.55`, max 55 characters per line, left-aligned
 
-**Signature:** Visible grid, asymmetric layouts, geometric shapes
+**Colors:**
+```css
+:root {
+    --bg: #ffffff;
+    --bg-dark: #0a0a0a;
+    --text: #0a0a0a;
+    --text-light: #ffffff;
+    --text-muted: #666666;
+    --red: #ff3300;       /* single accent — one element per slide maximum */
+    --grid-line: rgba(0, 0, 0, 0.05);
+}
+```
+
+**Signature Elements:**
+- **Visible grid** — `background-image` 12-column grid at `--grid-line` opacity as `::before` pseudo on each `.slide`. Present, never overwhelming.
+- **Red accent** — `#ff3300` for exactly one element per slide: a rule, a number, an underline, or a single word. Never a large fill.
+- **Asymmetric anchoring** — Titles attach to left or bottom-left. Negative space is deliberately top-right. This creates tension, not emptiness.
+- **Hard horizontal rules** — `2px solid #0a0a0a` for section separations. No decorative curves, no dashes.
+- **Large structural numbers** — Section counts and stats in `6–9rem Archivo Black` as visual anchors.
+- No gradients. No shadows. No rounded corners. No illustrations.
+
+**Named Layout Variations:**
+
+**1. Title Grid**
+Slide number top-right in `Archivo Black` 1rem, red. Title bottom-left in 7rem, 2 lines max, `line-height: 0.95`. Empty upper-right quadrant. Red `2px` horizontal rule above the title.
+
+**2. Column Content**
+Left column 40%: large section heading + red `2px` rule below. Right column 55% (5% gap): body text in two typographic sub-columns. Section number top-right in small red.
+
+**3. Stat Block**
+One large number left half at 8rem `Archivo Black`. Vertical `2px` black rule to its right. Then: label in 1.2rem uppercase + 1-line supporting sentence in 0.9rem body. Red underline on the number only.
+
+**4. Data Table**
+Full-width table. Header row: `Archivo Black` 11px uppercase, `background: #0a0a0a`, white text. Body: alternating `#ffffff` / `#f7f7f7` rows, `1px #e0e0e0` dividers. Most important row: `3px` red left-border. No outer border.
+
+**5. Geometric Diagram**
+SVG diagram of boxes + connector lines, `stroke: #0a0a0a`, `stroke-width: 1.5`. No fills except primary node: `fill: #ff3300`. Labels in `Nunito` 12px. Grid visible behind. No shadows.
+
+**6. Pull Quote**
+One short sentence (max 12 words) in 3rem `Archivo Black`, top-left. Below it: `2px` red rule + attribution in 0.8rem `Nunito`. Remaining 50%+ of slide: pure white. Emptiness is the message.
+
+**7. Contents Index**
+Numbered list, left-aligned. Each item: section number in `3rem Archivo Black` red, em-dash, topic in `1.5rem Archivo Black` black. Max 5 items. Visible grid behind. No borders on items.
 
 ---
 
 ### 13. Paper & Ink
 
-**Vibe:** Editorial, literary, thoughtful
+**Vibe:** Editorial, literary, thoughtful — a well-designed book or long-read magazine. Content is the hero; design serves it with quiet authority.
 
-**Typography:** `Cormorant Garamond` + `Source Serif 4`
+**Layout:** Generous margins, narrow content columns (max 680px), extreme vertical rhythm. Every element breathes. Slides feel like printed pages.
 
-**Colors:** Warm cream (#faf9f7), charcoal (#1a1a1a), crimson accent (#c41e3a)
+**Typography:**
+- Display: `Cormorant Garamond` (700/900) — classical elegance, high-contrast strokes
+- Body: `Source Serif 4` (400/600) — authoritative, highly readable at text sizes
+- Drop caps: `Cormorant Garamond` 900, `float: left`, 4-line height, crimson
+- Pull quotes: `Cormorant Garamond` 400 italic, `2rem+`
+- `line-height: 1.78` for body, `line-height: 1.05` for display headlines
+- All sizes: viewport-relative `clamp()` values
 
-**Signature:** Drop caps, pull quotes, elegant horizontal rules
+**Colors:**
+```css
+:root {
+    --bg: #faf9f7;          /* warm cream */
+    --bg-dark: #1a1a18;     /* rich black */
+    --text: #1a1a1a;
+    --text-muted: #666666;
+    --crimson: #c41e3a;     /* accent — one use per slide maximum */
+    --rule: #c4b8a4;        /* warm paper rule color */
+}
+```
+
+**Signature Elements:**
+- **Drop caps** — First letter at `clamp(3rem,6vw,5rem)`, `Cormorant Garamond` 900, `float: left`, `line-height: 0.85`, `margin-right: 0.1em`, color `--crimson`
+- **Horizontal rules** — `1px solid var(--rule)`, full column width, `margin: 2rem 0`. Double-rule variant: two thin lines 4px apart for section breaks.
+- **Pull quotes** — Italic `Cormorant Garamond` 400, preceded and followed by thin rule, 20px left indent. No typographic quote marks needed.
+- **Roman numeral section markers** — `I`, `II`, `III` in `Cormorant Garamond` 400 small, `--text-muted`, above headings
+- **Narrow column** — Content `max-width: 680px`, centered, `padding: 0 clamp(2rem,8vw,6rem)`. Feels like a page, not a screen.
+- No bright colors. No geometric shapes. No gradients. Typography and rules only.
+
+**Named Layout Variations:**
+
+**1. Chapter Opening**
+Roman numeral + chapter title in 5rem `Cormorant Garamond`, left-aligned. Thin horizontal rule below. Opening paragraph with drop cap beneath. Generous whitespace above the title (40%+ of slide height).
+
+**2. Long Read**
+Two-column body layout (magazine spread). Left: first 3 paragraphs. Right: continuation. `1px --rule` vertical separator. Pull quote spanning both columns at midpoint, breaking the grid intentionally.
+
+**3. Pull Quote**
+Single sentence in 2.5rem italic `Cormorant Garamond`, left-aligned or centered. Thin rule above and below. Attribution in 0.8rem `Source Serif 4`. Remaining slide: cream. The silence amplifies the quote.
+
+**4. Annotated**
+Main text in left 60% column. Right 40%: marginal annotation column in 0.75rem `--text-muted`, separated by `1px --rule`. Each annotation: small superscript number matching the main text.
+
+**5. The Statistic**
+One large number in `6rem Cormorant Garamond 900`, `--crimson`. Below: 2-line plain explanation in body size. Above: thin double-rule. Remaining space: cream.
+
+**6. Index Page**
+Reference list. Each entry: right-aligned page number (tabular-nums), dotted leader line `· · ·`, topic title. `Source Serif 4` body, `Cormorant Garamond` for the numbers. Max 8 entries.
+
+**7. Colophon (Closing)**
+Centered, small text only. Publication/deck title in `Cormorant Garamond` italic. Thin rule. 2–3 lines of closing copy. One crimson accent: a single word or `—` dash. Feels like the last page of a book.
 
 ---
 
@@ -915,6 +1130,29 @@ body {
 - Animations: none or 300ms fade-in max
 - Chinese titles: `"PingFang SC", "Source Han Sans SC", system-ui`
 
+**Named Layout Variations:**
+
+**1. KPI Dashboard**
+2×2 or 1×3 grid of KPI cards. Each card: `border: 1px --border`, `background: --bg-secondary`, large number in `--text-primary`, uppercase mono label in `--text-secondary`, optional trend SVG arrow in `--accent-green`/`--accent-red`. All numbers: `font-variant-numeric: tabular-nums`.
+
+**2. Consulting Split**
+Left column 35% (`--bg-secondary` background, `1px --border` right edge): section number + title + 2-line context. Right column 65%: main content — bullets, table, or chart. `--accent-blue` overline on section title. No padding between columns except the border.
+
+**3. Data Table**
+Full-width. Header: `--bg-secondary` fill, `--text-secondary` 11px uppercase, `letter-spacing: 0.1em`. Body: `1px --border` row dividers. Numbers right-aligned, tabular-nums. Most important row: `3px --accent-blue` left-border. No outer border — open table style.
+
+**4. Architecture Map**
+SVG on dark background. Boxes: `1px --border` stroke, `--bg-secondary` fill, labels in 11px mono. Connector lines: `1px --text-muted`, dashed for optional paths. Key node: `2px --accent-blue` stroke. Strategic layer labels in uppercase `--text-secondary`.
+
+**5. Comparison Matrix**
+2-column. Column headers in `--accent-blue`. Row labels left in `--text-secondary`. `1px --border` grid lines. `✓` in `--accent-green`, `✗` in `--accent-red`, `—` in `--text-muted`. Summary/total row: `--bg-secondary` fill.
+
+**6. Insight Pull**
+Single key sentence in 2rem `--text-primary`, left-aligned, top-left 55% of slide. Below: `1px --accent-blue` rule + 2-line attribution in `--text-secondary` 0.8rem. Remaining right and bottom: empty dark. The emptiness signals authority.
+
+**7. Horizontal Timeline**
+Thin `1px --border` horizontal track across slide center. Milestone circles `8px`, `--accent-blue` fill, `2px` glow. Date labels above in 0.7rem mono `--text-muted`. Event labels below in 0.85rem `--text-secondary`. Active milestone: larger circle with subtle glow.
+
 **Reference:** [references/enterprise-dark.md](references/enterprise-dark.md)
 
 ---
@@ -1068,6 +1306,84 @@ background: linear-gradient(135deg, #f8cdda 0%, #1d6fa4 100%);
 
 ---
 
+### 21. Neo-Retro Dev Deck
+
+**Vibe:** "90s computer manuals meet modern AI dev tools" — engineering notebook aesthetic. Pixel-art icons, thick black outlines, opinionated developer voice. Feels handmade and confident, like a zine printed at a hackathon.
+
+**Layout:** Grid paper canvas. Content in thick-bordered modular blocks, stacked with slight intentional overlap. Imperfection is a feature, not a bug. Text is short and declarative — no marketing fluff.
+
+**Typography:**
+- Display: `Barlow Condensed` (800/900) — compressed, mechanical, developer-legible
+- Body: `IBM Plex Sans` (400/500) — technical, clean, trustworthy
+- Code/labels: `IBM Plex Mono` (400/600) — for annotations, metrics, `// comments`
+- Text: `#111111` on light, `#f7f5f0` on dark panels — no intermediate grays
+- Headlines: UPPERCASE or Title Case, `letter-spacing: -0.01em`, tight `line-height: 1.0`
+- Body: max 2 sentences per slide — ruthless brevity
+
+**Colors:**
+```css
+:root {
+    --bg: #f5f2e8;           /* engineering notebook cream */
+    --grid: rgba(80, 100, 170, 0.10);  /* faint blue grid lines */
+    --text: #111111;
+    --pink: #FF3C7E;          /* hot pink — AI / intelligence concepts */
+    --yellow: #FFE14D;        /* bright yellow — tools / builds */
+    --cyan: #00C8FF;          /* cyan — web / networking */
+    --border: #111111;        /* thick outlines */
+    --block-bg: #ffffff;
+    --block-dark: #1a1a1a;
+}
+```
+
+**Grid Paper Background:**
+```css
+body {
+    background-color: var(--bg);
+    background-image:
+        linear-gradient(var(--grid) 1px, transparent 1px),
+        linear-gradient(90deg, var(--grid) 1px, transparent 1px);
+    background-size: 24px 24px;
+}
+```
+
+**Signature Elements:**
+- **Thick bordered blocks** — `border: 3px solid var(--border)`, `border-radius: 0` or `4px` max, `background: var(--block-bg)`
+- **Hard offset shadow** — `box-shadow: 4px 4px 0 var(--border)` on all content blocks; hover: `box-shadow: 2px 2px 0`, `transform: translate(2px, 2px)`
+- **Color coding** (consistent across the deck): pink = AI/intelligence, yellow = tools/builds, cyan = web/networking
+- **Pixel-style SVG icons** — 32×32px, flat colors, `2px` grid-aligned strokes, black outlines, zero gradients
+- **Section badge** — `IBM Plex Mono` uppercase label in `background: var(--yellow)` pill, `border: 2px solid var(--border)`, `border-radius: 0`
+- **Opinionated annotations** — `// short comment` in `IBM Plex Mono` 0.8rem, max 8 words
+- No stock photos. No gradients on large areas. No rounded corners above 4px.
+
+**Named Layout Variations:**
+
+**1. System Architecture**
+Title top-left in `Barlow Condensed`. Center: stacked horizontal layer blocks (each = a system component). Colors indicate category: pink=AI, yellow=tools, cyan=web. Each block: `3px border`, monospace label inside, hard offset shadow. Arrow connectors `2px` between layers.
+
+**2. Evolution / Timeline**
+Horizontal flow left to right. Each era: thick-bordered box, era label in `IBM Plex Mono` badge, 2-line `Barlow Condensed` description. `→` arrow between boxes. Current era: `border-color: var(--pink)`, subtle pink fill. Future: dashed border.
+
+**3. Feature Cards**
+3-card row or 2×2 grid. Each card: pixel SVG icon top-right corner, feature name in `Barlow Condensed` 1.4rem, `// 1–2 line comment` in mono below. Border: `3px --border`, hard shadow. Top border accent: one of pink/yellow/cyan per card, consistent with color system.
+
+**4. Before / After**
+Two-panel split. `BEFORE` header left (muted, `#666`), `AFTER` right (green `#22c55e` or cyan). Each panel: thick border, content in `IBM Plex Mono` or `Barlow`. Divider: `4px` hard black center line. Clear improvement framing — no bad news.
+
+**5. Manifesto / Thesis**
+Large bold statement in `Barlow Condensed` 900 UPPERCASE, 40%+ of slide. Below: 3 `// supporting points` in `IBM Plex Mono` 0.9rem. One key word in the headline: `background: var(--yellow)` highlight, `2px --border`, inline. Everything in one thick-bordered content block.
+
+**6. Metrics Dashboard**
+Pixel-style bar chart: bars are thick-bordered rectangles (not rounded), fill with color codes. Y-axis: simple tick marks in mono. Each bar labeled below in `IBM Plex Mono`. Key bar: pink or yellow fill. Title above in `Barlow Condensed`. Chart sits inside one large bordered block.
+
+**Tone Rules:**
+- Declarative sentences only: `"It runs 3× faster"` not `"We're excited to share..."`
+- No buzzwords: no "revolutionary", "game-changing", "cutting-edge", "robust"
+- `//` comment style for sub-points and annotations
+- Numbers over adjectives: `"83ms p95"` not `"blazing fast"`
+- One opinion per slide, stated plainly
+
+---
+
 ## Font Pairing Quick Reference (updated)
 
 | Preset | Display Font | Body Font | Source |
@@ -1091,6 +1407,8 @@ background: linear-gradient(135deg, #f8cdda 0%, #1d6fa4 100%);
 | Neo-Brutalism | Space Grotesk | Space Grotesk | Google |
 | Chinese Chan | Noto Serif CJK SC / EB Garamond | Noto Serif CJK SC | Google |
 | Data Story | Inter / Noto Sans SC | Inter / Noto Sans SC | System/Google |
+| Modern Newspaper | Oswald | Source Serif 4 | Google |
+| Neo-Retro Dev Deck | Barlow Condensed | IBM Plex Sans | Google |
 
 ---
 
@@ -1145,3 +1463,165 @@ background: linear-gradient(135deg, #f8cdda 0%, #1d6fa4 100%);
   4. **2×2 matrix** — comparison grid with labels
 
 **Reference:** [references/data-story.md](references/data-story.md)
+
+---
+
+### 20. Modern Newspaper
+
+**Vibe:** Authoritative, punchy, "smart & pop" — Japan's new economy business media meets Swiss editorial design. Information feels curated and consequential, not decorative.
+
+**Core Philosophy:** Swiss/Bauhaus asymmetry + extreme typographic hierarchy. Headlines occupy 30–50% of the slide area. Body text is deliberately small, making every word feel intentional. Electric Yellow punctuates — never floods. One idea per slide, no exceptions.
+
+**Layout:** Left-heavy asymmetry. Titles anchor bottom-left or top-left. Large negative space top-right or bottom-right is intentional — it creates tension, not emptiness.
+
+**Typography:**
+- Display: `Oswald` (700/900) — condensed, high-impact, reads like a headline
+- Body: `Source Serif 4` (400) — authoritative at small sizes
+- Mono (dates, issue numbers, labels): `IBM Plex Mono` (400)
+- **Headline-to-body ratio: minimum 10:1** (e.g., `clamp(4rem,12vw,9rem)` headline vs `clamp(0.65rem,1vw,0.85rem)` body)
+- Headlines: UPPERCASE, `letter-spacing: -0.02em`
+- Body: mixed case, `letter-spacing: 0.01em`, `line-height: 1.6`
+
+**Colors:**
+```css
+:root {
+    --bg: #f7f5f0;           /* aged newsprint white */
+    --bg-dark: #111111;      /* sumi black */
+    --text: #111111;
+    --text-muted: #555555;
+    --yellow: #FFCC00;       /* electric yellow — accent only */
+    --red: #FF3333;          /* alert red — sparingly */
+    --rule: #111111;         /* column rules */
+}
+```
+
+**Signature Elements:**
+- **Yellow bar** — 8–14px solid `#FFCC00` horizontal or vertical rule; marks transitions, section openers, and emphasis anchors. Never used as a background fill for large areas.
+- **Column rules** — `1px solid #111111` vertical lines to divide grid areas, evoking newspaper columns.
+- **Issue stamp** — Top corner in `IBM Plex Mono` 10px: `VOL.01 · NO.03` or a date. Grounds the slide in journalistic convention.
+- **Extreme headline scale** — The headline IS the slide. `font-size: clamp(4rem, 12vw, 9rem)`, `font-weight: 900`, `text-transform: uppercase`. Body text follows at ≤ 1/10th the size.
+- **Negative space as editorial choice** — At least 30% of the slide should be empty. Do not fill it.
+- **Red sparingly** — `#FF3333` for one word, one number, or one callout per slide maximum. Never for large backgrounds.
+- No gradients. No shadows. No illustrations. No photos. Typography and geometry only.
+
+**CSS Implementation:**
+```css
+/* Base */
+body {
+    background: var(--bg);
+    font-family: 'Source Serif 4', Georgia, serif;
+    color: var(--text);
+}
+
+/* Headline — the dominant element */
+.np-headline {
+    font-family: 'Oswald', 'Arial Narrow', sans-serif;
+    font-size: clamp(3.5rem, 11vw, 8rem);
+    font-weight: 900;
+    text-transform: uppercase;
+    letter-spacing: -0.02em;
+    line-height: 0.95;
+    color: var(--text);
+}
+
+/* Sub-headline */
+.np-subhead {
+    font-family: 'Oswald', sans-serif;
+    font-size: clamp(1rem, 2.5vw, 1.8rem);
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+/* Body — deliberately small */
+.np-body {
+    font-family: 'Source Serif 4', Georgia, serif;
+    font-size: clamp(0.65rem, 1vw, 0.85rem);
+    line-height: 1.65;
+    color: var(--text-muted);
+    max-width: 38ch;  /* newspaper column width */
+}
+
+/* Issue / date stamp */
+.np-stamp {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: clamp(0.55rem, 0.8vw, 0.7rem);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+}
+
+/* Yellow accent bar */
+.np-bar-h {
+    width: 100%;
+    height: 10px;
+    background: var(--yellow);
+}
+.np-bar-v {
+    width: 8px;
+    height: 100%;
+    background: var(--yellow);
+    flex-shrink: 0;
+}
+
+/* Column rule */
+.np-rule {
+    width: 1px;
+    background: var(--rule);
+    align-self: stretch;
+    margin: 0 clamp(1rem, 2.5vw, 2.5rem);
+}
+
+/* Red emphasis word */
+.np-red { color: var(--red); }
+
+/* Dark panel (inverted section) */
+.np-dark {
+    background: var(--bg-dark);
+    color: #f7f5f0;
+}
+.np-dark .np-body { color: rgba(247,245,240,0.6); }
+
+/* Grid — strict 12-column base */
+.np-grid {
+    display: grid;
+    grid-template-columns: repeat(12, 1fr);
+    gap: 0 clamp(0.5rem, 1.5vw, 1.5rem);
+    height: 100%;
+    padding: clamp(1.5rem, 4vw, 4rem);
+}
+```
+
+**Named Layout Variations:**
+
+**1. Cover / Masthead**
+Publication name top-left (small, mono), yellow horizontal bar beneath it. Off-center headline fills 40% of slide bottom-left (2–5 words). Date and issue number top-right. Subtitle 3 lines max, bottom-right corner, 8px body. Large empty zone upper-right.
+
+**2. Breaking Headline**
+One-sentence headline in 9rem Oswald occupies top 45% of slide. Yellow 10px bar separates it from evidence zone below. Below bar: two columns — left is 4–5 line body, right is one bold statistic in 3rem + 1-line label. Nothing else.
+
+**3. Split Column**
+Vertical column rule divides slide 40/60. Left 40%: black panel, yellow bar on left edge, white headline in Oswald. Right 60%: newsprint background, body text in 3 short paragraphs, mono label top-right.
+
+**4. Data Brief**
+One number dominates center-left at 8–10rem, colored `var(--yellow)` outline text (webkit-text-stroke: 3px #111, fill transparent) or solid black. Below it: 1-line label in mono. Right side: 4-bullet context list in 0.75rem body. Massive negative space top and right.
+
+**5. Feature Story (Asymmetric)**
+Headline anchors bottom-left (4rem, 3 lines max). Upper-left: yellow bar 8px + section label. Body text column bottom-right (3 short paras). Upper-right 40% of slide: completely empty. Creates cinematic tension.
+
+**6. Contents / Index**
+4–6 numbered items in two columns. Each item: `01` in 2rem Oswald yellow, em-dash, topic in 1.2rem Oswald black, 1-line descriptor in 0.7rem body. Yellow horizontal rules between items. Issue stamp top-right.
+
+**7. Pull Quote**
+Large opening quote mark `"` in 12rem Oswald at 8% opacity as background texture. Quote text in 2rem Source Serif 4, 3 lines max, left-aligned. Attribution: 1px rule + name in 0.75rem mono. Nothing else on slide.
+
+**8. Closing / Back Page (Inverted)**
+Full slide `var(--bg-dark)`. Yellow bar top-full-width. White headline bottom-left. Mono CTA bottom-right. Optional: thin red single-word emphasis. Mirrors the Cover layout but dark — signals closure.
+
+**Prohibitions:**
+- No markdown symbols in text (`#`, `*`, `**`)
+- No gradients on large areas
+- No drop shadows
+- No centered layouts — always anchor to a corner or edge
+- No more than 2 type sizes per slide (headline + body)
+- `#FFCC00` and `#FF3333` never appear on the same slide together

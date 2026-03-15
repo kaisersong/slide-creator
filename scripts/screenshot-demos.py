@@ -40,8 +40,10 @@ DEMOS = [
     ("enterprise-dark.html", "enterprise-dark.png"),
     ("glassmorphism.html",   "glassmorphism.png"),
     ("neo-brutalism.html",   "neo-brutalism.png"),
-    ("japanese-zen.html",    "japanese-zen.png"),
-    ("data-story.html",      "data-story.png"),
+    ("chinese-chan.html",          "chinese-chan.png"),
+    ("data-story.html",            "data-story.png"),
+    ("intro-modern-newspaper.html","modern-newspaper.png"),
+    ("intro-neo-retro-dev.html",   "neo-retro-dev.png"),
 ]
 
 def screenshot_demo(page, html_path, out_path, width=WIDTH, height=HEIGHT):
