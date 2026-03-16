@@ -4,7 +4,7 @@
 
 A skill for [Claude Code](https://claude.ai/claude-code) and [OpenClaw](https://openclaw.ai) that generates stunning, zero-dependency HTML presentations.
 
-**v1.9.0** — 21 design presets with named layout variations per style, content-type → style routing, visual rhythm rules for better pacing, language auto-detection, and two new styles: **Modern Newspaper** and **Neo-Retro Dev Deck**. Presenter Mode (`P` key), inline SVG diagrams, custom theme system (`themes/` directory). PPTX export via Playwright + system Chrome, no Node.js.
+**v2.0.0** — Restructured as a progressive disclosure skill: SKILL.md is now a thin command router (~150 lines). Full workflow details, style index, base CSS, and per-style references are loaded on demand — each command loads only what it needs. 21 design presets, Presenter Mode, inline SVG diagrams, custom theme system, PPTX export via Playwright.
 
 English | [简体中文](README.zh-CN.md)
 
@@ -190,6 +190,89 @@ Light sky-blue gradient background (`#f0f9ff → #e0f2fe`) with floating glassmo
 Signature elements: grainy noise texture overlay · 3 animated blur orbs repositioning per slide · glassmorphism cards with backdrop-filter · 40px tech grid with radial mask · spring-physics horizontal slide transitions · cloud hero effect on title slides.
 
 A complete starter template (`references/blue-sky-starter.html`) ships with the skill — all 10 signature visual elements are pre-built so models only need to fill in slide content.
+
+---
+
+## For AI Agents & Skills
+
+Other agents and skills can call slide-creator programmatically:
+
+```
+# From a topic or notes
+/slide-creator Make a pitch deck for [topic]
+
+# Two-step: plan first, then generate (supports review in between)
+/slide-creator --plan "Product launch deck for Acme v2"
+# (edit PLANNING.md if needed)
+/slide-creator --generate
+
+# Export to PPTX after generation
+/slide-creator --export pptx
+```
+
+---
+
+## Design Philosophy
+
+This section explains the design principles behind slide-creator — both as a user-facing tool and as a Claude Code skill.
+
+### 1. Skill as Progressive Disclosure
+
+A skill file is loaded entirely into the AI's context window every time it's invoked. This means skill size directly affects what the AI can focus on.
+
+slide-creator solves this with a **command routing table**: SKILL.md is a thin router (~150 lines) that dispatches each command to the smallest possible set of reference files.
+
+```
+--plan        → references/planning-template.md only
+--generate    → references/html-template.md + one style file + references/base-css.md
+--export pptx → runs a script, loads nothing
+interactive   → references/workflow.md (full Phase 1–5)
+style picker  → references/style-index.md (21 presets + mood mapping)
+```
+
+**The result:** a `--plan` invocation never touches CSS. A `--generate` run never loads the other 20 style descriptions. An `--export` call loads nothing at all — it just runs a Python script.
+
+This is progressive disclosure applied to AI context management: **reveal information at the moment it's needed, not before.** The same principle that makes good UX design also makes good AI skill design.
+
+### 2. Show, Don't Tell: Visual Style Discovery
+
+Most people cannot articulate design preferences in words until they see examples. Asking "do you want minimalist or bold?" produces vague answers. Generating three 50-line HTML previews and asking "which of these?" produces an instant reaction.
+
+Phase 2 is designed around this insight. The "wow moment" — when someone sees their own content title rendered in three completely different aesthetic directions — turns an abstract choice into a visceral one. The preview files are deliberately tiny (~50 lines each) and self-contained, so they generate in seconds.
+
+This is why the skill description says "Show, Don't Tell" rather than "21 themes available." Features don't create engagement; the experience of choosing creates engagement.
+
+### 3. Viewport Fitting as a First-Class Constraint
+
+A presentation slide that scrolls mid-viewing is broken. This sounds obvious but is easy to violate when generating HTML — if you put too much content on a slide, the browser will just let it overflow.
+
+slide-creator treats viewport fitting as a **non-negotiable constraint** rather than a best practice:
+
+- Every `.slide` must have `height: 100vh; overflow: hidden;`
+- Content density limits are specified per slide type (e.g., max 6 bullets, max 6 grid cards)
+- When content would overflow, the rule is always: **split the slide, don't squish**
+
+The base CSS (`references/base-css.md`) uses `clamp()` for all sizes so they scale gracefully from landscape phones to 4K displays. This is also why the CSS gotchas section exists — `calc(-1 * clamp(...))` vs `-clamp(...)` is a silent failure that has no console error and causes layouts to break invisibly.
+
+### 4. Custom Theme System: Composable Design Language
+
+The `themes/` directory lets any user extend slide-creator with their own brand style. Drop in a `reference.md` describing the visual system, and it immediately appears as a "Custom: folder-name" option in the style picker.
+
+The two-file convention (`reference.md` + optional `starter.html`) mirrors the Blue Sky pattern: `reference.md` describes the design language (colors, typography, component classes), while `starter.html` is a pre-built boilerplate for complex visual systems that would be hard to reconstruct from prose alone.
+
+This separation means simple custom themes need only one file, while complex ones (with animated backgrounds, custom JS, non-trivial layout systems) can ship a complete working template.
+
+### 5. Content-Type Routing as Intelligent Defaults
+
+The 21-preset library is large enough to be expressive but small enough to be curated. Rather than asking users to browse all 21 options, slide-creator maps content types to style recommendations:
+
+```
+Data report / KPI dashboard → Data Story, Enterprise Dark, Swiss Modern
+Business pitch / VC deck    → Bold Signal, Aurora Mesh, Enterprise Dark
+Developer tool / API docs   → Terminal Green, Neon Cyber, Neo-Retro Dev Deck
+```
+
+This routing table in SKILL.md serves two audiences simultaneously: human users who want a sensible starting point, and AI agents calling the skill programmatically (where the agent may know the content type but not which style to choose).
 
 ---
 

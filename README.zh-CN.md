@@ -4,7 +4,7 @@
 
 适用于 [Claude Code](https://claude.ai/claude-code) 和 [OpenClaw](https://openclaw.ai) 的演示文稿生成 skill，零依赖、纯浏览器运行的 HTML 幻灯片。
 
-**v1.9.0** — 21 种设计预设，每种风格包含命名布局变体；新增内容类型 → 风格智能路由；视觉节奏规则让幻灯片层次更分明；语言自动检测；两款全新风格：**Modern Newspaper**（报纸编辑风）和 **Neo-Retro Dev Deck**（复古工程师风）。演讲者模式（`P` 键）、内联 SVG 图表、自定义主题系统（`themes/` 目录）。PPTX 导出通过 Playwright + 系统 Chrome，无需 Node.js。
+**v2.0.0** — 重构为渐进式披露架构：SKILL.md 精简为约 150 行的指令路由层。完整工作流、风格索引、基础 CSS 和单风格参考文件均按需加载——每条指令只读取所需内容。21 种设计预设、演讲者模式、内联 SVG 图表、自定义主题系统、PPTX 导出。
 
 [English](README.md) | 简体中文
 
@@ -219,6 +219,89 @@ pip install Pillow python-pptx playwright
 标志性元素：SVG 颗粒噪声纹理叠层 · 3 个按幻灯片类型重新布阵的模糊光球 · `backdrop-filter: blur(24px)` 玻璃拟态卡片 · 40px 科技网格底层 · 弹簧物理横向切换动画 · 封面专属双层流动云朵效果。
 
 附带完整 starter 模板（`references/blue-sky-starter.html`）—— 全部 10 个签名视觉元素预置完毕，模型只需填充幻灯片内容即可。
+
+---
+
+## 面向 AI 智能体与技能开发者
+
+其他智能体和技能可直接调用 slide-creator：
+
+```
+# 根据主题或备注生成
+/slide-creator 为 [主题] 制作路演 deck
+
+# 两步流程：先规划，再生成（支持中间审查）
+/slide-creator --plan "Acme v2 产品发布演讲稿"
+# （如需要，编辑生成的 PLANNING.md）
+/slide-creator --generate
+
+# 生成后导出为 PPTX
+/slide-creator --export pptx
+```
+
+---
+
+## 设计理念
+
+本节介绍 slide-creator 的设计原则——既包括作为用户工具的设计，也包括作为 Claude Code 技能的设计。
+
+### 一、技能的渐进式披露
+
+技能文件每次被调用时，会完整加载到 AI 的上下文窗口中。这意味着技能文件的大小直接影响 AI 的专注程度。
+
+slide-creator 的解法是：**SKILL.md 是一个精简的指令路由层（约 150 行）**，将每条指令分发到所需的最小参考文件集合：
+
+```
+--plan        → 只读 references/planning-template.md
+--generate    → references/html-template.md + 单个风格文件 + references/base-css.md
+--export pptx → 运行脚本，不加载任何文件
+交互模式      → references/workflow.md（完整 Phase 1–5）
+风格选择      → references/style-index.md（21 个预设 + 心情映射）
+```
+
+**最终效果：** `--plan` 调用从不接触 CSS。`--generate` 运行时从不加载其他 20 种风格描述。`--export` 调用什么都不加载，只运行 Python 脚本。
+
+这是渐进式披露原则在 AI 上下文管理中的应用：**在需要信息的那一刻才披露，而不是提前全部加载**。好的 UX 设计原则同样适用于好的 AI 技能设计。
+
+### 二、以视觉代替语言：Show, Don't Tell
+
+大多数人在没有看到样例之前，无法用语言描述自己的设计偏好。问"你想要极简风还是大胆风？"只会得到模糊的答案。生成三个 50 行的 HTML 预览，然后问"你更喜欢哪个？"，用户会立即做出反应。
+
+Phase 2 正是围绕这一洞察设计的。当用户看到自己的内容标题以三种截然不同的设计语言呈现时，那种"wow 时刻"会把一个抽象的选择变成一种直觉体验。预览文件故意做得很小（约 50 行，自包含），几秒即可生成。
+
+这正是 slide-creator 强调"以视觉代替语言"而非"提供 21 个主题"的原因。功能不产生参与感，选择的体验才会。
+
+### 三、视口适配作为第一优先级约束
+
+演示文稿中途出现滚动条，意味着这个幻灯片是坏的。这听起来显而易见，但在生成 HTML 时很容易犯错——如果一张幻灯片内容太多，浏览器会直接溢出显示。
+
+slide-creator 将视口适配视为**不可妥协的硬约束**，而非最佳实践：
+
+- 每个 `.slide` 必须有 `height: 100vh; overflow: hidden;`
+- 按幻灯片类型规定了内容密度上限（例如最多 6 条要点、最多 6 个网格卡片）
+- 内容超出时，规则永远是：**拆分幻灯片，不要压缩**
+
+基础 CSS（`references/base-css.md`）对所有尺寸使用 `clamp()`，从横屏手机到 4K 显示器均可优雅缩放。CSS 陷阱备注栏也正因此而存在——`calc(-1 * clamp(...))` 与 `-clamp(...)` 的区别是一种静默失败，没有控制台报错，只是布局悄悄出了问题。
+
+### 四、自定义主题系统：可组合的设计语言
+
+`themes/` 目录允许任何用户以自己的品牌风格扩展 slide-creator。只需在 `themes/your-theme/` 目录中放入一个 `reference.md` 描述视觉系统，它就会立即以"Custom: folder-name"的形式出现在风格选择列表中。
+
+两文件约定（`reference.md` + 可选的 `starter.html`）与 Blue Sky 模式一致：`reference.md` 描述设计语言（颜色、字体、组件类），`starter.html` 是复杂视觉系统的完整模板。
+
+这种分离意味着简单的自定义主题只需一个文件，而复杂主题（带动画背景、自定义 JS、非常规布局系统）则可以附带完整的工作模板。
+
+### 五、内容类型路由：有意义的智能默认值
+
+21 个预设的数量足够丰富，同时又经过精心筛选。slide-creator 通过内容类型映射来推荐风格，而非让用户浏览所有选项：
+
+```
+数据报告 / KPI 看板    → Data Story、Enterprise Dark、Swiss Modern
+商业路演 / VC Deck     → Bold Signal、Aurora Mesh、Enterprise Dark
+开发工具 / API 文档    → Terminal Green、Neon Cyber、Neo-Retro Dev Deck
+```
+
+SKILL.md 中的这张路由表同时服务两类受众：希望获得合理起点的人类用户，以及以编程方式调用技能时可能知道内容类型但不知道选哪种风格的 AI 智能体。
 
 ---
 
