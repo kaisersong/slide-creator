@@ -93,13 +93,13 @@ git clone https://github.com/kaisersong/slide-creator ~/.claude/skills/slide-cre
 
 ```bash
 # 通过 ClawHub 安装（推荐）
-clawhub install html-slide-creator
+clawhub install kai-slide-creator
 
 # 或手动克隆
 git clone https://github.com/kaisersong/slide-creator ~/.openclaw/skills/slide-creator
 ```
 
-> ClawHub 页面：https://clawhub.ai/skills/html-slide-creator
+> ClawHub 页面：https://clawhub.ai/skills/kai-slide-creator
 
 OpenClaw 首次使用时会自动安装依赖（Pillow、python-pptx、playwright）。
 

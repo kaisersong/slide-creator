@@ -92,13 +92,13 @@ Restart Claude Code. Use as `/slide-creator`.
 
 ```bash
 # Via ClawHub (recommended)
-clawhub install html-slide-creator
+clawhub install kai-slide-creator
 
 # Or manually
 git clone https://github.com/kaisersong/slide-creator ~/.openclaw/skills/slide-creator
 ```
 
-> ClawHub page: https://clawhub.ai/skills/html-slide-creator
+> ClawHub page: https://clawhub.ai/skills/kai-slide-creator
 
 OpenClaw will automatically detect and install dependencies (Pillow, python-pptx, playwright) on first use.
 
