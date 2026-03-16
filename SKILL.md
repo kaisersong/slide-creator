@@ -1,8 +1,8 @@
 ---
 name: kai-slide-creator
-description: Create beautiful, zero-dependency HTML presentations that run entirely in the browser — no npm, no build tools. 21 curated style presets with named layout variations, visual style discovery with live previews, viewport-fitted slides, inline browser editing, Presenter Mode, and optional PPTX export. Content-type routing suggests the best style for pitch decks, dev docs, data reports, and more. Supports --plan (outline), --generate (HTML from plan), and --export pptx flags.
-version: 2.0.2
-metadata: {"openclaw":{"emoji":"🎞","os":["darwin","linux","windows"],"homepage":"https://github.com/kaisersong/slide-creator","requires":{"bins":["python3"]},"install":[{"id":"pillow","kind":"uv","package":"Pillow","label":"Pillow (image processing)"},{"id":"python-pptx","kind":"uv","package":"python-pptx","label":"python-pptx (PPT import/export)"},{"id":"playwright","kind":"uv","package":"playwright","label":"Playwright (pixel-perfect PPTX export via system Chrome)"}]}}
+description: Create beautiful, zero-dependency HTML presentations that run entirely in the browser — no npm, no build tools. 21 curated style presets with named layout variations, visual style discovery with live previews, viewport-fitted slides, inline browser editing, and Presenter Mode. Content-type routing suggests the best style for pitch decks, dev docs, data reports, and more. Supports --plan (outline) and --generate (HTML from plan) flags. For PPTX/PNG export use kai-html-export.
+version: 2.1.0
+metadata: {"openclaw":{"emoji":"🎞","os":["darwin","linux","windows"],"homepage":"https://github.com/kaisersong/slide-creator","requires":{"bins":["python3"]},"install":[{"id":"pillow","kind":"uv","package":"Pillow","label":"Pillow (image processing)"}]}}
 ---
 
 # Slide Creator
@@ -27,10 +27,9 @@ Parse the invocation first, then load only what that command needs:
 |---------|-------------|------------|
 | `--plan [prompt]` | `references/planning-template.md` | Create PLANNING.md. Stop — no HTML. |
 | `--generate` | `references/html-template.md` + chosen style file + `references/base-css.md` | Read PLANNING.md, generate HTML. |
-| `--export pptx` | Nothing | Run `scripts/export-pptx.py`. |
 | No flag (interactive) | `references/workflow.md` | Follow Phase 0–5. |
 
-**Progressive disclosure rule:** each command loads only its required files. `--plan` never touches CSS. `--export` never loads style knowledge. This keeps context focused and fast.
+**Progressive disclosure rule:** each command loads only its required files. `--plan` never touches CSS. This keeps context focused and fast.
 
 ---
 
@@ -80,16 +79,6 @@ Read only the file for the chosen style. Never load all styles into context.
 **For style picker / mood mapping / effect guide** → read `references/style-index.md`.
 
 **For viewport CSS, density limits, CSS gotchas** → read `references/base-css.md`.
-
----
-
-## Export Mode (`--export pptx`)
-
-1. Find `*.html` in current directory (prefer most recently modified).
-2. Run: `python3 <skill-path>/scripts/export-pptx.py <presentation.html> [output.pptx]`
-3. Report the PPTX file path and slide count.
-
-Uses system Chrome via Playwright (`--channel chrome`, no Chromium download). Requires only `pip install playwright python-pptx`.
 
 ---
 

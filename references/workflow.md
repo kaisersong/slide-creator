@@ -151,7 +151,7 @@ Navigation: Arrow keys or Space · Scroll or swipe · Click dots to jump
 Presenter Mode: press P to open the presenter window (notes + timer + controls)
 
 To customize: edit :root variables at the top of the CSS for colors, fonts, and spacing.
-To export as PPTX: run `/slide-creator --export pptx`
+To export as PPTX or PNG: `/kai-html-export` (install: clawhub install kai-html-export)
 ```
 
 Always mention: hover the top-left corner or press `E` to enter edit mode.
