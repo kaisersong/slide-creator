@@ -1,7 +1,7 @@
 ---
 name: kai-slide-creator
 description: Create beautiful, zero-dependency HTML presentations that run entirely in the browser — no npm, no build tools. 21 curated style presets with named layout variations, visual style discovery with live previews, viewport-fitted slides, inline browser editing, Presenter Mode, and optional PPTX export. Content-type routing suggests the best style for pitch decks, dev docs, data reports, and more. Supports --plan (outline), --generate (HTML from plan), and --export pptx flags.
-version: 2.0.1
+version: 2.0.2
 metadata: {"openclaw":{"emoji":"🎞","os":["darwin","linux","windows"],"homepage":"https://github.com/kaisersong/slide-creator","requires":{"bins":["python3"]},"install":[{"id":"pillow","kind":"uv","package":"Pillow","label":"Pillow (image processing)"},{"id":"python-pptx","kind":"uv","package":"python-pptx","label":"python-pptx (PPT import/export)"},{"id":"playwright","kind":"uv","package":"playwright","label":"Playwright (pixel-perfect PPTX export via system Chrome)"}]}}
 ---
 
