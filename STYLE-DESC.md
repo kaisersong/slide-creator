@@ -4,7 +4,7 @@ Curated visual styles for Slide Creator. Each preset is inspired by real design 
 
 ---
 
-## ⚠️ CRITICAL: Viewport Fitting (Non-Negotiable)
+## ⚠ CRITICAL: Viewport Fitting (Non-Negotiable)
 
 **Every slide MUST fit exactly in the viewport. No scrolling within slides, ever.**
 

@@ -24,13 +24,13 @@ themes/
 
 ## Colors
 
-​```css
+```css
 :root {
     --bg:      #...;
     --text:    #...;
     --accent:  #...;
 }
-​```
+```
 
 ## Typography
 ...
