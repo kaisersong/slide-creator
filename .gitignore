@@ -1,3 +1,4 @@
-.DS_Store
-PRODUCT.md
-presenter-test.html
+__pycache__/
+*.pyc
+*.pyo
+.pytest_cache/
