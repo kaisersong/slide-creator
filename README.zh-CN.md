@@ -4,7 +4,7 @@
 
 适用于 [Claude Code](https://claude.ai/claude-code) 和 [OpenClaw](https://openclaw.ai) 的演示文稿生成 skill，零依赖、纯浏览器运行的 HTML 幻灯片。
 
-**v2.0.0** — 重构为渐进式披露架构：SKILL.md 精简为约 150 行的指令路由层。完整工作流、风格索引、基础 CSS 和单风格参考文件均按需加载——每条指令只读取所需内容。21 种设计预设、演讲者模式、内联 SVG 图表、自定义主题系统、PPTX 导出。
+**v2.1.0** — PPTX/PNG 导出功能已解耦至独立技能 [kai-html-export](https://github.com/kaisersong/kai-html-export)。kai-slide-creator 专注于 HTML 演示文稿创建，依赖更轻量（仅需 Pillow，无需 Playwright 或 python-pptx）。
 
 [English](README.md) | 简体中文
 
@@ -72,7 +72,7 @@
 - **Blue Sky Starter 模板** — 完整 boilerplate，任何模型都能正确实现全套视觉系统
 - **图片处理流水线** — 自动评估和处理素材（Pillow）
 - **PPT 导入** — 将 `.pptx` 文件转换为网页演示
-- **PPTX 导出** — `--export pptx`，通过 Playwright + 系统 Chrome 导出
+- **PPTX / PNG 导出** — 通过 [kai-html-export](https://github.com/kaisersong/kai-html-export)（`clawhub install kai-html-export`）
 - **浏览器内编辑** — 直接在浏览器中编辑文字，Ctrl+S 保存
 - **视口自适应** — 每张幻灯片精确填充 100vh，永不出现滚动条
 - **中英双语** — 完整支持中文内容
@@ -101,7 +101,7 @@ git clone https://github.com/kaisersong/slide-creator ~/.openclaw/skills/slide-c
 
 > ClawHub 页面：https://clawhub.ai/skills/kai-slide-creator
 
-OpenClaw 首次使用时会自动安装依赖（Pillow、python-pptx、playwright）。
+OpenClaw 首次使用时会自动安装依赖（Pillow）。
 
 ---
 
@@ -110,8 +110,8 @@ OpenClaw 首次使用时会自动安装依赖（Pillow、python-pptx、playwrigh
 ```
 /slide-creator --plan       # 分析内容和 resources/ 目录，生成 PLANNING.md 大纲
 /slide-creator --generate   # 根据 PLANNING.md 生成 HTML 演示文稿
-/slide-creator --export pptx  # 导出为 PowerPoint
 /slide-creator              # 从零开始（交互式风格探索）
+/kai-html-export            # 导出为 PPTX 或 PNG（独立技能）
 ```
 
 ### 典型工作流
@@ -136,15 +136,18 @@ OpenClaw 首次使用时会自动安装依赖（Pillow、python-pptx、playwrigh
 
 | 依赖 | 用途 | OpenClaw 自动安装 |
 |------|------|------------------|
-| Python 3 + `Pillow` | 图片处理 | ✅ via uv |
-| Python 3 + `python-pptx` | PPT 导入/导出 | ✅ via uv |
-| Python 3 + `playwright` | PPTX 导出（使用系统 Chrome） | ✅ via uv |
+| Python 3 + `Pillow` | 生成时图片处理 | ✅ via uv |
 
-不再需要 Node.js。PPTX 导出使用你已安装的 Chrome/Edge/Brave，无需下载 300MB 的 Chromium。
+不需要 Node.js。
 
 **Claude Code 用户** 需手动安装：
 ```bash
-pip install Pillow python-pptx playwright
+pip install Pillow
+```
+
+如需导出 PPTX 或 PNG，安装 [kai-html-export](https://github.com/kaisersong/kai-html-export)：
+```bash
+clawhub install kai-html-export   # 或：pip install playwright python-pptx
 ```
 
 ---

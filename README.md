@@ -4,7 +4,7 @@
 
 A skill for [Claude Code](https://claude.ai/claude-code) and [OpenClaw](https://openclaw.ai) that generates stunning, zero-dependency HTML presentations.
 
-**v2.0.0** — Restructured as a progressive disclosure skill: SKILL.md is now a thin command router (~150 lines). Full workflow details, style index, base CSS, and per-style references are loaded on demand — each command loads only what it needs. 21 design presets, Presenter Mode, inline SVG diagrams, custom theme system, PPTX export via Playwright.
+**v2.1.0** — PPTX/PNG export decoupled to [kai-html-export](https://github.com/kaisersong/kai-html-export). kai-slide-creator now focuses solely on HTML presentation creation — only Pillow required, no Playwright or python-pptx. Progressive disclosure architecture: SKILL.md is a thin command router, full workflow loaded on demand.
 
 English | [简体中文](README.zh-CN.md)
 
@@ -71,7 +71,7 @@ Every demo uses the same content (slide-creator's own introduction) — making i
 - **Blue Sky starter template** — Complete boilerplate so models never mis-implement the visual system
 - **Image pipeline** — Auto-evaluate and process assets (Pillow)
 - **PPT import** — Convert `.pptx` files to web presentations
-- **PPTX export** — `--export pptx` via Playwright + system Chrome
+- **PPTX / PNG export** — via [kai-html-export](https://github.com/kaisersong/kai-html-export) (`clawhub install kai-html-export`)
 - **Inline editing** — Edit text in-browser, Ctrl+S to save
 - **Viewport fitting** — Every slide fits exactly in 100vh, no scrolling ever
 - **Bilingual** — Chinese / English support
@@ -100,7 +100,7 @@ git clone https://github.com/kaisersong/slide-creator ~/.openclaw/skills/slide-c
 
 > ClawHub page: https://clawhub.ai/skills/kai-slide-creator
 
-OpenClaw will automatically detect and install dependencies (Pillow, python-pptx, playwright) on first use.
+OpenClaw will automatically detect and install dependencies (Pillow) on first use.
 
 ---
 
@@ -109,30 +109,33 @@ OpenClaw will automatically detect and install dependencies (Pillow, python-pptx
 ```
 /slide-creator --plan       # Analyze content + resources/, create PLANNING.md
 /slide-creator --generate   # Generate HTML presentation from PLANNING.md
-/slide-creator --export pptx  # Export to PowerPoint
 /slide-creator              # Start from scratch (interactive style discovery)
+/kai-html-export            # Export to PPTX or PNG (separate skill)
 ```
 
 ## Requirements
 
 | Dependency | Purpose | Auto-installed (OpenClaw) |
 |-----------|---------|--------------------------|
-| Python 3 + `Pillow` | Image processing | ✅ via uv |
-| Python 3 + `python-pptx` | PPT import/export | ✅ via uv |
-| Python 3 + `playwright` | PPTX export (uses system Chrome) | ✅ via uv |
+| Python 3 + `Pillow` | Image processing during generation | ✅ via uv |
 
-Node.js is not required. PPTX export uses your existing Chrome/Edge/Brave — no 300MB Chromium download.
+Node.js is not required.
 
 **Claude Code users** — install manually:
 ```bash
-pip install Pillow python-pptx playwright
+pip install Pillow
+```
+
+For PPTX or PNG export, install [kai-html-export](https://github.com/kaisersong/kai-html-export):
+```bash
+clawhub install kai-html-export   # or: pip install playwright python-pptx
 ```
 
 ## Output
 
 Single-file `presentation.html` — zero dependencies, runs entirely in the browser.
 
-Optionally exports `PRESENTATION_SCRIPT.md` (speaker notes) and `.pptx`.
+Optionally generates `PRESENTATION_SCRIPT.md` (speaker notes). For PPTX/PNG export, use [kai-html-export](https://github.com/kaisersong/kai-html-export).
 
 ---
 
