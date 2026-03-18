@@ -1,7 +1,7 @@
 ---
 name: kai-slide-creator
-description: Create beautiful, zero-dependency HTML presentations that run entirely in the browser — no npm, no build tools. 21 curated style presets with named layout variations, visual style discovery with live previews, viewport-fitted slides, inline browser editing, and Presenter Mode. Content-type routing suggests the best style for pitch decks, dev docs, data reports, and more. Supports --plan (outline) and --generate (HTML from plan) flags. For PPTX/PNG export use kai-html-export.
-version: 2.1.0
+description: Use when someone wants to CREATE or BUILD a slide deck, presentation, or 幻灯片/PPT/演示文稿 — from scratch, from notes, from a Word/PPTX file, or from an approved outline. Handles Chinese and English equally. Covers pitch decks, product launches, team standups, conference talks, capstone presentations, style previews, and converting existing files to web slides. Use for --plan (outline) and --generate (HTML from plan) flags. Does NOT apply to exporting finished HTML to PPTX/PNG (use kai-html-export), writing speeches, or non-slide documents.
+version: 2.3.1
 metadata: {"openclaw":{"emoji":"🎞","os":["darwin","linux","windows"],"homepage":"https://github.com/kaisersong/slide-creator","requires":{"bins":["python3"]},"install":[{"id":"pillow","kind":"uv","package":"Pillow","label":"Pillow (image processing)"}]}}
 ---
 
@@ -99,7 +99,7 @@ Other agents can call this skill programmatically:
 /slide-creator --generate
 
 # Export to PPTX after generation
-/slide-creator --export pptx
+/kai-html-export presentation.html
 ```
 
 ---
