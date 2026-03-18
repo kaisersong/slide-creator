@@ -4,7 +4,7 @@
 
 适用于 [Claude Code](https://claude.ai/claude-code) 和 [OpenClaw](https://openclaw.ai) 的演示文稿生成 skill，零依赖、纯浏览器运行的 HTML 幻灯片。
 
-**v2.1.0** — PPTX/PNG 导出功能已解耦至独立技能 [kai-html-export](https://github.com/kaisersong/kai-html-export)。kai-slide-creator 专注于 HTML 演示文稿创建，依赖更轻量（仅需 Pillow，无需 Playwright 或 python-pptx）。
+**v2.3.1** — Bug 修复：方向键现在能正确渲染幻灯片。`goTo()` 手动切换 `.visible` 类，修复键盘导航时 IntersectionObserver 触发时机问题。PPTX/PNG 导出功能已解耦至独立技能 [kai-html-export](https://github.com/kaisersong/kai-html-export)。渐进式披露架构：SKILL.md 是轻量命令路由器，完整工作流按需加载。
 
 [English](README.md) | 简体中文
 

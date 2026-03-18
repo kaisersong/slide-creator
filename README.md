@@ -4,7 +4,7 @@
 
 A skill for [Claude Code](https://claude.ai/claude-code) and [OpenClaw](https://openclaw.ai) that generates stunning, zero-dependency HTML presentations.
 
-**v2.1.0** — PPTX/PNG export decoupled to [kai-html-export](https://github.com/kaisersong/kai-html-export). kai-slide-creator now focuses solely on HTML presentation creation — only Pillow required, no Playwright or python-pptx. Progressive disclosure architecture: SKILL.md is a thin command router, full workflow loaded on demand.
+**v2.3.1** — Bug fix: arrow keys now render slides correctly. `goTo()` manually toggles `.visible` class to fix IntersectionObserver timing issue during keyboard navigation. PPTX/PNG export decoupled to [kai-html-export](https://github.com/kaisersong/kai-html-export). Progressive disclosure architecture: SKILL.md is a thin command router, full workflow loaded on demand.
 
 English | [简体中文](README.zh-CN.md)
 
