@@ -3,9 +3,9 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>季度数据洞察 — 用户增长与留存分析</title>
+  <title>slide-creator · Data Story · 季度数据洞察 — 用户增长与留存分析</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&family=Noto+Sans+SC:wght@400;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&family=Noto+Sans+SC:wght@400;600&display=swap" rel="stylesheet">
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     html { scroll-snap-type: y mandatory; scroll-behavior: smooth; height: 100%; }
@@ -351,144 +351,140 @@
 </div>
 
 <div id="hotzone"></div>
-<div id="edit-indicator">编辑模式 — Ctrl+S 保存</div>
+<div id="edit-indicator">Edit Mode — Ctrl+S to Save</div>
 
-<!-- SLIDE 01: 封面 — 英雄数字布局 -->
+<!-- SLIDE 01: Cover — Hero layout -->
 <section class="slide" id="slide-0">
   <div class="content">
-    <div class="eyebrow reveal">Q3 数据洞察 · 用户增长与留存分析</div>
+    <div class="eyebrow reveal">数据故事 · Claude Code 和 OpenClaw 的数据可视化</div>
     <div class="hero-center reveal">
-      <p class="cover-tagline">数据驱动决策。<br>数字讲述故事。</p>
+      <p class="cover-tagline">零依赖的数据演示。<br>数据本身就是论证。</p>
       <div class="cover-stats-row">
         <div>
-          <span class="cover-stat-val">+127%</span>
-          <span class="cover-stat-label">用户增长</span>
+          <span class="cover-stat-val">8</span>
+          <span class="cover-stat-label">核心指标</span>
         </div>
         <div>
-          <span class="cover-stat-val">68%</span>
+          <span class="cover-stat-val">45%</span>
+          <span class="cover-stat-label">季度增长</span>
+        </div>
+        <div>
+          <span class="cover-stat-val">82%</span>
           <span class="cover-stat-label">留存率</span>
         </div>
         <div>
-          <span class="cover-stat-val">4.2M</span>
-          <span class="cover-stat-label">活跃用户</span>
-        </div>
-        <div>
-          <span class="cover-stat-val">↑ 3</span>
-          <span class="cover-stat-label">关键指标</span>
+          <span class="cover-stat-val">Q3</span>
+          <span class="cover-stat-label">数据周期</span>
         </div>
       </div>
     </div>
   </div>
 </section>
 
-<!-- SLIDE 02: 核心挑战 — 双列布局 -->
 <section class="slide" id="slide-1">
   <div class="content">
-    <div class="eyebrow reveal">关键挑战</div>
-    <h2 class="reveal">增长势头强劲，<br>但留存瓶颈待突破。</h2>
+    <div class="eyebrow reveal">核心发现</div>
+    <h2 class="reveal">用户增长加速，<br>留存趋势向好。</h2>
     <hr class="divider reveal">
     <div class="two-col reveal">
       <ul class="pain-list">
         <li class="pain-item">
           <span class="pain-dot"></span>
-          <span class="pain-text"><strong>新用户转化放缓。</strong> 虽然获客成本下降，但第二周留存率从 65% 跌至 58%，说明产品体验存在隐患。</span>
+          <span class="pain-text"><strong>新用户激增。</strong> 本季度新增注册用户 12,480 人，环比增长 45%。主要来源于有机推荐和社区渠道，转化质量显著提升。</span>
         </li>
         <li class="pain-item">
           <span class="pain-dot warn"></span>
-          <span class="pain-text"><strong>高流失用户群体。</strong> 25-35 岁用户群日均打开率下降 22%，分析表明功能设计不符合该年龄层需求。</span>
+          <span class="pain-text"><strong>留存稳定改善。</strong> D7 留存率从上季度的 68% 升至 74%，D30 留存率达到 58%。用户粘性指标创新高。</span>
         </li>
         <li class="pain-item">
           <span class="pain-dot"></span>
-          <span class="pain-text"><strong>变现能力不均衡。</strong> VIP 用户占比仅 8%，付费率与竞品差距 12 个百分点，需精准运营策略。</span>
+          <span class="pain-text"><strong>活跃度持续上升。</strong> MAU 环比增长 38%，达 145,300 人。日均新增功能使用次数提升 52%，产品热度明显。</span>
         </li>
       </ul>
       <div class="card" style="display:flex; flex-direction:column; gap:1rem;">
         <div>
-          <div class="kpi-label">本季度新增用户</div>
-          <div class="kpi-number pos" style="font-size: clamp(2rem,5vw,3.5rem);">+1.8M</div>
-          <div class="kpi-trend up">↑ 环比增长 127%</div>
+          <div class="kpi-label">上季度日均新用户</div>
+          <div class="kpi-number neg" style="font-size: clamp(2rem,5vw,3.5rem);">127</div>
+          <div class="kpi-trend down">↓ 增长瓶颈期</div>
         </div>
         <hr class="divider" style="margin: 0;">
         <div>
-          <div class="kpi-label">第二周留存率</div>
-          <div class="kpi-number neg" style="font-size: clamp(2rem,5vw,3.5rem);">58%</div>
-          <div class="kpi-trend down">↓ 同比下降 7%</div>
+          <div class="kpi-label">本季度日均新用户</div>
+          <div class="kpi-number pos" style="font-size: clamp(2rem,5vw,3.5rem);">185</div>
+          <div class="kpi-trend up">↑ 持续加速增长</div>
         </div>
       </div>
     </div>
   </div>
 </section>
 
-<!-- SLIDE 03: 洞察方法 — 步骤卡片 -->
 <section class="slide" id="slide-2">
   <div class="content">
-    <div class="eyebrow reveal">分析方法论</div>
-    <h2 class="reveal">从数据到洞察的三步法。</h2>
+    <div class="eyebrow reveal">增长驱动因素</div>
+    <h2 class="reveal">三大支柱驱动用户增长。</h2>
     <p class="reveal" style="margin-top: 0.5rem; margin-bottom: 0;">
-      通过用户行为分段、漏斗分析和队列追踪，我们识别了留存瓶颈的根本原因并提出了可行方案。
+      通过数据溯源，我们确认了增长的具体来源。每个环节都有明确的优化空间和机遇。
     </p>
     <div class="step-cards">
       <div class="step-card reveal">
         <div class="step-num">01</div>
-        <div class="step-title">行为分段</div>
-        <p class="step-desc">按照用户属性和使用路径分类，聚焦高价值人群的行为模式差异。</p>
+        <div class="step-title">产品创新</div>
+        <p class="step-desc">新增 3 项核心功能，用户反馈评分 4.7/5。功能采用率 65%，超预期 18%。</p>
       </div>
       <div class="step-card reveal">
         <div class="step-num">02</div>
-        <div class="step-title">漏斗分析</div>
-        <p class="step-desc">追踪关键转化节点，定位用户流失最多的环节和可能原因。</p>
+        <div class="step-title">渠道优化</div>
+        <p class="step-desc">社区合作扩展至 12 个高活跃社群，单渠道转化率 28%。社群引流占新用户 41%。</p>
       </div>
       <div class="step-card reveal">
         <div class="step-num">03</div>
-        <div class="step-title">队列追踪</div>
-        <p class="step-desc">对比不同时间加入的用户群体，评估产品迭代的实际效果。</p>
+        <div class="step-title">运营引导</div>
+        <p class="step-desc">优化新手引导路径，完成率提升至 82%。首次使用关键功能的激活时间缩短 35%。</p>
       </div>
     </div>
   </div>
 </section>
 
-<!-- SLIDE 04: 核心指标 — KPI 网格 -->
 <section class="slide" id="slide-3">
   <div class="content">
-    <div class="eyebrow reveal">Q3 关键指标</div>
-    <h2 class="reveal">四大核心数据，牵动全局。</h2>
+    <div class="eyebrow reveal">关键指标体系</div>
+    <h2 class="reveal">8 个核心 KPI 全面覆盖。</h2>
     <div class="kpi-grid">
       <div class="kpi-card highlight reveal">
+        <div class="kpi-label">本季度 MAU</div>
+        <div class="kpi-number blue">145.3K</div>
+        <div class="kpi-trend up">↑ 环比 +38%</div>
+      </div>
+      <div class="kpi-card reveal">
         <div class="kpi-label">新增用户</div>
-        <div class="kpi-number pos">1.8M</div>
-        <div class="kpi-trend up">↑ 环比 +127%</div>
+        <div class="kpi-number pos">12.5K</div>
+        <div class="kpi-trend up">↑ 环比 +45%</div>
       </div>
       <div class="kpi-card reveal">
-        <div class="kpi-label">日活用户</div>
-        <div class="kpi-number blue">420K</div>
-        <div class="kpi-trend up">↑ 环比 +42%</div>
+        <div class="kpi-label">D30 留存率</div>
+        <div class="kpi-number neu" style="font-size: clamp(2rem,5vw,3.5rem);">58%</div>
+        <div class="kpi-trend up">↑ 环比 +6pp</div>
       </div>
       <div class="kpi-card reveal">
-        <div class="kpi-label">7 日留存率</div>
-        <div class="kpi-number neu" style="font-size: clamp(2rem,5vw,3.5rem);">68%</div>
-        <div class="kpi-trend down">↓ 环比 -5%</div>
-      </div>
-      <div class="kpi-card reveal">
-        <div class="kpi-label">付费转化率</div>
-        <div class="kpi-number neu" style="font-size: clamp(2rem,5vw,3.5rem);">8.3%</div>
-        <div class="kpi-trend up">↑ 环比 +1.2%</div>
+        <div class="kpi-label">日均活跃用户</div>
+        <div class="kpi-number neu" style="font-size: clamp(2rem,5vw,3.5rem);">48.2K</div>
+        <div class="kpi-trend up">↑ 环比 +32%</div>
       </div>
     </div>
     <div class="insight reveal" style="margin-top: clamp(1rem,2vh,1.5rem);">
-      数据显示，获客效率与转化能力在提升，但产品留存能力亟待优化。<strong>未来重点：提升新用户第二周体验，针对性运营 25-35 岁用户群。</strong>
+      每项指标都已验证，对标行业基准。增长曲线陡峭而稳定，留存数据持续向好。
+      <strong>所有信号都指向正确的方向。</strong>
     </div>
   </div>
 </section>
 
-<!-- SLIDE 05: 增长曲线 — 柱状图与洞察 -->
 <section class="slide" id="slide-4">
   <div class="content">
-    <div class="eyebrow reveal">增长轨迹</div>
-    <h2 class="reveal">新增用户月度走势。</h2>
+    <div class="eyebrow reveal">用户增长轨迹</div>
+    <h2 class="reveal">按月新增用户统计。</h2>
     <div class="chart-layout reveal">
       <div class="chart-wrap">
-        <!-- SVG 柱状图：月度新增用户 -->
-        <svg viewBox="0 0 460 240" width="100%" style="display:block;" aria-label="月度新增用户">
+        <svg viewBox="0 0 460 240" width="100%" style="display:block;" aria-label="每月新增用户统计">
           <defs>
             <linearGradient id="barGrad" x1="0" y1="0" x2="0" y2="1">
               <stop offset="0%" stop-color="#3b82f6" stop-opacity="1"/>
@@ -499,9 +495,248 @@
               <stop offset="100%" stop-color="#8b5cf6" stop-opacity="0.6"/>
             </linearGradient>
           </defs>
-          <!-- Grid lines -->
           <line x1="48" y1="20" x2="48" y2="200" class="chart-axis"/>
           <line x1="48" y1="200" x2="450" y2="200" class="chart-axis"/>
           <line x1="48" y1="50" x2="450" y2="50" class="chart-grid"/>
           <line x1="48" y1="80" x2="450" y2="80" class="chart-grid"/>
-          <line x1="
+          <line x1="48" y1="110" x2="450" y2="110" class="chart-grid"/>
+          <line x1="48" y1="140" x2="450" y2="140" class="chart-grid"/>
+          <line x1="48" y1="170" x2="450" y2="170" class="chart-grid"/>
+          <text x="40" y="54" class="chart-label" text-anchor="end">2500</text>
+          <text x="40" y="84" class="chart-label" text-anchor="end">2000</text>
+          <text x="40" y="114" class="chart-label" text-anchor="end">1500</text>
+          <text x="40" y="144" class="chart-label" text-anchor="end">1000</text>
+          <text x="40" y="174" class="chart-label" text-anchor="end">500</text>
+          <rect x="58"  y="164" width="32" height="36"  rx="3" fill="url(#barGrad)"/>
+          <rect x="108" y="152" width="32" height="48"  rx="3" fill="url(#barGrad)"/>
+          <rect x="158" y="140" width="32" height="60"  rx="3" fill="url(#barGrad)"/>
+          <rect x="208" y="128" width="32" height="72"  rx="3" fill="url(#barGrad)"/>
+          <rect x="258" y="112" width="32" height="88"  rx="3" fill="url(#barGrad)"/>
+          <rect x="308" y="92"  width="32" height="108" rx="3" fill="url(#barGrad)"/>
+          <rect x="358" y="60"  width="32" height="140" rx="3" fill="url(#barGrad2)"/>
+          <rect x="408" y="20"  width="32" height="180" rx="3" fill="url(#barGrad2)"/>
+          <text x="74"  y="160" class="chart-val" text-anchor="middle">900</text>
+          <text x="124" y="148" class="chart-val" text-anchor="middle">1200</text>
+          <text x="174" y="136" class="chart-val" text-anchor="middle">1500</text>
+          <text x="224" y="124" class="chart-val" text-anchor="middle">1800</text>
+          <text x="274" y="108" class="chart-val" text-anchor="middle">2200</text>
+          <text x="324" y="88"  class="chart-val" text-anchor="middle">2700</text>
+          <text x="374" y="56"  class="chart-val" text-anchor="middle">3500</text>
+          <text x="424" y="16"  class="chart-val" text-anchor="middle">4500</text>
+          <text x="74"  y="216" class="chart-label" text-anchor="middle">6月</text>
+          <text x="124" y="216" class="chart-label" text-anchor="middle">7月</text>
+          <text x="174" y="216" class="chart-label" text-anchor="middle">8月</text>
+          <text x="224" y="216" class="chart-label" text-anchor="middle">9月</text>
+          <text x="274" y="216" class="chart-label" text-anchor="middle">10月</text>
+          <text x="324" y="216" class="chart-label" text-anchor="middle">11月</text>
+          <text x="374" y="216" class="chart-label" text-anchor="middle">12月</text>
+          <text x="424" y="216" class="chart-label" text-anchor="middle">1月</text>
+        </svg>
+      </div>
+      <div class="insights-stack reveal">
+        <div class="insight">
+          <strong>+400% 增长</strong> 从 6 月到 1 月 — 得益于产品迭代、营销发力和口碑传播的协同效应。
+        </div>
+        <div class="insight" style="border-left-color: #8b5cf6; background: rgba(139,92,246,0.08);">
+          <strong>12 月–1 月加速期：</strong> 新功能上线和跨年活动推动了 28% 的周环比增长。用户获取成本降低 22%。
+        </div>
+        <div style="margin-top: 0.5rem;">
+          <div class="kpi-label">月均增长率</div>
+          <div class="kpi-number pos" style="font-size: clamp(2rem,4.5vw,3rem);">+31%</div>
+          <div class="kpi-trend up">↑ 8 个月平均</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="slide" id="slide-5">
+  <div class="content">
+    <div class="eyebrow reveal">留存分析</div>
+    <h2 class="reveal">留存曲线呈现健康态势。</h2>
+    <div class="feature-table reveal">
+      <div class="feature-row">
+        <span class="feature-name">D1 留存率</span>
+        <span class="feature-desc">新用户次日回访率达 81%，说明首日体验满足度高。产品初期吸引力显著。</span>
+      </div>
+      <div class="feature-row">
+        <span class="feature-name">D7 留存率</span>
+        <span class="feature-desc">74% 的新用户在第七天仍活跃，环比上升 6 个百分点。核心功能粘性增强。</span>
+      </div>
+      <div class="feature-row">
+        <span class="feature-name">D30 留存率</span>
+        <span class="feature-desc">58% 的新用户完成 30 天留存，处于行业中上水平。长期活跃用户群体稳定增长。</span>
+      </div>
+      <div class="feature-row">
+        <span class="feature-name">留存转化</span>
+        <span class="feature-desc">新用户转为付费用户的比例达 12%，高于预期 3 个百分点。变现前景清晰。</span>
+      </div>
+    </div>
+    <div class="reveal" style="margin-top: clamp(1rem,2vh,1.5rem);">
+      <svg viewBox="0 0 460 80" width="100%" style="display:block;" aria-label="留存率趋势图">
+        <defs>
+          <linearGradient id="areaGrad" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="#3b82f6"/>
+            <stop offset="100%" stop-color="#3b82f6" stop-opacity="0"/>
+          </linearGradient>
+        </defs>
+        <line x1="0" y1="78" x2="460" y2="78" class="chart-grid"/>
+        <line x1="0" y1="40" x2="460" y2="40" class="chart-grid"/>
+        <polyline points="0,12 57,20 115,26 172,34 230,40 287,50 345,60 402,68 460,74" class="chart-line"/>
+        <polygon points="0,12 57,20 115,26 172,34 230,40 287,50 345,60 402,68 460,74 460,78 0,78" class="chart-area"/>
+      </svg>
+      <div class="eyebrow" style="margin-top: 0.4rem; margin-bottom: 0;">留存率演进 — D1、D7、D30 三个关键节点的变化趋势</div>
+    </div>
+  </div>
+</section>
+
+<section class="slide" id="slide-6">
+  <div class="content">
+    <div class="eyebrow reveal">实施路径</div>
+    <h2 class="reveal">两个阶段。零风险部署。</h2>
+    <hr class="divider reveal">
+    <div class="install-grid reveal">
+      <div class="install-card">
+        <span class="install-label">第一阶段：诊断</span>
+        <div class="code-block">
+          <span class="cmd">数据采集</span> 核心用户行为数据<br>
+          &nbsp;&nbsp;完整周期：7-14 天<br>
+          <span class="cmd">分析</span> 增长瓶颈与优化点<br>
+          <span class="comment"># 生成初步诊断报告</span>
+        </div>
+        <hr class="divider" style="margin-top: 1rem; margin-bottom: 1rem;">
+        <div class="kpi-label">完成周期</div>
+        <div class="kpi-number pos" style="font-size: clamp(1.5rem,3vw,2.5rem);">2 周</div>
+      </div>
+      <div class="install-card">
+        <span class="install-label">第二阶段：优化</span>
+        <div class="code-block">
+          <span class="cmd">A/B 测试</span> 多个优化方案<br>
+          <span class="comment"># 每周迭代一次</span><br>
+          <span class="cmd">滚动上线</span> 成功方案<br>
+        </div>
+        <hr class="divider" style="margin-top: 1rem; margin-bottom: 1rem;">
+        <div class="kpi-label">优化周期</div>
+        <div class="kpi-number pos" style="font-size: clamp(1.5rem,3vw,2.5rem);">4 周</div>
+      </div>
+    </div>
+    <div class="insight reveal" style="margin-top: clamp(1rem,2vh,1.5rem);">
+      基于数据驱动。每个决策都有量化依据。风险可控，收益可期。<strong>增长是可测可控的科学过程。</strong>
+    </div>
+  </div>
+</section>
+
+<section class="slide" id="slide-7">
+  <div class="content">
+    <div class="eyebrow reveal">总结</div>
+    <div class="cta-cmd reveal">Q3 数据洞察完整呈现</div>
+    <p class="cta-sub reveal">
+      用户增长加速，留存趋势向好，产品热度明显提升。<br>
+      数据清晰，方向正确。下阶段目标已锁定，执行在即。
+    </p>
+    <div class="cta-chips reveal">
+      <span class="chip active">+45% 新用户增长</span>
+      <span class="chip active">+6pp 留存提升</span>
+      <span class="chip">D30 留存 58%</span>
+      <span class="chip">月均环比 +31%</span>
+      <span class="chip">转化率 12%</span>
+      <span class="chip">可持续增长</span>
+    </div>
+    <div style="margin-top: clamp(2rem,4vh,3rem);" class="reveal">
+      <svg viewBox="0 0 460 60" width="100%" style="display:block; max-width: 520px;" aria-label="预测增长曲线">
+        <line x1="0" y1="58" x2="460" y2="58" class="chart-grid"/>
+        <polyline points="0,50 57,44 115,38 172,30 230,24 287,16 345,10 402,5 460,2" class="chart-line" stroke="#00d4aa"/>
+        <polygon points="0,50 57,44 115,38 172,30 230,24 287,16 345,10 402,5 460,2 460,58 0,58" fill="#00d4aa" opacity="0.08"/>
+      </svg>
+      <div class="eyebrow" style="margin-top: 0.4rem; margin-bottom: 0; color: #00d4aa;">增长轨迹 — 持续上升。未来可期。</div>
+    </div>
+  </div>
+</section>
+
+<script>
+  const slides = Array.from(document.querySelectorAll('.slide'));
+  const dots = Array.from(document.querySelectorAll('.dot'));
+  const progress = document.getElementById('progress');
+  let current = 0;
+  let editMode = false;
+
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('visible');
+        const idx = slides.indexOf(entry.target);
+        if (idx !== -1) updateNav(idx);
+      }
+    });
+  }, { threshold: 0.6 });
+  slides.forEach(s => observer.observe(s));
+
+  function updateNav(idx) {
+    current = idx;
+    dots.forEach((d, i) => d.classList.toggle('active', i === idx));
+    progress.style.width = ((idx + 1) / slides.length * 100) + '%';
+  }
+
+  function goTo(idx) {
+    if (idx < 0 || idx >= slides.length) return;
+    slides[idx].scrollIntoView({ behavior: 'smooth' });
+  }
+
+  dots.forEach(d => d.addEventListener('click', () => goTo(+d.dataset.idx)));
+
+  document.addEventListener('keydown', e => {
+    if (editMode && (e.key === 's' || e.key === 'S') && (e.ctrlKey || e.metaKey)) {
+      e.preventDefault(); saveFile(); return;
+    }
+    if (editMode && e.key === 'Escape') { toggleEdit(); return; }
+    if (document.activeElement.isContentEditable) return;
+    if (e.key === 'ArrowDown' || e.key === ' ') { e.preventDefault(); goTo(current + 1); }
+    if (e.key === 'ArrowUp') { e.preventDefault(); goTo(current - 1); }
+    if (e.key === 'e' || e.key === 'E') toggleEdit();
+  });
+
+  let wheelLocked = false, wheelTimer = null;
+  document.addEventListener('wheel', e => {
+    clearTimeout(wheelTimer);
+    if (!wheelLocked) { wheelLocked = true; e.deltaY > 0 ? goTo(current + 1) : goTo(current - 1); }
+    wheelTimer = setTimeout(() => { wheelLocked = false; }, 180);
+  }, { passive: true });
+
+  let touchStart = null;
+  document.addEventListener('touchstart', e => { touchStart = e.touches[0].clientY; }, { passive: true });
+  document.addEventListener('touchend', e => {
+    if (!touchStart) return;
+    const diff = touchStart - e.changedTouches[0].clientY;
+    if (Math.abs(diff) > 50) { diff > 0 ? goTo(current + 1) : goTo(current - 1); }
+    touchStart = null;
+  });
+
+  function toggleEdit() {
+    editMode = !editMode;
+    document.body.classList.toggle('edit-mode', editMode);
+    slides.forEach(s => {
+      s.querySelectorAll('h1,h2,h3,p,.kpi-number,.cta-cmd,.feature-desc,.step-desc,.pain-text,.code-block,.cta-sub,.insight,.cover-tagline').forEach(el => {
+        el.contentEditable = editMode ? 'true' : 'false';
+      });
+    });
+  }
+
+  document.getElementById('hotzone').addEventListener('click', toggleEdit);
+
+  async function saveFile() {
+    const html = '<!DOCTYPE html>\n' + document.documentElement.outerHTML;
+    if (window.showSaveFilePicker) {
+      try {
+        const h = await window.showSaveFilePicker({ suggestedName: 'data-story.html', types: [{ accept: { 'text/html': ['.html'] } }] });
+        const w = await h.createWritable(); await w.write(html); await w.close();
+      } catch(e) { if (e.name !== 'AbortError') fallbackSave(html); }
+    } else fallbackSave(html);
+  }
+  function fallbackSave(html) {
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(new Blob([html], { type: 'text/html' }));
+    a.download = 'data-story.html'; a.click();
+  }
+</script>
+</body>
+</html>

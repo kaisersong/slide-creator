@@ -3,9 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>幻灯片创建器 — 新复古开发者套装</title>
+    <title>slide-creator · Neo Retro Dev · 开发者工具发布 — API 文档与产品介绍</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;700;800;900&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;600&family=Noto+Sans+SC:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;700;800;900&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;600&display=swap&family=Noto+Sans+SC:wght@400;700" rel="stylesheet">
     <style>
         :root {
             --bg: #f5f2e8;
@@ -36,7 +36,7 @@
             background-size: 24px 24px;
             color: var(--text);
             height: 100%;
-            font-family: 'Noto Sans SC', 'IBM Plex Sans', sans-serif;
+            font-family: 'IBM Plex Sans', sans-serif;
             -webkit-font-smoothing: antialiased;
         }
 
@@ -71,7 +71,7 @@
         .h-sm { font-size: clamp(1rem,2.5vw,1.8rem); }
 
         .body-text {
-            font-family: 'Noto Sans SC', 'IBM Plex Sans', sans-serif;
+            font-family: 'IBM Plex Sans', sans-serif;
             font-size: clamp(0.8rem,1.4vw,1rem);
             line-height: 1.6;
             color: #444;
@@ -322,7 +322,7 @@
         .ba-header.good { color: #22c55e; }
         .ba-list { list-style: none; display: flex; flex-direction: column; gap: 0.6rem; }
         .ba-list li {
-            font-family: 'Noto Sans SC', 'IBM Plex Sans', sans-serif;
+            font-family: 'IBM Plex Mono', monospace;
             font-size: clamp(0.7rem,1.2vw,0.9rem);
             padding: 0.5rem 0.8rem;
             border: 2px solid var(--border);
@@ -414,70 +414,70 @@
 <body>
 
 <div class="progress-bar" id="progressBar"></div>
-<nav class="nav-dots" id="navDots" aria-label="幻灯片导航"></nav>
+<nav class="nav-dots" id="navDots" aria-label="Slide navigation"></nav>
 <div class="edit-hotzone"></div>
-<button class="edit-toggle" id="editToggle">✏ 编辑</button>
+<button class="edit-toggle" id="editToggle">✏ Edit</button>
 <div id="notes-panel">
     <div id="notes-panel-header">
-        <div id="notes-panel-label">演讲备注 — 第 1 张</div>
+        <div id="notes-panel-label">SPEAKER NOTES — SLIDE 1</div>
         <div id="notes-drag-hint"></div>
         <button id="notes-collapse-btn">▾</button>
     </div>
     <div id="notes-body">
-        <textarea id="notes-textarea" placeholder="添加演讲备注…"></textarea>
+        <textarea id="notes-textarea" placeholder="Add speaker notes…"></textarea>
     </div>
 </div>
 
-<!-- ══ 第 1 张：标题 ══ -->
+<!-- ══ SLIDE 1: TITLE ══ -->
 <section class="slide" id="s1"
-    data-notes="幻灯片创建器：一项为 Claude Code 设计的技能，可生成精美、零依赖的 HTML 演示文稿。选择风格，描述内容，获得设计感十足的演示文稿——而非生成的内容。"
-    aria-label="标题">
+    data-notes="Slide Creator: a skill for Claude Code that generates polished, zero-dependency HTML presentations. Pick a style, describe your content, get a deck that looks designed — not generated."
+    aria-label="Title">
     <div class="title-block">
         <div class="reveal" style="margin-bottom:1rem;">
             <span class="badge">Claude Code 技能</span>
             <span class="badge badge-pink" style="margin-left:0.5rem;">v1.8</span>
         </div>
         <div class="block reveal" style="margin-bottom:1rem;">
-            <div class="headline h-xl">幻灯片创建器</div>
+            <div class="headline h-xl">演示幻灯片生成器</div>
         </div>
         <div class="reveal">
-            <span class="comment" style="font-size:clamp(0.75rem,1.4vw,1rem);">为 Claude Code 打造的零依赖 HTML 演示文稿工具</span>
+            <span class="comment" style="font-size:clamp(0.75rem,1.4vw,1rem);">为 Claude Code 打造的零依赖 HTML 演示文稿</span>
         </div>
         <div style="display:flex;gap:1rem;margin-top:1.2rem;flex-wrap:wrap;" class="reveal">
             <div class="block" style="padding:0.6rem 1rem;">
-                <span class="headline" style="font-size:clamp(0.8rem,1.5vw,1.1rem);">21 <span class="hl">种风格</span></span>
+                <span class="headline" style="font-size:clamp(0.8rem,1.5vw,1.1rem);">21 <span class="hl">种样式</span></span>
             </div>
             <div class="block" style="padding:0.6rem 1rem;">
                 <span class="headline" style="font-size:clamp(0.8rem,1.5vw,1.1rem);">零 <span class="hl-pink" style="background:var(--pink);color:#fff;padding:0 3px;border:1px solid var(--pink);">依赖</span></span>
             </div>
             <div class="block" style="padding:0.6rem 1rem;">
-                <span class="headline" style="font-size:clamp(0.8rem,1.5vw,1.1rem);">1 <span class="hl-cyan" style="background:var(--cyan);padding:0 3px;border:1px solid var(--border);">文件</span></span>
+                <span class="headline" style="font-size:clamp(0.8rem,1.5vw,1.1rem);">1 <span class="hl-cyan" style="background:var(--cyan);padding:0 3px;border:1px solid var(--border);">HTML 文件</span></span>
             </div>
         </div>
     </div>
 </section>
 
-<!-- ══ 第 2 张：系统架构 ══ -->
+<!-- ══ SLIDE 2: SYSTEM ARCHITECTURE ══ -->
 <section class="slide" id="s2"
-    data-notes="幻灯片创建器是一个三步管道：原始内容进入，技能分析并设计，一个 HTML 文件输出。该 HTML 零外部依赖——在任何地方都能运行。"
-    aria-label="架构">
+    data-notes="Slide Creator is a three-step pipeline: raw content goes in, the skill analyzes and styles it, one HTML file comes out. The HTML has zero external dependencies — it runs anywhere."
+    aria-label="Architecture">
     <div class="reveal" style="margin-bottom:1.2rem;">
         <span class="badge">系统架构</span>
     </div>
-    <div class="headline h-md reveal" style="margin-bottom:1.5rem;">工作流程</div>
+    <div class="headline h-md reveal" style="margin-bottom:1.5rem;">工作原理</div>
     <div style="max-width:720px;" class="reveal">
         <div class="arch-layer" style="background:rgba(255,225,77,0.15);">
             <div>
-                <div class="arch-layer .layer-label headline h-sm">输入内容</div>
-                <div class="comment" style="margin-top:0.3rem;">笔记、文档、PLANNING.md、图片、PPTX</div>
+                <div class="arch-layer .layer-label headline h-sm">你的内容</div>
+                <div class="comment" style="margin-top:0.3rem;">笔记、文档、PLANNING.md、图像、PPTX</div>
             </div>
             <span class="badge">输入</span>
         </div>
         <div class="arch-arrow reveal">↓</div>
         <div class="arch-layer" style="background:rgba(255,60,126,0.1);">
             <div>
-                <div class="headline h-sm">幻灯片创建器</div>
-                <div class="comment" style="margin-top:0.3rem;">风格识别 → 布局生成 → 代码质量检查</div>
+                <div class="headline h-sm">/幻灯片生成器</div>
+                <div class="comment" style="margin-top:0.3rem;">样式发现 → 布局生成 → 代码质量检查</div>
             </div>
             <span class="badge badge-pink">技能</span>
         </div>
@@ -485,67 +485,353 @@
         <div class="arch-layer" style="background:rgba(0,200,255,0.1);">
             <div>
                 <div class="headline h-sm">演示文稿.HTML</div>
-                <div class="comment" style="margin-top:0.3rem;">内联 CSS + JS · 内置编辑 · 演讲者模式 · PPTX 导出</div>
+                <div class="comment" style="margin-top:0.3rem;">内联 CSS + JS · 浏览器编辑 · 演讲者模式 · PPTX 导出</div>
             </div>
             <span class="badge badge-cyan">输出</span>
         </div>
     </div>
 </section>
 
-<!-- ══ 第 3 张：特色卡片 ══ -->
+<!-- ══ SLIDE 3: FEATURE CARDS ══ -->
 <section class="slide" id="s3"
-    data-notes="三大核心特性：21 种精选设计预设，包含命名的布局变体。内置内联编辑——点击任何文本即可更改。演讲者模式，通过 BroadcastChannel API 支持备注和计时器。"
-    aria-label="特色">
-    <div class="reveal" style="margin-bottom:1rem;"><span class="badge">关键特性</span></div>
-    <div class="headline h-md reveal" style="margin-bottom:1.2rem;">核心功能</div>
+    data-notes="Three headline features: 21 curated design presets with named layout variations. Built-in inline editing — click any text to change it. Presenter mode with notes and timer via BroadcastChannel."
+    aria-label="Features">
+    <div class="reveal" style="margin-bottom:1rem;"><span class="badge">核心功能</span></div>
+    <div class="headline h-md reveal" style="margin-bottom:1.2rem;">你能得到什么</div>
     <div class="cards-grid reveal">
         <div class="feat-card accent-yellow">
             <div style="display:flex;justify-content:space-between;align-items:flex-start;">
-                <div class="headline h-sm">21 种风格</div>
+                <div class="headline h-sm">21 种样式</div>
                 <div class="feat-icon">🎨</div>
             </div>
             <div class="comment">精选设计预设</div>
-            <p class="body-text" style="font-size:clamp(0.7rem,1.2vw,0.88rem);margin-top:0.3rem;">大胆信号、瑞士现代、终端绿色、中文禅韵、新复古开发者等 16 种。每种都有命名的布局变体。</p>
+            <p class="body-text" style="font-size:clamp(0.7rem,1.2vw,0.88rem);margin-top:0.3rem;">大胆信号、瑞士现代、终端绿、中文禅宗、复古开发甲板 + 16 个更多选项。每个都有命名的布局变体。</p>
         </div>
         <div class="feat-card accent-pink">
             <div style="display:flex;justify-content:space-between;align-items:flex-start;">
                 <div class="headline h-sm">内联编辑</div>
                 <div class="feat-icon">✏️</div>
             </div>
-            <div class="comment">按 E 在浏览器中编辑</div>
-            <p class="body-text" style="font-size:clamp(0.7rem,1.2vw,0.88rem);margin-top:0.3rem;">点击任何文本。就地编辑。Ctrl+S 保存回 HTML 文件。无需外部编辑器。</p>
+            <div class="comment">按 E 键在浏览器中编辑</div>
+            <p class="body-text" style="font-size:clamp(0.7rem,1.2vw,0.88rem);margin-top:0.3rem;">点击任何文字。就地编辑。Ctrl+S 保存回 HTML 文件。无需外部编辑器。</p>
         </div>
         <div class="feat-card accent-cyan">
             <div style="display:flex;justify-content:space-between;align-items:flex-start;">
                 <div class="headline h-sm">演讲者模式</div>
                 <div class="feat-icon">🎤</div>
             </div>
-            <div class="comment">按 P 打开演讲者视图</div>
-            <p class="body-text" style="font-size:clamp(0.7rem,1.2vw,0.88rem);margin-top:0.3rem;">演讲备注 + 经过时间计时器 + 导航。通过 BroadcastChannel API 同步。离线可用。</p>
+            <div class="comment">按 P 键打开演讲者视图</div>
+            <p class="body-text" style="font-size:clamp(0.7rem,1.2vw,0.88rem);margin-top:0.3rem;">演讲者备注 + 计时器 + 导航。通过 BroadcastChannel API 同步。支持离线。</p>
         </div>
     </div>
 </section>
 
-<!-- ══ 第 4 张：对比 ══ -->
+<!-- ══ SLIDE 4: BEFORE / AFTER ══ -->
 <section class="slide" id="s4"
-    data-notes="之前：五种不同工具，相互独立，脆弱的 CDN 依赖，反复调整 AI 提示以获得更好输出。之后：一条命令，一个文件，完成。"
-    aria-label="对比">
+    data-notes="Before: five different tools, none talking to each other, fragile CDN dependencies, a re-rolling loop hoping for better AI output. After: one command, one file, done."
+    aria-label="Before and after">
     <div class="ba-panel reveal">
-        <div class="ba-header bad">// 之前 — 没有幻灯片创建器</div>
+        <div class="ba-header bad">// 之前 — 没有幻灯片生成器</div>
         <ul class="ba-list">
             <li class="minus">选择工具（Canva？Keynote？Miro？）</li>
             <li class="minus">npm install reveal.js 或 impress.js</li>
-            <li class="minus">依赖每张幻灯片的 3 个 CDN 库</li>
-            <li class="minus">反复调整 AI 提示直到输出看起来不错</li>
-            <li class="minus">导出 → 字体损坏、图片丢失</li>
+            <li class="minus">每张幻灯片依赖 3 个 CDN 库</li>
+            <li class="minus">反复调整 AI 提示，直到输出看起来不错</li>
+            <li class="minus">导出 → 字体破损、图像丢失</li>
         </ul>
     </div>
     <div class="ba-panel reveal">
-        <div class="ba-header good">// 之后 — 使用幻灯片创建器</div>
+        <div class="ba-header good">// 之后 — 使用幻灯片生成器</div>
         <ul class="ba-list">
-            <li class="plus"><span class="mono" style="font-size:0.9em;">/slide-creator</span></li>
-            <li class="plus">从 21 种预设中选择风格</li>
-            <li class="plus">获得 <strong>presentation.html</strong></li>
+            <li class="plus"><span class="mono" style="font-size:0.9em;">/幻灯片生成器</span></li>
+            <li class="plus">从 21 个预设中选择样式</li>
+            <li class="plus">获得 <strong>演示文稿.html</strong></li>
             <li class="plus">零依赖 · 离线运行</li>
-            <li class="plus">内联编辑 · 导出 PPTX · 完成</li>
+            <li class="plus">内联编辑 · 导出为 PPTX · 完成</li>
         </ul>
+    </div>
+</section>
+
+<!-- ══ SLIDE 5: MANIFESTO ══ -->
+<section class="slide" id="s5"
+    data-notes="The core philosophy: a presentation shouldn't require a build pipeline. One file, any browser, anywhere. Show-don't-tell style discovery: see 3 visual previews before committing to a style."
+    aria-label="Philosophy">
+    <div class="manifesto-block reveal">
+        <div class="headline h-xl" style="color:#f7f5f0;">一条命令。<br>一个 <span style="background:var(--yellow);color:var(--text);padding:0 6px;">文件</span>。<br>零借口。</div>
+        <ul class="points-list">
+            <li class="comment" style="color:rgba(247,245,240,0.6);">无需 npm install、无 CDN、无构建管道</li>
+            <li class="comment" style="color:rgba(247,245,240,0.6);">承诺前显示 3 个可视样式预览</li>
+            <li class="comment" style="color:rgba(247,245,240,0.6);">每张幻灯片完全适应一个视口 — 无需滚动</li>
+            <li class="comment" style="color:rgba(247,245,240,0.6);">离线工作 · 浏览器编辑 · 导出为 PPTX</li>
+        </ul>
+    </div>
+</section>
+
+<!-- ══ SLIDE 6: COMMANDS ══ -->
+<section class="slide" id="s6"
+    data-notes="Four commands. No flag is fully interactive: it asks what you want, shows style previews, and generates. --plan separates outline from code. --generate skips the questions when you have a plan."
+    aria-label="Commands">
+    <div class="reveal" style="margin-bottom:1rem;"><span class="badge">参考</span></div>
+    <div class="headline h-md reveal" style="margin-bottom:1.2rem;">命令</div>
+    <div class="block reveal" style="padding:0;overflow:hidden;">
+        <table class="cmd-table">
+            <tr class="reveal">
+                <td><span style="color:var(--pink);">/幻灯片生成器</span></td>
+                <td><span class="body-text">交互式：样式发现 → 内容 → 生成。最适合从零开始。</span></td>
+            </tr>
+            <tr class="reveal">
+                <td><span style="color:var(--text);">/幻灯片生成器</span> <span style="color:var(--pink);">--plan</span></td>
+                <td><span class="body-text">扫描 resources/，创建 PLANNING.md 大纲。在生成 HTML 前停止。先思考后编码。</span></td>
+            </tr>
+            <tr class="reveal">
+                <td><span style="color:var(--text);">/幻灯片生成器</span> <span style="color:var(--cyan);">--generate</span></td>
+                <td><span class="body-text">读取 PLANNING.md，跳过问题，生成 HTML。从计划到演示的快速路径。</span></td>
+            </tr>
+            <tr class="reveal">
+                <td><span style="color:var(--text);">/幻灯片生成器</span> <span style="color:#22c55e;">--export pptx</span></td>
+                <td><span class="body-text">通过系统 Chrome 截图每张幻灯片 → 组装 .pptx。无需 Node.js，无需下载 Chromium。</span></td>
+            </tr>
+        </table>
+    </div>
+</section>
+
+<!-- ══ SLIDE 7: METRICS ══ -->
+<section class="slide" id="s7"
+    data-notes="The numbers: 21 design presets each with named layout variations. 1 output file with zero runtime dependencies. 0 npm packages required. The whole skill is a SKILL.md that Claude reads."
+    aria-label="Metrics">
+    <div class="reveal" style="margin-bottom:1rem;"><span class="badge">数据统计</span></div>
+    <div class="headline h-md reveal" style="margin-bottom:1.2rem;">统计信息</div>
+    <div class="metrics-grid reveal">
+        <div class="metric-block accent-yellow">
+            <div class="metric-num" style="color:var(--text);">21</div>
+            <div class="headline h-sm">种样式</div>
+            <div class="comment">精选预设</div>
+            <div class="px-bar-wrap" style="margin-top:0.8rem;">
+                <div class="px-bar-row"><div class="px-bar" style="width:100%;background:var(--yellow);"></div><span class="px-label">深色主题</span></div>
+                <div class="px-bar-row"><div class="px-bar" style="width:76%;background:var(--yellow);opacity:0.7;"></div><span class="px-label">浅色主题</span></div>
+                <div class="px-bar-row"><div class="px-bar" style="width:48%;background:var(--yellow);opacity:0.4;"></div><span class="px-label">特色主题</span></div>
+            </div>
+        </div>
+        <div class="metric-block accent-pink">
+            <div class="metric-num" style="color:var(--pink);">1</div>
+            <div class="headline h-sm">HTML 文件</div>
+            <div class="comment">输出格式</div>
+            <div style="margin-top:0.8rem;">
+                <div class="comment">内联 CSS ✓</div>
+                <div class="comment">内联 JS ✓</div>
+                <div class="comment">无 CDN 调用 ✓</div>
+                <div class="comment">离线运行 ✓</div>
+            </div>
+        </div>
+        <div class="metric-block accent-cyan">
+            <div class="metric-num" style="color:var(--text);">0</div>
+            <div class="headline h-sm">NPM 依赖</div>
+            <div class="comment">运行时要求</div>
+            <div style="margin-top:0.8rem;">
+                <div class="comment">无 node_modules</div>
+                <div class="comment">无 package.json</div>
+                <div class="comment">无构建步骤</div>
+                <div class="comment">仅 html</div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ══ SLIDE 8: CLOSING ══ -->
+<section class="slide" id="s8"
+    data-notes="Install in under 30 seconds. Clone into the skills directory and you're running. Start with /slide-creator — it handles everything interactively."
+    aria-label="Get started">
+    <div class="close-block reveal">
+        <div style="margin-bottom:1rem;"><span class="badge badge-pink">安装</span></div>
+        <div class="headline h-lg" style="color:#f7f5f0;margin-bottom:1.2rem;">开始使用<br><span style="color:var(--yellow);">仅需 30 秒</span></div>
+        <div style="border: 2px solid rgba(255,255,255,0.15); padding: 0.8rem 1.2rem; margin-bottom:1rem; background:rgba(0,0,0,0.3);">
+            <span class="mono" style="font-size:clamp(0.6rem,1.1vw,0.82rem); color:rgba(247,245,240,0.85); word-break:break-all;">git clone https://github.com/kaisersong/slide-creator ~/.claude/skills/slide-creator</span>
+        </div>
+        <div style="display:flex;gap:0.5rem;flex-wrap:wrap;margin-bottom:1rem;">
+            <span class="badge" style="background:var(--cyan);">步骤 1：克隆</span>
+            <span style="font-family:'IBM Plex Mono';font-size:0.8rem;align-self:center;">→</span>
+            <span class="badge" style="background:var(--yellow);">步骤 2：/幻灯片生成器</span>
+            <span style="font-family:'IBM Plex Mono';font-size:0.8rem;align-self:center;">→</span>
+            <span class="badge badge-pink">步骤 3：发布</span>
+        </div>
+        <div class="comment" style="color:rgba(247,245,240,0.5);">无构建步骤 · 无配置 · 仅需运行</div>
+    </div>
+</section>
+
+<script>
+if (new URLSearchParams(location.search).has('presenter')) {
+    document.title = 'Presenter — ' + document.title;
+    document.body.innerHTML = `<style>*{box-sizing:border-box;margin:0}body{background:#111;color:#fff;font-family:system-ui,sans-serif}#pv{display:grid;grid-template-columns:1fr 220px;gap:1rem;padding:1.25rem;align-items:start}.pv-panel{background:#1e1e1e;border-radius:12px;padding:1.25rem}#pv-label{font-size:.6rem;letter-spacing:.18em;text-transform:uppercase;color:#555;margin-bottom:.6rem}#pv-notes{font-size:1.05rem;line-height:1.85;color:#d0d0d0}#pv-right{display:flex;flex-direction:column;gap:1rem}#pv-nav{display:flex;align-items:center;justify-content:space-between;gap:.5rem}.pv-arrow{width:32px;height:32px;border-radius:6px;border:1px solid #333;background:#2a2a2a;color:#aaa;font-size:1rem;cursor:pointer;display:flex;align-items:center;justify-content:center}.pv-arrow:hover{background:#383838;color:#fff}#pv-counter{text-align:center;flex:1}#pv-num{font-size:1.6rem;font-weight:700;font-variant-numeric:tabular-nums;line-height:1}#pv-of{color:#555;font-size:.75rem;margin-top:.2rem}#pv-timer-box{text-align:center}#pv-timer-label{font-size:.6rem;letter-spacing:.18em;text-transform:uppercase;color:#555;margin-bottom:.3rem}#pv-timer{font-size:1.5rem;font-weight:700;font-family:monospace;font-variant-numeric:tabular-nums}</style><div id="pv"><div class="pv-panel"><div id="pv-label">Speaker Notes</div><div id="pv-notes">Waiting for main window…</div></div><div id="pv-right"><div class="pv-panel"><div id="pv-nav"><button class="pv-arrow" id="pv-prev">←</button><div id="pv-counter"><div id="pv-num">—</div><div id="pv-of">/ —</div></div><button class="pv-arrow" id="pv-next">→</button></div></div><div class="pv-panel" id="pv-timer-box"><div id="pv-timer-label">Elapsed</div><div id="pv-timer">0:00</div></div></div></div>`;
+    const ch = new BroadcastChannel('slide-creator-presenter');
+    let t0 = null;
+    ch.addEventListener('message', e => {
+        if (e.data.type !== 'state') return;
+        if (!t0) t0 = Date.now();
+        document.getElementById('pv-notes').textContent = e.data.notes || '(no notes)';
+        document.getElementById('pv-num').textContent = e.data.index + 1;
+        document.getElementById('pv-of').textContent = `/ ${e.data.total}`;
+    });
+    ch.postMessage({ type: 'request-state' });
+    setInterval(() => {
+        if (!t0) return;
+        const s = Math.floor((Date.now() - t0) / 1000);
+        document.getElementById('pv-timer').textContent = `${Math.floor(s/60)}:${String(s%60).padStart(2,'0')}`;
+    }, 1000);
+    document.getElementById('pv-prev').addEventListener('click', () => ch.postMessage({ type: 'nav-prev' }));
+    document.getElementById('pv-next').addEventListener('click', () => ch.postMessage({ type: 'nav-next' }));
+    document.addEventListener('keydown', e => {
+        if (e.key === 'ArrowRight' || e.key === ' ') ch.postMessage({ type: 'nav-next' });
+        else if (e.key === 'ArrowLeft') ch.postMessage({ type: 'nav-prev' });
+    });
+} else {
+    class SlidePresentation {
+        constructor() {
+            this.slides = document.querySelectorAll('.slide');
+            this.currentSlide = 0;
+            this.channel = new BroadcastChannel('slide-creator-presenter');
+            this.setupNavDots();
+            this.setupObserver();
+            this.setupKeyboard();
+            this.setupTouch();
+            this.setupWheel();
+            this.setupPresenter();
+            this.setupEditor();
+            this.updateProgress();
+        }
+        setupNavDots() {
+            const nav = document.getElementById('navDots');
+            this.slides.forEach((_, i) => {
+                const btn = document.createElement('button');
+                btn.setAttribute('aria-label', `Slide ${i+1}`);
+                btn.addEventListener('click', () => this.goTo(i));
+                nav.appendChild(btn);
+            });
+        }
+        setupObserver() {
+            const obs = new IntersectionObserver(entries => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('visible');
+                        this.currentSlide = [...this.slides].indexOf(entry.target);
+                        this.updateProgress();
+                        this.updateDots();
+                        this.broadcastState();
+                        this.updateNotesPanel();
+                    }
+                });
+            }, { threshold: 0.5 });
+            this.slides.forEach(s => obs.observe(s));
+        }
+        setupKeyboard() {
+            document.addEventListener('keydown', e => {
+                if (e.target.getAttribute('contenteditable') || e.target.tagName === 'TEXTAREA') return;
+                if (e.key === 'ArrowDown' || e.key === 'ArrowRight' || e.key === ' ') { e.preventDefault(); this.next(); }
+                else if (e.key === 'ArrowUp' || e.key === 'ArrowLeft') { e.preventDefault(); this.prev(); }
+                else if (e.key === 'p' || e.key === 'P') {
+                    window.open(location.href.split('?')[0]+'?presenter','pres-'+Date.now(),'width=1100,menubar=no,toolbar=no,location=no');
+                } else if (e.key === 'e' || e.key === 'E') {
+                    this.editor.toggle();
+                }
+            });
+        }
+        setupTouch() {
+            let sy = 0;
+            document.addEventListener('touchstart', e => { sy = e.touches[0].clientY; }, { passive: true });
+            document.addEventListener('touchend', e => {
+                const d = sy - e.changedTouches[0].clientY;
+                if (Math.abs(d) > 50) d > 0 ? this.next() : this.prev();
+            });
+        }
+        setupWheel() {
+            let locked = false, timer = null;
+            document.addEventListener('wheel', e => {
+                clearTimeout(timer);
+                if (!locked) { locked = true; e.deltaY > 0 ? this.next() : this.prev(); }
+                timer = setTimeout(() => { locked = false; }, 180);
+            }, { passive: true });
+        }
+        setupPresenter() {
+            this.channel.addEventListener('message', e => {
+                if (e.data.type === 'nav-next') this.next();
+                else if (e.data.type === 'nav-prev') this.prev();
+                else if (e.data.type === 'request-state') this.broadcastState();
+            });
+        }
+        setupEditor() {
+            const panel = document.getElementById('notes-panel');
+            const label = document.getElementById('notes-panel-label');
+            const textarea = document.getElementById('notes-textarea');
+            const toggle = document.getElementById('editToggle');
+            const hotzone = document.querySelector('.edit-hotzone');
+            let hideTimeout = null;
+            hotzone.addEventListener('mouseenter', () => { clearTimeout(hideTimeout); toggle.classList.add('show'); });
+            hotzone.addEventListener('mouseleave', () => { hideTimeout = setTimeout(() => { if (!this.editor.active) toggle.classList.remove('show'); }, 400); });
+            toggle.addEventListener('mouseenter', () => clearTimeout(hideTimeout));
+            toggle.addEventListener('mouseleave', () => { hideTimeout = setTimeout(() => { if (!this.editor.active) toggle.classList.remove('show'); }, 400); });
+            hotzone.addEventListener('click', () => this.editor.toggle());
+            toggle.addEventListener('click', () => this.editor.toggle());
+            document.getElementById('notes-panel-header').addEventListener('click', () => panel.classList.toggle('collapsed'));
+            textarea.addEventListener('input', () => {
+                const slide = this.slides[this.currentSlide];
+                if (slide) { slide.dataset.notes = textarea.value; this.broadcastState(); }
+            });
+            document.addEventListener('keydown', e => {
+                if ((e.ctrlKey || e.metaKey) && e.key === 's') { e.preventDefault(); this.saveFile(); }
+            });
+            this.editor = {
+                active: false,
+                toggle: () => this.editor.active ? this.editor.exit() : this.editor.enter(),
+                enter: () => {
+                    this.editor.active = true;
+                    toggle.classList.add('active'); toggle.textContent = '✓ Done';
+                    this.slides.forEach(s => s.querySelectorAll('h1,h2,h3,p,li,span,div.headline,div.body-text,div.comment').forEach(el => { el.setAttribute('contenteditable','true'); el.style.outline='none'; }));
+                    panel.classList.add('active'); this.updateNotesPanel();
+                },
+                exit: () => {
+                    this.editor.active = false;
+                    toggle.classList.remove('active'); toggle.textContent = '✏ Edit';
+                    this.slides.forEach(s => s.querySelectorAll('[contenteditable]').forEach(el => { el.removeAttribute('contenteditable'); el.style.outline=''; }));
+                    panel.classList.remove('active');
+                }
+            };
+            this._notesLabel = label; this._notesTextarea = textarea;
+        }
+        updateNotesPanel() {
+            if (!this.editor?.active) return;
+            const slide = this.slides[this.currentSlide];
+            this._notesLabel.textContent = `SPEAKER NOTES — SLIDE ${this.currentSlide+1} / ${this.slides.length}`;
+            this._notesTextarea.value = slide?.dataset.notes || '';
+        }
+        saveFile() {
+            const html = '<!DOCTYPE html>\n' + document.documentElement.outerHTML;
+            fetch(location.pathname, { method:'PUT', body: new TextEncoder().encode(html), headers:{'Content-Type':'text/html'} })
+                .catch(() => {
+                    const a = Object.assign(document.createElement('a'), {
+                        href: URL.createObjectURL(new Blob([html],{type:'text/html'})),
+                        download: location.pathname.split('/').pop() || 'presentation.html'
+                    });
+                    a.click(); URL.revokeObjectURL(a.href);
+                });
+        }
+        broadcastState() {
+            const slide = this.slides[this.currentSlide];
+            this.channel.postMessage({ type:'state', index:this.currentSlide, total:this.slides.length, notes:slide?.dataset.notes||'' });
+        }
+        goTo(i) { this.slides[i]?.scrollIntoView({ behavior:'smooth' }); }
+        next() { this.goTo(Math.min(this.currentSlide+1, this.slides.length-1)); }
+        prev() { this.goTo(Math.max(this.currentSlide-1, 0)); }
+        updateProgress() {
+            const pct = (this.currentSlide / (this.slides.length-1)) * 100;
+            document.getElementById('progressBar').style.width = pct + '%';
+        }
+        updateDots() {
+            document.querySelectorAll('#navDots button').forEach((btn, i) => {
+                btn.classList.toggle('active', i === this.currentSlide);
+            });
+        }
+    }
+    new SlidePresentation();
+}
+</script>
+</body>
+</html>

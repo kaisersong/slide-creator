@@ -3,10 +3,10 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>设计工作室介绍 — 2024 项目集锦</title>
+  <title>slide-creator · Electric Studio · 设计工作室介绍 — 2024 项目集锦</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;700;800&family=Noto+Sans+SC:wght@400;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;700;800&display=swap&family=Noto+Sans+SC:wght@400;700" rel="stylesheet">
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     html {
@@ -17,7 +17,7 @@
     body {
       height: 100%;
       overflow-x: hidden;
-      font-family: 'Manrope', 'Noto Sans SC', sans-serif;
+      font-family: 'Manrope', sans-serif;
     }
 
     .slide {
@@ -70,7 +70,7 @@
     #brand-mark {
       position: fixed;
       top: 20px; left: 28px;
-      font-family: 'Manrope', 'Noto Sans SC', sans-serif;
+      font-family: 'Manrope', sans-serif;
       font-weight: 800;
       font-size: 15px;
       letter-spacing: 0.05em;
@@ -573,7 +573,7 @@
       color: #fff;
       border: none;
       padding: 6px 14px;
-      font-family: 'Manrope', 'Noto Sans SC', sans-serif;
+      font-family: 'Manrope', sans-serif;
       font-size: 11px;
       font-weight: 700;
       letter-spacing: 0.1em;
@@ -600,7 +600,7 @@
       background: #4361ee;
       color: #fff;
       padding: 8px 20px;
-      font-family: 'Manrope', 'Noto Sans SC', sans-serif;
+      font-family: 'Manrope', sans-serif;
       font-size: 12px;
       font-weight: 700;
       z-index: 3000;
@@ -613,98 +613,96 @@
 
 <div id="progress-bar"></div>
 <div id="nav-dots"></div>
-<div id="brand-mark">DS</div>
+<div id="brand-mark">SC</div>
 <div id="edit-hotzone"></div>
-<button id="edit-toggle">编辑</button>
-<div id="save-indicator">已保存</div>
+<button id="edit-toggle">Edit</button>
+<div id="save-indicator">SAVED</div>
 
 <!-- SLIDE 1: Cover -->
 <section class="slide" id="slide-1">
   <div class="left-panel">
-    <div class="label reveal">电气工作室</div>
-    <h1 class="main-title reveal" contenteditable="false">设计<br>集锦</h1>
-    <p class="subtitle reveal" contenteditable="false">2024 年精选设计项目展示与工作室能力突出。展现创意与技术的完美融合。</p>
+    <div class="label reveal">介绍</div>
+    <h1 class="main-title reveal" contenteditable="false">设计<br>工作室</h1>
+    <p class="subtitle reveal" contenteditable="false">零依赖的HTML演示文稿，为Claude Code和OpenClaw量身定制。</p>
     <div class="badge-row reveal">
-      <span class="badge-pill">12 个项目</span>
-      <span class="badge-pill">3 大领域</span>
-      <span class="badge-pill">100% 满意度</span>
+      <span class="badge-pill">19个预设</span>
+      <span class="badge-pill">0个依赖</span>
+      <span class="badge-pill">∞ 张幻灯片</span>
     </div>
   </div>
   <div class="right-panel">
     <div class="stats-block reveal">
       <div class="stat-item">
-        <div class="right-stat">12</div>
-        <div class="right-stat-sub">完成项目</div>
+        <div class="right-stat">19</div>
+        <div class="right-stat-sub">设计预设</div>
       </div>
       <div class="stat-item">
-        <div class="right-stat">3</div>
-        <div class="right-stat-sub">核心领域</div>
+        <div class="right-stat">0</div>
+        <div class="right-stat-sub">外部依赖</div>
       </div>
       <div class="stat-item">
         <div class="right-stat">∞</div>
-        <div class="right-stat-sub">无限可能</div>
+        <div class="right-stat-sub">幻灯片容量</div>
       </div>
     </div>
   </div>
   <span class="slide-num-label light">01</span>
 </section>
 
-<!-- SLIDE 2: Problem -->
 <section class="slide" id="slide-2">
   <div class="top-panel">
-    <div class="label reveal">核心挑战</div>
-    <h2 class="reveal" contenteditable="false">高质量设计往往困难重重</h2>
+    <div class="label reveal">核心问题</div>
+    <h2 class="reveal" contenteditable="false">演示文稿不应该需要构建系统</h2>
   </div>
   <div class="bottom-panel">
     <div class="pain-cols reveal">
       <div class="pain-col">
         <div class="pain-index">01</div>
-        <div class="pain-head" contenteditable="false">时间压力</div>
-        <div class="pain-text" contenteditable="false">有限的预算与紧张的周期要求快速交付高质量成果。</div>
+        <div class="pain-head" contenteditable="false">复杂的工具链</div>
+        <div class="pain-text" contenteditable="false">npm install、Webpack、300MB的node_modules。只是为了做幻灯片。</div>
       </div>
       <div class="pain-col">
         <div class="pain-index">02</div>
-        <div class="pain-head" contenteditable="false">沟通障碍</div>
-        <div class="pain-text" contenteditable="false">客户的想法往往抽象，需要通过迭代才能准确理解真实需求。</div>
+        <div class="pain-head" contenteditable="false">通用化输出</div>
+        <div class="pain-text" contenteditable="false">每份AI演示看起来都一样。Inter字体。紫色渐变。完全没有差异化。</div>
       </div>
       <div class="pain-col">
         <div class="pain-index">03</div>
-        <div class="pain-head" contenteditable="false">效果落差</div>
-        <div class="pain-text" contenteditable="false">从概念到完成的过程中，往往出现质量下降或偏离初心。</div>
+        <div class="pain-head" contenteditable="false">缺乏所有权</div>
+        <div class="pain-text" contenteditable="false">被平台锁定。导出受限。为你已经创建的文件每月付费。</div>
       </div>
     </div>
   </div>
   <span class="slide-num-label">02</span>
 </section>
 
-<!-- SLIDE 3: Show Don't Tell -->
 <section class="slide" id="slide-3">
   <div class="left-panel">
-    <div class="label reveal">我们的方式</div>
-    <h2 class="reveal" contenteditable="false">视觉优先的设计方法</h2>
-    <p class="body-text reveal" contenteditable="false">设计无法用言语准确描述。我们通过展示三种实际方案让客户直观反应，而非被迫描述。这样可以在内容制作前就确保审美方向的清晰性。</p>
+    <div class="label reveal">风格发现</div>
+    <h2 class="reveal" contenteditable="false">真正有效的风格发现方法</h2>
+    <p class="body-text reveal" contenteditable="false">设计无法用言语描述。设计工作室生成3个视觉预览——你反应，而不是描述。清晰的认识在任何内容写作之前就已形成。</p>
   </div>
   <div class="right-panel">
     <div class="steps-vertical reveal">
       <div class="step-v">
         <span class="step-v-num">01</span>
         <div>
-          <div class="step-v-text" contenteditable="false">品牌诊断</div>
-          <div class="step-v-sub" contenteditable="false">深入理解品牌调性与目标定位</div>
+          <div class="step-v-text" contenteditable="false">询问风格偏好</div>
+          <div class="step-v-sub" contenteditable="false">一个关于整体感觉和目的的开放式问题</div>
         </div>
       </div>
       <div class="step-v">
         <span class="step-v-num">02</span>
         <div>
-          <div class="step-v-text" contenteditable="false">三向方案</div>
-          <div class="step-v-sub" contenteditable="false">呈现三个完整的视觉方向与排版方案</div>
+          <div class="step-v-text" contenteditable="false">生成3个迷你预览</div>
+          <div class="step-v-sub" contenteditable="false">真实的布局、真实的排版、真实的色彩</div>
         </div>
       </div>
       <div class="step-v">
         <span class="step-v-num">03</span>
         <div>
-          <div class="step-v-text" contenteditable="false">明确方向</div>
-          <div class="step-v-sub" contenteditable="false">客户直观选择，进入深化与交付阶段</div>
+          <div class="step-v-text" contenteditable="false">选择最合适的方案</div>
+          <div class="step-v-sub" contenteditable="false">指点，而不是描述。内容随后生成。</div>
         </div>
       </div>
     </div>
@@ -712,17 +710,302 @@
   <span class="slide-num-label light">03</span>
 </section>
 
-<!-- SLIDE 4: Presets -->
 <section class="slide" id="slide-4">
   <div class="top-section reveal">
-    <div class="label">设计领域</div>
-    <h2 contenteditable="false">覆盖品牌、产品、内容的全方位设计服务</h2>
+    <div class="label">设计预设</div>
+    <h2 contenteditable="false">19种精选风格。告别AI通用美学。</h2>
   </div>
   <div class="grid-section reveal">
     <div class="presets-table">
-      <div class="pt-cell featured"><div class="pt-name">品牌系统</div><div class="pt-vibe">核心</div></div>
-      <div class="pt-cell featured"><div class="pt-name">数字产品</div><div class="pt-vibe">用户界面</div></div>
-      <div class="pt-cell featured"><div class="pt-name">内容运营</div><div class="pt-vibe">传播</div></div>
-      <div class="pt-cell"><div class="pt-name">视觉设计</div><div class="pt-vibe">表现</div></div>
-      <div class="pt-cell"><div class="pt-name">交互设计</div><div class="pt-vibe">体验</div></div>
-      <div
+      <div class="pt-cell featured"><div class="pt-name">大胆信号</div><div class="pt-vibe">冲击力</div></div>
+      <div class="pt-cell featured"><div class="pt-name">电光工作室</div><div class="pt-vibe">专业</div></div>
+      <div class="pt-cell featured"><div class="pt-name">创意电流</div><div class="pt-vibe">充满活力</div></div>
+      <div class="pt-cell"><div class="pt-name">深色植物</div><div class="pt-vibe">优雅</div></div>
+      <div class="pt-cell"><div class="pt-name">蓝天</div><div class="pt-vibe">宽敞</div></div>
+      <div class="pt-cell"><div class="pt-name">笔记本标签</div><div class="pt-vibe">编辑风格</div></div>
+      <div class="pt-cell"><div class="pt-name">柔和几何</div><div class="pt-vibe">友好</div></div>
+      <div class="pt-cell"><div class="pt-name">分割柔和</div><div class="pt-vibe">俏皮</div></div>
+      <div class="pt-cell"><div class="pt-name">复古编辑</div><div class="pt-vibe">机智</div></div>
+      <div class="pt-cell"><div class="pt-name">霓虹赛博</div><div class="pt-vibe">未来主义</div></div>
+      <div class="pt-cell"><div class="pt-name">终端绿</div><div class="pt-vibe">开发者</div></div>
+      <div class="pt-cell"><div class="pt-name">瑞士现代</div><div class="pt-vibe">精确</div></div>
+      <div class="pt-cell"><div class="pt-name">纸墨</div><div class="pt-vibe">文学</div></div>
+      <div class="pt-cell"><div class="pt-name">极光网格</div><div class="pt-vibe">生动</div></div>
+      <div class="pt-cell"><div class="pt-name">企业深色</div><div class="pt-vibe">商业</div></div>
+      <div class="pt-cell"><div class="pt-name">毛玻璃态</div><div class="pt-vibe">现代</div></div>
+      <div class="pt-cell"><div class="pt-name">新粗野主义</div><div class="pt-vibe">大胆</div></div>
+      <div class="pt-cell"><div class="pt-name">禅意中国</div><div class="pt-vibe">极简</div></div>
+      <div class="pt-cell"><div class="pt-name">数据故事</div><div class="pt-vibe">分析型</div></div>
+    </div>
+  </div>
+  <span class="slide-num-label">04</span>
+</section>
+
+<section class="slide" id="slide-5">
+  <div class="top-panel">
+    <div class="label white reveal">工作流程</div>
+    <h2 class="reveal" contenteditable="false">从想法到演示，只需几分钟</h2>
+  </div>
+  <div class="bottom-panel">
+    <div class="step-cols reveal">
+      <div class="step-col">
+        <div class="sc-num">01</div>
+        <div class="sc-title" contenteditable="false">/设计工作室</div>
+        <div class="sc-body" contenteditable="false">回答4个问题：目的、长度、内容、图片。整个流程——仅此而已。</div>
+      </div>
+      <div class="step-col">
+        <div class="sc-num">02</div>
+        <div class="sc-title" contenteditable="false">选择你的风格</div>
+        <div class="sc-body" contenteditable="false">对比3个视觉预览。无需用言语描述设计。指点你所共鸣的方案。</div>
+      </div>
+      <div class="step-col">
+        <div class="sc-num">03</div>
+        <div class="sc-title" contenteditable="false">打开并演示</div>
+        <div class="sc-body" contenteditable="false">箭头键·空格·滑动·点击圆点。在任何浏览器中工作，永久保存。</div>
+      </div>
+    </div>
+  </div>
+  <span class="slide-num-label light">05</span>
+</section>
+
+<section class="slide" id="slide-6">
+  <div class="left-panel">
+    <div class="label white reveal">功能特性</div>
+    <h2 class="reveal" contenteditable="false">你需要的一切，没有多余的</h2>
+    <p class="lead reveal" contenteditable="false">有意简约。每个功能都服务于演示——没有任何东西只是为了满足产品需求。</p>
+  </div>
+  <div class="right-panel">
+    <div class="features-list reveal">
+      <div class="feat-item">
+        <div class="feat-name" contenteditable="false">视口适配</div>
+        <div class="feat-desc" contenteditable="false">每张幻灯片完全填充100vh。溢出的内容会自动分割——不会被压缩。</div>
+      </div>
+      <div class="feat-item">
+        <div class="feat-name" contenteditable="false">内联编辑</div>
+        <div class="feat-desc" contenteditable="false">按E键，点击任何文本，直接编辑。Ctrl+S保存，无需接触代码编辑器。</div>
+      </div>
+      <div class="feat-item">
+        <div class="feat-name" contenteditable="false">PPTX导出</div>
+        <div class="feat-desc" contenteditable="false">/设计工作室 --export pptx 通过Playwright和本地Chrome。像素完美输出。</div>
+      </div>
+      <div class="feat-item">
+        <div class="feat-name" contenteditable="false">双阶段工作流</div>
+        <div class="feat-desc" contenteditable="false">--plan 首先创建 PLANNING.md 大纲。--generate 在准备好后渲染最终HTML。</div>
+      </div>
+    </div>
+  </div>
+  <span class="slide-num-label light">06</span>
+</section>
+
+<section class="slide" id="slide-7">
+  <div class="left-panel">
+    <div class="label reveal">安装</div>
+    <h2 class="reveal" contenteditable="false">30秒快速启动</h2>
+    <p class="intro reveal" contenteditable="false">两个平台。各一条命令。</p>
+    <div class="reveal">
+      <div class="install-option">
+        <div class="opt-label">Claude Code</div>
+        <div class="code-block"><code>git clone https://github.com/kaisersong/slide-creator ~/.claude/skills/slide-creator</code></div>
+        <div class="code-sub">重启Claude Code，然后使用 /slide-creator</div>
+      </div>
+      <div class="install-option">
+        <div class="opt-label">OpenClaw</div>
+        <div class="code-block"><code>clawhub install html-slide-creator</code></div>
+        <div class="code-sub">自动安装所有依赖。无需额外配置。</div>
+      </div>
+    </div>
+  </div>
+  <div class="right-panel">
+    <div class="install-visual reveal">
+      <div>
+        <div class="iv-label">首张幻灯片用时</div>
+        <div class="iv-big">30秒</div>
+        <div class="iv-sub">从安装到演示</div>
+      </div>
+      <div class="iv-divider"></div>
+      <div>
+        <div class="iv-label">需要的构建步骤</div>
+        <div class="iv-big">0</div>
+        <div class="iv-sub">纯HTML输出</div>
+      </div>
+      <div class="iv-divider"></div>
+      <div>
+        <div class="iv-label">外部依赖</div>
+        <div class="iv-big">0</div>
+        <div class="iv-sub">无npm、无webpack、无配置</div>
+      </div>
+    </div>
+  </div>
+  <span class="slide-num-label">07</span>
+</section>
+
+<section class="slide" id="slide-8">
+  <div class="left-panel">
+    <div class="label white reveal">立即开始</div>
+    <h2 class="reveal" contenteditable="false">你的下一场演示从这里开始</h2>
+    <p class="left-sub reveal" contenteditable="false">兼容Claude Code和OpenClaw。完全在浏览器中运行。无需订阅。无锁定。永久属于你。</p>
+  </div>
+  <div class="right-panel">
+    <div class="reveal" style="text-align:center;">
+      <div class="cta-pill" contenteditable="false">/设计工作室</div>
+      <div class="cta-note" contenteditable="false">兼容Claude Code和OpenClaw<br>完全在浏览器中运行</div>
+    </div>
+  </div>
+  <span class="slide-num-label light">08</span>
+</section>
+
+<script>
+  const TOTAL = 8;
+  let cur = 0;
+
+  const slides = Array.from(document.querySelectorAll('.slide'));
+  const progressBar = document.getElementById('progress-bar');
+  const navDotsContainer = document.getElementById('nav-dots');
+
+  slides.forEach((_, i) => {
+    const dot = document.createElement('div');
+    dot.className = 'dot' + (i === 0 ? ' active' : '');
+    dot.addEventListener('click', () => goTo(i));
+    navDotsContainer.appendChild(dot);
+  });
+
+  function updateUI(index) {
+    cur = index;
+    progressBar.style.width = ((index + 1) / TOTAL * 100) + '%';
+    document.querySelectorAll('.dot').forEach((d, i) => {
+      d.classList.toggle('active', i === index);
+    });
+  }
+
+  function goTo(index) {
+    if (index < 0 || index >= TOTAL) return;
+    slides[index].scrollIntoView({ behavior: 'smooth' });
+  }
+
+  // IntersectionObserver — adds .visible, stagger .reveal children
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('visible');
+        updateUI(slides.indexOf(entry.target));
+      }
+    });
+  }, { threshold: 0.5 });
+
+  slides.forEach(s => observer.observe(s));
+
+  // Keyboard navigation
+  document.addEventListener('keydown', (e) => {
+    if (document.body.classList.contains('edit-mode')) {
+      if ((e.ctrlKey || e.metaKey) && e.key === 's') {
+        e.preventDefault();
+        saveFile();
+      }
+      if (e.key === 'e' || e.key === 'E') toggleEditMode();
+      return;
+    }
+    if (e.key === 'ArrowDown' || e.key === 'ArrowRight' || e.key === ' ') {
+      e.preventDefault();
+      goTo(cur + 1);
+    } else if (e.key === 'ArrowUp' || e.key === 'ArrowLeft') {
+      e.preventDefault();
+      goTo(cur - 1);
+    } else if (e.key === 'e' || e.key === 'E') {
+      toggleEditMode();
+    }
+  });
+
+  // Wheel — debounce-reset lock (NOT time throttle)
+  let wheelLocked = false, wheelTimer = null;
+  document.addEventListener('wheel', e => {
+    clearTimeout(wheelTimer);
+    if (!wheelLocked) {
+      wheelLocked = true;
+      e.deltaY > 0 ? goTo(cur + 1) : goTo(cur - 1);
+    }
+    wheelTimer = setTimeout(() => { wheelLocked = false; }, 180);
+  }, { passive: true });
+
+  // Touch swipe
+  let touchStartY = 0;
+  document.addEventListener('touchstart', (e) => { touchStartY = e.touches[0].clientY; }, { passive: true });
+  document.addEventListener('touchend', (e) => {
+    const dy = touchStartY - e.changedTouches[0].clientY;
+    if (Math.abs(dy) > 50) {
+      dy > 0 ? goTo(cur + 1) : goTo(cur - 1);
+    }
+  }, { passive: true });
+
+  // Edit mode — hotzone 80x80 top-left, button appears on hover (400ms grace)
+  let editMode = false;
+  let hotzoneTimer = null;
+  const editToggle = document.getElementById('edit-toggle');
+  const editHotzone = document.getElementById('edit-hotzone');
+
+  editHotzone.addEventListener('mouseenter', () => {
+    hotzoneTimer = setTimeout(() => {
+      editToggle.style.display = 'block';
+      editToggle.classList.add('visible');
+    }, 400);
+  });
+  editHotzone.addEventListener('mouseleave', () => {
+    clearTimeout(hotzoneTimer);
+    if (!editMode) {
+      editToggle.classList.remove('visible');
+      setTimeout(() => { if (!editMode) editToggle.style.display = 'none'; }, 300);
+    }
+  });
+
+  editToggle.addEventListener('click', toggleEditMode);
+
+  function toggleEditMode() {
+    editMode = !editMode;
+    document.body.classList.toggle('edit-mode', editMode);
+    editToggle.style.display = 'block';
+    editToggle.classList.add('visible');
+    editToggle.textContent = editMode ? 'Exit Edit' : 'Edit';
+    document.querySelectorAll('[contenteditable]').forEach(el => {
+      el.contentEditable = editMode ? 'true' : 'false';
+    });
+    if (!editMode) {
+      editToggle.classList.remove('visible');
+      setTimeout(() => { editToggle.style.display = 'none'; }, 300);
+    }
+  }
+
+  async function saveFile() {
+    const html = '<!DOCTYPE html>\n' + document.documentElement.outerHTML;
+    if (window.showSaveFilePicker) {
+      try {
+        const handle = await window.showSaveFilePicker({
+          suggestedName: 'electric-studio.html',
+          types: [{ description: 'HTML file', accept: { 'text/html': ['.html'] } }]
+        });
+        const writable = await handle.createWritable();
+        await writable.write(html);
+        await writable.close();
+        showSaveIndicator();
+      } catch(e) {
+        if (e.name !== 'AbortError') fallbackSave(html);
+      }
+    } else {
+      fallbackSave(html);
+    }
+  }
+
+  function fallbackSave(html) {
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(new Blob([html], { type: 'text/html' }));
+    a.download = 'electric-studio.html';
+    a.click();
+    showSaveIndicator();
+  }
+
+  function showSaveIndicator() {
+    const el = document.getElementById('save-indicator');
+    el.style.display = 'block';
+    setTimeout(() => { el.style.display = 'none'; }, 2000);
+  }
+</script>
+</body>
+</html>

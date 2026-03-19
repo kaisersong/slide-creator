@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>slide-creator · 玻璃态形态 — 智能硬件发布会</title>
+<title>slide-creator · Glassmorphism · 消费科技新品 — 智能硬件发布会</title>
 <!-- Speaker note: backdrop-filter degrades to flat color in PPTX export. The blurred orbs are essential for the glass effect to work — without a colorful background behind each card, backdrop-filter: blur() has nothing to blur. -->
 <style>
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -467,7 +467,7 @@ body.edit-mode #edit-badge { display: flex; }
 <div id="progress"></div>
 <div id="nav-dots"></div>
 <div id="slide-num">1 / 8</div>
-<div id="edit-badge">编辑模式 · Ctrl+S</div>
+<div id="edit-badge">EDIT · Ctrl+S</div>
 <div id="hotzone"></div>
 
 <!-- SLIDE 1: Cover -->
@@ -476,169 +476,403 @@ body.edit-mode #edit-badge { display: flex; }
   <div class="orb orb2"></div>
   <div class="content" style="text-align:center;">
     <div class="reveal">
-      <span class="pill pill-dark">AI 智能助手 · 全新体验 · 开源生态</span>
+      <span class="pill pill-dark">Claude Code · OpenClaw · Open Source</span>
     </div>
     <div class="reveal" style="transition-delay:0.1s; margin-top:clamp(16px,2.5vw,28px);">
-      <h1>智能硬件发布会</h1>
+      <h1>slide-creator</h1>
     </div>
     <div class="reveal" style="transition-delay:0.15s; margin:clamp(8px,1.5vw,14px) auto 0; max-width:520px;">
-      <p style="font-size:clamp(15px,2vw,22px); color:rgba(255,255,255,0.80);">重新定义下一代人工智能交互体验</p>
+      <p style="font-size:clamp(15px,2vw,22px); color:rgba(255,255,255,0.80);">看起来像产品的演示文稿。</p>
     </div>
     <div class="reveal" style="transition-delay:0.2s; margin-top:clamp(20px,3.5vw,40px);">
       <div class="glass-card stats" style="display:inline-flex;">
         <div class="stat-card">
-          <span class="stat-value">10</span>
-          <span class="stat-label">创新功能</span>
+          <span class="stat-value">19</span>
+          <span class="stat-label">预设</span>
         </div>
         <div style="width:1px; background:rgba(255,255,255,0.15); align-self:stretch; margin:16px 0;"></div>
         <div class="stat-card">
-          <span class="stat-value">3</span>
-          <span class="stat-label">颜色配置</span>
+          <span class="stat-value">0</span>
+          <span class="stat-label">依赖</span>
         </div>
         <div style="width:1px; background:rgba(255,255,255,0.15); align-self:stretch; margin:16px 0;"></div>
         <div class="stat-card">
           <span class="stat-value">∞</span>
-          <span class="stat-label">使用场景</span>
+          <span class="stat-label">幻灯片</span>
         </div>
       </div>
     </div>
     <div class="reveal" style="transition-delay:0.3s; margin-top:clamp(14px,2vw,22px);">
-      <p style="font-size:clamp(12px,1.3vw,14px); color:rgba(255,255,255,0.35); letter-spacing:0.06em; text-transform:uppercase;">零依赖 · 高性能 · 开箱即用</p>
+      <p style="font-size:clamp(12px,1.3vw,14px); color:rgba(255,255,255,0.35); letter-spacing:0.06em; text-transform:uppercase;">零依赖HTML演示文稿</p>
     </div>
   </div>
 </section>
 
-<!-- SLIDE 2: Problem — light theme -->
 <section class="slide slide-1 text-light-theme" id="s1">
   <div class="orb" style="width:35vw;height:35vw;background:rgba(248,205,218,0.6);top:-5%;right:10%;filter:blur(60px);"></div>
   <div class="orb" style="width:28vw;height:28vw;background:rgba(166,193,238,0.5);bottom:0%;left:0%;filter:blur(60px);"></div>
   <div class="content">
     <div class="reveal">
-      <span class="pill pill-light">面临的挑战</span>
+      <span class="pill pill-light">问题所在</span>
     </div>
     <div class="reveal" style="transition-delay:0.1s; margin-top:clamp(12px,2vw,20px);">
-      <h2>智能硬件的<br>交互困境</h2>
+      <h2>"演示文稿不应该<br>需要构建系统"</h2>
     </div>
     <div class="sep sep-dark reveal" style="transition-delay:0.15s;"></div>
     <div class="glass-card reveal" style="transition-delay:0.2s; padding:0; overflow:hidden;">
       <div class="problem-item" style="border-bottom:1px solid rgba(26,26,46,0.10);">
-        <div class="icon-circle icon-circle-dark">🎯</div>
+        <div class="icon-circle icon-circle-dark">⚙️</div>
         <div>
-          <h3>交互学习曲线陡峭</h3>
-          <p>用户需花费数小时学习复杂的界面和手势，降低产品易用性。</p>
+          <h3>复杂的工具链</h3>
+          <p>npm、Webpack、配置文件。编写第一张幻灯片前需要花费数小时设置。</p>
         </div>
       </div>
       <div class="problem-item" style="border-bottom:1px solid rgba(26,26,46,0.10);">
-        <div class="icon-circle icon-circle-dark">⚡</div>
+        <div class="icon-circle icon-circle-dark">📋</div>
         <div>
-          <h3>响应延迟问题</h3>
-          <p>传统语音识别系统反应迟缓，无法提供实时流畅的交互体验。</p>
+          <h3>通用输出</h3>
+          <p>样板模板。每一份演示看起来都一样。</p>
         </div>
       </div>
       <div class="problem-item">
-        <div class="icon-circle icon-circle-dark">🔐</div>
+        <div class="icon-circle icon-circle-dark">🔒</div>
         <div>
-          <h3>隐私安全隐患</h3>
-          <p>用户数据上传云端处理，存在泄露风险，难以获得用户信任。</p>
+          <h3>无所有权</h3>
+          <p>你的幻灯片存在别人的云中。导出是事后考虑。</p>
         </div>
       </div>
     </div>
   </div>
 </section>
 
-<!-- SLIDE 3: Show Don't Tell — mint/light -->
 <section class="slide slide-2 text-light-theme" id="s2">
   <div class="orb" style="width:40vw;height:40vw;background:rgba(168,237,234,0.6);top:-15%;left:-5%;filter:blur(60px);"></div>
   <div class="orb" style="width:30vw;height:30vw;background:rgba(254,214,227,0.6);bottom:-5%;right:5%;filter:blur(60px);"></div>
   <div class="content">
     <div class="reveal">
-      <span class="pill pill-light">我们的解决方案</span>
+      <span class="pill pill-light">工作流</span>
     </div>
     <div class="reveal" style="transition-delay:0.1s; margin-top:clamp(12px,2vw,20px);">
-      <h2>突破性的<br>AI 交互系统</h2>
+      <h2>真正有效的<br>风格发现</h2>
     </div>
     <div class="sep sep-dark reveal" style="transition-delay:0.15s;"></div>
     <div class="reveal" style="transition-delay:0.18s;">
-      <p>采用端侧 AI 处理，百毫秒级响应，拥抱自然语言交互，让科技真正回归人性。</p>
+      <p>描述你的心情。获得三个视觉预览。在编写任何幻灯片之前选择感觉正确的设计。</p>
     </div>
     <div class="grid-3 reveal" style="transition-delay:0.25s;">
       <div class="glass-item" style="padding:clamp(14px,2vw,20px); background:rgba(255,255,255,0.40);">
-        <div class="icon-circle icon-circle-dark">🧠</div>
-        <h3 style="font-size:clamp(13px,1.4vw,15px); color:var(--text-dark);">本地 AI 引擎</h3>
-        <p style="font-size:clamp(11px,1.2vw,13px);">无需联网，数据永不上云，隐私完全掌握在用户手中。</p>
+        <div class="icon-circle icon-circle-dark">🎨</div>
+        <h3 style="font-size:clamp(13px,1.4vw,15px); color:var(--text-dark);">询问心情</h3>
+        <p style="font-size:clamp(11px,1.2vw,13px);">自然语言。"大胆极简。" "温暖富有创意。"</p>
       </div>
       <div class="glass-item" style="padding:clamp(14px,2vw,20px); background:rgba(255,255,255,0.40);">
-        <div class="icon-circle icon-circle-dark">⚡</div>
-        <h3 style="font-size:clamp(13px,1.4vw,15px); color:var(--text-dark);">毫秒级响应</h3>
-        <p style="font-size:clamp(11px,1.2vw,13px);">优化的边界计算，实时语音识别，流畅如自然交流。</p>
+        <div class="icon-circle icon-circle-dark">👁</div>
+        <h3 style="font-size:clamp(13px,1.4vw,15px); color:var(--text-dark);">3个预览</h3>
+        <p style="font-size:clamp(11px,1.2vw,13px);">三种匹配的风格，并排展示，完整生成前预览。</p>
       </div>
       <div class="glass-item" style="padding:clamp(14px,2vw,20px); background:rgba(255,255,255,0.40);">
-        <div class="icon-circle icon-circle-dark">✨</div>
-        <h3 style="font-size:clamp(13px,1.4vw,15px); color:var(--text-dark);">直观易用</h3>
-        <p style="font-size:clamp(11px,1.2vw,13px);">自然语言理解，无需复杂手势，长按即说，一句话解决。</p>
+        <div class="icon-circle icon-circle-dark">✓</div>
+        <h3 style="font-size:clamp(13px,1.4vw,15px); color:var(--text-dark);">选择并构建</h3>
+        <p style="font-size:clamp(11px,1.2vw,13px);">你选择的风格。完整的HTML文件。零依赖。</p>
       </div>
     </div>
   </div>
 </section>
 
-<!-- SLIDE 4: 10 Features — dark purple -->
 <section class="slide slide-3 text-dark" id="s3">
   <div class="orb orb1"></div>
   <div class="orb orb2"></div>
   <div class="content">
     <div class="reveal">
-      <span class="pill pill-dark">产品特性</span>
+      <span class="pill pill-dark">19 个预设</span>
     </div>
     <div class="reveal" style="transition-delay:0.1s; margin-top:clamp(12px,2vw,20px);">
-      <h2>十大创新功能<br>全面升级体验</h2>
+      <h2>每一个视觉系统<br>已经精心打造</h2>
     </div>
     <div class="sep reveal" style="transition-delay:0.15s;"></div>
     <div class="reveal" style="transition-delay:0.18s;">
-      <p style="color:rgba(255,255,255,0.70);">从智能识别到个性化推荐，我们精心打磨每一个细节，让交互变得更自然、更智能。</p>
+      <p style="color:rgba(255,255,255,0.70);">从大胆的推介到平静的报告。每个预设都是一个完整的视觉语言。</p>
     </div>
     <div class="tags reveal" style="transition-delay:0.25s;">
-      <span class="tag tag-dark">实时语音识别</span>
-      <span class="tag tag-dark">多语言支持</span>
-      <span class="tag tag-dark">情感识别</span>
-      <span class="tag tag-dark">上下文学习</span>
-      <span class="tag tag-dark">手势识别</span>
-      <span class="tag tag-dark">声纹解锁</span>
-      <span class="tag tag-dark">自适应界面</span>
-      <span class="tag tag-dark">即时翻译</span>
-      <span class="tag tag-dark">设备联动</span>
-      <span class="tag tag-highlight">玻璃态美学 ✦</span>
-      <span class="tag tag-dark">隐私保护</span>
-      <span class="tag tag-dark">离线可用</span>
-      <span class="tag tag-dark">快速充电</span>
+      <span class="tag tag-dark">大胆信号</span>
+      <span class="tag tag-dark">电气工作室</span>
+      <span class="tag tag-dark">创意电压</span>
+      <span class="tag tag-dark">深色植物</span>
+      <span class="tag tag-dark">蓝天</span>
+      <span class="tag tag-dark">笔记本选项卡</span>
+      <span class="tag tag-dark">柔和几何</span>
+      <span class="tag tag-dark">分割柔和</span>
+      <span class="tag tag-dark">复古编辑</span>
+      <span class="tag tag-dark">霓虹网络</span>
+      <span class="tag tag-dark">终端绿色</span>
+      <span class="tag tag-dark">瑞士现代</span>
+      <span class="tag tag-dark">纸张与墨水</span>
+      <span class="tag tag-dark">极光网格</span>
+      <span class="tag tag-dark">企业深色</span>
+      <span class="tag tag-highlight">玻璃态形态 ✦</span>
+      <span class="tag tag-dark">新蛮荒主义</span>
+      <span class="tag tag-dark">中国禅宗</span>
+      <span class="tag tag-dark">数据故事</span>
     </div>
   </div>
 </section>
 
-<!-- SLIDE 5: How It Works — mint -->
 <section class="slide slide-4 text-light-theme" id="s4">
   <div class="orb" style="width:38vw;height:38vw;background:rgba(168,237,234,0.55);top:-10%;left:-5%;filter:blur(60px);"></div>
   <div class="orb" style="width:28vw;height:28vw;background:rgba(254,214,227,0.55);bottom:0%;right:0%;filter:blur(60px);"></div>
   <div class="content">
     <div class="reveal">
-      <span class="pill pill-light">工作流程</span>
+      <span class="pill pill-light">工作原理</span>
     </div>
     <div class="reveal" style="transition-delay:0.1s; margin-top:clamp(12px,2vw,20px);">
-      <h2>三步快速<br>开启智能生活</h2>
+      <h2>三步完成<br>你的演示</h2>
     </div>
     <div class="sep sep-dark reveal" style="transition-delay:0.15s;"></div>
     <div class="glass-card reveal" style="transition-delay:0.2s; padding:0; overflow:hidden;">
       <div class="step-item" style="border-bottom:1px solid rgba(26,26,46,0.09);">
         <div class="step-num step-num-dark">1</div>
         <div>
-          <h3>唤醒设备</h3>
-          <p style="font-size:clamp(12px,1.3vw,15px);">说出唤醒词或长按设备，AI 系统即刻激活，准备好为您服务。</p>
+          <h3>运行 /slide-creator</h3>
+          <p style="font-size:clamp(12px,1.3vw,15px);">在Claude Code或OpenClaw中。说出你的主题和内容目标。</p>
         </div>
       </div>
       <div class="step-item" style="border-bottom:1px solid rgba(26,26,46,0.09);">
         <div class="step-num step-num-dark">2</div>
         <div>
-          <h3>自然交互</h3>
-          <p style="font-size:clamp(12px,1.3vw,15px);">用自然语言表达需求，系统瞬间理解您的意图，提供精准建议。</p>
+          <h3>从3个视觉预览中选择</h3>
+          <p style="font-size:clamp(12px,1.3vw,15px);">在提交之前比较风格选项。凭感觉选择，而不是猜测。</p>
         </div>
       </div>
-      <div class="step
+      <div class="step-item">
+        <div class="step-num step-num-dark">3</div>
+        <div>
+          <h3>打开HTML</h3>
+          <p style="font-size:clamp(12px,1.3vw,15px);">独立文件。无服务器。无安装。作为文件分享或在任何地方托管。</p>
+        </div>
+      </div>
+    </div>
+    <div class="glass-item reveal" style="transition-delay:0.3s; margin-top:clamp(12px,1.8vw,16px); padding:clamp(10px,1.5vw,14px); background:rgba(255,255,255,0.40);">
+      <p style="font-size:clamp(12px,1.3vw,15px); color:var(--text-muted-dark);"><strong style="color:var(--text-dark);">两阶段工作流：</strong>使用 <code style="background:rgba(26,26,46,0.08); padding:1px 5px; border-radius:4px; font-size:0.9em;">--plan</code> 先制定概要，然后 <code style="background:rgba(26,26,46,0.08); padding:1px 5px; border-radius:4px; font-size:0.9em;">--generate</code> 生成完整演示。</p>
+    </div>
+  </div>
+</section>
+
+<section class="slide slide-5 text-dark" id="s5">
+  <div class="orb" style="width:36vw;height:36vw;background:rgba(166,193,238,0.5);top:-5%;left:0%;filter:blur(60px);"></div>
+  <div class="orb" style="width:30vw;height:30vw;background:rgba(248,205,218,0.5);bottom:0%;right:0%;filter:blur(60px);"></div>
+  <div class="orb" style="width:22vw;height:22vw;background:rgba(29,111,164,0.4);bottom:20%;left:60%;filter:blur(50px);"></div>
+  <div class="content">
+    <div class="reveal">
+      <span class="pill pill-dark">功能特性</span>
+    </div>
+    <div class="reveal" style="transition-delay:0.1s; margin-top:clamp(12px,2vw,20px);">
+      <h2>你需要的一切。<br>你不需要的一无。</h2>
+    </div>
+    <div class="sep reveal" style="transition-delay:0.15s;"></div>
+    <div class="grid-2 reveal" style="transition-delay:0.2s;">
+      <div class="glass-item" style="padding:clamp(14px,2vw,20px);">
+        <div class="icon-circle">📐</div>
+        <h3>视口自适应</h3>
+        <p style="font-size:clamp(12px,1.3vw,14px);">100dvh幻灯片。任何屏幕或投影仪上完美显示。</p>
+      </div>
+      <div class="glass-item" style="padding:clamp(14px,2vw,20px);">
+        <div class="icon-circle">✏️</div>
+        <h3>内联编辑</h3>
+        <p style="font-size:clamp(12px,1.3vw,14px);">按E激活。Ctrl+S通过文件系统访问API保存到磁盘。</p>
+      </div>
+      <div class="glass-item" style="padding:clamp(14px,2vw,20px);">
+        <div class="icon-circle">📊</div>
+        <h3>PPTX导出</h3>
+        <p style="font-size:clamp(12px,1.3vw,14px);">为需要PowerPoint的利益相关者导出。注意：backdrop-filter在PPTX中会被压平。</p>
+      </div>
+      <div class="glass-item" style="padding:clamp(14px,2vw,20px);">
+        <div class="icon-circle">⚡</div>
+        <h3>两阶段工作流</h3>
+        <p style="font-size:clamp(12px,1.3vw,14px);">--plan制定概要，--generate生成。更快发货，更聪明迭代。</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="slide slide-6 text-light-theme" id="s6">
+  <div class="orb" style="width:40vw;height:40vw;background:rgba(168,237,234,0.5);top:-10%;left:-5%;filter:blur(60px);"></div>
+  <div class="orb" style="width:28vw;height:28vw;background:rgba(254,214,227,0.6);bottom:-5%;right:-5%;filter:blur(60px);"></div>
+  <div class="content">
+    <div class="reveal">
+      <span class="pill pill-light">安装</span>
+    </div>
+    <div class="reveal" style="transition-delay:0.1s; margin-top:clamp(12px,2vw,20px);">
+      <h2>在60秒内<br>启动并运行</h2>
+    </div>
+    <div class="sep sep-dark reveal" style="transition-delay:0.15s;"></div>
+    <div class="install-block reveal" style="transition-delay:0.2s;">
+      <div class="glass-card install-item">
+        <div class="install-label" style="color:var(--text-muted-dark);">Claude Code</div>
+        <div class="install-cmd" style="color:var(--text-dark);">git clone https://github.com/kaisersong/slide-creator ~/.claude/skills/slide-creator</div>
+      </div>
+      <div class="glass-card install-item">
+        <div class="install-label" style="color:var(--text-muted-dark);">OpenClaw</div>
+        <div class="install-cmd" style="color:var(--text-dark);">clawhub install html-slide-creator</div>
+      </div>
+    </div>
+    <div class="glass-item reveal" style="transition-delay:0.3s; margin-top:clamp(12px,1.8vw,18px); padding:clamp(12px,1.8vw,16px); display:flex; align-items:center; gap:12px; background:rgba(255,255,255,0.40);">
+      <div class="icon-circle icon-circle-dark" style="min-width:clamp(32px,4vw,44px); margin-bottom:0;">💡</div>
+      <p style="font-size:clamp(12px,1.3vw,15px);">无npm。无构建步骤。无配置。克隆即可工作。</p>
+    </div>
+  </div>
+</section>
+
+<section class="slide slide-7 text-dark" id="s7">
+  <div class="orb orb1"></div>
+  <div class="orb orb2"></div>
+  <div class="orb orb4"></div>
+  <div class="content" style="text-align:center;">
+    <div class="reveal">
+      <span class="pill pill-dark">开始使用</span>
+    </div>
+    <div class="reveal" style="transition-delay:0.1s; margin-top:clamp(14px,2vw,22px);">
+      <h1>/slide-creator</h1>
+    </div>
+    <div class="reveal" style="transition-delay:0.15s; margin:clamp(10px,1.5vw,16px) auto 0; max-width:480px;">
+      <p style="font-size:clamp(15px,2vw,21px); color:rgba(255,255,255,0.75);">适用于Claude Code和OpenClaw。<br>完全在浏览器中运行。</p>
+    </div>
+    <div class="reveal" style="transition-delay:0.2s;">
+      <div class="glass-card cta-btn" style="color:white; margin:clamp(22px,3.5vw,36px) auto 0; display:inline-flex;">
+        <span>使用 /slide-creator 开始</span>
+        <span style="opacity:0.55;">→</span>
+      </div>
+    </div>
+    <div class="reveal" style="transition-delay:0.3s; margin-top:clamp(14px,2.5vw,28px);">
+      <div class="glass-card stats" style="display:inline-flex;">
+        <div class="stat-card" style="padding:clamp(10px,1.5vw,16px) clamp(14px,2vw,22px);">
+          <span class="stat-value" style="font-size:clamp(22px,3.5vw,36px);">19</span>
+          <span class="stat-label">预设</span>
+        </div>
+        <div style="width:1px; background:rgba(255,255,255,0.15); margin:10px 0;"></div>
+        <div class="stat-card" style="padding:clamp(10px,1.5vw,16px) clamp(14px,2vw,22px);">
+          <span class="stat-value" style="font-size:clamp(22px,3.5vw,36px);">0</span>
+          <span class="stat-label">依赖</span>
+        </div>
+        <div style="width:1px; background:rgba(255,255,255,0.15); margin:10px 0;"></div>
+        <div class="stat-card" style="padding:clamp(10px,1.5vw,16px) clamp(14px,2vw,22px);">
+          <span class="stat-value" style="font-size:clamp(22px,3.5vw,36px);">∞</span>
+          <span class="stat-label">幻灯片</span>
+        </div>
+      </div>
+    </div>
+    <div class="reveal" style="transition-delay:0.4s; margin-top:clamp(14px,2vw,22px);">
+      <p style="font-size:clamp(11px,1.2vw,13px); color:rgba(255,255,255,0.28); letter-spacing:0.06em; text-transform:uppercase;">玻璃态形态 · slide-creator</p>
+    </div>
+  </div>
+</section>
+
+<script>
+const slides = document.querySelectorAll('.slide');
+const total = slides.length;
+let cur = 0;
+
+// Nav dots
+const dotsEl = document.getElementById('nav-dots');
+const dots = [];
+for (let i = 0; i < total; i++) {
+  const d = document.createElement('button');
+  d.className = 'dot';
+  d.setAttribute('aria-label', `Slide ${i+1}`);
+  d.addEventListener('click', () => goTo(i));
+  dotsEl.appendChild(d);
+  dots.push(d);
+}
+
+function goTo(n) {
+  n = Math.max(0, Math.min(total - 1, n));
+  cur = n;
+  slides[cur].scrollIntoView({ behavior: 'smooth' });
+  updateUI();
+}
+
+function updateUI() {
+  dots.forEach((d, i) => d.classList.toggle('active', i === cur));
+  document.getElementById('progress').style.width = ((cur + 1) / total * 100) + '%';
+  document.getElementById('slide-num').textContent = `${cur + 1} / ${total}`;
+}
+
+// IntersectionObserver for reveal with stagger
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      const el = entry.target;
+      const revealEls = el.querySelectorAll('.reveal');
+      revealEls.forEach((r, i) => {
+        const delay = Math.min(i, 4) * 100;
+        setTimeout(() => r.classList.add('visible'), delay);
+      });
+      const idx = Array.from(slides).indexOf(el);
+      if (idx !== -1) { cur = idx; updateUI(); }
+    }
+  });
+}, { threshold: 0.5 });
+
+slides.forEach(s => observer.observe(s));
+
+// Keyboard
+document.addEventListener('keydown', e => {
+  if (editMode && e.key !== 'Escape') {
+    if ((e.ctrlKey || e.metaKey) && e.key === 's') { e.preventDefault(); saveFile(); }
+    return;
+  }
+  if (e.key === 'ArrowDown' || e.key === 'ArrowRight' || e.key === ' ') { e.preventDefault(); goTo(cur + 1); }
+  if (e.key === 'ArrowUp'   || e.key === 'ArrowLeft')  { e.preventDefault(); goTo(cur - 1); }
+  if (e.key === 'e' || e.key === 'E') toggleEdit();
+  if (e.key === 'Escape' && editMode) toggleEdit();
+  if ((e.ctrlKey || e.metaKey) && e.key === 's') { e.preventDefault(); saveFile(); }
+});
+
+// Wheel — debounce-reset
+let wheelLocked = false, wheelTimer = null;
+document.addEventListener('wheel', e => {
+  clearTimeout(wheelTimer);
+  if (!wheelLocked) { wheelLocked = true; e.deltaY > 0 ? goTo(cur + 1) : goTo(cur - 1); }
+  wheelTimer = setTimeout(() => { wheelLocked = false; }, 180);
+}, { passive: true });
+
+// Touch swipe
+let touchY = 0;
+document.addEventListener('touchstart', e => { touchY = e.touches[0].clientY; }, { passive: true });
+document.addEventListener('touchend', e => {
+  const dy = touchY - e.changedTouches[0].clientY;
+  if (Math.abs(dy) > 40) dy > 0 ? goTo(cur + 1) : goTo(cur - 1);
+}, { passive: true });
+
+// Edit mode
+let editMode = false;
+let fileHandle = null;
+
+function toggleEdit() {
+  editMode = !editMode;
+  document.body.classList.toggle('edit-mode', editMode);
+  const editable = document.querySelectorAll('h1,h2,h3,p,.tag,.stat-value,.stat-label,.pill,.install-cmd');
+  editable.forEach(el => el.setAttribute('contenteditable', editMode ? 'true' : 'false'));
+}
+
+async function saveFile() {
+  const html = '<!DOCTYPE html>\n' + document.documentElement.outerHTML;
+  if (window.showSaveFilePicker) {
+    try {
+      if (!fileHandle) {
+        fileHandle = await window.showSaveFilePicker({ suggestedName: 'glassmorphism.html', types: [{ description: 'HTML', accept: {'text/html': ['.html']} }] });
+      }
+      const writable = await fileHandle.createWritable();
+      await writable.write(html); await writable.close();
+      return;
+    } catch(_) {}
+  }
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(new Blob([html], { type: 'text/html' }));
+  a.download = 'glassmorphism.html'; a.click();
+}
+
+document.getElementById('hotzone').addEventListener('click', toggleEdit);
+updateUI();
+</script>
+</body>
+</html>

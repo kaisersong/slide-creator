@@ -3,16 +3,16 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>独立创作者宣言 — 打破边界，重建规则</title>
+  <title>slide-creator · Neo Brutalism · 独立创作者宣言 — 打破边界，重建规则</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;800;900&family=Noto+Sans+SC:wght@400;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;800;900&display=swap&family=Noto+Sans+SC:wght@400;700" rel="stylesheet">
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     html { scroll-snap-type: y mandatory; scroll-behavior: smooth; height: 100%; }
     body {
       height: 100%; overflow-x: hidden;
       background: #FFEB3B;
-      font-family: 'Noto Sans SC', 'Space Grotesk', sans-serif;
+      font-family: 'Space Grotesk', sans-serif;
       color: #000;
     }
 
@@ -52,7 +52,7 @@
       box-shadow: 3px 3px 0 #000; padding: 12px 24px;
       font-weight: 900; text-transform: uppercase;
       font-size: clamp(0.8rem, 1.2vw, 1rem);
-      font-family: 'Noto Sans SC', 'Space Grotesk', sans-serif;
+      font-family: 'Space Grotesk', sans-serif;
       cursor: pointer; display: inline-block;
     }
     .brute-btn:hover { transform: translate(2px, 2px); box-shadow: 1px 1px 0 #000; }
@@ -80,7 +80,7 @@
     /* Edit indicator */
     #edit-indicator {
       position: fixed; bottom: 1.5rem; right: 2rem; z-index: 1000;
-      font-family: 'Noto Sans SC', 'Space Grotesk', sans-serif; font-size: 0.7rem; font-weight: 900;
+      font-family: 'Space Grotesk', sans-serif; font-size: 0.7rem; font-weight: 900;
       color: #000; background: #FFEB3B;
       border: 2px solid #000; box-shadow: 2px 2px 0 #000;
       padding: 0.3rem 0.8rem; display: none; text-transform: uppercase; letter-spacing: 0.1em;
@@ -314,22 +314,22 @@
 </div>
 
 <div id="hotzone"></div>
-<div id="edit-indicator">编辑模式 — 按 CTRL+S 保存</div>
+<div id="edit-indicator">EDIT MODE — CTRL+S TO SAVE</div>
 
 <!-- SLIDE 01: Cover -->
 <section class="slide" id="slide-0">
   <div class="stripe cover-bg-stripe"></div>
-  <div class="eyebrow reveal">为创作者而生的展示工具</div>
-  <h1 class="reveal">独立<br>创作者<span class="cover-arrow">→</span></h1>
-  <div class="cover-sub reveal">零依赖 · 浏览器原生 · 无妥协</div>
+  <div class="eyebrow reveal">为独立创作者打造的演示文稿工具</div>
+  <h1 class="reveal">slide-<br>creator<span class="cover-arrow">→</span></h1>
+  <div class="cover-sub reveal">零依赖·原生浏览器·无任何借口</div>
   <div class="cover-stats reveal">
     <div>
       <span class="cover-stat-val">19</span>
-      <span class="cover-stat-label">设计预设</span>
+      <span class="cover-stat-label">风格预设</span>
     </div>
     <div>
       <span class="cover-stat-val">0</span>
-      <span class="cover-stat-label">外部依赖</span>
+      <span class="cover-stat-label">代码依赖</span>
     </div>
     <div>
       <span class="cover-stat-val">∞</span>
@@ -338,94 +338,90 @@
   </div>
 </section>
 
-<!-- SLIDE 02: Problem -->
 <section class="slide" id="slide-1">
-  <div class="eyebrow reveal">核心问题</div>
-  <div class="problem-quote reveal">"演示文稿不应该<br>需要构建系统。"</div>
+  <div class="eyebrow reveal">问题所在</div>
+  <div class="problem-quote reveal">"演示文稿<br>不应该需要<br>构建系统"</div>
   <hr class="heavy-rule reveal">
   <ul class="pain-list">
     <li class="pain-item reveal">
       <span class="pain-num">01</span>
-      <span class="pain-text"><strong>繁琐的工具链。</strong>npm install、webpack 配置、300MB 的 node_modules——仅仅为了几张幻灯片。荒谬。</span>
+      <span class="pain-text"><strong>工具链过于复杂。</strong>npm install、webpack 配置、300MB 的 node_modules——仅仅为了发布几页幻灯片。荒谬。</span>
     </li>
     <li class="pain-item reveal">
       <span class="pain-num">02</span>
-      <span class="pain-text"><strong>通用无味的输出。</strong>每一份 AI 演示：Inter 字体、紫色渐变、零个性。你的品牌。你的声音。</span>
+      <span class="pain-text"><strong>输出过于通用。</strong>每套 AI 生成的演示：Inter 字体、紫色渐变、毫无个性。你的品牌。零存在感。</span>
     </li>
     <li class="pain-item reveal">
       <span class="pain-num">03</span>
-      <span class="pain-text"><strong>失去所有权。</strong>封闭平台、导出限制、月费订阅——为了你自己的内容。无法接受。</span>
+      <span class="pain-text"><strong>没有所有权。</strong>封闭平台、导出限制、为你自己的内容每月付费。不可接受。</span>
     </li>
   </ul>
 </section>
 
-<!-- SLIDE 03: Show Don't Tell -->
 <section class="slide" id="slide-2">
-  <div class="eyebrow reveal">智能发现</div>
-  <h2 class="reveal">视觉风格<br>智能匹配</h2>
+  <div class="eyebrow reveal">发现过程</div>
+  <h2 class="reveal">风格发现<br>真正有效</h2>
   <hr class="heavy-rule reveal">
-  <p class="reveal" style="margin-bottom: clamp(1rem,2vh,1.5rem);">无法用语言描述设计偏好。我们展示。你选择。直觉反应胜过冗长讨论。</p>
+  <p class="reveal" style="margin-bottom: clamp(1rem,2vh,1.5rem);">设计偏好无法用言语描述。slide-creator 直观展示。你来选择。视觉反应胜过冗长描述。</p>
   <div class="steps-grid reveal">
     <div class="step-card">
       <span class="step-num-lg">1</span>
       <div class="step-title">四个问题</div>
-      <div class="step-desc">语气、观众、能量、主题。无废话。</div>
+      <div class="step-desc">语气、受众、能量、主题。简洁明了。</div>
     </div>
     <div class="step-card rotated">
       <span class="step-num-lg">2</span>
-      <div class="step-title">三个预览</div>
-      <div class="step-desc">浏览器即时渲染。凭直觉反应。不用文字。</div>
+      <div class="step-title">3 个预览</div>
+      <div class="step-desc">浏览器实时渲染。凭直觉反应。无需文字。</div>
     </div>
     <div class="step-card">
       <span class="step-num-lg">3</span>
-      <div class="step-title">选择。完成。</div>
-      <div class="step-desc">完整演示。你的风格。即刻交付。</div>
+      <div class="step-title">选择·完成</div>
+      <div class="step-desc">完整演示稿。你的风格方向。立即交付。</div>
     </div>
   </div>
 </section>
 
-<!-- SLIDE 04: 19 Presets -->
 <section class="slide" id="slide-3">
   <div class="eyebrow reveal">设计系统</div>
-  <h2 class="reveal">19 种风格<br>零通用化<br>AI 美学</h2>
+  <h2 class="reveal">19 种风格<br>零 AI 通俗<br>美学</h2>
   <div class="preset-grid reveal">
     <span class="preset-tag">大胆信号</span>
-    <span class="preset-tag">电气工作室</span>
-    <span class="preset-tag">创意电流</span>
+    <span class="preset-tag">电光工作室</span>
+    <span class="preset-tag">创意电压</span>
     <span class="preset-tag">深色植物</span>
-    <span class="preset-tag">蓝天白云</span>
+    <span class="preset-tag">蓝天</span>
     <span class="preset-tag">笔记本标签</span>
-    <span class="preset-tag">柔和几何</span>
-    <span class="preset-tag">分割柔和</span>
+    <span class="preset-tag">粉彩几何</span>
+    <span class="preset-tag">分割粉彩</span>
     <span class="preset-tag">复古编辑</span>
-    <span class="preset-tag">霓虹网络</span>
-    <span class="preset-tag">终端绿色</span>
+    <span class="preset-tag">霓虹赛博</span>
+    <span class="preset-tag">终端绿</span>
     <span class="preset-tag">瑞士现代</span>
-    <span class="preset-tag">纸与墨</span>
+    <span class="preset-tag">纸张与墨水</span>
     <span class="preset-tag">极光网格</span>
     <span class="preset-tag">企业深色</span>
-    <span class="preset-tag">毛玻璃</span>
+    <span class="preset-tag">玻璃态</span>
     <span class="preset-tag current">新粗野主义</span>
-    <span class="preset-tag">禅意写意</span>
+    <span class="preset-tag">禅意中国风</span>
     <span class="preset-tag">数据故事</span>
   </div>
 </section>
 
-<!-- SLIDE 05: How It Works -->
 <section class="slide" id="slide-4">
   <div class="eyebrow reveal">工作流程</div>
-  <h2 class="reveal">三个步骤<br>一份演示</h2>
+  <h2 class="reveal">三个步骤<br>一份演示稿</h2>
   <hr class="heavy-rule reveal">
   <div class="how-grid reveal">
     <div class="how-card">
       <div class="how-num">01</div>
-      <div class="how-title">运行命令</div>
-      <div class="how-desc">输入命令。回答四个问题。无配置文件。无 npm。无废话。</div>
+      <div class="how-title">/slide-creator</div>
+      <div class="how-desc">输入命令。回答 4 个问题。无配置文件。无设置。无 npm。</div>
     </div>
     <div class="how-card rotated">
       <div class="how-num">02</div>
-      <div class="how-title">选择风格</div>
-      <div class="how-desc">对三个视觉预览做出反应。你的直觉知道。相信它。</div>
+      <div class="how-title">选择你的风格</div>
+      <div class="how-desc">对 3 个视觉预览做出反应。你的直觉知道。相信它。</div>
     </div>
     <div class="how-card">
       <div class="how-num">03</div>
@@ -435,56 +431,53 @@
   </div>
 </section>
 
-<!-- SLIDE 06: Features -->
 <section class="slide" id="slide-5">
   <div class="eyebrow reveal">功能特性</div>
-  <h2 class="reveal">为真实使用<br>而构建</h2>
+  <h2 class="reveal">为真实<br>使用场景<br>而构建</h2>
   <div class="feature-table">
     <div class="feature-row reveal">
-      <span class="feature-name">完整视口</span>
-      <span class="feature-desc">每一张幻灯片：精确 100vh。永不滚动。为你的屏幕尺寸精心设计。</span>
+      <span class="feature-name">视口适配</span>
+      <span class="feature-desc">每张幻灯片：恰好 100vh。永不滚动。为你的演示屏幕精心设计。</span>
     </div>
     <div class="feature-row reveal">
       <span class="feature-name">即时编辑</span>
-      <span class="feature-desc">按 E 进入编辑。点击任何文本。Ctrl+S 保存。实时编辑。无导出流程。</span>
+      <span class="feature-desc">按 E 键。点击任意文本。Ctrl+S 保存。实时编辑。无需导出。</span>
     </div>
     <div class="feature-row reveal">
       <span class="feature-name">PPTX 导出</span>
-      <span class="feature-desc">--export pptx。PowerPoint 用于董事会演示。完全支持。</span>
+      <span class="feature-desc">/slide-creator --export pptx。当董事会要求 PowerPoint 时可用。</span>
     </div>
     <div class="feature-row reveal">
-      <span class="feature-name">两阶段流程</span>
-      <span class="feature-desc">--plan 生成大纲。--generate 输出最终 HTML。评审后再确认。无意外。</span>
+      <span class="feature-name">两阶段工作流</span>
+      <span class="feature-desc">--plan 生成大纲。--generate 产出最终 HTML。提前审阅。无惊喜。</span>
     </div>
   </div>
 </section>
 
-<!-- SLIDE 07: Install -->
 <section class="slide" id="slide-6">
-  <div class="eyebrow reveal">安装步骤</div>
-  <h2 class="reveal">两行命令<br>零配置</h2>
+  <div class="eyebrow reveal">安装</div>
+  <h2 class="reveal">两行代码<br>零配置</h2>
   <hr class="heavy-rule reveal">
   <div class="eyebrow reveal" style="margin-top: clamp(1rem,2vh,1.5rem); margin-bottom: 0.5rem;">Claude Code</div>
   <div class="code-block reveal">
     git clone https://github.com/kaisersong/slide-creator \<br>
     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;~/.claude/skills/slide-creator<br>
-    <span class="code-comment"># 重启 Claude Code — 完成</span>
+    <span class="code-comment"># 重启 Claude Code —— 完成</span>
   </div>
   <div class="eyebrow reveal" style="margin-bottom: 0.5rem;">OpenClaw</div>
   <div class="code-block reveal">
     clawhub install html-slide-creator<br>
-    <span class="code-comment"># 即刻可用。无需重启。</span>
+    <span class="code-comment"># 立即可用。无需重启。</span>
   </div>
 </section>
 
-<!-- SLIDE 08: Get Started -->
 <section class="slide" id="slide-7">
-  <div class="eyebrow reveal">立即开始</div>
-  <h2 class="reveal" style="font-size: clamp(1.5rem,3vw,2.5rem);">运行命令。获得演示。</h2>
+  <div class="eyebrow reveal">开始使用</div>
+  <h2 class="reveal" style="font-size: clamp(1.5rem,3vw,2.5rem);">运行命令。获得演示稿。</h2>
   <div class="cta-block">
     <div class="cta-cmd reveal">/slide-creator</div>
-    <div class="cta-sub reveal">无 npm。无 webpack。无妥协。</div>
-    <div class="cta-manifesto reveal">19 种风格 · 零外部依赖 · 你的文件 · 你的规则</div>
+    <div class="cta-sub reveal">无 npm。无 webpack。无任何借口。</div>
+    <div class="cta-manifesto reveal">19 种风格·零代码依赖·你的文件·你的规则</div>
   </div>
 </section>
 
@@ -538,3 +531,40 @@
   }, { passive: true });
 
   let touchStart = null;
+  document.addEventListener('touchstart', e => { touchStart = e.touches[0].clientY; }, { passive: true });
+  document.addEventListener('touchend', e => {
+    if (!touchStart) return;
+    const diff = touchStart - e.changedTouches[0].clientY;
+    if (Math.abs(diff) > 50) { diff > 0 ? goTo(current + 1) : goTo(current - 1); }
+    touchStart = null;
+  });
+
+  function toggleEdit() {
+    editMode = !editMode;
+    document.body.classList.toggle('edit-mode', editMode);
+    slides.forEach(s => {
+      s.querySelectorAll('h1,h2,h3,p,.cover-stat-val,.cta-cmd,.feature-desc,.step-desc,.how-desc,.pain-text,.code-block,.cta-sub,.cover-sub').forEach(el => {
+        el.contentEditable = editMode ? 'true' : 'false';
+      });
+    });
+  }
+
+  document.getElementById('hotzone').addEventListener('click', toggleEdit);
+
+  async function saveFile() {
+    const html = '<!DOCTYPE html>\n' + document.documentElement.outerHTML;
+    if (window.showSaveFilePicker) {
+      try {
+        const h = await window.showSaveFilePicker({ suggestedName: 'neo-brutalism.html', types: [{ accept: { 'text/html': ['.html'] } }] });
+        const w = await h.createWritable(); await w.write(html); await w.close();
+      } catch(e) { if (e.name !== 'AbortError') fallbackSave(html); }
+    } else fallbackSave(html);
+  }
+  function fallbackSave(html) {
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(new Blob([html], { type: 'text/html' }));
+    a.download = 'neo-brutalism.html'; a.click();
+  }
+</script>
+</body>
+</html>

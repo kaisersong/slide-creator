@@ -3,16 +3,16 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>企业战略摘要 — 三年规划路线图</title>
+  <title>slide-creator · Swiss Modern · 企业战略摘要 — 三年规划路线图</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;600;800;900&family=Nunito:wght@400;600&family=Noto+Sans+SC:wght@400;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;600;800;900&family=Nunito:wght@400;600&display=swap&family=Noto+Sans+SC:wght@400;700" rel="stylesheet">
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     html { scroll-snap-type: y mandatory; scroll-behavior: smooth; height: 100%; }
     body {
       height: 100%; overflow-x: hidden;
       background: #ffffff;
-      font-family: 'Nunito', 'Noto Sans SC', sans-serif;
+      font-family: 'Nunito', sans-serif;
       color: #000000;
     }
 
@@ -68,7 +68,7 @@
     /* Edit indicator */
     #edit-indicator {
       position: fixed; bottom: 1.5rem; right: 1.5rem; z-index: 1000;
-      font-family: 'Nunito', 'Noto Sans SC', sans-serif; font-size: 0.7rem; font-weight: 600;
+      font-family: 'Nunito', sans-serif; font-size: 0.7rem; font-weight: 600;
       color: #ff3300; border-bottom: 2px solid #ff3300;
       padding-bottom: 0.2rem; display: none; text-transform: uppercase; letter-spacing: 0.1em;
     }
@@ -92,7 +92,7 @@
 
     /* Typography */
     .eyebrow {
-      font-family: 'Nunito', 'Noto Sans SC', sans-serif; font-weight: 600;
+      font-family: 'Nunito', sans-serif; font-weight: 600;
       font-size: clamp(0.65rem, 1vw, 0.75rem);
       letter-spacing: 0.2em; text-transform: uppercase;
       color: #000; margin-bottom: clamp(1rem, 2vh, 1.5rem);
@@ -105,7 +105,7 @@
     }
 
     h1 {
-      font-family: 'Archivo', 'Noto Sans SC', sans-serif; font-weight: 900;
+      font-family: 'Archivo', sans-serif; font-weight: 900;
       font-size: clamp(4rem, 10vw, 8rem);
       letter-spacing: -0.04em; line-height: 0.9;
       color: #000;
@@ -113,7 +113,7 @@
     h1 .red { color: #ff3300; }
 
     h2 {
-      font-family: 'Archivo', 'Noto Sans SC', sans-serif; font-weight: 800;
+      font-family: 'Archivo', sans-serif; font-weight: 800;
       font-size: clamp(2rem, 5vw, 4rem);
       letter-spacing: -0.03em; line-height: 1;
       color: #000;
@@ -124,7 +124,7 @@
     .rule-hair { border: none; border-top: 1px solid #000; margin: clamp(1rem, 2vh, 1.5rem) 0; }
 
     p {
-      font-family: 'Nunito', 'Noto Sans SC', sans-serif; font-weight: 400;
+      font-family: 'Nunito', sans-serif; font-weight: 400;
       font-size: clamp(0.9rem, 1.6vw, 1.1rem);
       line-height: 1.65; color: #000; max-width: 56ch;
     }
@@ -135,12 +135,12 @@
       margin-top: clamp(2rem, 4vh, 3rem);
     }
     .stat-val {
-      font-family: 'Archivo', 'Noto Sans SC', sans-serif; font-weight: 900;
+      font-family: 'Archivo', sans-serif; font-weight: 900;
       font-size: clamp(2rem, 4vw, 3rem);
       color: #000; display: block; line-height: 1;
     }
     .stat-label {
-      font-family: 'Nunito', 'Noto Sans SC', sans-serif; font-weight: 600;
+      font-family: 'Nunito', sans-serif; font-weight: 600;
       font-size: 0.65rem; letter-spacing: 0.18em;
       text-transform: uppercase; color: #9a9a9a; margin-top: 0.3rem; display: block;
     }
@@ -159,7 +159,7 @@
       font-size: 0.75rem; color: #ff3300; padding-top: 0.15rem;
     }
     .pain-text {
-      font-family: 'Nunito', 'Noto Sans SC', sans-serif; font-size: clamp(0.85rem, 1.4vw, 1rem);
+      font-family: 'Nunito', sans-serif; font-size: clamp(0.85rem, 1.4vw, 1rem);
       color: #000; line-height: 1.5;
     }
     .pain-text strong { font-weight: 600; }
@@ -175,7 +175,7 @@
       font-size: clamp(1.5rem, 3vw, 2.5rem); color: #ff3300; line-height: 1;
     }
     .step-body h3 {
-      font-family: 'Archivo', 'Noto Sans SC', sans-serif; font-weight: 800;
+      font-family: 'Archivo', sans-serif; font-weight: 800;
       font-size: clamp(1rem, 1.8vw, 1.3rem); margin-bottom: 0.25rem;
     }
     .step-body p { font-size: clamp(0.8rem, 1.2vw, 0.9rem); color: #555; }
@@ -186,7 +186,7 @@
       margin-top: clamp(1.5rem, 3vh, 2rem);
     }
     .preset-item {
-      font-family: 'Nunito', 'Noto Sans SC', sans-serif; font-weight: 600;
+      font-family: 'Nunito', sans-serif; font-weight: 600;
       font-size: clamp(0.7rem, 1.1vw, 0.85rem);
       text-transform: uppercase; letter-spacing: 0.08em;
       padding: 0.3rem 0; border-bottom: 2px solid transparent;
@@ -204,13 +204,13 @@
     }
     .feature-item:first-child { border-top: 2px solid #000; }
     .feature-name {
-      font-family: 'Archivo', 'Noto Sans SC', sans-serif; font-weight: 800;
+      font-family: 'Archivo', sans-serif; font-weight: 800;
       font-size: clamp(0.75rem, 1.2vw, 0.9rem);
       text-transform: uppercase; letter-spacing: 0.05em;
     }
     .feature-name.red { color: #ff3300; }
     .feature-desc {
-      font-family: 'Nunito', 'Noto Sans SC', sans-serif; font-size: clamp(0.8rem, 1.3vw, 0.95rem);
+      font-family: 'Nunito', sans-serif; font-size: clamp(0.8rem, 1.3vw, 0.95rem);
       color: #333; line-height: 1.5;
     }
 
@@ -226,13 +226,13 @@
 
     /* CTA */
     .cta-large {
-      font-family: 'Archivo', 'Noto Sans SC', sans-serif; font-weight: 900;
+      font-family: 'Archivo', sans-serif; font-weight: 900;
       font-size: clamp(3rem, 8vw, 7rem);
       color: #000; letter-spacing: -0.04em; line-height: 0.9;
       margin-top: clamp(1.5rem, 3vh, 2.5rem);
     }
     .cta-sub {
-      font-family: 'Nunito', 'Noto Sans SC', sans-serif; font-size: clamp(0.85rem, 1.4vw, 1rem);
+      font-family: 'Nunito', sans-serif; font-size: clamp(0.85rem, 1.4vw, 1rem);
       color: #555; margin-top: clamp(0.8rem, 1.5vh, 1.2rem);
     }
 
@@ -251,10 +251,10 @@
       margin-bottom: 0.5rem;
     }
     .how-title {
-      font-family: 'Archivo', 'Noto Sans SC', sans-serif; font-weight: 800;
+      font-family: 'Archivo', sans-serif; font-weight: 800;
       font-size: clamp(0.85rem, 1.4vw, 1rem); margin-bottom: 0.4rem;
     }
-    .how-desc { font-family: 'Nunito', 'Noto Sans SC', sans-serif; font-size: clamp(0.75rem, 1.1vw, 0.88rem); color: #555; line-height: 1.55; }
+    .how-desc { font-family: 'Nunito', sans-serif; font-size: clamp(0.75rem, 1.1vw, 0.88rem); color: #555; line-height: 1.55; }
   </style>
 </head>
 <body>
@@ -280,201 +280,201 @@
   <div class="bg-num">01</div>
   <div class="content">
     <div class="red-bar reveal"></div>
-    <div class="eyebrow reveal">企业战略 | 三年发展规划</div>
-    <h1 class="reveal">2024-2027<br>战略<span class="red">路线图</span></h1>
+    <div class="eyebrow reveal">企业战略规划与执行框架</div>
+    <h1 class="reveal">战略<span class="red">摘要</span></h1>
     <hr class="rule-heavy reveal">
     <div class="stat-row reveal">
       <div>
         <span class="stat-val">3</span>
-        <span class="stat-label">战略阶段</span>
+        <span class="stat-label">年度周期</span>
       </div>
       <div>
-        <span class="stat-val">12</span>
-        <span class="stat-label">关键项目</span>
+        <span class="stat-val">5</span>
+        <span class="stat-label">核心目标</span>
       </div>
       <div>
-        <span class="stat-val">100%</span>
-        <span class="stat-label">执行承诺</span>
+        <span class="stat-val">∞</span>
+        <span class="stat-label">增长潜力</span>
       </div>
     </div>
   </div>
 </section>
 
-<!-- SLIDE 02: The Problem -->
 <section class="slide" id="slide-1">
   <div class="bg-num">02</div>
   <div class="content">
-    <div class="eyebrow reveal">现状分析</div>
+    <div class="eyebrow reveal">战略现状</div>
     <div class="red-bar reveal"></div>
-    <h2 class="reveal">市场机遇与挑战<br>要求我们<span class="red">重新定位。</span></h2>
+    <h2 class="reveal">三年规划需要<br><span class="red">清晰的方向。</span></h2>
     <hr class="rule-heavy reveal">
     <ul class="pain-list" style="margin-top: clamp(1rem,2vh,1.5rem);">
       <li class="pain-item reveal">
         <span class="pain-counter">01</span>
-        <span class="pain-text"><strong>市场竞争加剧。</strong>行业对手正在加速创新，我们需要在核心竞争力上进行突破和投资。</span>
+        <span class="pain-text"><strong>缺乏战略一致性。</strong>各部门目标不明确，资源分配无序，无法形成统一的组织合力。</span>
       </li>
       <li class="pain-item reveal">
         <span class="pain-counter">02</span>
-        <span class="pain-text"><strong>客户需求演变。</strong>数字化转型成为刚性需求，产品与服务必须紧跟市场变化。</span>
+        <span class="pain-text"><strong>执行能力不足。</strong>计划与实际脱节，关键指标难以追踪，反馈机制缺失。</span>
       </li>
       <li class="pain-item reveal">
         <span class="pain-counter">03</span>
-        <span class="pain-text"><strong>人才与技术缺口。</strong>优秀人才竞争激烈，关键技术研发需要更大投入和长期规划。</span>
+        <span class="pain-text"><strong>市场适应困难。</strong>外部环境变化快速，现有策略灵活性不够，风险应对预案不完善。</span>
       </li>
     </ul>
   </div>
 </section>
 
-<!-- SLIDE 03: Show Don't Tell -->
 <section class="slide" id="slide-2">
   <div class="bg-num">03</div>
   <div class="content">
-    <div class="eyebrow reveal">战略方向</div>
+    <div class="eyebrow reveal">战略框架</div>
     <div class="red-bar reveal"></div>
-    <h2 class="reveal">三大战略支柱<br>驱动<span class="red">转型升级。</span></h2>
+    <h2 class="reveal">以目标驱动的<br><span class="red">执行模式。</span></h2>
     <hr class="rule-heavy reveal">
     <p class="reveal" style="margin-bottom: clamp(1rem,2vh,1.5rem);">
-      我们的三年规划围绕创新、效率和可持续发展三个核心方向展开，确保在竞争中领先一步。
+      战略不是计划，而是持续的选择与调整。通过明确的目标体系、可视化的路线图和定期的评估机制，确保组织朝着既定方向前进。
     </p>
     <div class="step-row reveal">
       <span class="step-num-big">1</span>
       <div class="step-body">
-        <h3>产品创新与迭代</h3>
-        <p>加大研发投入，打造下一代核心产品和服务能力。</p>
+        <h3>设定愿景与目标</h3>
+        <p>定义三年期的核心目标，明确量化指标和优先级。</p>
       </div>
     </div>
     <div class="step-row reveal">
       <span class="step-num-big">2</span>
       <div class="step-body">
-        <h3>运营效率优化</h3>
-        <p>通过数字化和流程再造，提升内部运营效率和客户体验。</p>
+        <h3>制定执行路线图</h3>
+        <p>将目标分解为年度、季度、月度的具体行动计划。</p>
       </div>
     </div>
     <div class="step-row reveal">
       <span class="step-num-big" style="color:#000;">3</span>
       <div class="step-body">
-        <h3>可持续发展</h3>
-        <p>建立绿色发展体系，承担社会责任，创造长期价值。</p>
+        <h3>持续监测与优化</h3>
+        <p>定期评估进展，根据市场反馈灵活调整策略。</p>
       </div>
     </div>
   </div>
 </section>
 
-<!-- SLIDE 04: 19 Presets -->
 <section class="slide" id="slide-3">
   <div class="bg-num">04</div>
   <div class="content">
-    <div class="eyebrow reveal">执行框架</div>
+    <div class="eyebrow reveal">五大战略支柱</div>
     <div class="red-bar reveal"></div>
-    <h2 class="reveal">12个关键项目<br><span class="red">三年分阶段推进。</span></h2>
+    <h2 class="reveal">聚焦核心业务。<br><span class="red">驱动可持续增长。</span></h2>
     <hr class="rule-heavy reveal">
     <div class="preset-wrap reveal">
-      <span class="preset-item">AI赋能产品</span>
-      <span class="preset-item">云原生迁移</span>
-      <span class="preset-item">客户数据平台</span>
-      <span class="preset-item">敏捷组织建设</span>
+      <span class="preset-item">市场拓展</span>
+      <span class="preset-item">产品创新</span>
+      <span class="preset-item">运营效率</span>
+      <span class="preset-item">人才发展</span>
+      <span class="preset-item">数字转型</span>
+      <span class="preset-item">客户体验</span>
+      <span class="preset-item">成本优化</span>
+      <span class="preset-item">风险管理</span>
+      <span class="preset-item">战略合作</span>
+      <span class="preset-item">品牌建设</span>
+      <span class="preset-item">技术升级</span>
+      <span class="preset-item active">企业治理</span>
       <span class="preset-item">供应链优化</span>
-      <span class="preset-item">营销自动化</span>
-      <span class="preset-item">安全能力升级</span>
-      <span class="preset-item">人才发展计划</span>
-      <span class="preset-item">国际化扩张</span>
-      <span class="preset-item">生态合作平台</span>
-      <span class="preset-item">碳中和承诺</span>
-      <span class="preset-item active">数据治理体系</span>
+      <span class="preset-item">可持续发展</span>
+      <span class="preset-item">生态建设</span>
+      <span class="preset-item">组织赋能</span>
+      <span class="preset-item">创新文化</span>
+      <span class="preset-item">国际化战略</span>
+      <span class="preset-item">财务健康</span>
     </div>
     <p class="reveal" style="margin-top: clamp(1.5rem,3vh,2rem); color: #555;">
-      每个项目都配备专属团队、预算和里程碑，确保按时交付和目标达成。
+      每个支柱都是一套完整的战略体系——包含目标、措施、责任人、时间表和评估标准。没有模糊，没有妥协。
     </p>
   </div>
 </section>
 
-<!-- SLIDE 05: How It Works -->
 <section class="slide" id="slide-4">
   <div class="bg-num">05</div>
   <div class="content">
-    <div class="eyebrow reveal">实施阶段</div>
+    <div class="eyebrow reveal">执行框架</div>
     <div class="red-bar reveal"></div>
-    <h2 class="reveal">三年分阶段<br>循序<span class="red">推进。</span></h2>
+    <h2 class="reveal">三步走。<br>一个<span class="red">完整的规划。</span></h2>
     <hr class="rule-heavy reveal">
     <div class="how-grid reveal">
       <div class="how-card red-top">
-        <div class="how-num">24-25</div>
-        <div class="how-title">基础建设年</div>
-        <div class="how-desc">完成技术底座、人才队伍、组织调整，为后续发展奠定基础。</div>
+        <div class="how-num">01</div>
+        <div class="how-title">战略诊断</div>
+        <div class="how-desc">评估现状，识别机会，明确挑战，制定发展方向。</div>
       </div>
       <div class="how-card">
-        <div class="how-num">25-26</div>
-        <div class="how-title">融合创新年</div>
-        <div class="how-desc">新产品上市、市场拓展、内部流程优化初显成效。</div>
+        <div class="how-num">02</div>
+        <div class="how-title">规划设计</div>
+        <div class="how-desc">确定目标体系，设计路线图，分配资源，建立指标体系。</div>
       </div>
       <div class="how-card">
-        <div class="how-num">26-27</div>
-        <div class="how-title">加速收获年</div>
-        <div class="how-desc">战略成果转化、市场地位提升、可持续模式形成。</div>
+        <div class="how-num">03</div>
+        <div class="how-title">执行与控制</div>
+        <div class="how-desc">推进项目实施，监测关键指标，定期评估，持续优化。</div>
       </div>
     </div>
   </div>
 </section>
 
-<!-- SLIDE 06: Key Features -->
 <section class="slide" id="slide-5">
   <div class="bg-num">06</div>
   <div class="content">
     <div class="eyebrow reveal">核心能力</div>
     <div class="red-bar reveal"></div>
-    <h2 class="reveal">重点投资方向<br><span class="red">战略支撑。</span></h2>
+    <h2 class="reveal">为真实业务<br><span class="red">而设计。</span></h2>
     <div class="feature-list">
       <div class="feature-item reveal">
-        <span class="feature-name red">技术创新</span>
-        <span class="feature-desc">在AI、大数据、云计算等前沿技术领域进行深度投资，建立竞争优势。</span>
+        <span class="feature-name red">目标级联</span>
+        <span class="feature-desc">从公司战略逐级分解到部门和个人，确保上下对齐，同向用力。</span>
       </div>
       <div class="feature-item reveal">
-        <span class="feature-name">人才培养</span>
-        <span class="feature-desc">建立完整的人才发展体系，吸引和留住行业顶尖人才，构建学习型组织。</span>
+        <span class="feature-name">动态监控</span>
+        <span class="feature-desc">实时跟踪关键指标，可视化展示进展，及时识别风险和机会。</span>
       </div>
       <div class="feature-item reveal">
-        <span class="feature-name">客户体验</span>
-        <span class="feature-desc">以客户为中心，通过数字化手段优化全链路体验，提升客户满意度和忠诚度。</span>
+        <span class="feature-name">敏捷调整</span>
+        <span class="feature-desc">定期召开战略评审会，根据市场反馈灵活调整优先级和资源配置。</span>
       </div>
       <div class="feature-item reveal">
-        <span class="feature-name">生态建设</span>
-        <span class="feature-desc">打造开放的合作平台，与合作伙伴共创价值，扩大市场影响力。</span>
+        <span class="feature-name">组织赋能</span>
+        <span class="feature-desc">为团队提供清晰的方向、充足的资源和必要的培训，激发执行力。</span>
       </div>
     </div>
   </div>
 </section>
 
-<!-- SLIDE 07: Install -->
 <section class="slide" id="slide-6">
   <div class="bg-num">07</div>
   <div class="content">
-    <div class="eyebrow reveal">组织保障</div>
+    <div class="eyebrow reveal">实施方案</div>
     <div class="red-bar reveal"></div>
-    <h2 class="reveal">管治体系<br><span class="red">确保执行。</span></h2>
+    <h2 class="reveal">两个阶段。<br><span class="red">零风险启动。</span></h2>
     <hr class="rule-heavy reveal">
-    <div class="eyebrow reveal" style="margin-top: clamp(1rem,2vh,1.5rem); margin-bottom: 0.4rem;">治理层级</div>
+    <div class="eyebrow reveal" style="margin-top: clamp(1rem,2vh,1.5rem); margin-bottom: 0.4rem;">第一阶段：规划期</div>
     <div class="code-block reveal">
-      <span>董事会战略委员会 > CEO领导 > 事业部总经理 > 项目经理</span><br>
-      <span class="comment"># 清晰的责权对应和决策链路</span>
+      <span>第1-2月：战略诊断与目标设定</span><br>
+      <span class="comment"># 完成现状评估和战略规划</span>
     </div>
-    <div class="eyebrow reveal" style="margin-bottom: 0.4rem;">监测指标</div>
+    <div class="eyebrow reveal" style="margin-bottom: 0.4rem;">第二阶段：执行期</div>
     <div class="code-block reveal">
-      <span>季度评估 + 年度考核 + 战略调整评审</span><br>
-      <span class="comment"># 灵活应对市场变化，动态优化</span>
+      <span>第3-36月：分年度、分季度、分月推进</span><br>
+      <span class="comment"># 定期评估和动态调整</span>
     </div>
   </div>
 </section>
 
-<!-- SLIDE 08: Get Started -->
 <section class="slide" id="slide-7">
   <div class="bg-num">08</div>
   <div class="content">
-    <div class="eyebrow reveal">行动号召</div>
+    <div class="eyebrow reveal">开始行动</div>
     <div class="red-bar reveal"></div>
-    <h2 class="reveal" style="font-size: clamp(1.5rem,3.5vw,2.5rem);">现在就开始</h2>
-    <div class="cta-large reveal">从战略到<span style="color:#ff3300;">行动</span></div>
+    <h2 class="reveal" style="font-size: clamp(1.5rem,3.5vw,2.5rem);">启动战略规划。</h2>
+    <div class="cta-large reveal">三年<span style="color:#ff3300;">路线图</span></div>
     <hr class="rule-heavy reveal">
-    <p class="cta-sub reveal">每个人都是执行者。我们携手同行，在三年内将愿景转变为现实，为公司和客户创造更大价值。</p>
+    <p class="cta-sub reveal">清晰的方向，科学的方法，有力的执行。从现在开始，用战略驱动增长。</p>
   </div>
 </section>
 
@@ -533,4 +533,36 @@
   document.addEventListener('touchend', e => {
     if (!touchStart) return;
     const diff = touchStart - e.changedTouches[0].clientY;
-    if (Math.abs(diff) > 50) { diff > 0 ? goTo(cur + 1) : goTo(cur - 1
+    if (Math.abs(diff) > 50) { diff > 0 ? goTo(cur + 1) : goTo(cur - 1); }
+    touchStart = null;
+  });
+
+  function toggleEdit() {
+    editMode = !editMode;
+    document.body.classList.toggle('edit-mode', editMode);
+    slides.forEach(s => {
+      s.querySelectorAll('h1,h2,h3,p,.stat-val,.cta-large,.feature-desc,.step-body h3,.step-body p,.how-desc,.pain-text,.code-block').forEach(el => {
+        el.contentEditable = editMode ? 'true' : 'false';
+      });
+    });
+  }
+
+  document.getElementById('hotzone').addEventListener('click', toggleEdit);
+
+  async function saveFile() {
+    const html = '<!DOCTYPE html>\n' + document.documentElement.outerHTML;
+    if (window.showSaveFilePicker) {
+      try {
+        const h = await window.showSaveFilePicker({ suggestedName: 'swiss-modern.html', types: [{ accept: { 'text/html': ['.html'] } }] });
+        const w = await h.createWritable(); await w.write(html); await w.close();
+      } catch(e) { if (e.name !== 'AbortError') fallbackSave(html); }
+    } else fallbackSave(html);
+  }
+  function fallbackSave(html) {
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(new Blob([html], { type: 'text/html' }));
+    a.download = 'swiss-modern.html'; a.click();
+  }
+</script>
+</body>
+</html>

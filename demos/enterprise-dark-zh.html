@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>企业战略·投资者关系 | slide-creator</title>
+<title>slide-creator · Enterprise Dark · 企业 B2B 战略 — 投资者关系报告</title>
 <style>
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -446,26 +446,27 @@ body.edit-mode #edit-badge { display: flex; }
 <div id="progress"></div>
 <div id="nav-dots"></div>
 <div id="slide-num">1 / 8</div>
-<div id="edit-badge">编辑模式 · Ctrl+S</div>
+<div id="edit-badge">EDIT · Ctrl+S</div>
 <div id="hotzone"></div>
 
 <!-- SLIDE 1: Cover -->
+<slides>
 <section class="slide" id="s0">
   <div class="content">
     <div class="reveal">
-      <span class="label-tag">企业战略 · v2.0</span>
+      <span class="label-tag">企业 · v2.0</span>
     </div>
     <div class="reveal" style="transition-delay:0.05s; margin-top:clamp(16px,2.5vw,28px);">
-      <h1>企业<span class="accent-blue">战略</span></h1>
+      <h1>幻灯片<span class="accent-blue">生成器</span></h1>
     </div>
     <div class="sep reveal" style="transition-delay:0.08s; margin-top:clamp(14px,2vw,22px);"></div>
     <div class="reveal" style="transition-delay:0.1s">
-      <p style="font-size:clamp(15px,1.8vw,20px); color:var(--text-primary); max-width:520px; line-height:1.5;">面向投资者与董事会的<br>战略决策支撑文档。</p>
+      <p style="font-size:clamp(15px,1.8vw,20px); color:var(--text-primary); max-width:520px; line-height:1.5;">为 Claude Code 和 OpenClaw 提供零依赖的<br>HTML 演示文稿。</p>
     </div>
     <div class="kpi-row reveal" style="transition-delay:0.15s">
       <div class="kpi">
         <span class="kpi-value accent-blue">19</span>
-        <span class="kpi-label">完整主题</span>
+        <span class="kpi-label">预设主题</span>
       </div>
       <div class="kpi">
         <span class="kpi-value accent-green">0</span>
@@ -473,15 +474,15 @@ body.edit-mode #edit-badge { display: flex; }
       </div>
       <div class="kpi">
         <span class="kpi-value" style="color:var(--text-primary);">∞</span>
-        <span class="kpi-label">幻灯片</span>
+        <span class="kpi-label">幻灯片数</span>
       </div>
       <div class="kpi">
-        <span class="kpi-value accent-blue">60秒</span>
-        <span class="kpi-label">快速部署</span>
+        <span class="kpi-value accent-blue">60s</span>
+        <span class="kpi-label">安装时间</span>
       </div>
     </div>
     <div class="reveal" style="transition-delay:0.2s; margin-top:clamp(14px,2vw,20px);">
-      <p style="font-size:clamp(12px,1.3vw,14px);">19 种专业模板。数分钟内交付。无需复杂工具链。</p>
+      <p style="font-size:clamp(12px,1.3vw,14px);">19 种风格。快速交付。无需工具链。</p>
     </div>
   </div>
 </section>
@@ -490,34 +491,34 @@ body.edit-mode #edit-badge { display: flex; }
 <section class="slide" id="s1">
   <div class="content">
     <div class="reveal">
-      <span class="label-tag">战略背景</span>
+      <span class="label-tag">问题描述</span>
     </div>
     <div class="reveal" style="transition-delay:0.05s; margin-top:clamp(14px,2vw,22px);">
-      <h2>"演示文稿不应该依赖<br>复杂的技术栈"</h2>
+      <h2>"演示文稿不应该<br>需要构建系统"</h2>
     </div>
     <div class="sep reveal" style="transition-delay:0.08s;"></div>
     <div class="card reveal" style="transition-delay:0.1s; margin-top:0;">
       <div class="feature-row">
         <div class="feature-icon">⚙️</div>
         <div>
-          <h3>工具链过于复杂</h3>
-          <p style="margin-top:3px;">需要配置 Node、Webpack、npm 依赖——耗时数小时仅为生成第一页。创作前的认知负担过重。</p>
+          <h3>复杂的工具链</h3>
+          <p style="margin-top:3px;">Node、Webpack、npm 安装——在制作第一张幻灯片前需要花费数小时设置。写出第一个字前的认知负担就已很重。</p>
         </div>
         <span class="badge badge-blue" style="margin-left:auto; white-space:nowrap; align-self:flex-start;">高摩擦力</span>
       </div>
       <div class="feature-row">
         <div class="feature-icon">📋</div>
         <div>
-          <h3>视觉平庸</h3>
-          <p style="margin-top:3px;">模板化的通用设计，缺乏差异化表现力。每套方案都显得"默认配置"。</p>
+          <h3>通用输出</h3>
+          <p style="margin-top:3px;">样板化模板，视觉差异化不足。每套演示都显示"默认设置"。</p>
         </div>
-        <span class="badge badge-blue" style="margin-left:auto; white-space:nowrap; align-self:flex-start;">低辨识度</span>
+        <span class="badge badge-blue" style="margin-left:auto; white-space:nowrap; align-self:flex-start;">信号弱</span>
       </div>
       <div class="feature-row">
         <div class="feature-icon">🔒</div>
         <div>
-          <h3>数据所有权缺失</h3>
-          <p style="margin-top:3px;">云端锁定、导出受限、厂商掌控定价。你的内容按它们的规则运行。</p>
+          <h3>缺乏所有权</h3>
+          <p style="margin-top:3px;">云端锁定数据，导出选项有限，厂商控制定价。你的内容，他们的规则。</p>
         </div>
         <span class="badge" style="background:rgba(248,81,73,0.12); color:var(--accent-red); border:1px solid rgba(248,81,73,0.30); margin-left:auto; white-space:nowrap; align-self:flex-start;">风险</span>
       </div>
@@ -532,7 +533,7 @@ body.edit-mode #edit-badge { display: flex; }
       <span class="label-tag">工作流程</span>
     </div>
     <div class="reveal" style="transition-delay:0.05s; margin-top:clamp(14px,2vw,22px);">
-      <h2>真正可行的<br>风格发现机制</h2>
+      <h2>真正有效的<br>风格发现</h2>
     </div>
     <div class="sep reveal" style="transition-delay:0.08s;"></div>
     <div class="split reveal" style="transition-delay:0.1s">
@@ -544,20 +545,20 @@ body.edit-mode #edit-badge { display: flex; }
       <div class="card" style="display:flex; flex-direction:column; gap:0;">
         <div class="feature-row">
           <div>
-            <h3>描述场景</h3>
-            <p style="margin-top:3px;">用自然语言描述演示意图。"执行摘要、数据驱动、专业权威"。</p>
+            <h3>描述气质</h3>
+            <p style="margin-top:3px;">用自然语言描述演示意图。"高管总结、数据密集、自信风格"。</p>
           </div>
         </div>
         <div class="feature-row">
           <div>
-            <h3>三种视觉方案</h3>
-            <p style="margin-top:3px;">并排预览三套配色方案。确认后再生成，无意外。</p>
+            <h3>3 个视觉预览</h3>
+            <p style="margin-top:3px;">生成前并排展示三种匹配的风格预览。没有意外。</p>
           </div>
         </div>
         <div class="feature-row">
           <div>
             <h3>选择并生成</h3>
-            <p style="margin-top:3px;">选中风格后，获得完整自包含的 HTML 文件。无需本地安装。</p>
+            <p style="margin-top:3px;">选择你的风格。获得完整的自包含 HTML 文件。接收者的机器无需安装任何东西。</p>
           </div>
         </div>
       </div>
@@ -569,10 +570,10 @@ body.edit-mode #edit-badge { display: flex; }
 <section class="slide" id="s3">
   <div class="content">
     <div class="reveal">
-      <span class="label-tag">19 种主题</span>
+      <span class="label-tag">19 个预设</span>
     </div>
     <div class="reveal" style="transition-delay:0.05s; margin-top:clamp(14px,2vw,22px);">
-      <h2>完整的视觉系统<br>而非简单的调色</h2>
+      <h2>完整的视觉系统，<br>不只是颜色交换</h2>
     </div>
     <div class="sep reveal" style="transition-delay:0.08s;"></div>
     <div class="reveal" style="transition-delay:0.1s">
@@ -580,36 +581,36 @@ body.edit-mode #edit-badge { display: flex; }
         <thead>
           <tr>
             <th>分类</th>
-            <th>数量</th>
-            <th>适用场景</th>
+            <th>预设数</th>
+            <th>最适用于</th>
           </tr>
         </thead>
         <tbody>
           <tr>
-            <td><span class="status-dot dot-blue"></span>大胆&活力</td>
+            <td><span class="status-dot dot-blue"></span>大胆和充满活力</td>
             <td><span class="badge badge-blue" style="font-variant-numeric:tabular-nums;">6</span></td>
             <td>产品发布、融资路演</td>
           </tr>
           <tr>
-            <td><span class="status-dot dot-green"></span>简洁&专业</td>
+            <td><span class="status-dot dot-green"></span>简洁和专业</td>
             <td><span class="badge badge-blue">5</span></td>
-            <td>战略报告、投资者关系</td>
+            <td>高管报告、战略规划</td>
           </tr>
           <tr>
-            <td><span class="status-dot" style="background:var(--accent-orange);"></span>创意&表现</td>
+            <td><span class="status-dot" style="background:var(--accent-orange);"></span>创意和表达</td>
             <td><span class="badge badge-blue">4</span></td>
-            <td>品牌建设、创意工坊</td>
+            <td>设计、代理、品牌工作</td>
           </tr>
           <tr>
-            <td><span class="status-dot dot-blue" style="background:#c792ea;"></span>暗调&技术</td>
+            <td><span class="status-dot dot-blue" style="background:#c792ea;"></span>深色和技术</td>
             <td><span class="badge badge-blue">4</span></td>
-            <td>开发团队、数据分析</td>
+            <td>开发团队、数据、运维</td>
           </tr>
         </tbody>
       </table>
     </div>
     <div class="reveal" style="transition-delay:0.2s; margin-top:clamp(12px,1.8vw,18px);">
-      <p>包含：Bold Signal · Electric Studio · Creative Voltage · Dark Botanical · Blue Sky · Notebook Tabs · Pastel Geometry · Split Pastel · Vintage Editorial · Neon Cyber · Terminal Green · Swiss Modern · Paper &amp; Ink · Aurora Mesh · <strong style="color:var(--text-primary);">企业深邃 ✦</strong> · Glassmorphism · Neo-Brutalism · 江南章法 · Data Story</p>
+      <p>包括：Bold Signal · Electric Studio · Creative Voltage · Dark Botanical · Blue Sky · Notebook Tabs · Pastel Geometry · Split Pastel · Vintage Editorial · Neon Cyber · Terminal Green · Swiss Modern · Paper &amp; Ink · Aurora Mesh · <strong style="color:var(--text-primary);">Enterprise Dark ✦</strong> · Glassmorphism · Neo-Brutalism · Chinese Chan · Data Story</p>
     </div>
   </div>
 </section>
@@ -618,18 +619,18 @@ body.edit-mode #edit-badge { display: flex; }
 <section class="slide" id="s4">
   <div class="content">
     <div class="reveal">
-      <span class="label-tag">使用流程</span>
+      <span class="label-tag">过程</span>
     </div>
     <div class="reveal" style="transition-delay:0.05s; margin-top:clamp(14px,2vw,22px);">
-      <h2>三步完成<br>专业演示文稿</h2>
+      <h2>三步获得<br>你的演示文稿</h2>
     </div>
     <div class="sep reveal" style="transition-delay:0.08s;"></div>
     <div class="card reveal" style="transition-delay:0.1s; margin-top:0;">
       <div class="feature-row">
         <div class="feature-icon" style="background:rgba(56,139,253,0.10); border-color:rgba(56,139,253,0.25);">1</div>
         <div>
-          <h3>执行 <code style="font-family:'SF Mono',monospace; background:var(--bg); border:1px solid var(--border); padding:1px 6px; border-radius:4px; font-size:0.9em;">/slide-creator</code></h3>
-          <p style="margin-top:3px;">在 Claude 或 OpenClaw 中启动。描述主题、受众和目标。</p>
+          <h3>运行 <code style="font-family:'SF Mono',monospace; background:var(--bg); border:1px solid var(--border); padding:1px 6px; border-radius:4px; font-size:0.9em;">/slide-creator</code></h3>
+          <p style="margin-top:3px;">在 Claude Code 或 OpenClaw 中。说出你的主题、受众和意图。</p>
         </div>
         <div style="margin-left:auto; text-align:right; min-width:80px;">
           <div class="prog-bar" style="width:80px;"><div class="prog-fill" style="width:33%"></div></div>
@@ -638,8 +639,8 @@ body.edit-mode #edit-badge { display: flex; }
       <div class="feature-row">
         <div class="feature-icon" style="background:rgba(56,139,253,0.10); border-color:rgba(56,139,253,0.25);">2</div>
         <div>
-          <h3>从 3 个预览中选择</h3>
-          <p style="margin-top:3px;">对比风格方案。根据直觉和品牌要求做出选择。</p>
+          <h3>从 3 个视觉预览中选择</h3>
+          <p style="margin-top:3px;">在确定前比较风格选项。凭直觉选择。</p>
         </div>
         <div style="margin-left:auto; text-align:right; min-width:80px;">
           <div class="prog-bar" style="width:80px;"><div class="prog-fill" style="width:66%"></div></div>
@@ -649,7 +650,7 @@ body.edit-mode #edit-badge { display: flex; }
         <div class="feature-icon" style="background:rgba(56,139,253,0.10); border-color:rgba(56,139,253,0.25);">3</div>
         <div>
           <h3>打开 HTML 文件</h3>
-          <p style="margin-top:3px;">自包含、无服务器依赖。通过链接分享或本地托管。</p>
+          <p style="margin-top:3px;">自包含。无需服务器。无需安装。作为文件分享或在任何地方托管。</p>
         </div>
         <div style="margin-left:auto; text-align:right; min-width:80px;">
           <div class="prog-bar" style="width:80px;"><div class="prog-fill" style="width:100%"></div></div>
@@ -657,7 +658,7 @@ body.edit-mode #edit-badge { display: flex; }
       </div>
     </div>
     <div class="reveal" style="transition-delay:0.2s; margin-top:clamp(12px,1.8vw,16px);">
-      <p style="font-size:clamp(12px,1.3vw,14px);"><span class="badge badge-blue">--plan</span> <span style="color:var(--text-muted);">→ 大纲优先</span> &nbsp;&nbsp; <span class="badge badge-green">--generate</span> <span style="color:var(--text-muted);">→ 完整演示</span></p>
+      <p style="font-size:clamp(12px,1.3vw,14px);"><span class="badge badge-blue">--plan</span> <span style="color:var(--text-muted);">→ 先生成大纲</span> &nbsp;&nbsp; <span class="badge badge-green">--generate</span> <span style="color:var(--text-muted);">→ 完整演示</span></p>
     </div>
   </div>
 </section>
@@ -666,28 +667,241 @@ body.edit-mode #edit-badge { display: flex; }
 <section class="slide" id="s5">
   <div class="content">
     <div class="reveal">
-      <span class="label-tag">核心能力</span>
+      <span class="label-tag">功能特性</span>
     </div>
     <div class="reveal" style="transition-delay:0.05s; margin-top:clamp(14px,2vw,22px);">
-      <h2>生产级功能<br>零配置需求</h2>
+      <h2>生产级功能，<br>零配置</h2>
     </div>
     <div class="sep reveal" style="transition-delay:0.08s;"></div>
     <div class="grid-2 reveal" style="transition-delay:0.1s">
       <div class="card">
         <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:8px;">
-          <h3>视口自适应</h3>
-          <span class="badge badge-green">实时</span>
+          <h3>视口适配</h3>
+          <span class="badge badge-green">已上线</span>
         </div>
-        <p>100dvh 幻灯片。兼容笔记本、投影仪、4K 显示屏。</p>
+        <p>100dvh 幻灯片。在笔记本、投影仪和 4K 显示屏上完美显示。</p>
         <div class="prog-bar" style="margin-top:10px;"><div class="prog-fill" style="width:100%"></div></div>
       </div>
       <div class="card">
         <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:8px;">
           <h3>内联编辑</h3>
-          <span class="badge badge-green">实时</span>
+          <span class="badge badge-green">已上线</span>
         </div>
-        <p>按 E 键激活。Ctrl+S 通过文件访问 API 保存。</p>
+        <p>按 E 键激活。Ctrl+S 通过文件系统访问 API 保存。</p>
         <div class="prog-bar" style="margin-top:10px;"><div class="prog-fill" style="width:90%"></div></div>
       </div>
       <div class="card">
-        <div style="display:flex; justify-content:space-
+        <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:8px;">
+          <h3>PPTX 导出</h3>
+          <span class="badge badge-blue">可用</span>
+        </div>
+        <p>为需要 PowerPoint 兼容性的利益相关者导出。</p>
+        <div class="prog-bar" style="margin-top:10px;"><div class="prog-fill" style="width:85%"></div></div>
+      </div>
+      <div class="card">
+        <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:8px;">
+          <h3>两阶段工作流</h3>
+          <span class="badge badge-blue">可用</span>
+        </div>
+        <p>--plan 生成大纲，--generate 生成演示。提交前迭代。</p>
+        <div class="prog-bar" style="margin-top:10px;"><div class="prog-fill" style="width:100%"></div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SLIDE 7: Install -->
+<section class="slide" id="s6">
+  <div class="content">
+    <div class="reveal">
+      <span class="label-tag">安装</span>
+    </div>
+    <div class="reveal" style="transition-delay:0.05s; margin-top:clamp(14px,2vw,22px);">
+      <h2>在 60 秒内<br>完成部署</h2>
+    </div>
+    <div class="sep reveal" style="transition-delay:0.08s;"></div>
+    <div class="reveal" style="transition-delay:0.1s">
+      <div class="install-item">
+        <div class="install-label">Claude Code</div>
+        <div class="install-cmd">git clone https://github.com/kaisersong/slide-creator ~/.claude/skills/slide-creator</div>
+      </div>
+      <div class="install-item">
+        <div class="install-label">OpenClaw</div>
+        <div class="install-cmd">clawhub install html-slide-creator</div>
+      </div>
+    </div>
+    <div class="card reveal" style="transition-delay:0.2s; margin-top:clamp(12px,1.8vw,18px);">
+      <table class="table" style="margin-top:0;">
+        <thead>
+          <tr><th>要求</th><th>状态</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Node / npm</td>
+            <td><span class="status-dot dot-green"></span><span class="accent-green">不需要</span></td>
+          </tr>
+          <tr>
+            <td>构建步骤</td>
+            <td><span class="status-dot dot-green"></span><span class="accent-green">不需要</span></td>
+          </tr>
+          <tr>
+            <td>云账户</td>
+            <td><span class="status-dot dot-green"></span><span class="accent-green">不需要</span></td>
+          </tr>
+          <tr>
+            <td>Claude Code 或 OpenClaw</td>
+            <td><span class="status-dot dot-blue"></span><span class="accent-blue">需要</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- SLIDE 8: Get Started -->
+<section class="slide" id="s7">
+  <div class="content">
+    <div class="reveal">
+      <span class="label-tag">快速开始</span>
+    </div>
+    <div class="reveal" style="transition-delay:0.05s; margin-top:clamp(14px,2vw,22px);">
+      <h1>你的下一套演示，<br>在 <span class="accent-blue">几分钟</span>内交付</h1>
+    </div>
+    <div class="sep reveal" style="transition-delay:0.08s;"></div>
+    <div class="reveal" style="transition-delay:0.1s">
+      <p style="font-size:clamp(14px,1.6vw,18px); color:var(--text-primary); line-height:1.5; max-width:540px;">支持 Claude Code 和 OpenClaw。<br>完全在浏览器中运行。</p>
+    </div>
+    <div class="code reveal" style="transition-delay:0.15s; font-size:clamp(14px,1.6vw,18px);">
+      <span class="muted"># 在 Claude Code 或 OpenClaw 中</span><br>
+      /slide-creator
+    </div>
+    <div class="kpi-row reveal" style="transition-delay:0.2s; margin-top:clamp(16px,2.5vw,24px);">
+      <div class="kpi" style="flex:none; min-width:0;">
+        <span class="kpi-value accent-blue" style="font-size:clamp(24px,3.5vw,40px);">19</span>
+        <span class="kpi-label">预设主题</span>
+      </div>
+      <div class="kpi" style="flex:none; min-width:0;">
+        <span class="kpi-value accent-green" style="font-size:clamp(24px,3.5vw,40px);">0</span>
+        <span class="kpi-label">依赖项</span>
+      </div>
+      <div class="kpi" style="flex:none; min-width:0;">
+        <span class="kpi-value" style="font-size:clamp(24px,3.5vw,40px); color:var(--text-primary);">∞</span>
+        <span class="kpi-label">可能性</span>
+      </div>
+    </div>
+    <div class="reveal" style="transition-delay:0.25s; margin-top:clamp(16px,2.5vw,24px);">
+      <p style="font-size:clamp(11px,1.2vw,13px); color:var(--text-muted); letter-spacing:0.06em; text-transform:uppercase;">Enterprise Dark · slide-creator</p>
+    </div>
+  </div>
+</section>
+</slides>
+
+<script>
+const slides = document.querySelectorAll('.slide');
+const total = slides.length;
+let cur = 0;
+
+// Nav dots
+const dotsEl = document.getElementById('nav-dots');
+const dots = [];
+for (let i = 0; i < total; i++) {
+  const d = document.createElement('button');
+  d.className = 'dot';
+  d.setAttribute('aria-label', `Slide ${i+1}`);
+  d.addEventListener('click', () => goTo(i));
+  dotsEl.appendChild(d);
+  dots.push(d);
+}
+
+function goTo(n) {
+  n = Math.max(0, Math.min(total - 1, n));
+  cur = n;
+  slides[cur].scrollIntoView({ behavior: 'smooth' });
+  updateUI();
+}
+
+function updateUI() {
+  dots.forEach((d, i) => d.classList.toggle('active', i === cur));
+  document.getElementById('progress').style.width = ((cur + 1) / total * 100) + '%';
+  document.getElementById('slide-num').textContent = `${cur + 1} / ${total}`;
+}
+
+// IntersectionObserver for reveal
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      const el = entry.target;
+      const revealEls = el.querySelectorAll('.reveal');
+      revealEls.forEach((r, i) => {
+        setTimeout(() => r.classList.add('visible'), i * 80);
+      });
+      const idx = Array.from(slides).indexOf(el);
+      if (idx !== -1) { cur = idx; updateUI(); }
+    }
+  });
+}, { threshold: 0.5 });
+
+slides.forEach(s => observer.observe(s));
+
+// Keyboard
+document.addEventListener('keydown', e => {
+  if (editMode && e.key !== 'Escape') {
+    if ((e.ctrlKey || e.metaKey) && e.key === 's') { e.preventDefault(); saveFile(); }
+    return;
+  }
+  if (e.key === 'ArrowDown' || e.key === 'ArrowRight' || e.key === ' ') { e.preventDefault(); goTo(cur + 1); }
+  if (e.key === 'ArrowUp'   || e.key === 'ArrowLeft')  { e.preventDefault(); goTo(cur - 1); }
+  if (e.key === 'e' || e.key === 'E') toggleEdit();
+  if (e.key === 'Escape' && editMode) toggleEdit();
+  if ((e.ctrlKey || e.metaKey) && e.key === 's') { e.preventDefault(); saveFile(); }
+});
+
+// Wheel — debounce-reset
+let wheelLocked = false, wheelTimer = null;
+document.addEventListener('wheel', e => {
+  clearTimeout(wheelTimer);
+  if (!wheelLocked) { wheelLocked = true; e.deltaY > 0 ? goTo(cur + 1) : goTo(cur - 1); }
+  wheelTimer = setTimeout(() => { wheelLocked = false; }, 180);
+}, { passive: true });
+
+// Touch swipe
+let touchY = 0;
+document.addEventListener('touchstart', e => { touchY = e.touches[0].clientY; }, { passive: true });
+document.addEventListener('touchend', e => {
+  const dy = touchY - e.changedTouches[0].clientY;
+  if (Math.abs(dy) > 40) dy > 0 ? goTo(cur + 1) : goTo(cur - 1);
+}, { passive: true });
+
+// Edit mode
+let editMode = false;
+let fileHandle = null;
+
+function toggleEdit() {
+  editMode = !editMode;
+  document.body.classList.toggle('edit-mode', editMode);
+  const editable = document.querySelectorAll('h1,h2,h3,p,.kpi-value,.kpi-label,.install-cmd,.badge,.label-tag');
+  editable.forEach(el => el.setAttribute('contenteditable', editMode ? 'true' : 'false'));
+}
+
+async function saveFile() {
+  const html = '<!DOCTYPE html>\n' + document.documentElement.outerHTML;
+  if (window.showSaveFilePicker) {
+    try {
+      if (!fileHandle) {
+        fileHandle = await window.showSaveFilePicker({ suggestedName: 'enterprise-dark.html', types: [{ description: 'HTML', accept: {'text/html': ['.html']} }] });
+      }
+      const writable = await fileHandle.createWritable();
+      await writable.write(html); await writable.close();
+      return;
+    } catch(_) {}
+  }
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(new Blob([html], { type: 'text/html' }));
+  a.download = 'enterprise-dark.html'; a.click();
+}
+
+document.getElementById('hotzone').addEventListener('click', toggleEdit);
+updateUI();
+</script>
+</body>
+</html>

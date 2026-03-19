@@ -3,16 +3,16 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>终端绿 — slide-creator</title>
+  <title>slide-creator · Terminal Green · 开源工具介绍 — 命令行效率神器</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Noto+Sans+SC:wght@400;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&display=swap&family=Noto+Sans+SC:wght@400;700" rel="stylesheet">
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     html { scroll-snap-type: y mandatory; scroll-behavior: smooth; height: 100%; }
     body {
       height: 100%; overflow-x: hidden;
       background: #0d1117;
-      font-family: 'Noto Sans SC', 'JetBrains Mono', 'Courier New', monospace;
+      font-family: 'JetBrains Mono', 'Courier New', monospace;
       color: #c9d1d9;
     }
 
@@ -124,14 +124,14 @@
     .rule { border: none; border-top: 1px solid rgba(57,211,83,0.2); margin: clamp(1rem, 2vh, 1.5rem) 0; }
 
     h1 {
-      font-family: 'Noto Sans SC', 'JetBrains Mono', monospace; font-weight: 700;
+      font-family: 'JetBrains Mono', monospace; font-weight: 700;
       font-size: clamp(2.5rem, 7vw, 5rem);
       color: #39d353; letter-spacing: -0.02em;
       animation: glow 3s ease-in-out infinite;
       line-height: 1;
     }
     h2 {
-      font-family: 'Noto Sans SC', 'JetBrains Mono', monospace; font-weight: 700;
+      font-family: 'JetBrains Mono', monospace; font-weight: 700;
       font-size: clamp(1.4rem, 3.5vw, 2.5rem);
       color: #c9d1d9; line-height: 1.2;
     }
@@ -279,39 +279,39 @@
 </div>
 
 <div id="hotzone"></div>
-<div id="edit-indicator">&gt; 编辑模式 [Ctrl+S 保存]</div>
+<div id="edit-indicator">&gt; EDIT_MODE [Ctrl+S to save]</div>
 
 <!-- SLIDE 01: Cover -->
 <section class="slide" id="slide-0">
-  <div class="slide-num reveal">[01/08] &gt; 系统启动</div>
+  <div class="slide-num reveal">[01/08] &gt; BOOT_SEQUENCE</div>
 
   <div class="boot-lines">
-    <div class="boot-line">&gt; 正在初始化 slide-creator v1.5.0...</div>
-    <div class="boot-line">&gt; 加载 19 个设计预设... <span class="ok">[完成]</span></div>
-    <div class="boot-line">&gt; 零依赖验证通过... <span class="ok">[完成]</span></div>
-    <div class="boot-line">&gt; 就绪<span class="cursor">|</span></div>
+    <div class="boot-line">&gt; initializing slide-creator v1.5.0...</div>
+    <div class="boot-line">&gt; loading 19 design presets... <span class="ok">[OK]</span></div>
+    <div class="boot-line">&gt; zero dependencies confirmed... <span class="ok">[OK]</span></div>
+    <div class="boot-line">&gt; ready.<span class="cursor">|</span></div>
   </div>
 
   <div class="main-title">
-    <div class="label">&gt; 系统名称</div>
+    <div class="label">&gt; SYSTEM_NAME</div>
     <h1>slide-creator</h1>
     <hr class="rule">
     <p style="color:#8b949e; font-size: clamp(0.8rem,1.4vw,1rem); margin-bottom: clamp(1rem,2vh,1.5rem);">
-      # 零依赖 HTML 演示文稿<br>
-      # 为 Claude Code 和 OpenClaw 设计
+      # 零依赖的HTML演示工具<br>
+      # 为Claude Code和OpenClaw量身打造
     </p>
     <div class="stat-row">
       <div class="stat">
         <span class="stat-val">19</span>
-        <span class="stat-label">&gt; 预设</span>
+        <span class="stat-label">&gt; PRESETS</span>
       </div>
       <div class="stat">
         <span class="stat-val">0</span>
-        <span class="stat-label">&gt; 依赖</span>
+        <span class="stat-label">&gt; DEPENDENCIES</span>
       </div>
       <div class="stat">
         <span class="stat-val">∞</span>
-        <span class="stat-label">&gt; 幻灯片</span>
+        <span class="stat-label">&gt; SLIDES</span>
       </div>
     </div>
   </div>
@@ -319,110 +319,110 @@
 
 <!-- SLIDE 02: The Problem -->
 <section class="slide" id="slide-1">
-  <div class="slide-num reveal">[02/08] &gt; 问题陈述</div>
-  <div class="label reveal">&gt; 已知问题</div>
-  <h2 class="reveal">演示文稿不应该<span class="accent">需要</span><br>构建系统</h2>
+  <div class="slide-num reveal">[02/08] &gt; PROBLEM_STATEMENT</div>
+  <div class="label reveal">&gt; KNOWN_ISSUES</div>
+  <h2 class="reveal">演示文稿不应该<span class="accent">依赖</span><br>构建系统</h2>
   <hr class="rule reveal">
   <ul class="pain-list">
     <li class="reveal">
-      <span>// 复杂工具链：npm install、webpack 配置、300MB node_modules，仅为了发布几张幻灯片</span>
+      <span>// 复杂的工具链：npm install、webpack配置、300MB的node_modules只为了发布几张幻灯片</span>
     </li>
     <li class="reveal">
-      <span>// 通用输出：每个 AI 演示都一样，Inter 字体、紫色渐变、毫无个性</span>
+      <span>// 通用的输出：每个AI演示看起来都一样——Inter字体、紫色渐变、毫无个性</span>
     </li>
     <li class="reveal">
-      <span>// 无法拥有：闭源平台、导出限制、每月费用来获取你自己的内容</span>
+      <span>// 失去所有权：封闭平台、导出限制、每月为你自己的内容付费</span>
     </li>
   </ul>
   <div class="terminal-block reveal">
     <span class="comment"># 你真正想要的</span><br>
-    <span class="prompt">$</span> <span class="cmd">/slide-creator</span>  <span class="comment"># 完成</span>
+    <span class="prompt">$</span> <span class="cmd">/slide-creator</span>  <span class="comment"># 完成。</span>
   </div>
 </section>
 
 <!-- SLIDE 03: Show Don't Tell -->
 <section class="slide" id="slide-2">
-  <div class="slide-num reveal">[03/08] &gt; 发现协议</div>
-  <div class="label reveal">&gt; 特性</div>
-  <h2 class="reveal">样式发现<span class="accent">真正</span>有效</h2>
+  <div class="slide-num reveal">[03/08] &gt; DISCOVERY_PROTOCOL</div>
+  <div class="label reveal">&gt; FEATURE</div>
+  <h2 class="reveal">风格发现系统<span class="accent">真的</span>有效</h2>
   <hr class="rule reveal">
   <p class="reveal" style="margin-bottom: clamp(1rem,2vh,1.5rem);">
-    你无法用文字描述设计偏好。slide-creator 生成 3 个视觉预览，你反应而无需描述。
+    你无法用文字描述设计偏好。slide-creator生成3个视觉预览——你做出反应，而不是描述。
   </p>
   <div class="steps">
     <div class="step reveal">
       <span class="step-num">01&gt;</span>
-      <div class="step-text">询问氛围 → <span class="accent">系统查询你的意图</span></div>
+      <div class="step-text">描述气质 → <span class="accent">系统理解你的意图</span></div>
     </div>
     <div class="step reveal">
       <span class="step-num">02&gt;</span>
-      <div class="step-text">生成 3 个迷你预览 → <span class="accent">渲染而非描述</span></div>
+      <div class="step-text">生成3个迷你预览 → <span class="accent">实际渲染，而非文字描述</span></div>
     </div>
     <div class="step reveal">
       <span class="step-num">03&gt;</span>
-      <div class="step-text">选择<span class="accent">感觉对</span>的 → 继续</div>
+      <div class="step-text">选择<span class="accent">最有感觉</span>的一个 → 继续</div>
     </div>
   </div>
 </section>
 
 <!-- SLIDE 04: 19 Presets -->
 <section class="slide" id="slide-3">
-  <div class="slide-num reveal">[04/08] &gt; 预设注册表</div>
-  <div class="label reveal">&gt; 已加载模块</div>
-  <h2 class="reveal">19 个精选样式<br><span class="accent">无通用 AI 美学</span></h2>
+  <div class="slide-num reveal">[04/08] &gt; PRESET_REGISTRY</div>
+  <div class="label reveal">&gt; LOADED_MODULES</div>
+  <h2 class="reveal">19个精心打磨的风格。<br><span class="accent">没有通用的AI美学。</span></h2>
   <hr class="rule reveal">
   <div class="preset-grid reveal">
-    <span class="preset-tag">大胆信号</span>
-    <span class="preset-tag">电力工作室</span>
-    <span class="preset-tag">创意电压</span>
-    <span class="preset-tag">深色植物</span>
-    <span class="preset-tag">蓝天</span>
-    <span class="preset-tag">笔记本标签</span>
-    <span class="preset-tag">柔和几何</span>
-    <span class="preset-tag">分割柔和</span>
-    <span class="preset-tag">复古编辑</span>
-    <span class="preset-tag">霓虹赛博</span>
-    <span class="preset-tag" style="border-color: #39d353; color:#39d353; background: rgba(57,211,83,0.12);">终端绿 ◀</span>
-    <span class="preset-tag">瑞士现代</span>
-    <span class="preset-tag">纸墨</span>
-    <span class="preset-tag">极光网格</span>
-    <span class="preset-tag">企业暗色</span>
-    <span class="preset-tag">玻璃态</span>
-    <span class="preset-tag">新野兽派</span>
-    <span class="preset-tag">中国禅韵</span>
-    <span class="preset-tag">数据故事</span>
+    <span class="preset-tag">Bold Signal</span>
+    <span class="preset-tag">Electric Studio</span>
+    <span class="preset-tag">Creative Voltage</span>
+    <span class="preset-tag">Dark Botanical</span>
+    <span class="preset-tag">Blue Sky</span>
+    <span class="preset-tag">Notebook Tabs</span>
+    <span class="preset-tag">Pastel Geometry</span>
+    <span class="preset-tag">Split Pastel</span>
+    <span class="preset-tag">Vintage Editorial</span>
+    <span class="preset-tag">Neon Cyber</span>
+    <span class="preset-tag" style="border-color: #39d353; color:#39d353; background: rgba(57,211,83,0.12);">Terminal Green ◀</span>
+    <span class="preset-tag">Swiss Modern</span>
+    <span class="preset-tag">Paper &amp; Ink</span>
+    <span class="preset-tag">Aurora Mesh</span>
+    <span class="preset-tag">Enterprise Dark</span>
+    <span class="preset-tag">Glassmorphism</span>
+    <span class="preset-tag">Neo-Brutalism</span>
+    <span class="preset-tag">Chinese Chan</span>
+    <span class="preset-tag">Data Story</span>
   </div>
   <p class="reveal" style="margin-top: clamp(1rem,2vh,1.5rem);">
-    <span style="color:#39d353;">// 已加载 19 个条目</span> 每个都是完整、自包含的 HTML 文件
+    <span style="color:#39d353;">// 19个模块已加载。</span>每个都是一个完整、独立的HTML文件。
   </p>
 </section>
 
 <!-- SLIDE 05: How It Works -->
 <section class="slide" id="slide-4">
-  <div class="slide-num reveal">[05/08] &gt; 执行流程</div>
-  <div class="label reveal">&gt; 工作原理</div>
-  <h2 class="reveal">三个命令<br><span class="accent">一份演示</span></h2>
+  <div class="slide-num reveal">[05/08] &gt; EXECUTION_FLOW</div>
+  <div class="label reveal">&gt; HOW_IT_WORKS</div>
+  <h2 class="reveal">三条命令。<br><span class="accent">一个演示。</span></h2>
   <hr class="rule reveal">
   <div class="how-steps">
     <div class="how-step reveal">
       <span class="how-num">01</span>
       <div class="how-content">
-        <h3><span style="color:#39d353;">/slide-creator</span> — 回答 4 个问题</h3>
-        <p>主题、受众、氛围、时长。系统完成其余工作</p>
+        <h3><span style="color:#39d353;">/slide-creator</span> — 回答4个问题</h3>
+        <p>主题、观众、气质、时长。系统完成剩余工作。</p>
       </div>
     </div>
     <div class="how-step reveal">
       <span class="how-num">02</span>
       <div class="how-content">
-        <h3>选择样式 — 反应 3 个视觉预览</h3>
-        <p>无需用文字描述美学。看到 > 选择 > 完成</p>
+        <h3>选择你的风格 — 对3个视觉预览做出反应</h3>
+        <p>无需用文字描述美学。看→选→完成。</p>
       </div>
     </div>
     <div class="how-step reveal">
       <span class="how-num">03</span>
       <div class="how-content">
-        <h3>打开演示 — 方向键 · 空格 · 滑动</h3>
-        <p>纯 HTML。离线运行。无服务器。无运行时</p>
+        <h3>打开你的演示 — 方向键·空格·滑动</h3>
+        <p>纯HTML。离线工作。无服务器。无运行时。</p>
       </div>
     </div>
   </div>
@@ -430,62 +430,62 @@
 
 <!-- SLIDE 06: Key Features -->
 <section class="slide" id="slide-5">
-  <div class="slide-num reveal">[06/08] &gt; 功能标志</div>
-  <div class="label reveal">&gt; 功能</div>
-  <h2 class="reveal">为<span class="accent">真实使用</span>而构建</h2>
+  <div class="slide-num reveal">[06/08] &gt; FEATURE_FLAGS</div>
+  <div class="label reveal">&gt; CAPABILITIES</div>
+  <h2 class="reveal">为<span class="accent">实际应用</span>而生。</h2>
   <hr class="rule reveal">
   <div class="feature-grid">
     <div class="feature-card reveal">
-      <div class="feature-title">&gt; 视口匹配</div>
-      <div class="feature-desc">每张幻灯片恰好占满 100vh。永不滚动。每个布局都针对视口设计</div>
+      <div class="feature-title">&gt; VIEWPORT_FIT</div>
+      <div class="feature-desc">每张幻灯片完全适配100vh。永不滚动。每个布局都为视口而设计。</div>
     </div>
     <div class="feature-card reveal">
-      <div class="feature-title">&gt; 内联编辑</div>
-      <div class="feature-desc">按 E，点击任何文本，Ctrl+S 保存。编辑模式内置于每个演示</div>
+      <div class="feature-title">&gt; INLINE_EDIT</div>
+      <div class="feature-desc">按E键，点击任意文本，Ctrl+S保存。编辑模式内置于每个演示中。</div>
     </div>
     <div class="feature-card reveal">
-      <div class="feature-title">&gt; PPTX 导出</div>
-      <div class="feature-desc"><code>/slide-creator --export pptx</code> — 当董事会需要时转换为 PowerPoint</div>
+      <div class="feature-title">&gt; PPTX_EXPORT</div>
+      <div class="feature-desc"><code>/slide-creator --export pptx</code> — 当董事会要求时转换为PowerPoint。</div>
     </div>
     <div class="feature-card reveal">
-      <div class="feature-title">&gt; 两阶段</div>
-      <div class="feature-desc"><code>--plan</code> 先创建大纲。<code>--generate</code> 生成最终 HTML。提交前审查</div>
+      <div class="feature-title">&gt; TWO_STAGE</div>
+      <div class="feature-desc"><code>--plan</code>先创建大纲。<code>--generate</code>生成最终HTML。提交前审查。</div>
     </div>
   </div>
 </section>
 
 <!-- SLIDE 07: Install -->
 <section class="slide" id="slide-6">
-  <div class="slide-num reveal">[07/08] &gt; 安装流程</div>
-  <div class="label reveal">&gt; 设置</div>
-  <h2 class="reveal">两行代码<br><span class="accent">零设置</span></h2>
+  <div class="slide-num reveal">[07/08] &gt; INSTALL_SEQUENCE</div>
+  <div class="label reveal">&gt; SETUP</div>
+  <h2 class="reveal">两行代码。<br><span class="accent">零配置。</span></h2>
   <hr class="rule reveal">
   <div class="label reveal" style="margin-top: clamp(1rem,2vh,1.5rem);">&gt; CLAUDE_CODE</div>
   <div class="terminal-block reveal">
     <span class="prompt">$</span> <span class="cmd">git clone https://github.com/kaisersong/slide-creator \</span><br>
     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="cmd">~/.claude/skills/slide-creator</span><br>
-    <span class="comment"># 就这样。重启 Claude Code</span>
+    <span class="comment"># 就这样。重启Claude Code。</span>
   </div>
   <div class="label reveal">&gt; OPENCLAW</div>
   <div class="terminal-block reveal">
     <span class="prompt">$</span> <span class="cmd">clawhub install html-slide-creator</span><br>
-    <span class="comment"># 一个命令。立即可用</span>
+    <span class="comment"># 一条命令。立即可用。</span>
   </div>
 </section>
 
 <!-- SLIDE 08: Get Started -->
 <section class="slide" id="slide-7">
-  <div class="slide-num reveal">[08/08] &gt; 就绪</div>
-  <div class="label reveal">&gt; 执行</div>
-  <h2 class="reveal" style="color:#c9d1d9;">运行它<span class="cursor">|</span></h2>
+  <div class="slide-num reveal">[08/08] &gt; READY</div>
+  <div class="label reveal">&gt; EXECUTE</div>
+  <h2 class="reveal" style="color:#c9d1d9;">运行它。<span class="cursor">|</span></h2>
   <hr class="rule reveal">
   <div class="cta-block reveal">
     <div class="cta-cmd">/slide-creator</div>
-    <div class="cta-sub">适用于 Claude Code 和 OpenClaw</div>
+    <div class="cta-sub">支持Claude Code和OpenClaw。</div>
   </div>
   <p class="reveal" style="margin-top: clamp(1.5rem,3vh,2rem);">
-    <span style="color:#39d353;"># 19 个预设已加载。0 个依赖。∞ 张幻灯片</span><br>
-    <span style="color:#484f58;"># 你的演示。你的文件。无平台锁定</span>
+    <span style="color:#39d353;"># 19个风格已加载。0个依赖。∞张幻灯片。</span><br>
+    <span style="color:#484f58;"># 你的演示。你的文件。无平台锁定。</span>
   </p>
 </section>
 
@@ -522,4 +522,64 @@
   // Dot nav
   dots.forEach(d => d.addEventListener('click', () => goTo(+d.dataset.idx)));
 
-  //
+  // Keyboard
+  document.addEventListener('keydown', e => {
+    if (editMode && (e.key === 's' || e.key === 'S') && (e.ctrlKey || e.metaKey)) {
+      e.preventDefault(); saveFile(); return;
+    }
+    if (editMode && e.key === 'Escape') { toggleEdit(); return; }
+    if (document.activeElement.isContentEditable) return;
+    if (e.key === 'ArrowDown' || e.key === ' ') { e.preventDefault(); goTo(cur + 1); }
+    if (e.key === 'ArrowUp') { e.preventDefault(); goTo(cur - 1); }
+    if (e.key === 'e' || e.key === 'E') toggleEdit();
+  });
+
+  // Wheel — debounce-reset
+  let wheelLocked = false, wheelTimer = null;
+  document.addEventListener('wheel', e => {
+    clearTimeout(wheelTimer);
+    if (!wheelLocked) { wheelLocked = true; e.deltaY > 0 ? goTo(cur + 1) : goTo(cur - 1); }
+    wheelTimer = setTimeout(() => { wheelLocked = false; }, 180);
+  }, { passive: true });
+
+  // Touch swipe
+  let touchStart = null;
+  document.addEventListener('touchstart', e => { touchStart = e.touches[0].clientY; }, { passive: true });
+  document.addEventListener('touchend', e => {
+    if (!touchStart) return;
+    const diff = touchStart - e.changedTouches[0].clientY;
+    if (Math.abs(diff) > 50) { diff > 0 ? goTo(cur + 1) : goTo(cur - 1); }
+    touchStart = null;
+  });
+
+  // Edit mode
+  function toggleEdit() {
+    editMode = !editMode;
+    document.body.classList.toggle('edit-mode', editMode);
+    slides.forEach(s => {
+      s.querySelectorAll('h1,h2,h3,p,.stat-val,.cta-cmd,.feature-desc,.step-text,.how-content h3,.how-content p').forEach(el => {
+        el.contentEditable = editMode ? 'true' : 'false';
+      });
+    });
+  }
+
+  document.getElementById('hotzone').addEventListener('click', toggleEdit);
+
+  // Save
+  async function saveFile() {
+    const html = '<!DOCTYPE html>\n' + document.documentElement.outerHTML;
+    if (window.showSaveFilePicker) {
+      try {
+        const h = await window.showSaveFilePicker({ suggestedName: 'terminal-green.html', types: [{ accept: { 'text/html': ['.html'] } }] });
+        const w = await h.createWritable(); await w.write(html); await w.close();
+      } catch(e) { if (e.name !== 'AbortError') fallbackSave(html); }
+    } else fallbackSave(html);
+  }
+  function fallbackSave(html) {
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(new Blob([html], { type: 'text/html' }));
+    a.download = 'terminal-green.html'; a.click();
+  }
+</script>
+</body>
+</html>
