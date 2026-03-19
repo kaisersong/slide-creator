@@ -156,6 +156,48 @@ Every presentation follows this structure:
         .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 250px), 1fr)); gap: clamp(0.5rem, 1.5vw, 1rem); }
 
         /* ... style-specific CSS goes here ... */
+
+        /* ===========================================
+           PRESENTATION MODE
+           ▶ button is position:fixed and lives outside .slide elements.
+           PPTX export uses locator('.slide').nth(i).screenshot() which
+           captures each element independently — the button is never included.
+
+           Enter: click ▶ or press F5. Exit: press ESC or Escape fullscreen.
+           Slides are fixed to 1440×900px and CSS-scaled to fill any screen
+           while preserving aspect ratio. Black background fills the margins.
+           =========================================== */
+        #present-btn {
+            position: fixed; bottom: 1.5rem; right: 1.5rem; z-index: 9997;
+            width: 44px; height: 44px; border-radius: 50%;
+            background: rgba(0,0,0,0.5); color: rgba(255,255,255,0.8);
+            border: 1.5px solid rgba(255,255,255,0.2);
+            font-size: 1rem; cursor: pointer;
+            backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+            display: flex; align-items: center; justify-content: center;
+            opacity: 0; transition: opacity 0.2s; pointer-events: none;
+        }
+        body:hover #present-btn { opacity: 1; pointer-events: auto; }
+        #present-btn:hover { background: rgba(0,0,0,0.78); }
+
+        #present-counter {
+            display: none; position: fixed; bottom: 1.4rem; left: 50%;
+            transform: translateX(-50%); z-index: 9997;
+            font-size: 0.65rem; letter-spacing: 0.14em; font-family: system-ui, sans-serif;
+            color: rgba(255,255,255,0.28);
+        }
+
+        body.presenting { background: #000 !important; overflow: hidden !important; }
+        body.presenting .slide {
+            position: fixed !important; inset: 0;
+            width: var(--pdw, 1440px) !important; height: var(--pdh, 900px) !important;
+            transform-origin: top left;
+            transform: translate(var(--pox, 0px), var(--poy, 0px)) scale(var(--ps, 1)) !important;
+            scroll-snap-align: none !important; display: none !important;
+        }
+        body.presenting .slide.p-on { display: flex !important; }
+        body.presenting #present-btn { display: none !important; }
+        body.presenting #present-counter { display: block; }
     </style>
 </head>
 <body>
@@ -410,8 +452,97 @@ Every presentation follows this structure:
                 if (e.key === 'ArrowRight' || e.key === ' ') ch.postMessage({ type: 'nav-next' });
                 else if (e.key === 'ArrowLeft') ch.postMessage({ type: 'nav-prev' });
             });
+        /* ===========================================
+           PRESENTATION MODE CONTROLLER
+           Scales slides to fill any screen. Intercepts goTo() so arrow-key
+           navigation works without scrollIntoView() (which breaks when slides
+           are position:fixed).
+           =========================================== */
+        class PresentMode {
+            constructor(ctrl) {
+                this.ctrl = ctrl;
+                this.DW = 1440; this.DH = 900;
+                this.active = false;
+                this._resize = () => this._scale();
+
+                // Create play button and slide counter in JS —
+                // both live outside .slide so they never appear in PPTX screenshots
+                const btn = document.createElement('button');
+                btn.id = 'present-btn';
+                btn.title = 'Present (F5)';
+                btn.setAttribute('aria-label', 'Present');
+                btn.textContent = '▶';
+                document.body.appendChild(btn);
+
+                const counter = document.createElement('div');
+                counter.id = 'present-counter';
+                document.body.appendChild(counter);
+
+                btn.addEventListener('click', () => this.enter());
+                document.addEventListener('keydown', e => {
+                    if (e.key === 'F5')                  { e.preventDefault(); this.enter(); }
+                    if (e.key === 'Escape' && this.active) this.exit();
+                });
+                document.addEventListener('fullscreenchange', () => {
+                    if (!document.fullscreenElement && this.active) this.exit();
+                });
+            }
+
+            enter() {
+                if (this.active) return;
+                this.active = true;
+                document.body.classList.add('presenting');
+                document.documentElement.requestFullscreen?.().catch(() => {});
+                window.addEventListener('resize', this._resize);
+                this._scale();
+                this._show(this.ctrl.currentSlide);
+
+                // Override goTo: skip scrollIntoView, keep visible class + reveal animations
+                this._origGoTo = this.ctrl.goTo.bind(this.ctrl);
+                this.ctrl.goTo = (i) => {
+                    const idx = Math.max(0, Math.min(i, this.ctrl.slides.length - 1));
+                    this.ctrl.currentSlide = idx;
+                    this.ctrl.slides.forEach((s, j) => s.classList.toggle('visible', j === idx));
+                    this._show(idx);
+                    this.ctrl.updateProgress?.();
+                    this.ctrl.updateDots?.();
+                    this.ctrl.broadcastState?.();
+                };
+            }
+
+            exit() {
+                if (!this.active) return;
+                this.active = false;
+                document.body.classList.remove('presenting');
+                document.querySelectorAll('.slide').forEach(s => s.classList.remove('p-on'));
+                if (document.fullscreenElement) document.exitFullscreen?.();
+                window.removeEventListener('resize', this._resize);
+                if (this._origGoTo) { this.ctrl.goTo = this._origGoTo; this._origGoTo = null; }
+                // Restore scroll position to current slide
+                this.ctrl.slides[this.ctrl.currentSlide]?.scrollIntoView({ behavior: 'instant' });
+            }
+
+            _scale() {
+                const s  = Math.min(window.innerWidth / this.DW, window.innerHeight / this.DH);
+                const ox = (window.innerWidth  - this.DW * s) / 2;
+                const oy = (window.innerHeight - this.DH * s) / 2;
+                const r  = document.documentElement;
+                r.style.setProperty('--pdw', this.DW + 'px');
+                r.style.setProperty('--pdh', this.DH + 'px');
+                r.style.setProperty('--ps',  s);
+                r.style.setProperty('--pox', ox + 'px');
+                r.style.setProperty('--poy', oy + 'px');
+            }
+
+            _show(i) {
+                document.querySelectorAll('.slide').forEach((s, idx) => s.classList.toggle('p-on', idx === i));
+                const c = document.getElementById('present-counter');
+                if (c) c.textContent = `${i + 1} / ${this.ctrl.slides.length}`;
+            }
+        }
+
         } else {
-            new SlidePresentation();
+            new PresentMode(new SlidePresentation());
         }
     </script>
 </body>
