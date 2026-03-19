@@ -1,0 +1,728 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>设计工作室介绍 — 2024 项目集锦</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;700;800&family=Noto+Sans+SC:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html {
+      scroll-snap-type: y mandatory;
+      scroll-behavior: smooth;
+      height: 100%;
+    }
+    body {
+      height: 100%;
+      overflow-x: hidden;
+      font-family: 'Manrope', 'Noto Sans SC', sans-serif;
+    }
+
+    .slide {
+      width: 100vw;
+      height: 100vh;
+      height: 100dvh;
+      scroll-snap-align: start;
+      overflow: hidden;
+      position: relative;
+      display: flex;
+    }
+
+    /* Progress bar */
+    #progress-bar {
+      position: fixed;
+      top: 0; left: 0;
+      height: 4px;
+      background: #4361ee;
+      width: 0%;
+      z-index: 1000;
+      transition: width 0.4s ease;
+    }
+
+    /* Nav dots */
+    #nav-dots {
+      position: fixed;
+      right: 20px;
+      top: 50%;
+      transform: translateY(-50%);
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      z-index: 1000;
+    }
+    .dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: rgba(67,97,238,0.25);
+      cursor: pointer;
+      transition: all 0.3s ease;
+      border: 1px solid rgba(67,97,238,0.4);
+    }
+    .dot.active {
+      background: #4361ee;
+      transform: scale(1.5);
+    }
+
+    /* Brand monogram */
+    #brand-mark {
+      position: fixed;
+      top: 20px; left: 28px;
+      font-family: 'Manrope', 'Noto Sans SC', sans-serif;
+      font-weight: 800;
+      font-size: 15px;
+      letter-spacing: 0.05em;
+      color: #4361ee;
+      z-index: 1000;
+    }
+
+    /* Reveal animations */
+    .reveal {
+      opacity: 0;
+      transform: translateY(18px);
+      transition: opacity 0.4s ease, transform 0.4s ease;
+    }
+    .slide.visible .reveal { opacity: 1; transform: translateY(0); }
+    .slide.visible .reveal:nth-child(1) { transition-delay: 0.05s; }
+    .slide.visible .reveal:nth-child(2) { transition-delay: 0.13s; }
+    .slide.visible .reveal:nth-child(3) { transition-delay: 0.21s; }
+    .slide.visible .reveal:nth-child(4) { transition-delay: 0.29s; }
+
+    /* Split layout helpers */
+    .left-panel {
+      flex: 0 0 58%;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: 80px 60px 80px 80px;
+      position: relative;
+    }
+    .right-panel {
+      flex: 0 0 42%;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: 80px 48px;
+      position: relative;
+    }
+    /* 4px vertical accent bar on split edge */
+    .left-panel::after {
+      content: '';
+      position: absolute;
+      right: 0; top: 12%; bottom: 12%;
+      width: 4px;
+      background: #4361ee;
+    }
+    /* Horizontal split helpers */
+    .top-panel {
+      flex: 0 0 52%;
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      padding: 56px 80px 40px;
+      position: relative;
+    }
+    .bottom-panel {
+      flex: 0 0 48%;
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-start;
+      padding: 40px 80px 56px;
+      position: relative;
+    }
+    .top-panel::after {
+      content: '';
+      position: absolute;
+      bottom: 0; left: 8%; right: 8%;
+      height: 4px;
+      background: #4361ee;
+    }
+
+    /* Slide number */
+    .slide-num-label {
+      position: absolute;
+      bottom: 28px; right: 36px;
+      font-size: 11px;
+      font-weight: 600;
+      color: rgba(0,0,0,0.18);
+      letter-spacing: 0.1em;
+    }
+    .slide-num-label.light { color: rgba(255,255,255,0.2); }
+
+    /* Labels */
+    .label {
+      display: inline-block;
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: #4361ee;
+      margin-bottom: 16px;
+    }
+    .label.white { color: rgba(255,255,255,0.5); }
+
+    /* ── SLIDE 1: Cover — left white / right dark ── */
+    #slide-1 { flex-direction: row; }
+    #slide-1 .left-panel { background: #ffffff; }
+    #slide-1 .right-panel {
+      background: #0a0a0a;
+      flex-direction: column;
+      justify-content: space-between;
+      padding-top: 100px;
+    }
+    #slide-1 .main-title {
+      font-weight: 800;
+      font-size: clamp(52px, 7vw, 90px);
+      line-height: 0.92;
+      color: #0a0a0a;
+      letter-spacing: -0.035em;
+      margin-bottom: 28px;
+    }
+    #slide-1 .subtitle {
+      font-size: 16px;
+      font-weight: 400;
+      color: rgba(0,0,0,0.45);
+      line-height: 1.65;
+      max-width: 380px;
+      margin-bottom: 44px;
+    }
+    .badge-row { display: flex; gap: 10px; flex-wrap: wrap; }
+    .badge-pill {
+      display: inline-block;
+      padding: 6px 16px;
+      border: 1.5px solid rgba(67,97,238,0.3);
+      font-size: 12px;
+      font-weight: 600;
+      color: #4361ee;
+      letter-spacing: 0.04em;
+    }
+    #slide-1 .stats-block {
+      display: flex;
+      flex-direction: column;
+      gap: 28px;
+    }
+    #slide-1 .stat-item {
+      padding-bottom: 28px;
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+    }
+    #slide-1 .stat-item:last-child { border-bottom: none; padding-bottom: 0; }
+    #slide-1 .right-stat {
+      font-weight: 800;
+      font-size: clamp(30px, 3.8vw, 46px);
+      color: #fff;
+      line-height: 1.05;
+      margin-bottom: 6px;
+    }
+    #slide-1 .right-stat-sub {
+      font-size: 11px;
+      color: rgba(255,255,255,0.3);
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      font-weight: 600;
+    }
+    #slide-1 .slide-num-label { color: rgba(255,255,255,0.12); }
+
+    /* ── SLIDE 2: Problem — horizontal split ── */
+    #slide-2 { flex-direction: column; }
+    #slide-2 .top-panel { background: #ffffff; }
+    #slide-2 .bottom-panel {
+      background: #f8f9ff;
+      flex-direction: row;
+      gap: 0;
+      padding: 0;
+    }
+    #slide-2 h2 {
+      font-weight: 800;
+      font-size: clamp(28px, 3.8vw, 50px);
+      line-height: 1.05;
+      color: #0a0a0a;
+      letter-spacing: -0.025em;
+      max-width: 720px;
+    }
+    .pain-cols { display: flex; flex: 1; }
+    .pain-col {
+      flex: 1;
+      padding: 36px 44px;
+      border-right: 1px solid rgba(0,0,0,0.06);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+    .pain-col:last-child { border-right: none; }
+    .pain-index {
+      font-size: 11px;
+      font-weight: 700;
+      color: #4361ee;
+      letter-spacing: 0.16em;
+      margin-bottom: 12px;
+    }
+    .pain-head {
+      font-weight: 800;
+      font-size: 17px;
+      color: #0a0a0a;
+      margin-bottom: 10px;
+      line-height: 1.2;
+    }
+    .pain-text {
+      font-size: 13px;
+      color: rgba(0,0,0,0.42);
+      line-height: 1.65;
+      font-weight: 400;
+    }
+    #slide-2 .slide-num-label { color: rgba(0,0,0,0.12); }
+
+    /* ── SLIDE 3: Show Don't Tell — left white / right dark ── */
+    #slide-3 { flex-direction: row; }
+    #slide-3 .left-panel { background: #ffffff; }
+    #slide-3 .right-panel { background: #0a0a0a; justify-content: center; }
+    #slide-3 h2 {
+      font-weight: 800;
+      font-size: clamp(26px, 3.2vw, 42px);
+      line-height: 1.1;
+      color: #0a0a0a;
+      letter-spacing: -0.02em;
+      margin-bottom: 20px;
+    }
+    #slide-3 .body-text {
+      font-size: 15px;
+      color: rgba(0,0,0,0.46);
+      line-height: 1.7;
+      max-width: 380px;
+    }
+    .steps-vertical { display: flex; flex-direction: column; gap: 28px; }
+    .step-v { display: flex; align-items: flex-start; gap: 16px; }
+    .step-v-num {
+      font-weight: 800;
+      font-size: 11px;
+      color: #4361ee;
+      letter-spacing: 0.16em;
+      padding-top: 3px;
+      flex-shrink: 0;
+      width: 24px;
+    }
+    .step-v-text {
+      font-weight: 600;
+      font-size: 16px;
+      color: #fff;
+      line-height: 1.35;
+    }
+    .step-v-sub {
+      font-size: 12px;
+      color: rgba(255,255,255,0.32);
+      margin-top: 4px;
+      font-weight: 400;
+    }
+    #slide-3 .slide-num-label { color: rgba(255,255,255,0.12); }
+
+    /* ── SLIDE 4: Presets — full white ── */
+    #slide-4 { flex-direction: column; background: #fff; }
+    #slide-4 .top-section {
+      padding: 52px 80px 28px;
+      border-bottom: 4px solid #4361ee;
+    }
+    #slide-4 h2 {
+      font-weight: 800;
+      font-size: clamp(22px, 2.8vw, 36px);
+      color: #0a0a0a;
+      letter-spacing: -0.02em;
+      max-width: 640px;
+    }
+    #slide-4 .grid-section { flex: 1; padding: 28px 80px; overflow: hidden; }
+    .presets-table {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 1px;
+      background: rgba(0,0,0,0.06);
+    }
+    .pt-cell {
+      background: #fff;
+      padding: 16px 20px;
+    }
+    .pt-name {
+      font-weight: 700;
+      font-size: 13px;
+      color: #0a0a0a;
+      margin-bottom: 3px;
+    }
+    .pt-vibe {
+      font-size: 10px;
+      font-weight: 600;
+      color: rgba(0,0,0,0.28);
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+    }
+    .pt-cell.featured { background: #4361ee; }
+    .pt-cell.featured .pt-name { color: #fff; }
+    .pt-cell.featured .pt-vibe { color: rgba(255,255,255,0.52); }
+    #slide-4 .slide-num-label { color: rgba(0,0,0,0.12); }
+
+    /* ── SLIDE 5: How It Works — horizontal split ── */
+    #slide-5 { flex-direction: column; }
+    #slide-5 .top-panel { background: #0a0a0a; }
+    #slide-5 .bottom-panel { background: #fff; flex-direction: row; padding: 0; }
+    #slide-5 h2 {
+      font-weight: 800;
+      font-size: clamp(26px, 3.2vw, 42px);
+      line-height: 1.05;
+      color: #fff;
+      letter-spacing: -0.02em;
+    }
+    .step-cols { display: flex; flex: 1; }
+    .step-col {
+      flex: 1;
+      padding: 36px 44px;
+      border-right: 1px solid rgba(0,0,0,0.06);
+    }
+    .step-col:last-child { border-right: none; }
+    .sc-num {
+      font-weight: 800;
+      font-size: 36px;
+      color: #4361ee;
+      opacity: 0.28;
+      line-height: 1;
+      margin-bottom: 16px;
+    }
+    .sc-title {
+      font-weight: 800;
+      font-size: 17px;
+      color: #0a0a0a;
+      margin-bottom: 10px;
+    }
+    .sc-body {
+      font-size: 13px;
+      color: rgba(0,0,0,0.42);
+      line-height: 1.65;
+    }
+    #slide-5 .slide-num-label { color: rgba(255,255,255,0.12); }
+
+    /* ── SLIDE 6: Features — left dark / right white ── */
+    #slide-6 { flex-direction: row; }
+    #slide-6 .left-panel { background: #0a0a0a; }
+    #slide-6 .left-panel::after { background: #4361ee; }
+    #slide-6 .right-panel { background: #fff; }
+    #slide-6 h2 {
+      font-weight: 800;
+      font-size: clamp(26px, 3.2vw, 42px);
+      color: #fff;
+      line-height: 1.1;
+      letter-spacing: -0.025em;
+      margin-bottom: 16px;
+    }
+    #slide-6 .lead {
+      font-size: 14px;
+      color: rgba(255,255,255,0.36);
+      line-height: 1.65;
+      max-width: 320px;
+    }
+    .features-list { display: flex; flex-direction: column; gap: 0; }
+    .feat-item {
+      padding: 20px 0;
+      border-bottom: 1px solid rgba(0,0,0,0.07);
+    }
+    .feat-item:first-child { border-top: 1px solid rgba(0,0,0,0.07); }
+    .feat-name {
+      font-weight: 700;
+      font-size: 15px;
+      color: #0a0a0a;
+      margin-bottom: 6px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .feat-name::before {
+      content: '';
+      display: inline-block;
+      width: 6px; height: 6px;
+      background: #4361ee;
+      flex-shrink: 0;
+    }
+    .feat-desc {
+      font-size: 13px;
+      color: rgba(0,0,0,0.42);
+      line-height: 1.6;
+      padding-left: 16px;
+    }
+    #slide-6 .slide-num-label { color: rgba(255,255,255,0.12); }
+
+    /* ── SLIDE 7: Install — left white / right tinted ── */
+    #slide-7 { flex-direction: row; background: #fff; }
+    #slide-7 .left-panel { background: #fff; }
+    #slide-7 .left-panel::after { background: #4361ee; }
+    #slide-7 .right-panel { background: #f2f4ff; }
+    #slide-7 h2 {
+      font-weight: 800;
+      font-size: clamp(28px, 3.5vw, 46px);
+      color: #0a0a0a;
+      line-height: 1.05;
+      letter-spacing: -0.025em;
+      margin-bottom: 12px;
+    }
+    #slide-7 .intro {
+      font-size: 15px;
+      color: rgba(0,0,0,0.4);
+      margin-bottom: 36px;
+    }
+    .install-option { margin-bottom: 28px; }
+    .opt-label {
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: #4361ee;
+      margin-bottom: 10px;
+    }
+    .code-block {
+      background: #0a0a0a;
+      padding: 14px 18px;
+      margin-bottom: 6px;
+    }
+    .code-block code {
+      font-family: 'Manrope', monospace;
+      font-size: 12px;
+      color: rgba(255,255,255,0.8);
+      display: block;
+      line-height: 1.6;
+      word-break: break-all;
+    }
+    .code-sub {
+      font-size: 12px;
+      color: rgba(0,0,0,0.36);
+      padding-left: 4px;
+    }
+    .install-visual { display: flex; flex-direction: column; gap: 20px; }
+    .iv-label {
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: rgba(0,0,0,0.3);
+      margin-bottom: 4px;
+    }
+    .iv-big {
+      font-weight: 800;
+      font-size: 44px;
+      color: #4361ee;
+      line-height: 1;
+    }
+    .iv-sub {
+      font-size: 13px;
+      color: rgba(0,0,0,0.36);
+    }
+    .iv-divider { height: 1px; background: rgba(0,0,0,0.07); }
+    #slide-7 .slide-num-label { color: rgba(0,0,0,0.12); }
+
+    /* ── SLIDE 8: CTA — left dark / right blue ── */
+    #slide-8 { flex-direction: row; }
+    #slide-8 .left-panel { background: #0a0a0a; flex: 0 0 55%; }
+    #slide-8 .left-panel::after { background: rgba(255,255,255,0.08); }
+    #slide-8 .right-panel {
+      background: #4361ee;
+      flex: 0 0 45%;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      padding: 60px 48px;
+    }
+    #slide-8 h2 {
+      font-weight: 800;
+      font-size: clamp(30px, 3.8vw, 52px);
+      color: #fff;
+      line-height: 1.05;
+      letter-spacing: -0.025em;
+      margin-bottom: 24px;
+    }
+    #slide-8 .left-sub {
+      font-size: 15px;
+      color: rgba(255,255,255,0.36);
+      line-height: 1.65;
+      max-width: 360px;
+    }
+    .cta-pill {
+      display: inline-block;
+      font-weight: 800;
+      font-size: 26px;
+      color: #4361ee;
+      background: #fff;
+      padding: 18px 36px;
+      letter-spacing: -0.01em;
+      margin-bottom: 20px;
+    }
+    .cta-note {
+      font-size: 13px;
+      color: rgba(255,255,255,0.52);
+      line-height: 1.6;
+    }
+    #slide-8 .slide-num-label { color: rgba(255,255,255,0.12); }
+
+    /* Edit mode */
+    #edit-hotzone {
+      position: fixed;
+      top: 0; left: 0;
+      width: 80px; height: 80px;
+      z-index: 2000;
+      cursor: pointer;
+    }
+    #edit-toggle {
+      position: fixed;
+      top: 16px; left: 16px;
+      background: #4361ee;
+      color: #fff;
+      border: none;
+      padding: 6px 14px;
+      font-family: 'Manrope', 'Noto Sans SC', sans-serif;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      cursor: pointer;
+      z-index: 2001;
+      display: none;
+      text-transform: uppercase;
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+    #edit-toggle.visible { opacity: 1; display: block; }
+    body.edit-mode [contenteditable] {
+      outline: 1px dashed rgba(67,97,238,0.4);
+      cursor: text;
+    }
+    body.edit-mode [contenteditable]:focus {
+      outline: 2px solid #4361ee;
+    }
+    #save-indicator {
+      position: fixed;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: #4361ee;
+      color: #fff;
+      padding: 8px 20px;
+      font-family: 'Manrope', 'Noto Sans SC', sans-serif;
+      font-size: 12px;
+      font-weight: 700;
+      z-index: 3000;
+      display: none;
+      letter-spacing: 0.1em;
+    }
+  </style>
+</head>
+<body>
+
+<div id="progress-bar"></div>
+<div id="nav-dots"></div>
+<div id="brand-mark">DS</div>
+<div id="edit-hotzone"></div>
+<button id="edit-toggle">编辑</button>
+<div id="save-indicator">已保存</div>
+
+<!-- SLIDE 1: Cover -->
+<section class="slide" id="slide-1">
+  <div class="left-panel">
+    <div class="label reveal">电气工作室</div>
+    <h1 class="main-title reveal" contenteditable="false">设计<br>集锦</h1>
+    <p class="subtitle reveal" contenteditable="false">2024 年精选设计项目展示与工作室能力突出。展现创意与技术的完美融合。</p>
+    <div class="badge-row reveal">
+      <span class="badge-pill">12 个项目</span>
+      <span class="badge-pill">3 大领域</span>
+      <span class="badge-pill">100% 满意度</span>
+    </div>
+  </div>
+  <div class="right-panel">
+    <div class="stats-block reveal">
+      <div class="stat-item">
+        <div class="right-stat">12</div>
+        <div class="right-stat-sub">完成项目</div>
+      </div>
+      <div class="stat-item">
+        <div class="right-stat">3</div>
+        <div class="right-stat-sub">核心领域</div>
+      </div>
+      <div class="stat-item">
+        <div class="right-stat">∞</div>
+        <div class="right-stat-sub">无限可能</div>
+      </div>
+    </div>
+  </div>
+  <span class="slide-num-label light">01</span>
+</section>
+
+<!-- SLIDE 2: Problem -->
+<section class="slide" id="slide-2">
+  <div class="top-panel">
+    <div class="label reveal">核心挑战</div>
+    <h2 class="reveal" contenteditable="false">高质量设计往往困难重重</h2>
+  </div>
+  <div class="bottom-panel">
+    <div class="pain-cols reveal">
+      <div class="pain-col">
+        <div class="pain-index">01</div>
+        <div class="pain-head" contenteditable="false">时间压力</div>
+        <div class="pain-text" contenteditable="false">有限的预算与紧张的周期要求快速交付高质量成果。</div>
+      </div>
+      <div class="pain-col">
+        <div class="pain-index">02</div>
+        <div class="pain-head" contenteditable="false">沟通障碍</div>
+        <div class="pain-text" contenteditable="false">客户的想法往往抽象，需要通过迭代才能准确理解真实需求。</div>
+      </div>
+      <div class="pain-col">
+        <div class="pain-index">03</div>
+        <div class="pain-head" contenteditable="false">效果落差</div>
+        <div class="pain-text" contenteditable="false">从概念到完成的过程中，往往出现质量下降或偏离初心。</div>
+      </div>
+    </div>
+  </div>
+  <span class="slide-num-label">02</span>
+</section>
+
+<!-- SLIDE 3: Show Don't Tell -->
+<section class="slide" id="slide-3">
+  <div class="left-panel">
+    <div class="label reveal">我们的方式</div>
+    <h2 class="reveal" contenteditable="false">视觉优先的设计方法</h2>
+    <p class="body-text reveal" contenteditable="false">设计无法用言语准确描述。我们通过展示三种实际方案让客户直观反应，而非被迫描述。这样可以在内容制作前就确保审美方向的清晰性。</p>
+  </div>
+  <div class="right-panel">
+    <div class="steps-vertical reveal">
+      <div class="step-v">
+        <span class="step-v-num">01</span>
+        <div>
+          <div class="step-v-text" contenteditable="false">品牌诊断</div>
+          <div class="step-v-sub" contenteditable="false">深入理解品牌调性与目标定位</div>
+        </div>
+      </div>
+      <div class="step-v">
+        <span class="step-v-num">02</span>
+        <div>
+          <div class="step-v-text" contenteditable="false">三向方案</div>
+          <div class="step-v-sub" contenteditable="false">呈现三个完整的视觉方向与排版方案</div>
+        </div>
+      </div>
+      <div class="step-v">
+        <span class="step-v-num">03</span>
+        <div>
+          <div class="step-v-text" contenteditable="false">明确方向</div>
+          <div class="step-v-sub" contenteditable="false">客户直观选择，进入深化与交付阶段</div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <span class="slide-num-label light">03</span>
+</section>
+
+<!-- SLIDE 4: Presets -->
+<section class="slide" id="slide-4">
+  <div class="top-section reveal">
+    <div class="label">设计领域</div>
+    <h2 contenteditable="false">覆盖品牌、产品、内容的全方位设计服务</h2>
+  </div>
+  <div class="grid-section reveal">
+    <div class="presets-table">
+      <div class="pt-cell featured"><div class="pt-name">品牌系统</div><div class="pt-vibe">核心</div></div>
+      <div class="pt-cell featured"><div class="pt-name">数字产品</div><div class="pt-vibe">用户界面</div></div>
+      <div class="pt-cell featured"><div class="pt-name">内容运营</div><div class="pt-vibe">传播</div></div>
+      <div class="pt-cell"><div class="pt-name">视觉设计</div><div class="pt-vibe">表现</div></div>
+      <div class="pt-cell"><div class="pt-name">交互设计</div><div class="pt-vibe">体验</div></div>
+      <div

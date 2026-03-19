@@ -1,0 +1,525 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>终端绿 — slide-creator</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Noto+Sans+SC:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-snap-type: y mandatory; scroll-behavior: smooth; height: 100%; }
+    body {
+      height: 100%; overflow-x: hidden;
+      background: #0d1117;
+      font-family: 'Noto Sans SC', 'JetBrains Mono', 'Courier New', monospace;
+      color: #c9d1d9;
+    }
+
+    /* CRT scanline overlay */
+    body::before {
+      content: '';
+      position: fixed; inset: 0; z-index: 9999;
+      pointer-events: none;
+      background: repeating-linear-gradient(
+        0deg,
+        transparent, transparent 2px,
+        rgba(0,255,65,0.01) 2px, rgba(0,255,65,0.01) 4px
+      );
+    }
+    /* CRT edge vignette */
+    body::after {
+      content: '';
+      position: fixed; inset: 0; z-index: 9998;
+      pointer-events: none;
+      box-shadow: inset 0 0 120px rgba(0,0,0,0.6), inset 0 0 40px rgba(0,255,65,0.04);
+    }
+
+    .slide {
+      width: 100vw; height: 100vh; height: 100dvh;
+      scroll-snap-align: start; overflow: hidden;
+      position: relative; display: flex; flex-direction: column;
+      background: #0d1117;
+      padding: clamp(2rem, 5vw, 4rem);
+      border-bottom: 1px solid rgba(57,211,83,0.15);
+    }
+
+    /* Progress bar */
+    #progress {
+      position: fixed; top: 0; left: 0; height: 2px;
+      background: #39d353; z-index: 1000;
+      transition: width 0.4s ease;
+      box-shadow: 0 0 8px #39d353;
+    }
+
+    /* Nav dots */
+    #nav-dots {
+      position: fixed; right: 1.5rem; top: 50%; transform: translateY(-50%);
+      display: flex; flex-direction: column; gap: 0.6rem; z-index: 1000;
+    }
+    .dot {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.7rem; color: rgba(57,211,83,0.3);
+      cursor: pointer; transition: color 0.2s;
+      line-height: 1;
+    }
+    .dot.active { color: #39d353; text-shadow: 0 0 6px #39d353; }
+
+    /* Edit mode */
+    #edit-indicator {
+      position: fixed; bottom: 1rem; right: 1rem; z-index: 1000;
+      font-family: 'JetBrains Mono', monospace; font-size: 0.65rem;
+      color: #39d353; background: rgba(57,211,83,0.1);
+      border: 1px solid rgba(57,211,83,0.3);
+      padding: 0.25rem 0.5rem; display: none;
+    }
+    body.edit-mode #edit-indicator { display: block; }
+    body.edit-mode [contenteditable] { outline: 1px dashed rgba(57,211,83,0.5); }
+    #hotzone {
+      position: fixed; top: 0; left: 0; width: 80px; height: 80px;
+      z-index: 999; cursor: pointer;
+    }
+
+    /* Animations */
+    @keyframes blink {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0; }
+    }
+    @keyframes lineReveal {
+      from { opacity: 0; max-height: 0; }
+      to { opacity: 1; max-height: 3rem; }
+    }
+    @keyframes glow {
+      0%, 100% { text-shadow: 0 0 8px rgba(57,211,83,0.6); }
+      50% { text-shadow: 0 0 20px rgba(57,211,83,0.9), 0 0 40px rgba(57,211,83,0.4); }
+    }
+
+    .cursor {
+      display: inline-block; color: #39d353;
+      animation: blink 1s step-end infinite;
+    }
+
+    /* Reveal stagger */
+    .reveal { opacity: 0; transform: translateY(8px); transition: opacity 0.3s ease, transform 0.3s ease; }
+    .slide.visible .reveal { opacity: 1; transform: none; }
+    .slide.visible .reveal:nth-child(1) { transition-delay: 0.05s; }
+    .slide.visible .reveal:nth-child(2) { transition-delay: 0.1s; }
+    .slide.visible .reveal:nth-child(3) { transition-delay: 0.15s; }
+    .slide.visible .reveal:nth-child(4) { transition-delay: 0.2s; }
+    .slide.visible .reveal:nth-child(5) { transition-delay: 0.25s; }
+    .slide.visible .reveal:nth-child(6) { transition-delay: 0.3s; }
+    .slide.visible .reveal:nth-child(7) { transition-delay: 0.35s; }
+
+    /* Common elements */
+    .slide-num {
+      font-size: clamp(0.6rem, 1.2vw, 0.75rem);
+      color: #39d353; letter-spacing: 0.1em;
+      margin-bottom: clamp(1.5rem, 4vh, 3rem);
+    }
+    .label {
+      font-size: clamp(0.6rem, 1vw, 0.7rem);
+      color: #39d353; letter-spacing: 0.12em;
+      margin-bottom: 0.6rem; opacity: 0.8;
+    }
+    .rule { border: none; border-top: 1px solid rgba(57,211,83,0.2); margin: clamp(1rem, 2vh, 1.5rem) 0; }
+
+    h1 {
+      font-family: 'Noto Sans SC', 'JetBrains Mono', monospace; font-weight: 700;
+      font-size: clamp(2.5rem, 7vw, 5rem);
+      color: #39d353; letter-spacing: -0.02em;
+      animation: glow 3s ease-in-out infinite;
+      line-height: 1;
+    }
+    h2 {
+      font-family: 'Noto Sans SC', 'JetBrains Mono', monospace; font-weight: 700;
+      font-size: clamp(1.4rem, 3.5vw, 2.5rem);
+      color: #c9d1d9; line-height: 1.2;
+    }
+    h2 span.accent { color: #39d353; }
+    p {
+      font-size: clamp(0.85rem, 1.5vw, 1rem);
+      color: #8b949e; line-height: 1.7;
+      max-width: 64ch;
+    }
+
+    .stat-row {
+      display: flex; gap: clamp(1.5rem, 4vw, 3rem);
+      margin-top: clamp(1rem, 2vh, 2rem);
+      flex-wrap: wrap;
+    }
+    .stat { display: flex; flex-direction: column; }
+    .stat-val {
+      font-size: clamp(1.2rem, 2.5vw, 1.8rem);
+      color: #58a6ff; font-weight: 700;
+    }
+    .stat-label {
+      font-size: 0.65rem; color: #39d353; opacity: 0.7; letter-spacing: 0.1em;
+    }
+
+    /* Boot sequence — title slide only */
+    .boot-lines { margin: clamp(1rem, 2vh, 2rem) 0; }
+    .boot-line {
+      font-size: clamp(0.75rem, 1.3vw, 0.9rem);
+      color: #8b949e; line-height: 2;
+      overflow: hidden; max-height: 0; opacity: 0;
+    }
+    .boot-line .ok { color: #39d353; }
+    .slide.visible .boot-line:nth-child(1) { animation: lineReveal 0.3s ease forwards 0.3s; }
+    .slide.visible .boot-line:nth-child(2) { animation: lineReveal 0.3s ease forwards 0.8s; }
+    .slide.visible .boot-line:nth-child(3) { animation: lineReveal 0.3s ease forwards 1.3s; }
+    .slide.visible .boot-line:nth-child(4) { animation: lineReveal 0.3s ease forwards 1.8s; }
+    .main-title { opacity: 0; transition: opacity 0.5s ease 2.3s; }
+    .slide.visible .main-title { opacity: 1; }
+
+    /* Terminal block */
+    .terminal-block {
+      background: #161b22;
+      border: 1px solid rgba(57,211,83,0.2);
+      border-left: 3px solid #39d353;
+      padding: clamp(0.8rem, 2vw, 1.2rem) clamp(1rem, 2vw, 1.5rem);
+      margin: clamp(0.8rem, 1.5vh, 1.2rem) 0;
+      font-size: clamp(0.7rem, 1.2vw, 0.85rem);
+      color: #c9d1d9; line-height: 1.8;
+    }
+    .terminal-block .prompt { color: #39d353; }
+    .terminal-block .cmd { color: #58a6ff; }
+    .terminal-block .comment { color: #484f58; }
+
+    /* Pain points */
+    .pain-list { list-style: none; margin: clamp(1rem, 2vh, 1.5rem) 0; }
+    .pain-list li {
+      font-size: clamp(0.8rem, 1.4vw, 0.95rem);
+      color: #8b949e; padding: 0.6rem 0;
+      border-bottom: 1px solid rgba(57,211,83,0.1);
+      display: flex; gap: 0.8rem; line-height: 1.5;
+    }
+    .pain-list li::before { content: '✗'; color: #f85149; flex-shrink: 0; }
+
+    /* Steps */
+    .steps { display: flex; flex-direction: column; gap: clamp(0.8rem, 1.5vh, 1.2rem); margin-top: clamp(1rem, 2vh, 1.5rem); }
+    .step {
+      display: flex; align-items: flex-start; gap: 1rem;
+      background: #161b22; border: 1px solid rgba(57,211,83,0.15);
+      padding: clamp(0.7rem, 1.5vw, 1rem) clamp(1rem, 2vw, 1.4rem);
+    }
+    .step-num { color: #39d353; font-weight: 700; flex-shrink: 0; font-size: clamp(0.8rem, 1.3vw, 1rem); }
+    .step-text { font-size: clamp(0.75rem, 1.2vw, 0.9rem); color: #c9d1d9; line-height: 1.5; }
+    .step-text .accent { color: #58a6ff; }
+
+    /* Preset grid */
+    .preset-grid {
+      display: flex; flex-wrap: wrap; gap: 0.5rem;
+      margin-top: clamp(1rem, 2vh, 1.5rem);
+    }
+    .preset-tag {
+      font-size: clamp(0.6rem, 1vw, 0.75rem);
+      color: #39d353; border: 1px solid rgba(57,211,83,0.3);
+      padding: 0.3rem 0.7rem; background: rgba(57,211,83,0.05);
+      letter-spacing: 0.05em;
+    }
+
+    /* Feature grid */
+    .feature-grid {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: clamp(0.8rem, 1.5vw, 1.2rem); margin-top: clamp(1rem, 2vh, 1.5rem);
+    }
+    .feature-card {
+      background: #161b22; border: 1px solid rgba(57,211,83,0.15);
+      border-top: 2px solid #39d353;
+      padding: clamp(0.8rem, 1.5vw, 1.2rem);
+    }
+    .feature-title { color: #39d353; font-size: clamp(0.7rem, 1.1vw, 0.85rem); margin-bottom: 0.4rem; font-weight: 700; }
+    .feature-desc { color: #8b949e; font-size: clamp(0.65rem, 1vw, 0.78rem); line-height: 1.6; }
+
+    /* CTA */
+    .cta-block {
+      margin-top: clamp(1.5rem, 3vh, 2.5rem);
+      background: rgba(57,211,83,0.08);
+      border: 1px solid rgba(57,211,83,0.4);
+      padding: clamp(1rem, 2.5vw, 2rem) clamp(1.5rem, 3vw, 2.5rem);
+      display: inline-block;
+    }
+    .cta-cmd {
+      font-size: clamp(1.5rem, 3.5vw, 2.5rem);
+      color: #39d353; font-weight: 700;
+      animation: glow 2s ease-in-out infinite;
+    }
+    .cta-sub { font-size: clamp(0.65rem, 1vw, 0.8rem); color: #8b949e; margin-top: 0.5rem; }
+
+    /* How it works */
+    .how-steps {
+      display: flex; flex-direction: column; gap: clamp(1rem, 2vh, 1.5rem);
+      margin-top: clamp(1rem, 2vh, 1.5rem); max-width: 650px;
+    }
+    .how-step {
+      display: grid; grid-template-columns: 2.5rem 1fr;
+      gap: 1rem; align-items: start;
+    }
+    .how-num {
+      font-size: clamp(1rem, 2vw, 1.4rem); font-weight: 700;
+      color: #39d353; padding-top: 0.1rem;
+    }
+    .how-content h3 { color: #c9d1d9; font-size: clamp(0.85rem, 1.4vw, 1rem); margin-bottom: 0.25rem; }
+    .how-content p { font-size: clamp(0.7rem, 1.1vw, 0.82rem); color: #484f58; }
+  </style>
+</head>
+<body>
+
+<div id="progress"></div>
+
+<div id="nav-dots">
+  <span class="dot active" data-idx="0">●</span>
+  <span class="dot" data-idx="1">●</span>
+  <span class="dot" data-idx="2">●</span>
+  <span class="dot" data-idx="3">●</span>
+  <span class="dot" data-idx="4">●</span>
+  <span class="dot" data-idx="5">●</span>
+  <span class="dot" data-idx="6">●</span>
+  <span class="dot" data-idx="7">●</span>
+</div>
+
+<div id="hotzone"></div>
+<div id="edit-indicator">&gt; 编辑模式 [Ctrl+S 保存]</div>
+
+<!-- SLIDE 01: Cover -->
+<section class="slide" id="slide-0">
+  <div class="slide-num reveal">[01/08] &gt; 系统启动</div>
+
+  <div class="boot-lines">
+    <div class="boot-line">&gt; 正在初始化 slide-creator v1.5.0...</div>
+    <div class="boot-line">&gt; 加载 19 个设计预设... <span class="ok">[完成]</span></div>
+    <div class="boot-line">&gt; 零依赖验证通过... <span class="ok">[完成]</span></div>
+    <div class="boot-line">&gt; 就绪<span class="cursor">|</span></div>
+  </div>
+
+  <div class="main-title">
+    <div class="label">&gt; 系统名称</div>
+    <h1>slide-creator</h1>
+    <hr class="rule">
+    <p style="color:#8b949e; font-size: clamp(0.8rem,1.4vw,1rem); margin-bottom: clamp(1rem,2vh,1.5rem);">
+      # 零依赖 HTML 演示文稿<br>
+      # 为 Claude Code 和 OpenClaw 设计
+    </p>
+    <div class="stat-row">
+      <div class="stat">
+        <span class="stat-val">19</span>
+        <span class="stat-label">&gt; 预设</span>
+      </div>
+      <div class="stat">
+        <span class="stat-val">0</span>
+        <span class="stat-label">&gt; 依赖</span>
+      </div>
+      <div class="stat">
+        <span class="stat-val">∞</span>
+        <span class="stat-label">&gt; 幻灯片</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SLIDE 02: The Problem -->
+<section class="slide" id="slide-1">
+  <div class="slide-num reveal">[02/08] &gt; 问题陈述</div>
+  <div class="label reveal">&gt; 已知问题</div>
+  <h2 class="reveal">演示文稿不应该<span class="accent">需要</span><br>构建系统</h2>
+  <hr class="rule reveal">
+  <ul class="pain-list">
+    <li class="reveal">
+      <span>// 复杂工具链：npm install、webpack 配置、300MB node_modules，仅为了发布几张幻灯片</span>
+    </li>
+    <li class="reveal">
+      <span>// 通用输出：每个 AI 演示都一样，Inter 字体、紫色渐变、毫无个性</span>
+    </li>
+    <li class="reveal">
+      <span>// 无法拥有：闭源平台、导出限制、每月费用来获取你自己的内容</span>
+    </li>
+  </ul>
+  <div class="terminal-block reveal">
+    <span class="comment"># 你真正想要的</span><br>
+    <span class="prompt">$</span> <span class="cmd">/slide-creator</span>  <span class="comment"># 完成</span>
+  </div>
+</section>
+
+<!-- SLIDE 03: Show Don't Tell -->
+<section class="slide" id="slide-2">
+  <div class="slide-num reveal">[03/08] &gt; 发现协议</div>
+  <div class="label reveal">&gt; 特性</div>
+  <h2 class="reveal">样式发现<span class="accent">真正</span>有效</h2>
+  <hr class="rule reveal">
+  <p class="reveal" style="margin-bottom: clamp(1rem,2vh,1.5rem);">
+    你无法用文字描述设计偏好。slide-creator 生成 3 个视觉预览，你反应而无需描述。
+  </p>
+  <div class="steps">
+    <div class="step reveal">
+      <span class="step-num">01&gt;</span>
+      <div class="step-text">询问氛围 → <span class="accent">系统查询你的意图</span></div>
+    </div>
+    <div class="step reveal">
+      <span class="step-num">02&gt;</span>
+      <div class="step-text">生成 3 个迷你预览 → <span class="accent">渲染而非描述</span></div>
+    </div>
+    <div class="step reveal">
+      <span class="step-num">03&gt;</span>
+      <div class="step-text">选择<span class="accent">感觉对</span>的 → 继续</div>
+    </div>
+  </div>
+</section>
+
+<!-- SLIDE 04: 19 Presets -->
+<section class="slide" id="slide-3">
+  <div class="slide-num reveal">[04/08] &gt; 预设注册表</div>
+  <div class="label reveal">&gt; 已加载模块</div>
+  <h2 class="reveal">19 个精选样式<br><span class="accent">无通用 AI 美学</span></h2>
+  <hr class="rule reveal">
+  <div class="preset-grid reveal">
+    <span class="preset-tag">大胆信号</span>
+    <span class="preset-tag">电力工作室</span>
+    <span class="preset-tag">创意电压</span>
+    <span class="preset-tag">深色植物</span>
+    <span class="preset-tag">蓝天</span>
+    <span class="preset-tag">笔记本标签</span>
+    <span class="preset-tag">柔和几何</span>
+    <span class="preset-tag">分割柔和</span>
+    <span class="preset-tag">复古编辑</span>
+    <span class="preset-tag">霓虹赛博</span>
+    <span class="preset-tag" style="border-color: #39d353; color:#39d353; background: rgba(57,211,83,0.12);">终端绿 ◀</span>
+    <span class="preset-tag">瑞士现代</span>
+    <span class="preset-tag">纸墨</span>
+    <span class="preset-tag">极光网格</span>
+    <span class="preset-tag">企业暗色</span>
+    <span class="preset-tag">玻璃态</span>
+    <span class="preset-tag">新野兽派</span>
+    <span class="preset-tag">中国禅韵</span>
+    <span class="preset-tag">数据故事</span>
+  </div>
+  <p class="reveal" style="margin-top: clamp(1rem,2vh,1.5rem);">
+    <span style="color:#39d353;">// 已加载 19 个条目</span> 每个都是完整、自包含的 HTML 文件
+  </p>
+</section>
+
+<!-- SLIDE 05: How It Works -->
+<section class="slide" id="slide-4">
+  <div class="slide-num reveal">[05/08] &gt; 执行流程</div>
+  <div class="label reveal">&gt; 工作原理</div>
+  <h2 class="reveal">三个命令<br><span class="accent">一份演示</span></h2>
+  <hr class="rule reveal">
+  <div class="how-steps">
+    <div class="how-step reveal">
+      <span class="how-num">01</span>
+      <div class="how-content">
+        <h3><span style="color:#39d353;">/slide-creator</span> — 回答 4 个问题</h3>
+        <p>主题、受众、氛围、时长。系统完成其余工作</p>
+      </div>
+    </div>
+    <div class="how-step reveal">
+      <span class="how-num">02</span>
+      <div class="how-content">
+        <h3>选择样式 — 反应 3 个视觉预览</h3>
+        <p>无需用文字描述美学。看到 > 选择 > 完成</p>
+      </div>
+    </div>
+    <div class="how-step reveal">
+      <span class="how-num">03</span>
+      <div class="how-content">
+        <h3>打开演示 — 方向键 · 空格 · 滑动</h3>
+        <p>纯 HTML。离线运行。无服务器。无运行时</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SLIDE 06: Key Features -->
+<section class="slide" id="slide-5">
+  <div class="slide-num reveal">[06/08] &gt; 功能标志</div>
+  <div class="label reveal">&gt; 功能</div>
+  <h2 class="reveal">为<span class="accent">真实使用</span>而构建</h2>
+  <hr class="rule reveal">
+  <div class="feature-grid">
+    <div class="feature-card reveal">
+      <div class="feature-title">&gt; 视口匹配</div>
+      <div class="feature-desc">每张幻灯片恰好占满 100vh。永不滚动。每个布局都针对视口设计</div>
+    </div>
+    <div class="feature-card reveal">
+      <div class="feature-title">&gt; 内联编辑</div>
+      <div class="feature-desc">按 E，点击任何文本，Ctrl+S 保存。编辑模式内置于每个演示</div>
+    </div>
+    <div class="feature-card reveal">
+      <div class="feature-title">&gt; PPTX 导出</div>
+      <div class="feature-desc"><code>/slide-creator --export pptx</code> — 当董事会需要时转换为 PowerPoint</div>
+    </div>
+    <div class="feature-card reveal">
+      <div class="feature-title">&gt; 两阶段</div>
+      <div class="feature-desc"><code>--plan</code> 先创建大纲。<code>--generate</code> 生成最终 HTML。提交前审查</div>
+    </div>
+  </div>
+</section>
+
+<!-- SLIDE 07: Install -->
+<section class="slide" id="slide-6">
+  <div class="slide-num reveal">[07/08] &gt; 安装流程</div>
+  <div class="label reveal">&gt; 设置</div>
+  <h2 class="reveal">两行代码<br><span class="accent">零设置</span></h2>
+  <hr class="rule reveal">
+  <div class="label reveal" style="margin-top: clamp(1rem,2vh,1.5rem);">&gt; CLAUDE_CODE</div>
+  <div class="terminal-block reveal">
+    <span class="prompt">$</span> <span class="cmd">git clone https://github.com/kaisersong/slide-creator \</span><br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="cmd">~/.claude/skills/slide-creator</span><br>
+    <span class="comment"># 就这样。重启 Claude Code</span>
+  </div>
+  <div class="label reveal">&gt; OPENCLAW</div>
+  <div class="terminal-block reveal">
+    <span class="prompt">$</span> <span class="cmd">clawhub install html-slide-creator</span><br>
+    <span class="comment"># 一个命令。立即可用</span>
+  </div>
+</section>
+
+<!-- SLIDE 08: Get Started -->
+<section class="slide" id="slide-7">
+  <div class="slide-num reveal">[08/08] &gt; 就绪</div>
+  <div class="label reveal">&gt; 执行</div>
+  <h2 class="reveal" style="color:#c9d1d9;">运行它<span class="cursor">|</span></h2>
+  <hr class="rule reveal">
+  <div class="cta-block reveal">
+    <div class="cta-cmd">/slide-creator</div>
+    <div class="cta-sub">适用于 Claude Code 和 OpenClaw</div>
+  </div>
+  <p class="reveal" style="margin-top: clamp(1.5rem,3vh,2rem);">
+    <span style="color:#39d353;"># 19 个预设已加载。0 个依赖。∞ 张幻灯片</span><br>
+    <span style="color:#484f58;"># 你的演示。你的文件。无平台锁定</span>
+  </p>
+</section>
+
+<script>
+  const slides = Array.from(document.querySelectorAll('.slide'));
+  const dots = Array.from(document.querySelectorAll('.dot'));
+  const progress = document.getElementById('progress');
+  let cur = 0;
+  let editMode = false;
+
+  // IntersectionObserver
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('visible');
+        const idx = slides.indexOf(entry.target);
+        if (idx !== -1) updateNav(idx);
+      }
+    });
+  }, { threshold: 0.6 });
+  slides.forEach(s => observer.observe(s));
+
+  function updateNav(idx) {
+    cur = idx;
+    dots.forEach((d, i) => d.classList.toggle('active', i === idx));
+    progress.style.width = ((idx + 1) / slides.length * 100) + '%';
+  }
+
+  function goTo(idx) {
+    if (idx < 0 || idx >= slides.length) return;
+    slides[idx].scrollIntoView({ behavior: 'smooth' });
+  }
+
+  // Dot nav
+  dots.forEach(d => d.addEventListener('click', () => goTo(+d.dataset.idx)));
+
+  //

@@ -1,0 +1,480 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>科技创业融资 — 未来交互平台</title>
+  <link href="https://api.fontshare.com/v2/css?f[]=clash-display@700,800&f[]=satoshi@400,500&family=Noto+Sans+SC:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-snap-type: y mandatory; scroll-behavior: smooth; height: 100%; }
+    body { height: 100%; overflow-x: hidden; font-family: 'Satoshi', 'Noto Sans SC', sans-serif; background: #0a0f1c; color: #ffffff; }
+
+    /* GRID BACKGROUND */
+    body::before {
+      content: '';
+      position: fixed; inset: 0; z-index: 0; pointer-events: none;
+      background-image:
+        linear-gradient(rgba(0,255,204,0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0,255,204,0.03) 1px, transparent 1px);
+      background-size: 50px 50px;
+    }
+
+    /* SCANLINES */
+    body::after {
+      content: '';
+      position: fixed; inset: 0; z-index: 1; pointer-events: none;
+      background: repeating-linear-gradient(
+        0deg,
+        transparent,
+        transparent 2px,
+        rgba(0,255,204,0.01) 2px,
+        rgba(0,255,204,0.01) 4px
+      );
+    }
+
+    /* PARTICLES */
+    .particle {
+      position: fixed; border-radius: 50%; pointer-events: none; z-index: 0;
+      animation: particleDrift linear infinite;
+    }
+    @keyframes particleDrift {
+      0% { transform: translateY(100vh) scale(0); opacity: 0; }
+      10% { opacity: 1; }
+      90% { opacity: 0.6; }
+      100% { transform: translateY(-20vh) scale(1); opacity: 0; }
+    }
+
+    .slide {
+      width: 100vw; height: 100vh; height: 100dvh;
+      scroll-snap-align: start; overflow: hidden;
+      position: relative; display: flex; flex-direction: column;
+      background: #0a0f1c; z-index: 2;
+    }
+
+    /* NEON GLITCH TITLE */
+    @keyframes glitch-1 {
+      0%, 90%, 100% { clip-path: inset(0 0 100% 0); transform: translate(0); }
+      92% { clip-path: inset(20% 0 60% 0); transform: translate(-4px, 1px); }
+      94% { clip-path: inset(40% 0 40% 0); transform: translate(4px, -1px); }
+      96% { clip-path: inset(70% 0 10% 0); transform: translate(-2px, 0); }
+      98% { clip-path: inset(5% 0 80% 0); transform: translate(3px, 1px); }
+    }
+    @keyframes glitch-2 {
+      0%, 88%, 100% { clip-path: inset(0 0 100% 0); transform: translate(0); opacity: 0; }
+      90% { clip-path: inset(60% 0 20% 0); transform: translate(4px, -2px); opacity: 0.8; }
+      93% { clip-path: inset(10% 0 70% 0); transform: translate(-4px, 1px); opacity: 0.6; }
+      97% { clip-path: inset(80% 0 5% 0); transform: translate(2px, 0); opacity: 0.7; }
+    }
+    @keyframes neonPulse {
+      0%, 100% { text-shadow: 0 0 20px rgba(0,255,204,0.5), 0 0 40px rgba(0,255,204,0.2); }
+      50% { text-shadow: 0 0 30px rgba(0,255,204,0.8), 0 0 60px rgba(0,255,204,0.4), 0 0 80px rgba(0,255,204,0.1); }
+    }
+    @keyframes magentaPulse {
+      0%, 100% { text-shadow: 0 0 20px rgba(255,0,170,0.5), 0 0 40px rgba(255,0,170,0.2); }
+      50% { text-shadow: 0 0 30px rgba(255,0,170,0.8), 0 0 60px rgba(255,0,170,0.4); }
+    }
+    @keyframes borderPulse {
+      0%, 100% { box-shadow: 0 0 0 1px rgba(0,255,204,0.3), 0 0 20px rgba(0,255,204,0.1); }
+      50% { box-shadow: 0 0 0 1px rgba(0,255,204,0.6), 0 0 30px rgba(0,255,204,0.2); }
+    }
+
+    /* TYPOGRAPHY */
+    .cyber-label {
+      font-family: 'Satoshi', 'Noto Sans SC', sans-serif;
+      font-size: clamp(10px, 1.3vw, 12px); font-weight: 500;
+      letter-spacing: 0.2em; text-transform: uppercase;
+      color: #00ffcc; animation: neonPulse 3s ease-in-out infinite;
+      margin-bottom: 16px;
+    }
+    .cyber-title {
+      font-family: 'Clash Display', 'Noto Sans SC', sans-serif;
+      font-size: clamp(56px, 10vw, 110px);
+      font-weight: 800; line-height: 0.92;
+      color: #00ffcc; letter-spacing: -0.04em;
+      animation: neonPulse 3s ease-in-out infinite;
+      position: relative;
+    }
+    .cyber-title::before,
+    .cyber-title::after {
+      content: attr(data-text);
+      position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+      font-family: 'Clash Display', 'Noto Sans SC', sans-serif; font-size: inherit;
+      font-weight: inherit; line-height: inherit; letter-spacing: inherit;
+    }
+    .cyber-title::before { color: #ff00aa; animation: glitch-1 8s ease-in-out infinite; }
+    .cyber-title::after { color: #00aaff; animation: glitch-2 8s ease-in-out infinite; }
+
+    .cyber-heading {
+      font-family: 'Clash Display', 'Noto Sans SC', sans-serif;
+      font-size: clamp(30px, 5vw, 54px);
+      font-weight: 700; line-height: 1.05; letter-spacing: -0.03em;
+      color: #ffffff; margin-bottom: 16px;
+    }
+    .cyber-heading .accent { color: #00ffcc; animation: neonPulse 3s ease-in-out infinite; }
+    .cyber-heading .magenta { color: #ff00aa; animation: magentaPulse 3s ease-in-out infinite; }
+
+    .body-text {
+      font-family: 'Satoshi', 'Noto Sans SC', sans-serif;
+      font-size: clamp(14px, 1.8vw, 17px); font-weight: 400;
+      color: rgba(255,255,255,0.5); line-height: 1.7;
+      max-width: 520px;
+    }
+
+    /* LAYOUT */
+    .content-wrapper {
+      flex: 1; display: flex; flex-direction: column; justify-content: center;
+      padding: clamp(32px, 5vh, 64px) clamp(32px, 6vw, 96px);
+      max-width: 920px; margin: 0 auto; width: 100%;
+      position: relative; z-index: 3;
+    }
+
+    /* NEON CARD */
+    .cyber-card {
+      border: 1px solid rgba(0,255,204,0.2);
+      background: rgba(0,255,204,0.03);
+      padding: clamp(16px, 2.5vw, 24px);
+      animation: borderPulse 4s ease-in-out infinite;
+      margin-bottom: 12px;
+      position: relative;
+    }
+    .cyber-card::before {
+      content: ''; position: absolute; top: 0; left: 0;
+      width: 40px; height: 2px; background: #00ffcc;
+    }
+    .cyber-card::after {
+      content: ''; position: absolute; top: 0; left: 0;
+      width: 2px; height: 40px; background: #00ffcc;
+    }
+    .card-tag {
+      font-size: 10px; font-weight: 500; letter-spacing: 0.2em;
+      text-transform: uppercase; color: #00ffcc; margin-bottom: 6px; display: block;
+    }
+    .card-title {
+      font-family: 'Clash Display', 'Noto Sans SC', sans-serif;
+      font-size: clamp(15px, 2vw, 18px); font-weight: 700; color: #ffffff; margin-bottom: 4px;
+    }
+    .card-body { font-size: clamp(12px, 1.5vw, 14px); color: rgba(255,255,255,0.5); line-height: 1.5; }
+
+    /* CYBER GRID */
+    .cyber-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(110px, 1fr)); gap: 8px; margin-top: 16px; }
+    .cyber-grid-item {
+      border: 1px solid rgba(0,255,204,0.15); padding: 9px 11px;
+      font-size: clamp(10px, 1.2vw, 11px); font-weight: 500; color: rgba(255,255,255,0.5);
+      background: rgba(0,255,204,0.02); text-align: center;
+      transition: all 0.2s;
+    }
+    .cyber-grid-item:hover { border-color: rgba(0,255,204,0.5); color: #00ffcc; background: rgba(0,255,204,0.05); }
+    .cyber-grid-item.featured { border-color: #00ffcc; color: #00ffcc; background: rgba(0,255,204,0.08); animation: borderPulse 2s ease-in-out infinite; }
+    .cyber-grid-item.magenta-feat { border-color: #ff00aa; color: #ff00aa; background: rgba(255,0,170,0.05); }
+
+    /* STEPS */
+    .step-cyber {
+      display: flex; gap: 20px; align-items: flex-start; padding: 16px 0;
+      border-bottom: 1px solid rgba(0,255,204,0.08);
+      opacity: 0; transform: translateX(-24px);
+      transition: opacity 0.3s ease, transform 0.3s ease;
+    }
+    .slide.visible .step-cyber:nth-child(1) { opacity: 1; transform: translateX(0); transition-delay: 0.05s; }
+    .slide.visible .step-cyber:nth-child(2) { opacity: 1; transform: translateX(0); transition-delay: 0.12s; }
+    .slide.visible .step-cyber:nth-child(3) { opacity: 1; transform: translateX(0); transition-delay: 0.19s; }
+    .step-cy-num {
+      font-family: 'Clash Display', 'Noto Sans SC', sans-serif; font-size: 11px; font-weight: 700;
+      color: #00ffcc; letter-spacing: 0.1em; width: 32px; flex-shrink: 0; padding-top: 3px;
+      animation: neonPulse 3s ease-in-out infinite;
+    }
+    .step-cy-title {
+      font-family: 'Clash Display', 'Noto Sans SC', sans-serif;
+      font-size: clamp(16px, 2.2vw, 20px); font-weight: 700; color: #ffffff; margin-bottom: 4px;
+    }
+    .step-cy-body { font-size: clamp(12px, 1.5vw, 14px); color: rgba(255,255,255,0.5); line-height: 1.5; }
+
+    /* ENTRANCE ANIMATION */
+    .cyber-entrance {
+      opacity: 0; transform: translateY(20px);
+      transition: opacity 0.3s ease, transform 0.3s ease;
+    }
+    .slide.visible .cyber-entrance { opacity: 1; transform: translateY(0); }
+    .slide.visible .cyber-entrance.d1 { transition-delay: 0.05s; }
+    .slide.visible .cyber-entrance.d2 { transition-delay: 0.12s; }
+    .slide.visible .cyber-entrance.d3 { transition-delay: 0.2s; }
+    .slide.visible .cyber-entrance.d4 { transition-delay: 0.28s; }
+
+    /* STAT BLOCKS */
+    .stat-row { display: flex; gap: 24px; flex-wrap: wrap; margin-top: 8px; }
+    .stat-block {
+      border: 1px solid rgba(0,255,204,0.2); padding: 16px 20px; flex: 1; min-width: 100px;
+      animation: borderPulse 4s ease-in-out infinite;
+    }
+    .stat-num {
+      font-family: 'Clash Display', 'Noto Sans SC', sans-serif; font-size: clamp(28px, 4vw, 42px);
+      font-weight: 800; color: #00ffcc; line-height: 1;
+      animation: neonPulse 3s ease-in-out infinite;
+    }
+    .stat-label { font-size: 10px; font-weight: 500; letter-spacing: 0.15em; text-transform: uppercase; color: rgba(255,255,255,0.4); margin-top: 4px; }
+
+    /* FEATURES */
+    .feature-cyber {
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 14px 0; border-bottom: 1px solid rgba(0,255,204,0.08);
+      opacity: 0; transform: translateX(-16px);
+      transition: opacity 0.3s ease, transform 0.3s ease;
+    }
+    .slide.visible .feature-cyber:nth-child(1) { opacity: 1; transform: translateX(0); transition-delay: 0.06s; }
+    .slide.visible .feature-cyber:nth-child(2) { opacity: 1; transform: translateX(0); transition-delay: 0.12s; }
+    .slide.visible .feature-cyber:nth-child(3) { opacity: 1; transform: translateX(0); transition-delay: 0.18s; }
+    .slide.visible .feature-cyber:nth-child(4) { opacity: 1; transform: translateX(0); transition-delay: 0.24s; }
+    .feat-name {
+      font-family: 'Clash Display', 'Noto Sans SC', sans-serif;
+      font-size: clamp(15px, 2vw, 18px); font-weight: 700; color: #ffffff;
+      display: flex; align-items: center; gap: 10px;
+    }
+    .feat-name::before { content: '\2192'; color: #00ffcc; animation: neonPulse 3s ease-in-out infinite; }
+    .feat-tag {
+      font-size: 10px; font-weight: 500; letter-spacing: 0.15em; text-transform: uppercase;
+      color: #00ffcc; border: 1px solid rgba(0,255,204,0.3); padding: 3px 10px;
+    }
+    .feat-tag.mg { color: #ff00aa; border-color: rgba(255,0,170,0.3); }
+
+    /* CODE */
+    .code-block {
+      background: rgba(0,255,204,0.05); border: 1px solid rgba(0,255,204,0.2);
+      padding: 14px 20px; font-family: 'Courier New', monospace;
+      font-size: clamp(11px, 1.4vw, 13px); color: #00ffcc;
+      line-height: 1.6; margin: 8px 0; word-break: break-all;
+      position: relative;
+    }
+    .code-block::before {
+      content: ''; position: absolute; top: 0; left: 0;
+      width: 3px; height: 100%; background: #00ffcc;
+      animation: neonPulse 2s ease-in-out infinite;
+    }
+
+    /* INSTALL BLOCKS */
+    .install-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 16px; }
+    .install-block {
+      border: 1px solid rgba(0,255,204,0.15); padding: 20px;
+      background: rgba(0,255,204,0.02);
+    }
+    .install-label { font-size: 10px; letter-spacing: 0.2em; text-transform: uppercase; color: rgba(255,255,255,0.4); margin-bottom: 12px; }
+
+    /* CTA */
+    .cta-cyber {
+      display: inline-flex; align-items: center; gap: 10px;
+      padding: 14px 30px; border: 1px solid #00ffcc;
+      background: transparent; color: #00ffcc;
+      font-family: 'Clash Display', 'Noto Sans SC', sans-serif; font-size: clamp(13px, 1.7vw, 16px); font-weight: 700;
+      letter-spacing: 0.06em; text-decoration: none; cursor: pointer;
+      animation: borderPulse 3s ease-in-out infinite;
+      transition: background 0.2s;
+      margin-top: 20px; margin-right: 12px;
+    }
+    .cta-cyber:hover { background: rgba(0,255,204,0.1); }
+    .cta-cyber.mg { border-color: #ff00aa; color: #ff00aa; animation: none; }
+    .cta-cyber.mg:hover { background: rgba(255,0,170,0.1); }
+
+    /* DIVIDER LINE */
+    .cyber-rule { width: 100%; height: 1px; background: rgba(0,255,204,0.15); margin: 16px 0; }
+
+    /* SLIDE NUMBER */
+    .slide-num {
+      position: absolute; top: 24px; right: 24px; z-index: 10;
+      font-size: 11px; font-weight: 500; letter-spacing: 0.15em;
+      color: rgba(0,255,204,0.5); font-family: 'Satoshi', 'Noto Sans SC', sans-serif;
+    }
+
+    /* PROGRESS */
+    #progress-bar {
+      position: fixed; top: 0; left: 0; width: 0%; height: 2px;
+      background: linear-gradient(to right, #00ffcc, #ff00aa);
+      z-index: 100; transition: width 0.3s ease;
+      box-shadow: 0 0 8px rgba(0,255,204,0.6);
+    }
+
+    /* NAV DOTS */
+    #nav-dots {
+      position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%);
+      display: flex; gap: 8px; z-index: 100;
+    }
+    .nav-dot {
+      width: 6px; height: 6px; border-radius: 50%; cursor: pointer; border: none;
+      background: rgba(0,255,204,0.2); transition: all 0.3s ease;
+    }
+    .nav-dot.active {
+      background: #00ffcc;
+      box-shadow: 0 0 8px rgba(0,255,204,0.8);
+    }
+
+    /* EDIT */
+    #edit-zone { position: fixed; top: 0; left: 0; width: 80px; height: 80px; z-index: 200; cursor: pointer; }
+    #edit-indicator {
+      position: fixed; top: 12px; left: 12px; z-index: 201;
+      background: rgba(0,255,204,0.1); border: 1px solid rgba(0,255,204,0.3);
+      color: #00ffcc; padding: 4px 12px;
+      font-size: 10px; font-weight: 500; letter-spacing: 0.15em; text-transform: uppercase;
+      display: none; align-items: center; gap: 6px;
+    }
+    body.edit-mode [contenteditable] { outline: 1px solid rgba(0,255,204,0.3); }
+    body.edit-mode #edit-indicator { display: flex; }
+
+    /* CORNER BRACKET DECORATION */
+    .corner-br {
+      position: absolute; bottom: 20px; right: 20px; z-index: 2;
+      width: 40px; height: 40px;
+      border-right: 1px solid rgba(0,255,204,0.15);
+      border-bottom: 1px solid rgba(0,255,204,0.15);
+    }
+    .corner-tl {
+      position: absolute; top: 20px; left: 20px; z-index: 2;
+      width: 40px; height: 40px;
+      border-left: 1px solid rgba(0,255,204,0.15);
+      border-top: 1px solid rgba(0,255,204,0.15);
+    }
+
+    @media (max-width: 600px) {
+      .install-row { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+<div id="progress-bar"></div>
+<div id="edit-zone" title="Click or press E to edit"></div>
+<div id="edit-indicator">&#9656; 编辑模式 &middot; CTRL+S 保存</div>
+<div id="nav-dots"></div>
+
+<!-- SLIDE 1: COVER -->
+<section class="slide" data-slide="0">
+  <div class="corner-tl"></div>
+  <div class="corner-br"></div>
+  <span class="slide-num">01 / 08</span>
+  <div class="content-wrapper">
+    <div class="cyber-label cyber-entrance d1">// 初创融资</div>
+    <h1 class="cyber-title cyber-entrance d2" data-text="融资导航">融资导航</h1>
+    <div class="cyber-rule cyber-entrance d3"></div>
+    <p class="body-text cyber-entrance d3">
+      科技创业的新时代已经到来。从融资策略到投资者关系，<br>
+      用数据和洞察驱动你的融资决策。
+    </p>
+    <div class="stat-row cyber-entrance d4">
+      <div class="stat-block">
+        <div class="stat-num">1200+</div>
+        <div class="stat-label">投资者</div>
+      </div>
+      <div class="stat-block">
+        <div class="stat-num">450M</div>
+        <div class="stat-label">融资规模</div>
+      </div>
+      <div class="stat-block">
+        <div class="stat-num">89%</div>
+        <div class="stat-label">成功率</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SLIDE 2: THE PROBLEM -->
+<section class="slide" data-slide="1">
+  <div class="corner-tl"></div>
+  <div class="corner-br"></div>
+  <span class="slide-num">02 / 08</span>
+  <div class="content-wrapper">
+    <div class="cyber-label cyber-entrance d1">// 融资困境</div>
+    <h2 class="cyber-heading cyber-entrance d2">初创企业面临的<br><span class="accent">融资难题</span></h2>
+    <div class="cyber-rule cyber-entrance d3"></div>
+    <div class="cyber-entrance d3">
+      <div class="cyber-card" style="animation-delay:0s;">
+        <span class="card-tag">&rarr; 问题一</span>
+        <div class="card-title">融资渠道单一</div>
+        <div class="card-body">信息不对称，难以找到匹配的投资方。传统融资流程复杂且效率低下。</div>
+      </div>
+      <div class="cyber-card" style="animation-delay:1.3s;">
+        <span class="card-tag">&rarr; 问题二</span>
+        <div class="card-title">评估体系不透明</div>
+        <div class="card-body">融资条款复杂，创始人难以理解真实估值。投资者尽职调查流程冗长。</div>
+      </div>
+      <div class="cyber-card" style="animation-delay:2.6s;">
+        <span class="card-tag">&rarr; 问题三</span>
+        <div class="card-title">后续支持缺失</div>
+        <div class="card-body">融资后缺乏专业的财务管理和投资者关系维护指导。企业成长受限。</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SLIDE 3: SHOW DON'T TELL -->
+<section class="slide" data-slide="2">
+  <div class="corner-tl"></div>
+  <div class="corner-br"></div>
+  <span class="slide-num">03 / 08</span>
+  <div class="content-wrapper">
+    <div class="cyber-label cyber-entrance d1">// 解决方案</div>
+    <h2 class="cyber-heading cyber-entrance d2">智能融资<br><span class="magenta">匹配平台</span></h2>
+    <p class="body-text cyber-entrance d3">
+      通过AI和大数据分析，精准连接融资需求方和投资方。
+      实时可视化融资进度，让整个过程透明化、数据化。
+    </p>
+    <div class="cyber-rule cyber-entrance d3"></div>
+    <div>
+      <div class="step-cyber">
+        <div class="step-cy-num">01//</div>
+        <div>
+          <div class="step-cy-title">填写融资需求</div>
+          <div class="step-cy-body">输入企业信息、融资阶段和目标金额。系统自动评估融资能力指数。</div>
+        </div>
+      </div>
+      <div class="step-cyber">
+        <div class="step-cy-num">02//</div>
+        <div>
+          <div class="step-cy-title">生成匹配方案</div>
+          <div class="step-cy-body">AI分析投资者画像，推荐三份最佳匹配方案。展示成功率和预期估值。</div>
+        </div>
+      </div>
+      <div class="step-cyber">
+        <div class="step-cy-num">03//</div>
+        <div>
+          <div class="step-cy-title">启动融资流程</div>
+          <div class="step-cy-body">一键发起接触，平台协助尽职调查和条款协商。全程透明追踪。</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SLIDE 4: 19 PRESETS -->
+<section class="slide" data-slide="3">
+  <div class="corner-tl"></div>
+  <div class="corner-br"></div>
+  <span class="slide-num">04 / 08</span>
+  <div class="content-wrapper">
+    <div class="cyber-label cyber-entrance d1">// 核心功能</div>
+    <h2 class="cyber-heading cyber-entrance d2">19项精选功能<br><span class="accent">全方位融资支持</span></h2>
+    <p class="body-text cyber-entrance d3">每个功能都经过精心设计，针对融资过程中的具体痛点。从融资规划到投后管理。</p>
+    <div class="cyber-grid cyber-entrance d4">
+      <div class="cyber-grid-item">投资者库查询</div>
+      <div class="cyber-grid-item">融资额预估</div>
+      <div class="cyber-grid-item">融资路线规划</div>
+      <div class="cyber-grid-item">竞品分析</div>
+      <div class="cyber-grid-item">BP优化建议</div>
+      <div class="cyber-grid-item">融资文档生成</div>
+      <div class="cyber-grid-item">法律条款库</div>
+      <div class="cyber-grid-item">融资时间表</div>
+      <div class="cyber-grid-item">财务模型建立</div>
+      <div class="cyber-grid-item featured">智能匹配 &#10022;</div>
+      <div class="cyber-grid-item">尽职调查清单</div>
+      <div class="cyber-grid-item">投资者关系管理</div>
+      <div class="cyber-grid-item">条款协商助手</div>
+      <div class="cyber-grid-item">融资数据分析</div>
+      <div class="cyber-grid-item">里程碑追踪</div>
+      <div class="cyber-grid-item">投后管理工具</div>
+      <div class="cyber-grid-item magenta-feat">融资社区</div>
+      <div class="cyber-grid-item">融资经验分享</div>
+      <div class="cyber-grid-item">融资新闻速递</div>
+    </div>
+  </div>
+</section>
+
+<!-- SLIDE 5: HOW IT WORKS -->
+<section class="slide" data-slide="4">
+  <div class="corner-tl"></div>
+  <div class="corner-br"></div>

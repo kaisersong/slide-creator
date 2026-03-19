@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>个人品牌故事 — 创作者的十年感悟</title>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,700;0,9..144,900;1,9..144,700&family=Work+Sans:wght@400;500;600&family=Noto+Sans+SC:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-snap-type: y mandatory; scroll-behavior: smooth; height: 100%; }
+    body { height: 100%; overflow-x: hidden; font-family: 'Work Sans', 'Noto Sans SC', sans-serif; background: #f5f3ee; color: #1a1a1a; }
+
+    .slide {
+      width: 100vw; height: 100vh; height: 100dvh;
+      scroll-snap-align: start; overflow: hidden;
+      position: relative; display: flex; flex-direction: column;
+      background: #f5f3ee;
+    }
+
+    /* DECORATIVE CIRCLE — CSS only, no SVG */
+    .deco-circle {
+      position: absolute;
+      border-radius: 50%;
+      border: 1.5px solid rgba(26,26,26,0.12);
+      pointer-events: none;
+    }
+
+    /* HORIZONTAL RULE LINE */
+    .rule { width: 100%; height: 1px; background: #1a1a1a; margin: 20px 0; opacity: 0.15; }
+    .rule-thick { width: 48px; height: 3px; background: #8b2635; margin: 12px 0 20px; }
+
+    /* SECTION INDICATOR */
+    .section-id {
+      font-family: 'Fraunces', serif;
+      font-size: clamp(11px, 1.4vw, 13px);
+      font-weight: 700; letter-spacing: 0.12em;
+      color: #8b2635; text-transform: uppercase;
+      margin-bottom: 8px;
+    }
+
+    /* TYPOGRAPHY */
+    .display-title {
+      font-family: 'Fraunces', serif;
+      font-size: clamp(64px, 11vw, 120px);
+      font-weight: 900; line-height: 0.9;
+      color: #1a1a1a; letter-spacing: -0.04em;
+      margin-bottom: 0;
+    }
+    .display-title em { font-style: italic; color: #8b2635; }
+
+    .headline {
+      font-family: 'Fraunces', serif;
+      font-size: clamp(34px, 5.5vw, 62px);
+      font-weight: 700; line-height: 1.08;
+      color: #1a1a1a; letter-spacing: -0.03em;
+      margin-bottom: 16px;
+    }
+    .pullquote {
+      font-family: 'Fraunces', serif;
+      font-size: clamp(20px, 3vw, 30px);
+      font-weight: 700; font-style: italic;
+      color: #1a1a1a; line-height: 1.3;
+      border-left: 3px solid #8b2635;
+      padding-left: 20px; margin: 20px 0;
+    }
+    .body-text {
+      font-family: 'Work Sans', 'Noto Sans SC', sans-serif;
+      font-size: clamp(14px, 1.8vw, 17px);
+      font-weight: 400; color: #555555; line-height: 1.75;
+      max-width: 560px;
+    }
+    .sub-label {
+      font-size: clamp(10px, 1.3vw, 12px); font-weight: 600;
+      letter-spacing: 0.14em; text-transform: uppercase; color: #888;
+      margin-bottom: 4px;
+    }
+
+    /* LAYOUT HELPERS */
+    .content-wrapper {
+      flex: 1; display: flex; flex-direction: column;
+      padding: clamp(40px, 6vh, 80px) clamp(32px, 6vw, 100px);
+      max-width: 900px; margin: 0 auto; width: 100%;
+      position: relative; z-index: 2;
+    }
+    .content-wrapper.center { justify-content: center; }
+    .content-wrapper.space-between { justify-content: space-between; }
+
+    /* BORDERED BOX */
+    .bordered-box {
+      border: 2px solid #1a1a1a; padding: clamp(16px, 2.5vw, 28px);
+      margin: 16px 0; position: relative;
+    }
+    .bordered-box::before {
+      content: attr(data-label);
+      position: absolute; top: -12px; left: 16px;
+      background: #f5f3ee; padding: 0 8px;
+      font-size: 11px; font-weight: 700; letter-spacing: 0.1em;
+      text-transform: uppercase; color: #8b2635;
+    }
+
+    /* PAIN POINT ROWS */
+    .pain-row {
+      display: flex; align-items: flex-start; gap: 20px;
+      padding: 16px 0; border-bottom: 1px solid rgba(26,26,26,0.1);
+      opacity: 0; transform: translateX(-24px);
+      transition: opacity 0.6s ease, transform 0.6s ease;
+    }
+    .slide.visible .pain-row:nth-child(1) { opacity: 1; transform: translateX(0); transition-delay: 0.1s; }
+    .slide.visible .pain-row:nth-child(2) { opacity: 1; transform: translateX(0); transition-delay: 0.22s; }
+    .slide.visible .pain-row:nth-child(3) { opacity: 1; transform: translateX(0); transition-delay: 0.34s; }
+    .pain-num {
+      font-family: 'Fraunces', serif; font-size: clamp(28px, 4vw, 42px);
+      font-weight: 900; color: rgba(26,26,26,0.1); line-height: 1; flex-shrink: 0; width: 48px;
+    }
+    .pain-title { font-family: 'Fraunces', serif; font-size: clamp(16px, 2.2vw, 20px); font-weight: 700; color: #1a1a1a; margin-bottom: 4px; }
+    .pain-body { font-size: clamp(13px, 1.6vw, 15px); color: #666; line-height: 1.5; }
+
+    /* STEPS — EDITORIAL STYLE */
+    .step-editorial {
+      display: flex; gap: 24px; align-items: flex-start;
+      padding: 20px 0; border-bottom: 1px solid rgba(26,26,26,0.1);
+      opacity: 0; transform: translateY(16px);
+      transition: opacity 0.6s ease, transform 0.6s ease;
+    }
+    .slide.visible .step-editorial:nth-child(1) { opacity: 1; transform: translateY(0); transition-delay: 0.1s; }
+    .slide.visible .step-editorial:nth-child(2) { opacity: 1; transform: translateY(0); transition-delay: 0.22s; }
+    .slide.visible .step-editorial:nth-child(3) { opacity: 1; transform: translateY(0); transition-delay: 0.34s; }
+    .step-ed-num {
+      font-family: 'Fraunces', serif; font-size: 13px; font-weight: 700;
+      color: #8b2635; width: 28px; flex-shrink: 0; padding-top: 2px;
+    }
+    .step-ed-title { font-family: 'Fraunces', serif; font-size: clamp(17px, 2.4vw, 21px); font-weight: 700; color: #1a1a1a; margin-bottom: 4px; }
+    .step-ed-body { font-size: clamp(13px, 1.6vw, 15px); color: #666; line-height: 1.5; }
+
+    /* PRESET GRID */
+    .preset-grid { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 16px; }
+    .preset-tag {
+      font-size: clamp(11px, 1.4vw, 13px); font-weight: 600;
+      padding: 5px 12px; border: 1.5px solid rgba(26,26,26,0.25);
+      color: #1a1a1a; background: transparent;
+    }
+    .preset-tag.featured { border-color: #8b2635; color: #8b2635; background: rgba(139,38,53,0.05); }
+    .preset-tag.dark { background: #1a1a1a; color: #f5f3ee; border-color: #1a1a1a; }
+
+    /* FEATURE ROWS */
+    .feature-row {
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 14px 0; border-bottom: 1px solid rgba(26,26,26,0.1);
+      opacity: 0; transform: translateX(-16px);
+      transition: opacity 0.6s ease, transform 0.6s ease;
+    }
+    .slide.visible .feature-row:nth-child(1) { opacity: 1; transform: translateX(0); transition-delay: 0.08s; }
+    .slide.visible .feature-row:nth-child(2) { opacity: 1; transform: translateX(0); transition-delay: 0.16s; }
+    .slide.visible .feature-row:nth-child(3) { opacity: 1; transform: translateX(0); transition-delay: 0.24s; }
+    .slide.visible .feature-row:nth-child(4) { opacity: 1; transform: translateX(0); transition-delay: 0.32s; }
+    .feature-name { font-family: 'Fraunces', serif; font-size: clamp(16px, 2.2vw, 20px); font-weight: 700; }
+    .feature-desc { font-size: clamp(12px, 1.5vw, 14px); color: #666; max-width: 300px; text-align: right; }
+    .feature-badge { font-size: 11px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; background: #e8d4c0; color: #5a2a1a; padding: 3px 10px; }
+
+    /* HEADLINE ANIMATION */
+    .slide-content-anim {
+      opacity: 0; transform: translateX(-30px);
+      transition: opacity 0.6s ease, transform 0.6s ease;
+    }
+    .slide.visible .slide-content-anim { opacity: 1; transform: translateX(0); }
+    .slide-content-anim.delay-1 { transition-delay: 0.1s; }
+    .slide-content-anim.delay-2 { transition-delay: 0.2s; }
+    .slide-content-anim.delay-3 { transition-delay: 0.3s; }
+
+    .fade-in { opacity: 0; transition: opacity 0.6s ease; }
+    .slide.visible .fade-in { opacity: 1; }
+    .fade-in.delay-1 { transition-delay: 0.15s; }
+    .fade-in.delay-2 { transition-delay: 0.3s; }
+    .fade-in.delay-3 { transition-delay: 0.45s; }
+
+    /* CODE */
+    .code-mono {
+      font-family: 'Courier New', monospace;
+      font-size: clamp(11px, 1.4vw, 13px); color: #1a1a1a;
+      background: #e8d4c0; padding: 12px 18px; display: block;
+      margin: 8px 0; line-height: 1.5; word-break: break-all;
+    }
+
+    /* STATS ROW */
+    .stats-row { display: flex; gap: 40px; margin-top: 8px; }
+    .stat-item { display: flex; flex-direction: column; }
+    .stat-big { font-family: 'Fraunces', serif; font-size: clamp(36px, 5vw, 54px); font-weight: 900; color: #1a1a1a; line-height: 1; }
+    .stat-small { font-size: 11px; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; color: #888; margin-top: 4px; }
+
+    /* CTA */
+    .cta-editorial {
+      display: inline-block; border: 2px solid #1a1a1a;
+      padding: 14px 32px; font-family: 'Work Sans', 'Noto Sans SC', sans-serif;
+      font-size: clamp(14px, 1.8vw, 16px); font-weight: 600;
+      color: #1a1a1a; text-decoration: none; cursor: pointer;
+      background: transparent; margin-top: 24px;
+      transition: background 0.2s, color 0.2s;
+    }
+    .cta-editorial:hover { background: #1a1a1a; color: #f5f3ee; }
+    .cta-accent { background: #8b2635; border-color: #8b2635; color: #fff; margin-left: 12px; }
+    .cta-accent:hover { background: #6a1c28; }
+
+    /* PROGRESS */
+    #progress-bar {
+      position: fixed; top: 0; left: 0; width: 0%; height: 2px;
+      background: #8b2635; z-index: 100; transition: width 0.4s ease;
+    }
+
+    /* NAV DOTS */
+    #nav-dots {
+      position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%);
+      display: flex; gap: 12px; z-index: 100;
+    }
+    .nav-dot {
+      width: 6px; height: 6px; border-radius: 50%;
+      cursor: pointer; border: none; background: rgba(26,26,26,0.2);
+      transition: all 0.3s ease;
+    }
+    .nav-dot.active { background: #8b2635; transform: scale(1.4); }
+
+    /* EDIT */
+    #edit-zone { position: fixed; top: 0; left: 0; width: 80px; height: 80px; z-index: 200; cursor: pointer; }
+    #edit-indicator {
+      position: fixed; top: 16px; left: 16px; z-index: 201;
+      background: #8b2635; color: #fff; padding: 4px 12px;
+      font-size: 11px; font-weight: 600; letter-spacing: 0.08em;
+      display: none; align-items: center; gap: 6px;
+    }
+    body.edit-mode [contenteditable] { outline: 1px dashed rgba(139,38,53,0.4); }
+    body.edit-mode #edit-indicator { display: flex; }
+
+    /* FOOTER STRIP */
+    .slide-footer {
+      padding: 12px clamp(32px, 6vw, 100px);
+      display: flex; justify-content: space-between; align-items: center;
+      border-top: 1px solid rgba(26,26,26,0.1);
+      position: relative; z-index: 2;
+    }
+    .footer-brand { font-family: 'Fraunces', serif; font-size: 14px; font-weight: 700; color: #1a1a1a; }
+    .footer-num { font-size: 11px; color: #888; letter-spacing: 0.08em; }
+  </style>
+</head>
+<body>
+
+<div id="progress-bar"></div>
+<div id="edit-zone" title="Click or press E to edit"></div>
+<div id="edit-indicator">&#9998; 编辑模式 &middot; Ctrl+S 保存</div>
+<div id="nav-dots"></div>
+
+<!-- SLIDE 1: COVER -->
+<section class="slide" data-slide="0">
+  <div class="deco-circle" style="width:600px;height:600px;top:-200px;right:-200px;"></div>
+  <div class="deco-circle" style="width:200px;height:200px;bottom:80px;left:60px;"></div>
+  <div class="content-wrapper space-between">
+    <div style="padding-top: clamp(20px,4vh,60px);">
+      <div class="section-id slide-content-anim">创作者的故事</div>
+      <div class="rule-thick slide-content-anim delay-1"></div>
+      <h1 class="display-title slide-content-anim delay-1">十年<br><em>感悟</em></h1>
+      <div class="rule slide-content-anim delay-2"></div>
+      <p class="body-text fade-in delay-2" style="margin-top:16px; max-width:460px;">
+        从零开始到个人品牌，我在这十年里学到了什么。一个创作者的诚实故事，分享成长的每一个转折点。
+      </p>
+      <div class="stats-row fade-in delay-3">
+        <div class="stat-item">
+          <span class="stat-big">10</span>
+          <span class="stat-small">年的坚持</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-big">100</span>
+          <span class="stat-small">万粉丝</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-big">1</span>
+          <span class="stat-small">个梦想</span>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="slide-footer">
+    <span class="footer-brand">个人品牌故事</span>
+    <span class="footer-num">&sect;01 / 08</span>
+  </div>
+</section>
+
+<!-- SLIDE 2: THE PROBLEM -->
+<section class="slide" data-slide="1">
+  <div class="deco-circle" style="width:400px;height:400px;top:50%;right:-120px;transform:translateY(-50%);"></div>
+  <div class="content-wrapper space-between">
+    <div>
+      <div class="section-id slide-content-anim">起点</div>
+      <div class="rule-thick slide-content-anim delay-1"></div>
+      <h2 class="headline slide-content-anim delay-1" style="max-width:500px;">我也曾迷茫和自我怀疑</h2>
+      <div class="rule fade-in delay-2" style="opacity:0.15;"></div>
+      <div class="fade-in delay-2" style="margin-top:8px;">
+        <div class="pain-row">
+          <div class="pain-num">01</div>
+          <div>
+            <div class="pain-title">没有清晰的方向</div>
+            <div class="pain-body">做了很多尝试，却不知道自己真正想要什么。每一次改变都带来迷茫。</div>
+          </div>
+        </div>
+        <div class="pain-row">
+          <div class="pain-num">02</div>
+          <div>
+            <div class="pain-title">输出质量不稳定</div>
+            <div class="pain-body">有时灵感满满，有时完全干枯。找不到持续输出的节奏和方法。</div>
+          </div>
+        </div>
+        <div class="pain-row">
+          <div class="pain-num">03</div>
+          <div>
+            <div class="pain-title">缺乏专业积累</div>
+            <div class="pain-body">知识杂乱无章，没有深度。很难在众多声音中找到属于自己的位置。</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="slide-footer">
+    <span class="footer-brand">个人品牌故事</span>
+    <span class="footer-num">&sect;02 / 08</span>
+  </div>
+</section>
+
+<!-- SLIDE 3: SHOW DON'T TELL -->
+<section class="slide" data-slide="2">
+  <div class="deco-circle" style="width:300px;height:300px;bottom:-80px;left:-80px;"></div>
+  <div class="content-wrapper space-between">
+    <div>
+      <div class="section-id slide-content-anim">转折</div>
+      <div class="rule-thick slide-content-anim delay-1"></div>
+      <h2 class="headline slide-content-anim delay-1">一切从定位开始改变</h2>
+      <div class="pullquote fade-in delay-2">
+        "专注就是放弃。而放弃正是成功的开始。"
+      </div>
+      <p class="body-text fade-in delay-2">
+        我终于意识到，与其做十个平庸的事，不如把一件事做到极致。这一刻，我的世界重新整理了。
+      </p>
+      <div style="margin-top:24px;">
+        <div class="step-editorial">
+          <div class="step-ed-num">I.</div>
+          <div>
+            <div class="step-ed-title">找到自己的独特视角</div>
+            <div class="step-ed-body">问自己：什么是只有我能说的话？什么话题能让我写得最深入？</div>
+          </div>
+        </div>
+        <div class="step-editorial">
+          <div class="step-ed-num">II.</div>
+          <div>
+            <div class="step-ed-title">建立输出的体系</div>
+            <div class="step-ed-body">不靠灵感，靠制度。每周的固定时间，固定形式，让写作成为习惯。</div>
+          </div>
+        </div>
+        <div class="step-editorial">
+          <div class="step-ed-num">III.</div>
+          <div>
+            <div class="step-ed-title">坚持打磨三年</div>
+            <div class="step-ed-body">前两年几乎没有反馈，但我没有停。因为我知道这是正确的方向。</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="slide-footer">
+    <span class="footer-brand">个人品牌故事</span>
+    <span class="footer-num">&sect;03 / 08</span>
+  </div>
+</section>
+
+<!-- SLIDE 4: 19 PRESETS -->
+<section class="slide" data-slide="3">
+  <div class="deco-circle" style="width:500px;height:500px;top:-150px;left:-150px;"></div>
+  <div class="content-wrapper space-between">
+    <div>
+      <div class="section-id slide-content-anim">积累</div>
+      <div class="rule-thick slide-content-anim delay-1"></div>
+      <h2 class="headline slide-content-anim delay-1" style="max-width:480px;">我学会了用内容说话</h2>
+      <p class="body-text fade-in delay-2">每一篇文章都是打磨。每一个案例都是深思。慢慢地，品质成为了我的标签。</p>
+      <div class="preset-grid fade-in delay-2">
+        <span class="preset-tag">深度思考</span>
+        <span class="preset-tag">行业洞察</span>
+        <span class="preset-tag">实战经验</span>
+        <span class="preset-tag">趋势分析</span>
+        <span class="preset-tag">原创研究</span>
+        <span class="preset-tag">案例拆解</span>
+        <span class="preset-tag">方法论</span>
+        <span class="preset-tag">工具推荐</span>
+        <span class="preset-tag featured">个人故事 &#10022;</span>
+        <span class="preset-tag dark">数据解读</span>
+        <span class="preset-tag dark">市场观察</span>
+        <span class="preset-tag">行动指南</span>
+        <span class="preset-tag">失败复盘</span>
+        <span class="preset-tag">创意灵感</span>
+        <span class="preset-tag dark">竞品分析</span>
+        <span class="preset-tag">社群见闻</span>
+        <span class="preset-tag">书籍推荐</span>
+        <span class="preset-tag">对话采访</span>
+        <span class="preset-tag dark">年度总结</span>
+      </div>
+    </div>
+  </div>
+  <div class="slide-footer">
+    <span class="footer-brand">个人品牌故事</span>
+    <span class="footer-num">&sect;04 / 08</span>
+  </div>
+</section>
+
+<!-- SLIDE 5: HOW IT WORKS -->
+<section class="slide" data-slide="4">
+  <div class="deco-circle" style="width:360px;height:360px;bottom:-80px;right:-80px;"></div>
+  <div class="content-wrapper space-between">
+    <div>
+      <div class="section-id slide-content-anim">方法</div>
+      <div class="rule-thick slide-content-anim delay-1"></div>
+      <h2 class="headline slide-content-anim delay-1">我的个人品牌三步法则</h2>
+      <div style="margin-top:20px;">
+        <div class="step-editorial">
+          <div class="step-ed-num">I.</div>
+          <div>
+            <div class="step-ed-title">产品思维</div>
+            <div class="step-ed-body">把自己当作产品。不断优化，不断迭代，持续提升用户体验。</div>
+          </div>
+        </div>
+        <div class="step-editorial">
+          <div class="step-ed-num">II.</div>
+          <div>
+            <div class="step-ed-title">社群运营</div>
+            <div class="step-ed-body">与用户建立真实的连接。倾听反馈，创造归属感，而不仅仅是获得粉丝。</div>
+          </div>
+        </div>
+        <div class="step-editorial">
+          <div class="step-ed-num">III.</div>
+          <div>
+            <div class="step-ed-title">商业变现</div>
+            <div class="step-ed-body">品牌有了影响力，才能有更多可能。变现是为了可持续，而不是目的本身。</div>
+          </div>
+        </div>
+      </div>
+      <div class="bordered-box fade-in delay-3" data-label="核心信念">
+        <p class="body-text" style="max-width:100%; color:#1a1a1a;">
+          个人品牌的本质不是虚荣，而是信任。当人们愿意相信你，你的影响力才真正有价值。
+        </p>
+      </div>
+    </div>
+  </div>
+  <div class="slide-footer">
+    <span class="footer-brand">个人品牌故事</span>
+    <span class="footer-num">&sect;05 / 08</span>
+  </div>
+</section>
+
+<!-- SLIDE 6: FEATURES -->
+<section class="slide" data-slide="5">
+  <div class="deco-circle" style="width:280px;height:280px;top:60px;right:60px;"></div>
+  <div class="content-wrapper space-between">
+    <div>
+      <div class="section-id slide-content-anim">成长</div>
+      <div class="rule-thick slide-content-anim delay-1"></div>
+      <h2 class="headline slide-content-anim delay-1">十年里我得到的<br>真正的财富</h2>
+      <div class="rule fade-in delay-2" style="opacity:0.15; margin-top:20px;"></div>
+      <div class="fade-in delay-2">
+        <div class="feature-row">
+          <div class="feature-name">专业能力</div>
+          <div class="feature-desc">不是纸上谈兵，而是在实战中积累的深度专业知识。</div>
+        </div>
+        <div class="feature-row">
+          <div class="feature-name">信任资产</div>
+          <div style="text-align:right;">
+            <div class="feature-badge">价值连城</div>
+          </div>
+        </div>
+        <div class="feature-row">
+          <div class="feature-name">平台能力</div>
+          <div class="feature-desc">不依赖单一平台，在多渠道都有话语权。</div>
+        </div>
+        <div class="feature-row" style="border-bottom:none;">
+          <div class="feature-name">人生选择权</div>
+          <div style="text-align:right;">
+            <div class="feature-badge">自由工作</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="slide-footer">
+    <span class="footer-brand">个人品牌故事</span>
+    <span class="footer-num">&sect;06 / 08</span>
+  </div>
+</section>
+
+<!-- SLIDE 7: INSTALL -->
+<section class="slide" data-slide="6">
+  <div class="deco-circle" style="width:450px;height:450px;bottom:-150

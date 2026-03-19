@@ -1,0 +1,499 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>行业研究报告 — 中国 AI 市场洞察 2024</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;700;900&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&family=IBM+Plex+Mono:wght@400;600&family=Noto+Sans+SC:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #f7f5f0;
+            --bg-dark: #111111;
+            --text: #111111;
+            --text-muted: #555555;
+            --yellow: #FFCC00;
+            --red: #FF3333;
+            --rule: #111111;
+            --slide-padding: clamp(2rem, 5vw, 5rem);
+        }
+
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+        html {
+            scroll-behavior: smooth;
+            scroll-snap-type: y mandatory;
+            height: 100%;
+            overflow-x: hidden;
+        }
+
+        body {
+            background: var(--bg);
+            color: var(--text);
+            height: 100%;
+            font-family: 'Noto Sans SC', 'Source Serif 4', Georgia, serif;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        .slide {
+            width: 100vw;
+            height: 100vh;
+            height: 100dvh;
+            scroll-snap-align: start;
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            padding: var(--slide-padding);
+        }
+
+        /* ── TYPOGRAPHY ── */
+        .np-headline {
+            font-family: 'Oswald', 'Noto Sans SC', sans-serif;
+            font-weight: 900;
+            text-transform: uppercase;
+            letter-spacing: -0.02em;
+            line-height: 0.92;
+            color: var(--text);
+            font-size: clamp(3rem, 10vw, 8rem);
+        }
+        .np-headline-lg { font-size: clamp(4rem, 13vw, 11rem); }
+        .np-headline-sm { font-size: clamp(1.8rem, 4.5vw, 4rem); }
+        .np-subhead {
+            font-family: 'Oswald', 'Noto Sans SC', sans-serif;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+            font-size: clamp(0.9rem, 2vw, 1.5rem);
+        }
+        .np-body {
+            font-family: 'Noto Sans SC', 'Source Serif 4', serif;
+            font-size: clamp(0.7rem, 1.1vw, 0.9rem);
+            line-height: 1.7;
+            color: var(--text-muted);
+            max-width: 38ch;
+        }
+        .np-stamp {
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: clamp(0.55rem, 0.9vw, 0.72rem);
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            color: var(--text-muted);
+        }
+        .np-red { color: var(--red); }
+        .np-yellow-text { color: var(--yellow); }
+
+        /* ── STRUCTURAL ── */
+        .np-bar-h {
+            width: 100%;
+            height: 10px;
+            background: var(--yellow);
+            flex-shrink: 0;
+        }
+        .np-bar-v {
+            width: 8px;
+            height: 100%;
+            background: var(--yellow);
+            flex-shrink: 0;
+        }
+        .np-rule-h {
+            width: 100%;
+            height: 1px;
+            background: var(--rule);
+        }
+        .np-rule-v {
+            width: 1px;
+            background: var(--rule);
+        }
+        .np-dark { background: var(--bg-dark); color: #f7f5f0; }
+        .np-dark .np-body { color: rgba(247,245,240,0.55); }
+        .np-dark .np-stamp { color: rgba(247,245,240,0.4); }
+        .np-dark .np-rule-v { background: rgba(247,245,240,0.2); }
+        .np-dark .np-rule-h { background: rgba(247,245,240,0.2); }
+
+        /* ── GHOST NUMBER ── */
+        .np-ghost {
+            position: absolute;
+            font-family: 'Oswald', 'Noto Sans SC', sans-serif;
+            font-weight: 900;
+            font-size: clamp(12rem, 30vw, 28rem);
+            color: rgba(0,0,0,0.05);
+            line-height: 1;
+            pointer-events: none;
+            text-transform: uppercase;
+            letter-spacing: -0.04em;
+        }
+
+        /* ── ANIMATIONS ── */
+        .reveal {
+            opacity: 0;
+            transform: translateY(24px);
+            transition: opacity 0.7s cubic-bezier(0.16,1,0.3,1),
+                        transform 0.7s cubic-bezier(0.16,1,0.3,1);
+        }
+        .reveal-left {
+            opacity: 0;
+            transform: translateX(-32px);
+            transition: opacity 0.7s cubic-bezier(0.16,1,0.3,1),
+                        transform 0.7s cubic-bezier(0.16,1,0.3,1);
+        }
+        .slide.visible .reveal { opacity: 1; transform: translateY(0); }
+        .slide.visible .reveal-left { opacity: 1; transform: translateX(0); }
+        .reveal:nth-child(1), .reveal-left:nth-child(1) { transition-delay: 0.05s; }
+        .reveal:nth-child(2), .reveal-left:nth-child(2) { transition-delay: 0.15s; }
+        .reveal:nth-child(3), .reveal-left:nth-child(3) { transition-delay: 0.25s; }
+        .reveal:nth-child(4), .reveal-left:nth-child(4) { transition-delay: 0.35s; }
+        .reveal:nth-child(5) { transition-delay: 0.42s; }
+        .reveal:nth-child(6) { transition-delay: 0.49s; }
+
+        /* ── NAV DOTS ── */
+        .nav-dots {
+            position: fixed;
+            right: 1.5rem;
+            top: 50%;
+            transform: translateY(-50%);
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            z-index: 100;
+        }
+        .nav-dots button {
+            width: 7px; height: 7px;
+            border-radius: 50%;
+            border: 1.5px solid #111;
+            background: transparent;
+            cursor: pointer;
+            transition: all 0.3s;
+            padding: 0;
+        }
+        .nav-dots button.active { background: var(--yellow); border-color: #111; transform: scale(1.3); }
+
+        /* ── PROGRESS BAR ── */
+        .progress-bar {
+            position: fixed; top: 0; left: 0;
+            height: 4px; background: var(--yellow);
+            width: 0%; z-index: 200;
+            transition: width 0.3s ease;
+        }
+
+        /* ── EDIT BUTTON ── */
+        .edit-hotzone {
+            position: fixed; top: 0; left: 0;
+            width: 80px; height: 80px;
+            z-index: 10000; cursor: pointer;
+        }
+        .edit-toggle {
+            position: fixed; top: 16px; left: 16px;
+            opacity: 0; pointer-events: none;
+            transition: opacity 0.3s; z-index: 10001;
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 0.7rem; letter-spacing: 0.1em;
+            text-transform: uppercase;
+            background: var(--bg-dark); color: #f7f5f0;
+            border: none; padding: 6px 14px;
+            cursor: pointer;
+        }
+        .edit-toggle.show { opacity: 1; pointer-events: auto; }
+        .edit-toggle.active { opacity: 1; pointer-events: auto; background: var(--yellow); color: #111; }
+
+        #notes-panel {
+            display: none; position: fixed; bottom: 0; left: 0; right: 0;
+            z-index: 9998;
+            background: rgba(8,8,8,0.94);
+            backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
+            border-top: 1px solid rgba(255,255,255,0.08);
+        }
+        #notes-panel.active { display: flex; flex-direction: column; }
+        #notes-panel-header {
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 0.45rem 1.4rem; cursor: pointer; user-select: none;
+        }
+        #notes-panel-label {
+            flex: 1; font-family: 'IBM Plex Mono', 'Noto Sans SC', monospace;
+            font-size: 0.58rem; letter-spacing: 0.16em;
+            text-transform: uppercase; color: rgba(255,255,255,0.3);
+        }
+        #notes-drag-hint { flex: 1; display: flex; justify-content: center; }
+        #notes-drag-hint::after {
+            content: ''; display: block; width: 36px; height: 3px;
+            border-radius: 2px; background: rgba(255,255,255,0.25);
+        }
+        #notes-collapse-btn {
+            flex: 1; text-align: right; font-size: 1rem;
+            color: rgba(255,255,255,0.4); background: none; border: none;
+            cursor: pointer; transition: color 0.15s, transform 0.2s;
+        }
+        #notes-panel.collapsed #notes-body { display: none; }
+        #notes-panel.collapsed #notes-collapse-btn { transform: rotate(180deg); }
+        #notes-body { padding: 0 1.4rem 0.75rem; }
+        #notes-textarea {
+            width: 100%; height: 72px; min-height: 48px; max-height: 200px;
+            resize: vertical; background: transparent; border: none; outline: none;
+            color: rgba(255,255,255,0.75); font-size: 0.88rem; line-height: 1.65;
+            font-family: system-ui, 'Noto Sans SC', sans-serif; caret-color: var(--yellow);
+        }
+        #notes-textarea::placeholder { color: rgba(255,255,255,0.18); }
+
+        @media (max-height: 700px) { :root { --slide-padding: clamp(1rem,3vw,2rem); } }
+        @media (max-height: 600px) { .nav-dots { display: none; } }
+        @media (prefers-reduced-motion: reduce) {
+            *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.2s !important; }
+            html { scroll-behavior: auto; }
+        }
+
+        /* ═══════════════════════════════════════════
+           SLIDE-SPECIFIC LAYOUTS
+           ═══════════════════════════════════════════ */
+
+        /* SLIDE 1 — Cover/Masthead */
+        #s1 { justify-content: flex-end; }
+        #s1 .np-bar-h { position: absolute; top: 0; left: 0; right: 0; }
+        #s1 .stamp-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: clamp(1rem,3vh,3rem);
+        }
+        #s1 .headline-wrap { margin-bottom: 1.2rem; }
+        #s1 .tagline-row {
+            display: flex;
+            align-items: center;
+            gap: 2rem;
+        }
+
+        /* SLIDE 2 — Breaking Headline */
+        #s2 { justify-content: flex-start; padding-top: calc(var(--slide-padding) * 1.2); }
+        #s2 .evidence-row {
+            display: flex;
+            gap: 2.5rem;
+            margin-top: clamp(1.5rem,3vh,3rem);
+            align-items: flex-start;
+        }
+        #s2 .evidence-col { flex: 1; }
+
+        /* SLIDE 3 — Zero Dependencies (Feature Story) */
+        #s3 { justify-content: flex-end; }
+        #s3 .support-col {
+            position: absolute;
+            top: var(--slide-padding);
+            right: var(--slide-padding);
+            width: 28%;
+        }
+
+        /* SLIDE 4 — Data Brief: 19 */
+        #s4 { flex-direction: row; align-items: center; justify-content: flex-start; gap: 0; }
+        #s4 .stat-left { flex: 0 0 auto; display: flex; flex-direction: column; align-items: flex-start; }
+        #s4 .stat-right { flex: 1; padding-left: 3rem; }
+        #s4 .big-num {
+            font-family: 'Oswald', 'Noto Sans SC', sans-serif;
+            font-weight: 900;
+            font-size: clamp(7rem, 18vw, 15rem);
+            line-height: 1;
+            color: transparent;
+            -webkit-text-stroke: 3px var(--text);
+        }
+
+        /* SLIDE 5 — Split Column: Edit */
+        #s5 { flex-direction: row; padding: 0; }
+        #s5 .left-col {
+            width: 42%;
+            background: var(--bg-dark);
+            padding: var(--slide-padding);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            position: relative;
+        }
+        #s5 .left-col .np-bar-v { position: absolute; left: 0; top: 0; }
+        #s5 .right-col {
+            flex: 1;
+            padding: var(--slide-padding);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        /* SLIDE 6 — Pull Quote: Presenter */
+        #s6 { justify-content: center; }
+        #s6 .quote-wrap {
+            max-width: 65%;
+        }
+        #s6 .quote-text {
+            font-family: 'Noto Sans SC', 'Source Serif 4', serif;
+            font-style: italic;
+            font-size: clamp(1.4rem, 3.5vw, 2.8rem);
+            line-height: 1.35;
+            color: var(--text);
+        }
+        #s6 .attribution {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+
+        /* SLIDE 7 — Contents/Index */
+        #s7 { justify-content: center; }
+        #s7 .index-list { list-style: none; width: 100%; max-width: 680px; }
+        #s7 .index-list li {
+            display: flex;
+            align-items: baseline;
+            gap: 1.2rem;
+            padding: clamp(0.6rem,1.5vh,1.2rem) 0;
+            border-bottom: 1px solid rgba(0,0,0,0.1);
+        }
+        #s7 .index-list li:first-child { border-top: 1px solid rgba(0,0,0,0.1); }
+        #s7 .idx-num {
+            font-family: 'Oswald', 'Noto Sans SC', sans-serif;
+            font-weight: 900;
+            font-size: clamp(1.6rem,3.5vw,2.8rem);
+            color: var(--yellow);
+            -webkit-text-stroke: 1.5px var(--text);
+            color: transparent;
+            flex-shrink: 0;
+            width: 2.2ch;
+        }
+        #s7 .idx-cmd {
+            font-family: 'Oswald', 'Noto Sans SC', sans-serif;
+            font-weight: 700;
+            font-size: clamp(0.95rem,2vw,1.5rem);
+            text-transform: uppercase;
+            flex: 1;
+        }
+        #s7 .idx-desc { flex: 2; }
+
+        /* SLIDE 8 — PPTX Data Brief */
+        #s8 { justify-content: center; align-items: flex-start; }
+        #s8 .pptx-num {
+            font-family: 'Oswald', 'Noto Sans SC', sans-serif;
+            font-weight: 900;
+            font-size: clamp(5rem, 16vw, 14rem);
+            line-height: 1;
+            color: transparent;
+            -webkit-text-stroke: 3px var(--text);
+            text-transform: uppercase;
+        }
+
+        /* SLIDE 9 — Closing (Inverted) */
+        #s9 { background: var(--bg-dark); color: #f7f5f0; justify-content: flex-end; }
+        #s9 .np-bar-h { position: absolute; top: 0; left: 0; right: 0; }
+    </style>
+</head>
+<body>
+
+<div class="progress-bar" id="progressBar"></div>
+<nav class="nav-dots" id="navDots" aria-label="幻灯片导航"></nav>
+<div class="edit-hotzone"></div>
+<button class="edit-toggle" id="editToggle" title="编辑模式 (E)">✏ 编辑</button>
+<div id="notes-panel">
+    <div id="notes-panel-header">
+        <div id="notes-panel-label">演讲备注 — 幻灯片 1</div>
+        <div id="notes-drag-hint"></div>
+        <button id="notes-collapse-btn">▾</button>
+    </div>
+    <div id="notes-body">
+        <textarea id="notes-textarea" placeholder="为此幻灯片添加演讲备注…"></textarea>
+    </div>
+</div>
+
+<!-- ══ SLIDE 1: COVER / MASTHEAD ══ -->
+<section class="slide" id="s1"
+    data-notes="欢迎。这份报告深入分析了2024年中国人工智能市场的发展现状、核心驱动因素与未来趋势。通过数据驱动的洞察，我们为投资者和企业决策者提供了明确的战略参考。"
+    aria-label="封面">
+    <div class="np-bar-h reveal"></div>
+    <div class="stamp-row reveal">
+        <span class="np-stamp">行业研究报告</span>
+        <span class="np-stamp">2024年版 · 第一期</span>
+    </div>
+    <div class="headline-wrap reveal">
+        <div class="np-headline np-headline-lg">中国·AI<br>市场洞察</div>
+    </div>
+    <div class="np-bar-h reveal"></div>
+    <div class="tagline-row reveal" style="margin-top:1rem;">
+        <span class="np-body">基于深度数据分析的市场趋势研究。洞察关键驱动力，把握投资机遇。</span>
+        <span class="np-stamp" style="margin-left:auto;">↓ 向下滚动阅读</span>
+    </div>
+</section>
+
+<!-- ══ SLIDE 2: BREAKING HEADLINE ══ -->
+<section class="slide" id="s2"
+    data-notes="中国AI市场在政策扶持、资本驱动和技术突破的三重推动下，实现了超高速增长。2024年，市场规模同比增长超过45%，成为全球增速最快的区域市场。但快速扩张背后，也存在产业集中度过高、应用层创新不足等关键问题。"
+    aria-label="市场现状">
+    <span class="np-ghost" style="top:-0.2em;right:-0.1em;opacity:0.04;">AI</span>
+    <div class="np-stamp reveal" style="margin-bottom:1.2rem;">市场驱动</div>
+    <div class="np-headline reveal" style="font-size:clamp(2.2rem,7vw,5.8rem);max-width:80%;">
+        中国AI市场高速<span class="np-red">增长</span>，<br>产业结构需优化
+    </div>
+    <div class="np-bar-h reveal" style="margin-top:clamp(1.2rem,3vh,2.5rem);"></div>
+    <div class="evidence-row">
+        <div class="evidence-col reveal">
+            <div class="np-subhead" style="margin-bottom:0.6rem;">关键指标</div>
+            <p class="np-body">市场规模突破1200亿元，同比增长45.2%。大模型训练和推理芯片需求激增，产业链上游供不应求。资本投入集中在大模型和垂直应用领域。</p>
+        </div>
+        <div class="np-rule-v reveal"></div>
+        <div class="evidence-col reveal">
+            <div class="np-subhead" style="margin-bottom:0.6rem;">核心挑战</div>
+            <p class="np-body">TOP 10企业占据行业超过65%的市场份额，竞争格局趋于稳定。中小创新企业融资难、商业化难，生态繁荣度不足。应用创新深度有限。</p>
+        </div>
+    </div>
+</section>
+
+<!-- ══ SLIDE 3: ZERO DEPENDENCIES (Feature Story) ══ -->
+<section class="slide" id="s3"
+    data-notes="政策支持是推动产业发展的关键力量。从《新一代人工智能发展规划》到各地产业扶持政策，形成了从国家到地方的完整政策体系。2024年，政府AI相关投资规模突破500亿元，创历史新高。"
+    aria-label="政策驱动">
+    <div class="support-col reveal">
+        <div class="np-stamp" style="margin-bottom:0.8rem;">政策支撑体系</div>
+        <p class="np-body">国务院发布《关于促进人工智能与经济社会融合发展的指导意见》，明确了AI在制造、金融、医疗等七大应用领域的发展方向。北京、上海、深圳等地竞相出台AI产业基金，形成"全国一盘棋"的发展格局。</p>
+        <div class="np-rule-h" style="margin:1rem 0;"></div>
+        <p class="np-body">政府采购和示范项目规模超过200亿元，有力带动了产业投资和应用落地。</p>
+    </div>
+    <div class="np-stamp reveal" style="margin-bottom:clamp(0.5rem,2vh,1.5rem);">核心特点</div>
+    <div class="np-bar-h reveal" style="width:6rem;height:8px;margin-bottom:1rem;"></div>
+    <div class="np-headline np-headline-lg reveal">政策<br>引导·<br>资本驱动</div>
+    <div class="np-body reveal" style="margin-top:1rem;max-width:45ch;">完善的法规体系和充足的资金支持，为产业创新提供了坚实基础。</div>
+</section>
+
+<!-- ══ SLIDE 4: DATA BRIEF — 19 STYLES ══ -->
+<section class="slide" id="s4"
+    data-notes="产业生态呈现多元化布局。从芯片制造到应用开发，各环节都涌现出专业化的领导企业。算力资源日益紧张，推动芯片和云服务企业获得最高融资额。垂直行业应用正成为新的增长驱动。"
+    aria-label="产业布局">
+    <div class="np-bar-v reveal"></div>
+    <div class="stat-left reveal" style="padding-left:2rem;">
+        <div class="np-stamp" style="margin-bottom:0.5rem;">融资企业数量</div>
+        <div class="big-num">2847</div>
+        <div class="np-subhead" style="margin-top:0.5rem;font-size:clamp(0.7rem,1.5vw,1.1rem);">已获投企业</div>
+    </div>
+    <div class="np-rule-v reveal" style="margin: 0 2rem; height:60%;align-self:center;"></div>
+    <div class="stat-right reveal">
+        <div class="np-stamp" style="margin-bottom:1rem;">细分领域融资分布：</div>
+        <ul style="list-style:none;display:flex;flex-direction:column;gap:0.5rem;">
+            <li><span class="np-subhead" style="font-size:clamp(0.75rem,1.5vw,1.1rem);">大模型与基础技术</span> <span class="np-body" style="display:inline;"> — 占比 32.5%</span></li>
+            <li><span class="np-subhead" style="font-size:clamp(0.75rem,1.5vw,1.1rem);">芯片与算力</span> <span class="np-body" style="display:inline;"> — 占比 28.3%</span></li>
+            <li><span class="np-subhead" style="font-size:clamp(0.75rem,1.5vw,1.1rem);">企业应用工具</span> <span class="np-body" style="display:inline;"> — 占比 19.4%</span></li>
+            <li><span class="np-subhead" style="font-size:clamp(0.75rem,1.5vw,1.1rem);">行业垂直应用</span> <span class="np-body" style="display:inline;"> — 占比 15.8%</span></li>
+            <li><span class="np-subhead" style="font-size:clamp(0.75rem,1.5vw,1.1rem);">其他新兴方向</span> <span class="np-body" style="display:inline;"> — 占比 4.0%</span></li>
+        </ul>
+        <div class="np-stamp" style="margin-top:1rem;">数据来源：公开融资数据库分析</div>
+    </div>
+</section>
+
+<!-- ══ SLIDE 5: SPLIT COLUMN — INLINE EDITING ══ -->
+<section class="slide" id="s5"
+    data-notes="应用层是AI价值实现的关键。目前，金融、制造、医疗三大领域的AI应用最为成熟，市场规模占比超过70%。但在教育、农业、能源等领域的应用才刚刚起步，蕴含巨大增长空间。"
+    aria-label="应用前景">
+    <div class="left-col">
+        <div class="np-bar-v"></div>
+        <div class="np-stamp reveal" style="color:rgba(247,245,240,0.45);margin-bottom:1.2rem;">应用现状</div>
+        <div class="np-headline reveal" style="color:#f7f5f0;font-size:clamp(1.8rem,4.5vw,3.8rem);">垂直<br>应用·<br>深度融合</div>
+        <div class="np-stamp reveal" style="color:rgba(247,245,240,0.35);margin-top:1.5rem;">MARKET://AI-INTEGRATION</div>
+    </div>
+    <div class="right-col">
+        <div class="np-stamp reveal" style="margin-bottom:1.2rem;">应用拓展方向</div>
+        <div class="np-subhead reveal" style="margin-bottom:0.8rem;font-size:clamp(0.85rem,1.8vw,1.3rem);">金融 · 制造 · 医疗 · 教育</div>
+        <div class="np-rule-h reveal" style="margin-bottom:0.8rem;"></div>
+        <ul style="list-style:none;display:flex;flex-direction:column;gap:0.6rem;">
+            <li class="reveal"><span class="np-stamp">金融服务</span> <span class="np-body" style="display:inline;margin-left:0.5rem;">— 风控、量化交易、客户服务</span></li>
+            <li class="reveal"><span class="np-stamp">工业制造</span> <span class="np-body" style="display:inline;margin-left:0.5rem;">— 质检、预测性维护、优化排产</span></li>
+            <li class="reveal"><span class="np-stamp">医疗健康</span> <span class="np-body" style="display:inline;margin-left:0.5rem;">— 诊断辅助、新药研发、精准医疗</span></li>
+            <li class="reveal"><span class="np-stamp">教育培训</span> <span class="np-body" style="display:inline;margin-left:0.5rem;">— 个性化学习、智能教学、

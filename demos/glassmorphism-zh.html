@@ -1,0 +1,644 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>slide-creator · 玻璃态形态 — 智能硬件发布会</title>
+<!-- Speaker note: backdrop-filter degrades to flat color in PPTX export. The blurred orbs are essential for the glass effect to work — without a colorful background behind each card, backdrop-filter: blur() has nothing to blur. -->
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --text-dark: #1a1a2e;
+  --text-light: rgba(255,255,255,0.92);
+  --text-muted-dark: rgba(26,26,46,0.65);
+  --text-muted-light: rgba(255,255,255,0.60);
+}
+
+html {
+  scroll-snap-type: y mandatory;
+  scroll-behavior: smooth;
+  height: 100%;
+}
+
+body {
+  height: 100%;
+  overflow-x: hidden;
+  font-family: system-ui, -apple-system, "PingFang SC", "Helvetica Neue", sans-serif;
+}
+
+.slide {
+  width: 100vw;
+  height: 100vh;
+  height: 100dvh;
+  scroll-snap-align: start;
+  overflow: hidden;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+/* ---- Slide backgrounds ---- */
+.slide-0 { background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%); }
+.slide-1 { background: linear-gradient(135deg, #f8cdda 0%, #a6c1ee 50%, #1d6fa4 100%); }
+.slide-2 { background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%); }
+.slide-3 { background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%); }
+.slide-4 { background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%); }
+.slide-5 { background: linear-gradient(135deg, #f8cdda 0%, #a6c1ee 50%, #1d6fa4 100%); }
+.slide-6 { background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%); }
+.slide-7 { background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%); }
+
+/* Blurred orbs — placed behind glass cards; required for backdrop-filter */
+.orb {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(60px);
+  pointer-events: none;
+  z-index: 0;
+}
+
+.orb1 { width: 40vw; height: 40vw; background: rgba(102,126,234,0.5); top: -10%; left: -5%; }
+.orb2 { width: 30vw; height: 30vw; background: rgba(240,147,251,0.4); bottom: -5%; right: -5%; }
+.orb3 { width: 35vw; height: 35vw; background: rgba(168,237,234,0.5); top: 50%; left: 60%; transform: translate(-50%,-50%); }
+.orb4 { width: 25vw; height: 25vw; background: rgba(254,214,227,0.6); top: 10%; right: 10%; }
+
+/* ---- Glass card ---- */
+.glass-card {
+  background: rgba(255,255,255,0.15);
+  backdrop-filter: blur(20px) saturate(1.5);
+  -webkit-backdrop-filter: blur(20px) saturate(1.5);
+  border: 1px solid rgba(255,255,255,0.30);
+  border-radius: 16px;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.10);
+}
+
+.glass-item {
+  background: rgba(255,255,255,0.08);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255,255,255,0.20);
+  border-radius: 12px;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.06);
+}
+
+/* ---- Content wrapper ---- */
+.content {
+  width: 100%;
+  max-width: 800px;
+  padding: clamp(24px, 5vw, 60px);
+  position: relative;
+  z-index: 1;
+}
+
+/* ---- Typography — dark slides ---- */
+.text-dark h1 {
+  font-size: clamp(34px, 5.5vw, 66px);
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  line-height: 1.06;
+  color: var(--text-light);
+}
+
+.text-dark h2 {
+  font-size: clamp(24px, 4vw, 50px);
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  line-height: 1.1;
+  color: var(--text-light);
+}
+
+.text-dark h3 {
+  font-size: clamp(14px, 1.6vw, 18px);
+  font-weight: 600;
+  color: var(--text-light);
+  margin-bottom: 5px;
+}
+
+.text-dark p {
+  font-size: clamp(13px, 1.5vw, 17px);
+  color: var(--text-muted-light);
+  line-height: 1.65;
+}
+
+/* ---- Typography — light slides ---- */
+.text-light-theme h1 {
+  font-size: clamp(34px, 5.5vw, 66px);
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  line-height: 1.06;
+  color: var(--text-dark);
+}
+
+.text-light-theme h2 {
+  font-size: clamp(24px, 4vw, 50px);
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  line-height: 1.1;
+  color: var(--text-dark);
+}
+
+.text-light-theme h3 {
+  font-size: clamp(14px, 1.6vw, 18px);
+  font-weight: 600;
+  color: var(--text-dark);
+  margin-bottom: 5px;
+}
+
+.text-light-theme p {
+  font-size: clamp(13px, 1.5vw, 17px);
+  color: var(--text-muted-dark);
+  line-height: 1.65;
+}
+
+/* ---- Pill / badge ---- */
+.pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(255,255,255,0.20);
+  border: 1px solid rgba(255,255,255,0.35);
+  border-radius: 100px;
+  padding: 5px 14px;
+  font-size: clamp(11px, 1.1vw, 13px);
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+
+.pill-dark { color: var(--text-light); }
+.pill-light { color: var(--text-dark); background: rgba(255,255,255,0.40); }
+
+/* ---- Stat row ---- */
+.stats {
+  display: flex;
+  gap: clamp(0px, 2vw, 24px);
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.stat-card {
+  padding: clamp(14px, 2vw, 22px) clamp(18px, 2.5vw, 28px);
+  text-align: center;
+  flex: 1;
+  min-width: 100px;
+}
+
+.stat-value {
+  font-size: clamp(32px, 5vw, 56px);
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  line-height: 1;
+  color: var(--text-light);
+  display: block;
+}
+
+.stat-label {
+  font-size: clamp(10px, 1.1vw, 12px);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--text-muted-light);
+  display: block;
+  margin-top: 4px;
+}
+
+/* ---- Grid layouts ---- */
+.grid-2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: clamp(10px, 1.5vw, 16px);
+  margin-top: clamp(16px, 2.5vw, 26px);
+}
+
+.grid-3 {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: clamp(8px, 1.3vw, 14px);
+  margin-top: clamp(16px, 2.5vw, 26px);
+}
+
+/* ---- Icon circle (SF Symbols-style) ---- */
+.icon-circle {
+  width: clamp(32px, 4vw, 44px);
+  height: clamp(32px, 4vw, 44px);
+  border-radius: 50%;
+  border: 1.5px solid rgba(255,255,255,0.45);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: clamp(14px, 1.8vw, 20px);
+  background: rgba(255,255,255,0.10);
+  margin-bottom: clamp(8px, 1.2vw, 12px);
+}
+
+.icon-circle-dark {
+  border-color: rgba(26,26,46,0.25);
+  background: rgba(26,26,46,0.06);
+}
+
+/* ---- Problem items ---- */
+.problem-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  padding: clamp(12px, 1.8vw, 18px);
+}
+
+/* ---- Steps list ---- */
+.step-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: clamp(12px, 1.8vw, 16px);
+}
+
+.step-num {
+  width: 26px;
+  height: 26px;
+  min-width: 26px;
+  border-radius: 50%;
+  border: 1.5px solid rgba(255,255,255,0.40);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--text-light);
+  background: rgba(255,255,255,0.10);
+}
+
+.step-num-dark {
+  border-color: rgba(26,26,46,0.30);
+  color: var(--text-dark);
+  background: rgba(26,26,46,0.07);
+}
+
+/* ---- Tags ---- */
+.tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+  margin-top: clamp(14px, 2vw, 22px);
+}
+
+.tag {
+  padding: 5px 12px;
+  border-radius: 8px;
+  font-size: clamp(11px, 1.2vw, 13px);
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+
+.tag-dark {
+  background: rgba(255,255,255,0.12);
+  border: 1px solid rgba(255,255,255,0.22);
+  color: var(--text-light);
+}
+
+.tag-light {
+  background: rgba(255,255,255,0.35);
+  border: 1px solid rgba(255,255,255,0.50);
+  color: var(--text-dark);
+}
+
+.tag-highlight {
+  background: rgba(102,126,234,0.25);
+  border: 1px solid rgba(102,126,234,0.50);
+  color: #fff;
+}
+
+/* ---- Install ---- */
+.install-block {
+  margin-top: clamp(14px, 2vw, 22px);
+  display: flex;
+  flex-direction: column;
+  gap: clamp(8px, 1.2vw, 12px);
+}
+
+.install-item {
+  padding: clamp(12px, 1.8vw, 18px);
+}
+
+.install-label {
+  font-size: clamp(10px, 1.1vw, 12px);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin-bottom: 5px;
+}
+
+.install-cmd {
+  font-family: 'SF Mono', 'Fira Code', monospace;
+  font-size: clamp(11px, 1.2vw, 14px);
+  word-break: break-all;
+  line-height: 1.5;
+}
+
+/* ---- CTA ---- */
+.cta-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: clamp(12px, 1.8vw, 18px) clamp(22px, 3vw, 32px);
+  border-radius: 14px;
+  font-size: clamp(15px, 1.8vw, 20px);
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  cursor: default;
+  margin-top: clamp(22px, 3.5vw, 36px);
+}
+
+/* ---- Nav dots ---- */
+#nav-dots {
+  position: fixed;
+  right: clamp(14px, 2vw, 22px);
+  top: 50%;
+  transform: translateY(-50%);
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  z-index: 100;
+}
+
+.dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.35);
+  cursor: pointer;
+  transition: all 0.3s ease;
+  border: none;
+  padding: 0;
+}
+
+.dot.active {
+  background: rgba(255,255,255,0.90);
+  transform: scale(1.5);
+}
+
+/* Progress bar */
+#progress {
+  position: fixed;
+  top: 0; left: 0;
+  height: 2px;
+  background: rgba(255,255,255,0.70);
+  transition: width 0.4s ease;
+  z-index: 100;
+}
+
+/* Slide number */
+#slide-num {
+  position: fixed;
+  bottom: clamp(12px, 2vw, 18px);
+  right: clamp(14px, 2vw, 22px);
+  font-size: 11px;
+  font-weight: 600;
+  color: rgba(255,255,255,0.45);
+  letter-spacing: 0.08em;
+  z-index: 100;
+}
+
+/* Edit mode */
+#hotzone {
+  position: fixed;
+  top: 0; left: 0;
+  width: 80px; height: 80px;
+  z-index: 200;
+  cursor: default;
+}
+
+body.edit-mode [contenteditable] {
+  outline: 1px dashed rgba(255,255,255,0.5);
+  border-radius: 4px;
+  min-width: 20px;
+}
+body.edit-mode #edit-badge { display: flex; }
+
+#edit-badge {
+  display: none;
+  position: fixed;
+  top: 12px; left: 12px;
+  align-items: center;
+  gap: 6px;
+  background: rgba(255,255,255,0.20);
+  border: 1px solid rgba(255,255,255,0.35);
+  border-radius: 8px;
+  padding: 5px 12px;
+  font-size: 11px;
+  font-weight: 600;
+  color: white;
+  z-index: 200;
+  letter-spacing: 0.04em;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+
+/* ---- Reveal animation — float entrance ---- */
+.reveal {
+  opacity: 0;
+  transform: translateY(16px);
+  transition: opacity 0.6s cubic-bezier(0.34,1.2,0.64,1), transform 0.6s cubic-bezier(0.34,1.2,0.64,1);
+}
+
+.reveal.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Separator */
+.sep {
+  height: 1px;
+  background: rgba(255,255,255,0.20);
+  margin: clamp(12px, 1.8vw, 18px) 0;
+}
+
+.sep-dark {
+  background: rgba(26,26,46,0.15);
+}
+</style>
+</head>
+<body>
+
+<div id="progress"></div>
+<div id="nav-dots"></div>
+<div id="slide-num">1 / 8</div>
+<div id="edit-badge">编辑模式 · Ctrl+S</div>
+<div id="hotzone"></div>
+
+<!-- SLIDE 1: Cover -->
+<section class="slide slide-0 text-dark" id="s0">
+  <div class="orb orb1"></div>
+  <div class="orb orb2"></div>
+  <div class="content" style="text-align:center;">
+    <div class="reveal">
+      <span class="pill pill-dark">AI 智能助手 · 全新体验 · 开源生态</span>
+    </div>
+    <div class="reveal" style="transition-delay:0.1s; margin-top:clamp(16px,2.5vw,28px);">
+      <h1>智能硬件发布会</h1>
+    </div>
+    <div class="reveal" style="transition-delay:0.15s; margin:clamp(8px,1.5vw,14px) auto 0; max-width:520px;">
+      <p style="font-size:clamp(15px,2vw,22px); color:rgba(255,255,255,0.80);">重新定义下一代人工智能交互体验</p>
+    </div>
+    <div class="reveal" style="transition-delay:0.2s; margin-top:clamp(20px,3.5vw,40px);">
+      <div class="glass-card stats" style="display:inline-flex;">
+        <div class="stat-card">
+          <span class="stat-value">10</span>
+          <span class="stat-label">创新功能</span>
+        </div>
+        <div style="width:1px; background:rgba(255,255,255,0.15); align-self:stretch; margin:16px 0;"></div>
+        <div class="stat-card">
+          <span class="stat-value">3</span>
+          <span class="stat-label">颜色配置</span>
+        </div>
+        <div style="width:1px; background:rgba(255,255,255,0.15); align-self:stretch; margin:16px 0;"></div>
+        <div class="stat-card">
+          <span class="stat-value">∞</span>
+          <span class="stat-label">使用场景</span>
+        </div>
+      </div>
+    </div>
+    <div class="reveal" style="transition-delay:0.3s; margin-top:clamp(14px,2vw,22px);">
+      <p style="font-size:clamp(12px,1.3vw,14px); color:rgba(255,255,255,0.35); letter-spacing:0.06em; text-transform:uppercase;">零依赖 · 高性能 · 开箱即用</p>
+    </div>
+  </div>
+</section>
+
+<!-- SLIDE 2: Problem — light theme -->
+<section class="slide slide-1 text-light-theme" id="s1">
+  <div class="orb" style="width:35vw;height:35vw;background:rgba(248,205,218,0.6);top:-5%;right:10%;filter:blur(60px);"></div>
+  <div class="orb" style="width:28vw;height:28vw;background:rgba(166,193,238,0.5);bottom:0%;left:0%;filter:blur(60px);"></div>
+  <div class="content">
+    <div class="reveal">
+      <span class="pill pill-light">面临的挑战</span>
+    </div>
+    <div class="reveal" style="transition-delay:0.1s; margin-top:clamp(12px,2vw,20px);">
+      <h2>智能硬件的<br>交互困境</h2>
+    </div>
+    <div class="sep sep-dark reveal" style="transition-delay:0.15s;"></div>
+    <div class="glass-card reveal" style="transition-delay:0.2s; padding:0; overflow:hidden;">
+      <div class="problem-item" style="border-bottom:1px solid rgba(26,26,46,0.10);">
+        <div class="icon-circle icon-circle-dark">🎯</div>
+        <div>
+          <h3>交互学习曲线陡峭</h3>
+          <p>用户需花费数小时学习复杂的界面和手势，降低产品易用性。</p>
+        </div>
+      </div>
+      <div class="problem-item" style="border-bottom:1px solid rgba(26,26,46,0.10);">
+        <div class="icon-circle icon-circle-dark">⚡</div>
+        <div>
+          <h3>响应延迟问题</h3>
+          <p>传统语音识别系统反应迟缓，无法提供实时流畅的交互体验。</p>
+        </div>
+      </div>
+      <div class="problem-item">
+        <div class="icon-circle icon-circle-dark">🔐</div>
+        <div>
+          <h3>隐私安全隐患</h3>
+          <p>用户数据上传云端处理，存在泄露风险，难以获得用户信任。</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SLIDE 3: Show Don't Tell — mint/light -->
+<section class="slide slide-2 text-light-theme" id="s2">
+  <div class="orb" style="width:40vw;height:40vw;background:rgba(168,237,234,0.6);top:-15%;left:-5%;filter:blur(60px);"></div>
+  <div class="orb" style="width:30vw;height:30vw;background:rgba(254,214,227,0.6);bottom:-5%;right:5%;filter:blur(60px);"></div>
+  <div class="content">
+    <div class="reveal">
+      <span class="pill pill-light">我们的解决方案</span>
+    </div>
+    <div class="reveal" style="transition-delay:0.1s; margin-top:clamp(12px,2vw,20px);">
+      <h2>突破性的<br>AI 交互系统</h2>
+    </div>
+    <div class="sep sep-dark reveal" style="transition-delay:0.15s;"></div>
+    <div class="reveal" style="transition-delay:0.18s;">
+      <p>采用端侧 AI 处理，百毫秒级响应，拥抱自然语言交互，让科技真正回归人性。</p>
+    </div>
+    <div class="grid-3 reveal" style="transition-delay:0.25s;">
+      <div class="glass-item" style="padding:clamp(14px,2vw,20px); background:rgba(255,255,255,0.40);">
+        <div class="icon-circle icon-circle-dark">🧠</div>
+        <h3 style="font-size:clamp(13px,1.4vw,15px); color:var(--text-dark);">本地 AI 引擎</h3>
+        <p style="font-size:clamp(11px,1.2vw,13px);">无需联网，数据永不上云，隐私完全掌握在用户手中。</p>
+      </div>
+      <div class="glass-item" style="padding:clamp(14px,2vw,20px); background:rgba(255,255,255,0.40);">
+        <div class="icon-circle icon-circle-dark">⚡</div>
+        <h3 style="font-size:clamp(13px,1.4vw,15px); color:var(--text-dark);">毫秒级响应</h3>
+        <p style="font-size:clamp(11px,1.2vw,13px);">优化的边界计算，实时语音识别，流畅如自然交流。</p>
+      </div>
+      <div class="glass-item" style="padding:clamp(14px,2vw,20px); background:rgba(255,255,255,0.40);">
+        <div class="icon-circle icon-circle-dark">✨</div>
+        <h3 style="font-size:clamp(13px,1.4vw,15px); color:var(--text-dark);">直观易用</h3>
+        <p style="font-size:clamp(11px,1.2vw,13px);">自然语言理解，无需复杂手势，长按即说，一句话解决。</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SLIDE 4: 10 Features — dark purple -->
+<section class="slide slide-3 text-dark" id="s3">
+  <div class="orb orb1"></div>
+  <div class="orb orb2"></div>
+  <div class="content">
+    <div class="reveal">
+      <span class="pill pill-dark">产品特性</span>
+    </div>
+    <div class="reveal" style="transition-delay:0.1s; margin-top:clamp(12px,2vw,20px);">
+      <h2>十大创新功能<br>全面升级体验</h2>
+    </div>
+    <div class="sep reveal" style="transition-delay:0.15s;"></div>
+    <div class="reveal" style="transition-delay:0.18s;">
+      <p style="color:rgba(255,255,255,0.70);">从智能识别到个性化推荐，我们精心打磨每一个细节，让交互变得更自然、更智能。</p>
+    </div>
+    <div class="tags reveal" style="transition-delay:0.25s;">
+      <span class="tag tag-dark">实时语音识别</span>
+      <span class="tag tag-dark">多语言支持</span>
+      <span class="tag tag-dark">情感识别</span>
+      <span class="tag tag-dark">上下文学习</span>
+      <span class="tag tag-dark">手势识别</span>
+      <span class="tag tag-dark">声纹解锁</span>
+      <span class="tag tag-dark">自适应界面</span>
+      <span class="tag tag-dark">即时翻译</span>
+      <span class="tag tag-dark">设备联动</span>
+      <span class="tag tag-highlight">玻璃态美学 ✦</span>
+      <span class="tag tag-dark">隐私保护</span>
+      <span class="tag tag-dark">离线可用</span>
+      <span class="tag tag-dark">快速充电</span>
+    </div>
+  </div>
+</section>
+
+<!-- SLIDE 5: How It Works — mint -->
+<section class="slide slide-4 text-light-theme" id="s4">
+  <div class="orb" style="width:38vw;height:38vw;background:rgba(168,237,234,0.55);top:-10%;left:-5%;filter:blur(60px);"></div>
+  <div class="orb" style="width:28vw;height:28vw;background:rgba(254,214,227,0.55);bottom:0%;right:0%;filter:blur(60px);"></div>
+  <div class="content">
+    <div class="reveal">
+      <span class="pill pill-light">工作流程</span>
+    </div>
+    <div class="reveal" style="transition-delay:0.1s; margin-top:clamp(12px,2vw,20px);">
+      <h2>三步快速<br>开启智能生活</h2>
+    </div>
+    <div class="sep sep-dark reveal" style="transition-delay:0.15s;"></div>
+    <div class="glass-card reveal" style="transition-delay:0.2s; padding:0; overflow:hidden;">
+      <div class="step-item" style="border-bottom:1px solid rgba(26,26,46,0.09);">
+        <div class="step-num step-num-dark">1</div>
+        <div>
+          <h3>唤醒设备</h3>
+          <p style="font-size:clamp(12px,1.3vw,15px);">说出唤醒词或长按设备，AI 系统即刻激活，准备好为您服务。</p>
+        </div>
+      </div>
+      <div class="step-item" style="border-bottom:1px solid rgba(26,26,46,0.09);">
+        <div class="step-num step-num-dark">2</div>
+        <div>
+          <h3>自然交互</h3>
+          <p style="font-size:clamp(12px,1.3vw,15px);">用自然语言表达需求，系统瞬间理解您的意图，提供精准建议。</p>
+        </div>
+      </div>
+      <div class="step
