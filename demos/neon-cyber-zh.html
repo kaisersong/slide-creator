@@ -653,13 +653,17 @@
     }
   });
 
-  // Wheel — debounce-reset (NOT time throttle)
-  let wheelLocked = false, wheelTimer = null;
+  // Wheel — throttle (not debounce): lock for fixed 600ms after each slide change
+  // preventDefault stops native scroll-snap competing with JS smooth scroll
+  let wheelLocked = false;
   document.addEventListener('wheel', e => {
-    clearTimeout(wheelTimer);
-    if (!wheelLocked) { wheelLocked = true; e.deltaY > 0 ? goTo(cur + 1) : goTo(cur - 1); }
-    wheelTimer = setTimeout(() => { wheelLocked = false; }, 180);
-  }, { passive: true });
+    e.preventDefault();
+    if (!wheelLocked) {
+      wheelLocked = true;
+      e.deltaY > 0 ? goTo(cur + 1) : goTo(cur - 1);
+      setTimeout(() => { wheelLocked = false; }, 600);
+    }
+  }, { passive: false });
 
   // Touch swipe
   let touchStartY = 0;

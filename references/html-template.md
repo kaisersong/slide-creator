@@ -65,9 +65,10 @@ Every presentation follows this structure:
         *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
 
         html {
-            scroll-behavior: smooth;
             scroll-snap-type: y mandatory;
             height: 100%;
+            /* scroll-behavior intentionally omitted — JS scrollIntoView({behavior:'smooth'}) handles animation;
+               CSS scroll-behavior + JS smooth scroll = double animation = jitter */
         }
 
         body {
@@ -325,12 +326,15 @@ Every presentation follows this structure:
                    subsequent inertia events only reset the 180ms timer;
                    unlock only after 180ms of silence. Prevents trackpad
                    inertia from skipping multiple slides. */
-                let locked = false, timer = null;
+                let locked = false;
                 document.addEventListener('wheel', e => {
-                    clearTimeout(timer);
-                    if (!locked) { locked = true; e.deltaY > 0 ? this.next() : this.prev(); }
-                    timer = setTimeout(() => { locked = false; }, 180);
-                }, { passive: true });
+                    e.preventDefault(); // stops native scroll-snap competing with JS smooth scroll
+                    if (!locked) {
+                        locked = true;
+                        e.deltaY > 0 ? this.next() : this.prev();
+                        setTimeout(() => { locked = false; }, 600); // throttle: fixed 600ms regardless of momentum
+                    }
+                }, { passive: false }); // must be false to allow preventDefault
             }
 
             setupPresenter() {

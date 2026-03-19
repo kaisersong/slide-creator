@@ -12,8 +12,8 @@ English | [简体中文](README.zh-CN.md)
 
 See what slide-creator produces — open directly in your browser:
 
-- 🇺🇸 [slide-creator intro (English)](https://kaisersong.github.io/slide-creator/demos/intro-en.html) — what the skill is and how it works
-- 🇨🇳 [slide-creator 介绍（中文）](https://kaisersong.github.io/slide-creator/demos/intro-zh.html) — 同上，中文版
+- 🇺🇸 [slide-creator intro (English)](https://kaisersong.github.io/slide-creator/demos/blue-sky-en.html) — what the skill is and how it works
+- 🇨🇳 [slide-creator 介绍（中文）](https://kaisersong.github.io/slide-creator/demos/blue-sky-zh.html) — 同上，中文版
 
 Both demos above use the Blue Sky style. Click any screenshot below to open the live demo:
 

@@ -23,7 +23,8 @@ html, body {
 
 html {
     scroll-snap-type: y mandatory;
-    scroll-behavior: smooth;
+    /* scroll-behavior intentionally omitted — JS scrollIntoView({behavior:'smooth'}) handles animation;
+       CSS scroll-behavior + JS smooth scroll = double animation = jitter */
 }
 
 /* Each slide = exact viewport height */

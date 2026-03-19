@@ -1151,12 +1151,15 @@ channel.addEventListener('message', e => {
 });
 
 /* Wheel with inertia debounce */
-let wheelLocked = false, wheelTimer = null;
-document.addEventListener('wheel', e => {
-  clearTimeout(wheelTimer);
-  if (!wheelLocked) { wheelLocked = true; e.deltaY > 0 ? ctrl.goTo(cur + 1) : ctrl.goTo(cur - 1); }
-  wheelTimer = setTimeout(() => { wheelLocked = false; }, 180);
-}, { passive: true });
+let wheelLocked = false;
+  document.addEventListener('wheel', e => {
+    e.preventDefault();
+    if (!wheelLocked) {
+      wheelLocked = true;
+      e.deltaY > 0 ? ctrl.goTo(cur + 1) : ctrl.goTo(cur - 1);
+      setTimeout(() => { wheelLocked = false; }, 600);
+    }
+  }, { passive: false });
 
 /* Touch swipe */
 let touchStartX = 0;

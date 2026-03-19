@@ -885,15 +885,15 @@
   });
 
   // Wheel — debounce-reset lock (NOT time throttle)
-  let wheelLocked = false, wheelTimer = null;
+  let wheelLocked = false;
   document.addEventListener('wheel', e => {
-    clearTimeout(wheelTimer);
+    e.preventDefault();
     if (!wheelLocked) {
       wheelLocked = true;
       e.deltaY > 0 ? goTo(cur + 1) : goTo(cur - 1);
+      setTimeout(() => { wheelLocked = false; }, 600);
     }
-    wheelTimer = setTimeout(() => { wheelLocked = false; }, 180);
-  }, { passive: true });
+  }, { passive: false });
 
   // Touch swipe
   let touchStartY = 0;

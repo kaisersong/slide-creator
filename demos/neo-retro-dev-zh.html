@@ -738,6 +738,7 @@ if (new URLSearchParams(location.search).has('presenter')) {
         setupWheel() {
             let locked = false, timer = null;
             document.addEventListener('wheel', e => {
+                e.preventDefault();
                 clearTimeout(timer);
                 if (!locked) { locked = true; e.deltaY > 0 ? this.next() : this.prev(); }
                 timer = setTimeout(() => { locked = false; }, 180);

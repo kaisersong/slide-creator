@@ -7,7 +7,7 @@
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;700;800&display=swap&family=Noto+Sans+SC:wght@400;700">
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    html { scroll-snap-type: y mandatory; scroll-behavior: smooth; height: 100%; }
+    html { scroll-snap-type: y mandatory; height: 100%; }
     body {
       height: 100%; overflow-x: hidden;
       background: #c8d9e6;
@@ -581,13 +581,14 @@
   // Wheel — debounce-reset pattern (NOT time throttle)
   let wheelLocked = false, wheelTimer = null;
   document.addEventListener('wheel', e => {
+    e.preventDefault();
     clearTimeout(wheelTimer);
     if (!wheelLocked) {
       wheelLocked = true;
       if (e.deltaY > 0) goTo(cur + 1); else goTo(cur - 1);
     }
-    wheelTimer = setTimeout(() => { wheelLocked = false; }, 180);
-  }, { passive: true });
+    );
+  }, { passive: false });
 
   // Touch swipe
   let touchStartY = 0;

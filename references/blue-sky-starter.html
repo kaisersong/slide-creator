@@ -9,17 +9,21 @@
   ║  3. Fill the orbPositions array in JS (one entry per slide)          ║
   ║  4. Do NOT modify the visual system CSS — it is complete as-is       ║
   ║                                                                      ║
-  ║  All 10 Blue Sky signature elements are pre-built:                   ║
+  ║  All 13 Blue Sky signature elements are pre-built:                   ║
   ║  ✓ Sky gradient background                                           ║
   ║  ✓ SVG noise texture overlay                                         ║
   ║  ✓ 40px tech grid with radial mask                                   ║
   ║  ✓ 3 animated ambient orbs (reposition per slide via JS)             ║
-  ║  ✓ Glassmorphism cards (.g)                                          ║
+  ║  ✓ Glassmorphism cards (.g) — refined blue-tinted shadow             ║
   ║  ✓ Gradient headline text (.gt)                                      ║
   ║  ✓ Spring-physics horizontal track transitions                       ║
   ║  ✓ Pill pagination dots                                              ║
   ║  ✓ Cloud hero effect (use class="slide cover" on title slide)        ║
   ║  ✓ Slide counter (top-left, auto-set by JS)                          ║
+  ║  ✓ Cloud bank hero (.cloud-layer) — fractalNoise distorted scrolling ║
+  ║    white clouds with SVG flowing dashes (from V12MVP cover design)   ║
+  ║  ✓ Dual counter-rotating orbital rings (.rings + .ring)              ║
+  ║  ✓ Bento grid (.bento) + fade-bottom mask (.fade-bottom)            ║
   ╚══════════════════════════════════════════════��═══════════════════════╝
 -->
 <html lang="zh-CN">
@@ -67,6 +71,9 @@
   --green:     #10b981;
   --green-bg:  rgba( 16, 185, 129, 0.10);
 }
+
+/* Text selection color */
+::selection { background: #bfdbfe; color: #1e3a8a; }
 
 /* ═══════════════════════════════════════════════
    RESET
@@ -137,6 +144,8 @@ body::after {
   align-items: center; justify-content: center;
   padding: clamp(28px, 4vw, 56px) clamp(32px, 5vw, 80px);
   position: relative; overflow: hidden;
+  /* Own background so present mode (body.presenting = #000) doesn't bleed through */
+  background: linear-gradient(160deg, var(--bg-from), var(--bg-to));
 }
 
 /* ═══════════════════════════════════════════════
@@ -148,7 +157,7 @@ body::after {
   border-radius: 20px;
   backdrop-filter: blur(24px);
   -webkit-backdrop-filter: blur(24px);
-  box-shadow: 0 8px 32px rgba(14,165,233,0.10), 0 1px 0 rgba(255,255,255,0.8) inset;
+  box-shadow: 0 10px 40px -10px rgba(37,99,235,0.12), 0 1px 3px rgba(0,0,0,0.04), 0 1px 0 rgba(255,255,255,0.8) inset;
 }
 
 /* ═══════════════════════════════════════════════
@@ -173,6 +182,76 @@ body::after {
   0%, 100% { transform: translateY(0) scale(1); }
   50%       { transform: translateY(-20px) scale(1.05); }
 }
+
+/* ═══════════════════════════════════════════════
+   SIGNATURE ELEMENT 11 — Cloud bank hero
+   Inspired by V12MVP: feTurbulence-distorted white circles scroll
+   horizontally in two parallax layers. SVG dashed paths create the
+   "particles at cloud edge" feel.
+
+   Usage: add this structure inside a .slide.cover section:
+   1. Hidden SVG with #cloud-filter defs + #line-g gradient defs
+   2. Ambient color orb divs (blur blobs)
+   3. SVG with two dashed paths (class="dash-fwd" + "dash-back")
+   4. .cloud-layer div (wraps two .cloud-strip divs — slow + fast)
+   5. Title content div (z-index:10, position:relative)
+
+   See slide-creator-intro.html Slide 1 for full example.
+   ═══════════════════════════════════════════════ */
+.cloud-layer {
+  position: absolute; bottom: 0; left: 0; width: 100%; height: 75%;
+  pointer-events: none; overflow: hidden; z-index: 2;
+}
+.cloud-strip {
+  position: absolute; bottom: 0; left: 0;
+  display: flex; height: 100%;
+  animation: cloud-scroll 30s linear infinite;
+}
+.cloud-strip.fast { animation-duration: 18s; }
+@keyframes cloud-scroll {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-1920px); }
+}
+.cloud-group { position: absolute; bottom: 0; }
+.cloud-puff  { position: absolute; background: white; border-radius: 50%; }
+
+/* Flowing dashed line animations */
+@keyframes dash-fwd  { to { stroke-dashoffset: -100; } }
+@keyframes dash-back { to { stroke-dashoffset:  100; } }
+.dash-fwd  { animation: dash-fwd  4s linear infinite; }
+.dash-back { animation: dash-back 6s linear infinite; }
+
+/* ═══════════════════════════════════════════════
+   SIGNATURE ELEMENT 12 — Orbital rings
+   Usage: wrap two .ring divs in a .rings div.
+   Size each .ring with width/height style attr.
+   ═══════════════════════════════════════════════ */
+.rings {
+  position: absolute; pointer-events: none;
+  display: flex; align-items: center; justify-content: center;
+}
+.ring {
+  position: absolute; border-radius: 50%;
+  border: 1.5px solid rgba(37,99,235,0.20);
+  animation: ring-spin 10s linear infinite;
+}
+.ring::after {
+  content: ''; position: absolute; top: -4px; left: 30%;
+  width: 8px; height: 8px; border-radius: 50%;
+  background: rgba(37,99,235,0.50);
+  box-shadow: 0 0 10px rgba(37,99,235,0.60);
+}
+.ring:nth-child(2) {
+  animation-duration: 15s;
+  animation-direction: reverse;
+  border-color: rgba(14,165,233,0.16);
+}
+.ring:nth-child(2)::after {
+  left: 60%;
+  background: rgba(14,165,233,0.50);
+  box-shadow: 0 0 10px rgba(14,165,233,0.60);
+}
+@keyframes ring-spin { to { transform: rotate(360deg); } }
 
 /* ═══════════════════════════════════════════════
    SIGNATURE ELEMENT 8 — Pill pagination dots
@@ -215,6 +294,21 @@ p, li { font-size: clamp(0.82rem, 1.4vw, 1.05rem); line-height: 1.6; color: var(
 .cols2 { display: grid; grid-template-columns: 1fr 1fr;         gap: 16px; width: 100%; }
 .cols3 { display: grid; grid-template-columns: 1fr 1fr 1fr;     gap: 14px; width: 100%; }
 .cols4 { display: grid; grid-template-columns: repeat(4, 1fr);  gap: 12px; width: 100%; }
+
+/* Bento grid — iOS-style multi-height cards */
+.bento { display: grid; grid-template-columns: repeat(4, 1fr); grid-auto-rows: 160px; gap: 12px; width: 100%; }
+.bento .g { padding: 16px 18px; overflow: hidden; }
+.bento .span2 { grid-column: span 2; }
+.bento .span3 { grid-column: span 3; }
+.bento .row2  { grid-row: span 2; }
+
+/* Fade-bottom mask for overflow content */
+.fade-bottom { position: relative; }
+.fade-bottom::after {
+  content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 44px;
+  background: linear-gradient(transparent, rgba(224,242,254,0.92));
+  pointer-events: none; border-radius: inherit;
+}
 
 /* Divider accent line */
 .divider {
