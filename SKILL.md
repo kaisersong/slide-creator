@@ -99,7 +99,8 @@ Other agents can call this skill programmatically:
 /slide-creator --generate
 
 # Export to PPTX after generation
-/kai-html-export presentation.html
+/kai-html-export presentation.html                    # image mode (pixel-perfect, default)
+/kai-html-export --mode native presentation.html      # native mode (editable text/shapes)
 ```
 
 ---
