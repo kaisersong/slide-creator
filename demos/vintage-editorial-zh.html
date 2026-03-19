@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>slide-creator · Vintage Editorial · 个人品牌故事 — 创作者的十年感悟</title>
+  <title>Vintage Editorial — slide-creator</title>
   <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,700;0,9..144,900;1,9..144,700&family=Work+Sans:wght@400;500;600&display=swap&family=Noto+Sans+SC:wght@400;700" rel="stylesheet">
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -248,293 +248,301 @@
 <div id="nav-dots"></div>
 
 <!-- SLIDE 1: COVER -->
+<slides>
 <section class="slide" data-slide="0">
   <div class="deco-circle" style="width:600px;height:600px;top:-200px;right:-200px;"></div>
   <div class="deco-circle" style="width:200px;height:200px;bottom:80px;left:60px;"></div>
   <div class="content-wrapper space-between">
     <div style="padding-top: clamp(20px,4vh,60px);">
-      <div class="section-id slide-content-anim">核心主题</div>
+      <div class="section-id slide-content-anim">工具介绍</div>
       <div class="rule-thick slide-content-anim delay-1"></div>
-      <h1 class="display-title slide-content-anim delay-1">个人品牌<br><em>十年感悟</em></h1>
+      <h1 class="display-title slide-content-anim delay-1">slide-<br><em>creator</em></h1>
       <div class="rule slide-content-anim delay-2"></div>
       <p class="body-text fade-in delay-2" style="margin-top:16px; max-width:460px;">
-        从零开始到影响力建立的真实故事。<br>
-        这是创作者的觉悟之路，也是你的参考镜鉴。
+        为 Claude Code 和 OpenClaw 打造的零依赖 HTML 演示文稿工具。<br>
+        我们开发这个工具，是因为现有的替代品实在是令人尴尬。
       </p>
       <div class="stats-row fade-in delay-3">
         <div class="stat-item">
-          <span class="stat-big">10</span>
-          <span class="stat-small">年的沉淀</span>
+          <span class="stat-big">19</span>
+          <span class="stat-small">预设样式</span>
         </div>
         <div class="stat-item">
-          <span class="stat-big">100+</span>
-          <span class="stat-small">个案例</span>
+          <span class="stat-big">0</span>
+          <span class="stat-small">依赖项</span>
         </div>
         <div class="stat-item">
-          <span class="stat-big">∞</span>
-          <span class="stat-small">种可能</span>
+          <span class="stat-big">&#8734;</span>
+          <span class="stat-small">幻灯片</span>
         </div>
       </div>
     </div>
   </div>
   <div class="slide-footer">
-    <span class="footer-brand">个人品牌故事</span>
+    <span class="footer-brand">slide-creator</span>
     <span class="footer-num">&sect;01 / 08</span>
   </div>
 </section>
 
+<!-- SLIDE 2: THE PROBLEM -->
 <section class="slide" data-slide="1">
   <div class="deco-circle" style="width:400px;height:400px;top:50%;right:-120px;transform:translateY(-50%);"></div>
   <div class="content-wrapper space-between">
     <div>
-      <div class="section-id slide-content-anim">现实困境</div>
+      <div class="section-id slide-content-anim">问题所在</div>
       <div class="rule-thick slide-content-anim delay-1"></div>
-      <h2 class="headline slide-content-anim delay-1" style="max-width:500px;">大多数创作者正在走弯路</h2>
+      <h2 class="headline slide-content-anim delay-1" style="max-width:500px;">演示文稿不应该需要构建系统</h2>
       <div class="rule fade-in delay-2" style="opacity:0.15;"></div>
       <div class="fade-in delay-2" style="margin-top:8px;">
         <div class="pain-row">
           <div class="pain-num">01</div>
           <div>
-            <div class="pain-title">找不到差异化方向</div>
-            <div class="pain-body">内容同质化严重，数千个声音像一个声音。你的独特价值在哪里？</div>
+            <div class="pain-title">复杂的工具链</div>
+            <div class="pain-body">npm install、webpack 配置、300MB node_modules——仅仅是为了制作幻灯片。太荒唐了。</div>
           </div>
         </div>
         <div class="pain-row">
           <div class="pain-num">02</div>
           <div>
-            <div class="pain-title">增长陷入困境</div>
-            <div class="pain-body">前期涨粉快，后期增长停滞。粉丝数不涨，收入也跟着不动。</div>
+            <div class="pain-title">通用化输出</div>
+            <div class="pain-body">每一份 AI 生成的演示都长得一样——Inter 字体、紫色渐变。你的品牌被抹去了。</div>
           </div>
         </div>
         <div class="pain-row">
           <div class="pain-num">03</div>
           <div>
-            <div class="pain-title">变现能力弱</div>
-            <div class="pain-body">有粉丝没转化，有内容没价值。流量换不成真金白银。</div>
+            <div class="pain-title">没有所有权</div>
+            <div class="pain-body">封闭平台、导出限制、月度收费。你的幻灯片被扣为人质。</div>
           </div>
         </div>
       </div>
     </div>
   </div>
   <div class="slide-footer">
-    <span class="footer-brand">个人品牌故事</span>
+    <span class="footer-brand">slide-creator</span>
     <span class="footer-num">&sect;02 / 08</span>
   </div>
 </section>
 
+<!-- SLIDE 3: SHOW DON'T TELL -->
 <section class="slide" data-slide="2">
   <div class="deco-circle" style="width:300px;height:300px;bottom:-80px;left:-80px;"></div>
   <div class="content-wrapper space-between">
     <div>
       <div class="section-id slide-content-anim">核心洞察</div>
       <div class="rule-thick slide-content-anim delay-1"></div>
-      <h2 class="headline slide-content-anim delay-1">品牌不是靠说的，是靠做的</h2>
+      <h2 class="headline slide-content-anim delay-1">真正有效的风格发现</h2>
       <div class="pullquote fade-in delay-2">
-        "你的作品会替你说话，在你沉默的时候。"
+        "你无法用言语描述设计偏好。"
       </div>
       <p class="body-text fade-in delay-2">
-        个人品牌建设有三个关键阶段——认知自己、建立壁垒、创造复利。这不是速成术，而是系统方法论。
+        slide-creator 生成 3 个视觉预览——你反应，不描述。没有色彩理论。没有字体名称。只是：就是这个。
       </p>
       <div style="margin-top:24px;">
         <div class="step-editorial">
-          <div class="step-ed-num">一</div>
+          <div class="step-ed-num">I.</div>
           <div>
-            <div class="step-ed-title">认知自己的优势</div>
-            <div class="step-ed-body">找到你真正擅长且热爱的领域。这是所有差异化的起点。</div>
+            <div class="step-ed-title">表达气质</div>
+            <div class="step-ed-body">告诉它你想要的氛围。温暖、锐利、活泼、严肃但不沉闷。</div>
           </div>
         </div>
         <div class="step-editorial">
-          <div class="step-ed-num">二</div>
+          <div class="step-ed-num">II.</div>
           <div>
-            <div class="step-ed-title">持续产出有价值的内容</div>
-            <div class="step-ed-body">不追热点，只追深度。让每一条内容都值得被收藏。</div>
+            <div class="step-ed-title">生成 3 个迷你预览</div>
+            <div class="step-ed-body">三种不同的视觉风格，并排展示，瞬间生成。</div>
           </div>
         </div>
         <div class="step-editorial">
-          <div class="step-ed-num">三</div>
+          <div class="step-ed-num">III.</div>
           <div>
-            <div class="step-ed-title">建立商业闭环</div>
-            <div class="step-ed-body">从影响力到变现的完整路径。让热爱成为事业。</div>
+            <div class="step-ed-title">选择感觉对的那个</div>
+            <div class="step-ed-body">相信你的直觉。这就是全部要点。</div>
           </div>
         </div>
       </div>
     </div>
   </div>
   <div class="slide-footer">
-    <span class="footer-brand">个人品牌故事</span>
+    <span class="footer-brand">slide-creator</span>
     <span class="footer-num">&sect;03 / 08</span>
   </div>
 </section>
 
+<!-- SLIDE 4: 19 PRESETS -->
 <section class="slide" data-slide="3">
   <div class="deco-circle" style="width:500px;height:500px;top:-150px;left:-150px;"></div>
   <div class="content-wrapper space-between">
     <div>
-      <div class="section-id slide-content-anim">成长案例</div>
+      <div class="section-id slide-content-anim">样式库</div>
       <div class="rule-thick slide-content-anim delay-1"></div>
-      <h2 class="headline slide-content-anim delay-1" style="max-width:480px;">10年间见证了100+位创作者的蜕变</h2>
-      <p class="body-text fade-in delay-2">从素人到KOL，从爱好到事业。每一个成功故事都遵循同样的底层规律。</p>
+      <h2 class="headline slide-content-anim delay-1" style="max-width:480px;">19 款精心设计的样式。没有平庸的 AI 美学。</h2>
+      <p class="body-text fade-in delay-2">每一个预设都精心打磨，各具特色。从野兽派到植物风——每个故事都有它的声音。</p>
       <div class="preset-grid fade-in delay-2">
-        <span class="preset-tag">品牌定位师</span>
-        <span class="preset-tag">内容创业者</span>
-        <span class="preset-tag">知识变现者</span>
-        <span class="preset-tag">视频博主</span>
-        <span class="preset-tag">播客主持人</span>
-        <span class="preset-tag">写作者</span>
-        <span class="preset-tag">设计师</span>
-        <span class="preset-tag">摄影师</span>
-        <span class="preset-tag featured">品牌故事讲述者 ✦</span>
-        <span class="preset-tag dark">社群运营者</span>
-        <span class="preset-tag dark">顾问型创作者</span>
-        <span class="preset-tag">教育创新者</span>
-        <span class="preset-tag">艺术家</span>
-        <span class="preset-tag">自媒体企业家</span>
-        <span class="preset-tag dark">影响力投资人</span>
-        <span class="preset-tag">跨界融合者</span>
-        <span class="preset-tag">思想家</span>
-        <span class="preset-tag">文化传承者</span>
-        <span class="preset-tag dark">品牌加速者</span>
+        <span class="preset-tag">Bold Signal</span>
+        <span class="preset-tag">Electric Studio</span>
+        <span class="preset-tag">Creative Voltage</span>
+        <span class="preset-tag">Dark Botanical</span>
+        <span class="preset-tag">Blue Sky</span>
+        <span class="preset-tag">Notebook Tabs</span>
+        <span class="preset-tag">Pastel Geometry</span>
+        <span class="preset-tag">Split Pastel</span>
+        <span class="preset-tag featured">Vintage Editorial &#10022;</span>
+        <span class="preset-tag dark">Neon Cyber</span>
+        <span class="preset-tag dark">Terminal Green</span>
+        <span class="preset-tag">Swiss Modern</span>
+        <span class="preset-tag">Paper &amp; Ink</span>
+        <span class="preset-tag">Aurora Mesh</span>
+        <span class="preset-tag dark">Enterprise Dark</span>
+        <span class="preset-tag">Glassmorphism</span>
+        <span class="preset-tag">Neo-Brutalism</span>
+        <span class="preset-tag">Chinese Chan</span>
+        <span class="preset-tag dark">Data Story</span>
       </div>
     </div>
   </div>
   <div class="slide-footer">
-    <span class="footer-brand">个人品牌故事</span>
+    <span class="footer-brand">slide-creator</span>
     <span class="footer-num">&sect;04 / 08</span>
   </div>
 </section>
 
+<!-- SLIDE 5: HOW IT WORKS -->
 <section class="slide" data-slide="4">
   <div class="deco-circle" style="width:360px;height:360px;bottom:-80px;right:-80px;"></div>
   <div class="content-wrapper space-between">
     <div>
-      <div class="section-id slide-content-anim">方法论</div>
+      <div class="section-id slide-content-anim">工作流程</div>
       <div class="rule-thick slide-content-anim delay-1"></div>
-      <h2 class="headline slide-content-anim delay-1">三步走完整品牌建设体系</h2>
+      <h2 class="headline slide-content-anim delay-1">从想法到演示文稿，只需几分钟</h2>
       <div style="margin-top:20px;">
         <div class="step-editorial">
-          <div class="step-ed-num">第一步</div>
+          <div class="step-ed-num">I.</div>
           <div>
-            <div class="step-ed-title">策划你的品牌基因</div>
-            <div class="step-ed-body">确定领域、定位、调性。花2-4周深思，胜过盲目半年。</div>
+            <div class="step-ed-title">/slide-creator</div>
+            <div class="step-ed-body">回答几个问题。内容、气质、观众、语气。两分钟最多。</div>
           </div>
         </div>
         <div class="step-editorial">
-          <div class="step-ed-num">第二步</div>
+          <div class="step-ed-num">II.</div>
           <div>
-            <div class="step-ed-title">打造内容生产体系</div>
-            <div class="step-ed-body">建立选题库、创作流程、发布日历。让产出成为习惯。</div>
+            <div class="step-ed-title">从 3 个预览中选择</div>
+            <div class="step-ed-body">对三种视觉风格做出反应。不需要色彩理论——我们保证。</div>
           </div>
         </div>
         <div class="step-editorial">
-          <div class="step-ed-num">第三步</div>
+          <div class="step-ed-num">III.</div>
           <div>
-            <div class="step-ed-title">构建商业变现路径</div>
-            <div class="step-ed-body">粉丝—忠实用户—付费客户—终身客户。每一步都有方法。</div>
+            <div class="step-ed-title">打开你的 HTML</div>
+            <div class="step-ed-body">方向键 · 空格 · 滑动。在任何浏览器中运行。从不需要安装。</div>
           </div>
         </div>
       </div>
-      <div class="bordered-box fade-in delay-3" data-label="核心承诺" style="margin-top:24px;">
+      <div class="bordered-box fade-in delay-3" data-label="我们的承诺" style="margin-top:24px;">
         <p class="body-text" style="max-width:100%; color:#1a1a1a;">
-          用这套系统，你在第6个月能看到清晰的品牌轮廓，第12个月能实现初步变现。不是梦想，是真实可复制的路径。
+          从开始到完成不超过十分钟。我们计过时间。如果超时了，责怪你的内容——不是工具。
         </p>
       </div>
     </div>
   </div>
   <div class="slide-footer">
-    <span class="footer-brand">个人品牌故事</span>
+    <span class="footer-brand">slide-creator</span>
     <span class="footer-num">&sect;05 / 08</span>
   </div>
 </section>
 
+<!-- SLIDE 6: FEATURES -->
 <section class="slide" data-slide="5">
   <div class="deco-circle" style="width:280px;height:280px;top:60px;right:60px;"></div>
   <div class="content-wrapper space-between">
     <div>
-      <div class="section-id slide-content-anim">关键要素</div>
+      <div class="section-id slide-content-anim">功能详情</div>
       <div class="rule-thick slide-content-anim delay-1"></div>
-      <h2 class="headline slide-content-anim delay-1">品牌建设的五大核心<br>要素缺一不可</h2>
+      <h2 class="headline slide-content-anim delay-1">你需要的一切。<br>没有多余的。</h2>
       <div class="rule fade-in delay-2" style="opacity:0.15; margin-top:20px;"></div>
       <div class="fade-in delay-2">
         <div class="feature-row">
-          <div class="feature-name">清晰的定位</div>
-          <div class="feature-desc">让目标受众一句话理解你是谁。</div>
+          <div class="feature-name">视口自适应</div>
+          <div class="feature-desc">完美适配任何屏幕——笔记本电脑、电视、投影仪。</div>
         </div>
         <div class="feature-row">
-          <div class="feature-name">稳定的输出</div>
+          <div class="feature-name">行内编辑</div>
           <div style="text-align:right;">
-            <div class="feature-badge">持之以恒 · 日积月累</div>
+            <div class="feature-badge">E 键 + Ctrl+S</div>
           </div>
         </div>
         <div class="feature-row">
-          <div class="feature-name">独特的风格</div>
-          <div class="feature-desc">让人一眼就知道是你的内容。</div>
+          <div class="feature-name">PPTX 导出</div>
+          <div class="feature-desc">一键导出为 PowerPoint。完成。</div>
         </div>
         <div class="feature-row" style="border-bottom:none;">
-          <div class="feature-name">社群的共鸣</div>
+          <div class="feature-name">两阶段工作流</div>
           <div style="text-align:right;">
-            <div class="feature-badge">信任 → 认同 → 追随</div>
+            <div class="feature-badge">--plan → --generate</div>
           </div>
         </div>
       </div>
     </div>
   </div>
   <div class="slide-footer">
-    <span class="footer-brand">个人品牌故事</span>
+    <span class="footer-brand">slide-creator</span>
     <span class="footer-num">&sect;06 / 08</span>
   </div>
 </section>
 
+<!-- SLIDE 7: INSTALL -->
 <section class="slide" data-slide="6">
   <div class="deco-circle" style="width:450px;height:450px;bottom:-150px;right:-100px;"></div>
   <div class="content-wrapper space-between">
     <div>
-      <div class="section-id slide-content-anim">开始行动</div>
+      <div class="section-id slide-content-anim">安装指南</div>
       <div class="rule-thick slide-content-anim delay-1"></div>
-      <h2 class="headline slide-content-anim delay-1">两种加入方式<br>都能改变你的轨迹</h2>
+      <h2 class="headline slide-content-anim delay-1">两种开始方式。<br>都只需三十秒。</h2>
       <div class="fade-in delay-2" style="margin-top:24px;">
-        <div class="bordered-box" data-label="自学者路线">
-          <span class="sub-label">深度课程 + 工具包</span>
-          <code class="code-mono">完整的品牌建设框架 + 100+个执行案例 + 终身社群支持</code>
+        <div class="bordered-box" data-label="Claude Code">
+          <span class="sub-label">git clone</span>
+          <code class="code-mono">git clone https://github.com/kaisersong/slide-creator ~/.claude/skills/slide-creator</code>
         </div>
-        <div class="bordered-box" data-label="加速者计划">
-          <span class="sub-label">1对1 陪伴 + 实战指导</span>
-          <code class="code-mono">12周品牌突破计划 + 每周1对1导师课 + 直达变现</code>
+        <div class="bordered-box" data-label="OpenClaw">
+          <span class="sub-label">clawhub install</span>
+          <code class="code-mono">clawhub install html-slide-creator</code>
         </div>
       </div>
-      <p class="body-text fade-in delay-3" style="margin-top:16px; font-style:italic;">投资自己，是最聪明的决定。你的品牌价值远超你的想象。</p>
+      <p class="body-text fade-in delay-3" style="margin-top:16px; font-style:italic;">免费。开源。MIT 许可。无需注册。我们是认真的。</p>
     </div>
   </div>
   <div class="slide-footer">
-    <span class="footer-brand">个人品牌故事</span>
+    <span class="footer-brand">slide-creator</span>
     <span class="footer-num">&sect;07 / 08</span>
   </div>
 </section>
 
+<!-- SLIDE 8: GET STARTED -->
 <section class="slide" data-slide="7">
   <div class="deco-circle" style="width:700px;height:700px;bottom:-300px;right:-200px;"></div>
   <div class="deco-circle" style="width:120px;height:120px;top:80px;right:120px;"></div>
   <div class="content-wrapper center">
-    <div class="section-id slide-content-anim">开启新篇章</div>
+    <div class="section-id slide-content-anim">开始</div>
     <div class="rule-thick slide-content-anim delay-1"></div>
-    <h2 class="display-title slide-content-anim delay-1" style="font-size:clamp(52px,9vw,100px);">你的品牌<br>故事<br><em>从今天开始</em></h2>
+    <h2 class="display-title slide-content-anim delay-1" style="font-size:clamp(52px,9vw,100px);">你的下一份<br>演示文稿<br><em>从这里开始</em></h2>
     <div class="rule fade-in delay-2" style="opacity:0.15; margin-top:24px;"></div>
     <p class="body-text fade-in delay-2" style="margin-top:16px;">
-      10年的实战经验凝聚成系统方法论。<br>
-      你需要的不是运气，而是正确的方向和坚持。
+      支持 Claude Code 和 OpenClaw。完全在浏览器中运行。<br>无需安装——只需结果。
     </p>
     <div class="fade-in delay-3" style="margin-top:24px;">
-      <code class="code-mono" style="display:inline-block; font-size:clamp(16px,2.5vw,22px); padding:16px 32px; border:2px solid #1a1a1a;">开始品牌觉醒之旅</code>
+      <code class="code-mono" style="display:inline-block; font-size:clamp(16px,2.5vw,22px); padding:16px 32px; border:2px solid #1a1a1a;">/slide-creator</code>
     </div>
     <div class="fade-in delay-3">
-      <button class="cta-editorial" onclick="saveFile()">保存此演讲稿</button>
-      <a class="cta-editorial cta-accent" href="https://github.com" target="_blank">加入社群 →</a>
+      <button class="cta-editorial" onclick="saveFile()">保存此演示文稿</button>
+      <a class="cta-editorial cta-accent" href="https://github.com/kaisersong/slide-creator" target="_blank">在 GitHub 上查看 →</a>
     </div>
   </div>
   <div class="slide-footer">
-    <span class="footer-brand">个人品牌故事</span>
+    <span class="footer-brand">slide-creator</span>
     <span class="footer-num">&sect;08 / 08</span>
   </div>
 </section>
+</slides>
 
 <script>
   const slides = document.querySelectorAll('.slide');

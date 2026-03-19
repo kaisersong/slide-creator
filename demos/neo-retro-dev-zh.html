@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>slide-creator · Neo Retro Dev · 开发者工具发布 — API 文档与产品介绍</title>
+    <title>Slide Creator — Neo-Retro Dev Deck</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;700;800;900&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;600&display=swap&family=Noto+Sans+SC:wght@400;700" rel="stylesheet">
     <style>
@@ -438,10 +438,10 @@
             <span class="badge badge-pink" style="margin-left:0.5rem;">v1.8</span>
         </div>
         <div class="block reveal" style="margin-bottom:1rem;">
-            <div class="headline h-xl">演示幻灯片生成器</div>
+            <div class="headline h-xl">SLIDE-CREATOR</div>
         </div>
         <div class="reveal">
-            <span class="comment" style="font-size:clamp(0.75rem,1.4vw,1rem);">为 Claude Code 打造的零依赖 HTML 演示文稿</span>
+            <span class="comment" style="font-size:clamp(0.75rem,1.4vw,1rem);">Claude Code 零依赖 HTML 演示文稿</span>
         </div>
         <div style="display:flex;gap:1rem;margin-top:1.2rem;flex-wrap:wrap;" class="reveal">
             <div class="block" style="padding:0.6rem 1rem;">
@@ -457,7 +457,6 @@
     </div>
 </section>
 
-<!-- ══ SLIDE 2: SYSTEM ARCHITECTURE ══ -->
 <section class="slide" id="s2"
     data-notes="Slide Creator is a three-step pipeline: raw content goes in, the skill analyzes and styles it, one HTML file comes out. The HTML has zero external dependencies — it runs anywhere."
     aria-label="Architecture">
@@ -469,14 +468,14 @@
         <div class="arch-layer" style="background:rgba(255,225,77,0.15);">
             <div>
                 <div class="arch-layer .layer-label headline h-sm">你的内容</div>
-                <div class="comment" style="margin-top:0.3rem;">笔记、文档、PLANNING.md、图像、PPTX</div>
+                <div class="comment" style="margin-top:0.3rem;">笔记、文档、PLANNING.md、图片、PPTX</div>
             </div>
             <span class="badge">输入</span>
         </div>
         <div class="arch-arrow reveal">↓</div>
         <div class="arch-layer" style="background:rgba(255,60,126,0.1);">
             <div>
-                <div class="headline h-sm">/幻灯片生成器</div>
+                <div class="headline h-sm">/SLIDE-CREATOR</div>
                 <div class="comment" style="margin-top:0.3rem;">样式发现 → 布局生成 → 代码质量检查</div>
             </div>
             <span class="badge badge-pink">技能</span>
@@ -484,90 +483,86 @@
         <div class="arch-arrow reveal">↓</div>
         <div class="arch-layer" style="background:rgba(0,200,255,0.1);">
             <div>
-                <div class="headline h-sm">演示文稿.HTML</div>
-                <div class="comment" style="margin-top:0.3rem;">内联 CSS + JS · 浏览器编辑 · 演讲者模式 · PPTX 导出</div>
+                <div class="headline h-sm">PRESENTATION.HTML</div>
+                <div class="comment" style="margin-top:0.3rem;">内联 CSS + JS · 内联编辑 · 演讲者模式 · PPTX 导出</div>
             </div>
             <span class="badge badge-cyan">输出</span>
         </div>
     </div>
 </section>
 
-<!-- ══ SLIDE 3: FEATURE CARDS ══ -->
 <section class="slide" id="s3"
     data-notes="Three headline features: 21 curated design presets with named layout variations. Built-in inline editing — click any text to change it. Presenter mode with notes and timer via BroadcastChannel."
     aria-label="Features">
     <div class="reveal" style="margin-bottom:1rem;"><span class="badge">核心功能</span></div>
-    <div class="headline h-md reveal" style="margin-bottom:1.2rem;">你能得到什么</div>
+    <div class="headline h-md reveal" style="margin-bottom:1.2rem;">你将获得什么</div>
     <div class="cards-grid reveal">
         <div class="feat-card accent-yellow">
             <div style="display:flex;justify-content:space-between;align-items:flex-start;">
                 <div class="headline h-sm">21 种样式</div>
                 <div class="feat-icon">🎨</div>
             </div>
-            <div class="comment">精选设计预设</div>
-            <p class="body-text" style="font-size:clamp(0.7rem,1.2vw,0.88rem);margin-top:0.3rem;">大胆信号、瑞士现代、终端绿、中文禅宗、复古开发甲板 + 16 个更多选项。每个都有命名的布局变体。</p>
+            <div class="comment">精心设计的预设样式</div>
+            <p class="body-text" style="font-size:clamp(0.7rem,1.2vw,0.88rem);margin-top:0.3rem;">Bold Signal、Swiss Modern、Terminal Green、Chinese Chan、Neo-Retro Dev Deck 以及 16 种其他样式。每种样式都带有命名的布局变体。</p>
         </div>
         <div class="feat-card accent-pink">
             <div style="display:flex;justify-content:space-between;align-items:flex-start;">
                 <div class="headline h-sm">内联编辑</div>
                 <div class="feat-icon">✏️</div>
             </div>
-            <div class="comment">按 E 键在浏览器中编辑</div>
-            <p class="body-text" style="font-size:clamp(0.7rem,1.2vw,0.88rem);margin-top:0.3rem;">点击任何文字。就地编辑。Ctrl+S 保存回 HTML 文件。无需外部编辑器。</p>
+            <div class="comment">按 E 在浏览器中编辑</div>
+            <p class="body-text" style="font-size:clamp(0.7rem,1.2vw,0.88rem);margin-top:0.3rem;">点击任何文本。就地编辑。Ctrl+S 保存回 HTML 文件。无需外部编辑器。</p>
         </div>
         <div class="feat-card accent-cyan">
             <div style="display:flex;justify-content:space-between;align-items:flex-start;">
                 <div class="headline h-sm">演讲者模式</div>
                 <div class="feat-icon">🎤</div>
             </div>
-            <div class="comment">按 P 键打开演讲者视图</div>
-            <p class="body-text" style="font-size:clamp(0.7rem,1.2vw,0.88rem);margin-top:0.3rem;">演讲者备注 + 计时器 + 导航。通过 BroadcastChannel API 同步。支持离线。</p>
+            <div class="comment">按 P 打开演讲者视图</div>
+            <p class="body-text" style="font-size:clamp(0.7rem,1.2vw,0.88rem);margin-top:0.3rem;">演讲者备注 + 计时器 + 导航。通过 BroadcastChannel API 同步。离线可用。</p>
         </div>
     </div>
 </section>
 
-<!-- ══ SLIDE 4: BEFORE / AFTER ══ -->
 <section class="slide" id="s4"
     data-notes="Before: five different tools, none talking to each other, fragile CDN dependencies, a re-rolling loop hoping for better AI output. After: one command, one file, done."
     aria-label="Before and after">
     <div class="ba-panel reveal">
-        <div class="ba-header bad">// 之前 — 没有幻灯片生成器</div>
+        <div class="ba-header bad">// 之前 — 没有 slide-creator</div>
         <ul class="ba-list">
-            <li class="minus">选择工具（Canva？Keynote？Miro？）</li>
+            <li class="minus">选择工具（Canva? Keynote? Miro?）</li>
             <li class="minus">npm install reveal.js 或 impress.js</li>
             <li class="minus">每张幻灯片依赖 3 个 CDN 库</li>
-            <li class="minus">反复调整 AI 提示，直到输出看起来不错</li>
-            <li class="minus">导出 → 字体破损、图像丢失</li>
+            <li class="minus">反复调整 AI 提示词，直到输出看起来不错</li>
+            <li class="minus">导出 → 字体损坏、图片丢失</li>
         </ul>
     </div>
     <div class="ba-panel reveal">
-        <div class="ba-header good">// 之后 — 使用幻灯片生成器</div>
+        <div class="ba-header good">// 之后 — 使用 slide-creator</div>
         <ul class="ba-list">
-            <li class="plus"><span class="mono" style="font-size:0.9em;">/幻灯片生成器</span></li>
-            <li class="plus">从 21 个预设中选择样式</li>
-            <li class="plus">获得 <strong>演示文稿.html</strong></li>
+            <li class="plus"><span class="mono" style="font-size:0.9em;">/slide-creator</span></li>
+            <li class="plus">从 21 种预设中选择样式</li>
+            <li class="plus">获得 <strong>presentation.html</strong></li>
             <li class="plus">零依赖 · 离线运行</li>
-            <li class="plus">内联编辑 · 导出为 PPTX · 完成</li>
+            <li class="plus">内联编辑 · 导出 PPTX · 完成</li>
         </ul>
     </div>
 </section>
 
-<!-- ══ SLIDE 5: MANIFESTO ══ -->
 <section class="slide" id="s5"
     data-notes="The core philosophy: a presentation shouldn't require a build pipeline. One file, any browser, anywhere. Show-don't-tell style discovery: see 3 visual previews before committing to a style."
     aria-label="Philosophy">
     <div class="manifesto-block reveal">
-        <div class="headline h-xl" style="color:#f7f5f0;">一条命令。<br>一个 <span style="background:var(--yellow);color:var(--text);padding:0 6px;">文件</span>。<br>零借口。</div>
+        <div class="headline h-xl" style="color:#f7f5f0;">一个命令。<br>一个 <span style="background:var(--yellow);color:var(--text);padding:0 6px;">文件</span>。<br>零 借口。</div>
         <ul class="points-list">
             <li class="comment" style="color:rgba(247,245,240,0.6);">无需 npm install、无 CDN、无构建管道</li>
-            <li class="comment" style="color:rgba(247,245,240,0.6);">承诺前显示 3 个可视样式预览</li>
+            <li class="comment" style="color:rgba(247,245,240,0.6);">提交前展示 3 个视觉样式预览</li>
             <li class="comment" style="color:rgba(247,245,240,0.6);">每张幻灯片完全适应一个视口 — 无需滚动</li>
-            <li class="comment" style="color:rgba(247,245,240,0.6);">离线工作 · 浏览器编辑 · 导出为 PPTX</li>
+            <li class="comment" style="color:rgba(247,245,240,0.6);">离线工作 · 在浏览器中编辑 · 导出 PPTX</li>
         </ul>
     </div>
 </section>
 
-<!-- ══ SLIDE 6: COMMANDS ══ -->
 <section class="slide" id="s6"
     data-notes="Four commands. No flag is fully interactive: it asks what you want, shows style previews, and generates. --plan separates outline from code. --generate skips the questions when you have a plan."
     aria-label="Commands">
@@ -576,40 +571,39 @@
     <div class="block reveal" style="padding:0;overflow:hidden;">
         <table class="cmd-table">
             <tr class="reveal">
-                <td><span style="color:var(--pink);">/幻灯片生成器</span></td>
+                <td><span style="color:var(--pink);">/slide-creator</span></td>
                 <td><span class="body-text">交互式：样式发现 → 内容 → 生成。最适合从零开始。</span></td>
             </tr>
             <tr class="reveal">
-                <td><span style="color:var(--text);">/幻灯片生成器</span> <span style="color:var(--pink);">--plan</span></td>
-                <td><span class="body-text">扫描 resources/，创建 PLANNING.md 大纲。在生成 HTML 前停止。先思考后编码。</span></td>
+                <td><span style="color:var(--text);">/slide-creator</span> <span style="color:var(--pink);">--plan</span></td>
+                <td><span class="body-text">扫描 resources/ 文件夹，创建 PLANNING.md 大纲。在生成 HTML 前停止。先思考，再编码。</span></td>
             </tr>
             <tr class="reveal">
-                <td><span style="color:var(--text);">/幻灯片生成器</span> <span style="color:var(--cyan);">--generate</span></td>
-                <td><span class="body-text">读取 PLANNING.md，跳过问题，生成 HTML。从计划到演示的快速路径。</span></td>
+                <td><span style="color:var(--text);">/slide-creator</span> <span style="color:var(--cyan);">--generate</span></td>
+                <td><span class="body-text">读取 PLANNING.md，跳过提问，生成 HTML。从计划快速到演示文稿的路径。</span></td>
             </tr>
             <tr class="reveal">
-                <td><span style="color:var(--text);">/幻灯片生成器</span> <span style="color:#22c55e;">--export pptx</span></td>
-                <td><span class="body-text">通过系统 Chrome 截图每张幻灯片 → 组装 .pptx。无需 Node.js，无需下载 Chromium。</span></td>
+                <td><span style="color:var(--text);">/slide-creator</span> <span style="color:#22c55e;">--export pptx</span></td>
+                <td><span class="body-text">通过系统 Chrome 截屏每张幻灯片 → 组装 .pptx。无需 Node.js、无需下载 Chromium。</span></td>
             </tr>
         </table>
     </div>
 </section>
 
-<!-- ══ SLIDE 7: METRICS ══ -->
 <section class="slide" id="s7"
     data-notes="The numbers: 21 design presets each with named layout variations. 1 output file with zero runtime dependencies. 0 npm packages required. The whole skill is a SKILL.md that Claude reads."
     aria-label="Metrics">
-    <div class="reveal" style="margin-bottom:1rem;"><span class="badge">数据统计</span></div>
-    <div class="headline h-md reveal" style="margin-bottom:1.2rem;">统计信息</div>
+    <div class="reveal" style="margin-bottom:1rem;"><span class="badge">数字说话</span></div>
+    <div class="headline h-md reveal" style="margin-bottom:1.2rem;">统计数据</div>
     <div class="metrics-grid reveal">
         <div class="metric-block accent-yellow">
             <div class="metric-num" style="color:var(--text);">21</div>
             <div class="headline h-sm">种样式</div>
-            <div class="comment">精选预设</div>
+            <div class="comment">精心设计的预设</div>
             <div class="px-bar-wrap" style="margin-top:0.8rem;">
                 <div class="px-bar-row"><div class="px-bar" style="width:100%;background:var(--yellow);"></div><span class="px-label">深色主题</span></div>
                 <div class="px-bar-row"><div class="px-bar" style="width:76%;background:var(--yellow);opacity:0.7;"></div><span class="px-label">浅色主题</span></div>
-                <div class="px-bar-row"><div class="px-bar" style="width:48%;background:var(--yellow);opacity:0.4;"></div><span class="px-label">特色主题</span></div>
+                <div class="px-bar-row"><div class="px-bar" style="width:48%;background:var(--yellow);opacity:0.4;"></div><span class="px-label">特色款</span></div>
             </div>
         </div>
         <div class="metric-block accent-pink">
@@ -626,35 +620,34 @@
         <div class="metric-block accent-cyan">
             <div class="metric-num" style="color:var(--text);">0</div>
             <div class="headline h-sm">NPM 依赖</div>
-            <div class="comment">运行时要求</div>
+            <div class="comment">运行时需求</div>
             <div style="margin-top:0.8rem;">
                 <div class="comment">无 node_modules</div>
                 <div class="comment">无 package.json</div>
                 <div class="comment">无构建步骤</div>
-                <div class="comment">仅 html</div>
+                <div class="comment">仅 HTML</div>
             </div>
         </div>
     </div>
 </section>
 
-<!-- ══ SLIDE 8: CLOSING ══ -->
 <section class="slide" id="s8"
     data-notes="Install in under 30 seconds. Clone into the skills directory and you're running. Start with /slide-creator — it handles everything interactively."
     aria-label="Get started">
     <div class="close-block reveal">
         <div style="margin-bottom:1rem;"><span class="badge badge-pink">安装</span></div>
-        <div class="headline h-lg" style="color:#f7f5f0;margin-bottom:1.2rem;">开始使用<br><span style="color:var(--yellow);">仅需 30 秒</span></div>
+        <div class="headline h-lg" style="color:#f7f5f0;margin-bottom:1.2rem;">开始使用<br><span style="color:var(--yellow);">只需 30 秒</span></div>
         <div style="border: 2px solid rgba(255,255,255,0.15); padding: 0.8rem 1.2rem; margin-bottom:1rem; background:rgba(0,0,0,0.3);">
             <span class="mono" style="font-size:clamp(0.6rem,1.1vw,0.82rem); color:rgba(247,245,240,0.85); word-break:break-all;">git clone https://github.com/kaisersong/slide-creator ~/.claude/skills/slide-creator</span>
         </div>
         <div style="display:flex;gap:0.5rem;flex-wrap:wrap;margin-bottom:1rem;">
-            <span class="badge" style="background:var(--cyan);">步骤 1：克隆</span>
+            <span class="badge" style="background:var(--cyan);">第一步：克隆</span>
             <span style="font-family:'IBM Plex Mono';font-size:0.8rem;align-self:center;">→</span>
-            <span class="badge" style="background:var(--yellow);">步骤 2：/幻灯片生成器</span>
+            <span class="badge" style="background:var(--yellow);">第二步：/slide-creator</span>
             <span style="font-family:'IBM Plex Mono';font-size:0.8rem;align-self:center;">→</span>
-            <span class="badge badge-pink">步骤 3：发布</span>
+            <span class="badge badge-pink">第三步：发布</span>
         </div>
-        <div class="comment" style="color:rgba(247,245,240,0.5);">无构建步骤 · 无配置 · 仅需运行</div>
+        <div class="comment" style="color:rgba(247,245,240,0.5);">无构建步骤 · 无配置 · 直接运行</div>
     </div>
 </section>
 

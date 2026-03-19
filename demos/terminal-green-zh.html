@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>slide-creator · Terminal Green · 开源工具介绍 — 命令行效率神器</title>
+  <title>Terminal Green — slide-creator</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&display=swap&family=Noto+Sans+SC:wght@400;700" rel="stylesheet">
   <style>
@@ -282,6 +282,7 @@
 <div id="edit-indicator">&gt; EDIT_MODE [Ctrl+S to save]</div>
 
 <!-- SLIDE 01: Cover -->
+<slides>
 <section class="slide" id="slide-0">
   <div class="slide-num reveal">[01/08] &gt; BOOT_SEQUENCE</div>
 
@@ -297,8 +298,8 @@
     <h1>slide-creator</h1>
     <hr class="rule">
     <p style="color:#8b949e; font-size: clamp(0.8rem,1.4vw,1rem); margin-bottom: clamp(1rem,2vh,1.5rem);">
-      # 零依赖的HTML演示工具<br>
-      # 为Claude Code和OpenClaw量身打造
+      # 零依赖 HTML 演示文稿<br>
+      # 适用于 Claude Code &amp; OpenClaw
     </p>
     <div class="stat-row">
       <div class="stat">
@@ -321,17 +322,17 @@
 <section class="slide" id="slide-1">
   <div class="slide-num reveal">[02/08] &gt; PROBLEM_STATEMENT</div>
   <div class="label reveal">&gt; KNOWN_ISSUES</div>
-  <h2 class="reveal">演示文稿不应该<span class="accent">依赖</span><br>构建系统</h2>
+  <h2 class="reveal">演示文稿不应该<span class="accent">需要</span><br>构建系统</h2>
   <hr class="rule reveal">
   <ul class="pain-list">
     <li class="reveal">
-      <span>// 复杂的工具链：npm install、webpack配置、300MB的node_modules只为了发布几张幻灯片</span>
+      <span>// 复杂工具链：npm install、webpack 配置、300MB node_modules 只是为了发布幻灯片</span>
     </li>
     <li class="reveal">
-      <span>// 通用的输出：每个AI演示看起来都一样——Inter字体、紫色渐变、毫无个性</span>
+      <span>// 通用输出：每个 AI 演示看起来都一样——Inter 字体、紫色渐变、没有个性</span>
     </li>
     <li class="reveal">
-      <span>// 失去所有权：封闭平台、导出限制、每月为你自己的内容付费</span>
+      <span>// 无所有权：封闭平台、导出限制、为自己的内容支付月费</span>
     </li>
   </ul>
   <div class="terminal-block reveal">
@@ -344,23 +345,23 @@
 <section class="slide" id="slide-2">
   <div class="slide-num reveal">[03/08] &gt; DISCOVERY_PROTOCOL</div>
   <div class="label reveal">&gt; FEATURE</div>
-  <h2 class="reveal">风格发现系统<span class="accent">真的</span>有效</h2>
+  <h2 class="reveal">设计发现能<span class="accent">真正</span>有效</h2>
   <hr class="rule reveal">
   <p class="reveal" style="margin-bottom: clamp(1rem,2vh,1.5rem);">
-    你无法用文字描述设计偏好。slide-creator生成3个视觉预览——你做出反应，而不是描述。
+    你无法用文字描述设计偏好。slide-creator 生成 3 个视觉预览——你反应，而不是描述。
   </p>
   <div class="steps">
     <div class="step reveal">
       <span class="step-num">01&gt;</span>
-      <div class="step-text">描述气质 → <span class="accent">系统理解你的意图</span></div>
+      <div class="step-text">询问氛围 → <span class="accent">系统查询你的意图</span></div>
     </div>
     <div class="step reveal">
       <span class="step-num">02&gt;</span>
-      <div class="step-text">生成3个迷你预览 → <span class="accent">实际渲染，而非文字描述</span></div>
+      <div class="step-text">生成 3 个迷你预览 → <span class="accent">渲染而非描述</span></div>
     </div>
     <div class="step reveal">
       <span class="step-num">03&gt;</span>
-      <div class="step-text">选择<span class="accent">最有感觉</span>的一个 → 继续</div>
+      <div class="step-text">选择<span class="accent">感觉对</span>的那个 → 继续</div>
     </div>
   </div>
 </section>
@@ -369,7 +370,7 @@
 <section class="slide" id="slide-3">
   <div class="slide-num reveal">[04/08] &gt; PRESET_REGISTRY</div>
   <div class="label reveal">&gt; LOADED_MODULES</div>
-  <h2 class="reveal">19个精心打磨的风格。<br><span class="accent">没有通用的AI美学。</span></h2>
+  <h2 class="reveal">19 种精选风格。<br><span class="accent">没有通用 AI 美学。</span></h2>
   <hr class="rule reveal">
   <div class="preset-grid reveal">
     <span class="preset-tag">Bold Signal</span>
@@ -393,7 +394,7 @@
     <span class="preset-tag">Data Story</span>
   </div>
   <p class="reveal" style="margin-top: clamp(1rem,2vh,1.5rem);">
-    <span style="color:#39d353;">// 19个模块已加载。</span>每个都是一个完整、独立的HTML文件。
+    <span style="color:#39d353;">// 19 entries loaded.</span> 每个都作为完整的自包含 HTML 文件交付。
   </p>
 </section>
 
@@ -401,28 +402,28 @@
 <section class="slide" id="slide-4">
   <div class="slide-num reveal">[05/08] &gt; EXECUTION_FLOW</div>
   <div class="label reveal">&gt; HOW_IT_WORKS</div>
-  <h2 class="reveal">三条命令。<br><span class="accent">一个演示。</span></h2>
+  <h2 class="reveal">三个命令。<br><span class="accent">一个演示文稿。</span></h2>
   <hr class="rule reveal">
   <div class="how-steps">
     <div class="how-step reveal">
       <span class="how-num">01</span>
       <div class="how-content">
-        <h3><span style="color:#39d353;">/slide-creator</span> — 回答4个问题</h3>
-        <p>主题、观众、气质、时长。系统完成剩余工作。</p>
+        <h3><span style="color:#39d353;">/slide-creator</span> — 回答 4 个问题</h3>
+        <p>主题、受众、氛围、时长。系统完成其余工作。</p>
       </div>
     </div>
     <div class="how-step reveal">
       <span class="how-num">02</span>
       <div class="how-content">
-        <h3>选择你的风格 — 对3个视觉预览做出反应</h3>
-        <p>无需用文字描述美学。看→选→完成。</p>
+        <h3>选择你的风格 — 对 3 个视觉预览做出反应</h3>
+        <p>无需用文字描述美学。看到 > 选择 > 完成。</p>
       </div>
     </div>
     <div class="how-step reveal">
       <span class="how-num">03</span>
       <div class="how-content">
-        <h3>打开你的演示 — 方向键·空格·滑动</h3>
-        <p>纯HTML。离线工作。无服务器。无运行时。</p>
+        <h3>打开你的演示文稿 — 箭头键 · 空格 · 滑动</h3>
+        <p>纯 HTML。离线工作。无服务器。无运行时。</p>
       </div>
     </div>
   </div>
@@ -432,24 +433,24 @@
 <section class="slide" id="slide-5">
   <div class="slide-num reveal">[06/08] &gt; FEATURE_FLAGS</div>
   <div class="label reveal">&gt; CAPABILITIES</div>
-  <h2 class="reveal">为<span class="accent">实际应用</span>而生。</h2>
+  <h2 class="reveal">为<span class="accent">真实使用</span>而构建。</h2>
   <hr class="rule reveal">
   <div class="feature-grid">
     <div class="feature-card reveal">
       <div class="feature-title">&gt; VIEWPORT_FIT</div>
-      <div class="feature-desc">每张幻灯片完全适配100vh。永不滚动。每个布局都为视口而设计。</div>
+      <div class="feature-desc">每张幻灯片精确适配 100vh。永不滚动。每个布局都为视口设计。</div>
     </div>
     <div class="feature-card reveal">
       <div class="feature-title">&gt; INLINE_EDIT</div>
-      <div class="feature-desc">按E键，点击任意文本，Ctrl+S保存。编辑模式内置于每个演示中。</div>
+      <div class="feature-desc">按 E，点击任何文本，Ctrl+S 保存。编辑模式内置到每个演示文稿中。</div>
     </div>
     <div class="feature-card reveal">
       <div class="feature-title">&gt; PPTX_EXPORT</div>
-      <div class="feature-desc"><code>/slide-creator --export pptx</code> — 当董事会要求时转换为PowerPoint。</div>
+      <div class="feature-desc"><code>/slide-creator --export pptx</code> — 当董事会需要时转换为 PowerPoint。</div>
     </div>
     <div class="feature-card reveal">
       <div class="feature-title">&gt; TWO_STAGE</div>
-      <div class="feature-desc"><code>--plan</code>先创建大纲。<code>--generate</code>生成最终HTML。提交前审查。</div>
+      <div class="feature-desc"><code>--plan</code> 首先创建大纲。<code>--generate</code> 生成最终 HTML。提交前审查。</div>
     </div>
   </div>
 </section>
@@ -458,18 +459,18 @@
 <section class="slide" id="slide-6">
   <div class="slide-num reveal">[07/08] &gt; INSTALL_SEQUENCE</div>
   <div class="label reveal">&gt; SETUP</div>
-  <h2 class="reveal">两行代码。<br><span class="accent">零配置。</span></h2>
+  <h2 class="reveal">两行代码。<br><span class="accent">零设置。</span></h2>
   <hr class="rule reveal">
   <div class="label reveal" style="margin-top: clamp(1rem,2vh,1.5rem);">&gt; CLAUDE_CODE</div>
   <div class="terminal-block reveal">
     <span class="prompt">$</span> <span class="cmd">git clone https://github.com/kaisersong/slide-creator \</span><br>
     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="cmd">~/.claude/skills/slide-creator</span><br>
-    <span class="comment"># 就这样。重启Claude Code。</span>
+    <span class="comment"># 就这样。重启 Claude Code。</span>
   </div>
   <div class="label reveal">&gt; OPENCLAW</div>
   <div class="terminal-block reveal">
     <span class="prompt">$</span> <span class="cmd">clawhub install html-slide-creator</span><br>
-    <span class="comment"># 一条命令。立即可用。</span>
+    <span class="comment"># 一个命令。立即可用。</span>
   </div>
 </section>
 
@@ -481,13 +482,14 @@
   <hr class="rule reveal">
   <div class="cta-block reveal">
     <div class="cta-cmd">/slide-creator</div>
-    <div class="cta-sub">支持Claude Code和OpenClaw。</div>
+    <div class="cta-sub">适用于 Claude Code 和 OpenClaw。</div>
   </div>
   <p class="reveal" style="margin-top: clamp(1.5rem,3vh,2rem);">
-    <span style="color:#39d353;"># 19个风格已加载。0个依赖。∞张幻灯片。</span><br>
-    <span style="color:#484f58;"># 你的演示。你的文件。无平台锁定。</span>
+    <span style="color:#39d353;"># 19 个预设已加载。0 个依赖。∞ 张幻灯片。</span><br>
+    <span style="color:#484f58;"># 你的演示文稿。你的文件。无平台锁定。</span>
   </p>
 </section>
+</slides>
 
 <script>
   const slides = Array.from(document.querySelectorAll('.slide'));

@@ -4,6 +4,20 @@ Read this file when generating a presentation (Phase 3). It contains the full HT
 
 ---
 
+## Generation Checklist — Copy These Exactly
+
+Every generated HTML **must** include all of the following. Do not omit any item:
+
+1. **Present mode CSS** — `#present-btn`, `#present-counter`, `body.presenting .slide`, `body.presenting .slide.p-on` (see CSS block below)
+2. **Edit hotzone HTML** — `<div class="edit-hotzone">` + `<button class="edit-toggle" id="editToggle">` + `#notes-panel` with textarea
+3. **`SlidePresentation` class** — navigation, dots, keyboard, touch, wheel, BroadcastChannel
+4. **`?presenter` branch** — replaces body with notes/timer UI when `?presenter` in URL
+5. **`PresentMode` class** — inside the `else` block, before `new PresentMode(...)`. **Never put it inside the `if (presenter)` block** (class is block-scoped; it would be inaccessible in the else branch)
+6. **`setupEditor()` call** — edit hotzone + notes panel wired up
+7. **`data-notes` on every `<section class="slide">`** — 1–3 sentence speaker note per slide
+
+---
+
 ## HTML Architecture
 
 Every presentation follows this structure:
@@ -81,6 +95,9 @@ Every presentation follows this structure:
             justify-content: center;
             position: relative;
             overflow: hidden;
+            /* Must carry its own background so present mode (body.presenting = #000)
+               doesn't bleed through the transparent slide */
+            background: var(--bg-primary);
         }
 
         .slide-content {
@@ -452,11 +469,17 @@ Every presentation follows this structure:
                 if (e.key === 'ArrowRight' || e.key === ' ') ch.postMessage({ type: 'nav-next' });
                 else if (e.key === 'ArrowLeft') ch.postMessage({ type: 'nav-prev' });
             });
+
+        } else {
         /* ===========================================
            PRESENTATION MODE CONTROLLER
            Scales slides to fill any screen. Intercepts goTo() so arrow-key
            navigation works without scrollIntoView() (which breaks when slides
            are position:fixed).
+
+           IMPORTANT: this class must stay in the else block (main window only).
+           The ?presenter branch replaces document.body entirely so PresentMode
+           is never needed there.
            =========================================== */
         class PresentMode {
             constructor(ctrl) {
@@ -541,7 +564,6 @@ Every presentation follows this structure:
             }
         }
 
-        } else {
             new PresentMode(new SlidePresentation());
         }
     </script>
