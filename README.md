@@ -4,7 +4,7 @@
 
 A skill for [Claude Code](https://claude.ai/claude-code) and [OpenClaw](https://openclaw.ai) that generates stunning, zero-dependency HTML presentations.
 
-**v2.3.1** — Bug fix: arrow keys now render slides correctly. `goTo()` manually toggles `.visible` class to fix IntersectionObserver timing issue during keyboard navigation. PPTX/PNG export decoupled to [kai-html-export](https://github.com/kaisersong/kai-html-export). Progressive disclosure architecture: SKILL.md is a thin command router, full workflow loaded on demand.
+**v2.3.2** — Bug fix: mouse wheel scroll now advances slides reliably. Replaced broken `clearTimeout` pattern (dangling `)`) with a simple 600ms lock. **v2.3.1** — Bug fix: arrow keys now render slides correctly. `goTo()` manually toggles `.visible` class to fix IntersectionObserver timing issue during keyboard navigation. PPTX/PNG export decoupled to [kai-html-export](https://github.com/kaisersong/kai-html-export). Progressive disclosure architecture: SKILL.md is a thin command router, full workflow loaded on demand.
 
 English | [简体中文](README.zh-CN.md)
 
@@ -66,6 +66,7 @@ Every demo uses the same content (slide-creator's own introduction) — making i
 - **Content-type routing** — Automatically suggests the best style for pitch decks, dev tools, data reports, editorial, and more
 - **Style discovery** — Generate 3 visual previews before committing to a style
 - **Presenter Mode** — Press `P` to open a synced speaker window: notes, timer, slide counter, prev/next nav; window height auto-adapts to notes length
+- **Notes editing panel** — In edit mode (`E` key), a notes bar appears at the bottom; click the title bar to collapse/expand; edits sync live to the presenter window
 - **Inline SVG diagrams** — Flowcharts, timelines, bar charts, comparison grids, org charts — no Mermaid.js, no external libs
 - **Custom theme system** — Drop a `reference.md` into `themes/your-theme/` to add your own design preset; `starter.html` optional for complex visual systems
 - **Blue Sky starter template** — Complete boilerplate so models never mis-implement the visual system

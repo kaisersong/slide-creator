@@ -619,15 +619,14 @@
   });
 
   // Wheel — debounce-reset pattern
-  let wheelLocked = false, wheelTimer = null;
+  let wheelLocked = false;
   document.addEventListener('wheel', e => {
     e.preventDefault();
-    clearTimeout(wheelTimer);
     if (!wheelLocked) {
       wheelLocked = true;
       if (e.deltaY > 0) goTo(cur + 1); else goTo(cur - 1);
+      setTimeout(() => { wheelLocked = false; }, 600);
     }
-    );
   }, { passive: false });
 
   // Touch swipe

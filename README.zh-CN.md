@@ -4,7 +4,7 @@
 
 适用于 [Claude Code](https://claude.ai/claude-code) 和 [OpenClaw](https://openclaw.ai) 的演示文稿生成 skill，零依赖、纯浏览器运行的 HTML 幻灯片。
 
-**v2.3.1** — Bug 修复：方向键现在能正确渲染幻灯片。`goTo()` 手动切换 `.visible` 类，修复键盘导航时 IntersectionObserver 触发时机问题。PPTX/PNG 导出功能已解耦至独立技能 [kai-html-export](https://github.com/kaisersong/kai-html-export)。渐进式披露架构：SKILL.md 是轻量命令路由器，完整工作流按需加载。
+**v2.3.2** — Bug 修复：鼠标滚轮翻页现在可靠工作。移除了存在语法错误的 `clearTimeout` 模式（悬空 `)`），改用 600ms 简单锁定。**v2.3.1** — Bug 修复：方向键现在能正确渲染幻灯片。`goTo()` 手动切换 `.visible` 类，修复键盘导航时 IntersectionObserver 触发时机问题。PPTX/PNG 导出功能已解耦至独立技能 [kai-html-export](https://github.com/kaisersong/kai-html-export)。渐进式披露架构：SKILL.md 是轻量命令路由器，完整工作流按需加载。
 
 [English](README.md) | 简体中文
 
