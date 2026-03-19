@@ -21,7 +21,6 @@
         *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
 
         html {
-            scroll-behavior: smooth;
             scroll-snap-type: y mandatory;
             height: 100%;
             overflow-x: hidden;
@@ -668,13 +667,9 @@ if (new URLSearchParams(location.search).has('presenter')) {
             });
         }
         setupWheel() {
-            let locked = false, timer = null;
-            document.addEventListener('wheel', e => {
-                e.preventDefault();
-                clearTimeout(timer);
-                if (!locked) { locked = true; e.deltaY > 0 ? this.next() : this.prev(); }
-                timer = setTimeout(() => { locked = false; }, 180);
-            }, { passive: true });
+                /* scroll-snap-type: y mandatory handles trackpad/mouse wheel natively.
+                   No JS wheel handler — IntersectionObserver keeps cur/dots in sync.
+                   Adding goTo/scrollIntoView here causes double-animation or multi-page scroll. */
         }
         setupPresenter() {
             this.channel.addEventListener('message', e => {

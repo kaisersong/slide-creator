@@ -322,19 +322,10 @@ Every presentation follows this structure:
             }
 
             setupWheel() {
-                /* Debounce-reset pattern: first event navigates and locks;
-                   subsequent inertia events only reset the 180ms timer;
-                   unlock only after 180ms of silence. Prevents trackpad
-                   inertia from skipping multiple slides. */
-                let locked = false;
-                document.addEventListener('wheel', e => {
-                    e.preventDefault(); // stops native scroll-snap competing with JS smooth scroll
-                    if (!locked) {
-                        locked = true;
-                        e.deltaY > 0 ? this.next() : this.prev();
-                        setTimeout(() => { locked = false; }, 600); // throttle: fixed 600ms regardless of momentum
-                    }
-                }, { passive: false }); // must be false to allow preventDefault
+                /* scroll-snap-type: y mandatory handles trackpad/mouse wheel natively.
+                   No JS wheel handler needed — IntersectionObserver keeps state in sync.
+                   DO NOT add a JS wheel handler here: it will fight scroll-snap and cause
+                   jitter (double animation) or multi-page advancement (momentum tail). */
             }
 
             setupPresenter() {

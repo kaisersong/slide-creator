@@ -700,16 +700,36 @@ const orbPositions = [
     if (e.key === 'End')  go(TOTAL - 1);
   });
 
-  /* Wheel — debounce-reset lock.
-     Inertia events keep resetting the 180ms timer; the lock releases only after
-     the gesture truly ends. Prevents trackpad inertia from double-navigating. */
-  let wheelLocked = false, wheelTimer = null;
-  document.addEventListener('wheel', e => {
-    clearTimeout(wheelTimer);
-    if (!wheelLocked) { wheelLocked = true; e.deltaY > 0 ? go(cur + 1) : go(cur - 1); }
-    wheelTimer = setTimeout(() => { wheelLocked = false; }, 180);
-  }, { passive: true });
-
+  /* Wheel — gap-based momentum detection:
+   macOS sends momentum events continuously at ~16ms intervals.
+   A new intentional swipe arrives after lifting the finger (gap > 80ms).
+   No deltaY thresholds — pure timing.
+   Phase 1 (ANIMATING): first event navigates; all subsequent ignored.
+   Phase 2 (DRAINING): after transitionend, skip events arriving within
+   80ms of each other (continuous = momentum); navigate on first event
+   with gap > 80ms since the previous one (finger lifted = new swipe).
+   Fallback: reset after 1500ms if no events arrive in DRAINING state. */
+let wState = 'idle';
+let wLastTime = 0, wFallback = null;
+track.addEventListener('transitionend', e => {
+  if (e.propertyName !== 'transform') return;
+  wState = 'draining'; wLastTime = Date.now();
+  clearTimeout(wFallback);
+  wFallback = setTimeout(() => { wState = 'idle'; }, 1500);
+});
+document.addEventListener('wheel', e => {
+  e.preventDefault();
+  if (wState === 'animating') return;
+  const now = Date.now();
+  if (wState === 'draining') {
+    const gap = now - wLastTime;
+    wLastTime = now;
+    if (gap <= 80) return; // continuous stream = momentum
+    wState = 'idle'; clearTimeout(wFallback); // gap = finger lifted
+  }
+  wState = 'animating';
+  e.deltaY > 0 ? go(cur + 1) : go(cur - 1);
+}, { passive: false });
   /* Touch swipe */
   let touchStartX = 0;
   document.addEventListener('touchstart', e => { touchStartX = e.touches[0].clientX; }, { passive: true });

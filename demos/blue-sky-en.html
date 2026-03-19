@@ -1150,17 +1150,36 @@ channel.addEventListener('message', e => {
   else if (e.data.type === 'request-state') broadcastState();
 });
 
-/* Wheel with inertia debounce */
-let wheelLocked = false;
-  document.addEventListener('wheel', e => {
-    e.preventDefault();
-    if (!wheelLocked) {
-      wheelLocked = true;
-      e.deltaY > 0 ? ctrl.goTo(cur + 1) : ctrl.goTo(cur - 1);
-      setTimeout(() => { wheelLocked = false; }, 600);
-    }
-  }, { passive: false });
-
+/* Wheel — gap-based momentum detection:
+   macOS sends momentum events continuously at ~16ms intervals.
+   A new intentional swipe arrives after lifting the finger (gap > 80ms).
+   No deltaY thresholds — pure timing.
+   Phase 1 (ANIMATING): first event navigates; all subsequent ignored.
+   Phase 2 (DRAINING): after transitionend, skip events arriving within
+   80ms of each other (continuous = momentum); navigate on first event
+   with gap > 80ms since the previous one (finger lifted = new swipe).
+   Fallback: reset after 1500ms if no events arrive in DRAINING state. */
+let wState = 'idle';
+let wLastTime = 0, wFallback = null;
+track.addEventListener('transitionend', e => {
+  if (e.propertyName !== 'transform') return;
+  wState = 'draining'; wLastTime = Date.now();
+  clearTimeout(wFallback);
+  wFallback = setTimeout(() => { wState = 'idle'; }, 1500);
+});
+document.addEventListener('wheel', e => {
+  e.preventDefault();
+  if (wState === 'animating') return;
+  const now = Date.now();
+  if (wState === 'draining') {
+    const gap = now - wLastTime;
+    wLastTime = now;
+    if (gap <= 80) return; // continuous stream = momentum
+    wState = 'idle'; clearTimeout(wFallback); // gap = finger lifted
+  }
+  wState = 'animating';
+  e.deltaY > 0 ? ctrl.goTo(cur + 1) : ctrl.goTo(cur - 1);
+}, { passive: false });
 /* Touch swipe */
 let touchStartX = 0;
 document.addEventListener('touchstart', e => { touchStartX = e.touches[0].clientX; }, { passive: true });

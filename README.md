@@ -4,7 +4,7 @@
 
 A skill for [Claude Code](https://claude.ai/claude-code) and [OpenClaw](https://openclaw.ai) that generates stunning, zero-dependency HTML presentations.
 
-**v2.3.2** — Bug fix: mouse wheel scroll now advances slides reliably. Replaced broken `clearTimeout` pattern (dangling `)`) with a simple 600ms lock. **v2.3.1** — Bug fix: arrow keys now render slides correctly. `goTo()` manually toggles `.visible` class to fix IntersectionObserver timing issue during keyboard navigation. PPTX/PNG export decoupled to [kai-html-export](https://github.com/kaisersong/kai-html-export). Progressive disclosure architecture: SKILL.md is a thin command router, full workflow loaded on demand.
+**v2.3.3** — Bug fix: macOS trackpad no longer advances multiple pages per swipe. Replaced deltaY-threshold approach with gap-based momentum detection — macOS sends momentum at ~16ms intervals; a new swipe always arrives after a >80ms gap. All 21 styles updated. **v2.3.2** — Bug fix: mouse wheel scroll now advances slides reliably. **v2.3.1** — Bug fix: arrow keys now render slides correctly. `goTo()` manually toggles `.visible` class to fix IntersectionObserver timing issue during keyboard navigation. PPTX/PNG export decoupled to [kai-html-export](https://github.com/kaisersong/kai-html-export). Progressive disclosure architecture: SKILL.md is a thin command router, full workflow loaded on demand.
 
 English | [简体中文](README.zh-CN.md)
 
@@ -65,6 +65,7 @@ Every demo uses the same content (slide-creator's own introduction) — making i
 - **21 design presets** — Bold Signal, Blue Sky, Modern Newspaper, Neo-Retro Dev Deck, and more — each with named layout variations
 - **Content-type routing** — Automatically suggests the best style for pitch decks, dev tools, data reports, editorial, and more
 - **Style discovery** — Generate 3 visual previews before committing to a style
+- **Play Mode** — Press `F5` or click the ▶ button (bottom-right) to enter fullscreen presentation mode; slides scale to fill any screen; controls auto-hide; press `Esc` to exit
 - **Presenter Mode** — Press `P` to open a synced speaker window: notes, timer, slide counter, prev/next nav; window height auto-adapts to notes length
 - **Notes editing panel** — In edit mode (`E` key), a notes bar appears at the bottom; click the title bar to collapse/expand; edits sync live to the presenter window
 - **Inline SVG diagrams** — Flowcharts, timelines, bar charts, comparison grids, org charts — no Mermaid.js, no external libs
@@ -156,6 +157,26 @@ Every generated presentation includes a built-in text editor — no need to touc
 - **`Escape`** — exit edit mode without saving
 
 **To enable inline editing**, answer "Yes" when slide-creator asks during setup (it's the recommended default). If you generated a presentation without it, just re-run `/slide-creator --generate` and opt in.
+
+---
+
+## Play Mode
+
+Every generated presentation includes a fullscreen play mode — no extra software needed.
+
+**How to enter:**
+
+- Press **`F5`** anywhere in the presentation
+- Or hover the bottom-right corner → click the **▶** button that appears
+
+**In play mode:**
+
+- Slides scale to fill the entire screen at 1440×900 (letterboxed on other ratios)
+- Navigation controls and slide counter auto-hide; hover to reveal them
+- All keyboard shortcuts still work: arrow keys, space bar, `P` for presenter window
+- Press **`Esc`** or `F5` again to exit
+
+**Presenter window** — press **`P`** to open a separate synced window showing speaker notes, elapsed time, current / total slide count, and prev/next controls. Useful when presenting from a laptop connected to a projector.
 
 ---
 

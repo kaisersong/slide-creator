@@ -711,15 +711,8 @@
     if (e.key === 'e' || e.key === 'E') toggleEdit();
   });
 
-  let wheelLocked = false;
-  document.addEventListener('wheel', e => {
-    e.preventDefault();
-    if (!wheelLocked) {
-      wheelLocked = true;
-      e.deltaY > 0 ? goTo(current + 1) : goTo(current - 1);
-      setTimeout(() => { wheelLocked = false; }, 600);
-    }
-  }, { passive: false });
+  // Trackpad/mouse wheel: handled natively by scroll-snap-type: y mandatory
+  // No JS wheel handler needed — IntersectionObserver keeps cur/dots in sync
 
   let touchStart = null;
   document.addEventListener('touchstart', e => { touchStart = e.touches[0].clientY; }, { passive: true });

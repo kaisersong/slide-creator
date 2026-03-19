@@ -205,8 +205,165 @@ class TestNavigation:
             pytest.skip("Demo generated before goTo() fix — regenerate to apply fix")
 
 
+# ─── Wheel / trackpad scroll tests ───────────────────────────────────────────
+
+# scroll-snap demos: wheel handler must NOT call scrollIntoView or goTo() —
+# native scroll-snap handles trackpad; a JS wheel handler causes double-animation or
+# multi-page scroll.
+SCROLL_SNAP_DEMOS = [p for p in ALL_DEMOS
+                     if "scroll-snap-type" in p.read_text(encoding="utf-8")]
+
+# Transform-based demos (Blue Sky horizontal track): use transitionend wheel lock.
+TRANSFORM_DEMOS = [p for p in ALL_DEMOS
+                   if "scroll-snap-type" not in p.read_text(encoding="utf-8")
+                   and "addEventListener('wheel'" in p.read_text(encoding="utf-8")]
+
+
+class TestWheelBehavior:
+    """Regression tests for trackpad/wheel scroll bugs.
+
+    Root cause of multi-page scroll bug:
+    - Time throttle (lock for fixed N ms after first event) fires goTo() once,
+      then unlocks while trackpad momentum is still sending events → fires again.
+    - Any N ms value is wrong: momentum duration is user/speed dependent.
+
+    Correct patterns:
+    - scroll-snap demos: NO JS wheel handler. scroll-snap-type: y mandatory handles
+      trackpad natively. IntersectionObserver syncs state.
+    - transform demos (Blue Sky): end-of-gesture debounce — accumulate deltaY,
+      navigate once after 100ms of silence. Never fires during momentum.
+    """
+
+    @pytest.fixture(params=SCROLL_SNAP_DEMOS, ids=lambda p: p.name)
+    def snap_demo(self, request):
+        return load(request.param)
+
+    @pytest.fixture(params=TRANSFORM_DEMOS, ids=lambda p: p.name)
+    def transform_demo(self, request):
+        return load(request.param)
+
+    def test_scroll_snap_no_js_wheel_handler(self, snap_demo):
+        """scroll-snap demos must NOT have a JS wheel event listener that calls
+        goTo() / scrollIntoView. scroll-snap handles trackpad natively.
+
+        Regression: JS wheel handler + scroll-snap = double animation or
+        multi-page scroll (momentum tail unlocks throttle, fires goTo() again).
+        """
+        _, content = snap_demo
+        import re
+        # Detect a wheel listener that actually navigates (calls goTo, next, prev, scrollIntoView)
+        nav_in_wheel = re.search(
+            r"addEventListener\('wheel'.*?(?:goTo|\.next\(\)|\.prev\(\)|scrollIntoView)",
+            content, re.DOTALL
+        )
+        assert not nav_in_wheel, (
+            "scroll-snap demo has a JS wheel handler that calls navigation — "
+            "remove it and let scroll-snap-type: y mandatory handle trackpad."
+        )
+
+    def test_scroll_snap_no_scroll_behavior_on_html(self, snap_demo):
+        """html {} must NOT have scroll-behavior: smooth.
+
+        Regression: scroll-behavior on html + scrollIntoView({behavior:'smooth'})
+        = two simultaneous animations = jitter on page turn.
+        """
+        _, content = snap_demo
+        import re
+        # Look for scroll-behavior: smooth inside html { ... } rule
+        bad = re.search(
+            r"html\s*\{[^}]*scroll-behavior\s*:\s*smooth",
+            content, re.DOTALL
+        )
+        assert not bad, (
+            "html {} has scroll-behavior: smooth — remove it. "
+            "JS scrollIntoView({behavior:'smooth'}) handles animation."
+        )
+
+    def test_no_wheel_throttle_pattern(self, snap_demo):
+        """scroll-snap demos must not use wheelLocked time-throttle pattern.
+
+        Regression: setTimeout(unlock, Nms) after first event — momentum tail
+        outlasts N, fires goTo() again after lock expires.
+        """
+        _, content = snap_demo
+        assert "wheelLocked" not in content, (
+            "wheelLocked throttle pattern found in scroll-snap demo — "
+            "remove the wheel handler entirely."
+        )
+
+    def test_transform_demo_uses_transitionend_wheel_lock(self, transform_demo):
+        """Transform-based demos (Blue Sky) must use gap-based momentum detection:
+        1. ANIMATING: first event navigates; all subsequent ignored.
+        2. DRAINING: after transitionend, skip events arriving within 80ms of each
+           other (continuous = macOS momentum); navigate on first event with gap > 80ms
+           (finger lifted = new intentional swipe). No deltaY thresholds needed.
+
+        Why not simpler approaches:
+        - Time throttle (setTimeout Nms): unlocks during momentum tail → two pages advance.
+        - wheelDelta accumulate+debounce: second swipe never crosses threshold → stuck.
+        - transitionend + |deltaY| threshold: momentum at t=700ms is still 20-50px → wrong.
+        - monotonic-decrease: momentum has jitter, false positives trigger extra navigation.
+        """
+        _, content = transform_demo
+        assert "transitionend" in content, (
+            "Transform demo missing transitionend. "
+            "Pattern: lock on first event, start DRAINING phase after animation."
+        )
+        assert "wState" in content, (
+            "Transform demo missing wState — gap-based wheel filter not implemented. "
+            "Required: 'idle'/'animating'/'draining' states with 80ms gap detection."
+        )
+        assert "wLastTime" in content, (
+            "Transform demo missing wLastTime — gap timing not tracked. "
+            "Required: measure ms between events to detect momentum vs new swipe."
+        )
+        assert "wheelDelta" not in content, (
+            "wheelDelta debounce found — breaks on second+ swipe. Use gap-based detection."
+        )
+
+
 class TestTemplate:
     """Tests for the HTML template file itself (not generated demos)."""
+
+    REFS = Path(__file__).parent.parent / "references"
+
+    def test_blue_sky_starter_wheel_transitionend(self):
+        """blue-sky-starter.html must use transitionend to unlock wheel navigation.
+
+        Correct: lock on first wheel event, unlock when track CSS transition ends.
+        Banned: time throttle (setTimeout Nms) — unlocks during momentum.
+        Banned: wheelDelta debounce — second swipe never crosses threshold, stops working.
+        """
+        starter = self.REFS / "blue-sky-starter.html"
+        assert starter.exists(), "blue-sky-starter.html not found"
+        content = starter.read_text(encoding="utf-8")
+        assert "transitionend" in content, \
+            "blue-sky-starter.html missing transitionend wheel unlock"
+        assert "wState" in content, \
+            "blue-sky-starter.html missing wState — gap-based wheel filter required"
+        assert "wLastTime" in content, \
+            "blue-sky-starter.html missing wLastTime — 80ms gap timing required"
+        assert "wheelDelta" not in content, \
+            "blue-sky-starter.html uses wheelDelta debounce — broken on 2nd swipe, use gap detection"
+
+    def test_template_no_scroll_behavior_on_html(self):
+        """html-template.md must NOT set scroll-behavior: smooth on html {}.
+
+        Regression: causes double animation jitter when combined with scrollIntoView.
+        """
+        import re
+        tmpl = self.REFS / "html-template.md"
+        assert tmpl.exists(), "html-template.md not found"
+        content = tmpl.read_text(encoding="utf-8")
+        bad = re.search(r"html\s*\{[^}]*scroll-behavior\s*:\s*smooth", content, re.DOTALL)
+        assert not bad, "html-template.md html{} has scroll-behavior: smooth — remove it"
+
+    def test_template_wheel_handler_not_throttle(self):
+        """html-template.md setupWheel() must not use wheelLocked throttle."""
+        tmpl = self.REFS / "html-template.md"
+        content = tmpl.read_text(encoding="utf-8")
+        assert "wheelLocked" not in content, \
+            "html-template.md uses wheelLocked throttle — banned, causes multi-page scroll"
 
     def test_template_goto_toggles_visible_class(self):
         """HTML template must have goTo() that toggles .visible class.

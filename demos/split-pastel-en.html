@@ -513,18 +513,8 @@
       case 'e': case 'E': if (!document.body.classList.contains('edit-mode')) toggleEditMode(); break;
     }
   });
-
-  // Wheel — debounce-reset (NOT time throttle)
-  let wheelLocked = false;
-  document.addEventListener('wheel', e => {
-    e.preventDefault();
-    if (!wheelLocked) {
-      wheelLocked = true;
-      e.deltaY > 0 ? goTo(cur + 1) : goTo(cur - 1);
-      setTimeout(() => { wheelLocked = false; }, 600);
-    }
-  }, { passive: false });
-
+  // Trackpad/mouse wheel: handled natively by scroll-snap-type: y mandatory
+  // No JS wheel handler needed — IntersectionObserver keeps cur/dots in sync
   // Touch swipe
   let touchStartY = 0;
   document.addEventListener('touchstart', e => { touchStartY = e.touches[0].clientY; }, { passive: true });

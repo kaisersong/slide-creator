@@ -22,7 +22,6 @@
 
 html {
   scroll-snap-type: y mandatory;
-  scroll-behavior: smooth;
   height: 100%;
 }
 
@@ -854,16 +853,8 @@ document.addEventListener('keydown', e => {
   if ((e.ctrlKey || e.metaKey) && e.key === 's') { e.preventDefault(); saveFile(); }
 });
 
-// Wheel — debounce-reset
-let wheelLocked = false;
-  document.addEventListener('wheel', e => {
-    e.preventDefault();
-    if (!wheelLocked) {
-      wheelLocked = true;
-      e.deltaY > 0 ? goTo(cur + 1) : goTo(cur - 1);
-      setTimeout(() => { wheelLocked = false; }, 600);
-    }
-  }, { passive: false });
+  // Trackpad/mouse wheel: handled natively by scroll-snap-type: y mandatory
+  // No JS wheel handler needed — IntersectionObserver keeps cur/dots in sync
 
 // Touch swipe
 let touchY = 0;
