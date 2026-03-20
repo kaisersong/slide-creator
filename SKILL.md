@@ -1,7 +1,7 @@
 ---
 name: kai-slide-creator
 description: Use when someone wants to CREATE or BUILD a slide deck, presentation, or 幻灯片/PPT/演示文稿 — from scratch, from notes, from a Word/PPTX file, or from an approved outline. Handles Chinese and English equally. Covers pitch decks, product launches, team standups, conference talks, capstone presentations, style previews, and converting existing files to web slides. Use for --plan (outline) and --generate (HTML from plan) flags. Does NOT apply to exporting finished HTML to PPTX/PNG (use kai-html-export), writing speeches, or non-slide documents.
-version: 2.5.1
+version: 2.5.2
 metadata: {"openclaw":{"emoji":"🎞","os":["darwin","linux","windows"],"homepage":"https://github.com/kaisersong/slide-creator","requires":{"bins":["python3"]},"install":[]}}
 ---
 
@@ -53,7 +53,8 @@ Parse the invocation first, then load only what that command needs:
 
 Quick routing before reading workflow.md:
 
-- **PLANNING.md exists** → read it as source of truth, skip to Phase 3 (generation).
+- **PLANNING.md exists** → read it as source of truth, skip to Phase 3. Load `references/html-template.md` before generating.
+- **User provides source content + style directly** (e.g. a .txt/.md file + style name) → skip Phase 1/2. Load `references/html-template.md` + style file + `references/base-css.md`, then generate immediately.
 - **User has a `.ppt/.pptx` file** → Phase 4 (PPT conversion).
 - **User wants to enhance existing HTML** → read it, then enhance. Split slides that overflow.
 - **Everything else** → Phase 1 (Content Discovery).
