@@ -1,7 +1,7 @@
 ---
 name: kai-slide-creator
 description: Use when someone wants to CREATE or BUILD a slide deck, presentation, or 幻灯片/PPT/演示文稿 — from scratch, from notes, from a Word/PPTX file, or from an approved outline. Handles Chinese and English equally. Covers pitch decks, product launches, team standups, conference talks, capstone presentations, style previews, and converting existing files to web slides. Use for --plan (outline) and --generate (HTML from plan) flags. Does NOT apply to exporting finished HTML to PPTX/PNG (use kai-html-export), writing speeches, or non-slide documents.
-version: 2.5.0
+version: 2.5.1
 metadata: {"openclaw":{"emoji":"🎞","os":["darwin","linux","windows"],"homepage":"https://github.com/kaisersong/slide-creator","requires":{"bins":["python3"]},"install":[]}}
 ---
 
@@ -19,6 +19,19 @@ Generate zero-dependency HTML presentations that run entirely in the browser.
 
 ---
 
+## Generation Contract (Non-Negotiable)
+
+**Every generated HTML file MUST include both of these — no exceptions:**
+
+1. **Presentation Mode** — F5 / ▶ button, fullscreen scaling, `PresentMode` class (`body.presenting`, `#present-btn`, `#present-counter`)
+2. **Edit Mode** — top-left hotzone, `✏ Edit` toggle, `contenteditable` on all text, notes panel (`#notes-panel`, `setupEditor()`)
+
+These are defined in `references/html-template.md`. **Read that file before writing any HTML**, regardless of how you entered the skill.
+
+> Omitting either feature is a generation error — the same as missing viewport fitting or broken slide navigation.
+
+---
+
 ## Command Routing
 
 Parse the invocation first, then load only what that command needs:
@@ -27,7 +40,8 @@ Parse the invocation first, then load only what that command needs:
 |---------|-------------|------------|
 | `--plan [prompt]` | `references/planning-template.md` | Create PLANNING.md. Stop — no HTML. |
 | `--generate` | `references/html-template.md` + chosen style file + `references/base-css.md` | Read PLANNING.md, generate HTML. |
-| No flag (interactive) | `references/workflow.md` | Follow Phase 0–5. |
+| No flag (interactive) | `references/workflow.md` + **`references/html-template.md` before Phase 3** | Follow Phase 0–5. |
+| Content + style given directly | `references/html-template.md` + style file + `references/base-css.md` | Generate immediately — no Phase 1/2 needed. |
 
 **Progressive disclosure rule:** each command loads only its required files. `--plan` never touches CSS. This keeps context focused and fast.
 

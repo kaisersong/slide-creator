@@ -8,7 +8,7 @@ Read this file when generating a presentation (Phase 3). It contains the full HT
 
 Every generated HTML **must** include all of the following. Do not omit any item:
 
-1. **Present mode CSS** — `#present-btn`, `#present-counter`, `body.presenting .slide`, `body.presenting .slide.p-on` (see CSS block below)
+1. **Present mode CSS** — `#present-btn`, `#present-counter`, `body.presenting .slide`, `body.presenting .slide.p-on`, `body.presenting.presenting-black` (see CSS block below)
 2. **Edit hotzone HTML** — `<div class="edit-hotzone">` + `<button class="edit-toggle" id="editToggle">` + `#notes-panel` with textarea
 3. **`SlidePresentation` class** — navigation, dots, keyboard, touch, wheel, BroadcastChannel
 4. **`?presenter` branch** — replaces body with notes/timer UI when `?presenter` in URL
@@ -216,6 +216,8 @@ Every presentation follows this structure:
         body.presenting .slide.p-on { display: flex !important; }
         body.presenting #present-btn { display: none !important; }
         body.presenting #present-counter { display: block; }
+        body.presenting.presenting-black .slide { visibility: hidden !important; }
+        body.presenting.presenting-black::after { content: ''; position: fixed; inset: 0; background: #000; z-index: 99999; }
     </style>
 </head>
 <body>
@@ -300,9 +302,9 @@ Every presentation follows this structure:
             setupKeyboard() {
                 document.addEventListener('keydown', (e) => {
                     if (e.target.getAttribute('contenteditable')) return;
-                    if (e.key === 'ArrowDown' || e.key === 'ArrowRight' || e.key === ' ') {
+                    if (e.key === 'ArrowDown' || e.key === 'ArrowRight' || e.key === ' ' || e.key === 'PageDown' || e.key === 'Enter') {
                         e.preventDefault(); this.next();
-                    } else if (e.key === 'ArrowUp' || e.key === 'ArrowLeft') {
+                    } else if (e.key === 'ArrowUp' || e.key === 'ArrowLeft' || e.key === 'PageUp' || e.key === 'Backspace') {
                         e.preventDefault(); this.prev();
                     } else if (e.key === 'p' || e.key === 'P') {
                         /* Open presenter window — same file, ?presenter param */
@@ -461,8 +463,8 @@ Every presentation follows this structure:
             document.getElementById('pv-prev').addEventListener('click', () => ch.postMessage({ type: 'nav-prev' }));
             document.getElementById('pv-next').addEventListener('click', () => ch.postMessage({ type: 'nav-next' }));
             document.addEventListener('keydown', e => {
-                if (e.key === 'ArrowRight' || e.key === ' ') ch.postMessage({ type: 'nav-next' });
-                else if (e.key === 'ArrowLeft') ch.postMessage({ type: 'nav-prev' });
+                if (e.key === 'ArrowRight' || e.key === 'ArrowDown' || e.key === ' ' || e.key === 'PageDown' || e.key === 'Enter') ch.postMessage({ type: 'nav-next' });
+                else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp' || e.key === 'PageUp' || e.key === 'Backspace') ch.postMessage({ type: 'nav-prev' });
             });
 
         } else {
@@ -500,6 +502,7 @@ Every presentation follows this structure:
                 document.addEventListener('keydown', e => {
                     if (e.key === 'F5')                  { e.preventDefault(); this.enter(); }
                     if (e.key === 'Escape' && this.active) this.exit();
+                    if ((e.key === 'b' || e.key === 'B') && this.active) document.body.classList.toggle('presenting-black');
                 });
                 document.addEventListener('fullscreenchange', () => {
                     if (!document.fullscreenElement && this.active) this.exit();
@@ -531,7 +534,7 @@ Every presentation follows this structure:
             exit() {
                 if (!this.active) return;
                 this.active = false;
-                document.body.classList.remove('presenting');
+                document.body.classList.remove('presenting', 'presenting-black');
                 document.querySelectorAll('.slide').forEach(s => s.classList.remove('p-on'));
                 if (document.fullscreenElement) document.exitFullscreen?.();
                 window.removeEventListener('resize', this._resize);
