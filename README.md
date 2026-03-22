@@ -4,7 +4,7 @@
 
 A skill for [Claude Code](https://claude.ai/claude-code) and [OpenClaw](https://openclaw.ai) that generates stunning, zero-dependency HTML presentations.
 
-**v2.3.3** — Bug fix: macOS trackpad no longer advances multiple pages per swipe. Replaced deltaY-threshold approach with gap-based momentum detection — macOS sends momentum at ~16ms intervals; a new swipe always arrives after a >80ms gap. All 21 styles updated. **v2.3.2** — Bug fix: mouse wheel scroll now advances slides reliably. **v2.3.1** — Bug fix: arrow keys now render slides correctly. `goTo()` manually toggles `.visible` class to fix IntersectionObserver timing issue during keyboard navigation. PPTX/PNG export decoupled to [kai-html-export](https://github.com/kaisersong/kai-html-export). Progressive disclosure architecture: SKILL.md is a thin command router, full workflow loaded on demand.
+**v2.5.4** — Added a template-level export chrome switch: set `data-export-progress="false"` on `<body>` to hide both the top progress bar and right-side nav dots in generated HTML and in native PPT export via [kai-html-export](https://github.com/kaisersong/kai-html-export). **v2.5.2–v2.5.3** — Added presenter remote-control keys (`PageDown`, `PageUp`, `Enter`, `Backspace`, `B`) and refreshed release packaging.
 
 English | [简体中文](README.zh-CN.md)
 
@@ -70,6 +70,7 @@ Every demo uses the same content (slide-creator's own introduction) — making i
 - **Notes editing panel** — In edit mode (`E` key), a notes bar appears at the bottom; click the title bar to collapse/expand; edits sync live to the presenter window
 - **Inline SVG diagrams** — Flowcharts, timelines, bar charts, comparison grids, org charts — no Mermaid.js, no external libs
 - **Custom theme system** — Drop a `reference.md` into `themes/your-theme/` to add your own design preset; `starter.html` optional for complex visual systems
+- **Template export chrome switch** — Set `data-export-progress="false"` on `<body>` to hide both the top progress bar and right-side nav dots in HTML playback and native PPT export
 - **Blue Sky starter template** — Complete boilerplate so models never mis-implement the visual system
 - **Image pipeline** — Auto-evaluate and process assets (Pillow)
 - **PPT import** — Convert `.pptx` files to web presentations
@@ -286,6 +287,8 @@ The `themes/` directory lets any user extend slide-creator with their own brand 
 The two-file convention (`reference.md` + optional `starter.html`) mirrors the Blue Sky pattern: `reference.md` describes the design language (colors, typography, component classes), while `starter.html` is a pre-built boilerplate for complex visual systems that would be hard to reconstruct from prose alone.
 
 This separation means simple custom themes need only one file, while complex ones (with animated backgrounds, custom JS, non-trivial layout systems) can ship a complete working template.
+
+If a custom theme should not render export chrome, add `data-export-progress="false"` to the template's `<body>`. That single flag hides both the top progress bar and the right-side nav dots in browser playback and when the deck is exported in native mode through `kai-html-export`.
 
 ### 5. Content-Type Routing as Intelligent Defaults
 
