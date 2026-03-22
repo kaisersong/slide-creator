@@ -78,6 +78,10 @@ Every presentation follows this structure:
             overflow-x: hidden;
             height: 100%;
         }
+        body[data-export-progress="false"] .progress-bar,
+        body[data-export-progress="false"] .nav-dots {
+            display: none !important;
+        }
 
         /* ===========================================
            SLIDE CONTAINER
@@ -220,8 +224,10 @@ Every presentation follows this structure:
         body.presenting.presenting-black::after { content: ''; position: fixed; inset: 0; background: #000; z-index: 99999; }
     </style>
 </head>
-<body>
-    <!-- Progress bar -->
+<body data-export-progress="true">
+    <!-- Progress bar
+         Set body[data-export-progress="false"] to hide both the progress bar and nav dots
+         on the page and omit them from native PPT export. -->
     <div class="progress-bar" style="position:fixed;top:0;left:0;height:3px;background:var(--accent);width:0%;z-index:100;transition:width 0.3s ease;"></div>
 
     <!-- Navigation dots -->
