@@ -4,7 +4,7 @@
 
 A skill for [Claude Code](https://claude.ai/claude-code) and [OpenClaw](https://openclaw.ai) that generates stunning, zero-dependency HTML presentations.
 
-**v2.5.4** — Added a template-level export chrome switch: set `data-export-progress="false"` on `<body>` to hide both the top progress bar and right-side nav dots in generated HTML and in native PPT export via [kai-html-export](https://github.com/kaisersong/kai-html-export). **v2.5.2–v2.5.3** — Added presenter remote-control keys (`PageDown`, `PageUp`, `Enter`, `Backspace`, `B`) and refreshed release packaging.
+**v2.6.0** — Design Quality Baseline: new `references/design-quality.md` encodes anti-slop rules for generated slides — minimum 65% fill rule with decision tree for sparse content (2 items → big-card layout, not half-empty bullets), multi-column balance enforcement (no column < 60% of tallest), 90/8/2 color law, no 3 consecutive full-bullet slides, content-tone color calibration, and a pre-output self-check gate. Fixes aurora-mesh Inter font contradiction (replaced with Space Grotesk + DM Sans). Planning template now suggests tone-matched accent colors. **v2.5.4** — Added a template-level export chrome switch: set `data-export-progress="false"` on `<body>` to hide both the top progress bar and right-side nav dots in generated HTML and in native PPT export via [kai-html-export](https://github.com/kaisersong/kai-html-export). **v2.5.2–v2.5.3** — Added presenter remote-control keys (`PageDown`, `PageUp`, `Enter`, `Backspace`, `B`) and refreshed release packaging.
 
 English | [简体中文](README.zh-CN.md)
 
@@ -301,6 +301,39 @@ Developer tool / API docs   → Terminal Green, Neon Cyber, Neo-Retro Dev Deck
 ```
 
 This routing table in SKILL.md serves two audiences simultaneously: human users who want a sensible starting point, and AI agents calling the skill programmatically (where the agent may know the content type but not which style to choose).
+
+### 6. Design Quality Baseline: Against Slide Slop
+
+The most common failure mode in AI-generated slides is not broken CSS or wrong colors — it's **accidental emptiness**. A slide with two bullet points centered in a full-height viewport, or a two-column layout where one column has four items and the other has one, looks unfinished regardless of how polished the design system is.
+
+`references/design-quality.md` (loaded during `--generate` alongside the style file) encodes rules that force layout decisions based on content density, not just content type:
+
+**Minimum fill rule.** Every slide must use at least 65% of the slide area. When content is sparse, the model must choose a different layout — not center the content and call it done:
+
+```
+2 bullet points → Switch to quote/big-stat layout, or expand to 2-line statements
+1 key insight   → Large quote / single stat / manifesto with visual treatment
+3 thin bullets  → Expand each with supporting detail, or switch to 3-card grid
+```
+
+The distinction that matters: *intentional* whitespace (a breathing-room slide with oversized type, deliberately placed) is a design choice. *Accidental* whitespace (content floating in the middle of a half-empty slide) is a generation failure.
+
+**Multi-column balance rule.** No column in a 2-col or 3-col layout should have less than 60% of the tallest column's height. When content is unequal, the model must choose one of three remediation paths: expand the shorter column with supporting detail, redesign as an explicitly asymmetric layout (e.g., `2fr 1fr` with visual purpose), or merge to a single column.
+
+**90/8/2 color law.** 90% neutral surface, 8% structural accent used on at most 3 element types, 2% bullet-point accent on 1–2 precise hits. This prevents the common pattern of accent color appearing on every heading, every icon, every border, and every button — which produces visual noise rather than hierarchy.
+
+**No 3 consecutive full-bullet slides.** After two bullet-list slides, the next must be a visual anchor: a single large stat, a pull quote, a diagram, or a layout-break slide. This is a cognitive pacing rule, not an aesthetic preference — dense lists without visual relief cause readers to disengage.
+
+**Content-tone color calibration.** The planning template now suggests tone-matched accent colors based on content type, so the color system reinforces the emotional register of the content:
+
+```
+Contemplative / Research → #7C6853 warm brown (grounded, editorial)
+Technical / Engineering  → #3D5A80 navy (precise, authoritative)
+Business / Data          → #0F7B6C deep teal (confident, forward)
+Narrative / Annual       → #B45309 amber (warm, momentum)
+```
+
+**Pre-output self-check.** Before writing the final HTML, the model runs a 6-gate check: viewport overflow, minimum fill, column balance, color law compliance, 3-consecutive-bullet rule, and the anti-slop question: *"If you told someone 'an AI made this' — would they immediately believe it?"* If yes, revise before output.
 
 ---
 
