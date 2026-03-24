@@ -4,7 +4,7 @@
 
 适用于 [Claude Code](https://claude.ai/claude-code) 和 [OpenClaw](https://openclaw.ai) 的演示文稿生成 skill，零依赖、纯浏览器运行的 HTML 幻灯片。
 
-**v2.6.0** — 设计质量基准：新增 `references/design-quality.md`，内置防"AI 烂稿"规则 —— 最低 65% 填充率（稀疏内容使用大卡片布局而非半空的要点列表）、多栏平衡约束（任意列不得低于最高列 60%）、90/8/2 配色法则、禁止连续 3 张纯要点页、内容语调配色校准，以及生成前自检门控。修复 aurora-mesh 风格中 Inter 字体与设计规范的矛盾（替换为 Space Grotesk + DM Sans）；规划模板现在会根据内容语调建议匹配的强调色。**v2.5.4** — 新增模板级导出开关：在 `<body>` 上设置 `data-export-progress="false"`，即可同时隐藏顶部进度条和右侧导航点；这个开关对浏览器里的 HTML 播放和通过 [kai-html-export](https://github.com/kaisersong/kai-html-export) 进行的 native PPT 导出都生效。**v2.5.2–v2.5.3** — 新增演讲者远程控制快捷键（`PageDown`、`PageUp`、`Enter`、`Backspace`、`B`），并完成配套发布整理。
+**v2.6.1** — 品牌风格迁移：新增"使用案例：品牌风格迁移"章节，记录通过 `themes/your-brand/reference.md` 将现有 PPTX 迁移到自定义品牌设计系统的完整工作流。**v2.6.0** — 设计质量基准：新增 `references/design-quality.md`，内置防"AI 烂稿"规则 —— 最低 65% 填充率（稀疏内容使用大卡片布局而非半空的要点列表）、多栏平衡约束（任意列不得低于最高列 60%）、90/8/2 配色法则、禁止连续 3 张纯要点页、内容语调配色校准，以及生成前自检门控。修复 aurora-mesh 风格中 Inter 字体与设计规范的矛盾（替换为 Space Grotesk + DM Sans）；规划模板现在会根据内容语调建议匹配的强调色。**v2.5.4** — 新增模板级导出开关：在 `<body>` 上设置 `data-export-progress="false"`，即可同时隐藏顶部进度条和右侧导航点；这个开关对浏览器里的 HTML 播放和通过 [kai-html-export](https://github.com/kaisersong/kai-html-export) 进行的 native PPT 导出都生效。**v2.5.2–v2.5.3** — 新增演讲者远程控制快捷键（`PageDown`、`PageUp`、`Enter`、`Backspace`、`B`），并完成配套发布整理。
 
 [English](README.md) | 简体中文
 
