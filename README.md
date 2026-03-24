@@ -337,6 +337,31 @@ Narrative / Annual       → #B45309 amber (warm, momentum)
 
 ---
 
+## Use Case: Brand Style Migration
+
+Migrate an existing `.pptx` to a custom brand design system — get both a pixel-perfect archive and an editable version in one workflow.
+
+**Setup:** Create `themes/your-brand/` with a `reference.md` describing colors, fonts, and layouts (and optionally a `starter.html` for complex visual systems).
+
+```bash
+# Step 1 — re-style: slide-creator reads the PPTX and migrates to your brand theme
+/slide-creator --plan "migrate company-deck.pptx to our brand style"
+# review PLANNING.md, then:
+/slide-creator --generate
+# → branded-deck.html
+
+# Step 2 — export both modes (requires kai-html-export)
+/kai-html-export branded-deck.html
+# → branded-deck.pptx  (pixel-perfect, for sharing)
+
+/kai-html-export --pptx --mode native branded-deck.html
+# → branded-deck.pptx  (editable text, for editing)
+```
+
+This workflow is especially useful when an internal template or brand guidelines exist as a `starter.html` — slide-creator uses it as the base and fills in content from the source PPTX.
+
+---
+
 ## Compatibility
 
 | Platform | Version | Install path |

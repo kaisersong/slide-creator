@@ -367,6 +367,31 @@ AI 生成幻灯片最常见的失败模式，不是 CSS 错误或配色问题—
 
 ---
 
+## 使用案例：品牌风格迁移
+
+将现有 `.pptx` 迁移到自定义品牌设计系统——一套工作流同时输出像素级归档版和可编辑版。
+
+**准备工作：** 在 `themes/your-brand/` 下创建 `reference.md`，描述颜色、字体和布局（复杂视觉系统可额外提供 `starter.html`）。
+
+```bash
+# 第一步——风格迁移：slide-creator 读取 PPTX，按品牌主题重排
+/slide-creator --plan "将 company-deck.pptx 迁移到我们的品牌风格"
+# 确认 PLANNING.md 后：
+/slide-creator --generate
+# → branded-deck.html
+
+# 第二步——两种模式同时导出（需要 kai-html-export）
+/kai-html-export branded-deck.html
+# → branded-deck.pptx（像素级，用于分享）
+
+/kai-html-export --pptx --mode native branded-deck.html
+# → branded-deck.pptx（文字可编辑，用于修改）
+```
+
+这套工作流特别适合企业已有品牌模板或 VI 规范的场景——将规范写成 `starter.html`，slide-creator 以此为底板，自动填入源 PPTX 的内容。
+
+---
+
 ## 兼容性
 
 | 平台 | 版本 | 安装路径 |
