@@ -1,7 +1,7 @@
 ---
 name: kai-slide-creator
 description: Use when someone wants to CREATE or BUILD a slide deck, presentation, or 幻灯片/PPT/演示文稿 — from scratch, from notes, from a Word/PPTX file, or from an approved outline. Handles Chinese and English equally. Covers pitch decks, product launches, team standups, conference talks, capstone presentations, style previews, and converting existing files to web slides. Use for --plan (outline) and --generate (HTML from plan) flags. Does NOT apply to exporting finished HTML to PPTX/PNG (use kai-html-export), writing speeches, or non-slide documents.
-version: 2.5.4
+version: 2.6.1
 metadata: {"openclaw":{"emoji":"🎞","os":["darwin","linux","windows"],"homepage":"https://github.com/kaisersong/slide-creator","requires":{"bins":["python3"]},"install":[]}}
 ---
 
