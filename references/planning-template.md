@@ -24,7 +24,12 @@ Use this structure when generating `PLANNING.md` during `--plan` mode.
 - **Overall tone**: [e.g., warm, minimal, high-contrast dark]
 - **Background**: [hex color + description]
 - **Primary text**: [hex color]
-- **Accent (primary)**: [hex color + usage]
+- **Accent (primary)**: [hex color + usage — if content tone matches a category below, use the suggested color as the starting point]
+  - Contemplative / Research → `#7C6853` warm brown (grounded, editorial)
+  - Technical / Engineering → `#3D5A80` navy (precise, authoritative)
+  - Business / Data → `#0F7B6C` deep teal (confident, forward)
+  - Narrative / Annual → `#B45309` amber (warm, momentum)
+  - Creative / Personal brand → keep the preset's signature accent
 - **Typography**: [Font pairing, e.g., Clash Display + Satoshi]
 - **Per-slide rule**: 1 key point + up to 5 supporting bullets; no text walls
 - **Animations**: [e.g., fade + slide-up, staggered 0.1s delay]

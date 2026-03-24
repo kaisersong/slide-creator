@@ -46,14 +46,16 @@ body {
 ## Typography
 
 ```css
-/* Title */
-font-family: "Inter", "PingFang SC", "Noto Sans CJK SC", "Microsoft YaHei", system-ui, sans-serif;
+/* Title — use a distinctive display font, NOT Inter (banned as display typeface) */
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@700&display=swap');
+font-family: "Space Grotesk", "PingFang SC", "Noto Sans CJK SC", "Microsoft YaHei", sans-serif;
 font-weight: 700;
-letter-spacing: -0.02em;
+letter-spacing: -0.03em;
 color: #ffffff;
 
 /* Body */
-font-family: "Inter", "PingFang SC", system-ui, sans-serif;
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500&display=swap');
+font-family: "DM Sans", "PingFang SC", system-ui, sans-serif;
 font-weight: 400;
 color: rgba(255,255,255,0.70);
 line-height: 1.7;
