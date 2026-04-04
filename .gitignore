@@ -14,3 +14,7 @@ scripts/
 .DS_Store
 **/.DS_Store
 themes/.DS_Store
+
+# Private custom themes (not for public repo)
+themes/kingdee/
+themes/cloudhub/
