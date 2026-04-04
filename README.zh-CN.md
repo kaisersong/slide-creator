@@ -4,7 +4,7 @@
 
 适用于 [Claude Code](https://claude.ai/claude-code) 和 [OpenClaw](https://openclaw.ai) 的演示文稿生成 skill，零依赖、纯浏览器运行的 HTML 幻灯片。
 
-**v2.6.1** — 品牌风格迁移：新增"使用案例：品牌风格迁移"章节，记录通过 `themes/your-brand/reference.md` 将现有 PPTX 迁移到自定义品牌设计系统的完整工作流。**v2.6.0** — 设计质量基准：新增 `references/design-quality.md`，内置防"AI 烂稿"规则 —— 最低 65% 填充率（稀疏内容使用大卡片布局而非半空的要点列表）、多栏平衡约束（任意列不得低于最高列 60%）、90/8/2 配色法则、禁止连续 3 张纯要点页、内容语调配色校准，以及生成前自检门控。修复 aurora-mesh 风格中 Inter 字体与设计规范的矛盾（替换为 Space Grotesk + DM Sans）；规划模板现在会根据内容语调建议匹配的强调色。**v2.5.4** — 新增模板级导出开关：在 `<body>` 上设置 `data-export-progress="false"`，即可同时隐藏顶部进度条和右侧导航点；这个开关对浏览器里的 HTML 播放和通过 [kai-html-export](https://github.com/kaisersong/kai-html-export) 进行的 native PPT 导出都生效。**v2.5.2–v2.5.3** — 新增演讲者远程控制快捷键（`PageDown`、`PageUp`、`Enter`、`Backspace`、`B`），并完成配套发布整理。
+**v2.7.0** — 为编辑已有 HTML deck 增加了明确的 Enhancement Mode 守则，统一了“浏览器内编辑默认开启但可关闭”的规则，并随仓库附带 `themes/cloudhub/` 与 `themes/kingdee/` 两套品牌主题示例。**v2.6.1** — 品牌风格迁移：新增"使用案例：品牌风格迁移"章节，记录通过 `themes/your-brand/reference.md` 将现有 PPTX 迁移到自定义品牌设计系统的完整工作流。**v2.6.0** — 设计质量基准：新增 `references/design-quality.md`，内置防"AI 烂稿"规则 —— 最低 65% 填充率（稀疏内容使用大卡片布局而非半空的要点列表）、多栏平衡约束（任意列不得低于最高列 60%）、90/8/2 配色法则、禁止连续 3 张纯要点页、内容语调配色校准，以及生成前自检门控。修复 aurora-mesh 风格中 Inter 字体与设计规范的矛盾（替换为 Space Grotesk + DM Sans）；规划模板现在会根据内容语调建议匹配的强调色。
 
 [English](README.md) | 简体中文
 
@@ -69,13 +69,13 @@
 - **演讲者模式** — 按 `P` 打开同步演讲者窗口：备注、计时器、页数、翻页导航；窗口高度随备注自动调整
 - **备注编辑面板** — 编辑模式（`E` 键）下底部出现备注栏，点击标题可收起/展开，输入实时同步到演讲者窗口
 - **内联 SVG 图表** — 流程图、时间轴、条形图、对比矩阵、组织架构图，无需 Mermaid.js 或外部库
-- **自定义主题系统** — 在 `themes/你的主题/` 放入 `reference.md` 即可添加专属设计预设；可选提供 `starter.html`
+- **自定义主题系统** — 在 `themes/你的主题/` 放入 `reference.md` 即可添加专属设计预设；可选提供 `starter.html`；仓库内附带 `themes/cloudhub/` 与 `themes/kingdee/` 两套品牌主题示例
 - **模板导出界面开关** — 在 `<body>` 上设置 `data-export-progress="false"`，可同时隐藏顶部进度条和右侧导航点，并同步影响 native PPT 导出
 - **Blue Sky Starter 模板** — 完整 boilerplate，任何模型都能正确实现全套视觉系统
 - **图片处理流水线** — 自动评估和处理素材（Pillow）
 - **PPT 导入** — 将 `.pptx` 文件转换为网页演示
 - **PPTX / PNG 导出** — 通过 [kai-html-export](https://github.com/kaisersong/kai-html-export)（`clawhub install kai-html-export`）
-- **浏览器内编辑** — 直接在浏览器中编辑文字，Ctrl+S 保存
+- **浏览器内编辑** — 默认开启、可按需关闭；直接在浏览器中编辑文字，Ctrl+S 保存
 - **视口自适应** — 每张幻灯片精确填充 100vh，永不出现滚动条
 - **中英双语** — 完整支持中文内容
 
@@ -158,7 +158,7 @@ clawhub install kai-html-export   # 或：pip install playwright python-pptx
 
 - `presentation.html` — 零依赖单文件，直接用浏览器打开
 - `PRESENTATION_SCRIPT.md` — 演讲稿（幻灯片 8 张以上时自动生成）
-- `*.pptx` — 通过 `--export pptx` 导出
+- `*.pptx` / `*.png` — 通过独立技能 [kai-html-export](https://github.com/kaisersong/kai-html-export) 导出
 
 ---
 
@@ -262,8 +262,9 @@ clawhub install kai-html-export   # 或：pip install playwright python-pptx
 # （如需要，编辑生成的 PLANNING.md）
 /slide-creator --generate
 
-# 生成后导出为 PPTX
-/slide-creator --export pptx
+# 生成后导出
+/kai-html-export presentation.html
+/kai-html-export --png presentation.html
 ```
 
 ---
@@ -281,12 +282,11 @@ slide-creator 的解法是：**SKILL.md 是一个精简的指令路由层（约 
 ```
 --plan        → 只读 references/planning-template.md
 --generate    → references/html-template.md + 单个风格文件 + references/base-css.md
---export pptx → 运行脚本，不加载任何文件
 交互模式      → references/workflow.md（完整 Phase 1–5）
 风格选择      → references/style-index.md（21 个预设 + 心情映射）
 ```
 
-**最终效果：** `--plan` 调用从不接触 CSS。`--generate` 运行时从不加载其他 20 种风格描述。`--export` 调用什么都不加载，只运行 Python 脚本。
+**最终效果：** `--plan` 调用从不接触 CSS。`--generate` 运行时从不加载其他 20 种风格描述。导出能力继续放在独立的 `kai-html-export` 技能里，因此 slide-creator 自身始终只聚焦于规划和 HTML 生成。
 
 这是渐进式披露原则在 AI 上下文管理中的应用：**在需要信息的那一刻才披露，而不是提前全部加载**。好的 UX 设计原则同样适用于好的 AI 技能设计。
 

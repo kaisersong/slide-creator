@@ -1,4 +1,4 @@
-# Slide Creator — Interactive Workflow (Phase 1–5)
+# Slide Creator - Interactive Workflow (Phase 1-5)
 
 Read this file when running in **no-flag / interactive mode**. For `--plan` read only the Planning Mode section. For `--generate` skip to Phase 3.
 
@@ -12,6 +12,21 @@ Read this file when running in **no-flag / interactive mode**. For `--plan` read
 4. Save as `PLANNING.md` in the working directory.
 5. Present slide count, structure, and key decisions. Ask for approval.
 6. **Stop. Do NOT generate HTML.**
+
+---
+
+## Enhancement Mode (existing HTML)
+
+Use this mode when the user asks to improve an existing HTML deck instead of generating from scratch.
+
+1. Count existing content before adding new text or images.
+2. Compare the target slide against the same density limits used for fresh generation.
+3. If the slide is already full, split it before appending more bullets, screenshots, or notes.
+4. Images added during enhancement must keep viewport-safe constraints such as `max-height: min(50vh, 400px)`.
+5. After every modification, verify `.slide` still uses `height: 100vh; height: 100dvh; overflow: hidden;`.
+6. Re-check that modified typography and spacing still use `clamp()`-based sizing where required.
+7. If a change would exceed density limits, split the slide proactively.
+8. Validate the edited deck at a practical presentation size such as 1280x720 before handing it back.
 
 ---
 
@@ -155,3 +170,5 @@ To export as PPTX or PNG: `/kai-html-export` (install: clawhub install kai-html-
 ```
 
 Always mention: hover the top-left corner or press `E` to enter edit mode.
+
+---

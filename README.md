@@ -4,7 +4,7 @@
 
 A skill for [Claude Code](https://claude.ai/claude-code) and [OpenClaw](https://openclaw.ai) that generates stunning, zero-dependency HTML presentations.
 
-**v2.6.1** — Brand Style Migration: added "Use Case: Brand Style Migration" section documenting the workflow for migrating existing PPTX files to a custom brand design system using `themes/your-brand/reference.md`. **v2.6.0** — Design Quality Baseline: new `references/design-quality.md` encodes anti-slop rules for generated slides — minimum 65% fill rule with decision tree for sparse content (2 items → big-card layout, not half-empty bullets), multi-column balance enforcement (no column < 60% of tallest), 90/8/2 color law, no 3 consecutive full-bullet slides, content-tone color calibration, and a pre-output self-check gate. Fixes aurora-mesh Inter font contradiction (replaced with Space Grotesk + DM Sans). Planning template now suggests tone-matched accent colors. **v2.5.4** — Added a template-level export chrome switch: set `data-export-progress="false"` on `<body>` to hide both the top progress bar and right-side nav dots in generated HTML and in native PPT export via [kai-html-export](https://github.com/kaisersong/kai-html-export). **v2.5.2–v2.5.3** — Added presenter remote-control keys (`PageDown`, `PageUp`, `Enter`, `Backspace`, `B`) and refreshed release packaging.
+**v2.7.0** — Added explicit Enhancement Mode guardrails for editing existing HTML decks, clarified that inline editing is default-on but optional, and bundled two example custom brand themes under `themes/cloudhub/` and `themes/kingdee/`. **v2.6.1** — Brand Style Migration: added "Use Case: Brand Style Migration" section documenting the workflow for migrating existing PPTX files to a custom brand design system using `themes/your-brand/reference.md`. **v2.6.0** — Design Quality Baseline: new `references/design-quality.md` encodes anti-slop rules for generated slides — minimum 65% fill rule with decision tree for sparse content (2 items → big-card layout, not half-empty bullets), multi-column balance enforcement (no column < 60% of tallest), 90/8/2 color law, no 3 consecutive full-bullet slides, content-tone color calibration, and a pre-output self-check gate. Fixes aurora-mesh Inter font contradiction (replaced with Space Grotesk + DM Sans). Planning template now suggests tone-matched accent colors.
 
 English | [简体中文](README.zh-CN.md)
 
@@ -69,13 +69,13 @@ Every demo uses the same content (slide-creator's own introduction) — making i
 - **Presenter Mode** — Press `P` to open a synced speaker window: notes, timer, slide counter, prev/next nav; window height auto-adapts to notes length
 - **Notes editing panel** — In edit mode (`E` key), a notes bar appears at the bottom; click the title bar to collapse/expand; edits sync live to the presenter window
 - **Inline SVG diagrams** — Flowcharts, timelines, bar charts, comparison grids, org charts — no Mermaid.js, no external libs
-- **Custom theme system** — Drop a `reference.md` into `themes/your-theme/` to add your own design preset; `starter.html` optional for complex visual systems
+- **Custom theme system** — Drop a `reference.md` into `themes/your-theme/` to add your own design preset; `starter.html` optional for complex visual systems; example brand themes now ship in `themes/cloudhub/` and `themes/kingdee/`
 - **Template export chrome switch** — Set `data-export-progress="false"` on `<body>` to hide both the top progress bar and right-side nav dots in HTML playback and native PPT export
 - **Blue Sky starter template** — Complete boilerplate so models never mis-implement the visual system
 - **Image pipeline** — Auto-evaluate and process assets (Pillow)
 - **PPT import** — Convert `.pptx` files to web presentations
 - **PPTX / PNG export** — via [kai-html-export](https://github.com/kaisersong/kai-html-export) (`clawhub install kai-html-export`)
-- **Inline editing** — Edit text in-browser, Ctrl+S to save
+- **Inline editing** — Default-on, optional browser editing; edit text in-browser and press Ctrl+S to save
 - **Viewport fitting** — Every slide fits exactly in 100vh, no scrolling ever
 - **Bilingual** — Chinese / English support
 
@@ -232,8 +232,9 @@ Other agents and skills can call slide-creator programmatically:
 # (edit PLANNING.md if needed)
 /slide-creator --generate
 
-# Export to PPTX after generation
-/slide-creator --export pptx
+# Export after generation
+/kai-html-export presentation.html
+/kai-html-export --png presentation.html
 ```
 
 ---
@@ -251,12 +252,11 @@ slide-creator solves this with a **command routing table**: SKILL.md is a thin r
 ```
 --plan        → references/planning-template.md only
 --generate    → references/html-template.md + one style file + references/base-css.md
---export pptx → runs a script, loads nothing
 interactive   → references/workflow.md (full Phase 1–5)
 style picker  → references/style-index.md (21 presets + mood mapping)
 ```
 
-**The result:** a `--plan` invocation never touches CSS. A `--generate` run never loads the other 20 style descriptions. An `--export` call loads nothing at all — it just runs a Python script.
+**The result:** a `--plan` invocation never touches CSS. A `--generate` run never loads the other 20 style descriptions. Export stays in the separate `kai-html-export` skill, so slide-creator itself remains focused on planning and HTML generation.
 
 This is progressive disclosure applied to AI context management: **reveal information at the moment it's needed, not before.** The same principle that makes good UX design also makes good AI skill design.
 
