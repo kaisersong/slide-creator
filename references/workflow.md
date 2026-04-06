@@ -195,6 +195,89 @@ Alternate between text-heavy and visual-heavy slides. Three or more consecutive 
 
 ---
 
+## Phase 3.5: Review (Polish mode only)
+
+**Auto mode**: Skip this phase entirely. Proceed directly to Phase 5 Delivery.
+
+**Polish mode**: Run after Phase 3 generation completes.
+
+**`--review` command**: Entry point for reviewing any existing HTML.
+
+### Step 1: Load review rules
+
+Read [review-checklist.md](review-checklist.md) for the 16 checkpoints.
+
+### Step 2: Execute detection
+
+Run all 16 checkpoints against the generated HTML:
+
+- **Category 1 (Auto-Detectable)**: 6 checkpoints that can be detected; only 1.1 can be fully auto-fixed
+- **Category 2 (AI-advised)**: 10 checkpoints where AI provides suggestions
+
+### Step 3: Classify and present results
+
+Group results by category:
+
+| Symbol | Category | Action |
+|---|---|---|
+| ✅ | Passed | No action needed |
+| 🔧 | Auto-fixable | Can fix without user input |
+| ⚠️ | Needs confirmation | AI suggests fix, user confirms |
+| ❌ | Needs judgment | AI provides guidance, user decides |
+
+Present via AskUserQuestion with options:
+- **[全部自动修复]** — Apply all 🔧 fixes automatically
+- **[逐项确认]** — Review each 🔧/⚠️ item individually
+- **[跳过 Review]** — Output HTML as-is
+
+### Step 4: Apply fixes
+
+**If "全部自动修复"**:
+1. Apply all 🔧 auto-fixable changes
+2. Write updated HTML
+3. Generate REVIEW_REPORT.md
+
+**If "逐项确认"**:
+1. For each 🔧/⚠️ item, show:
+   - Checkpoint name
+   - Issue description
+   - Suggested fix
+2. User selects: [修复] / [跳过] / [保持原样]
+3. After all items, write updated HTML
+4. Generate REVIEW_REPORT.md
+
+**If "跳过 Review"**:
+1. Write HTML as-is
+2. Skip report generation
+
+### Step 5: Output diagnostic report
+
+Generate REVIEW_REPORT.md in working directory:
+
+```markdown
+## Review 诊断报告
+
+**幻灯片**: [filename].html
+**检测结果**: [passed]/16 通过，[pending] 项待处理
+
+### 已修复项 ([count])
+- ✅ [checkpoint]: [what was fixed]
+
+### 未修复项 ([count])
+- ⚠️ [checkpoint]: [issue description]
+  - AI 建议：[suggestion]
+
+### 需人工判断项 (建议思考)
+- 🔍 [checkpoint]: [AI analysis]
+
+---
+可再次运行 `/slide-creator --review` 继续优化
+```
+
+Tell user: "Review 完成。可再次运行 `/slide-creator --review [filename].html` 继续优化。"
+
+---
+
 ## Phase 4: PPT Conversion
 
 Read [pptx-extraction.md](pptx-extraction.md) for the Python extraction script.
