@@ -70,6 +70,26 @@ These are defined in `references/html-template.md`. **Read that file before writ
 
 ---
 
+## Review Mode (`--review`)
+
+Run 16 content checkpoints against generated or existing HTML:
+
+```
+/slide-creator --review presentation.html
+```
+
+**Behavior:**
+1. Load `references/review-checklist.md`
+2. Execute all 16 checkpoints
+3. Show confirmation window with results (✅ passed, 🔧 auto-fixable, ⚠️ needs confirmation, ❌ needs judgment)
+4. User chooses: [全部自动修复] / [逐项确认] / [跳过]
+5. Output fixed HTML + diagnostic report
+
+**Polish mode**: Phase 3.5 Review runs automatically after generation.
+**Auto mode**: Skips Phase 3.5 entirely.
+
+---
+
 ## Command Routing
 
 Parse the invocation first, then load only what that command needs:
@@ -78,7 +98,8 @@ Parse the invocation first, then load only what that command needs:
 |---------|-------------|------------|
 | `--plan [prompt]` | `references/planning-template.md` | Detect planning depth (`自动` or `精修`), create PLANNING.md, then stop — no HTML. |
 | `--generate` | `references/html-template.md` + chosen style file + `references/base-css.md` + `references/design-quality.md` | Read PLANNING.md, generate HTML. |
-| No flag (interactive) | `references/workflow.md` + **`references/html-template.md` before Phase 3** + `references/design-quality.md` before writing | Follow Phase 0-5. |
+| `--review [file.html]` | `references/review-checklist.md` + target HTML | Execute 16 checkpoints → confirmation window → fix/report. |
+| No flag (interactive) | `references/workflow.md` + **`references/html-template.md` before Phase 3** + `references/design-quality.md` before writing | Follow Phase 0-5 (Phase 3.5 Review only in Polish mode). |
 | Content + style given directly | `references/html-template.md` + style file + `references/base-css.md` | Generate immediately — no Phase 1/2 needed. |
 
 **Progressive disclosure rule:** each command loads only its required files. `--plan` never touches CSS. This keeps context focused and fast.
