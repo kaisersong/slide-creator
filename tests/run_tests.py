@@ -35,7 +35,8 @@ def check_deps():
 
 def run_pytest(verbose: bool) -> int:
     args = [sys.executable, "-m", "pytest", "--tb=short",
-            str(TESTS_DIR / "test_demo_quality.py")]
+            str(TESTS_DIR / "test_demo_quality.py"),
+            str(TESTS_DIR / "test_doc_sync.py")]
     if verbose:
         args.append("-v")
     return subprocess.run(args).returncode

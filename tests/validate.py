@@ -227,6 +227,15 @@ RESET = "\033[0m"
 BOLD  = "\033[1m"
 
 
+def render_console_symbol(symbol: str, fallback: str, encoding: str | None = None) -> str:
+    encoding = encoding or getattr(sys.stdout, "encoding", None) or "utf-8"
+    try:
+        symbol.encode(encoding)
+    except UnicodeEncodeError:
+        return fallback
+    return symbol
+
+
 def validate(html_path: str | Path, strict: bool = False) -> bool:
     path = Path(html_path)
     if not path.exists():
@@ -251,11 +260,17 @@ def validate(html_path: str | Path, strict: bool = False) -> bool:
     print(f"\n{BOLD}Validating:{RESET} {path.name}")
     print("─" * 60)
     for passed, name, message in results:
-        icon = f"{GREEN}✓{RESET}" if passed else f"{RED}✗{RESET}"
+        if passed:
+            glyph = render_console_symbol("✓", "OK")
+            icon = f"{GREEN}{glyph}{RESET}"
+        else:
+            glyph = render_console_symbol("✗", "FAIL")
+            icon = f"{RED}{glyph}{RESET}"
         print(f"  {icon}  {message}")
 
     for w in warnings:
-        print(f"  {YELLOW}⚠{RESET}  {w}")
+        glyph = render_console_symbol("⚠", "WARN")
+        print(f"  {YELLOW}{glyph}{RESET}  {w}")
 
     failed = [r for r in results if not r[0]]
     print("─" * 60)

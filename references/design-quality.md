@@ -91,6 +91,22 @@ Single-stat, quote, or breathing-room slides → title/stat element should be �
 
 ---
 
+## 4.5 Title Fit Guardrail
+
+**A slide title wrapping to 4+ lines is a layout failure, not a typography style.**
+
+Fix it in this order:
+
+1. Rewrite the title to the shortest defensible judgment
+2. Widen the title measure for that language or layout
+3. Change the layout so the title has more horizontal room
+
+Do **not** solve this by globally forcing tiny heading boxes such as `max-width: 10ch` or `14ch` for Chinese / mixed technical titles. That reliably turns reasonable titles into 5-6 line stacks.
+
+**Hard rule:** if a heading wraps beyond 3 lines on desktop, regenerate the title or layout before shipping.
+
+---
+
 ## 5. Content-Tone Color Calibration
 
 When no specific color is given, match the accent color to the content's emotional register:
@@ -137,6 +153,21 @@ These patterns make slides look instantly AI-generated:
 
 ---
 
+## 8. Nested Grid Fit
+
+The most common overflow bug in technical decks is packing too many dense cards into a half-width column.
+
+**Never put a 5-step state chain or API matrix inside a 50/50 column unless each item is extremely short.**
+
+If a state sequence needs 5 items:
+- use a full-width slide
+- or reflow into `3 + 2`
+- or turn it into a diagram instead of five verbose cards
+
+If any card needs more than 2 short lines to stay readable, the grid is too dense for the container.
+
+---
+
 ## Pre-Output Self-Check
 
 Run this before writing the final HTML:
@@ -147,6 +178,8 @@ Run this before writing the final HTML:
 □ Is the accent color used on more than 3 distinct element types simultaneously?
 □ Are there 3+ consecutive bullet-list slides without a layout break?
 □ Does any title/heading sound like a template ("Overview", "Summary", "Conclusion")?
+□ Does any title wrap to 4+ lines on desktop? If yes, shorten it or widen the measure.
+□ Did you pack a 5-step state chain or long API list inside a half-width card?
 □ If you told someone "an AI made this" — would they immediately believe it?
   If yes — find the most generic slide and redesign it before writing.
 ```

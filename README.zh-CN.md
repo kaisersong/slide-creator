@@ -62,6 +62,7 @@
 ## 功能特性
 
 - **两阶段工作流** — `--plan` 生成大纲，`--generate` 输出幻灯片
+- **两种规划深度** — `自动（Auto）` 适合快速出稿，`精修（Polish）` 适合更强叙事和视觉锁定
 - **21 种设计预设** — Bold Signal、Blue Sky、Modern Newspaper、Neo-Retro Dev Deck 等，每种风格含命名布局变体
 - **内容类型智能路由** — 根据路演、开发工具、数据报告、编辑内容等自动推荐最匹配的风格
 - **视觉风格探索** — 先生成 3 个预览，看图选风格而非描述风格
@@ -115,6 +116,37 @@ OpenClaw 首次使用时会自动安装依赖（Pillow）。
 /slide-creator              # 从零开始（交互式风格探索）
 /kai-html-export            # 导出为 PPTX 或 PNG（独立技能）
 ```
+
+## 规划深度
+
+- `自动（Auto）` — 快速路径
+- `精修（Polish）` — 深度路径
+
+同一份内容在 `自动` 与 `精修` 之间切换时，除非用户明确要求换风格，否则应保持相同 preset。
+
+## 耗时
+
+端到端预计耗时：
+
+- `自动（Auto）`：通常约 3-6 分钟
+- `精修（Polish）`：通常约 8-15 分钟
+
+统一记录以下分段：
+
+- `plan`
+- `generate`
+- `validate`
+- `polish`
+- `total`
+
+Intent Broker 重跑实测（当前机器）：
+
+| 路径 | plan | generate | validate | polish | total |
+|---|---:|---:|---:|---:|---:|
+| `自动（Auto）` | 0m 00s（复用已确认 plan） | 0m 22s | 0m 13s | 0m 00s | 0m 35s |
+| `精修（Polish）` | 0m 00s（复用已确认 plan） | 0m 13s | 0m 14s | 0m 00s | 0m 27s |
+
+这些数字是同一份 Intent Broker demo 在规则已锁定后的重跑耗时。给用户做预期沟通时，优先使用上面的预计区间。
 
 ### 典型工作流
 

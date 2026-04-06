@@ -15,6 +15,7 @@ Every generated HTML **must** include all of the following. Do not omit any item
 5. **`PresentMode` class** — inside the `else` block, before `new PresentMode(...)`. **Never put it inside the `if (presenter)` block** (class is block-scoped; it would be inaccessible in the else branch)
 6. **`setupEditor()` call** — edit hotzone + notes panel wired up
 7. **`data-notes` on every `<section class="slide">`** — 1–3 sentence speaker note per slide
+8. **Preset fidelity metadata** — if PLANNING.md or the workflow selected a preset, honor it exactly and stamp it into HTML as `data-preset="Preset Name"` on `<body>`
 
 ---
 
@@ -113,6 +114,11 @@ Every presentation follows this structure:
             max-height: 100%;
             overflow: hidden;
         }
+
+        /* Title fit guardrail:
+           do not globally cap CJK or technical titles to tiny measures such as 10ch / 14ch.
+           If a heading wants more than ~3 lines, rewrite the title or change the layout
+           instead of forcing a six-line wrap with an artificially narrow max-width. */
 
         /* ===========================================
            RESPONSIVE BREAKPOINTS
@@ -224,7 +230,7 @@ Every presentation follows this structure:
         body.presenting.presenting-black::after { content: ''; position: fixed; inset: 0; background: #000; z-index: 99999; }
     </style>
 </head>
-<body data-export-progress="true">
+<body data-export-progress="true" data-preset="Enterprise Dark">
     <!-- Progress bar
          Set body[data-export-progress="false"] to hide both the progress bar and nav dots
          on the page and omit them from native PPT export. -->
