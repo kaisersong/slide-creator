@@ -2,7 +2,10 @@ __pycache__/
 *.pyc
 *.pyo
 .pytest_cache/
+.tmp-run/
+.tmp-test-doc-sync/
 .gstack/
+.worktrees/
 
 # Product docs & scratchpads
 PRODUCT.md

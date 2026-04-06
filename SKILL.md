@@ -1,7 +1,7 @@
 ---
 name: kai-slide-creator
 description: Use when someone wants to CREATE or BUILD a slide deck, presentation, or 幻灯片/PPT/演示文稿 — from scratch, from notes, from a Word/PPTX file, or from an approved outline. Handles Chinese and English equally. Covers pitch decks, product launches, team standups, conference talks, capstone presentations, style previews, and converting existing files to web slides. Use for --plan (outline) and --generate (HTML from plan) flags. Does NOT apply to exporting finished HTML to PPTX/PNG (use kai-html-export), writing speeches, or non-slide documents.
-version: 2.7.0
+version: 2.8.0
 metadata: {"openclaw":{"emoji":"🎞","os":["darwin","linux","windows"],"homepage":"https://github.com/kaisersong/slide-creator","requires":{"bins":["python3"]},"install":[]}}
 ---
 
@@ -16,6 +16,44 @@ Generate zero-dependency HTML presentations that run entirely in the browser.
 3. **Distinctive Design** — Avoid generic AI aesthetics (Inter font, purple gradients, predictable heroes).
 4. **Viewport Fitting** — Slides fit exactly in the viewport. Overflowing content gets split, not squished.
 5. **Plan Before Generate** — `--plan` creates an outline; `--generate` produces HTML from it.
+
+---
+
+## Planning Depths
+
+slide-creator now supports **two user-facing planning depths**:
+
+- `自动` / `Auto` — default path for fast drafts, light interaction, and direct generation momentum
+- `精修` / `Polish` — deeper planning for decks that need stronger structure, visual locking, and page-aware image decisions
+
+`参考驱动` remains supported, but only as an internal reference-driven branch inside `精修`.
+
+Do not add a third top-level mode.
+
+Auto-upgrade to `精修` when the request emphasizes deck thesis, narrative pacing, page roles, stronger visual system locking, brand alignment beyond preset choice, page-level image reasoning, or explicit planning confirmation before generation.
+
+Image intent exists only in `精修`.
+
+Planning depth changes narrative detail, not preset routing. If the same content stays on the same content type and the user did not request a new style, keep the same preset across `自动` and `精修`.
+
+Language rule for mode labels:
+
+- Chinese requests may show `自动` / `精修`
+- English requests should show `Auto` / `Polish`
+- Agents may parse either pair as the same two canonical planning depths
+
+Timing contract:
+
+- `plan` — planning / outline time
+- `generate` — HTML generation time
+- `validate` — validation time
+- `polish` — post-generation fix / rerun time
+- `total` — end-to-end elapsed time
+
+Before generation starts, tell the user the expected time range:
+
+- `Auto`: usually ~3-6 minutes end-to-end
+- `Polish`: usually ~8-15 minutes end-to-end
 
 ---
 
@@ -38,7 +76,7 @@ Parse the invocation first, then load only what that command needs:
 
 | Command | What to load | What to do |
 |---------|-------------|------------|
-| `--plan [prompt]` | `references/planning-template.md` | Create PLANNING.md. Stop — no HTML. |
+| `--plan [prompt]` | `references/planning-template.md` | Detect planning depth (`自动` or `精修`), create PLANNING.md, then stop — no HTML. |
 | `--generate` | `references/html-template.md` + chosen style file + `references/base-css.md` + `references/design-quality.md` | Read PLANNING.md, generate HTML. |
 | No flag (interactive) | `references/workflow.md` + **`references/html-template.md` before Phase 3** + `references/design-quality.md` before writing | Follow Phase 0-5. |
 | Content + style given directly | `references/html-template.md` + style file + `references/base-css.md` | Generate immediately — no Phase 1/2 needed. |
@@ -58,6 +96,8 @@ Quick routing before reading workflow.md:
 - **User has a `.ppt/.pptx` file** → Phase 4 (PPT conversion).
 - **User wants to enhance existing HTML** → read it, then follow the Enhancement Mode guardrails in `references/workflow.md` before editing.
 - **Everything else** → Phase 1 (Content Discovery).
+
+For planning depth, default to `自动`. Route to `精修` when the user explicitly asks for it or the request clearly needs stronger narrative shaping, tighter visual constraints, page roles, or image intent.
 
 **Content-type → Style hints** (use when user hasn't chosen a style):
 
