@@ -1,0 +1,230 @@
+# Slide Content Review Checklist
+
+Load this file during Phase 3.5 (Polish mode) or when `--review` is called.
+
+---
+
+## Overview
+
+16 checkpoints divided into two categories:
+- **Auto-fixable (6)**: Can be detected and fixed automatically
+- **AI-advised (10)**: AI provides judgment suggestions for user consideration
+
+---
+
+## Category 1: Auto-Fixable Checkpoints
+
+These checkpoints can be detected programmatically and fixed without user input.
+
+### 1.1 视角翻转 (Perspective Flip)
+
+**Detection**: Scan slide titles and body text for first-person pronouns:
+- Chinese: "我", "本系统", "本次分享", "我们"
+- English: "I", "my", "our system", "this presentation"
+
+**Auto-fix**: Replace with audience-centered pronouns:
+- "我/我们" → "你/你们"
+- "本系统" → "你的系统" / "这套方案"
+- "本次分享" → "今天你将学会"
+- "I/We" → "You"
+- "my/our" → "your"
+
+**Example fix**:
+- Before: "我要分享的系统架构是..."
+- After: "你将学会如何利用这套架构解决问题"
+
+### 1.2 结论先行 (Conclusion First)
+
+**Detection**: Check if slide title is a noun phrase (no verb) vs. a judgment/claim.
+
+Noun phrase patterns:
+- "XX架构概览", "XX系统介绍", "XX方案说明"
+- "Overview", "Introduction", "Summary"
+
+**Auto-fix**: Generate suggested title as a judgment statement:
+- "XX架构概览" → "XX架构可确保流量峰值期零遗漏"
+- "Overview" → "How XX ensures zero downtime during traffic spikes"
+
+**Fix template**: `[Subject] + [benefit/claim/outcome]`
+
+### 1.3 3概念法则 (3-Concept Rule)
+
+**Detection**: Count new technical terms/concepts per slide. Flag if > 3.
+
+Technical term indicators:
+- CamelCase words
+- Acronyms (API, SDK, LLM)
+- Terms in quotes or with explicit definition
+- English words in Chinese text (excluding common words)
+
+**Auto-fix**: None (requires content restructuring)
+
+**Suggestion**: "Slide X contains 5 new concepts. Consider splitting into 2 slides or using progressive disclosure."
+
+### 1.4 禁止连续密集页 (No Consecutive Dense Slides)
+
+**Detection**: Check if 3+ consecutive slides have same layout type:
+- Full bullet lists
+- Full grid of cards
+- Full data tables
+
+**Auto-fix**: None (requires content restructuring)
+
+**Suggestion**: "Slides X-X+2 are all bullet lists. Insert a visual break (diagram/quote/stat) after slide X."
+
+### 1.5 字号底线 (Font Size Floor)
+
+**Detection**: Check if body text font-size is below readable threshold:
+- CSS: `< 1rem` or `< clamp(1rem, 2vw, 1.25rem)`
+- Inline style with px/pt below 16px/12pt
+
+**Auto-fix**: None (may break layout)
+
+**Suggestion**: "Slide X body text is below readable size. Increase font-size or reduce content."
+
+### 1.6 眯眼测试 (Squint Test)
+
+**Detection**: Check if page has a clear visual focal point:
+- Largest element should be the most important content
+- If multiple elements compete for attention (same size/weight), flag
+
+**Auto-fix**: None (requires design decision)
+
+**Suggestion**: "Slide X has no clear visual hierarchy. Make the key message larger/bolder or add emphasis color."
+
+---
+
+## Category 2: AI-Advised Checkpoints
+
+These checkpoints require AI judgment. Provide specific suggestions.
+
+### 2.1 痛点前置拦截 (Pain Point First)
+
+**Detection**: Check slides 1-2 for:
+- Specific user scenario
+- Screenshot with annotation
+- Real case study
+- Pain/frustration keywords
+
+**AI suggestion template**: "前2页未检测到具体痛点场景。建议在Slide 1补充真实用户痛点截图或案例，例如'大促期间客服手工核对几百个订单到崩溃'。"
+
+### 2.2 WIIFM量化承诺 (WIIFM Quantified)
+
+**Detection**: Check slides 1-3 for quantified benefit:
+- Numbers with % or time units
+- "节省XX%", "缩短XX分钟", "提升XX倍"
+- "save X%", "reduce by X", "X times faster"
+
+**AI suggestion template**: "前3页未检测到量化收益承诺。建议明确写出'掌握这个工作流能让你的日均处理时间缩短40%'。"
+
+### 2.3 MECE原则 (MECE Principle)
+
+**Detection**: Check step/category lists for:
+- Overlapping keywords between items
+- Items that could be merged
+- Missing obvious category
+
+**AI suggestion template**: "步骤X和步骤Y包含相似关键词'[word]'，可能存在重叠。建议合并为'XX'或明确区分边界。"
+
+### 2.4 奥卡姆剃刀 (Occam's Razor)
+
+**Detection**: Check each slide for:
+- Content not directly supporting main goal
+- Tangential information that could be appendix
+- More than 5 bullet points (possible scope creep)
+
+**AI suggestion template**: "Slide X与核心目标'[goal]'关联较弱。可考虑移到附录或删除。"
+
+### 2.5 10分钟注意力重置 (10-Min Attention Reset)
+
+**Detection**: After every 8-10 slides of dense content, check for:
+- Interactive question
+- Real case study
+- Demo/screenshot
+- Breathing room slide
+
+**AI suggestion template**: "连续X页干货后未检测到注意力重置点。建议在Slide X后插入一个真实踩坑案例或互动提问。"
+
+### 2.6 张力对比结构 (Tension Contrast)
+
+**Detection**: Check for before/after or manual/auto contrast:
+- "旧方法 → 新方法" structure
+- "痛点 → 解决方案" contrast
+- Side-by-side comparison
+
+**AI suggestion template**: "未检测到张力对比结构。建议增加'手工操作繁琐步骤 → 自动化流程对比'形成强烈反差。"
+
+### 2.7 留白缓冲页 (Breathing Room)
+
+**Detection**: Check for visual-minimal slides every 5-6 slides:
+- Single statement slide
+- Big number/stat
+- Quote with attribution
+- Near-empty slide with intentional whitespace
+
+**AI suggestion template**: "未检测到缓冲页。建议每5-6页插入一张呼吸页（单句陈述/大数字/引语），让听众大脑存储信息。"
+
+### 2.8 黑话降维翻译 (Jargon Translation)
+
+**Detection**: For each technical term on first appearance:
+- Check if analogy/explanation follows within same slide or next slide
+- Flag terms without plain-language translation
+
+**AI suggestion template**: "'[term]'首次出现未附带类比解释。建议添加'相当于一个XX'或'类似于XX'让人话翻译。"
+
+### 2.9 图像降噪 (Image Noise Reduction)
+
+**Detection**: Check images for:
+- 3D cartoon characters/stock people
+- Emoji or meme images
+- Low-quality screenshots
+- Watermarked images
+
+**AI suggestion template**: "检测到[X]类廉价图像元素。建议替换为专业图示或高质量截图。"
+
+### 2.10 数据图表降噪 (Chart Noise Reduction)
+
+**Detection**: Check SVG/charts for:
+- Grid lines on line/bar charts
+- 3D effects on charts
+- More than 5 data series on single chart
+- Redundant axis labels
+
+**AI suggestion template**: "图表含网格线/3D效果。建议删除以降低视觉噪音，将核心数据线标为高亮主色，其余置灰。"
+
+---
+
+## Detection Result Categories
+
+When running review, classify each checkpoint result:
+
+| Symbol | Category | Description |
+|---|---|---|
+| ✅ | Passed | No issues detected |
+| 🔧 | Auto-fixable | Can be fixed automatically |
+| ⚠️ | Needs confirmation | AI suggestion provided, user decides |
+| ❌ | Needs human judgment | Cannot auto-detect, AI provides guidance |
+
+---
+
+## Review Report Template
+
+```markdown
+## Review 诊断报告
+
+**幻灯片**: [filename].html
+**检测结果**: [passed]/16 通过，[pending]项待处理
+
+### 已修复项 ([count])
+- ✅ [checkpoint]: [what was fixed]
+
+### 未修复项 ([count])
+- ⚠️ [checkpoint]: [issue description]
+  - AI建议：[suggestion]
+
+### 需人工判断项 (建议思考)
+- 🔍 [checkpoint]: [AI analysis]
+
+---
+可再次运行 `/slide-creator --review` 继续优化
+```
