@@ -4,7 +4,7 @@
 
 A skill for [Claude Code](https://claude.ai/claude-code) and [OpenClaw](https://openclaw.ai) that generates stunning, zero-dependency HTML presentations.
 
-**v2.8.0** — Simplified planning into two user-facing depths, `Auto` and `Polish`, with bilingual naming rules, timing guidance, preset-lock behavior across depths, checked-in demo paths, and regression coverage for mode routing plus README / workflow doc sync. **v2.7.1** — Added a zero-dependency `check-doc-sync.py` contract checker to keep `SKILL.md`, `README.md`, and `references/workflow.md` aligned, and wired it into the regression test runner. **v2.7.0** — Added explicit Enhancement Mode guardrails for editing existing HTML decks, clarified that inline editing is default-on but optional, and bundled two example custom brand themes under `themes/cloudhub/` and `themes/kingdee/`. **v2.6.1** — Brand Style Migration: added "Use Case: Brand Style Migration" section documenting the workflow for migrating existing PPTX files to a custom brand design system using `themes/your-brand/reference.md`. **v2.6.0** — Design Quality Baseline: new `references/design-quality.md` encodes anti-slop rules for generated slides — minimum 65% fill rule with decision tree for sparse content (2 items → big-card layout, not half-empty bullets), multi-column balance enforcement (no column < 60% of tallest), 90/8/2 color law, no 3 consecutive full-bullet slides, content-tone color calibration, and a pre-output self-check gate. Fixes aurora-mesh Inter font contradiction (replaced with Space Grotesk + DM Sans). Planning template now suggests tone-matched accent colors.
+**v2.9.0** — Content Review System: 16 checkpoints (6 auto-detectable, 10 AI-advised) with three rule types (hard/context-aware/advisory); Phase 3.5 Review runs automatically in Polish mode; `--review` command for on-demand diagnosis and fix suggestions; rule types differentiate between mandatory enforcement, context-triggered behavior, and advisory hints. **v2.8.0** — Simplified planning into two user-facing depths, `Auto` and `Polish`, with bilingual naming rules, timing guidance, preset-lock behavior across depths, checked-in demo paths, and regression coverage for mode routing plus README / workflow doc sync. **v2.7.1** — Added a zero-dependency `check-doc-sync.py` contract checker to keep `SKILL.md`, `README.md`, and `references/workflow.md` aligned, and wired it into the regression test runner. **v2.7.0** — Added explicit Enhancement Mode guardrails for editing existing HTML decks, clarified that inline editing is default-on but optional, and bundled two example custom brand themes under `themes/cloudhub/` and `themes/kingdee/`. **v2.6.1** — Brand Style Migration: added "Use Case: Brand Style Migration" section documenting the workflow for migrating existing PPTX files to a custom brand design system using `themes/your-brand/reference.md`. **v2.6.0** — Design Quality Baseline: new `references/design-quality.md` encodes anti-slop rules for generated slides — minimum 65% fill rule with decision tree for sparse content (2 items → big-card layout, not half-empty bullets), multi-column balance enforcement (no column < 60% of tallest), 90/8/2 color law, no 3 consecutive full-bullet slides, content-tone color calibration, and a pre-output self-check gate. Fixes aurora-mesh Inter font contradiction (replaced with Space Grotesk + DM Sans). Planning template now suggests tone-matched accent colors.
 
 English | [简体中文](README.zh-CN.md)
 
@@ -63,6 +63,7 @@ Every demo uses the same content (slide-creator's own introduction) — making i
 
 - **Two-stage workflow** — `--plan` to outline, `--generate` to produce
 - **Two planning depths** — `Auto` for speed, `Polish` for stronger narrative and visual locking
+- **Content Review System** — 16 checkpoints for quality assurance: `--review` for on-demand diagnosis; Polish mode auto-runs review; three rule types (hard/context-aware/advisory) with smart triggers
 - **21 design presets** — Bold Signal, Blue Sky, Modern Newspaper, Neo-Retro Dev Deck, and more — each with named layout variations
 - **Content-type routing** — Automatically suggests the best style for pitch decks, dev tools, data reports, editorial, and more
 - **Style discovery** — Generate 3 visual previews before committing to a style
@@ -113,16 +114,41 @@ OpenClaw will automatically detect and install dependencies (Pillow) on first us
 ```
 /slide-creator --plan       # Analyze content + resources/, create PLANNING.md
 /slide-creator --generate   # Generate HTML presentation from PLANNING.md
+/slide-creator --review     # Diagnose and fix content quality issues
 /slide-creator              # Start from scratch (interactive style discovery)
 /kai-html-export            # Export to PPTX or PNG (separate skill)
 ```
 
 ## Planning Depths
 
-- `Auto` — fast draft path; Chinese UI may show `自动`
-- `Polish` — deeper planning path; Chinese UI may show `精修`
+- `Auto` — fast draft path; skips Phase 3.5 Review; Chinese UI may show `自动`
+- `Polish` — deeper planning path; auto-runs Phase 3.5 Review; Chinese UI may show `精修`
 
-Same content should keep the same preset across `Auto` and `Polish` unless the user explicitly changes style.
+## Review Mode
+
+Run `--review` to diagnose content quality against 16 checkpoints:
+
+```
+/slide-creator --review presentation.html
+```
+
+**Review behavior:**
+1. Load `references/review-checklist.md`
+2. Execute all 16 checkpoints (6 auto-detectable + 10 AI-advised)
+3. Show results: ✅ passed / 🔧 auto-fixable / ⚠️ needs confirmation / ❌ needs judgment
+4. User chooses: [全部自动修复] / [逐项确认] / [跳过]
+5. Output fixed HTML + diagnostic report
+
+**Rule types:**
+
+| Type | Rules | Behavior |
+|---|---|---|
+| **Hard** | Layout rotation, font size floor, 3-concept rule | Always enforced |
+| **Context-aware** | Conclusion-first titles, quantified benefits | Triggered by content type and user intent |
+| **Advisory** | Pain point first, attention reset, jargon translation | Suggested in review, not enforced |
+
+**Polish mode**: Phase 3.5 Review runs automatically after generation.
+**Auto mode**: Skips Phase 3.5 entirely.
 
 ## Timing
 
@@ -366,6 +392,45 @@ Narrative / Annual       → #B45309 amber (warm, momentum)
 ```
 
 **Pre-output self-check.** Before writing the final HTML, the model runs a 6-gate check: viewport overflow, minimum fill, column balance, color law compliance, 3-consecutive-bullet rule, and the anti-slop question: *"If you told someone 'an AI made this' — would they immediately believe it?"* If yes, revise before output.
+
+### 7. Content Review System: Quality Baseline Beyond Visuals
+
+The Design Quality Baseline (Section 6) addresses visual slop. But AI-generated slides have a deeper problem: **content slop** — titles that are noun phrases instead of claims, no quantified benefits in the first three slides, technical jargon without plain-language translation.
+
+The Content Review System introduces 16 checkpoints divided into two categories:
+
+**Category 1: Auto-Detectable (6 checkpoints)** can be detected programmatically:
+- Perspective flip (first-person → audience-centered)
+- Conclusion-first titles (noun phrase → judgment statement)
+- 3-concept rule (max 3 new concepts per slide)
+- Layout rotation (no 3 consecutive same-layout slides)
+- Font size floor
+- Visual hierarchy (squint test)
+
+**Category 2: AI-Advised (10 checkpoints)** require AI judgment:
+- Pain point first (slides 1-2 must show real user pain)
+- Quantified benefits (slides 1-3 should have numbers/%)
+- MECE principle (no overlapping step definitions)
+- Occam's razor (remove tangential content)
+- Attention reset (break every 8-10 dense slides)
+- Tension contrast (before/after, manual/auto)
+- Breathing room slides
+- Jargon translation (first appearance needs analogy)
+- Image/chart noise reduction
+
+**Three rule types with different enforcement:**
+
+| Type | Trigger | Example |
+|---|---|---|
+| **Hard** | Always | Layout rotation, font size |
+| **Context-aware** | Based on content type | Judgment-title for proposal, not for intro |
+| **Advisory** | Suggest only | "Consider adding a case study here" |
+
+**Why context-aware rules matter:** A slide titled "slide-creator 简介" (intro) should keep the noun phrase. A slide titled "XX架构概览" (proposal) should become "XX架构可确保流量峰值零遗漏" (judgment). The same rule behaves differently based on content type and user intent.
+
+**Quantified benefits detection:** If content contains numbers ("效率提升约40%"), extract and surface in slides 1-3. If no numbers exist, suggest in review — don't fabricate.
+
+**Generation-time embedding:** These rules should be embedded during Phase 3 generation (for Polish mode) rather than applied post-hoc. This shifts quality assurance left — fixing problems before they're created.
 
 ---
 
