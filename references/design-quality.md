@@ -185,3 +185,16 @@ Run this before writing the final HTML:
 ```
 
 Do not skip this check. It takes 30 seconds and prevents the most visible quality failures.
+
+---
+
+## L1 Content Quality Check
+
+For content-level checkpoints (perspective, logic, pacing, clarity), see [review-checklist.md](review-checklist.md).
+
+**L0 (Visual)**: This file — density, color, typography, layout
+**L1 (Content)**: review-checklist.md — perspective flip, conclusion first, cognitive load, jargon translation
+
+**When to apply:**
+- L0: Always, before writing HTML
+- L1: Polish mode after generation, or via `--review` command
