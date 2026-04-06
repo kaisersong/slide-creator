@@ -7,14 +7,103 @@ Load this file during Phase 3.5 (Polish mode) or when `--review` is called.
 ## Overview
 
 16 checkpoints divided into two categories:
-- **Auto-fixable (6)**: Can be detected and fixed automatically
-- **AI-advised (10)**: AI provides judgment suggestions for user consideration
+- **Category 1: Auto-Detectable (6)**: Can be detected programmatically; only 1.1 can be fully auto-fixed
+- **Category 2: AI-Advised (10)**: AI provides judgment suggestions for user consideration
 
 ---
 
-## Category 1: Auto-Fixable Checkpoints
+## Category 1: Auto-Detectable Checkpoints
 
-These checkpoints can be detected programmatically and fixed without user input.
+These checkpoints can be detected programmatically without user input.
+
+### 1.1 视角翻转 (Perspective Flip)
+
+**Detection**: Scan slide titles and body text for first-person pronouns:
+- Chinese: "我", "本系统", "本次分享", "我们"
+- English: "I", "my", "our system", "this presentation"
+
+**Auto-fix**: Replace with audience-centered pronouns:
+- "我/我们" → "你/你们"
+- "本系统" → "你的系统" / "这套方案"
+- "本次分享" → "今天你将学会"
+- "I/We" → "You"
+- "my/our" → "your"
+
+**Example fix**:
+- Before: "我要分享的系统架构是..."
+- After: "你将学会如何利用这套架构解决问题"
+
+**Auto-fix capability**: ✅ Yes — can automatically replace pronouns
+
+### 1.2 结论先行 (Conclusion First)
+
+**Detection**: Check if slide title is a noun phrase (no verb) vs. a judgment/claim.
+
+Noun phrase patterns:
+- "XX架构概览", "XX系统介绍", "XX方案说明"
+- "Overview", "Introduction", "Summary"
+
+**Auto-fix**: Generate suggested title as a judgment statement:
+- "XX架构概览" → "XX架构可确保流量峰值期零遗漏"
+- "Overview" → "How XX ensures zero downtime during traffic spikes"
+
+**Fix template**: `[Subject] + [benefit/claim/outcome]`
+
+**Auto-fix capability**: ⚠️ Partial — can generate suggestion, user confirms
+
+### 1.3 三概念法则 (3-Concept Rule)
+
+**Detection**: Count new technical terms/concepts per slide. Flag if > 3.
+
+Technical term indicators:
+- CamelCase words
+- Acronyms (API, SDK, LLM)
+- Terms in quotes or with explicit definition
+- English words in Chinese text (excluding common words)
+
+**Auto-fix**: None (requires content restructuring)
+
+**Suggestion**: "Slide X contains 5 new concepts. Consider splitting into 2 slides or using progressive disclosure."
+
+**Auto-fix capability**: ❌ No — detection only, requires manual intervention
+
+### 1.4 禁止连续密集页 (No Consecutive Dense Slides)
+
+**Detection**: Check if 3+ consecutive slides have same layout type:
+- Full bullet lists
+- Full grid of cards
+- Full data tables
+
+**Auto-fix**: None (requires content restructuring)
+
+**Suggestion**: "Slides X-X+2 are all bullet lists. Insert a visual break (diagram/quote/stat) after slide X."
+
+**Auto-fix capability**: ❌ No — detection only, requires manual intervention
+
+### 1.5 字号底线 (Font Size Floor)
+
+**Detection**: Check if body text font-size is below readable threshold:
+- CSS: `< 1rem` or `< clamp(1rem, 2vw, 1.25rem)`
+- Inline style with px/pt below 16px/12pt
+
+**Auto-fix**: None (may break layout)
+
+**Suggestion**: "Slide X body text is below readable size. Increase font-size or reduce content."
+
+**Auto-fix capability**: ❌ No — detection only, requires manual intervention
+
+### 1.6 眯眼测试 (Squint Test)
+
+**Detection**: Check if page has a clear visual focal point:
+- Largest element should be the most important content
+- Flag if 2+ elements have font-size within 10% of each other and both > 1.5rem
+- Flag if page has no element with font-size > 2rem (no clear hierarchy anchor)
+
+**Auto-fix**: None (requires design decision)
+
+**Suggestion**: "Slide X has no clear visual hierarchy. Make the key message larger/bolder or add emphasis color."
+
+**Auto-fix capability**: ❌ No — detection only, requires manual intervention
 
 ### 1.1 视角翻转 (Perspective Flip)
 
@@ -104,7 +193,7 @@ These checkpoints require AI judgment. Provide specific suggestions.
 - Specific user scenario
 - Screenshot with annotation
 - Real case study
-- Pain/frustration keywords
+- Pain/frustration keywords: "痛点", "难点", "问题", "崩溃", "pain", "frustration", "issue", "problem", "struggle"
 
 **AI suggestion template**: "前2页未检测到具体痛点场景。建议在Slide 1补充真实用户痛点截图或案例，例如'大促期间客服手工核对几百个订单到崩溃'。"
 
