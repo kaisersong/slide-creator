@@ -105,7 +105,7 @@ git clone https://github.com/kaisersong/slide-creator ~/.openclaw/skills/slide-c
 
 > ClawHub 页面：https://clawhub.ai/skills/kai-slide-creator
 
-OpenClaw 首次使用时会自动安装依赖（Pillow）。
+OpenClaw 首次导出时会自动安装 kai-html-export 的依赖（playwright、python-pptx）。
 
 ---
 
@@ -196,16 +196,9 @@ Intent Broker 重跑实测（当前机器）：
 
 ## 依赖要求
 
-| 依赖 | 用途 | OpenClaw 自动安装 |
-|------|------|------------------|
-| Python 3 + `Pillow` | 生成时图片处理 | ✅ via uv |
+slide-creator **无外部依赖**。Python 3 仅用于规划阶段可选的图片评估，无需安装任何 Python 包。
 
 不需要 Node.js。
-
-**Claude Code 用户** 需手动安装：
-```bash
-pip install Pillow
-```
 
 如需导出 PPTX 或 PNG，安装 [kai-html-export](https://github.com/kaisersong/kai-html-export)：
 ```bash

@@ -105,7 +105,7 @@ git clone https://github.com/kaisersong/slide-creator ~/.openclaw/skills/slide-c
 
 > ClawHub page: https://clawhub.ai/skills/kai-slide-creator
 
-OpenClaw will automatically detect and install dependencies (Pillow) on first use.
+OpenClaw will automatically detect and install kai-html-export dependencies (playwright, python-pptx) on first export.
 
 ---
 
@@ -176,16 +176,9 @@ These measured numbers are rerun timings for the checked-in Intent Broker demo p
 
 ## Requirements
 
-| Dependency | Purpose | Auto-installed (OpenClaw) |
-|-----------|---------|--------------------------|
-| Python 3 + `Pillow` | Image processing during generation | ✅ via uv |
+slide-creator has **no external dependencies**. Python 3 is optional and only used for image evaluation during planning — no packages required.
 
 Node.js is not required.
-
-**Claude Code users** — install manually:
-```bash
-pip install Pillow
-```
 
 For PPTX or PNG export, install [kai-html-export](https://github.com/kaisersong/kai-html-export):
 ```bash
