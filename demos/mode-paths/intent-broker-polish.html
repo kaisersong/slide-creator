@@ -1,0 +1,1117 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="slide-creator-mode" content="Polish">
+<meta name="slide-creator-preset" content="Enterprise Dark">
+<title>Intent Broker v1 · 精修路径</title>
+<style>
+*,
+*::before,
+*::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg-primary: #0d1117;
+  --bg-secondary: #161b22;
+  --surface: rgba(22, 27, 34, 0.94);
+  --surface-strong: rgba(33, 38, 45, 0.96);
+  --surface-border: rgba(48, 54, 61, 0.96);
+  --text-primary: #e6edf3;
+  --text-secondary: #c9d1d9;
+  --text-muted: #8b949e;
+  --accent: #d29922;
+  --accent-soft: rgba(210, 153, 34, 0.12);
+  --accent-2: #388bfd;
+  --danger: #f85149;
+  --danger-soft: rgba(248, 81, 73, 0.16);
+  --success: #3fb950;
+  --success-soft: rgba(63, 185, 80, 0.16);
+  --title-size: clamp(2.2rem, 5vw, 4.6rem);
+  --h2-size: clamp(1.55rem, 2.8vw, 2.5rem);
+  --body-size: clamp(0.86rem, 1.2vw, 1.04rem);
+  --small-size: clamp(0.72rem, 0.95vw, 0.86rem);
+  --slide-padding: clamp(1.5rem, 4vw, 3.5rem);
+  --content-gap: clamp(1rem, 2vw, 1.5rem);
+  --shadow: 0 20px 70px rgba(0, 0, 0, 0.34);
+}
+
+html { scroll-snap-type: y mandatory; height: 100%; }
+
+body {
+  font-family: "PingFang SC", "Microsoft YaHei", "Segoe UI", system-ui, sans-serif;
+  background: #0d1117;
+  color: var(--text-primary);
+  overflow-x: hidden;
+  height: 100%;
+}
+
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(48, 54, 61, 0.5) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(48, 54, 61, 0.5) 1px, transparent 1px);
+  background-size: 24px 24px;
+  opacity: 0.03;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.slide {
+  width: 100vw;
+  height: 100vh;
+  height: 100dvh;
+  padding: var(--slide-padding);
+  scroll-snap-align: start;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  position: relative;
+  overflow: hidden;
+  background: transparent;
+}
+
+.slide-content {
+  position: relative;
+  z-index: 1;
+  width: min(1160px, 100%);
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: var(--content-gap);
+  max-height: 100%;
+}
+
+.eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  width: fit-content;
+  padding: 0.38rem 0.85rem;
+  border-radius: 999px;
+  font-size: var(--small-size);
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--accent);
+  background: var(--accent-soft);
+  border: 1px solid rgba(210, 153, 34, 0.24);
+}
+
+h1, h2, h3 { line-height: 1.08; letter-spacing: -0.03em; }
+h1 { font-size: var(--title-size); max-width: 15ch; }
+h2 { font-size: var(--h2-size); max-width: 24ch; }
+h3 { font-size: clamp(1rem, 1.4vw, 1.18rem); }
+p, li, td, th { font-size: var(--body-size); line-height: 1.55; color: var(--text-secondary); }
+strong { color: var(--text-primary); }
+
+.lede { max-width: 56ch; font-size: clamp(1rem, 1.35vw, 1.16rem); color: var(--text-secondary); }
+.accent { color: var(--accent); }
+.accent-2 { color: var(--accent-2); }
+.danger { color: var(--danger); }
+.success { color: var(--success); }
+
+.card, .panel {
+  background: var(--surface);
+  border: 1px solid var(--surface-border);
+  border-radius: 24px;
+  box-shadow: var(--shadow);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+}
+
+.card { padding: clamp(1rem, 1.6vw, 1.4rem); }
+.stats-grid, .triple-grid, .dual-grid { display: grid; gap: clamp(0.8rem, 1.4vw, 1.2rem); }
+.stats-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.triple-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.dual-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+
+.stat-number {
+  font-size: clamp(2.4rem, 4.8vw, 4.2rem);
+  line-height: 0.95;
+  letter-spacing: -0.05em;
+  font-weight: 800;
+  color: var(--accent-2);
+}
+
+.stat-label {
+  margin-top: 0.35rem;
+  font-size: var(--small-size);
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+.bullet-list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.bullet-list li { display: flex; gap: 0.7rem; align-items: flex-start; }
+.bullet-list li::before {
+  content: "•";
+  color: var(--accent);
+  font-weight: 800;
+  margin-top: 0.05rem;
+}
+
+.feature-row {
+  display: grid;
+  grid-template-columns: 42px 1fr auto;
+  gap: 0.9rem;
+  align-items: start;
+  padding-bottom: 0.8rem;
+  border-bottom: 1px solid rgba(15, 118, 110, 0.10);
+}
+
+.feature-row:last-child { border-bottom: none; padding-bottom: 0; }
+
+.feature-icon {
+  width: 42px;
+  height: 42px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, rgba(15, 118, 110, 0.16), rgba(37, 99, 235, 0.14));
+  color: var(--accent);
+  font-weight: 800;
+}
+
+.tag {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.22rem 0.7rem;
+  border-radius: 999px;
+  font-size: var(--small-size);
+  font-weight: 700;
+  color: var(--accent);
+  background: var(--accent-soft);
+}
+
+.tag.warn { color: var(--danger); background: var(--danger-soft); }
+.tag.ok { color: var(--success); background: var(--success-soft); }
+
+.diagram-shell {
+  display: grid;
+  grid-template-columns: 1.2fr 0.8fr;
+  gap: 1rem;
+  align-items: stretch;
+}
+
+svg.diagram { width: 100%; height: auto; display: block; }
+
+.timeline {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.7rem;
+}
+
+.step {
+  padding: 0.9rem;
+  border-radius: 18px;
+  background: var(--bg-secondary);
+  border: 1px solid var(--surface-border);
+  min-height: 0;
+}
+
+.step p {
+  font-size: clamp(0.78rem, 0.96vw, 0.92rem);
+  line-height: 1.35;
+}
+
+.step-num {
+  font-size: var(--small-size);
+  color: var(--accent-2);
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.quote-band {
+  padding: 1.2rem 1.4rem;
+  border-radius: 20px;
+  background: linear-gradient(135deg, rgba(56, 139, 253, 0.11), rgba(210, 153, 34, 0.10));
+  border: 1px solid rgba(56, 139, 253, 0.12);
+}
+
+code {
+  color: var(--text-primary);
+  font-size: 0.88em;
+}
+
+.nav-dots {
+  position: fixed;
+  right: 1.1rem;
+  top: 50%;
+  transform: translateY(-50%);
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  z-index: 100;
+}
+
+.nav-dots button {
+  width: 8px;
+  height: 8px;
+  border-radius: 999px;
+  border: none;
+  cursor: pointer;
+  background: rgba(53, 82, 102, 0.22);
+  transition: all 0.25s ease;
+}
+
+.nav-dots button.active {
+  height: 28px;
+  background: var(--accent);
+}
+
+.progress-bar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 3px;
+  width: 0;
+  background: linear-gradient(90deg, var(--accent), var(--accent-2));
+  z-index: 100;
+  transition: width 0.25s ease;
+}
+
+.reveal {
+  opacity: 0;
+  transform: translateY(24px);
+  transition: opacity 0.55s ease, transform 0.55s ease;
+}
+
+.slide.visible .reveal {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.slide.visible .reveal:nth-child(2) { transition-delay: 0.08s; }
+.slide.visible .reveal:nth-child(3) { transition-delay: 0.16s; }
+.slide.visible .reveal:nth-child(4) { transition-delay: 0.24s; }
+.slide.visible .reveal:nth-child(5) { transition-delay: 0.32s; }
+
+#present-btn {
+  position: fixed;
+  bottom: 1.3rem;
+  right: 1.3rem;
+  z-index: 9997;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  border: 1px solid rgba(15, 118, 110, 0.15);
+  background: rgba(255, 255, 255, 0.78);
+  color: var(--text-primary);
+  cursor: pointer;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s ease;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+
+body:hover #present-btn { opacity: 1; pointer-events: auto; }
+
+#present-counter {
+  display: none;
+  position: fixed;
+  left: 50%;
+  bottom: 1.2rem;
+  transform: translateX(-50%);
+  z-index: 9997;
+  font-size: 0.7rem;
+  letter-spacing: 0.14em;
+  color: rgba(255, 255, 255, 0.72);
+}
+
+body.presenting { background: #000 !important; overflow: hidden !important; }
+body.presenting .slide {
+  position: fixed !important;
+  inset: 0;
+  width: var(--pdw, 1440px) !important;
+  height: var(--pdh, 900px) !important;
+  transform-origin: top left;
+  transform: translate(var(--pox, 0px), var(--poy, 0px)) scale(var(--ps, 1)) !important;
+  display: none !important;
+}
+
+body.presenting .slide.p-on { display: flex !important; }
+body.presenting #present-btn { display: none !important; }
+body.presenting #present-counter { display: block; }
+
+.edit-hotzone {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 80px;
+  height: 80px;
+  z-index: 10000;
+}
+
+.edit-toggle {
+  position: fixed;
+  top: 1rem;
+  left: 1rem;
+  z-index: 10001;
+  opacity: 0;
+  pointer-events: none;
+  border: none;
+  border-radius: 999px;
+  padding: 0.45rem 0.95rem;
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  color: var(--text-primary);
+  background: rgba(255, 255, 255, 0.86);
+  border: 1px solid rgba(15, 118, 110, 0.12);
+  transition: opacity 0.25s ease;
+  cursor: pointer;
+}
+
+.edit-toggle.show { opacity: 1; pointer-events: auto; }
+.edit-toggle.active { opacity: 1; pointer-events: auto; color: #fff; background: var(--accent); }
+
+#notes-panel {
+  display: none;
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 9998;
+  background: rgba(10, 18, 28, 0.93);
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+}
+
+#notes-panel.active { display: flex; flex-direction: column; }
+#notes-panel-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.5rem 1.2rem;
+  cursor: pointer;
+}
+
+#notes-panel-label {
+  flex: 1;
+  font-size: 0.62rem;
+  text-transform: uppercase;
+  letter-spacing: 0.16em;
+  color: rgba(255, 255, 255, 0.35);
+}
+
+#notes-drag-hint { flex: 1; display: flex; justify-content: center; }
+#notes-drag-hint::after {
+  content: "";
+  width: 36px;
+  height: 3px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.24);
+}
+
+#notes-collapse-btn {
+  flex: 1;
+  text-align: right;
+  border: none;
+  background: none;
+  color: rgba(255, 255, 255, 0.45);
+  cursor: pointer;
+}
+
+#notes-panel.collapsed #notes-body { display: none; }
+#notes-panel.collapsed #notes-collapse-btn { transform: rotate(180deg); }
+#notes-body { padding: 0 1.2rem 0.9rem; }
+
+#notes-textarea {
+  width: 100%;
+  height: 88px;
+  border: none;
+  outline: none;
+  resize: vertical;
+  background: transparent;
+  color: rgba(255, 255, 255, 0.82);
+  font-family: system-ui, sans-serif;
+  font-size: 0.9rem;
+  line-height: 1.65;
+}
+
+#notes-textarea::placeholder { color: rgba(255, 255, 255, 0.18); }
+[contenteditable] { outline: none; border-radius: 6px; }
+[contenteditable]:hover { background: rgba(15, 118, 110, 0.08); }
+[contenteditable]:focus { background: rgba(15, 118, 110, 0.12); }
+
+@media (max-width: 900px) {
+  .stats-grid,
+  .triple-grid,
+  .dual-grid,
+  .diagram-shell,
+  .timeline { grid-template-columns: 1fr; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.2s !important;
+  }
+  html { scroll-behavior: auto; }
+}
+</style>
+</head>
+<body data-export-progress="true" data-preset="Enterprise Dark" data-mode="Polish">
+<div class="progress-bar"></div>
+<nav class="nav-dots" aria-label="Slide navigation"></nav>
+<div class="edit-hotzone" id="hotzone"></div>
+<button class="edit-toggle" id="editToggle" title="Edit mode (E)">✏ Edit</button>
+<div id="notes-panel">
+  <div id="notes-panel-header">
+    <div id="notes-panel-label">Speaker Notes</div>
+    <div id="notes-drag-hint"></div>
+    <button id="notes-collapse-btn" title="Collapse / expand">▾</button>
+  </div>
+  <div id="notes-body">
+    <textarea id="notes-textarea" placeholder="Add speaker notes for this slide…"></textarea>
+  </div>
+</div>
+
+<section class="slide cover" data-notes="这是一版精修路径的成品。第一页不要从功能列表开始，而是先把核心 thesis 打出来：Intent Broker 不是多一个聊天窗口，而是把多 agent 协作升级为协议基础设施。">
+  <div class="slide-content">
+    <div class="eyebrow reveal">精修 / Polish · Enterprise Dark</div>
+    <h1 class="reveal">Intent Broker</h1>
+    <p class="lede reveal">本地优先、可靠优先、协议优先的协作中间层。目标不是替代推理，而是让任务认领、澄清、提交和审批拥有可重放、可审计、可恢复的本地真相源。</p>
+    <div class="stats-grid reveal">
+      <div class="card">
+        <div class="stat-number">3</div>
+        <div class="stat-label">核心设计原则</div>
+      </div>
+      <div class="card">
+        <div class="stat-number">10</div>
+        <div class="stat-label">稳定 Intent</div>
+      </div>
+      <div class="card">
+        <div class="stat-number">∞</div>
+        <div class="stat-label">后续扩展空间</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="slide problem-slide" data-notes="这一页制造必要性。评审需要先认同现在的协作方式不可靠，才会觉得事件日志和审批机制不是过度设计。">
+  <div class="slide-content">
+    <div class="eyebrow reveal">问题定义</div>
+    <h2 class="reveal">多窗口协作仍停留在临时约定</h2>
+    <div class="triple-grid reveal">
+      <div class="card">
+        <h3>缺少统一通道</h3>
+        <p>多个 agent 与人类之间没有统一 inbox，任务常常散落在不同会话里。</p>
+      </div>
+      <div class="card">
+        <h3>缺少任务语义</h3>
+        <p>“直接聊天”很难稳定表达 accept、clarification、approval 这类高价值动作。</p>
+      </div>
+      <div class="card">
+        <h3>缺少可靠恢复</h3>
+        <p>当长连接断开或窗口关闭时，关键上下文容易丢失，也缺少审计重放能力。</p>
+      </div>
+    </div>
+    <div class="quote-band reveal">
+      <p><strong class="accent-2">关键判断：</strong> 当前缺的不是“更多消息”，而是“带状态推进语义的协作协议”。</p>
+    </div>
+  </div>
+</section>
+
+<section class="slide split-slide" data-notes="这里先把 thesis 和 scope 一次说清，避免后面讲架构时被理解成另一个 workflow system。">
+  <div class="slide-content">
+    <div class="eyebrow reveal">Thesis 与边界</div>
+    <h2 class="reveal">Broker 只做协议、事件、投递与视图</h2>
+    <div class="dual-grid reveal">
+      <div class="card">
+        <h3 class="accent">This system is</h3>
+        <ul class="bullet-list" style="margin-top:0.75rem;">
+          <li>append-only 事件日志 + task / thread / approval 投影视图</li>
+          <li>participant / role / capability 驱动的路由器</li>
+          <li>以 HTTP pull 为主消费模型的本地 broker</li>
+          <li>多 agent 协作的本地基础设施起点</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3 class="danger">This system is not</h3>
+        <ul class="bullet-list" style="margin-top:0.75rem;">
+          <li>通用聊天服务器</li>
+          <li>自动执行 shell / git / browser 的任务工厂</li>
+          <li>各家 agent 内部 conversation protocol 的抽象层</li>
+          <li>一开始就覆盖远程、多租户、OAuth 的大平台</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="slide principles-slide" data-notes="这页是整套方案的解释器。后面所有设计取舍，都应该能回收到本地优先、协议优先、可靠优先这三类原则。">
+  <div class="slide-content">
+    <div class="eyebrow reveal">设计原则</div>
+    <h2 class="reveal">v1 先做稳定协议，不追求大而全</h2>
+    <div class="triple-grid reveal">
+      <div class="card">
+        <h3>本地优先</h3>
+        <p>先解决单机多个 agent / human 的协作问题，默认绑定 localhost，不引入复杂远程身份体系。</p>
+      </div>
+      <div class="card">
+        <h3>协议优先</h3>
+        <p>先稳定定义 request / accept / progress / submit / approval 这些高价值意图，再谈更多客户端。</p>
+      </div>
+      <div class="card">
+        <h3>可靠优先</h3>
+        <p>先写事件再投递，以 cursor、ack 和 replay 保证可恢复，而不是依赖在线连接是否存活。</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="slide concept-slide" data-notes="精修路径在这里把概念关系图做得更明确，因为后面的状态机、投递和架构图都建立在这个骨架上。">
+  <div class="slide-content">
+    <div class="eyebrow reveal">Concept Map</div>
+    <h2 class="reveal">五个核心对象构成协作骨架</h2>
+    <div class="diagram-shell reveal">
+      <div class="card">
+        <svg class="diagram" viewBox="0 0 680 400" aria-label="Intent Broker polished concept map">
+          <rect x="260" y="154" width="160" height="78" rx="24" fill="#101827" stroke="#f59e0b" stroke-width="2"/>
+          <text x="340" y="200" text-anchor="middle" font-size="28" fill="#edf3fb" font-weight="700">Intent</text>
+          <rect x="42" y="46" width="182" height="72" rx="22" fill="#111827" stroke="#60a5fa" stroke-width="2"/>
+          <text x="133" y="90" text-anchor="middle" font-size="24" fill="#edf3fb" font-weight="700">Participant</text>
+          <rect x="456" y="48" width="174" height="72" rx="22" fill="#111827" stroke="#f59e0b" stroke-width="2"/>
+          <text x="543" y="92" text-anchor="middle" font-size="24" fill="#edf3fb" font-weight="700">Task</text>
+          <rect x="58" y="284" width="166" height="70" rx="22" fill="#111827" stroke="#34d399" stroke-width="2"/>
+          <text x="141" y="326" text-anchor="middle" font-size="23" fill="#edf3fb" font-weight="700">Thread</text>
+          <rect x="458" y="284" width="166" height="70" rx="22" fill="#111827" stroke="#60a5fa" stroke-width="2"/>
+          <text x="541" y="326" text-anchor="middle" font-size="23" fill="#edf3fb" font-weight="700">Approval</text>
+          <line x1="224" y1="118" x2="282" y2="154" stroke="#60a5fa" stroke-width="3"/>
+          <line x1="456" y1="120" x2="398" y2="154" stroke="#f59e0b" stroke-width="3"/>
+          <line x1="224" y1="284" x2="286" y2="232" stroke="#34d399" stroke-width="3"/>
+          <line x1="458" y1="284" x2="394" y2="232" stroke="#60a5fa" stroke-width="3"/>
+        </svg>
+      </div>
+      <div class="card">
+        <ul class="bullet-list">
+          <li><strong>Intent</strong> 是少量稳定字段 + 自然语言 body 的混合协议。</li>
+          <li><strong>Task</strong> 表示长生命周期工作对象，状态由事件聚合产生。</li>
+          <li><strong>Thread</strong> 把澄清、进度、交付挂进同一上下文流。</li>
+          <li><strong>Approval</strong> 独立于 Task，但影响 blocked / submitted / completed。</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="slide state-slide" data-notes="这一页从“状态不能被客户端任意写”切入，然后把 task 与 approval 的状态推进看成受 intent 约束的系统行为。">
+  <div class="slide-content">
+    <div class="eyebrow reveal">Lifecycle</div>
+    <h2 class="reveal">状态推进来自 intent 事件</h2>
+    <div class="dual-grid reveal">
+      <div class="card">
+        <h3>Task lifecycle</h3>
+        <div class="timeline" style="margin-top:0.9rem;">
+          <div class="step"><div class="step-num">open</div><p>request_task 创建任务</p></div>
+          <div class="step"><div class="step-num">candidate</div><p>accept_task 进入候选</p></div>
+          <div class="step"><div class="step-num">in_progress</div><p>首次 progress 进入执行</p></div>
+          <div class="step"><div class="step-num">submitted</div><p>submit_result 等待确认</p></div>
+          <div class="step"><div class="step-num">completed</div><p>人工确认或审批通过</p></div>
+        </div>
+      </div>
+      <div class="card">
+        <h3>Approval lifecycle</h3>
+        <ul class="bullet-list" style="margin-top:0.9rem;">
+          <li><strong>pending</strong>：由 request_approval 创建</li>
+          <li><strong>approved / rejected</strong>：由 respond_approval 推进</li>
+          <li><strong>expired / cancelled</strong>：由 TTL 或任务终止触发</li>
+          <li><strong>约束</strong>：`completed` 不直接回退，返工要创建 follow-up task</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="slide reliability-slide" data-notes="这是最关键的一页。要让听众看到：可靠性不是附加功能，而是整个系统被设计出来的原因。">
+  <div class="slide-content">
+    <div class="eyebrow reveal">Reliability</div>
+    <h2 class="reveal">“先落事件，再投递” 是 v1 的基础承诺</h2>
+    <div class="diagram-shell reveal">
+      <div class="card">
+        <svg class="diagram" viewBox="0 0 720 360" aria-label="Intent Broker polished reliability flow">
+          <rect x="26" y="138" width="112" height="66" rx="22" fill="#111827" stroke="#60a5fa" stroke-width="2"/>
+          <text x="82" y="177" text-anchor="middle" font-size="20" fill="#edf3fb" font-weight="700">Intent</text>
+          <rect x="182" y="138" width="154" height="66" rx="22" fill="#111827" stroke="#f59e0b" stroke-width="2"/>
+          <text x="259" y="177" text-anchor="middle" font-size="20" fill="#edf3fb" font-weight="700">events (SQLite)</text>
+          <rect x="382" y="56" width="142" height="64" rx="20" fill="#111827" stroke="#60a5fa" stroke-width="2"/>
+          <text x="453" y="94" text-anchor="middle" font-size="18" fill="#edf3fb" font-weight="700">router</text>
+          <rect x="382" y="230" width="142" height="64" rx="20" fill="#111827" stroke="#34d399" stroke-width="2"/>
+          <text x="453" y="268" text-anchor="middle" font-size="18" fill="#edf3fb" font-weight="700">inbox + cursor</text>
+          <rect x="568" y="56" width="116" height="64" rx="20" fill="#111827" stroke="#60a5fa" stroke-width="2"/>
+          <text x="626" y="94" text-anchor="middle" font-size="18" fill="#edf3fb" font-weight="700">WS notify</text>
+          <rect x="568" y="230" width="116" height="64" rx="20" fill="#111827" stroke="#f59e0b" stroke-width="2"/>
+          <text x="626" y="268" text-anchor="middle" font-size="18" fill="#edf3fb" font-weight="700">HTTP pull</text>
+          <line x1="138" y1="171" x2="182" y2="171" stroke="#60a5fa" stroke-width="3"/>
+          <line x1="336" y1="171" x2="382" y2="88" stroke="#f59e0b" stroke-width="3"/>
+          <line x1="336" y1="171" x2="382" y2="262" stroke="#34d399" stroke-width="3"/>
+          <line x1="524" y1="88" x2="568" y2="88" stroke="#60a5fa" stroke-width="3"/>
+          <line x1="524" y1="262" x2="568" y2="262" stroke="#f59e0b" stroke-width="3"/>
+        </svg>
+      </div>
+      <div class="card">
+        <ul class="bullet-list">
+          <li>事件日志是真相源；实时连接只是提醒层。</li>
+          <li>每个 participant 拥有独立 inbox 与消费 cursor。</li>
+          <li>关键事件默认不可丢弃；易失事件可 TTL，但必须留下 discard 审计记录。</li>
+          <li>至少一次投递 + 幂等去重，让重连和重放成为常规路径。</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="slide architecture-slide" data-notes="现在把系统结构讲出来，让听众看到它是一个收敛的小系统，而不是一个抽象概念。">
+  <div class="slide-content">
+    <div class="eyebrow reveal">Architecture</div>
+    <h2 class="reveal">六个组件围绕 event-store 分工</h2>
+    <div class="dual-grid reveal">
+      <div class="card">
+        <ul class="bullet-list">
+          <li><strong>broker-server</strong>：暴露 HTTP API，可选 WebSocket 提醒</li>
+          <li><strong>event-store</strong>：append-only 事实源</li>
+          <li><strong>projection-engine</strong>：派生 TaskView / ApprovalView / InboxItem</li>
+          <li><strong>router</strong>：按寻址规则分发事件</li>
+          <li><strong>policy-layer</strong>：审批、TTL、认领模式等本地策略</li>
+          <li><strong>client-adapters</strong>：对接 Codex、Claude Code、OpenCode</li>
+        </ul>
+      </div>
+      <div class="card">
+        <svg class="diagram" viewBox="0 0 480 360" aria-label="Intent Broker architecture decomposition">
+          <rect x="126" y="24" width="228" height="54" rx="18" fill="#111827" stroke="#60a5fa" stroke-width="2"/>
+          <text x="240" y="57" text-anchor="middle" font-size="18" fill="#edf3fb" font-weight="700">broker-server</text>
+          <rect x="148" y="116" width="184" height="56" rx="18" fill="#111827" stroke="#f59e0b" stroke-width="2"/>
+          <text x="240" y="149" text-anchor="middle" font-size="18" fill="#edf3fb" font-weight="700">event-store</text>
+          <rect x="18" y="222" width="134" height="56" rx="18" fill="#111827" stroke="#34d399" stroke-width="2"/>
+          <text x="85" y="255" text-anchor="middle" font-size="17" fill="#edf3fb" font-weight="700">router</text>
+          <rect x="174" y="222" width="134" height="56" rx="18" fill="#111827" stroke="#60a5fa" stroke-width="2"/>
+          <text x="241" y="255" text-anchor="middle" font-size="17" fill="#edf3fb" font-weight="700">projection</text>
+          <rect x="330" y="222" width="134" height="56" rx="18" fill="#111827" stroke="#f59e0b" stroke-width="2"/>
+          <text x="397" y="255" text-anchor="middle" font-size="17" fill="#edf3fb" font-weight="700">policy</text>
+          <rect x="148" y="304" width="184" height="40" rx="14" fill="#111827" stroke="#60a5fa" stroke-width="2"/>
+          <text x="240" y="329" text-anchor="middle" font-size="16" fill="#edf3fb" font-weight="700">client-adapters</text>
+          <line x1="240" y1="78" x2="240" y2="116" stroke="#60a5fa" stroke-width="3"/>
+          <line x1="240" y1="172" x2="85" y2="222" stroke="#34d399" stroke-width="3"/>
+          <line x1="240" y1="172" x2="241" y2="222" stroke="#60a5fa" stroke-width="3"/>
+          <line x1="240" y1="172" x2="397" y2="222" stroke="#f59e0b" stroke-width="3"/>
+          <line x1="241" y1="278" x2="240" y2="304" stroke="#60a5fa" stroke-width="3"/>
+        </svg>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="slide api-slide" data-notes="收束阶段先证明它能实现，再给出扩展空间。这样整套方案会显得既克制又完整。">
+  <div class="slide-content">
+    <div class="eyebrow reveal">Readiness</div>
+    <h2 class="reveal">API 与测试面足够支撑 v1 验证</h2>
+    <div class="dual-grid reveal">
+      <div class="card">
+        <h3>Stable HTTP surface</h3>
+        <ul class="bullet-list" style="margin-top:0.8rem;">
+          <li><code>POST /participants/register</code> / <code>/presence</code></li>
+          <li><code>POST /intents</code> / <code>GET /inbox/{participant}</code></li>
+          <li><code>POST /inbox/{participant}/ack</code></li>
+          <li><code>GET /tasks/{task_id}</code> / <code>GET /threads/{thread_id}</code></li>
+          <li><code>POST /approvals/{approval_id}/respond</code> / <code>GET /events/replay</code></li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>Test matrix</h3>
+        <ul class="bullet-list" style="margin-top:0.8rem;">
+          <li>协议单元测试：字段校验、幂等、状态推进</li>
+          <li>路由测试：participant / role / capability / broadcast</li>
+          <li>可靠性测试：reconnect、duplicate ack、TTL discard record</li>
+          <li>集成测试：从 request_task 到 approval 完成整条链路</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="slide closing-slide" data-notes="最后把产品 framing 收紧。强调它不是聊天系统，而是本地协作基础设施。下一步是实现 v1 闭环，再按需要外扩。">
+  <div class="slide-content">
+    <div class="eyebrow reveal">Closing</div>
+    <h2 class="reveal">Intent Broker 是协作基础设施</h2>
+    <div class="dual-grid reveal">
+      <div class="card">
+        <p>它用少量稳定 intent、append-only 事件日志、HTTP pull 和审批机制，把多 agent 与人类协作从“临时对话”提升为“可重放、可审计、可恢复”的系统。</p>
+      </div>
+      <div class="card">
+        <p><strong class="accent">建议实施路径：</strong> 先实现 v1 的本地闭环与测试矩阵，随后再沿着远程部署、文件邮箱兼容层和更强策略插件向外扩展。</p>
+      </div>
+    </div>
+  </div>
+</section>
+<script>
+class SlidePresentation {
+  constructor() {
+    this.slides = [...document.querySelectorAll(".slide")];
+    this.currentSlide = 0;
+    this.channel = new BroadcastChannel("slide-creator-presenter");
+    this.editor = null;
+    this.setupNavDots();
+    this.setupObserver();
+    this.setupKeyboard();
+    this.setupTouch();
+    this.setupWheel();
+    this.setupPresenter();
+    this.setupEditor();
+    this.updateProgress();
+  }
+
+  setupNavDots() {
+    const nav = document.querySelector(".nav-dots");
+    this.slides.forEach((_, i) => {
+      const dot = document.createElement("button");
+      dot.setAttribute("aria-label", `Go to slide ${i + 1}`);
+      dot.addEventListener("click", () => this.goTo(i));
+      nav.appendChild(dot);
+    });
+    this.updateDots();
+  }
+
+  setupObserver() {
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (!entry.isIntersecting) return;
+        this.currentSlide = this.slides.indexOf(entry.target);
+        entry.target.classList.add("visible");
+        this.updateProgress();
+        this.updateDots();
+        this.broadcastState();
+        this.updateNotesPanel();
+      });
+    }, { threshold: 0.52 });
+    this.slides.forEach((slide) => observer.observe(slide));
+  }
+
+  setupKeyboard() {
+    document.addEventListener("keydown", (e) => {
+      if (e.target.getAttribute("contenteditable") || e.target.tagName === "TEXTAREA") return;
+      if (e.key === "ArrowDown" || e.key === "ArrowRight" || e.key === " " || e.key === "PageDown" || e.key === "Enter") {
+        e.preventDefault();
+        this.next();
+      } else if (e.key === "ArrowUp" || e.key === "ArrowLeft" || e.key === "PageUp" || e.key === "Backspace") {
+        e.preventDefault();
+        this.prev();
+      } else if (e.key === "p" || e.key === "P") {
+        const url = location.href.split("?")[0] + "?presenter";
+        window.open(url, "slide-presenter-" + Date.now(), "width=1100,menubar=no,toolbar=no,location=no");
+      }
+    });
+  }
+
+  setupTouch() {
+    let startY = 0;
+    document.addEventListener("touchstart", (e) => { startY = e.touches[0].clientY; }, { passive: true });
+    document.addEventListener("touchend", (e) => {
+      const delta = startY - e.changedTouches[0].clientY;
+      if (Math.abs(delta) > 45) delta > 0 ? this.next() : this.prev();
+    }, { passive: true });
+  }
+
+  setupWheel() {
+    /* scroll-snap-type handles wheel natively; do not add JS wheel navigation */
+  }
+
+  setupPresenter() {
+    this.channel.addEventListener("message", (e) => {
+      if (e.data.type === "nav-next") this.next();
+      else if (e.data.type === "nav-prev") this.prev();
+      else if (e.data.type === "request-state") this.broadcastState();
+    });
+  }
+
+  setupEditor() {
+    const panel = document.getElementById("notes-panel");
+    const label = document.getElementById("notes-panel-label");
+    const textarea = document.getElementById("notes-textarea");
+    const toggle = document.getElementById("editToggle");
+    const hotzone = document.querySelector(".edit-hotzone");
+    let hideTimeout = null;
+
+    hotzone.addEventListener("mouseenter", () => { clearTimeout(hideTimeout); toggle.classList.add("show"); });
+    hotzone.addEventListener("mouseleave", () => {
+      hideTimeout = setTimeout(() => { if (!this.editor?.active) toggle.classList.remove("show"); }, 400);
+    });
+    toggle.addEventListener("mouseenter", () => clearTimeout(hideTimeout));
+    toggle.addEventListener("mouseleave", () => {
+      hideTimeout = setTimeout(() => { if (!this.editor?.active) toggle.classList.remove("show"); }, 400);
+    });
+    hotzone.addEventListener("click", () => this.editor.toggle());
+    toggle.addEventListener("click", () => this.editor.toggle());
+    document.getElementById("notes-panel-header").addEventListener("click", () => panel.classList.toggle("collapsed"));
+
+    textarea.addEventListener("input", () => {
+      const slide = this.slides[this.currentSlide];
+      if (!slide) return;
+      slide.dataset.notes = textarea.value;
+      this.broadcastState();
+    });
+
+    document.addEventListener("keydown", (e) => {
+      if (e.target.getAttribute("contenteditable") || e.target.tagName === "TEXTAREA") return;
+      if (e.key === "e" || e.key === "E") this.editor.toggle();
+      if ((e.ctrlKey || e.metaKey) && e.key === "s") {
+        e.preventDefault();
+        this.saveFile();
+      }
+    });
+
+    this.editor = {
+      active: false,
+      toggle: () => this.editor.active ? this.editor.exit() : this.editor.enter(),
+      enter: () => {
+        this.editor.active = true;
+        toggle.classList.add("active");
+        toggle.textContent = "✓ Done";
+        this.slides.forEach((slide) => {
+          slide.querySelectorAll("h1,h2,h3,p,li,td,th,.stat-number,.stat-label").forEach((el) => {
+            el.setAttribute("contenteditable", "true");
+          });
+        });
+        panel.classList.add("active");
+        this.updateNotesPanel();
+      },
+      exit: () => {
+        this.editor.active = false;
+        toggle.classList.remove("active");
+        toggle.textContent = "✏ Edit";
+        this.slides.forEach((slide) => {
+          slide.querySelectorAll("[contenteditable]").forEach((el) => el.removeAttribute("contenteditable"));
+        });
+        panel.classList.remove("active");
+      }
+    };
+
+    this._notesLabel = label;
+    this._notesTextarea = textarea;
+  }
+
+  updateNotesPanel() {
+    if (!this.editor?.active) return;
+    const slide = this.slides[this.currentSlide];
+    this._notesLabel.textContent = `Speaker Notes — Slide ${this.currentSlide + 1} / ${this.slides.length}`;
+    this._notesTextarea.value = slide?.dataset.notes || "";
+  }
+
+  saveFile() {
+    const html = "<!DOCTYPE html>\n" + document.documentElement.outerHTML;
+    if (window.showSaveFilePicker) {
+      window.showSaveFilePicker({
+        suggestedName: "intent-broker-polish.html",
+        types: [{ description: "HTML", accept: { "text/html": [".html"] } }]
+      }).then((handle) => handle.createWritable().then((writable) => {
+        writable.write(html);
+        return writable.close();
+      })).catch(() => this.downloadFallback(html));
+      return;
+    }
+    this.downloadFallback(html);
+  }
+
+  downloadFallback(html) {
+    const a = Object.assign(document.createElement("a"), {
+      href: URL.createObjectURL(new Blob([html], { type: "text/html" })),
+      download: "intent-broker-polish.html"
+    });
+    a.click();
+    URL.revokeObjectURL(a.href);
+  }
+
+  broadcastState() {
+    const slide = this.slides[this.currentSlide];
+    this.channel.postMessage({
+      type: "state",
+      index: this.currentSlide,
+      total: this.slides.length,
+      notes: slide?.dataset.notes || ""
+    });
+  }
+
+  goTo(index) {
+    this.slides.forEach((slide, i) => slide.classList.toggle("visible", i === index));
+    this.slides[index]?.scrollIntoView({ behavior: "smooth" });
+  }
+
+  next() { this.goTo(Math.min(this.currentSlide + 1, this.slides.length - 1)); }
+  prev() { this.goTo(Math.max(this.currentSlide - 1, 0)); }
+
+  updateProgress() {
+    const pct = (this.currentSlide / (this.slides.length - 1)) * 100;
+    document.querySelector(".progress-bar").style.width = `${pct}%`;
+  }
+
+  updateDots() {
+    document.querySelectorAll(".nav-dots button").forEach((dot, i) => {
+      dot.classList.toggle("active", i === this.currentSlide);
+    });
+  }
+}
+
+if (new URLSearchParams(location.search).has("presenter")) {
+  document.title = "Presenter — " + document.title;
+  document.body.innerHTML = `
+  <style>
+    * { box-sizing: border-box; margin: 0; }
+    body { background: #0f1720; color: #fff; font-family: system-ui, sans-serif; }
+    #pv { display: grid; grid-template-columns: 1fr 220px; gap: 1rem; padding: 1.25rem; align-items: start; }
+    .pv-panel { background: #182430; border-radius: 16px; padding: 1.25rem; }
+    #pv-label, #pv-timer-label { font-size: 0.62rem; letter-spacing: 0.18em; text-transform: uppercase; color: #7b8e9f; margin-bottom: 0.6rem; }
+    #pv-notes { font-size: 1.02rem; line-height: 1.8; color: #d7e2ea; }
+    #pv-right { display: flex; flex-direction: column; gap: 1rem; }
+    #pv-nav { display: flex; align-items: center; justify-content: space-between; gap: 0.5rem; }
+    .pv-arrow { width: 34px; height: 34px; border-radius: 8px; border: 1px solid #355266; background: #213444; color: #d7e2ea; cursor: pointer; }
+    #pv-counter { flex: 1; text-align: center; }
+    #pv-num { font-size: 1.7rem; font-weight: 700; }
+    #pv-of { color: #7b8e9f; font-size: 0.8rem; margin-top: 0.2rem; }
+    #pv-timer { font-size: 1.5rem; font-weight: 700; font-family: monospace; }
+  </style>
+  <div id="pv">
+    <div class="pv-panel">
+      <div id="pv-label">Speaker Notes</div>
+      <div id="pv-notes">Waiting for main window…</div>
+    </div>
+    <div id="pv-right">
+      <div class="pv-panel">
+        <div id="pv-nav">
+          <button class="pv-arrow" id="pv-prev">←</button>
+          <div id="pv-counter">
+            <div id="pv-num">—</div>
+            <div id="pv-of">/ —</div>
+          </div>
+          <button class="pv-arrow" id="pv-next">→</button>
+        </div>
+      </div>
+      <div class="pv-panel">
+        <div id="pv-timer-label">Elapsed</div>
+        <div id="pv-timer">0:00</div>
+      </div>
+    </div>
+  </div>`;
+
+  const ch = new BroadcastChannel("slide-creator-presenter");
+  let startTime = null;
+  ch.addEventListener("message", (e) => {
+    if (e.data.type !== "state") return;
+    if (!startTime) startTime = Date.now();
+    document.getElementById("pv-notes").textContent = e.data.notes || "(no notes)";
+    document.getElementById("pv-num").textContent = e.data.index + 1;
+    document.getElementById("pv-of").textContent = `/ ${e.data.total}`;
+  });
+  ch.postMessage({ type: "request-state" });
+  setInterval(() => {
+    if (!startTime) return;
+    const s = Math.floor((Date.now() - startTime) / 1000);
+    document.getElementById("pv-timer").textContent = `${Math.floor(s / 60)}:${String(s % 60).padStart(2, "0")}`;
+  }, 1000);
+  document.getElementById("pv-prev").addEventListener("click", () => ch.postMessage({ type: "nav-prev" }));
+  document.getElementById("pv-next").addEventListener("click", () => ch.postMessage({ type: "nav-next" }));
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "ArrowRight" || e.key === "ArrowDown" || e.key === " " || e.key === "PageDown" || e.key === "Enter") ch.postMessage({ type: "nav-next" });
+    else if (e.key === "ArrowLeft" || e.key === "ArrowUp" || e.key === "PageUp" || e.key === "Backspace") ch.postMessage({ type: "nav-prev" });
+  });
+} else {
+  class PresentMode {
+    constructor(ctrl) {
+      this.ctrl = ctrl;
+      this.DW = 1440;
+      this.DH = 900;
+      this.active = false;
+      this._resize = () => this.scale();
+
+      const btn = document.createElement("button");
+      btn.id = "present-btn";
+      btn.setAttribute("aria-label", "Present");
+      btn.title = "Present (F5)";
+      btn.textContent = "▶";
+      document.body.appendChild(btn);
+
+      const counter = document.createElement("div");
+      counter.id = "present-counter";
+      document.body.appendChild(counter);
+
+      btn.addEventListener("click", () => this.enter());
+      document.addEventListener("keydown", (e) => {
+        if (e.key === "F5") { e.preventDefault(); this.enter(); }
+        if (e.key === "Escape" && this.active) this.exit();
+      });
+      document.addEventListener("fullscreenchange", () => {
+        if (!document.fullscreenElement && this.active) this.exit();
+      });
+    }
+
+    enter() {
+      if (this.active) return;
+      this.active = true;
+      document.body.classList.add("presenting");
+      document.documentElement.requestFullscreen?.().catch(() => {});
+      window.addEventListener("resize", this._resize);
+      this.scale();
+      this.show(this.ctrl.currentSlide);
+      this._origGoTo = this.ctrl.goTo.bind(this.ctrl);
+      this.ctrl.goTo = (i) => {
+        const index = Math.max(0, Math.min(i, this.ctrl.slides.length - 1));
+        this.ctrl.currentSlide = index;
+        this.ctrl.slides.forEach((slide, idx) => slide.classList.toggle("visible", idx === index));
+        this.show(index);
+        this.ctrl.updateProgress();
+        this.ctrl.updateDots();
+        this.ctrl.broadcastState();
+        this.ctrl.updateNotesPanel();
+      };
+    }
+
+    exit() {
+      if (!this.active) return;
+      this.active = false;
+      document.body.classList.remove("presenting");
+      document.querySelectorAll(".slide").forEach((slide) => slide.classList.remove("p-on"));
+      window.removeEventListener("resize", this._resize);
+      if (document.fullscreenElement) document.exitFullscreen?.();
+      if (this._origGoTo) {
+        this.ctrl.goTo = this._origGoTo;
+        this._origGoTo = null;
+      }
+      this.ctrl.slides[this.ctrl.currentSlide]?.scrollIntoView({ behavior: "instant" });
+    }
+
+    scale() {
+      const s = Math.min(window.innerWidth / this.DW, window.innerHeight / this.DH);
+      const ox = (window.innerWidth - this.DW * s) / 2;
+      const oy = (window.innerHeight - this.DH * s) / 2;
+      const root = document.documentElement;
+      root.style.setProperty("--pdw", this.DW + "px");
+      root.style.setProperty("--pdh", this.DH + "px");
+      root.style.setProperty("--ps", s);
+      root.style.setProperty("--pox", ox + "px");
+      root.style.setProperty("--poy", oy + "px");
+    }
+
+    show(i) {
+      document.querySelectorAll(".slide").forEach((slide, idx) => slide.classList.toggle("p-on", idx === i));
+      document.getElementById("present-counter").textContent = `${i + 1} / ${this.ctrl.slides.length}`;
+    }
+  }
+
+  new PresentMode(new SlidePresentation());
+}
+</script>
+</body>
+</html>

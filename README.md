@@ -62,6 +62,7 @@ Every demo uses the same content (slide-creator's own introduction) — making i
 ## Features
 
 - **Two-stage workflow** — `--plan` to outline, `--generate` to produce
+- **Two planning depths** — `Auto` for speed, `Polish` for stronger narrative and visual locking
 - **21 design presets** — Bold Signal, Blue Sky, Modern Newspaper, Neo-Retro Dev Deck, and more — each with named layout variations
 - **Content-type routing** — Automatically suggests the best style for pitch decks, dev tools, data reports, editorial, and more
 - **Style discovery** — Generate 3 visual previews before committing to a style
@@ -115,6 +116,37 @@ OpenClaw will automatically detect and install dependencies (Pillow) on first us
 /slide-creator              # Start from scratch (interactive style discovery)
 /kai-html-export            # Export to PPTX or PNG (separate skill)
 ```
+
+## Planning Depths
+
+- `Auto` — fast draft path; Chinese UI may show `自动`
+- `Polish` — deeper planning path; Chinese UI may show `精修`
+
+Same content should keep the same preset across `Auto` and `Polish` unless the user explicitly changes style.
+
+## Timing
+
+Expected end-to-end timing:
+
+- `Auto`: usually ~3-6 minutes
+- `Polish`: usually ~8-15 minutes
+
+Tracked segments:
+
+- `plan`
+- `generate`
+- `validate`
+- `polish`
+- `total`
+
+Intent Broker rerun timings on this machine:
+
+| Path | plan | generate | validate | polish | total |
+|---|---:|---:|---:|---:|---:|
+| `Auto` | 0m 00s (reused plan) | 0m 22s | 0m 13s | 0m 00s | 0m 35s |
+| `Polish` | 0m 00s (reused plan) | 0m 13s | 0m 14s | 0m 00s | 0m 27s |
+
+These measured numbers are rerun timings for the checked-in Intent Broker demo paths after preset and quality rules were already locked. Use the estimate ranges above for user-facing budgeting.
 
 ## Requirements
 

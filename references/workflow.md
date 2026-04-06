@@ -6,12 +6,46 @@ Read this file when running in **no-flag / interactive mode**. For `--plan` read
 
 ## Planning Mode (`--plan`)
 
+### Planning Depth Routing
+
+Default: if the user does not specify a mode, route to `自动` (`Auto` in English UI).
+
+Route to `精修` (`Polish`) when:
+
+- the user explicitly says `精修` or `Polish`
+- the request emphasizes thesis, pacing, narrative arc, or page roles
+- the deck needs stronger visual lock or brand alignment beyond preset selection
+- the user wants page-level image reasoning instead of simple image placement
+- the user wants to confirm planning decisions before generation
+- the deck should follow a specific visual reference or precedent
+
+Stay in `自动` (`Auto`) when:
+
+- the user wants a quick draft or says "先出一版"
+- the content is already prepared and mainly needs design plus rendering
+- the request does not require stronger image strategy
+
+`参考驱动` is only an internal branch inside `精修` / `Polish`.
+
+Image intent exists only in `精修` / `Polish`.
+
+If the same source content already has a chosen preset, do not silently switch presets when moving between `自动` and `精修`. Planning depth can deepen structure and page roles, but preset changes require either a user request or a content-type routing reason strong enough to explain explicitly.
+
+Mode label display rule:
+
+- Chinese requests: show `自动` / `精修`
+- English requests: show `Auto` / `Polish`
+- Keep the underlying two-depth contract the same in both languages
+
 1. Scan `resources/` — read text/markdown files, note images. Tell the user what was found (or "Planning from prompt only" if empty).
-2. Extract: topic, audience, tone, language, slide count, goals from the prompt.
+2. Extract: topic, audience, tone, language, slide count, goals, and the correct planning depth from the prompt.
 3. Draft the plan following [planning-template.md](planning-template.md).
-4. Save as `PLANNING.md` in the working directory.
-5. Present slide count, structure, and key decisions. Ask for approval.
-6. **Stop. Do NOT generate HTML.**
+4. In `自动` / `Auto`, keep the plan lightweight: outline, style direction, images as resources, and deliverables only.
+5. In `精修` / `Polish`, add deck thesis, narrative arc, page roles, style constraints, and image intent for only the slides that truly need imagery. If the visual lock benefits from references, run `参考驱动` as an internal sub-step here instead of exposing it as a user-facing mode.
+6. Save as `PLANNING.md` in the working directory.
+7. Add a `Timing` section with estimated `plan`, `generate`, `validate`, `polish`, and `total` ranges.
+8. Present slide count, structure, planning depth, timing estimate, and key decisions. Ask for approval.
+9. **Stop. Do NOT generate HTML.**
 
 ---
 
@@ -33,6 +67,8 @@ Use this mode when the user asks to improve an existing HTML deck instead of gen
 ## Phase 1: Content Discovery
 
 **First, silently scan for a `resources/` folder.** If found, read text/markdown files and note images as background context. Don't ask the user to take any action.
+
+Before moving into style discovery, detect whether the request should stay in `自动` / `Auto` or switch to `精修` / `Polish` using the Planning Depth Routing rules above. Keep the default path lightweight; only add deeper planning when the request clearly justifies it.
 
 Then gather everything in a **single AskUserQuestion call with all 5 questions at once**:
 
@@ -59,11 +95,19 @@ If images are provided:
 3. Build a slide outline that co-designs text and images from the start. This is not "plan slides, then fit images in after." Example: 3 usable product screenshots → 3 feature slides anchored by those screenshots.
 4. Present the evaluation and proposed outline, then confirm via AskUserQuestion (Looks good / Adjust images / Adjust outline).
 
+In `自动` / `Auto`, stop here — treat images as usable resources, not page-level design jobs.
+
+In `精修` / `Polish`, keep going after the usability pass: decide which slides should have images, what communication task each image serves, and record image intent plus search/reference direction only where it improves the deck.
+
 ---
 
 ## Phase 2: Style Discovery
 
 Most people can't articulate design preferences in words. Generate 3 mini visual previews and let them react — this is the "wow moment" of the skill.
+
+If the deck is in `精修` / `Polish`, add a short design-lock step before generating previews: define deck thesis, narrative arc, page roles, and style constraints so the previews support the presentation's rhetorical structure rather than acting as disconnected skins.
+
+If the user already approved a preset or PLANNING.md already names one, skip fresh preset routing and keep that preset. Do not reinterpret the same deck into a different theme just because the planning depth changed.
 
 ### Style Path
 
@@ -92,6 +136,19 @@ Present the 3 files with a one-sentence description each, then ask via AskUserQu
 
 Generate the presentation based on content from Phase 1 and style from Phase 2. If PLANNING.md exists, it's the source of truth — skip Phases 1 and 2.
 
+Before writing HTML, tell the user the expected end-to-end time window based on planning depth:
+
+- `Auto`: usually ~3-6 minutes
+- `Polish`: usually ~8-15 minutes
+
+When running checked-in demos or formal validation, record segmented timing for:
+
+- `plan`
+- `generate`
+- `validate`
+- `polish`
+- `total`
+
 ### Step 1: Load the right references
 
 **If Blue Sky style:** Read [blue-sky-starter.html](blue-sky-starter.html) and use it as the base. All 10 signature visual elements are pre-built — only fill in slide content. Do not rewrite the visual system CSS. Content goes inside `.slide` wrappers using pre-built classes: `.g` (glass card), `.gt` (gradient text), `.pill`, `.stat`, `.divider`, `.cols2/3/4`, `.ctable`, `.co` (amber callout), `.warn`, `.info`, `.layer`, `ul.bl`.
@@ -99,6 +156,8 @@ Generate the presentation based on content from Phase 1 and style from Phase 2. 
 **If a custom theme from themes/:** Read the theme's `reference.md`. If a `starter.html` exists in the theme folder, use it as the base.
 
 **For all other styles:** Read [html-template.md](html-template.md) + [base-css.md](base-css.md). If the style has a dedicated reference file in `references/` (e.g. `aurora-mesh.md`, `enterprise-dark.md`), read that instead of scanning STYLE-DESC.md. Otherwise read the relevant section in STYLE-DESC.md.
+
+Honor the chosen preset exactly. `自动` and `精修` may produce different structure, density, and diagrams, but they should still render inside the same preset family unless the user explicitly changed the style.
 
 ### Step 2: Viewport fitting
 
