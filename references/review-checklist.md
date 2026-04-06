@@ -105,82 +105,6 @@ Technical term indicators:
 
 **Auto-fix capability**: ❌ No — detection only, requires manual intervention
 
-### 1.1 视角翻转 (Perspective Flip)
-
-**Detection**: Scan slide titles and body text for first-person pronouns:
-- Chinese: "我", "本系统", "本次分享", "我们"
-- English: "I", "my", "our system", "this presentation"
-
-**Auto-fix**: Replace with audience-centered pronouns:
-- "我/我们" → "你/你们"
-- "本系统" → "你的系统" / "这套方案"
-- "本次分享" → "今天你将学会"
-- "I/We" → "You"
-- "my/our" → "your"
-
-**Example fix**:
-- Before: "我要分享的系统架构是..."
-- After: "你将学会如何利用这套架构解决问题"
-
-### 1.2 结论先行 (Conclusion First)
-
-**Detection**: Check if slide title is a noun phrase (no verb) vs. a judgment/claim.
-
-Noun phrase patterns:
-- "XX架构概览", "XX系统介绍", "XX方案说明"
-- "Overview", "Introduction", "Summary"
-
-**Auto-fix**: Generate suggested title as a judgment statement:
-- "XX架构概览" → "XX架构可确保流量峰值期零遗漏"
-- "Overview" → "How XX ensures zero downtime during traffic spikes"
-
-**Fix template**: `[Subject] + [benefit/claim/outcome]`
-
-### 1.3 3概念法则 (3-Concept Rule)
-
-**Detection**: Count new technical terms/concepts per slide. Flag if > 3.
-
-Technical term indicators:
-- CamelCase words
-- Acronyms (API, SDK, LLM)
-- Terms in quotes or with explicit definition
-- English words in Chinese text (excluding common words)
-
-**Auto-fix**: None (requires content restructuring)
-
-**Suggestion**: "Slide X contains 5 new concepts. Consider splitting into 2 slides or using progressive disclosure."
-
-### 1.4 禁止连续密集页 (No Consecutive Dense Slides)
-
-**Detection**: Check if 3+ consecutive slides have same layout type:
-- Full bullet lists
-- Full grid of cards
-- Full data tables
-
-**Auto-fix**: None (requires content restructuring)
-
-**Suggestion**: "Slides X-X+2 are all bullet lists. Insert a visual break (diagram/quote/stat) after slide X."
-
-### 1.5 字号底线 (Font Size Floor)
-
-**Detection**: Check if body text font-size is below readable threshold:
-- CSS: `< 1rem` or `< clamp(1rem, 2vw, 1.25rem)`
-- Inline style with px/pt below 16px/12pt
-
-**Auto-fix**: None (may break layout)
-
-**Suggestion**: "Slide X body text is below readable size. Increase font-size or reduce content."
-
-### 1.6 眯眼测试 (Squint Test)
-
-**Detection**: Check if page has a clear visual focal point:
-- Largest element should be the most important content
-- If multiple elements compete for attention (same size/weight), flag
-
-**Auto-fix**: None (requires design decision)
-
-**Suggestion**: "Slide X has no clear visual hierarchy. Make the key message larger/bolder or add emphasis color."
-
 ---
 
 ## Category 2: AI-Advised Checkpoints
@@ -317,3 +241,79 @@ When running review, classify each checkpoint result:
 ---
 可再次运行 `/slide-creator --review` 继续优化
 ```
+
+---
+
+## 规则类型与触发条件
+
+Review 规则分为三类，执行策略不同：
+
+### 硬规则 (Hard Rules)
+
+强制执行，不依赖内容判断。
+
+| 规则 | 行为 |
+|---|---|
+| 1.3 三概念法则 | 单页新概念 ≤ 3，超出提示拆分 |
+| 1.4 布局轮换 | 检测连续 3 页同布局 → 提示插入缓冲 |
+| 1.5 字号底线 | 检测字号过低 → 提示调整 |
+| 1.6 眯眼测试 | 检测视觉焦点不明确 → 提示重新分配权重 |
+
+### 情境规则 (Context-Aware Rules)
+
+根据内容类型和用户意图决定是否触发。
+
+#### 1.2 结论先行 (标题判断句)
+
+**触发条件**（同时满足）：
+- 内容类型为：论证 / 提案 / 方案汇报 / 问题分析 / 技术方案
+- 用户未在提示词中明确指定标题
+- 当前标题为名词短语（无动词/判断词）
+
+**不触发**：
+- 内容类型为：简介 / 介绍 / 教程 / 产品说明 / 个人介绍
+- 用户已明确指定标题（如"做一个 slide-creator 简介"）
+
+**示例**：
+- 论证型输入 → 标题改为"XX架构可确保流量峰值零遗漏" ✓
+- 简介型输入 → 保持"slide-creator 简介" ✓
+
+#### 2.2 量化收益 (原 WIIFM量化承诺)
+
+**触发条件**：
+- 内容中已包含量化数据（%、时间、倍数）
+- 内容类型为：方案汇报 / 提案 / 效果展示
+
+**行为**：
+- 检测到量化数据 → 自动提升到 Slide 1-3 展示
+- 未检测到量化数据 → Review 时提示"建议补充量化数据"，不硬编
+
+**示例**：
+- 内容含"效率提升约40%" → Slide 2 展示"效率提升 40%"
+- 内容无量化的概念介绍 → 不强制添加
+
+### 建议规则 (Advisory Rules)
+
+Review 时提示，不强制执行。
+
+| 规则 | 行为 |
+|---|---|
+| 2.1 痛点前置 | 前2页无痛点场景 → 提示补充案例 |
+| 2.5 注意力重置点 | 连续 8-10 页干货 → 提示插入案例/提问 |
+| 2.7 留白缓冲页 | 每 5-6 页 → 提示插入呼吸页 |
+| 2.8 术语类比 | 技术术语首次出现 → 提示添加类比解释 |
+
+---
+
+## 生成时内嵌规则
+
+以下规则应在 Phase 3 生成阶段自动遵循，减少事后 Review 工作量：
+
+| 规则 | 阶段 | 内嵌方式 |
+|---|---|---|
+| 1.3 三概念法则 | Generate | 生成时控制单页概念密度 |
+| 1.4 布局轮换 | Generate | 自动轮换布局类型 |
+| 1.5 字号底线 | Generate | 使用 clamp() 响应式字号 |
+| 1.2 结论先行 | Plan/Generate | 根据内容类型决定标题风格 |
+| 2.2 量化收益 | Plan | 检测并提取内容中的量化数据 |
+| 2.8 术语类比 | Generate | 技术术语首次出现时附带类比 |
