@@ -1,21 +1,33 @@
 ---
 name: kai-slide-creator
-description: Use when someone wants to CREATE or BUILD a slide deck, presentation, or 幻灯片/PPT/演示文稿 — from scratch, from notes, from a Word/PPTX file, or from an approved outline. Handles Chinese and English equally. Covers pitch decks, product launches, team standups, conference talks, capstone presentations, style previews, and converting existing files to web slides. Use for --plan (outline) and --generate (HTML from plan) flags. Does NOT apply to exporting finished HTML to PPTX/PNG (use kai-html-export), writing speeches, or non-slide documents.
-version: 2.8.0
+description: 生成零依赖 HTML 演示文稿 — 21 种设计预设，视觉风格探索，异步友好的播放/演讲者模式。适用于路演、产品发布、技术分享、站会等场景。命令：--plan (大纲)、--generate (生成)、--review (质量优化)。导出 PPTX/PNG 使用 kai-html-export。
+version: 2.9.0
 metadata: {"openclaw":{"emoji":"🎞","os":["darwin","linux","windows"],"homepage":"https://github.com/kaisersong/slide-creator","requires":{"bins":["python3"]},"install":[]}}
 ---
 
 # Slide Creator
 
-Generate zero-dependency HTML presentations that run entirely in the browser.
+生成零依赖 HTML 演示文稿，纯浏览器运行。
 
-## Core Philosophy
+## 核心亮点
 
-1. **Zero Dependencies** — Single HTML files with inline CSS/JS. No npm, no build tools.
-2. **Show, Don't Tell** — Generate visual style previews; people can't articulate design preferences until they see options.
-3. **Distinctive Design** — Avoid generic AI aesthetics (Inter font, purple gradients, predictable heroes).
-4. **Viewport Fitting** — Slides fit exactly in the viewport. Overflowing content gets split, not squished.
-5. **Plan Before Generate** — `--plan` creates an outline; `--generate` produces HTML from it.
+- **21 种设计预设** — Bold Signal、Blue Sky、Terminal Green 等，避免通用 AI 审美
+- **视觉风格探索** — 生成 3 个预览，看图选风格而非描述风格
+- **播放模式** — F5/▶ 全屏，幻灯片缩放适配，控制栏自动隐藏
+- **演讲者模式** — P 键打开同步窗口：备注、计时器、页数、翻页
+- **浏览器内编辑** — E 键进入编辑模式，Ctrl+S 保存
+- **两种规划深度** — 自动 (快速出稿) / 精修 (更强叙事和视觉锁定)
+- **内容 Review 系统** — 16 个检查点，精修模式自动执行
+
+---
+
+## 安装
+
+**Claude Code:** 告诉 Claude「安装 https://github.com/kaisersong/slide-creator」
+
+**OpenClaw:** `clawhub install kai-slide-creator`
+
+> ClawHub 页面：https://clawhub.ai/skills/kai-slide-creator
 
 ---
 
@@ -70,120 +82,139 @@ These are defined in `references/html-template.md`. **Read that file before writ
 
 ---
 
-## Review Mode (`--review`)
+## Review 模式 (`--review`)
 
-Run 16 content checkpoints against generated or existing HTML:
+对已有 HTML 执行 16 项检查点：
 
-```
+```bash
 /slide-creator --review presentation.html
 ```
 
-**Behavior:**
-1. Load `references/review-checklist.md`
-2. Execute all 16 checkpoints
-3. Show confirmation window with results (✅ passed, 🔧 auto-fixable, ⚠️ needs confirmation, ❌ needs judgment)
-4. User chooses: [全部自动修复] / [逐项确认] / [跳过]
-5. Output fixed HTML + diagnostic report
+**行为：**
+1. 加载 `references/review-checklist.md`
+2. 执行全部 16 项检查
+3. 显示确认窗口（✅ 通过、🔧 可修复、⚠️ 需确认、❌ 需判断）
+4. 用户选择：[全部自动修复] / [逐项确认] / [跳过]
+5. 输出修复后 HTML + 诊断报告
 
-**Polish mode**: Phase 3.5 Review runs automatically after generation.
-**Auto mode**: Skips Phase 3.5 entirely.
-
----
-
-## Command Routing
-
-Parse the invocation first, then load only what that command needs:
-
-| Command | What to load | What to do |
-|---------|-------------|------------|
-| `--plan [prompt]` | `references/planning-template.md` | Detect planning depth (`自动` or `精修`), create PLANNING.md, then stop — no HTML. |
-| `--generate` | `references/html-template.md` + chosen style file + `references/base-css.md` + `references/design-quality.md` | Read PLANNING.md, generate HTML. |
-| `--review [file.html]` | `references/review-checklist.md` + target HTML | Execute 16 checkpoints → confirmation window → fix/report. |
-| No flag (interactive) | `references/workflow.md` + **`references/html-template.md` before Phase 3** + `references/design-quality.md` before writing | Follow Phase 0-5 (Phase 3.5 Review only in Polish mode). |
-| Content + style given directly | `references/html-template.md` + style file + `references/base-css.md` | Generate immediately — no Phase 1/2 needed. |
-
-**Progressive disclosure rule:** each command loads only its required files. `--plan` never touches CSS. This keeps context focused and fast.
+**精修模式**：Phase 3.5 Review 自动生成后执行。
+**自动模式**：跳过 Phase 3.5。
 
 ---
 
-## Phase 0: Detect Mode (No-flag entry point)
+## 使用方式
 
-**Read `references/workflow.md` for the full interactive workflow (Phases 1-5).**
+```bash
+/slide-creator --plan [prompt]       # 生成 PLANNING.md 大纲
+/slide-creator --generate            # 从 PLANNING.md 生成 HTML
+/slide-creator --review [file.html]  # 16 项检查点自动优化
+/slide-creator                       # 交互式创建（风格探索）
+```
 
-Quick routing before reading workflow.md:
+**规划深度：**
+- `自动` (Auto) — 快速出稿，约 3-6 分钟
+- `精修` (Polish) — 深度规划，约 8-15 分钟，自动执行 Review
 
-- **PLANNING.md exists** → read it as source of truth, skip to Phase 3. Load `references/html-template.md` before generating.
-- **User provides source content + style directly** (e.g. a .txt/.md file + style name) → skip Phase 1/2. Load `references/html-template.md` + style file + `references/base-css.md`, then generate immediately.
-- **User has a `.ppt/.pptx` file** → Phase 4 (PPT conversion).
-- **User wants to enhance existing HTML** → read it, then follow the Enhancement Mode guardrails in `references/workflow.md` before editing.
-- **Everything else** → Phase 1 (Content Discovery).
+**内容类型 → 风格推荐：**
 
-For planning depth, default to `自动`. Route to `精修` when the user explicitly asks for it or the request clearly needs stronger narrative shaping, tighter visual constraints, page roles, or image intent.
-
-**Content-type → Style hints** (use when user hasn't chosen a style):
-
-| Content type | Suggested styles |
+| 内容类型 | 推荐风格 |
 |---|---|
-| Data report / KPI dashboard | Data Story, Enterprise Dark, Swiss Modern |
-| Business pitch / VC deck | Bold Signal, Aurora Mesh, Enterprise Dark |
-| Developer tool / API docs | Terminal Green, Neon Cyber, Neo-Retro Dev Deck |
-| Research / thought leadership | Modern Newspaper, Paper & Ink, Swiss Modern |
-| Creative / personal brand | Vintage Editorial, Split Pastel, Neo-Brutalism |
-| Product launch / SaaS | Aurora Mesh, Glassmorphism, Electric Studio |
-| Education / tutorial | Notebook Tabs, Paper & Ink, Pastel Geometry |
-| Chinese content | Chinese Chan, Aurora Mesh, Blue Sky |
-| Hackathon / indie dev | Neo-Retro Dev Deck, Neo-Brutalism, Terminal Green |
+| 数据报告 / KPI 看板 | Data Story、Enterprise Dark、Swiss Modern |
+| 商业路演 / VC Deck | Bold Signal、Aurora Mesh、Enterprise Dark |
+| 开发工具 / API 文档 | Terminal Green、Neon Cyber、Neo-Retro Dev Deck |
+| 研究 / 思想领导力 | Modern Newspaper、Paper & Ink、Swiss Modern |
+| 创意 / 个人品牌 | Vintage Editorial、Split Pastel、Neo-Brutalism |
+| 产品发布 / SaaS | Aurora Mesh、Glassmorphism、Electric Studio |
 
 ---
 
-## Style Reference Files
+## 命令路由
 
-Read only the file for the chosen style. Never load all styles into context.
+| 命令 | 加载内容 | 行为 |
+|------|----------|------|
+| `--plan [prompt]` | `references/planning-template.md` | 检测规划深度，创建 PLANNING.md，不生成 HTML |
+| `--generate` | `references/html-template.md` + 风格文件 + `base-css.md` + `design-quality.md` | 从 PLANNING.md 生成 HTML |
+| `--review [file.html]` | `references/review-checklist.md` + 目标 HTML | 执行 16 项检查点 → 确认窗口 → 修复/报告 |
+| 无 flag (交互式) | `references/workflow.md` + 其他按需 | 遵循 Phase 0-5（仅精修模式执行 Phase 3.5 Review） |
+| 直接给内容 + 风格 | `references/html-template.md` + 风格文件 + `base-css.md` | 立即生成，无需 Phase 1/2 |
 
-| Style | File |
-|-------|------|
-| Blue Sky | `references/blue-sky-starter.html` (use as full base — do not rewrite visual CSS) |
+**渐进式披露：** 每个命令只加载所需文件。`--plan` 不接触 CSS。
+
+---
+
+## 生成契约
+
+**每次生成的 HTML 必须包含播放模式和编辑模式（默认开启）。**
+
+1. **播放模式** — F5 / ▶ 按钮，全屏缩放，`PresentMode` 类
+2. **编辑模式** — 左上角热区，`✏ Edit` 开关，`contenteditable`，备注面板
+
+详见 `references/html-template.md`。**生成任何 HTML 前必读此文件**。
+
+> 省略播放模式是生成错误。仅当用户明确选择「无需编辑」时可省略编辑模式。
+
+**快速路由：**
+
+- **PLANNING.md 已存在** → 读取并作为真相源，跳至 Phase 3
+- **用户直接给内容 + 风格** → 跳过 Phase 1/2，立即生成
+- **用户有 `.ppt/.pptx` 文件** → Phase 4（PPT 转换）
+- **用户要增强现有 HTML** → 读取后遵循 Enhancement Mode 守则
+- **其他情况** → Phase 1（内容发现）
+
+---
+
+## 风格参考文件
+
+仅读取已选风格的文件。绝不加载所有风格。
+
+| 风格 | 文件 |
+|------|------|
+| Blue Sky | `references/blue-sky-starter.html`（完整基底，不重写视觉 CSS） |
 | Aurora Mesh | `references/aurora-mesh.md` |
 | Chinese Chan | `references/chinese-chan.md` |
 | Data Story | `references/data-story.md` |
 | Enterprise Dark | `references/enterprise-dark.md` |
 | Glassmorphism | `references/glassmorphism.md` |
 | Neo-Brutalism | `references/neo-brutalism.md` |
-| All other styles | Relevant section in `STYLE-DESC.md` |
-| Custom theme | `themes/<name>/reference.md` (use `starter.html` if it exists) |
+| 其他风格 | `STYLE-DESC.md` 相关章节 |
+| 自定义主题 | `themes/<name>/reference.md`（如有 `starter.html` 则使用） |
 
-**For style picker / mood mapping / effect guide** → read `references/style-index.md`.
+**风格选择器 / 心情映射 / 效果指南** → `references/style-index.md`
 
-**For viewport CSS, density limits, CSS gotchas** → read `references/base-css.md`.
+**视口 CSS / 密度限制 / CSS 陷阱** → `references/base-css.md`
+
+---
+
+## Review 模式
 
 **For design quality rules (density balance, column balance, anti-slop, pre-output self-check)** → read `references/design-quality.md` alongside the style file during `--generate` and Phase 3.
 
 ---
 
-## For AI Agents & Skills
+## 面向 AI 智能体
 
-Other agents can call this skill programmatically:
+其他智能体可直接调用：
 
-```
-# From a topic or notes
-/slide-creator Make a pitch deck for [topic]
+```bash
+# 从主题或备注生成
+/slide-creator 为 [主题] 制作路演 deck
 
-# From a plan file (skip interactive phases)
-/slide-creator --generate  # reads PLANNING.md automatically
+# 从计划文件生成（跳过交互式 Phase）
+/slide-creator --generate  # 自动读取 PLANNING.md
 
-# Two-step (review the plan before generating)
-/slide-creator --plan "Product launch deck for Acme v2"
-# (edit PLANNING.md if needed)
+# 两阶段（生成前审查大纲）
+/slide-creator --plan "Acme v2 产品发布"
+# （如需要，编辑 PLANNING.md）
 /slide-creator --generate
 
-# Export to PPTX after generation
-/kai-html-export presentation.html                    # image mode (pixel-perfect, default)
-/kai-html-export --mode native presentation.html      # native mode (editable text/shapes)
+# 生成后导出 PPTX
+/kai-html-export presentation.html                    # 图片模式（像素级，默认）
+/kai-html-export --mode native presentation.html      # Native 模式（文字可编辑）
 ```
 
 ---
 
-## Related Skills
+## 相关技能
 
-- **report-creator** — For long-form scrollable HTML reports (not slides)
-- **frontend-design** — For interactive pages that go beyond slides
+- **kai-report-creator** — 长篇幅可滚动 HTML 报告（非幻灯片）
+- **kai-html-export** — 导出 PPTX/PNG，或发布为分享链接
