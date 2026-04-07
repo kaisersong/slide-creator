@@ -1,25 +1,25 @@
 # slide-creator
 
-> You have great content — but great content deserves a great presentation. AI can generate slides, but the results are inconsistent and re-rolling gets old fast. Slide-Creator gives you stable, polished output every time: pick a style that fits your audience, and let the model handle the rest. Go grab a coffee ☕
+> You have great content — but great content deserves a great presentation. AI can generate slides, but the results are inconsistent and re-rolling gets old fast. Slide-Creator gives you stable, polished output every time: pick a style that fits your audience, and let the model handle the rest. Go grab a coffee.
 
 A skill for [Claude Code](https://claude.ai/claude-code) and [OpenClaw](https://openclaw.ai) that generates stunning, zero-dependency HTML presentations.
 
-**v2.9.0** — Content Review System: 16 checkpoints (6 auto-detectable, 10 AI-advised) with three rule types (hard/context-aware/advisory); Phase 3.5 Review runs automatically in Polish mode; `--review` command for on-demand diagnosis and fix suggestions; rule types differentiate between mandatory enforcement, context-triggered behavior, and advisory hints. **v2.8.0** — Simplified planning into two user-facing depths, `Auto` and `Polish`, with bilingual naming rules, timing guidance, preset-lock behavior across depths, checked-in demo paths, and regression coverage for mode routing plus README / workflow doc sync. **v2.7.1** — Added a zero-dependency `check-doc-sync.py` contract checker to keep `SKILL.md`, `README.md`, and `references/workflow.md` aligned, and wired it into the regression test runner. **v2.7.0** — Added explicit Enhancement Mode guardrails for editing existing HTML decks, clarified that inline editing is default-on but optional, and bundled two example custom brand themes under `themes/cloudhub/` and `themes/kingdee/`. **v2.6.1** — Brand Style Migration: added "Use Case: Brand Style Migration" section documenting the workflow for migrating existing PPTX files to a custom brand design system using `themes/your-brand/reference.md`. **v2.6.0** — Design Quality Baseline: new `references/design-quality.md` encodes anti-slop rules for generated slides — minimum 65% fill rule with decision tree for sparse content (2 items → big-card layout, not half-empty bullets), multi-column balance enforcement (no column < 60% of tallest), 90/8/2 color law, no 3 consecutive full-bullet slides, content-tone color calibration, and a pre-output self-check gate. Fixes aurora-mesh Inter font contradiction (replaced with Space Grotesk + DM Sans). Planning template now suggests tone-matched accent colors.
-
 English | [简体中文](README.zh-CN.md)
+
+---
 
 ## Live Demo
 
 See what slide-creator produces — open directly in your browser:
 
-- 🇺🇸 [slide-creator intro (English)](https://kaisersong.github.io/slide-creator/demos/blue-sky-en.html) — what the skill is and how it works
-- 🇨🇳 [slide-creator 介绍（中文）](https://kaisersong.github.io/slide-creator/demos/blue-sky-zh.html) — 同上，中文版
+- [slide-creator intro (English)](https://kaisersong.github.io/slide-creator/demos/blue-sky-en.html)
+- [slide-creator 介绍（中文）](https://kaisersong.github.io/slide-creator/demos/blue-sky-zh.html)
 
-Both demos above use the Blue Sky style. Click any screenshot below to open the live demo:
+Click any screenshot below to open the live demo (same content, different styles):
 
 <table>
 <tr>
-<td align="center"><a href="https://kaisersong.github.io/slide-creator/demos/blue-sky-en.html"><img src="demos/screenshots/blue-sky.png" width="240" alt="Blue Sky"/></a><br/><b>Blue Sky</b> ✨</td>
+<td align="center"><a href="https://kaisersong.github.io/slide-creator/demos/blue-sky-en.html"><img src="demos/screenshots/blue-sky.png" width="240" alt="Blue Sky"/></a><br/><b>Blue Sky</b></td>
 <td align="center"><a href="https://kaisersong.github.io/slide-creator/demos/bold-signal-en.html"><img src="demos/screenshots/bold-signal.png" width="240" alt="Bold Signal"/></a><br/><b>Bold Signal</b></td>
 <td align="center"><a href="https://kaisersong.github.io/slide-creator/demos/electric-studio-en.html"><img src="demos/screenshots/electric-studio.png" width="240" alt="Electric Studio"/></a><br/><b>Electric Studio</b></td>
 </tr>
@@ -39,7 +39,7 @@ Both demos above use the Blue Sky style. Click any screenshot below to open the 
 <td align="center"><a href="https://kaisersong.github.io/slide-creator/demos/swiss-modern-en.html"><img src="demos/screenshots/swiss-modern.png" width="240" alt="Swiss Modern"/></a><br/><b>Swiss Modern</b></td>
 </tr>
 <tr>
-<td align="center"><a href="https://kaisersong.github.io/slide-creator/demos/paper-ink-en.html"><img src="demos/screenshots/paper-ink.png" width="240" alt="Paper &amp; Ink"/></a><br/><b>Paper &amp; Ink</b></td>
+<td align="center"><a href="https://kaisersong.github.io/slide-creator/demos/paper-ink-en.html"><img src="demos/screenshots/paper-ink.png" width="240" alt="Paper & Ink"/></a><br/><b>Paper & Ink</b></td>
 <td align="center"><a href="https://kaisersong.github.io/slide-creator/demos/aurora-mesh-en.html"><img src="demos/screenshots/aurora-mesh.png" width="240" alt="Aurora Mesh"/></a><br/><b>Aurora Mesh</b></td>
 <td align="center"><a href="https://kaisersong.github.io/slide-creator/demos/enterprise-dark-en.html"><img src="demos/screenshots/enterprise-dark.png" width="240" alt="Enterprise Dark"/></a><br/><b>Enterprise Dark</b></td>
 </tr>
@@ -55,31 +55,142 @@ Both demos above use the Blue Sky style. Click any screenshot below to open the 
 </tr>
 </table>
 
-Every demo uses the same content (slide-creator's own introduction) — making it easy to compare how the same topic looks across completely different design philosophies.
-
 ---
 
-## Features
+## Design Philosophy: Skills as Domain Harness Engineering
 
-- **Two-stage workflow** — `--plan` to outline, `--generate` to produce
-- **Two planning depths** — `Auto` for speed, `Polish` for stronger narrative and visual locking
-- **Content Review System** — 16 checkpoints for quality assurance: `--review` for on-demand diagnosis; Polish mode auto-runs review; three rule types (hard/context-aware/advisory) with smart triggers
-- **21 design presets** — Bold Signal, Blue Sky, Modern Newspaper, Neo-Retro Dev Deck, and more — each with named layout variations
-- **Content-type routing** — Automatically suggests the best style for pitch decks, dev tools, data reports, editorial, and more
-- **Style discovery** — Generate 3 visual previews before committing to a style
-- **Play Mode** — Press `F5` or click the ▶ button (bottom-right) to enter fullscreen presentation mode; slides scale to fill any screen; controls auto-hide; press `Esc` to exit
-- **Presenter Mode** — Press `P` to open a synced speaker window: notes, timer, slide counter, prev/next nav; window height auto-adapts to notes length
-- **Notes editing panel** — In edit mode (`E` key), a notes bar appears at the bottom; click the title bar to collapse/expand; edits sync live to the presenter window
-- **Inline SVG diagrams** — Flowcharts, timelines, bar charts, comparison grids, org charts — no Mermaid.js, no external libs
-- **Custom theme system** — Drop a `reference.md` into `themes/your-theme/` to add your own design preset; `starter.html` optional for complex visual systems; example brand themes now ship in `themes/cloudhub/` and `themes/kingdee/`
-- **Template export chrome switch** — Set `data-export-progress="false"` on `<body>` to hide both the top progress bar and right-side nav dots in HTML playback and native PPT export
-- **Blue Sky starter template** — Complete boilerplate so models never mis-implement the visual system
-- **Image pipeline** — Auto-evaluate and process assets (Pillow)
-- **PPT import** — Convert `.pptx` files to web presentations
-- **PPTX / PNG export** — via [kai-html-export](https://github.com/kaisersong/kai-html-export) (`clawhub install kai-html-export`)
-- **Inline editing** — Default-on, optional browser editing; edit text in-browser and press Ctrl+S to save
-- **Viewport fitting** — Every slide fits exactly in 100vh, no scrolling ever
-- **Bilingual** — Chinese / English support
+This section explains the principles behind slide-creator — both as a user tool and as a Claude Code skill. These principles are reusable for anyone building skills.
+
+### 1. Progressive Disclosure
+
+A skill file loads entirely into the AI's context on every invocation. Size directly affects focus.
+
+slide-creator solves this with a **command routing table**: SKILL.md is a thin router (~150 lines) dispatching each command to the smallest reference set.
+
+```
+--plan        → references/planning-template.md only
+--generate    → references/html-template.md + one style file + base-css.md
+interactive   → references/workflow.md (full Phase 1–5)
+style picker  → references/style-index.md (21 presets + mood mapping)
+```
+
+**Result:** `--plan` never touches CSS. `--generate` never loads the other 20 styles. Export lives in a separate skill (`kai-html-export`).
+
+This is progressive disclosure applied to AI context: **reveal information at the moment it's needed, not before.** Good UX principles make good skill design.
+
+### 2. Show, Don't Tell: Visual Style Discovery
+
+Most people cannot articulate design preferences in words until they see examples. Asking "minimalist or bold?" gets vague answers. Showing three 50-line HTML previews and asking "which of these?" gets an instant reaction.
+
+Phase 2 is built around this insight. The "wow moment" — seeing your own content title in three completely different aesthetic directions — turns an abstract choice into a visceral one. Preview files are deliberately tiny (~50 lines, self-contained) so they generate in seconds.
+
+Features don't create engagement. The experience of choosing creates engagement.
+
+### 3. Viewport Fitting as a Hard Constraint
+
+A slide that scrolls mid-viewing is broken. Obvious but easy to violate when generating HTML — overflow just happens.
+
+slide-creator treats viewport fitting as **non-negotiable**:
+
+- Every `.slide` must have `height: 100vh; overflow: hidden;`
+- Content density limits per slide type (max 6 bullets, max 6 grid cards)
+- When content would overflow: **split the slide, don't squish**
+
+Base CSS uses `clamp()` for all sizes, scaling from landscape phones to 4K. CSS gotchas exist because `calc(-1 * clamp(...))` vs `-clamp(...)` is a silent failure — no console error, just invisible layout breakage.
+
+### 4. Custom Theme System: Composable Design Language
+
+The `themes/` directory lets anyone extend slide-creator with their brand style. Drop a `reference.md` describing the visual system, and it appears as "Custom: folder-name" in the style picker.
+
+Two-file convention (`reference.md` + optional `starter.html`) mirrors Blue Sky:
+- `reference.md` describes the design language (colors, typography, components)
+- `starter.html` is pre-built boilerplate for complex visual systems (animated backgrounds, custom JS, non-trivial layouts)
+
+Simple themes need one file. Complex ones ship a complete working template.
+
+### 5. Content-Type Routing as Intelligent Defaults
+
+21 presets is expressive but curated. Rather than browsing all options, slide-creator maps content types to recommendations:
+
+```
+Data report / KPI dashboard → Data Story, Enterprise Dark, Swiss Modern
+Business pitch / VC deck    → Bold Signal, Aurora Mesh, Enterprise Dark
+Developer tool / API docs   → Terminal Green, Neon Cyber, Neo-Retro Dev Deck
+```
+
+This routing table serves two audiences: human users wanting a sensible starting point, and AI agents calling programmatically (knowing content type but not which style).
+
+### 6. Design Quality Baseline: Against Slide Slop
+
+The most common AI-slide failure is not broken CSS — it's **accidental emptiness**. Two bullets centered in full-height, or one column with four items and another with one. Looks unfinished regardless of design system polish.
+
+`references/design-quality.md` (loaded during `--generate`) forces layout decisions based on content density:
+
+**Minimum fill rule.** Every slide must use ≥65% of area. Sparse content triggers layout switch, not centering:
+
+```
+2 bullets  → quote/big-stat layout, or expand to 2-line statements
+1 insight  → large quote / single stat / manifesto with visual treatment
+3 bullets  → expand each with detail, or switch to 3-card grid
+```
+
+*Intentional* whitespace (breathing-room slide, oversized type) is a design choice. *Accidental* whitespace (content floating mid-page) is a generation failure.
+
+**Multi-column balance.** No column <60% of tallest column's height. Unequal content requires one of three paths: expand shorter column, redesign as explicit asymmetric layout (`2fr 1fr`), or merge to single column.
+
+**90/8/2 color law.** 90% neutral, 8% structural accent (≤3 element types), 2% bullet accent (1–2 precise hits). Prevents accent color on every heading, icon, border, button — which produces noise, not hierarchy.
+
+**No 3 consecutive bullet slides.** After two bullet-list slides, next must be a visual anchor: large stat, pull quote, diagram, or layout-break. Cognitive pacing, not aesthetic preference.
+
+**Content-tone color calibration.** Planning template suggests tone-matched accent colors:
+
+```
+Contemplative / Research → #7C6853 warm brown (grounded, editorial)
+Technical / Engineering  → #3D5A80 navy (precise, authoritative)
+Business / Data          → #0F7B6C deep teal (confident, forward)
+Narrative / Annual       → #B45309 amber (warm, momentum)
+```
+
+**Pre-output self-check.** Before final HTML, 6-gate check: viewport overflow, minimum fill, column balance, color law, 3-consecutive-bullet rule, and the anti-slop question: *"If you told someone 'an AI made this' — would they believe it?"* If yes, revise first.
+
+### 7. Content Review System: Beyond Visual Slop
+
+Design Quality Baseline addresses visual slop. But AI slides have deeper **content slop** — noun-phrase titles instead of claims, no quantified benefits in first three slides, jargon without translation.
+
+Content Review System introduces 16 checkpoints:
+
+**Auto-detectable (6):**
+- Perspective flip (first-person → audience-centered)
+- Conclusion-first titles (noun phrase → judgment statement)
+- 3-concept rule (max 3 new concepts per slide)
+- Layout rotation (no 3 consecutive same-layout slides)
+- Font size floor
+- Visual hierarchy (squint test)
+
+**AI-advised (10):**
+- Pain point first (slides 1–2 show real user pain)
+- Quantified benefits (slides 1–3 have numbers/%)
+- MECE principle (no overlapping step definitions)
+- Occam's razor (remove tangential content)
+- Attention reset (break every 8–10 dense slides)
+- Tension contrast (before/after, manual/auto)
+- Breathing room slides
+- Jargon translation (first appearance needs analogy)
+- Image/chart noise reduction
+
+**Three rule types:**
+
+| Type | Trigger | Example |
+|---|---|---|
+| **Hard** | Always | Layout rotation, font size |
+| **Context-aware** | Based on content type | Judgment-title for proposals, noun-phrase for intros |
+| **Advisory** | Suggest only | "Consider adding a case study here" |
+
+**Why context-aware matters:** "slide-creator intro" should keep noun phrase. "XX Architecture Overview" (proposal) should become "XX Architecture ensures zero missed traffic peaks." Same rule, different behavior by content type.
+
+**Quantified benefits:** If content has numbers ("~40% efficiency gain"), extract to slides 1–3. If none, suggest in review — don't fabricate.
+
+**Generation-time embedding:** Rules embed during Phase 3 generation (Polish mode), not post-hoc. Quality assurance shifts left — fix before creation.
 
 ---
 
@@ -87,6 +198,9 @@ Every demo uses the same content (slide-creator's own introduction) — making i
 
 ### Claude Code
 
+Tell Claude: "Install https://github.com/kaisersong/slide-creator"
+
+Or manually:
 ```bash
 git clone https://github.com/kaisersong/slide-creator ~/.claude/skills/slide-creator
 ```
@@ -105,136 +219,103 @@ git clone https://github.com/kaisersong/slide-creator ~/.openclaw/skills/slide-c
 
 > ClawHub page: https://clawhub.ai/skills/kai-slide-creator
 
-OpenClaw will automatically detect and install kai-html-export dependencies (playwright, python-pptx) on first export.
-
 ---
 
 ## Usage
 
+### Commands
+
 ```
 /slide-creator --plan       # Analyze content + resources/, create PLANNING.md
-/slide-creator --generate   # Generate HTML presentation from PLANNING.md
+/slide-creator --generate   # Generate HTML from PLANNING.md
 /slide-creator --review     # Diagnose and fix content quality issues
 /slide-creator              # Start from scratch (interactive style discovery)
 /kai-html-export            # Export to PPTX or PNG (separate skill)
 ```
 
-## Planning Depths
+### Planning Depths
 
-- `Auto` — fast draft path; skips Phase 3.5 Review; Chinese UI may show `自动`
-- `Polish` — deeper planning path; auto-runs Phase 3.5 Review; Chinese UI may show `精修`
+- **Auto** — fast draft; skips Phase 3.5 Review
+- **Polish** — deeper path; auto-runs Phase 3.5 Review
 
-## Review Mode
+Same content switching between Auto/Polish should keep the same preset unless user explicitly requests a style change.
 
-Run `--review` to diagnose content quality against 16 checkpoints:
+### Typical Workflows
+
+**Interactive creation:**
+1. Run `/slide-creator`, answer four questions (purpose, length, content, images)
+2. See 3 style previews, pick one
+3. Generate full deck, open in browser
+
+**Two-stage workflow (complex content):**
+1. Put assets in `resources/` folder
+2. Run `/slide-creator --plan "My AI startup pitch deck"`
+3. Review `PLANNING.md`, then `/slide-creator --generate`
+
+**PPT conversion:**
+1. Put `.pptx` file in current directory
+2. Run `/slide-creator` — skill auto-detects and extracts content
+
+### Review Mode
 
 ```
 /slide-creator --review presentation.html
 ```
 
-**Review behavior:**
+**Behavior:**
 1. Load `references/review-checklist.md`
-2. Execute all 16 checkpoints (6 auto-detectable + 10 AI-advised)
+2. Execute 16 checkpoints (6 auto-detect + 10 AI-advised)
 3. Show results: ✅ passed / 🔧 auto-fixable / ⚠️ needs confirmation / ❌ needs judgment
-4. User chooses: [全部自动修复] / [逐项确认] / [跳过]
+4. User chooses: [Auto-fix all] / [Confirm each] / [Skip]
 5. Output fixed HTML + diagnostic report
 
-**Rule types:**
+**Polish mode:** Phase 3.5 Review runs automatically after generation.
+**Auto mode:** Skips Phase 3.5.
 
-| Type | Rules | Behavior |
-|---|---|---|
-| **Hard** | Layout rotation, font size floor, 3-concept rule | Always enforced |
-| **Context-aware** | Conclusion-first titles, quantified benefits | Triggered by content type and user intent |
-| **Advisory** | Pain point first, attention reset, jargon translation | Suggested in review, not enforced |
+### Timing
 
-**Polish mode**: Phase 3.5 Review runs automatically after generation.
-**Auto mode**: Skips Phase 3.5 entirely.
+Expected end-to-end:
 
-## Timing
+- **Auto:** ~3–6 minutes
+- **Polish:** ~8–15 minutes
 
-Expected end-to-end timing:
-
-- `Auto`: usually ~3-6 minutes
-- `Polish`: usually ~8-15 minutes
-
-Tracked segments:
-
-- `plan`
-- `generate`
-- `validate`
-- `polish`
-- `total`
-
-Intent Broker rerun timings on this machine:
-
-| Path | plan | generate | validate | polish | total |
-|---|---:|---:|---:|---:|---:|
-| `Auto` | 0m 00s (reused plan) | 0m 22s | 0m 13s | 0m 00s | 0m 35s |
-| `Polish` | 0m 00s (reused plan) | 0m 13s | 0m 14s | 0m 00s | 0m 27s |
-
-These measured numbers are rerun timings for the checked-in Intent Broker demo paths after preset and quality rules were already locked. Use the estimate ranges above for user-facing budgeting.
-
-## Requirements
-
-slide-creator has **no external dependencies**. Python 3 is optional and only used for image evaluation during planning — no packages required.
-
-Node.js is not required.
-
-For PPTX or PNG export, install [kai-html-export](https://github.com/kaisersong/kai-html-export):
-```bash
-clawhub install kai-html-export   # or: pip install playwright python-pptx
-```
-
-## Output
-
-Single-file `presentation.html` — zero dependencies, runs entirely in the browser.
-
-Optionally generates `PRESENTATION_SCRIPT.md` (speaker notes). For PPTX/PNG export, use [kai-html-export](https://github.com/kaisersong/kai-html-export).
+Tracked segments: `plan`, `generate`, `validate`, `polish`, `total`
 
 ---
 
-## Inline Editing
+## Features
 
-Every generated presentation includes a built-in text editor — no need to touch the HTML file.
+### Core
 
-**How to enter edit mode:**
+- **Two-stage workflow** — `--plan` to outline, `--generate` to produce
+- **Two planning depths** — Auto for speed, Polish for narrative and visual locking
+- **Content Review System** — 16 checkpoints: `--review` for on-demand diagnosis; Polish auto-runs review; three rule types (hard/context-aware/advisory)
+- **21 design presets** — each with named layout variations
+- **Content-type routing** — auto-suggests best style for pitch decks, dev tools, data reports
+- **Style discovery** — generate 3 visual previews before committing
+- **Inline SVG diagrams** — flowcharts, timelines, bar charts, comparison grids, org charts — no external libs
+- **Blue Sky starter template** — complete boilerplate so models never mis-implement the visual system
 
-- Hover the **top-left corner** of the screen → an edit button appears, click it
-- Or press **`E`** on your keyboard
+### Interaction
 
-**In edit mode:**
+- **Play Mode** — Press `F5` or click ▶ (bottom-right) for fullscreen; slides scale to any screen; controls auto-hide; `Esc` to exit
+- **Presenter Mode** — Press `P` for synced speaker window: notes, timer, slide counter, prev/next nav; height auto-adapts
+- **Notes editing panel** — In edit mode (`E`), notes bar at bottom; click title bar to collapse/expand; edits sync live
+- **Inline editing** — Default-on browser editing; edit text in-browser, `Ctrl+S` to save
+- **Viewport fitting** — Every slide fits 100vh exactly, no scrolling
 
-- Click any text on the slide to edit it directly
-- **`Ctrl+S`** (or `Cmd+S` on Mac) — save changes back to the HTML file
-- **`Escape`** — exit edit mode without saving
+### Output
 
-**To enable inline editing**, answer "Yes" when slide-creator asks during setup (it's the recommended default). If you generated a presentation without it, just re-run `/slide-creator --generate` and opt in.
-
----
-
-## Play Mode
-
-Every generated presentation includes a fullscreen play mode — no extra software needed.
-
-**How to enter:**
-
-- Press **`F5`** anywhere in the presentation
-- Or hover the bottom-right corner → click the **▶** button that appears
-
-**In play mode:**
-
-- Slides scale to fill the entire screen at 1440×900 (letterboxed on other ratios)
-- Navigation controls and slide counter auto-hide; hover to reveal them
-- All keyboard shortcuts still work: arrow keys, space bar, `P` for presenter window
-- Press **`Esc`** or `F5` again to exit
-
-**Presenter window** — press **`P`** to open a separate synced window showing speaker notes, elapsed time, current / total slide count, and prev/next controls. Useful when presenting from a laptop connected to a projector.
+- **Custom theme system** — Drop `reference.md` in `themes/your-theme/` to add preset; `starter.html` optional for complex systems
+- **Template export chrome switch** — Set `data-export-progress="false"` on `<body>` to hide progress bar and nav dots
+- **Image pipeline** — Auto-evaluate and process assets (Pillow)
+- **PPT import** — Convert `.pptx` to web presentations
+- **PPTX / PNG export** — via [kai-html-export](https://github.com/kaisersong/kai-html-export)
+- **Bilingual** — Chinese / English support
 
 ---
 
 ## Design Presets
-
-**21 curated styles — no generic AI aesthetics.**
 
 | Preset | Vibe | Best For |
 |--------|------|----------|
@@ -242,7 +323,7 @@ Every generated presentation includes a fullscreen play mode — no extra softwa
 | **Electric Studio** | Clean, professional | Agency presentations |
 | **Creative Voltage** | Energetic, retro-modern | Creative pitches |
 | **Dark Botanical** | Elegant, sophisticated | Premium brands |
-| **Blue Sky** ✨ | Airy, enterprise SaaS | Product launches, tech decks |
+| **Blue Sky** | Airy, enterprise SaaS | Product launches, tech decks |
 | **Notebook Tabs** | Editorial, organized | Reports, reviews |
 | **Pastel Geometry** | Friendly, approachable | Product overviews |
 | **Split Pastel** | Playful, modern | Creative agencies |
@@ -262,193 +343,58 @@ Every generated presentation includes a fullscreen play mode — no extra softwa
 
 ### Blue Sky
 
-Light sky-blue gradient background (`#f0f9ff → #e0f2fe`) with floating glassmorphism cards and animated ambient orbs. Inspired by a real enterprise AI pitch deck — the CloudHub V12 MVP presentation. Feels like a high-altitude clear day: open, confident, premium.
+Light sky-blue gradient (`#f0f9ff → #e0f2fe`) with floating glassmorphism cards and animated ambient orbs. Inspired by a real enterprise AI pitch deck (CloudHub V12 MVP). Feels like a high-altitude clear day: open, confident, premium.
 
-Signature elements: grainy noise texture overlay · 3 animated blur orbs repositioning per slide · glassmorphism cards with backdrop-filter · 40px tech grid with radial mask · spring-physics horizontal slide transitions · cloud hero effect on title slides.
+Signature elements: grainy noise texture overlay · 3 animated blur orbs repositioning per slide · glassmorphism cards with `backdrop-filter: blur(24px)` · 40px tech grid with radial mask · spring-physics horizontal transitions · cloud hero effect on title slides.
 
-A complete starter template (`references/blue-sky-starter.html`) ships with the skill — all 10 signature visual elements are pre-built so models only need to fill in slide content.
-
----
-
-## For AI Agents & Skills
-
-Other agents and skills can call slide-creator programmatically:
-
-```
-# From a topic or notes
-/slide-creator Make a pitch deck for [topic]
-
-# Two-step: plan first, then generate (supports review in between)
-/slide-creator --plan "Product launch deck for Acme v2"
-# (edit PLANNING.md if needed)
-/slide-creator --generate
-
-# Export after generation
-/kai-html-export presentation.html
-/kai-html-export --png presentation.html
-```
+**Why Blue Sky is the starter template:** It demonstrates all 10 signature visual elements pre-built. Models only fill in content — no risk of mis-implementing the design system. This pattern (`reference.md` + `starter.html`) is reusable for any complex theme.
 
 ---
 
-## Design Philosophy
+## Creating Custom Themes
 
-This section explains the design principles behind slide-creator — both as a user-facing tool and as a Claude Code skill.
+1. Create `themes/your-theme/` directory
+2. Write `reference.md` describing:
+   - Colors (primary, accent, neutrals)
+   - Typography (fonts, weights, sizes)
+   - Layout patterns (cards, grids, full-bleed)
+   - Component classes (if custom CSS needed)
+3. Optionally add `starter.html` for complex visual systems (animated backgrounds, custom JS)
 
-### 1. Skill as Progressive Disclosure
+Your theme appears as "Custom: your-theme" in the style picker.
 
-A skill file is loaded entirely into the AI's context window every time it's invoked. This means skill size directly affects what the AI can focus on.
-
-slide-creator solves this with a **command routing table**: SKILL.md is a thin router (~150 lines) that dispatches each command to the smallest possible set of reference files.
-
-```
---plan        → references/planning-template.md only
---generate    → references/html-template.md + one style file + references/base-css.md
-interactive   → references/workflow.md (full Phase 1–5)
-style picker  → references/style-index.md (21 presets + mood mapping)
-```
-
-**The result:** a `--plan` invocation never touches CSS. A `--generate` run never loads the other 20 style descriptions. Export stays in the separate `kai-html-export` skill, so slide-creator itself remains focused on planning and HTML generation.
-
-This is progressive disclosure applied to AI context management: **reveal information at the moment it's needed, not before.** The same principle that makes good UX design also makes good AI skill design.
-
-### 2. Show, Don't Tell: Visual Style Discovery
-
-Most people cannot articulate design preferences in words until they see examples. Asking "do you want minimalist or bold?" produces vague answers. Generating three 50-line HTML previews and asking "which of these?" produces an instant reaction.
-
-Phase 2 is designed around this insight. The "wow moment" — when someone sees their own content title rendered in three completely different aesthetic directions — turns an abstract choice into a visceral one. The preview files are deliberately tiny (~50 lines each) and self-contained, so they generate in seconds.
-
-This is why the skill description says "Show, Don't Tell" rather than "21 themes available." Features don't create engagement; the experience of choosing creates engagement.
-
-### 3. Viewport Fitting as a First-Class Constraint
-
-A presentation slide that scrolls mid-viewing is broken. This sounds obvious but is easy to violate when generating HTML — if you put too much content on a slide, the browser will just let it overflow.
-
-slide-creator treats viewport fitting as a **non-negotiable constraint** rather than a best practice:
-
-- Every `.slide` must have `height: 100vh; overflow: hidden;`
-- Content density limits are specified per slide type (e.g., max 6 bullets, max 6 grid cards)
-- When content would overflow, the rule is always: **split the slide, don't squish**
-
-The base CSS (`references/base-css.md`) uses `clamp()` for all sizes so they scale gracefully from landscape phones to 4K displays. This is also why the CSS gotchas section exists — `calc(-1 * clamp(...))` vs `-clamp(...)` is a silent failure that has no console error and causes layouts to break invisibly.
-
-### 4. Custom Theme System: Composable Design Language
-
-The `themes/` directory lets any user extend slide-creator with their own brand style. Drop in a `reference.md` describing the visual system, and it immediately appears as a "Custom: folder-name" option in the style picker.
-
-The two-file convention (`reference.md` + optional `starter.html`) mirrors the Blue Sky pattern: `reference.md` describes the design language (colors, typography, component classes), while `starter.html` is a pre-built boilerplate for complex visual systems that would be hard to reconstruct from prose alone.
-
-This separation means simple custom themes need only one file, while complex ones (with animated backgrounds, custom JS, non-trivial layout systems) can ship a complete working template.
-
-If a custom theme should not render export chrome, add `data-export-progress="false"` to the template's `<body>`. That single flag hides both the top progress bar and the right-side nav dots in browser playback and when the deck is exported in native mode through `kai-html-export`.
-
-### 5. Content-Type Routing as Intelligent Defaults
-
-The 21-preset library is large enough to be expressive but small enough to be curated. Rather than asking users to browse all 21 options, slide-creator maps content types to style recommendations:
-
-```
-Data report / KPI dashboard → Data Story, Enterprise Dark, Swiss Modern
-Business pitch / VC deck    → Bold Signal, Aurora Mesh, Enterprise Dark
-Developer tool / API docs   → Terminal Green, Neon Cyber, Neo-Retro Dev Deck
-```
-
-This routing table in SKILL.md serves two audiences simultaneously: human users who want a sensible starting point, and AI agents calling the skill programmatically (where the agent may know the content type but not which style to choose).
-
-### 6. Design Quality Baseline: Against Slide Slop
-
-The most common failure mode in AI-generated slides is not broken CSS or wrong colors — it's **accidental emptiness**. A slide with two bullet points centered in a full-height viewport, or a two-column layout where one column has four items and the other has one, looks unfinished regardless of how polished the design system is.
-
-`references/design-quality.md` (loaded during `--generate` alongside the style file) encodes rules that force layout decisions based on content density, not just content type:
-
-**Minimum fill rule.** Every slide must use at least 65% of the slide area. When content is sparse, the model must choose a different layout — not center the content and call it done:
-
-```
-2 bullet points → Switch to quote/big-stat layout, or expand to 2-line statements
-1 key insight   → Large quote / single stat / manifesto with visual treatment
-3 thin bullets  → Expand each with supporting detail, or switch to 3-card grid
-```
-
-The distinction that matters: *intentional* whitespace (a breathing-room slide with oversized type, deliberately placed) is a design choice. *Accidental* whitespace (content floating in the middle of a half-empty slide) is a generation failure.
-
-**Multi-column balance rule.** No column in a 2-col or 3-col layout should have less than 60% of the tallest column's height. When content is unequal, the model must choose one of three remediation paths: expand the shorter column with supporting detail, redesign as an explicitly asymmetric layout (e.g., `2fr 1fr` with visual purpose), or merge to a single column.
-
-**90/8/2 color law.** 90% neutral surface, 8% structural accent used on at most 3 element types, 2% bullet-point accent on 1–2 precise hits. This prevents the common pattern of accent color appearing on every heading, every icon, every border, and every button — which produces visual noise rather than hierarchy.
-
-**No 3 consecutive full-bullet slides.** After two bullet-list slides, the next must be a visual anchor: a single large stat, a pull quote, a diagram, or a layout-break slide. This is a cognitive pacing rule, not an aesthetic preference — dense lists without visual relief cause readers to disengage.
-
-**Content-tone color calibration.** The planning template now suggests tone-matched accent colors based on content type, so the color system reinforces the emotional register of the content:
-
-```
-Contemplative / Research → #7C6853 warm brown (grounded, editorial)
-Technical / Engineering  → #3D5A80 navy (precise, authoritative)
-Business / Data          → #0F7B6C deep teal (confident, forward)
-Narrative / Annual       → #B45309 amber (warm, momentum)
-```
-
-**Pre-output self-check.** Before writing the final HTML, the model runs a 6-gate check: viewport overflow, minimum fill, column balance, color law compliance, 3-consecutive-bullet rule, and the anti-slop question: *"If you told someone 'an AI made this' — would they immediately believe it?"* If yes, revise before output.
-
-### 7. Content Review System: Quality Baseline Beyond Visuals
-
-The Design Quality Baseline (Section 6) addresses visual slop. But AI-generated slides have a deeper problem: **content slop** — titles that are noun phrases instead of claims, no quantified benefits in the first three slides, technical jargon without plain-language translation.
-
-The Content Review System introduces 16 checkpoints divided into two categories:
-
-**Category 1: Auto-Detectable (6 checkpoints)** can be detected programmatically:
-- Perspective flip (first-person → audience-centered)
-- Conclusion-first titles (noun phrase → judgment statement)
-- 3-concept rule (max 3 new concepts per slide)
-- Layout rotation (no 3 consecutive same-layout slides)
-- Font size floor
-- Visual hierarchy (squint test)
-
-**Category 2: AI-Advised (10 checkpoints)** require AI judgment:
-- Pain point first (slides 1-2 must show real user pain)
-- Quantified benefits (slides 1-3 should have numbers/%)
-- MECE principle (no overlapping step definitions)
-- Occam's razor (remove tangential content)
-- Attention reset (break every 8-10 dense slides)
-- Tension contrast (before/after, manual/auto)
-- Breathing room slides
-- Jargon translation (first appearance needs analogy)
-- Image/chart noise reduction
-
-**Three rule types with different enforcement:**
-
-| Type | Trigger | Example |
-|---|---|---|
-| **Hard** | Always | Layout rotation, font size |
-| **Context-aware** | Based on content type | Judgment-title for proposal, not for intro |
-| **Advisory** | Suggest only | "Consider adding a case study here" |
-
-**Why context-aware rules matter:** A slide titled "slide-creator 简介" (intro) should keep the noun phrase. A slide titled "XX架构概览" (proposal) should become "XX架构可确保流量峰值零遗漏" (judgment). The same rule behaves differently based on content type and user intent.
-
-**Quantified benefits detection:** If content contains numbers ("效率提升约40%"), extract and surface in slides 1-3. If no numbers exist, suggest in review — don't fabricate.
-
-**Generation-time embedding:** These rules should be embedded during Phase 3 generation (for Polish mode) rather than applied post-hoc. This shifts quality assurance left — fixing problems before they're created.
+**Example brand themes bundled:** `themes/cloudhub/` and `themes/kingdee/`
 
 ---
 
-## Use Case: Brand Style Migration
+## Brand Style Migration
 
-Migrate an existing `.pptx` to a custom brand design system — get both a pixel-perfect archive and an editable version in one workflow.
-
-**Setup:** Create `themes/your-brand/` with a `reference.md` describing colors, fonts, and layouts (and optionally a `starter.html` for complex visual systems).
+Migrate existing `.pptx` to custom brand design — get pixel-perfect archive + editable version.
 
 ```bash
-# Step 1 — re-style: slide-creator reads the PPTX and migrates to your brand theme
+# Step 1 — re-style
 /slide-creator --plan "migrate company-deck.pptx to our brand style"
-# review PLANNING.md, then:
-/slide-creator --generate
-# → branded-deck.html
+/slide-creator --generate  # → branded-deck.html
 
-# Step 2 — export both modes (requires kai-html-export)
-/kai-html-export branded-deck.html
-# → branded-deck.pptx  (pixel-perfect, for sharing)
-
-/kai-html-export --pptx --mode native branded-deck.html
-# → branded-deck.pptx  (editable text, for editing)
+# Step 2 — export both modes
+/kai-html-export branded-deck.html              # pixel-perfect
+/kai-html-export --pptx --mode native branded-deck.html  # editable
 ```
 
-This workflow is especially useful when an internal template or brand guidelines exist as a `starter.html` — slide-creator uses it as the base and fills in content from the source PPTX.
+---
+
+## Requirements
+
+slide-creator has **no external dependencies**. Python 3 is optional for image evaluation — no packages required.
+
+For PPTX/PNG export: `clawhub install kai-html-export` or `pip install playwright python-pptx`
+
+---
+
+## Output
+
+- `presentation.html` — single-file, zero dependencies, runs in browser
+- `PRESENTATION_SCRIPT.md` — speaker notes (auto-generated if ≥8 slides)
 
 ---
 
@@ -458,3 +404,25 @@ This workflow is especially useful when an internal template or brand guidelines
 |---------|---------|-------------|
 | Claude Code | any | `~/.claude/skills/slide-creator/` |
 | OpenClaw | ≥ 0.9 | `~/.openclaw/skills/slide-creator/` |
+
+---
+
+## Version History
+
+**v2.9.0** — Content Review System: 16 checkpoints (6 auto-detectable, 10 AI-advised); Phase 3.5 Review in Polish mode; `--review` command for on-demand diagnosis; three rule types (hard/context-aware/advisory).
+
+**v2.8.0** — Simplified planning depths (Auto / Polish); bilingual naming; timing guidance; preset-lock across depths; checked-in demo paths; regression coverage.
+
+**v2.7.1** — Zero-dependency `check-doc-sync.py` contract checker for SKILL.md/README/workflow.md sync; regression test integration.
+
+**v2.7.0** — Enhancement Mode guardrails for editing existing HTML decks; inline editing default-on but optional; bundled brand theme examples (`themes/cloudhub/`, `themes/kingdee/`).
+
+**v2.6.1** — Brand Style Migration workflow documentation.
+
+**v2.6.0** — Design Quality Baseline (`references/design-quality.md`): minimum 65% fill, multi-column balance, 90/8/2 color law, no 3 consecutive bullet slides, content-tone color calibration, pre-output self-check. Fixed aurora-mesh Inter font contradiction (Space Grotesk + DM Sans).
+
+**v2.5.0** — 21 presets with Blue Sky starter template; Show Don't Tell style discovery.
+
+**v2.0.0** — Two-stage workflow (`--plan` / `--generate`); inline editing; presenter mode.
+
+**v1.0.0** — Initial release with 10 presets.
