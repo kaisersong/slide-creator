@@ -1,11 +1,11 @@
 ---
 name: kai-slide-creator
-description: 生成零依赖 HTML 演示文稿 — 21 种设计预设，视觉风格探索，异步友好的播放/演讲者模式。适用于路演、产品发布、技术分享、站会等场景。命令：--plan (大纲)、--generate (生成)、--review (质量优化)。导出 PPTX/PNG 使用 kai-html-export。
+description: 生成零依赖 HTML 演示文稿 — 21 种设计预设，视觉风格探索，播放/演讲者模式。适用于路演、产品发布、技术分享等场景。
 version: 2.9.0
 metadata: {"openclaw":{"emoji":"🎞","os":["darwin","linux","windows"],"homepage":"https://github.com/kaisersong/slide-creator","requires":{"bins":["python3"]},"install":[]}}
 ---
 
-# Slide Creator
+# kai-slide-creator
 
 生成零依赖 HTML 演示文稿，纯浏览器运行。
 
@@ -28,77 +28,6 @@ metadata: {"openclaw":{"emoji":"🎞","os":["darwin","linux","windows"],"homepag
 **OpenClaw:** `clawhub install kai-slide-creator`
 
 > ClawHub 页面：https://clawhub.ai/skills/kai-slide-creator
-
----
-
-## Planning Depths
-
-slide-creator now supports **two user-facing planning depths**:
-
-- `自动` / `Auto` — default path for fast drafts, light interaction, and direct generation momentum
-- `精修` / `Polish` — deeper planning for decks that need stronger structure, visual locking, and page-aware image decisions
-
-`参考驱动` remains supported, but only as an internal reference-driven branch inside `精修`.
-
-Do not add a third top-level mode.
-
-Auto-upgrade to `精修` when the request emphasizes deck thesis, narrative pacing, page roles, stronger visual system locking, brand alignment beyond preset choice, page-level image reasoning, or explicit planning confirmation before generation.
-
-Image intent exists only in `精修`.
-
-Planning depth changes narrative detail, not preset routing. If the same content stays on the same content type and the user did not request a new style, keep the same preset across `自动` and `精修`.
-
-Language rule for mode labels:
-
-- Chinese requests may show `自动` / `精修`
-- English requests should show `Auto` / `Polish`
-- Agents may parse either pair as the same two canonical planning depths
-
-Timing contract:
-
-- `plan` — planning / outline time
-- `generate` — HTML generation time
-- `validate` — validation time
-- `polish` — post-generation fix / rerun time
-- `total` — end-to-end elapsed time
-
-Before generation starts, tell the user the expected time range:
-
-- `Auto`: usually ~3-6 minutes end-to-end
-- `Polish`: usually ~8-15 minutes end-to-end
-
----
-
-## Generation Contract (Non-Negotiable)
-
-**Every generated HTML file MUST include Presentation Mode.**
-
-1. **Presentation Mode** - F5 / ▶ button, fullscreen scaling, `PresentMode` class (`body.presenting`, `#present-btn`, `#present-counter`)
-2. **Edit Mode (default-on, optional)** - top-left hotzone, `✏ Edit` toggle, `contenteditable` on all text, notes panel (`#notes-panel`, `setupEditor()`). Include it by default and omit it only when the user explicitly chooses "No inline editing."
-
-These are defined in `references/html-template.md`. **Read that file before writing any HTML**, regardless of how you entered the skill.
-
-> Omitting Presentation Mode is a generation error. Omitting Edit Mode is allowed only when the user opted out.
-
----
-
-## Review 模式 (`--review`)
-
-对已有 HTML 执行 16 项检查点：
-
-```bash
-/slide-creator --review presentation.html
-```
-
-**行为：**
-1. 加载 `references/review-checklist.md`
-2. 执行全部 16 项检查
-3. 显示确认窗口（✅ 通过、🔧 可修复、⚠️ 需确认、❌ 需判断）
-4. 用户选择：[全部自动修复] / [逐项确认] / [跳过]
-5. 输出修复后 HTML + 诊断报告
-
-**精修模式**：Phase 3.5 Review 自动生成后执行。
-**自动模式**：跳过 Phase 3.5。
 
 ---
 
@@ -126,6 +55,16 @@ These are defined in `references/html-template.md`. **Read that file before writ
 | 创意 / 个人品牌 | Vintage Editorial、Split Pastel、Neo-Brutalism |
 | 产品发布 / SaaS | Aurora Mesh、Glassmorphism、Electric Studio |
 
+---
+
+## 命令路由
+
+slide-creator now supports **two user-facing planning depths**:
+
+- `自动` / `Auto` — default path for fast drafts, light interaction, and direct generation momentum
+- `精修` / `Polish` — deeper planning for decks that need stronger structure, visual locking, and page-aware image decisions
+
+`参考驱动` remains supported, but only as an internal reference-driven branch inside `精修`.
 ---
 
 ## 命令路由
@@ -165,11 +104,11 @@ These are defined in `references/html-template.md`. **Read that file before writ
 
 ## 风格参考文件
 
-仅读取已选风格的文件。绝不加载所有风格。
+仅读取已选风格的文件。
 
 | 风格 | 文件 |
 |------|------|
-| Blue Sky | `references/blue-sky-starter.html`（完整基底，不重写视觉 CSS） |
+| Blue Sky | `references/blue-sky-starter.html` |
 | Aurora Mesh | `references/aurora-mesh.md` |
 | Chinese Chan | `references/chinese-chan.md` |
 | Data Story | `references/data-story.md` |
@@ -177,17 +116,13 @@ These are defined in `references/html-template.md`. **Read that file before writ
 | Glassmorphism | `references/glassmorphism.md` |
 | Neo-Brutalism | `references/neo-brutalism.md` |
 | 其他风格 | `STYLE-DESC.md` 相关章节 |
-| 自定义主题 | `themes/<name>/reference.md`（如有 `starter.html` 则使用） |
+| 自定义主题 | `themes/<name>/reference.md` |
 
-**风格选择器 / 心情映射 / 效果指南** → `references/style-index.md`
+**风格选择器 / 心情映射** → `references/style-index.md`
 
-**视口 CSS / 密度限制 / CSS 陷阱** → `references/base-css.md`
+**视口 CSS / 密度限制** → `references/base-css.md`
 
----
-
-## Review 模式
-
-**For design quality rules (density balance, column balance, anti-slop, pre-output self-check)** → read `references/design-quality.md` alongside the style file during `--generate` and Phase 3.
+**设计质量规则** → `references/design-quality.md`
 
 ---
 
