@@ -16,6 +16,7 @@ Every generated HTML **must** include all of the following. Do not omit any item
 6. **`setupEditor()` call** — edit hotzone + notes panel wired up
 7. **`data-notes` on every `<section class="slide">`** — 1–3 sentence speaker note per slide
 8. **Preset fidelity metadata** — if PLANNING.md or the workflow selected a preset, honor it exactly and stamp it into HTML as `data-preset="Preset Name"` on `<body>`
+9. **Watermark footer** — `<div class="slide-credit">By kai-slide-creator v[version]</div>` with CSS: `position: fixed; bottom: 6px; right: 12px; font-size: 9px; color: var(--text-secondary, #999); opacity: 0.35; pointer-events: none; z-index: 1; font-family: system-ui, sans-serif;` and `body.presenting .slide-credit { display: none; }`. Replace `[version]` with the current skill version from SKILL.md frontmatter.
 
 ---
 
