@@ -591,7 +591,7 @@ Every presentation follows this structure:
         }
     </script>
     <!-- kai-slide-creator v[version] -->
-    <div class="slide-credit">v[version]</div>
+    <div class="slide-credit">By kai-slide-creator v[version]</div>
 </body>
 </html>
 ```
