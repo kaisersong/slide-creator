@@ -40,8 +40,9 @@ These checkpoints can be detected programmatically without user input.
 **Detection**: Check if slide title is a noun phrase (no verb) vs. a judgment/claim.
 
 Noun phrase patterns:
-- "XX架构概览", "XX系统介绍", "XX方案说明"
-- "Overview", "Introduction", "Summary"
+- "XX架构概览", "XX系统介绍", "XX方案说明", "XX简介", "XX说明"
+- "Overview", "Introduction", "Summary", "Key Insights", "Next Steps", "Conclusion"
+- "背景", "方法论", "问题分析", "关键发现", "总结", "展望"
 
 **Auto-fix**: Generate suggested title as a judgment statement:
 - "XX架构概览" → "XX架构可确保流量峰值期零遗漏"

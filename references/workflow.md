@@ -193,13 +193,28 @@ Alternate between text-heavy and visual-heavy slides. Three or more consecutive 
 - `@media (prefers-reduced-motion: reduce)` support
 - No markdown symbols (`#`, `*`, `**`, `_`) in slide text — use `<strong>`, `<em>`, `<h2>`
 
+### Step 7: Pre-write validation (ALL modes — Auto, Polish, --generate)
+
+Before writing the final HTML, scan the assembled output for these violations and fix each one found:
+
+1. **Search `:::` in HTML** → convert any unconverted directive blocks
+2. **Search generic slide titles** from forbidden list (概览, Overview, 架构介绍, Key Insights, 总结, 结论, Next Steps, 简介, 说明, 关键发现) → rewrite as assertion-style titles
+3. **Search slide title line wraps** → flag any title wrapping ≥4 lines; shorten or restructure
+4. **Search content density** → any slide filling <50% of its area → switch to emphasis layout (large stat, quote, single statement)
+5. **Search column balance** → in two/three-column slides, verify no column <60% of tallest; fix imbalance
+6. **Search consecutive same-layout slides** → 3+ consecutive identical layouts → insert visual break (quote, diagram, big stat)
+7. **Search `--accent` usage** → count distinct element types using accent color on each slide; if >3 types → reduce
+8. **Search concept density** → any slide introducing >3 new technical terms → split or use progressive disclosure
+
+**These checks are NOT optional.** Run them in every generation mode (Auto, Polish, --generate). Auto-fix violations. Then proceed to Phase 3.5 Review (Polish mode only).
+
 ---
 
 ## Phase 3.5: Review (Polish mode only)
 
-**Auto mode**: Skip this phase entirely. Proceed directly to Phase 5 Delivery.
+**Auto mode**: Phase 3 Step 7 already ran the 8 pre-write validation checks. Proceed directly to Phase 5 Delivery.
 
-**Polish mode**: Run after Phase 3 generation completes.
+**Polish mode**: Run after Phase 3 generation completes. Phase 3 Step 7 already fixed basic violations; Phase 3.5 runs the full 16-point review for deeper content quality issues.
 
 **`--review` command**: Entry point for reviewing any existing HTML.
 
