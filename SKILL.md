@@ -1,7 +1,7 @@
 ---
 name: kai-slide-creator
 description: 生成零依赖 HTML 演示文稿 — 21 种设计预设，视觉风格探索，播放/演讲者模式。适用于路演、产品发布、技术分享等场景。
-version: 2.10.0
+version: 2.11.0
 metadata: {"openclaw":{"emoji":"🎞","os":["darwin","linux","windows"],"homepage":"https://github.com/kaisersong/slide-creator","requires":{"bins":["python3"]},"install":[]}}
 ---
 
@@ -72,10 +72,10 @@ slide-creator now supports **two user-facing planning depths**:
 | 命令 | 加载内容 | 行为 |
 |------|----------|------|
 | `--plan [prompt]` | `references/planning-template.md` | 检测规划深度，创建 PLANNING.md，不生成 HTML |
-| `--generate` | `references/html-template.md` + 风格文件 + `base-css.md` + `design-quality.md` | 从 PLANNING.md 生成 HTML |
+| `--generate` | SKILL.md HARD RULES + `references/html-template.md` + 风格文件 + `base-css.md` | 从 PLANNING.md 生成 HTML，执行 8 项生成前校验 |
 | `--review [file.html]` | `references/review-checklist.md` + 目标 HTML | 执行 16 项检查点 → 确认窗口 → 修复/报告 |
-| 无 flag (交互式) | `references/workflow.md` + 其他按需 | 遵循 Phase 0-5（仅精修模式执行 Phase 3.5 Review） |
-| 直接给内容 + 风格 | `references/html-template.md` + 风格文件 + `base-css.md` | 立即生成，无需 Phase 1/2 |
+| 无 flag (交互式) | `references/workflow.md` + 其他按需 | 遵循 Phase 0-5（Phase 3 Step 7 必须执行校验） |
+| 直接给内容 + 风格 | SKILL.md HARD RULES + `references/html-template.md` + 风格文件 + `base-css.md` | 立即生成，执行 8 项生成前校验 |
 
 **渐进式披露：** 每个命令只加载所需文件。`--plan` 不接触 CSS。
 
@@ -92,6 +92,44 @@ slide-creator now supports **two user-facing planning depths**:
 详见 `references/html-template.md`。**生成任何 HTML 前必读此文件**。
 
 > 省略播放模式是生成错误。仅当用户明确选择「无需编辑」时可省略编辑模式。
+
+---
+
+### HARD RULES（生成 HTML 前必须执行）
+
+这些规则不可协商。组装完整 HTML 后，逐条搜索违规项并修复，再写入文件。
+
+**Rule 1 — 内容密度（最低填充）：** 每张内容页必须填满内容区域的 **≥65%**。如果内容不足 50%，不能留白当完成——切换为大字强调/引用/单句宣言布局。
+
+**Rule 2 — 列平衡：** 双列/三列布局中，最短列的高度不得低于最高列的 **60%**。否则扩展短列、改用非对称布局（2fr 1fr）、或合并为单列。
+
+**Rule 3 — 标题禁止换行 ≥4 行：** 幻灯片标题换行超过 3 行是失败。修复顺序：缩短标题 → 加大字号 → 调整布局。
+
+**Rule 4 — 标题禁止通用标签：** 不得使用 "概览"、"Overview"、"架构介绍"、"Key Insights"、"结论"、"Next Steps"、"总结" 作为幻灯片标题。必须用断言式标题（见下方标题质量规则）。
+
+**Rule 5 — 禁止连续 3 页相同布局：** 3+ 页连续纯文字列表/卡片/表格时，必须在第 3 页后插入视觉打断（大图、引用、单句宣言）。
+
+**Rule 6 — 三概念法则：** 每张新幻灯片引入的技术概念/术语 ≤3 个。超过时拆分幻灯片或使用渐进式披露。
+
+**Rule 7 — 90/8/2 色彩律：** 强调色（`--accent`）同时用于 >3 种元素类型时，必须削减。
+
+### 标题质量规则
+
+**Do NOT 使用这些通用标签作为幻灯片标题：**
+概览、Overview、架构介绍、Introduction、Summary、总结、结论、Key Insights、Next Steps、方法论、背景、问题分析、关键发现、展望、简介、说明、系统介绍、方案说明。
+
+**Instead，使用断言式标题（陈述结论或主张）：**
+- ❌ `XX 架构概览` → ✅ `XX 架构可确保流量峰值期零遗漏`
+- ❌ `Overview` → ✅ `How XX ensures zero downtime during traffic spikes`
+- ❌ `系统介绍` → ✅ `三个核心模块，支撑日活百万级业务`
+- ❌ `关键发现` → ✅ `80% 的用户流失来自首次加载超时`
+
+**幻灯片标题模板（选一种匹配）：**
+- "[Subject] 可确保/证明/支撑 [具体收益/结果]" — 技术/架构页
+- "N 个 [核心概念]，解决 [关键痛点]" — 能力/特性页
+- "[数据/事实] — [洞察/含义]" — 数据/发现页
+- "[行动/决策] 的 N 个步骤/原则" — 方法/流程页
+- 最短有力断言（≤12 字中文 / ≤6 英文词）— 强调/宣言页
 
 **快速路由：**
 
