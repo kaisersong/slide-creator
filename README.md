@@ -411,7 +411,7 @@ For PPTX/PNG export: `clawhub install kai-html-export` or `pip install playwrigh
 
 ## Version History
 
-**v2.12.0** — Pre-write Validation Pipeline expanded to 16 checks: 8 core rules + 8 visual hard rules from Impeccable Anti-Patterns + component richness mandate. Every generation mode (Auto/Polish/--generate) now scans assembled HTML for violations before writing. Blue Sky starter template includes content-type → component combination map to prevent sparse "card + bullet list" output.
+**v2.12.0**
 
 **v2.11.0** — Hard rules embedded in SKILL.md; `--generate` flow restructured with explicit validation.
 
