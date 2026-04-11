@@ -9,22 +9,46 @@
   ║  3. Fill the orbPositions array in JS (one entry per slide)          ║
   ║  4. Do NOT modify the visual system CSS — it is complete as-is       ║
   ║                                                                      ║
-  ║  All 13 Blue Sky signature elements are pre-built:                   ║
-  ║  ✓ Sky gradient background                                           ║
-  ║  ✓ SVG noise texture overlay                                         ║
-  ║  ✓ 40px tech grid with radial mask                                   ║
-  ║  ✓ 3 animated ambient orbs (reposition per slide via JS)             ║
-  ║  ✓ Glassmorphism cards (.g) — refined blue-tinted shadow             ║
-  ║  ✓ Gradient headline text (.gt)                                      ║
-  ║  ✓ Spring-physics horizontal track transitions                       ║
-  ║  ✓ Pill pagination dots                                              ║
-  ║  ✓ Cloud hero effect (use class="slide cover" on title slide)        ║
-  ║  ✓ Slide counter (top-left, auto-set by JS)                          ║
-  ║  ✓ Cloud bank hero (.cloud-layer) — fractalNoise distorted scrolling ║
-  ║    white clouds with SVG flowing dashes (from V12MVP cover design)   ║
-  ║  ✓ Dual counter-rotating orbital rings (.rings + .ring)              ║
-  ║  ✓ Bento grid (.bento) + fade-bottom mask (.fade-bottom)            ║
-  ╚══════════════════════════════════════════════��═══════════════════════╝
+  ║  CONTENT TYPE → COMPONENT COMBINATION MAP                            ║
+  ║  ─────────────────────────────────────────────────────────────       ║
+  ║  NEVER use only .g + .bl on every slide. Each slide MUST use         ║
+  ║  2-3 distinct component types from the table below.                  ║
+  ║                                                                      ║
+  ║  Cover       → cloud divs + inline orbs + .pill + .gt + .stat x3     ║
+  ║  Chapter     → .chapter-num + .gt + .divider + subtitle              ║
+  ║  Workflow    → .layer rows + .step circles + .cmd blocks             ║
+  ║  Commands    → .ctable + kbd badges + .info/.co callouts             ║
+  ║  Features    → .g cards + .pill tags + .gt headings                  ║
+  ║  Comparison  → .cols2/.cols3 + border-left accent cards + .warn/.co  ║
+  ║  Stats/KPI   → .stat big numbers + .cols3/.cols4 + .g containers     ║
+  ║  Quote       → .g centered + .gt attribution + .divider              ║
+  ║  Code/Terminal → .cmd + kbd + mono text + .info callout              ║
+  ║  Closing     → cloud divs + .gt centered + takeaway .g card          ║
+  ║                                                                      ║
+  ║  If every slide in your deck looks like "glass card + bullet list",  ║
+  ║  redesign at least half of them BEFORE writing HTML.                 ║
+  ║                                                                      ║
+  ║  Available component classes (use these, invent nothing):             ║
+  ║    .g       glass card with blue-tinted shadow                       ║
+  ║    .gt      gradient text (for headlines/emphasis)                   ║
+  ║    .pill    rounded label/tag badge                                  ║
+  ║    .stat    large number/KPI display                                 ║
+  ║    .divider horizontal rule with gradient fade                       ║
+  ║    .cols2/3/4  multi-column grids                                    ║
+  ║    .ctable  comparison table                                        ║
+  ║    .co      amber callout box                                        ║
+  ║    .warn    red warning box                                          ║
+  ║    .info    blue info box                                            ║
+  ║    .layer   horizontal row with icon circle + content                ║
+  ║    .step    numbered circle indicator                                ║
+  ║    .cmd     terminal-style command block                             ║
+  ║    kbd      keyboard key badge                                      ║
+  ║    ul.bl    bullet list                                              ║
+  ║    .bento   bento grid layout                                        ║
+  ║    .cloud   animated cloud blob (SVG filter on cover slides)         ║
+  ║    .rings   orbital ring decoration                                  ║
+  ║    inline   ambient orbs: <span class="orb" style="..."></span>      ║
+  ╚══════════════════════════════════════════════════════════════════════╝
 -->
 <html lang="zh-CN">
 <head>
