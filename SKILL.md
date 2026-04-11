@@ -87,7 +87,7 @@ slide-creator now supports **two user-facing planning depths**:
 
 1. **播放模式** — F5 / ▶ 按钮，全屏缩放，`PresentMode` 类
 2. **编辑模式** — 左上角热区，`✏ Edit` 开关，`contenteditable`，备注面板
-3. **水印** — 右下角固定显示 `v[版本号]`（仅版本号，不显示产品名），`[version]` 从 SKILL.md frontmatter 读取，播放模式下隐藏，HTML 源码中置于 `</body>` 之后 `</html>` 之前
+3. **水印** — 右下角固定显示 `By kai-slide-creator v[version]`，`[version]` 从 SKILL.md frontmatter 读取，播放模式下隐藏，HTML 源码中置于 `</body>` 之后 `</html>` 之前
 
 详见 `references/html-template.md`。**生成任何 HTML 前必读此文件**。
 
