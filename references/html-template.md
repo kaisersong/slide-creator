@@ -229,6 +229,18 @@ Every presentation follows this structure:
         body.presenting #present-counter { display: block; }
         body.presenting.presenting-black .slide { visibility: hidden !important; }
         body.presenting.presenting-black::after { content: ''; position: fixed; inset: 0; background: #000; z-index: 99999; }
+
+        /* ===========================================
+           WATERMARK — implicit, outside slide content.
+           Low opacity, pointer-events: none, hidden in present mode.
+           =========================================== */
+        .slide-credit {
+            position: fixed; bottom: 6px; right: 12px;
+            font-size: 9px; color: var(--text-secondary, #999);
+            opacity: 0.35; pointer-events: none; z-index: 1;
+            font-family: system-ui, sans-serif;
+        }
+        body.presenting .slide-credit { display: none !important; }
     </style>
 </head>
 <body data-export-progress="true" data-preset="Enterprise Dark">
@@ -577,6 +589,8 @@ Every presentation follows this structure:
 
             new PresentMode(new SlidePresentation());
         }
+    <!-- Watermark — version stamp, hidden in present mode -->
+    <div class="slide-credit">By kai-slide-creator v[version]</div>
     </script>
 </body>
 </html>

@@ -1,7 +1,7 @@
 ---
 name: kai-slide-creator
 description: 生成零依赖 HTML 演示文稿 — 21 种设计预设，视觉风格探索，播放/演讲者模式。适用于路演、产品发布、技术分享等场景。
-version: 2.11.0
+version: 2.12.0
 metadata: {"openclaw":{"emoji":"🎞","os":["darwin","linux","windows"],"homepage":"https://github.com/kaisersong/slide-creator","requires":{"bins":["python3"]},"install":[]}}
 ---
 
@@ -72,10 +72,10 @@ slide-creator now supports **two user-facing planning depths**:
 | 命令 | 加载内容 | 行为 |
 |------|----------|------|
 | `--plan [prompt]` | `references/planning-template.md` | 检测规划深度，创建 PLANNING.md，不生成 HTML |
-| `--generate` | SKILL.md HARD RULES + `references/html-template.md` + 风格文件 + `base-css.md` | 从 PLANNING.md 生成 HTML，执行 8 项生成前校验 |
+| `--generate` | SKILL.md HARD RULES + `references/html-template.md` + 风格文件 + `base-css.md` | 从 PLANNING.md 生成 HTML，执行 16 项生成前校验 |
 | `--review [file.html]` | `references/review-checklist.md` + 目标 HTML | 执行 16 项检查点 → 确认窗口 → 修复/报告 |
-| 无 flag (交互式) | `references/workflow.md` + 其他按需 | 遵循 Phase 0-5（Phase 3 Step 7 必须执行校验） |
-| 直接给内容 + 风格 | SKILL.md HARD RULES + `references/html-template.md` + 风格文件 + `base-css.md` | 立即生成，执行 8 项生成前校验 |
+| 无 flag (交互式) | `references/workflow.md` + 其他按需 | 遵循 Phase 0-5（Phase 3 Step 7 必须执行 16 项校验） |
+| 直接给内容 + 风格 | SKILL.md HARD RULES + `references/html-template.md` + 风格文件 + `base-css.md` | 立即生成，执行 16 项生成前校验 |
 
 **渐进式披露：** 每个命令只加载所需文件。`--plan` 不接触 CSS。
 
@@ -95,23 +95,31 @@ slide-creator now supports **two user-facing planning depths**:
 
 ---
 
-### HARD RULES（生成 HTML 前必须执行）
+### Pre-Write Validation Pipeline（生成前校验流水线）
 
-这些规则不可协商。组装完整 HTML 后，逐条搜索违规项并修复，再写入文件。
+这些规则在组装完整 HTML 后、写入文件前**自动执行**。逐条搜索违规项并修复。
 
-**Rule 1 — 内容密度（最低填充）：** 每张内容页必须填满内容区域的 **≥65%**。如果内容不足 50%，不能留白当完成——切换为大字强调/引用/单句宣言布局。
+**现有 8 项（HARD RULES Rule 1-7 + 标题质量）+ 9 项视觉/组件硬规则：**
+1. 内容密度 ≥65%（Rule 1）
+2. 列平衡 ≥60%（Rule 2）
+3. 标题换行 ≤3 行（Rule 3）
+4. 标题禁止通用标签（Rule 4）
+5. 禁止连续 3 页同布局（Rule 5）
+6. 三概念法则 ≤3（Rule 6）
+7. 90/8/2 色彩律（Rule 7）
+8. 标题质量（断言式，非通用标签）
 
-**Rule 2 — 列平衡：** 双列/三列布局中，最短列的高度不得低于最高列的 **60%**。否则扩展短列、改用非对称布局（2fr 1fr）、或合并为单列。
+**新增视觉硬规则（来自 impeccable-anti-patterns.md）：**
+9. **U+FE0F 零容忍：** HTML 中不得出现 U+FE0F 变体选择符（emoji 使用基础形式）
+10. **letter-spacing 上限：** 正文/列表/卡片元素的 `letter-spacing` 不得超过 `0.05em`
+11. **纯黑背景禁用：** `#000` / `#000000` 背景 → 替换为 `#111` 或 `#18181B`
+12. **bounce/elastic easing 禁用：** 检测 `ease.*back|bounce` → 替换为 `cubic-bezier(0.16, 1, 0.3, 1)`
+13. **嵌套卡片：** 检测 `.card` / `.glass-card` 等容器内再嵌套同类容器 → 扁平化
+14. **cramped padding：** 卡片/容器 padding < `0.75rem` → 增加到 ≥0.75rem
+15. **gray text on colored bg：** 灰色文字（`#888`/`#999`/`var(--text-secondary)`）在非白色背景上 → 加深文字
+16. **组件丰富度：** 检测整个 deck 中是否超过 50% 的幻灯片仅使用同一种组件模式（如全是 `.g` + `.bl`）→ 至少一半的幻灯片必须使用 2-3 种不同组件类型（step/callout/stat/kbd/table/callout/quote 等）
 
-**Rule 3 — 标题禁止换行 ≥4 行：** 幻灯片标题换行超过 3 行是失败。修复顺序：缩短标题 → 加大字号 → 调整布局。
-
-**Rule 4 — 标题禁止通用标签：** 不得使用 "概览"、"Overview"、"架构介绍"、"Key Insights"、"结论"、"Next Steps"、"总结" 作为幻灯片标题。必须用断言式标题（见下方标题质量规则）。
-
-**Rule 5 — 禁止连续 3 页相同布局：** 3+ 页连续纯文字列表/卡片/表格时，必须在第 3 页后插入视觉打断（大图、引用、单句宣言）。
-
-**Rule 6 — 三概念法则：** 每张新幻灯片引入的技术概念/术语 ≤3 个。超过时拆分幻灯片或使用渐进式披露。
-
-**Rule 7 — 90/8/2 色彩律：** 强调色（`--accent`）同时用于 >3 种元素类型时，必须削减。
+> 完整反模式映射表见 `references/impeccable-anti-patterns.md`。
 
 ### 标题质量规则
 
@@ -162,6 +170,8 @@ slide-creator now supports **two user-facing planning depths**:
 **视口 CSS / 密度限制** → `references/base-css.md`
 
 **设计质量规则** → `references/design-quality.md`
+
+**Impeccable 反模式（视觉硬规则）** → `references/impeccable-anti-patterns.md`
 
 ---
 

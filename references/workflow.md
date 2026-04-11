@@ -151,11 +151,15 @@ When running checked-in demos or formal validation, record segmented timing for:
 
 ### Step 1: Load the right references
 
-**If Blue Sky style:** Read [blue-sky-starter.html](blue-sky-starter.html) and use it as the base. All 10 signature visual elements are pre-built — only fill in slide content. Do not rewrite the visual system CSS. Content goes inside `.slide` wrappers using pre-built classes: `.g` (glass card), `.gt` (gradient text), `.pill`, `.stat`, `.divider`, `.cols2/3/4`, `.ctable`, `.co` (amber callout), `.warn`, `.info`, `.layer`, `ul.bl`.
+**If Blue Sky style:** Read [blue-sky-starter.html](blue-sky-starter.html) and use it as the base. All 10 signature visual elements are pre-built — only fill in slide content. Do not rewrite the visual system CSS. Content goes inside `.slide` wrappers using pre-built classes: `.g` (glass card), `.gt` (gradient text), `.pill`, `.stat`, `.divider`, `.cols2/3/4`, `.ctable`, `.co` (amber callout), `.warn`, `.info`, `.layer`, `ul.bl`, `.step`, `.cmd`, `kbd`, cloud bank SVG, inline ambient orbs.
+
+**CRITICAL: Use the full component palette.** Do NOT default to only `.g` + `.bl` on every slide — that produces sparse, draft-looking decks. Each slide should use at least 2-3 distinct component types from the template. Examples: cover = SVG cloud filter + stat cards + inline orbs; workflow = `.layer` rows + `.step` circles + `.cmd` blocks; features = `.g` cards + `.pill` tags + gradient text; commands = `.ctable` + `kbd` badges + `.info` callouts. If every slide in your deck looks like "glass card with bullet list," redesign at least half of them before writing HTML.
 
 **If a custom theme from themes/:** Read the theme's `reference.md`. If a `starter.html` exists in the theme folder, use it as the base.
 
 **For all other styles:** Read [html-template.md](html-template.md) + [base-css.md](base-css.md). If the style has a dedicated reference file in `references/` (e.g. `aurora-mesh.md`, `enterprise-dark.md`), read that instead of scanning STYLE-DESC.md. Otherwise read the relevant section in STYLE-DESC.md.
+
+**CRITICAL: Use the style's full component palette.** Every style template provides multiple component patterns — cards, callouts, stat blocks, comparison tables, quote layouts, badge rows, etc. Do NOT put every piece of content inside a generic card with bullets. Each slide should use 2-3 distinct component types. If every slide looks like "card + bullet list," redesign at least half before writing HTML.
 
 Honor the chosen preset exactly. `自动` and `精修` may produce different structure, density, and diagrams, but they should still render inside the same preset family unless the user explicitly changed the style.
 
@@ -197,6 +201,7 @@ Alternate between text-heavy and visual-heavy slides. Three or more consecutive 
 
 Before writing the final HTML, scan the assembled output for these violations and fix each one found:
 
+**Core 8 checks:**
 1. **Search `:::` in HTML** → convert any unconverted directive blocks
 2. **Search generic slide titles** from forbidden list (概览, Overview, 架构介绍, Key Insights, 总结, 结论, Next Steps, 简介, 说明, 关键发现) → rewrite as assertion-style titles
 3. **Search slide title line wraps** → flag any title wrapping ≥4 lines; shorten or restructure
@@ -205,6 +210,18 @@ Before writing the final HTML, scan the assembled output for these violations an
 6. **Search consecutive same-layout slides** → 3+ consecutive identical layouts → insert visual break (quote, diagram, big stat)
 7. **Search `--accent` usage** → count distinct element types using accent color on each slide; if >3 types → reduce
 8. **Search concept density** → any slide introducing >3 new technical terms → split or use progressive disclosure
+
+**Visual hard rules (from impeccable-anti-patterns.md):**
+9. **Search U+FE0F** → remove all variant selectors from emoji
+10. **Search `letter-spacing`** → any non-title element > `0.05em` → reduce
+11. **Search `#000` / `#000000` background** → replace with `#111` or `#18181B`
+12. **Search bounce/elastic easing** → `ease.*back|bounce` → replace with `cubic-bezier(0.16, 1, 0.3, 1)`
+13. **Search nested cards** → `.card` / `.glass-card` inside same class → flatten hierarchy
+14. **Search cramped padding** → `padding: 0.[1-5]rem` on cards → increase to ≥0.75rem
+15. **Search gray on colored bg** → `color: #[89]99` or `var(--text-secondary)` on non-white background → darken text
+16. **Search component monotony** → if >50% of slides use the same component pattern (e.g., only `.g` + `.bl`) → redesign at least half to use 2-3 distinct component types (step/callout/stat/kbd/table/quote)
+
+> Load `references/impeccable-anti-patterns.md` for the full detection patterns and fix guidance.
 
 **These checks are NOT optional.** Run them in every generation mode (Auto, Polish, --generate). Auto-fix violations. Then proceed to Phase 3.5 Review (Polish mode only).
 

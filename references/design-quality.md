@@ -168,6 +168,27 @@ If any card needs more than 2 short lines to stay readable, the grid is too dens
 
 ---
 
+## 7.5 Visual Hard Rules (from Impeccable Anti-Patterns)
+
+These are structural, auto-detectable violations. Scan the assembled HTML for each before writing.
+
+| Rule | Detection | Fix |
+|------|-----------|-----|
+| letter-spacing > 0.05em on body | `letter-spacing:\s*(?:0\.[1-9][0-9]*\|[1-9])` on non-title elements | Reduce to ≤0.05em |
+| Pure black background | `#000` or `#000000` as background | Use `#111` or `#18181B` |
+| Bounce/elastic easing | `ease.*back\|bounce` in CSS | Use `cubic-bezier(0.16, 1, 0.3, 1)` |
+| Nested cards | `.card` / `.glass-card` inside same class container | Flatten hierarchy |
+| Cramped padding | `padding: 0.[1-5]rem` on cards/containers | Increase to ≥0.75rem |
+| Gray text on colored bg | `color: #[89]99` on non-white background | Darken text or lighten background |
+| Centered text everywhere | `text-align: center` on `.bullet-list` / `.body-text` | Left-align; center only titles/quotes |
+| Monospace as body font | `font-family.*monospace` outside `<pre>`/`<code>` | Use system-ui |
+| All-caps body text | `text-transform: uppercase` on paragraphs/lists | Remove; all-caps only for labels/chips |
+| Inconsistent alignment | Same slide has both left + center text-align on body elements | Unify alignment |
+| Gradient text without fallback | `-webkit-background-clip: text` without preceding `color:` | Add `color: var(--accent)` fallback |
+| U+FE0F variant selectors | Any `\uFE0F` byte in HTML | Remove; use base emoji |
+
+> See `references/impeccable-anti-patterns.md` for full detection patterns, rationale, and fix guidance.
+
 ## Pre-Output Self-Check
 
 Run this before writing the final HTML:
