@@ -10,6 +10,12 @@ English | [简体中文](README.zh-CN.md)
 
 ---
 
+## Project Docs
+
+Project design and implementation planning docs are indexed in [docs/README.md](docs/README.md).
+
+---
+
 ## Live Demo
 
 See what slide-creator produces — open directly in your browser:
