@@ -30,6 +30,62 @@ Still, focused, contemplative. Inspired by Chinese ink painting (水墨画), Hui
 
 ---
 
+## Background
+
+```css
+body {
+    background-color: var(--bg);
+    font-family: "Noto Serif CJK SC", "Source Han Serif SC", "STSong", "SimSun", Georgia, serif;
+}
+
+/* Optional: subtle ink wash texture */
+body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background: radial-gradient(ellipse at 30% 20%, rgba(26,26,24,0.03) 0%, transparent 70%);
+    pointer-events: none;
+    z-index: 0;
+}
+```
+
+## Components
+
+```css
+/* Narrow content container */
+.zen-content {
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 0 clamp(24px, 6vw, 60px);
+}
+
+/* Thin horizontal rule */
+.zen-rule {
+    height: 1px;
+    background: var(--rule);
+    border: none;
+    margin: clamp(32px, 5vw, 80px) 0;
+}
+
+/* Ghost kanji background texture */
+.zen-kanji {
+    position: absolute;
+    font-size: clamp(8rem, 20vw, 16rem);
+    opacity: 0.06;
+    pointer-events: none;
+    user-select: none;
+    font-family: "Noto Serif CJK SC", serif;
+}
+
+/* Accent emphasis (single use) */
+.zen-accent {
+    color: var(--accent);
+    font-weight: 700;
+}
+```
+
+---
+
 ## Typography
 
 ```css
@@ -177,6 +233,18 @@ Still, focused, contemplative. Inspired by Chinese ink painting (水墨画), Hui
     color: var(--text);
 }
 ```
+
+---
+
+## Signature Elements
+
+- **Extreme negative space** — 50%+ of slide should be empty, this is the design
+- **Vermilion seal** — `#C41E3A` used exactly once per slide maximum, as a small square or single character
+- **Thin horizontal rules** — `1px solid var(--rule)`, full width or partial, for section division
+- **CJK punctuation** — `font-feature-settings: "palt"` for proper spacing
+- **Ink-wash texture** — subtle `radial-gradient` overlay at 3% opacity
+- **Single column** — no multi-column layouts, content flows vertically
+- No gradients. No geometric shapes. No bright colors. No drop shadows. No borders above 1px.
 
 ---
 

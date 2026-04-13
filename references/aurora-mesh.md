@@ -148,6 +148,47 @@ Centered single-column layout. No side panels. Content sits in centered cards ov
 
 ---
 
+## Signature Elements
+
+- **Mesh gradient background** — multi-stop gradient with 4-6 color positions, organic blending
+- **Aurora light strips** — horizontal gradient bands at 20-30% opacity, simulating northern lights
+- **Frosted overlay cards** — `backdrop-filter: blur(12px)` on semi-transparent dark cards
+- **Gradient text** — `-webkit-background-clip: text` with gradient for hero numbers
+- **Dark-first design** — all variants are dark backgrounds, never white
+- **System font stack** — no custom web fonts, uses -apple-system / Segoe UI
+
+---
+
+## Components
+
+```css
+/* Light glassmorphism card */
+.aurora-card {
+    background: rgba(255,255,255,0.05);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 12px;
+    padding: clamp(16px, 2.5vw, 24px);
+}
+
+/* Accent divider line */
+.aurora-divider {
+    height: 1px;
+    background: rgba(0,245,196,0.3);
+    border: none;
+    margin: 16px 0;
+}
+
+/* Emphasis text */
+.aurora-emphasis {
+    color: #00f5c4;
+    font-weight: 500;
+}
+```
+
+---
+
 ## Animation
 
 ```css

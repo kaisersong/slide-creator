@@ -232,6 +232,8 @@ Before writing the final HTML, scan the assembled output for these violations an
 14. **Search cramped padding** → `padding: 0.[1-5]rem` on cards → increase to ≥0.75rem
 15. **Search gray on colored bg** → `color: #[89]99` or `var(--text-secondary)` on non-white background → darken text
 16. **Search component monotony** → if >50% of slides use the same component pattern (e.g., only `.g` + `.bl`) → redesign at least half to use 2-3 distinct component types (step/callout/stat/kbd/table/quote)
+17. **Search present mode JS** → must contain `PresentMode` class or `enterPresent()` function, `'F5'` key listener, `#present-btn` CSS, and `body.presenting` CSS → missing = generation error, must fix
+18. **Search watermark placement** → must be JS-injected into last slide (`slides[slides.length - 1].appendChild`), CSS must be `position: absolute` → if `position: fixed` or hardcoded `<div class="slide-credit">` before `</body>`, move to JS injection
 
 > Load `references/impeccable-anti-patterns.md` for the full detection patterns and fix guidance.
 

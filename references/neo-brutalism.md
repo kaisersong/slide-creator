@@ -33,6 +33,28 @@ Choose one background per presentation — commit to it:
 
 ---
 
+## Background
+
+```css
+body {
+    background-color: var(--bg);
+    font-family: "Space Grotesk", "Barlow Condensed", -apple-system, sans-serif;
+}
+
+/* Optional: subtle dot pattern for structure */
+body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: radial-gradient(circle, rgba(0,0,0,0.08) 1px, transparent 1px);
+    background-size: 12px 12px;
+    pointer-events: none;
+    z-index: 0;
+}
+```
+
+---
+
 ## Signature Brutalist Effects
 
 ```css
@@ -96,6 +118,56 @@ Choose one background per presentation — commit to it:
     font-weight: 700;
     text-transform: uppercase;
     letter-spacing: 0.08em;
+}
+```
+
+---
+
+## Components
+
+```css
+/* Core brutalist card */
+.brute-card {
+    background: #ffffff;
+    border: 3px solid #000000;
+    border-radius: 0;
+    box-shadow: 4px 4px 0 #000000;
+    padding: clamp(1rem, 2vw, 1.5rem);
+}
+.brute-card:hover {
+    box-shadow: 2px 2px 0 #000000;
+    transform: translate(2px, 2px);
+    transition: none;
+}
+
+/* Brutalist button */
+.brute-btn {
+    background: #000000;
+    color: var(--bg);
+    border: 3px solid #000000;
+    border-radius: 0;
+    box-shadow: 3px 3px 0 #000000;
+    padding: 10px 20px;
+    font-weight: 800;
+    text-transform: uppercase;
+    cursor: pointer;
+}
+
+/* Stripe fill decoration */
+.brute-stripe {
+    background: repeating-linear-gradient(
+        -45deg, #000 0px, #000 2px, transparent 2px, transparent 10px
+    );
+}
+
+/* Hand-drawn style arrow */
+.brute-arrow {
+    display: inline-block;
+}
+.brute-arrow svg {
+    stroke: #000;
+    stroke-width: 3;
+    stroke-linecap: square;
 }
 ```
 
@@ -181,6 +253,18 @@ body {
   <path d="M0 12 H52 M40 4 L52 12 L40 20" stroke="#000" stroke-width="3" stroke-linecap="square"/>
 </svg>
 ```
+
+---
+
+## Signature Elements
+
+- **Hard offset shadows** — `box-shadow: 4px 4px 0 #000` on all content blocks, no blur
+- **Zero border-radius** — everything is sharp corners, `border-radius: 0` always
+- **Thick black borders** — `3px solid #000` minimum on all containers
+- **High-contrast color blocking** — one bold background color per presentation
+- **Monospace numbers** — for stats, use `Space Grotesk` or `IBM Plex Mono`
+- **Hand-drawn SVG arrows** — thick `stroke-width="3"`, square line caps
+- No gradients. No soft shadows. No rounded corners. No subtle borders.
 
 ---
 
