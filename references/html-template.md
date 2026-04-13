@@ -187,6 +187,24 @@ Every presentation follows this structure:
         /* Cards/containers */
         .card, .container, .content-box { max-width: min(90vw, 1000px); max-height: min(80vh, 700px); }
 
+        /* Contrast fallback: when a card/block has a light inline background,
+           force dark text so #cbd5e1 / var(--text-secondary) doesn't disappear.
+           Covers #f0f4f8, #fef3c7, #e8eef7, #e8f5e9, #f3e5f5, #fff, etc. */
+        .bl[style*="background:#f"], .bl[style*="background: #f"],
+        .bl[style*="background:#e"], .bl[style*="background: #e"],
+        .card[style*="background:#f"], .card[style*="background: #f"],
+        .card[style*="background:#e"], .card[style*="background: #e"],
+        [style*="background:#fff"], [style*="background: #fff"] {
+            color: #1e293b !important;
+        }
+        .bl[style*="background:#f"] li, .bl[style*="background: #f"] li,
+        .bl[style*="background:#e"] li, .bl[style*="background: #e"] li,
+        .card[style*="background:#f"] li, .card[style*="background: #f"] li,
+        .card[style*="background:#e"] li, .card[style*="background: #e"] li,
+        [style*="background:#fff"] li, [style*="background: #fff"] li {
+            color: #334155 !important;
+        }
+
         /* Grid */
         .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 250px), 1fr)); gap: clamp(0.5rem, 1.5vw, 1rem); }
 

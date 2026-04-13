@@ -81,9 +81,9 @@
 - **修复：** 限制为 1-2 个精确命中；遵循 90/8/2 色彩律
 - **slide-creator 已有：** HARD RULES Rule 7 / design-quality.md §3 已覆盖
 
-### 12. 灰色文字在彩色背景上（Gray Text on Colored Background）— CLI
-- **检测：** `color: #888` / `#999` / `var(--text-secondary)` 出现在非白色背景上
-- **修复：** 加深文字颜色或减淡背景色，确保 WCAG AA 对比度
+### 12. 浅色文字在浅色背景上（Light Text on Light Background）— CLI
+- **检测：** `color: #888` / `#999` / `#aaa` / `#bbb` / `#cbd5e1` / `var(--text-secondary)` 出现在浅色系背景（`#f0f4f8`、`#fef3c7`、`#e8eef7`、`#e8f5e9`、`#f3e5f5`、`#fff` 或任何亮度 >60% 的背景色）上
+- **修复：** 加深文字颜色（如 `#1e293b`、`#334155`）或减淡背景色，确保 WCAG AA 对比度（≥4.5:1）
 - **slide-creator 已有：** 无直接对应
 
 ---
@@ -146,7 +146,7 @@
 | 10 | 全局居中 | `text-align:\s*center` 出现在非 `.title` / `.stat` / `.quote` 容器上 | 改为 left-align |
 | 11 | letter-spacing >0.05em | `letter-spacing:\s*(?:0\.[1-9][0-9]*|[1-9])` | 缩减到 ≤0.05em |
 | 12 | 纯黑背景 | `#000000` 或 `#000[` 或 `#000;` 或 `#000}` | 替换为 #111 |
-| 13 | gray on colored bg | `color:\s*(?:#[89]99|var\(--text-secondary)` 在非 `#fff` / `var(--bg)` 背景上 | 加深文字 |
+| 13 | light text on light bg | `color:\s*(?:#[89a][0-9a-f]{2}|#cbd5e1|var\(--text-secondary)` 在浅色系背景（`#f[0-9a-f]{3,}`、`#e[0-9a-f]{3,}` 等亮度 >60%）上 | 加深文字或覆盖 `color: inherit` |
 | 14 | bounce easing | `ease.*back|bounce|cubic-bezier\([^)]*[2-9]\.[0-9][^)]*\)` | 替换为 ease-out-expo |
 | 15 | mobile hidden | `@media.*max-width.*768.*display:\s*none` 作用于 `.slide` / `.nav` / `.edit` | 改为调整布局 |
 | 16 | cramped padding | `padding:\s*0\.[1-5]rem` | 增加到 ≥0.75rem |
@@ -155,3 +155,4 @@
 | 19 | icon tile | 独立的圆角方形 `<div>` 含图标 + 紧随其后的 `<h2>` | 内联到标题 |
 | 20 | inconsistent align | 同一 `<section class="slide">` 内同时出现 left + center 的 text-align | 统一对齐 |
 | 21 | gradient no fallback | `-webkit-background-clip:\s*text` 前无 `color:` 声明 | 添加 color 降级 |
+| 22 | SVG 箭头连线不可见 | `<line>` 起点与终点距离 <30px；箭头指向圆内部而非圆边缘 | 调整 rect 位置与圆保持 ≥30px 间距，箭头从外框指向圆边缘 |
