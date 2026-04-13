@@ -32,24 +32,30 @@ Every presentation follows this structure:
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Presentation Title</title>
 
-    <!-- Fonts: use Fontshare (api.fontshare.com) or Google Fonts -->
-    <link rel="stylesheet" href="https://api.fontshare.com/v2/css?f[]=clash-display@700,800&f[]=satoshi@400,500&display=swap">
+    <!-- Fonts: MUST come from the selected style reference file (e.g., references/data-story.md).
+         DO NOT use Clash Display / Satoshi unless the style file explicitly specifies them. -->
+    <link rel="stylesheet" href="[FONT CDN URL FROM STYLE FILE]">
 
     <style>
         /* ===========================================
            CSS CUSTOM PROPERTIES (THEME)
-           Change these values to change the whole look.
+           CRITICAL: ALL values below MUST come from the selected
+           style reference file (e.g., references/data-story.md).
+           DO NOT copy these placeholder examples verbatim.
+           Replace every color, font, and token with the style file's values.
            =========================================== */
         :root {
-            --bg-primary: #0a0f1c;
-            --bg-secondary: #111827;
-            --text-primary: #ffffff;
-            --text-secondary: #9ca3af;
-            --accent: #00ffcc;
+            /* REPLACE with values from the style reference file: */
+            --bg-primary: [from style file];
+            --bg-secondary: [from style file];
+            --text-primary: [from style file];
+            --text-secondary: [from style file];
+            --accent: [from style file];
 
-            /* Typography — always use clamp() for responsive scaling */
-            --font-display: 'Clash Display', sans-serif;
-            --font-body: 'Satoshi', sans-serif;
+            /* Typography — always use clamp() for responsive scaling.
+               Font names MUST come from the style reference file. */
+            --font-display: '[font name from style file]', sans-serif;
+            --font-body: '[font name from style file]', sans-serif;
             --title-size: clamp(2rem, 6vw, 5rem);
             --subtitle-size: clamp(0.875rem, 2vw, 1.25rem);
             --body-size: clamp(0.75rem, 1.5vw, 1.125rem);

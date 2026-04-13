@@ -1,7 +1,7 @@
 ---
 name: kai-slide-creator
 description: 生成零依赖 HTML 演示文稿 — 21 种设计预设，视觉风格探索，播放/演讲者模式。适用于路演、产品发布、技术分享等场景。
-version: 2.12.0
+version: 2.13.0
 metadata: {"openclaw":{"emoji":"🎞","os":["darwin","linux","windows"],"homepage":"https://github.com/kaisersong/slide-creator","requires":{"bins":["python3"]},"install":[]}}
 ---
 
@@ -88,6 +88,7 @@ slide-creator now supports **two user-facing planning depths**:
 1. **播放模式** — F5 / ▶ 按钮，全屏缩放，`PresentMode` 类
 2. **编辑模式** — 左上角热区，`✏ Edit` 开关，`contenteditable`，备注面板
 3. **水印** — 右下角固定显示 `By kai-slide-creator v[version] · [preset-name]`，`[version]` 从 SKILL.md frontmatter 读取，`[preset-name]` 为选中的风格预设名称（如 `Blue Sky`、`Enterprise Dark`），播放模式下隐藏，HTML 源码中置于 `</body>` 之后 `</html>` 之前
+4. **风格强制** — 所有 CSS 主题值（颜色、字体、图表色等）**必须且只能**来自选中的风格参考文件。模板 `html-template.md` 中的占位符（`[from style file]`）和注释示例值仅为结构示意，**禁止直接使用**。生成后对照风格文件的 checklist 验证。
 
 详见 `references/html-template.md`。**生成任何 HTML 前必读此文件**。
 
