@@ -163,6 +163,18 @@ When running checked-in demos or formal validation, record segmented timing for:
 
 Honor the chosen preset exactly. `自动` and `精修` may produce different structure, density, and diagrams, but they should still render inside the same preset family unless the user explicitly changed the style.
 
+### Step 1.5: Style value extraction (MANDATORY)
+
+**Before writing any CSS**, extract ALL theme values from the style reference file:
+
+1. **Colors** — background, text, accent, semantic colors (success/error/etc.)
+2. **Fonts** — display font, body font, CDN URL
+3. **Typography** — title/body sizes, line-heights, letter-spacing
+4. **Components** — any style-specific classes (e.g. Data Story's `.ds-kpi`, `.ds-kpi-card`)
+5. **Checklist** — each style file has a "Style Preview Checklist" section; these items MUST appear in the generated HTML
+
+**Critical:** The template `html-template.md` uses placeholder values (`[from style file]`). **Never emit these placeholders into the final HTML.** Every color, font, and token must resolve to an actual value from the style reference file.
+
 ### Step 2: Viewport fitting
 
 Each slide must equal exactly one viewport height (`100vh` / `100dvh`). When content doesn't fit, split it across slides — never allow scrolling. See [base-css.md](base-css.md) for density limits and required CSS.
