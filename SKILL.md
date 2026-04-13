@@ -1,7 +1,7 @@
 ---
 name: kai-slide-creator
 description: 生成零依赖 HTML 演示文稿 — 21 种设计预设，视觉风格探索，播放/演讲者模式。适用于路演、产品发布、技术分享等场景。
-version: 2.13.0
+version: 2.14.0
 metadata: {"openclaw":{"emoji":"🎞","os":["darwin","linux","windows"],"homepage":"https://github.com/kaisersong/slide-creator","requires":{"bins":["python3"]},"install":[]}}
 ---
 
@@ -117,8 +117,9 @@ slide-creator now supports **two user-facing planning depths**:
 12. **bounce/elastic easing 禁用：** 检测 `ease.*back|bounce` → 替换为 `cubic-bezier(0.16, 1, 0.3, 1)`
 13. **嵌套卡片：** 检测 `.card` / `.glass-card` 等容器内再嵌套同类容器 → 扁平化
 14. **cramped padding：** 卡片/容器 padding < `0.75rem` → 增加到 ≥0.75rem
-15. **gray text on colored bg：** 灰色文字（`#888`/`#999`/`var(--text-secondary)`）在非白色背景上 → 加深文字
+15. **light text on light bg：** 浅色文字（`#888`/`#999`/`#cbd5e1`/`var(--text-secondary)`）在浅色背景（`#f0f4f8`/`#fef3c7`/`#e8f5e9`/`#fff` 等亮度 >60% 的颜色）上 → 加深文字为深色（`#1e293b`/`#334155`）或覆盖 `color: inherit` 到卡片上
 16. **组件丰富度：** 检测整个 deck 中是否超过 50% 的幻灯片仅使用同一种组件模式（如全是 `.g` + `.bl`）→ 至少一半的幻灯片必须使用 2-3 种不同组件类型（step/callout/stat/kbd/table/callout/quote 等）
+17. **SVG 箭头连线可见：** `<line>` 元素的起点和终点距离必须 ≥30px，确保线段可见。箭头从外框边缘指向中心图形边缘（如圆外切点），不得指向圆心或进入圆内部。下侧/右侧/左侧的箭头都需要足够的连线长度，rect 位置应与圆保持 ≥30px 间距
 
 > 完整反模式映射表见 `references/impeccable-anti-patterns.md`。
 

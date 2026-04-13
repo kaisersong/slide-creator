@@ -6,8 +6,8 @@ Load this file during Phase 3.5 (Polish mode) or when `--review` is called.
 
 ## Overview
 
-16 checkpoints divided into two categories:
-- **Category 1: Auto-Detectable (6)**: Can be detected programmatically; only 1.1 can be fully auto-fixed
+17 checkpoints divided into two categories:
+- **Category 1: Auto-Detectable (7)**: Can be detected programmatically; only 1.1 and 1.6 can be fully auto-fixed
 - **Category 2: AI-Advised (10)**: AI provides judgment suggestions for user consideration
 
 ---
@@ -80,6 +80,20 @@ Technical term indicators:
 **Suggestion**: "Slides X-X+2 are all bullet lists. Insert a visual break (diagram/quote/stat) after slide X."
 
 **Auto-fix capability**: ❌ No — detection only, requires manual intervention
+
+### 1.6 文字/背景对比度 (Text/Background Contrast)
+
+**Detection**: Check if any element has light text on light background:
+- Search for `color: #cbd5e1` / `#888` / `#999` / `#aaa` / `var(--text-secondary)` inside elements with light inline backgrounds (`#f0f4f8`, `#fef3c7`, `#e8eef7`, `#e8f5e9`, `#f3e5f5`, `#fff`, or any background starting with `#f` or `#e`)
+- This is a common issue when global CSS defines light text colors for dark-theme slides, but individual blocks use light backgrounds
+
+**Auto-fix**: Add `color: #1e293b` to the container and `color: #334155` to child `li`/`p` elements
+
+**Suggestion**: "Slide X has light text (#cbd5e1) on a light background (#f0f4f8). Text is nearly invisible — deepen text to #334155."
+
+**Auto-fix capability**: ✅ Yes — can auto-insert color overrides on the container
+
+---
 
 ### 1.5 字号底线 (Font Size Floor)
 
@@ -299,6 +313,7 @@ Review 时提示，不强制执行。
 
 | 规则 | 行为 |
 |---|---|
+| 1.6 文字对比 | 浅色背景+浅色文字 → 自动加深文字颜色 |
 | 2.1 痛点前置 | 前2页无痛点场景 → 提示补充案例 |
 | 2.5 注意力重置点 | 连续 8-10 页干货 → 提示插入案例/提问 |
 | 2.7 留白缓冲页 | 每 5-6 页 → 提示插入呼吸页 |
@@ -312,6 +327,7 @@ Review 时提示，不强制执行。
 
 | 规则 | 阶段 | 内嵌方式 |
 |---|---|---|
+| 1.6 文字对比 | Generate | 浅色背景 block 自动覆盖深色文字 |
 | 1.3 三概念法则 | Generate | 生成时控制单页概念密度 |
 | 1.4 布局轮换 | Generate | 自动轮换布局类型 |
 | 1.5 字号底线 | Generate | 使用 clamp() 响应式字号 |
