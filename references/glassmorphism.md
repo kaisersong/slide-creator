@@ -4,6 +4,48 @@ Light, translucent, and modern. Inspired by Apple WWDC slides and iOS Control Ce
 
 ---
 
+## Colors
+
+```css
+:root {
+    --bg-gradient-1: #667eea;
+    --bg-gradient-2: #764ba2;
+    --bg-gradient-3: #f093fb;
+    --glass-bg: rgba(255, 255, 255, 0.15);
+    --glass-border: rgba(255, 255, 255, 0.30);
+    --glass-text-dark: #1a1a2e;
+    --glass-text-light: rgba(255,255,255,0.92);
+    --orb-purple: rgba(102,126,234,0.5);
+    --orb-pink: rgba(240,147,251,0.4);
+    --orb-mint: rgba(168,237,234,0.4);
+}
+```
+
+---
+
+## Background
+
+```css
+body {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+    font-family: -apple-system, "SF Pro Display", BlinkMacSystemFont, sans-serif;
+    min-height: 100vh;
+}
+
+/* Blurred color orbs (required — backdrop-filter only works if there's something behind the card) */
+.glass-orb {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(60px);
+    pointer-events: none;
+}
+.orb-1 { width: 400px; height: 400px; background: var(--orb-purple); top: -10%; left: -5%; }
+.orb-2 { width: 300px; height: 300px; background: var(--orb-pink); bottom: -5%; right: -5%; }
+.orb-3 { width: 250px; height: 250px; background: var(--orb-mint); top: 30%; right: 15%; }
+```
+
+---
+
 ## Background Options
 
 ```css
@@ -135,6 +177,42 @@ body {
 
 ---
 
+## Components
+
+```css
+/* Primary glass card */
+.glass-card {
+    background: rgba(255, 255, 255, 0.15);
+    backdrop-filter: blur(20px) saturate(1.5);
+    -webkit-backdrop-filter: blur(20px) saturate(1.5);
+    border: 1px solid rgba(255, 255, 255, 0.30);
+    border-radius: 16px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.10);
+    padding: clamp(1.2rem, 2.5vw, 2rem);
+}
+
+/* Secondary glass card */
+.glass-card-secondary {
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 12px;
+    padding: clamp(0.75rem, 1.5vw, 1.2rem);
+}
+
+/* SF Symbols-style circle icon */
+.glass-icon {
+    width: clamp(24px, 3vw, 32px);
+    height: clamp(24px, 3vw, 32px);
+    border-radius: 50%;
+    border: 1.5px solid rgba(255,255,255,0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+```
+
+---
+
 ## Animation
 
 ```css
@@ -150,6 +228,17 @@ body {
 .reveal:nth-child(3) { transition-delay: 0.28s; }
 .reveal:nth-child(4) { transition-delay: 0.38s; }
 ```
+
+---
+
+## Signature Elements
+
+- **Frosted glass cards** — `backdrop-filter: blur(20px) saturate(1.5)`, `background: rgba(255,255,255,0.15)`, `border: 1px solid rgba(255,255,255,0.30)`
+- **Blurred color orbs** — `filter: blur(60px)`, placed behind cards, never overlapping content
+- **Gradient background** — 3-color diagonal gradient (135deg) as base, never solid color
+- **Rounded corners** — 12-16px on all cards, consistent with iOS design language
+- **System font stack** — SF Pro / -apple-system, no custom web fonts needed
+- No borders on body. No grid patterns. No geometric shapes. Only gradients and blurs.
 
 ---
 

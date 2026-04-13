@@ -87,7 +87,7 @@ slide-creator now supports **two user-facing planning depths**:
 
 1. **播放模式** — F5 / ▶ 按钮，全屏缩放，`PresentMode` 类
 2. **编辑模式** — 左上角热区，`✏ Edit` 开关，`contenteditable`，备注面板
-3. **水印** — 右下角固定显示 `By kai-slide-creator v[version] · [preset-name]`，`[version]` 从 SKILL.md frontmatter 读取，`[preset-name]` 为选中的风格预设名称（如 `Blue Sky`、`Enterprise Dark`），播放模式下隐藏，HTML 源码中置于 `</body>` 之后 `</html>` 之前
+3. **水印** — 由 JS 注入到**最后一页幻灯片**（`slides[slides.length - 1].appendChild`），CSS 使用 `position: absolute`，禁止 `position: fixed`。播放模式下隐藏，HTML 源码中不得出现 `<div class="slide-credit">` 硬编码在 `</body>` 前
 4. **风格强制** — 所有 CSS 主题值（颜色、字体、图表色等）**必须且只能**来自选中的风格参考文件。模板 `html-template.md` 中的占位符（`[from style file]`）和注释示例值仅为结构示意，**禁止直接使用**。生成后对照风格文件的 checklist 验证。
 
 详见 `references/html-template.md`。**生成任何 HTML 前必读此文件**。
@@ -120,6 +120,8 @@ slide-creator now supports **two user-facing planning depths**:
 15. **light text on light bg：** 浅色文字（`#888`/`#999`/`#cbd5e1`/`var(--text-secondary)`）在浅色背景（`#f0f4f8`/`#fef3c7`/`#e8f5e9`/`#fff` 等亮度 >60% 的颜色）上 → 加深文字为深色（`#1e293b`/`#334155`）或覆盖 `color: inherit` 到卡片上
 16. **组件丰富度：** 检测整个 deck 中是否超过 50% 的幻灯片仅使用同一种组件模式（如全是 `.g` + `.bl`）→ 至少一半的幻灯片必须使用 2-3 种不同组件类型（step/callout/stat/kbd/table/callout/quote 等）
 17. **SVG 箭头连线可见：** `<line>` 元素的起点和终点距离必须 ≥30px，确保线段可见。箭头从外框边缘指向中心图形边缘（如圆外切点），不得指向圆心或进入圆内部。下侧/右侧/左侧的箭头都需要足够的连线长度，rect 位置应与圆保持 ≥30px 间距
+18. **播放模式 JS：** 必须包含 `PresentMode` 类或 `enterPresent()` 函数，且存在 `F5` 键监听器、`#present-btn` CSS、`body.presenting` CSS。缺失即生成错误
+19. **水印位置：** 水印必须由 JS 注入到最后一页（`slides[slides.length - 1].appendChild`），CSS 必须是 `position: absolute`，禁止 `position: fixed`，禁止 `<div class="slide-credit">` 硬编码在 `</body>` 前
 
 > 完整反模式映射表见 `references/impeccable-anti-patterns.md`。
 
@@ -157,14 +159,27 @@ slide-creator now supports **two user-facing planning depths**:
 
 | 风格 | 文件 |
 |------|------|
+| Bold Signal | `references/bold-signal.md` |
 | Blue Sky | `references/blue-sky-starter.html` |
 | Aurora Mesh | `references/aurora-mesh.md` |
 | Chinese Chan | `references/chinese-chan.md` |
+| Creative Voltage | `references/creative-voltage.md` |
+| Dark Botanical | `references/dark-botanical.md` |
 | Data Story | `references/data-story.md` |
+| Electric Studio | `references/electric-studio.md` |
 | Enterprise Dark | `references/enterprise-dark.md` |
 | Glassmorphism | `references/glassmorphism.md` |
+| Modern Newspaper | `references/modern-newspaper.md` |
 | Neo-Brutalism | `references/neo-brutalism.md` |
-| 其他风格 | `STYLE-DESC.md` 相关章节 |
+| Neo-Retro Dev | `references/neo-retro-dev.md` |
+| Neon Cyber | `references/neon-cyber.md` |
+| Notebook Tabs | `references/notebook-tabs.md` |
+| Paper & Ink | `references/paper-ink.md` |
+| Pastel Geometry | `references/pastel-geometry.md` |
+| Split Pastel | `references/split-pastel.md` |
+| Swiss Modern | `references/swiss-modern.md` |
+| Terminal Green | `references/terminal-green.md` |
+| Vintage Editorial | `references/vintage-editorial.md` |
 | 自定义主题 | `themes/<name>/reference.md` |
 
 **风格选择器 / 心情映射** → `references/style-index.md`

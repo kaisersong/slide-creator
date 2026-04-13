@@ -9,6 +9,7 @@ Run: python -m pytest tests/test_demo_quality.py -v
 """
 
 import os
+import re
 from pathlib import Path
 
 import pytest
@@ -384,3 +385,224 @@ class TestTemplate:
         )
         assert has_toggle, \
             "html-template.md goTo() must toggle .visible class (arrow-key rendering fix)"
+
+    def test_template_first_slide_visible_on_load(self):
+        """HTML template constructor must make the first slide visible immediately.
+
+        IntersectionObserver with threshold:0.5 may not fire for the first slide
+        on page load (it's already in the viewport). Without an explicit initial
+        .visible on the first slide, all .reveal elements stay at opacity:0
+        and the page renders black.
+
+        The fix must add .visible to this.slides[0] and its .reveal elements
+        BEFORE setupObserver() is called, so the page has visible content on load.
+        """
+        template_path = Path(__file__).parent.parent / "references" / "html-template.md"
+        assert template_path.exists(), "html-template.md not found"
+        content = template_path.read_text(encoding="utf-8")
+
+        # Check that constructor adds .visible to first slide
+        has_first_slide_fix = (
+            "slides[0]" in content
+            and "classList.add" in content
+            and "'visible'" in content
+        )
+        # More specific: look for the pattern near setupObserver
+        has_specific_pattern = re.search(
+            r"slides\[0\].*?classList\.add.*?visible",
+            content
+        )
+        assert has_first_slide_fix and has_specific_pattern, \
+            "html-template.md constructor must add .visible to slides[0] (first slide black screen bug)"
+
+        # Check that constructor adds .visible to first slide's reveal elements
+        has_reveal_fix = re.search(
+            r"slides\[0\].*?querySelectorAll.*?\.reveal",
+            content
+        )
+        assert has_reveal_fix, \
+            "html-template.md constructor must add .visible to slides[0] .reveal elements"
+
+    def test_demo_first_slide_reveal_visible(self, demo):
+        """Every demo must have the first slide's .reveal elements visible on load.
+
+        Either via initial .visible class in HTML, or via JS in the constructor.
+        This catches demos generated before the first-slide fix was applied.
+        """
+        soup, content = demo
+        slides = soup.find_all(class_="slide")
+        assert len(slides) >= 1, "No slides found"
+
+        first_slide = slides[0]
+        reveals = first_slide.find_all(class_="reveal")
+        if not reveals:
+            pytest.skip("First slide has no .reveal elements")
+
+        # Check if JS handles it (constructor adds .visible to first slide)
+        has_js_fix = bool(re.search(
+            r"slides\[0\].*?classList\.add.*?visible",
+            content
+        ))
+        if has_js_fix:
+            return  # JS handles it, passes
+
+        # Otherwise, HTML must have .visible class on first slide or its reveals
+        if first_slide.get("class") and "visible" in first_slide.get("class", []):
+            return  # First slide itself has .visible
+
+        # Check if any reveal has .visible class in HTML
+        for reveal in reveals:
+            if reveal.get("class") and "visible" in reveal.get("class", []):
+                return
+
+        pytest.fail(
+            "First slide .reveal elements will be invisible on page load. "
+            "Either: (a) add JS fix in constructor — slides[0].classList.add('visible'), "
+            "or (b) add class='visible' to the first <section class='slide'> or its .reveal elements."
+        )
+
+    def test_template_has_present_mode_css(self):
+        """html-template.md must define #present-btn and body.presenting CSS.
+
+        Every generated demo must have a F5 play button (hover to reveal, bottom-right)
+        and present mode styles that make slides position:fixed to fill screen.
+        """
+        tmpl = self.REFS / "html-template.md"
+        assert tmpl.exists(), "html-template.md not found"
+        content = tmpl.read_text(encoding="utf-8")
+        assert "#present-btn" in content, \
+            "html-template.md missing #present-btn CSS (F5 play button)"
+        assert "body.presenting" in content, \
+            "html-template.md missing body.presenting CSS"
+
+    def test_template_has_present_mode_js(self):
+        """html-template.md must include the PresentMode class with enter() and exit().
+
+        The class must:
+        - Create #present-btn button in JS constructor (not in HTML)
+        - Listen for F5 key to enter present mode
+        - Scale slides to fill screen (1440x900 canvas)
+        - Override goTo() to avoid scrollIntoView during present mode
+        """
+        tmpl = self.REFS / "html-template.md"
+        content = tmpl.read_text(encoding="utf-8")
+
+        # Check class exists
+        assert "class PresentMode" in content, \
+            "html-template.md missing PresentMode class"
+        # Check enter/exit methods
+        assert "enter()" in content or "enter(" in content, \
+            "PresentMode missing enter() method"
+        assert "exit()" in content or "exit(" in content, \
+            "PresentMode missing exit() method"
+        # Check F5 key listener
+        assert "'F5'" in content or '"F5"' in content, \
+            "PresentMode missing F5 key listener"
+        # Check that button is created in JS (not hardcoded in HTML)
+        assert "present-btn" in content and "document.createElement" in content or \
+               "textContent = '▶'" in content or 'textContent = "▶"' in content or \
+               "textContent = '▶'" in content, \
+            "PresentMode must create #present-btn in JS constructor"
+
+
+class TestPresentMode:
+    """Every demo must support present mode (F5 / play button).
+
+    This guards against demos generated from templates that
+    skip the PresentMode class or simplify to scroll-only navigation.
+    """
+
+    @pytest.fixture(params=ALL_DEMOS, ids=lambda p: p.name)
+    def demo(self, request):
+        return load(request.param)
+
+    def test_present_mode_in_js(self, demo):
+        """Demo must include PresentMode class or enterPresent() function.
+
+        Both patterns are accepted:
+        - Blue Sky style: enterPresent() / exitPresent() functions
+        - Template style: class PresentMode with enter()/exit() methods
+        """
+        _, content = demo
+        has_class = "class PresentMode" in content
+        has_function = "enterPresent" in content
+        has_present_btn = "#present-btn" in content or "present-btn" in content
+
+        # Check for F5 key or play button trigger
+        has_f5 = "'F5'" in content or '"F5"' in content
+
+        assert (has_class or has_function) and has_f5, \
+            "Demo missing present mode: must have PresentMode class or enterPresent() + F5 listener"
+
+    def test_present_mode_css(self, demo):
+        """Demo must have body.presenting and #present-btn CSS.
+
+        body.presenting makes slides position:fixed to fill any screen.
+        #present-btn styles the F5 play button.
+        """
+        _, content = demo
+        assert "body.presenting" in content, \
+            "Demo missing body.presenting CSS (present mode slide scaling)"
+        assert "#present-btn" in content, \
+            "Demo missing #present-btn CSS (F5 play button)"
+
+    def test_present_mode_exit(self, demo):
+        """Demo must provide a way to exit present mode (Escape key).
+        """
+        _, content = demo
+        has_escape_exit = (
+            ("exitPresent" in content and ("Escape" in content or "'Escape'" in content)) or
+            ("class PresentMode" in content and "exit()" in content and "Escape" in content) or
+            ("presentMode" in content and "exitPresent" in content)
+        )
+        assert has_escape_exit, \
+            "Demo missing Escape key handler to exit present mode"
+
+
+class TestWatermark:
+    """Watermark must be on the last slide only, not fixed across all slides."""
+
+    @pytest.fixture(params=ALL_DEMOS, ids=lambda p: p.name)
+    def demo(self, request):
+        return load(request.param)
+
+    def test_watermark_not_position_fixed(self, demo):
+        """slide-credit CSS must NOT use position: fixed.
+
+        Position: fixed shows the watermark on every slide. It must be
+        position: absolute inside the last slide.
+        """
+        _, content = demo
+        credit_css = re.search(r'\.slide-credit\s*\{[^}]+\}', content, re.DOTALL)
+        if credit_css:
+            assert "position: fixed" not in credit_css.group(), \
+                ".slide-credit must NOT use position: fixed (watermark should be on last slide only)"
+
+    def test_watermark_injected_in_last_slide(self, demo):
+        """Watermark must be injected by JS into the last slide, not hardcoded in body.
+
+        Acceptable patterns:
+        - JS: slides[slides.length - 1].appendChild(credit)
+        - JS: lastSlide.appendChild(credit)
+
+        Not acceptable:
+        - Hardcoded <div class="slide-credit"> outside <script>
+        """
+        _, content = demo
+        non_script = re.sub(r'<script[^>]*>.*?</script>', '', content, flags=re.DOTALL)
+
+        if 'slide-credit' in non_script:
+            # Hardcoded watermark outside script — fail
+            pytest.fail(
+                "Watermark <div class='slide-credit'> is hardcoded outside <script>. "
+                "It must be injected by JS into the last slide only."
+            )
+
+        # Check JS injection pattern
+        has_js_inject = (
+            ('slides.length - 1' in content or 'slides\\[slides\\.length - 1\\]' in content) and
+            'slide-credit' in content and
+            'appendChild' in content
+        )
+        assert has_js_inject, \
+            "Watermark must be injected by JS into last slide (slides[slides.length-1].appendChild)"

@@ -38,6 +38,33 @@ Clear, precise, and persuasive. Numbers are the hero. Inspired by Figma Annual R
 
 ---
 
+## Background
+
+```css
+body {
+    background-color: var(--bg);
+    font-family: "Inter", "Noto Sans SC", "PingFang SC", system-ui, sans-serif;
+    font-variant-numeric: tabular-nums;
+    -webkit-font-smoothing: antialiased;
+}
+
+/* Subtle grid pattern for data alignment */
+body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+        linear-gradient(var(--grid-line) 1px, transparent 1px),
+        linear-gradient(90deg, var(--grid-line) 1px, transparent 1px);
+    background-size: 40px 40px;
+    opacity: 0.3;
+    pointer-events: none;
+    z-index: 0;
+}
+```
+
+---
+
 ## Typography
 
 ```css
@@ -255,6 +282,58 @@ body {
 }
 .ds-insight strong { color: var(--chart-primary); }
 ```
+
+---
+
+## Components
+
+```css
+/* KPI hero card */
+.ds-kpi-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: clamp(16px, 2.5vw, 24px);
+}
+
+/* Trend arrow */
+.ds-trend-up {
+    color: var(--positive);
+    font-weight: 600;
+}
+.ds-trend-down {
+    color: var(--negative);
+    font-weight: 600;
+}
+
+/* Pure CSS bar chart */
+.ds-bar {
+    display: inline-block;
+    background: var(--chart-primary);
+    border-radius: 2px;
+    min-width: 24px;
+}
+
+/* Data annotation */
+.ds-annotation {
+    font-size: clamp(10px, 1.1vw, 12px);
+    color: var(--text-muted);
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+}
+```
+
+---
+
+## Signature Elements
+
+- **Hero KPI numbers** — `clamp(4rem, 12vw, 10rem)`, tabular-nums, colored by sentiment (positive/negative/neutral)
+- **Pure CSS bar charts** — no external libraries, `div` elements with percentage heights
+- **Trend arrows** — CSS-only `↑` / `↓` with color coding
+- **Data cards** — `var(--bg-card)` background, `1px solid var(--border)`, `border-radius: 8px`
+- **Annotation callouts** — small `--text-muted` text explaining data context
+- **12-column grid** — for aligning chart elements and data points
+- No decorative elements. No gradients on large areas. Data is the visual focus.
 
 ---
 

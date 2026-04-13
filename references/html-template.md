@@ -16,7 +16,7 @@ Every generated HTML **must** include all of the following. Do not omit any item
 6. **`setupEditor()` call** — edit hotzone + notes panel wired up
 7. **`data-notes` on every `<section class="slide">`** — 1–3 sentence speaker note per slide
 8. **Preset fidelity metadata** — if PLANNING.md or the workflow selected a preset, honor it exactly and stamp it into HTML as `data-preset="Preset Name"` on `<body>`
-9. **Watermark footer** — `<div class="slide-credit">By kai-slide-creator v[version] · [preset-name]</div>` with CSS: `position: fixed; bottom: 6px; right: 12px; font-size: 9px; color: var(--text-secondary, #999); opacity: 0.35; pointer-events: none; z-index: 1; font-family: system-ui, sans-serif;` and `body.presenting .slide-credit { display: none; }`. Replace `[version]` with the current skill version from SKILL.md frontmatter. Replace `[preset-name]` with the selected style preset name (e.g. `Blue Sky`, `Enterprise Dark`).
+9. **Watermark footer** — injected by JS into the **last slide only** as `<div class="slide-credit">By kai-slide-creator v[version] · [preset-name]</div>` with CSS: `position: absolute; bottom: 8px; right: 14px; font-size: 9px; color: var(--text-secondary, #999); opacity: 0.35; pointer-events: none; z-index: 1; font-family: system-ui, sans-serif;` and `body.presenting .slide-credit { display: none; }`. Replace `[version]` with the current skill version from SKILL.md frontmatter. Replace `[preset-name]` with the selected style preset name (e.g. `Blue Sky`, `Enterprise Dark`).
 
 ---
 
@@ -255,11 +255,11 @@ Every presentation follows this structure:
         body.presenting.presenting-black::after { content: ''; position: fixed; inset: 0; background: #000; z-index: 99999; }
 
         /* ===========================================
-           WATERMARK — implicit, outside slide content.
+           WATERMARK — implicit, inside last slide only.
            Low opacity, pointer-events: none, hidden in present mode.
            =========================================== */
         .slide-credit {
-            position: fixed; bottom: 6px; right: 12px;
+            position: absolute; bottom: 8px; right: 14px;
             font-size: 9px; color: var(--text-secondary, #999);
             opacity: 0.35; pointer-events: none; z-index: 1;
             font-family: system-ui, sans-serif;
@@ -310,6 +310,15 @@ Every presentation follows this structure:
                 this.slides = document.querySelectorAll('.slide');
                 this.currentSlide = 0;
                 this.channel = new BroadcastChannel('slide-creator-presenter');
+
+                // CRITICAL: Make first slide visible immediately on page load.
+                // IntersectionObserver with threshold:0.5 may not fire for the first slide
+                // since it's already in the viewport — without this, all .reveal elements
+                // stay at opacity:0 and the page renders black.
+                this.slides[0]?.classList.add('visible');
+                this.slides[0]?.querySelectorAll('.reveal').forEach(function(r) {
+                    r.classList.add('visible');
+                });
 
                 this.setupNavDots();
                 this.setupObserver();
@@ -401,6 +410,8 @@ Every presentation follows this structure:
             goTo(index) {
                 this.slides.forEach((slide, i) => {
                     slide.classList.toggle('visible', i === index);
+                    var reveals = slide.querySelectorAll('.reveal');
+                    reveals.forEach(function(r) { r.classList.toggle('visible', i === index); });
                 });
                 this.slides[index]?.scrollIntoView({ behavior: 'smooth' });
             }
@@ -614,8 +625,18 @@ Every presentation follows this structure:
             new PresentMode(new SlidePresentation());
         }
     </script>
-    <!-- kai-slide-creator v[version] -->
-    <div class="slide-credit">By kai-slide-creator v[version] · [preset-name]</div>
+    <script>
+    // Watermark — injected into last slide only
+    (function() {
+        var slides = document.querySelectorAll('.slide');
+        if (!slides.length) return;
+        var last = slides[slides.length - 1];
+        var credit = document.createElement('div');
+        credit.className = 'slide-credit';
+        credit.textContent = 'By kai-slide-creator v[version] · [preset-name]';
+        last.appendChild(credit);
+    })();
+    </script>
 </body>
 </html>
 ```

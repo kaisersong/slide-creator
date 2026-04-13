@@ -1,0 +1,787 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>slide-creator · Enterprise Dark</title>
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg: #0d1117;
+  --bg-card: #161b22;
+  --bg-header: #21262d;
+  --border: #30363d;
+  --text-primary: #e6edf3;
+  --text-muted: #8b949e;
+  --accent-blue: #388bfd;
+  --accent-green: #3fb950;
+  --accent-red: #f85149;
+  --accent-orange: #d29922;
+}
+
+html { scroll-snap-type: y mandatory; height: 100%; }
+
+body {
+  height: 100%;
+  overflow-x: hidden;
+  font-family: system-ui, "PingFang SC", "Noto Sans SC", -apple-system, sans-serif;
+  background-color: var(--bg);
+  background-image:
+    linear-gradient(rgba(48,54,61,0.5) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(48,54,61,0.5) 1px, transparent 1px);
+  background-size: 24px 24px;
+  color: var(--text-primary);
+}
+
+body::before {
+  content: ''; position: fixed; inset: 0;
+  background-image:
+    linear-gradient(rgba(48,54,61,0.5) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(48,54,61,0.5) 1px, transparent 1px);
+  background-size: 24px 24px;
+  opacity: 0.03; pointer-events: none; z-index: 0;
+}
+
+.slide {
+  width: 100vw; height: 100vh; height: 100dvh;
+  scroll-snap-align: start; overflow: hidden;
+  position: relative; display: flex;
+  flex-direction: column; align-items: center; justify-content: center;
+}
+
+/* Content container */
+.ent-content {
+  width: 100%; max-width: 880px;
+  padding: clamp(24px, 5vw, 60px);
+  position: relative; z-index: 1;
+}
+
+/* Typography */
+h1 {
+  font-size: clamp(32px, 5.5vw, 64px);
+  font-weight: 700; letter-spacing: -0.02em; line-height: 1.08;
+}
+h2 {
+  font-size: clamp(22px, 3.5vw, 44px);
+  font-weight: 600; letter-spacing: -0.02em; line-height: 1.12;
+}
+h3 {
+  font-size: clamp(13px, 1.5vw, 16px);
+  font-weight: 600; letter-spacing: -0.01em;
+}
+p {
+  font-size: clamp(13px, 1.4vw, 16px);
+  color: var(--text-muted); line-height: 1.6;
+}
+
+/* Accent colors */
+.ent-accent-blue   { color: var(--accent-blue); }
+.ent-accent-green  { color: var(--accent-green); }
+.ent-accent-red    { color: var(--accent-red); }
+.ent-accent-amber  { color: var(--accent-orange); }
+
+/* Label tag */
+.ent-label-tag {
+  display: inline-flex; align-items: center; gap: 6px;
+  background: var(--bg-card); border: 1px solid var(--border);
+  border-radius: 4px; padding: 3px 10px;
+  font-size: clamp(10px, 1.1vw, 12px);
+  font-weight: 600; color: var(--text-muted);
+  letter-spacing: 0.06em; text-transform: uppercase;
+  font-variant-numeric: tabular-nums;
+}
+
+/* Inline badge */
+.ent-badge {
+  display: inline-block; padding: 2px 8px; border-radius: 4px;
+  font-size: clamp(10px, 1.1vw, 12px); font-weight: 600;
+  letter-spacing: 0.04em; font-variant-numeric: tabular-nums;
+}
+.ent-badge-blue {
+  background: rgba(56,139,253,0.15); color: var(--accent-blue);
+  border: 1px solid rgba(56,139,253,0.30);
+}
+.ent-badge-green {
+  background: rgba(63,185,80,0.15); color: var(--accent-green);
+  border: 1px solid rgba(63,185,80,0.30);
+}
+
+/* Status dot */
+.ent-status-dot {
+  display: inline-block; width: 7px; height: 7px;
+  border-radius: 50%; margin-right: 6px; vertical-align: middle;
+}
+.ent-dot-green { background: var(--accent-green); }
+.ent-dot-blue  { background: var(--accent-blue); }
+.ent-dot-red   { background: var(--accent-red); }
+
+/* KPI card */
+.ent-kpi-card {
+  background: var(--bg-card); border: 1px solid var(--border);
+  border-radius: 6px; padding: clamp(16px, 2.5vw, 24px) clamp(20px, 3vw, 32px);
+  display: flex; flex-direction: column; gap: 4px;
+  flex: 1; min-width: 120px;
+}
+.ent-kpi-number {
+  font-size: clamp(36px, 5vw, 56px); font-weight: 700;
+  letter-spacing: -0.03em; line-height: 1;
+  font-variant-numeric: tabular-nums;
+}
+.ent-kpi-label {
+  font-size: clamp(10px, 1.1vw, 12px); font-weight: 600;
+  color: var(--text-muted); text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+.ent-kpi-row {
+  display: flex; gap: clamp(12px, 2vw, 20px);
+  margin-top: clamp(20px, 3vw, 32px); flex-wrap: wrap;
+}
+
+/* Separator */
+.ent-sep {
+  height: 1px; background: var(--border);
+  margin: clamp(14px, 2vw, 22px) 0;
+}
+
+/* Feature row */
+.ent-feature-row {
+  display: flex; align-items: flex-start; gap: 14px;
+  padding: clamp(12px, 1.8vw, 16px) 0;
+  border-bottom: 1px solid var(--border);
+}
+.ent-feature-row:last-child { border-bottom: none; }
+.ent-feature-icon {
+  width: 28px; height: 28px; min-width: 28px;
+  background: var(--bg-card); border: 1px solid var(--border);
+  border-radius: 4px; display: flex; align-items: center;
+  justify-content: center; font-size: 14px;
+}
+
+/* Progress bar */
+.ent-prog-bar {
+  height: 2px; background: var(--border);
+  border-radius: 2px; overflow: hidden;
+}
+.ent-prog-fill {
+  height: 100%; background: var(--accent-blue);
+  border-radius: 2px; transition: width 0.8s ease;
+}
+
+/* Consulting split */
+.ent-split {
+  display: grid; grid-template-columns: 200px 1fr;
+  gap: clamp(20px, 3vw, 36px); align-items: start;
+}
+.ent-split-labels {
+  display: flex; flex-direction: column;
+  gap: clamp(10px, 1.5vw, 14px);
+}
+.ent-split-label {
+  font-size: clamp(10px, 1.1vw, 12px); font-weight: 600;
+  color: var(--text-muted); text-transform: uppercase;
+  letter-spacing: 0.08em;
+  padding: clamp(10px, 1.5vw, 14px) 0;
+  border-bottom: 1px solid var(--border);
+}
+.ent-split-label:last-child { border-bottom: none; }
+
+/* Data table */
+.ent-table {
+  width: 100%; border-collapse: collapse;
+  font-variant-numeric: tabular-nums;
+}
+.ent-table th {
+  background: var(--bg-header);
+  color: var(--text-muted);
+  font-size: clamp(10px, 1.1vw, 12px);
+  font-weight: 600; text-transform: uppercase;
+  letter-spacing: 0.06em;
+  padding: clamp(8px, 1.2vw, 12px) clamp(12px, 1.5vw, 16px);
+  text-align: left;
+  border-bottom: 1px solid var(--border);
+}
+.ent-table td {
+  padding: clamp(10px, 1.3vw, 14px) clamp(12px, 1.5vw, 16px);
+  color: var(--text-primary);
+  border-bottom: 1px solid var(--border);
+  font-size: clamp(12px, 1.3vw, 15px);
+}
+.ent-table tr:last-child td { border-bottom: none; }
+
+/* 2-column grid */
+.ent-grid-2 {
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: clamp(10px, 1.5vw, 16px);
+}
+
+/* Code block */
+.ent-code {
+  font-family: 'SF Mono', 'Fira Code', 'Consolas', monospace;
+  background: var(--bg); border: 1px solid var(--border);
+  border-radius: 6px; padding: clamp(12px, 1.8vw, 18px);
+  font-size: clamp(11px, 1.2vw, 14px);
+  color: var(--accent-blue); line-height: 1.6;
+}
+.ent-code .muted { color: var(--text-muted); }
+.ent-code .green { color: var(--accent-green); }
+
+/* Install block */
+.ent-install {
+  background: var(--bg-card); border: 1px solid var(--border);
+  border-radius: 6px; padding: clamp(12px, 1.8vw, 18px);
+  margin-bottom: clamp(8px, 1.2vw, 12px);
+}
+.ent-install-label {
+  font-size: clamp(10px, 1.1vw, 12px); font-weight: 600;
+  color: var(--text-muted); text-transform: uppercase;
+  letter-spacing: 0.08em; margin-bottom: 6px;
+}
+.ent-install-cmd {
+  font-family: 'SF Mono', 'Fira Code', monospace;
+  font-size: clamp(11px, 1.2vw, 14px);
+  color: var(--accent-green); word-break: break-all;
+}
+
+/* Nav dots */
+#nav-dots {
+  position: fixed; right: clamp(14px, 2vw, 22px);
+  top: 50%; transform: translateY(-50%);
+  display: flex; flex-direction: column; gap: 6px; z-index: 100;
+}
+.dot {
+  width: 4px; height: 4px; border-radius: 50%;
+  background: var(--border); cursor: pointer;
+  transition: all 0.3s ease; border: none; padding: 0;
+}
+.dot.active {
+  background: var(--accent-blue); height: 16px; border-radius: 2px;
+}
+
+/* Progress bar */
+#progress {
+  position: fixed; top: 0; left: 0; height: 2px;
+  background: var(--accent-blue); transition: width 0.3s ease; z-index: 100;
+}
+
+/* Slide number */
+#slide-num {
+  position: fixed; bottom: clamp(12px, 2vw, 18px);
+  right: clamp(14px, 2vw, 22px);
+  font-size: 11px; font-weight: 600;
+  color: var(--text-muted); letter-spacing: 0.08em;
+  z-index: 100; font-variant-numeric: tabular-nums;
+}
+
+/* Edit mode */
+#hotzone {
+  position: fixed; top: 0; left: 0;
+  width: 80px; height: 80px; z-index: 200; cursor: default;
+}
+body.edit-mode [contenteditable] { outline: 1px dashed rgba(56,139,253,0.5); border-radius: 2px; }
+body.edit-mode #edit-badge { display: flex; }
+#edit-badge {
+  display: none; position: fixed; top: 10px; left: 10px;
+  align-items: center; gap: 6px;
+  background: var(--bg-card); border: 1px solid var(--border);
+  border-radius: 4px; padding: 4px 10px;
+  font-size: 11px; font-weight: 600; color: var(--text-muted);
+  z-index: 200; letter-spacing: 0.04em; text-transform: uppercase;
+}
+
+/* Reveal */
+.reveal { opacity: 0; transition: opacity 0.3s ease; }
+.reveal.visible { opacity: 1; }
+.reveal:nth-child(1) { transition-delay: 0.05s; }
+.reveal:nth-child(2) { transition-delay: 0.08s; }
+.reveal:nth-child(3) { transition-delay: 0.11s; }
+.reveal:nth-child(4) { transition-delay: 0.14s; }
+
+/* Watermark — last slide only */
+.slide-credit {
+    position: absolute; bottom: 8px; right: 14px;
+    font-size: 9px; color: var(--text-secondary);
+    opacity: 0.35; pointer-events: none; z-index: 1;
+    font-family: system-ui, sans-serif;
+}
+
+/* Present mode button */
+#present-btn {
+    position: fixed; bottom: 1.5rem; right: 1.5rem; z-index: 9997;
+    width: 44px; height: 44px; border-radius: 50%;
+    background: rgba(22,27,34,0.85); color: rgba(230,237,243,0.5);
+    border: 1.5px solid var(--border);
+    font-size: 1rem; cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    opacity: 0; transition: opacity 0.2s; pointer-events: none;
+}
+body:hover #present-btn { opacity: 1; pointer-events: auto; }
+
+#present-counter {
+    display: none; position: fixed; bottom: 1.4rem; left: 50%;
+    transform: translateX(-50%); z-index: 9997;
+    font-size: 0.65rem; letter-spacing: 0.14em; font-family: system-ui, sans-serif;
+    color: rgba(255,255,255,0.55);
+}
+
+/* Present mode */
+body.presenting { background: #000 !important; overflow: hidden !important; }
+body.presenting .slide { position: fixed !important; inset: 0; width: 1440px !important; height: 900px !important; transform-origin: top left; display: none !important; }
+body.presenting .slide.p-on { display: flex !important; }
+body.presenting #nav-dots, body.presenting #progress, body.presenting #slide-num, body.presenting #edit-badge, body.presenting .slide-credit { display: none !important; }
+body.presenting #present-btn { display: none !important; }
+body.presenting #present-counter { display: block; }
+body.presenting.presenting-black .slide { visibility: hidden !important; }
+body.presenting.presenting-black::after { content: ''; position: fixed; inset: 0; background: #000; z-index: 99999; }
+</style>
+</head>
+<body data-export-progress="true" data-preset="Enterprise Dark">
+
+<div id="progress"></div>
+<div id="nav-dots"></div>
+<div id="slide-num">1 / 8</div>
+<div id="edit-badge">EDIT · Ctrl+S</div>
+<div id="hotzone"></div>
+
+<!-- SLIDE 1: Cover -->
+<section class="slide" data-notes="欢迎来到 slide-creator。这是企业级演示文稿的封面页。" aria-label="Title slide">
+  <div class="ent-content">
+    <div class="reveal"><span class="ent-label-tag">企业级 · v2.0</span></div>
+    <div class="reveal" style="transition-delay:0.05s; margin-top:clamp(16px,2.5vw,28px);">
+      <h1>slide<span class="ent-accent-blue">-creator</span></h1>
+    </div>
+    <div class="ent-sep reveal" style="transition-delay:0.08s;"></div>
+    <div class="reveal" style="transition-delay:0.1s;">
+      <p style="font-size:clamp(15px,1.8vw,20px); color:var(--text-primary); max-width:520px; line-height:1.5;">为 Claude Code 和 OpenClaw 提供的<br>零依赖 HTML 演示工具。</p>
+    </div>
+    <div class="ent-kpi-row reveal" style="transition-delay:0.15s;">
+      <div class="ent-kpi-card">
+        <span class="ent-kpi-number ent-accent-blue">19</span>
+        <span class="ent-kpi-label">预设主题</span>
+      </div>
+      <div class="ent-kpi-card">
+        <span class="ent-kpi-number ent-accent-green">0</span>
+        <span class="ent-kpi-label">依赖项</span>
+      </div>
+      <div class="ent-kpi-card">
+        <span class="ent-kpi-number" style="color:var(--text-primary);">∞</span>
+        <span class="ent-kpi-label">幻灯片数</span>
+      </div>
+      <div class="ent-kpi-card">
+        <span class="ent-kpi-number ent-accent-blue">60s</span>
+        <span class="ent-kpi-label">安装时间</span>
+      </div>
+    </div>
+    <div class="reveal" style="transition-delay:0.2s; margin-top:clamp(14px,2vw,20px);">
+      <p style="font-size:clamp(12px,1.3vw,14px);">19 种风格。数分钟内交付。无需工具链。</p>
+    </div>
+  </div>
+</section>
+
+<!-- SLIDE 2: Problem -->
+<section class="slide" data-notes="问题陈述：演示文稿不应该需要构建系统。" aria-label="Problem statement">
+  <div class="ent-content">
+    <div class="reveal"><span class="ent-label-tag">问题陈述</span></div>
+    <div class="reveal" style="transition-delay:0.05s; margin-top:clamp(14px,2vw,22px);">
+      <h2>"演示文稿不应该<br>需要构建系统"</h2>
+    </div>
+    <div class="ent-sep reveal" style="transition-delay:0.08s;"></div>
+    <div class="reveal" style="background:var(--bg-card); border:1px solid var(--border); border-radius:6px; padding:clamp(16px,2.5vw,28px); margin-top:0; transition-delay:0.1s;">
+      <div class="ent-feature-row">
+        <div class="ent-feature-icon">⚙️</div>
+        <div>
+          <h3>复杂的工具链</h3>
+          <p style="margin-top:3px;">Node、Webpack、npm 安装 — 需要数小时的设置才能制作第一张幻灯片。在写第一个字之前就带来了认知负担。</p>
+        </div>
+        <span class="ent-badge ent-badge-blue" style="margin-left:auto; white-space:nowrap; align-self:flex-start;">高门槛</span>
+      </div>
+      <div class="ent-feature-row">
+        <div class="ent-feature-icon">📋</div>
+        <div>
+          <h3>通用输出</h3>
+          <p style="margin-top:3px;">样板模板没有视觉差异。每份演示都显示"默认设置"。</p>
+        </div>
+        <span class="ent-badge ent-badge-blue" style="margin-left:auto; white-space:nowrap; align-self:flex-start;">辨识度低</span>
+      </div>
+      <div class="ent-feature-row">
+        <div class="ent-feature-icon">🔒</div>
+        <div>
+          <h3>缺乏所有权</h3>
+          <p style="margin-top:3px;">数据云锁定、导出选项受限、供应商定价控制。你的内容，他们的规则。</p>
+        </div>
+        <span class="ent-badge" style="background:rgba(248,81,73,0.12); color:var(--accent-red); border:1px solid rgba(248,81,73,0.30); margin-left:auto; white-space:nowrap; align-self:flex-start;">风险</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SLIDE 3: Workflow -->
+<section class="slide" data-notes="三步工作流程：描述、预览、生成。" aria-label="Workflow">
+  <div class="ent-content">
+    <div class="reveal"><span class="ent-label-tag">工作流程</span></div>
+    <div class="reveal" style="transition-delay:0.05s; margin-top:clamp(14px,2vw,22px);">
+      <h2>真正有效的<br>风格发现</h2>
+    </div>
+    <div class="ent-sep reveal" style="transition-delay:0.08s;"></div>
+    <div class="ent-split reveal" style="transition-delay:0.1s;">
+      <div class="ent-split-labels">
+        <div class="ent-split-label">01 · 输入</div>
+        <div class="ent-split-label">02 · 预览</div>
+        <div class="ent-split-label">03 · 输出</div>
+      </div>
+      <div style="background:var(--bg-card); border:1px solid var(--border); border-radius:6px; padding:clamp(16px,2.5vw,28px); display:flex; flex-direction:column; gap:0;">
+        <div class="ent-feature-row">
+          <div>
+            <h3>描述氛围</h3>
+            <p style="margin-top:3px;">用自然语言描述您的演示意图。"行政总结、数据密集、自信风格。"</p>
+          </div>
+        </div>
+        <div class="ent-feature-row">
+          <div>
+            <h3>3 个视觉预览</h3>
+            <p style="margin-top:3px;">三种匹配的风格并排渲染，供完整生成前选择。没有惊喜。</p>
+          </div>
+        </div>
+        <div class="ent-feature-row">
+          <div>
+            <h3>选择并生成</h3>
+            <p style="margin-top:3px;">选择您的风格。获得完整的自包含 HTML 文件。收件人的计算机无需安装。</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SLIDE 4: Data Table -->
+<section class="slide" data-notes="19个预设的完整分类。" aria-label="Preset categories">
+  <div class="ent-content">
+    <div class="reveal"><span class="ent-label-tag">19 个预设</span></div>
+    <div class="reveal" style="transition-delay:0.05s; margin-top:clamp(14px,2vw,22px);">
+      <h2>完整的视觉系统，<br>而非简单换色</h2>
+    </div>
+    <div class="ent-sep reveal" style="transition-delay:0.08s;"></div>
+    <div class="reveal" style="transition-delay:0.1s;">
+      <table class="ent-table">
+        <thead>
+          <tr>
+            <th>分类</th>
+            <th>预设数</th>
+            <th>适合场景</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><span class="ent-status-dot ent-dot-blue"></span>大胆与充满活力</td>
+            <td><span class="ent-badge ent-badge-blue">6</span></td>
+            <td>产品发布、融资路演</td>
+          </tr>
+          <tr>
+            <td><span class="ent-status-dot ent-dot-green"></span>简洁与专业</td>
+            <td><span class="ent-badge ent-badge-blue">5</span></td>
+            <td>行政报告、战略规划</td>
+          </tr>
+          <tr>
+            <td><span class="ent-status-dot" style="background:var(--accent-orange);"></span>创意与表现力</td>
+            <td><span class="ent-badge ent-badge-blue">4</span></td>
+            <td>设计、代理、品牌工作</td>
+          </tr>
+          <tr>
+            <td><span class="ent-status-dot ent-dot-blue" style="background:#c792ea;"></span>深色与技术感</td>
+            <td><span class="ent-badge ent-badge-blue">4</span></td>
+            <td>开发团队、数据、运维</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="reveal" style="transition-delay:0.2s; margin-top:clamp(12px,1.8vw,18px);">
+      <p>包括：Bold Signal · Electric Studio · Creative Voltage · Dark Botanical · Blue Sky · Notebook Tabs · Pastel Geometry · Split Pastel · Vintage Editorial · Neon Cyber · Terminal Green · Swiss Modern · Paper &amp; Ink · Aurora Mesh · <strong style="color:var(--text-primary);">Enterprise Dark</strong> · Glassmorphism · Neo-Brutalism · Chinese Chan · Data Story</p>
+    </div>
+  </div>
+</section>
+
+<!-- SLIDE 5: Steps with progress bars -->
+<section class="slide" data-notes="三步创建流程，含进度指示。" aria-label="Steps">
+  <div class="ent-content">
+    <div class="reveal"><span class="ent-label-tag">流程</span></div>
+    <div class="reveal" style="transition-delay:0.05s; margin-top:clamp(14px,2vw,22px);">
+      <h2>三步创建<br>您的演示</h2>
+    </div>
+    <div class="ent-sep reveal" style="transition-delay:0.08s;"></div>
+    <div class="reveal" style="background:var(--bg-card); border:1px solid var(--border); border-radius:6px; padding:clamp(16px,2.5vw,28px); margin-top:0; transition-delay:0.1s;">
+      <div class="ent-feature-row">
+        <div class="ent-feature-icon" style="background:rgba(56,139,253,0.10); border-color:rgba(56,139,253,0.25);">1</div>
+        <div>
+          <h3>运行 <code style="font-family:'SF Mono',monospace; background:var(--bg); border:1px solid var(--border); padding:1px 6px; border-radius:4px; font-size:0.9em;">/slide-creator</code></h3>
+          <p style="margin-top:3px;">在 Claude Code 或 OpenClaw 中。说出您的主题、受众和意图。</p>
+        </div>
+        <div style="margin-left:auto; text-align:right; min-width:80px;">
+          <div class="ent-prog-bar" style="width:80px;"><div class="ent-prog-fill" style="width:33%"></div></div>
+        </div>
+      </div>
+      <div class="ent-feature-row">
+        <div class="ent-feature-icon" style="background:rgba(56,139,253,0.10); border-color:rgba(56,139,253,0.25);">2</div>
+        <div>
+          <h3>从 3 个视觉预览中选择</h3>
+          <p style="margin-top:3px;">在提交前比较风格选项。凭直觉选择。</p>
+        </div>
+        <div style="margin-left:auto; text-align:right; min-width:80px;">
+          <div class="ent-prog-bar" style="width:80px;"><div class="ent-prog-fill" style="width:66%"></div></div>
+        </div>
+      </div>
+      <div class="ent-feature-row">
+        <div class="ent-feature-icon" style="background:rgba(56,139,253,0.10); border-color:rgba(56,139,253,0.25);">3</div>
+        <div>
+          <h3>打开 HTML 文件</h3>
+          <p style="margin-top:3px;">自包含。无需服务器。无需安装。以文件形式分享或在任何地方托管。</p>
+        </div>
+        <div style="margin-left:auto; text-align:right; min-width:80px;">
+          <div class="ent-prog-bar" style="width:80px;"><div class="ent-prog-fill" style="width:100%"></div></div>
+        </div>
+      </div>
+    </div>
+    <div class="reveal" style="transition-delay:0.2s; margin-top:clamp(12px,1.8vw,16px);">
+      <p style="font-size:clamp(12px,1.3vw,14px);"><span class="ent-badge ent-badge-blue">--plan</span> <span style="color:var(--text-muted);">→ 先创建大纲</span> &nbsp;&nbsp; <span class="ent-badge ent-badge-green">--generate</span> <span style="color:var(--text-muted);">→ 生成完整演示</span></p>
+    </div>
+  </div>
+</section>
+
+<!-- SLIDE 6: Features grid -->
+<section class="slide" data-notes="核心功能特性概览。" aria-label="Features">
+  <div class="ent-content">
+    <div class="reveal"><span class="ent-label-tag">功能特性</span></div>
+    <div class="reveal" style="transition-delay:0.05s; margin-top:clamp(14px,2vw,22px);">
+      <h2>生产级特性，<br>零配置</h2>
+    </div>
+    <div class="ent-sep reveal" style="transition-delay:0.08s;"></div>
+    <div class="ent-grid-2 reveal" style="transition-delay:0.1s;">
+      <div style="background:var(--bg-card); border:1px solid var(--border); border-radius:6px; padding:clamp(16px,2.5vw,24px);">
+        <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:8px;">
+          <h3>视口自适应</h3>
+          <span class="ent-badge ent-badge-green">已上线</span>
+        </div>
+        <p>100dvh 幻灯片。完美适配笔记本、投影仪、4K 显示屏。</p>
+        <div class="ent-prog-bar" style="margin-top:10px;"><div class="ent-prog-fill" style="width:100%"></div></div>
+      </div>
+      <div style="background:var(--bg-card); border:1px solid var(--border); border-radius:6px; padding:clamp(16px,2.5vw,24px);">
+        <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:8px;">
+          <h3>内联编辑</h3>
+          <span class="ent-badge ent-badge-green">已上线</span>
+        </div>
+        <p>按 E 键激活。Ctrl+S 通过文件系统访问 API 保存。</p>
+        <div class="ent-prog-bar" style="margin-top:10px;"><div class="ent-prog-fill" style="width:90%"></div></div>
+      </div>
+      <div style="background:var(--bg-card); border:1px solid var(--border); border-radius:6px; padding:clamp(16px,2.5vw,24px);">
+        <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:8px;">
+          <h3>PPTX 导出</h3>
+          <span class="ent-badge ent-badge-blue">已推出</span>
+        </div>
+        <p>为需要 PowerPoint 兼容性的利益相关者导出。</p>
+        <div class="ent-prog-bar" style="margin-top:10px;"><div class="ent-prog-fill" style="width:85%"></div></div>
+      </div>
+      <div style="background:var(--bg-card); border:1px solid var(--border); border-radius:6px; padding:clamp(16px,2.5vw,24px);">
+        <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:8px;">
+          <h3>两阶段工作流</h3>
+          <span class="ent-badge ent-badge-blue">已推出</span>
+        </div>
+        <p>--plan 创建大纲，--generate 生成。在提交前迭代。</p>
+        <div class="ent-prog-bar" style="margin-top:10px;"><div class="ent-prog-fill" style="width:100%"></div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SLIDE 7: Install -->
+<section class="slide" data-notes="安装方式和部署要求。" aria-label="Installation">
+  <div class="ent-content">
+    <div class="reveal"><span class="ent-label-tag">安装</span></div>
+    <div class="reveal" style="transition-delay:0.05s; margin-top:clamp(14px,2vw,22px);">
+      <h2>在 60 秒内<br>完成部署</h2>
+    </div>
+    <div class="ent-sep reveal" style="transition-delay:0.08s;"></div>
+    <div class="reveal" style="transition-delay:0.1s;">
+      <div class="ent-install">
+        <div class="ent-install-label">Claude Code</div>
+        <div class="ent-install-cmd">git clone https://github.com/kaisersong/slide-creator ~/.claude/skills/slide-creator</div>
+      </div>
+      <div class="ent-install">
+        <div class="ent-install-label">OpenClaw</div>
+        <div class="ent-install-cmd">clawhub install html-slide-creator</div>
+      </div>
+    </div>
+    <div class="reveal" style="transition-delay:0.15s; margin-top:clamp(12px,1.8vw,18px);">
+      <div style="background:var(--bg-card); border:1px solid var(--border); border-radius:6px; padding:clamp(16px,2.5vw,24px);">
+        <table class="ent-table" style="margin-top:0;">
+          <thead><tr><th>需求</th><th>状态</th></tr></thead>
+          <tbody>
+            <tr><td>Node / npm</td><td><span class="ent-status-dot ent-dot-green"></span><span class="ent-accent-green">不需要</span></td></tr>
+            <tr><td>构建步骤</td><td><span class="ent-status-dot ent-dot-green"></span><span class="ent-accent-green">不需要</span></td></tr>
+            <tr><td>云账户</td><td><span class="ent-status-dot ent-dot-green"></span><span class="ent-accent-green">不需要</span></td></tr>
+            <tr><td>Claude Code 或 OpenClaw</td><td><span class="ent-status-dot ent-dot-blue"></span><span class="ent-accent-blue">需要</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SLIDE 8: Closing -->
+<section class="slide" data-notes="结语和行动号召。" aria-label="Closing">
+  <div class="ent-content">
+    <div class="reveal"><span class="ent-label-tag">开始使用</span></div>
+    <div class="reveal" style="transition-delay:0.05s; margin-top:clamp(14px,2vw,22px);">
+      <h1>您的下一份演示，<br>在 <span class="ent-accent-blue">数分钟</span>内交付</h1>
+    </div>
+    <div class="ent-sep reveal" style="transition-delay:0.08s;"></div>
+    <div class="reveal" style="transition-delay:0.1s;">
+      <p style="font-size:clamp(14px,1.6vw,18px); color:var(--text-primary); line-height:1.5; max-width:540px;">与 Claude Code 和 OpenClaw 配合使用。<br>完全在您的浏览器中运行。</p>
+    </div>
+    <div class="ent-code reveal" style="transition-delay:0.15s; font-size:clamp(14px,1.6vw,18px);">
+      <span class="muted"># 在 Claude Code 或 OpenClaw 中</span><br>
+      /slide-creator
+    </div>
+    <div class="ent-kpi-row reveal" style="transition-delay:0.2s; margin-top:clamp(16px,2.5vw,24px);">
+      <div class="ent-kpi-card" style="flex:none; min-width:0;">
+        <span class="ent-kpi-number ent-accent-blue" style="font-size:clamp(24px,3.5vw,40px);">19</span>
+        <span class="ent-kpi-label">预设主题</span>
+      </div>
+      <div class="ent-kpi-card" style="flex:none; min-width:0;">
+        <span class="ent-kpi-number ent-accent-green" style="font-size:clamp(24px,3.5vw,40px);">0</span>
+        <span class="ent-kpi-label">依赖项</span>
+      </div>
+      <div class="ent-kpi-card" style="flex:none; min-width:0;">
+        <span class="ent-kpi-number" style="font-size:clamp(24px,3.5vw,40px); color:var(--text-primary);">∞</span>
+        <span class="ent-kpi-label">可能性</span>
+      </div>
+    </div>
+    <div class="reveal" style="transition-delay:0.25s; margin-top:clamp(16px,2.5vw,24px);">
+      <p style="font-size:clamp(11px,1.2vw,13px); color:var(--text-muted); letter-spacing:0.06em; text-transform:uppercase;">Enterprise Dark · slide-creator</p>
+    </div>
+  </div>
+</section>
+
+<script>
+const slides = document.querySelectorAll('.slide');
+const total = slides.length;
+let cur = 0;
+
+// First slide: make visible immediately
+slides[0]?.classList.add('visible');
+slides[0]?.querySelectorAll('.reveal').forEach(function(r) { r.classList.add('visible'); });
+
+// Nav dots
+const dotsEl = document.getElementById('nav-dots');
+const dots = [];
+for (let i = 0; i < total; i++) {
+  const d = document.createElement('button');
+  d.className = 'dot';
+  d.setAttribute('aria-label', 'Slide ' + (i+1));
+  d.addEventListener('click', () => goTo(i));
+  dotsEl.appendChild(d);
+  dots.push(d);
+}
+
+function goTo(n) {
+  n = Math.max(0, Math.min(total - 1, n));
+  cur = n;
+  slides.forEach(function(slide, i) {
+    slide.classList.toggle('visible', i === n);
+    var reveals = slide.querySelectorAll('.reveal');
+    reveals.forEach(function(r) { r.classList.toggle('visible', i === n); });
+  });
+  slides[cur].scrollIntoView({ behavior: 'smooth' });
+  updateUI();
+}
+
+function updateUI() {
+  dots.forEach((d, i) => d.classList.toggle('active', i === cur));
+  document.getElementById('progress').style.width = ((cur + 1) / total * 100) + '%';
+  document.getElementById('slide-num').textContent = (cur + 1) + ' / ' + total;
+}
+
+// IntersectionObserver for reveal
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      const el = entry.target;
+      const revealEls = el.querySelectorAll('.reveal');
+      revealEls.forEach((r, i) => {
+        setTimeout(() => r.classList.add('visible'), i * 80);
+      });
+      const idx = Array.from(slides).indexOf(el);
+      if (idx !== -1) { cur = idx; updateUI(); }
+    }
+  });
+}, { threshold: 0.5 });
+slides.forEach(s => observer.observe(s));
+
+// Keyboard
+let editMode = false;
+let presentMode = false;
+document.addEventListener('keydown', e => {
+  if (editMode && e.key !== 'Escape') {
+    if ((e.ctrlKey || e.metaKey) && e.key === 's') { e.preventDefault(); saveFile(); }
+    return;
+  }
+  if (presentMode) {
+    if (e.key === 'Escape') { e.preventDefault(); exitPresent(); return; }
+    if ((e.key === 'b' || e.key === 'B')) { e.preventDefault(); document.body.classList.toggle('presenting-black'); return; }
+  }
+  if (e.key === 'ArrowDown' || e.key === 'ArrowRight' || e.key === ' ') { e.preventDefault(); goTo(cur + 1); }
+  if (e.key === 'ArrowUp'   || e.key === 'ArrowLeft')  { e.preventDefault(); goTo(cur - 1); }
+  if (e.key === 'e' || e.key === 'E') toggleEdit();
+  if (e.key === 'Escape' && editMode) toggleEdit();
+  if (e.key === 'F5') { e.preventDefault(); enterPresent(); }
+  if ((e.ctrlKey || e.metaKey) && e.key === 's') { e.preventDefault(); saveFile(); }
+});
+
+// Trackpad/mouse wheel: handled natively by scroll-snap-type: y mandatory
+// No JS wheel handler needed — IntersectionObserver keeps cur/dots in sync
+
+// Touch swipe
+let touchY = 0;
+document.addEventListener('touchstart', e => { touchY = e.touches[0].clientY; }, { passive: true });
+document.addEventListener('touchend', e => {
+  const dy = touchY - e.changedTouches[0].clientY;
+  if (Math.abs(dy) > 40) dy > 0 ? goTo(cur + 1) : goTo(cur - 1);
+}, { passive: true });
+
+// Edit mode
+let fileHandle = null;
+function toggleEdit() {
+  editMode = !editMode;
+  document.body.classList.toggle('edit-mode', editMode);
+  const editable = document.querySelectorAll('h1,h2,h3,p,.ent-kpi-number,.ent-kpi-label,.ent-install-cmd,.ent-badge,.ent-label-tag');
+  editable.forEach(el => el.setAttribute('contenteditable', editMode ? 'true' : 'false'));
+}
+
+async function saveFile() {
+  const html = '<!DOCTYPE html>\n' + document.documentElement.outerHTML;
+  if (window.showSaveFilePicker) {
+    try {
+      if (!fileHandle) fileHandle = await window.showSaveFilePicker({ suggestedName: 'enterprise-dark.html', types: [{ description: 'HTML', accept: {'text/html': ['.html']} }] });
+      const writable = await fileHandle.createWritable();
+      await writable.write(html); await writable.close(); return;
+    } catch(_) {}
+  }
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(new Blob([html], { type: 'text/html' }));
+  a.download = 'enterprise-dark.html'; a.click();
+}
+
+document.getElementById('hotzone').addEventListener('click', toggleEdit);
+updateUI();
+
+/* Watermark — last slide only */
+(function() {
+  var slides = document.querySelectorAll('.slide');
+  if (!slides.length) return;
+  var last = slides[slides.length - 1];
+  var credit = document.createElement('div');
+  credit.className = 'slide-credit';
+  credit.textContent = 'By kai-slide-creator v2.12.0 · Enterprise Dark';
+  last.appendChild(credit);
+})();
+</script>
+</body>
+</html>
