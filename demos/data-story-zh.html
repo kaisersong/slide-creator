@@ -1,738 +1,714 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Data Story — slide-creator</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&family=Noto+Sans+SC:wght@400;600&display=swap" rel="stylesheet">
-  <style>
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    html { scroll-snap-type: y mandatory; height: 100%; }
-    body {
-      height: 100%; overflow-x: hidden;
-      background: #0f1117;
-      font-family: 'Inter', 'Noto Sans SC', sans-serif;
-      color: #e2e8f0;
-      font-variant-numeric: tabular-nums;
-    }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Data Story · 下一代开发者平台</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@700&family=Inter:wght@400;500;600;700" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-    .slide {
-      width: 100vw; height: 100vh; height: 100dvh;
-      scroll-snap-align: start; overflow: hidden;
-      position: relative; display: flex; flex-direction: column;
-      background: #0f1117;
-      padding: clamp(2rem, 5vw, 4rem) clamp(2.5rem, 7vw, 6rem);
-    }
+:root {
+    --bg: #0f172a;
+    --accent: #38bdf8;
+    --text-primary: #f1f5f9;
+    --text-body: rgba(241,245,249,0.70);
+    --text-secondary: rgba(241,245,249,0.50);
+    --text-muted: rgba(241,245,249,0.35);
+    --card-bg: rgba(56,189,248,0.06);
+    --card-border: rgba(56,189,248,0.15);
+    --divider: rgba(56,189,248,0.20);
+    --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+    --duration-normal: 0.6s;
+}
 
-    /* Progress bar */
-    #progress {
-      position: fixed; top: 0; left: 0; height: 2px;
-      background: linear-gradient(90deg, #3b82f6, #8b5cf6);
-      z-index: 1000; transition: width 0.3s ease;
-    }
+html { scroll-snap-type: y mandatory; height: 100%; }
 
-    /* Nav dots */
-    #nav-dots {
-      position: fixed; right: 1.5rem; top: 50%; transform: translateY(-50%);
-      display: flex; flex-direction: column; gap: 0.5rem; z-index: 1000;
-    }
-    .dot {
-      width: 4px; height: 4px; border-radius: 50%;
-      background: #334155; cursor: pointer; transition: all 0.2s;
-    }
-    .dot.active { background: #3b82f6; height: 16px; border-radius: 2px; }
+body {
+    height: 100%;
+    overflow-x: hidden;
+    font-family: 'Inter', system-ui, sans-serif;
+    color: var(--text-primary);
+}
 
-    /* Edit indicator */
-    #edit-indicator {
-      position: fixed; bottom: 1.5rem; right: 1.5rem; z-index: 1000;
-      font-family: 'Inter', sans-serif; font-size: 0.65rem; font-weight: 600;
-      color: #3b82f6; letter-spacing: 0.12em; text-transform: uppercase;
-      border-bottom: 1px solid #3b82f6; padding-bottom: 0.15rem; display: none;
-    }
-    body.edit-mode #edit-indicator { display: block; }
-    body.edit-mode [contenteditable] { outline: 1px solid rgba(59,130,246,0.4); }
-    #hotzone { position: fixed; top: 0; left: 0; width: 80px; height: 80px; z-index: 999; cursor: pointer; }
+/* Background */
+body {
+    background: #0f172a;
+    background-image:
+        linear-gradient(rgba(56,189,248,0.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(56,189,248,0.04) 1px, transparent 1px);
+    background-size: 32px 32px;
+}
 
-    /* Animations */
-    @keyframes fadeInUp { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: none; } }
-    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-    @keyframes growBar {
-      from { transform: scaleY(0); transform-origin: bottom; }
-      to { transform: scaleY(1); transform-origin: bottom; }
-    }
+.slide {
+    width: 100vw; height: 100vh; height: 100dvh;
+    scroll-snap-align: start; overflow: hidden;
+    position: relative; display: flex;
+    flex-direction: column; align-items: center; justify-content: center;
+    padding: clamp(1.5rem, 4vw, 4rem);
+}
 
-    .reveal { opacity: 0; }
-    .slide.visible .reveal { animation: fadeInUp 0.45s ease forwards; }
-    .slide.visible .reveal:nth-child(1) { animation-delay: 0.05s; }
-    .slide.visible .reveal:nth-child(2) { animation-delay: 0.12s; }
-    .slide.visible .reveal:nth-child(3) { animation-delay: 0.19s; }
-    .slide.visible .reveal:nth-child(4) { animation-delay: 0.26s; }
-    .slide.visible .reveal:nth-child(5) { animation-delay: 0.33s; }
-    .slide.visible .reveal:nth-child(6) { animation-delay: 0.40s; }
-    .slide.visible .reveal:nth-child(7) { animation-delay: 0.47s; }
+.slide .content {
+    width: 100%; max-width: min(90vw, 800px);
+    padding: clamp(24px, 5vw, 64px);
+    position: relative; z-index: 1;
+}
 
-    /* Grid background */
-    .slide::before {
-      content: ''; position: absolute; inset: 0; pointer-events: none;
-      background-image:
-        linear-gradient(rgba(30,41,59,0.5) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(30,41,59,0.5) 1px, transparent 1px);
-      background-size: clamp(40px,6vw,80px) clamp(40px,6vw,80px);
-    }
+h1 { font-size: clamp(2rem, 5.5vw, 4rem); font-weight: 800; line-height: 1.1; letter-spacing: -0.02em; }
+h2 { font-size: clamp(1.4rem, 3.5vw, 2.4rem); font-weight: 700; line-height: 1.2; letter-spacing: -0.01em; }
+h3 { font-size: clamp(0.9rem, 1.6vw, 1.2rem); font-weight: 600; }
+p { font-size: clamp(0.82rem, 1.4vw, 1.05rem); line-height: 1.6; color: var(--text-body); }
 
-    /* Shared layout layer */
-    .content { position: relative; z-index: 1; flex: 1; display: flex; flex-direction: column; }
+.pill {
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 4px 14px; border-radius: 999px;
+    font-size: 12px; font-weight: 600; letter-spacing: 0.05em;
+    background: rgba(56,189,248,0.12); color: #38bdf8;
+    border: 1px solid rgba(56,189,248,0.25);
+}
 
-    /* Typography */
-    .eyebrow {
-      font-size: clamp(0.6rem, 0.85vw, 0.68rem); font-weight: 600;
-      text-transform: uppercase; letter-spacing: 0.14em; color: #64748b;
-      margin-bottom: clamp(0.6rem, 1.2vh, 1rem);
-    }
+.reveal {
+    opacity: 0; transform: translateY(20px);
+    transition: opacity var(--duration-normal) var(--ease-out-expo),
+                transform var(--duration-normal) var(--ease-out-expo);
+}
+.slide.visible .reveal { opacity: 1; transform: translateY(0); }
 
-    h1 {
-      font-size: clamp(2.5rem, 7vw, 5rem); font-weight: 800;
-      letter-spacing: -0.03em; line-height: 1;
-      color: #e2e8f0;
-    }
+/* Progress bar */
+.progress-bar { position: fixed; top: 0; left: 0; height: 3px; background: var(--accent); width: 0%; z-index: 100; transition: width 0.3s ease; }
 
-    h2 {
-      font-size: clamp(1.6rem, 3.5vw, 2.8rem); font-weight: 800;
-      letter-spacing: -0.02em; line-height: 1.1;
-      color: #e2e8f0;
-    }
+/* Nav dots placeholder */
+.nav-dots {}
 
-    p {
-      font-size: clamp(0.85rem, 1.3vw, 0.98rem);
-      line-height: 1.65; color: #94a3b8; max-width: 52ch;
-    }
 
-    /* KPI system */
-    .kpi-number {
-      font-size: clamp(3rem, 8vw, 5.5rem);
-      font-weight: 800; font-variant-numeric: tabular-nums;
-      line-height: 1; letter-spacing: -0.02em;
-    }
-    .kpi-number.pos { color: #00d4aa; }
-    .kpi-number.neg { color: #ff6b6b; }
-    .kpi-number.neu { color: #e2e8f0; }
-    .kpi-number.blue { color: #3b82f6; }
+/* ═══════════════════════════════════════════════
+   Present Mode — F5 / ▶ to enter, ESC to exit
+   ═══════════════════════════════════════════════ */
+#present-btn {
+  position: fixed; bottom: 1.5rem; right: 1.5rem; z-index: 9997;
+  width: 44px; height: 44px; border-radius: 50%;
+  background: rgba(0,0,0,0.50); color: rgba(255,255,255,0.80);
+  border: 1.5px solid rgba(255,255,255,0.20);
+  font-size: 1rem; cursor: pointer;
+  backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+  display: flex; align-items: center; justify-content: center;
+  opacity: 0; transition: opacity 0.2s; pointer-events: none;
+}
+body:hover #present-btn { opacity: 1; pointer-events: auto; }
+#present-btn:hover { background: rgba(0,0,0,0.78); }
 
-    .kpi-label {
-      font-size: 11px; font-weight: 600;
-      text-transform: uppercase; letter-spacing: 0.12em; color: #64748b;
-      margin-top: 8px;
-    }
-    .kpi-trend {
-      font-size: 13px; font-weight: 600;
-      display: inline-flex; align-items: center; gap: 4px; margin-top: 4px;
-    }
-    .kpi-trend.up { color: #00d4aa; }
-    .kpi-trend.down { color: #ff6b6b; }
+#present-counter {
+  display: none; position: fixed; bottom: 1.4rem; left: 50%;
+  transform: translateX(-50%); z-index: 9997;
+  font-size: 0.65rem; letter-spacing: 0.14em; font-family: system-ui, sans-serif;
+  color: rgba(255,255,255,0.28);
+}
 
-    /* Insight pullquote */
-    .insight {
-      border-left: 3px solid #3b82f6;
-      padding: 0.75rem 1rem;
-      background: rgba(59,130,246,0.08);
-      border-radius: 0 6px 6px 0;
-      font-size: clamp(0.8rem, 1.3vw, 1rem); line-height: 1.5;
-      color: #cbd5e1; max-width: 56ch;
-    }
-    .insight strong { color: #e2e8f0; font-weight: 600; }
+body.presenting { background: #111 !important; overflow: hidden !important; }
+body.presenting .slide {
+  position: fixed !important; inset: 0;
+  width: 1440px !important; height: 900px !important;
+  transform-origin: top left;
+  display: none !important; margin: 0; padding: 0;
+}
+body.presenting .slide.p-on { display: flex !important; }
+body.presenting .slide.p-on .reveal { opacity: 1; transform: translateY(0); }
+body.presenting #present-btn { display: none !important; }
+body.presenting #present-counter { display: block; }
+body.presenting .nav-dots,
+body.presenting #slide-counter,
+body.presenting .orb,
+body.presenting #notes-panel,
+body.presenting .edit-hotzone,
+body.presenting .edit-toggle,
+body.presenting .keyboard-hint { display: none !important; }
 
-    /* Card */
-    .card {
-      background: #1a1f2e; border: 1px solid #2d3748; border-radius: 8px;
-      padding: clamp(1rem, 2vw, 1.5rem);
-    }
+body.presenting.presenting-black { background: #000 !important; }
+body.presenting.presenting-black .slide { display: none !important; }
 
-    /* Divider */
-    .divider { border: none; border-top: 1px solid #1e293b; margin: clamp(1rem,2vh,1.5rem) 0; }
 
-    /* SVG chart helpers */
-    .chart-axis { stroke: #334155; stroke-width: 1; fill: none; }
-    .chart-grid { stroke: #1e293b; stroke-width: 1; stroke-dasharray: 4 4; fill: none; }
-    .chart-bar { fill: #3b82f6; }
-    .chart-bar.secondary { fill: #8b5cf6; }
-    .chart-bar.tertiary { fill: #10b981; }
-    .chart-line { stroke: #3b82f6; stroke-width: 2.5; fill: none; stroke-linecap: round; stroke-linejoin: round; }
-    .chart-area { fill: url(#areaGrad); opacity: 0.15; }
-    .chart-label { fill: #64748b; font-size: 11px; font-family: 'Inter', sans-serif; }
-    .chart-val { fill: #94a3b8; font-size: 11px; font-family: 'Inter', sans-serif; font-weight: 600; }
+.slide-credit {
+  position: absolute; bottom: 8px; right: 14px;
+  font-size: 9px; color: var(--text-secondary, #999);
+  opacity: 0.35; pointer-events: none; z-index: 1;
+  font-family: system-ui, sans-serif;
+}
+body.presenting .slide-credit { display: none; }
 
-    /* --- Slide-specific layouts --- */
 
-    /* Slide 1 — Hero number layout */
-    .hero-center {
-      flex: 1; display: flex; flex-direction: column;
-      align-items: center; justify-content: center; text-align: center;
-    }
-    .hero-kpi-num {
-      font-size: clamp(6rem, 18vw, 12rem); font-weight: 800;
-      font-variant-numeric: tabular-nums; letter-spacing: -0.04em;
-      line-height: 0.9;
-    }
-    .hero-kpi-label {
-      font-size: clamp(0.7rem, 1.2vw, 0.85rem); font-weight: 600;
-      text-transform: uppercase; letter-spacing: 0.16em; color: #64748b;
-      margin-top: 1rem;
-    }
-    .hero-context {
-      font-size: clamp(0.85rem, 1.3vw, 0.95rem);
-      color: #64748b; margin-top: 0.5rem;
-    }
-    .cover-tagline {
-      font-size: clamp(1rem, 1.8vw, 1.3rem); font-weight: 600;
-      color: #e2e8f0; letter-spacing: -0.01em; line-height: 1.3;
-      max-width: 44ch; text-align: center;
-    }
-    .cover-stats-row {
-      display: flex; gap: clamp(2rem, 5vw, 5rem);
-      margin-top: clamp(2rem, 4vh, 3rem); justify-content: center;
-    }
-    .cover-stat-val {
-      font-size: clamp(1.8rem, 3.5vw, 2.8rem); font-weight: 800;
-      font-variant-numeric: tabular-nums; color: #3b82f6;
-      display: block; line-height: 1;
-    }
-    .cover-stat-label {
-      font-size: 10px; font-weight: 600; text-transform: uppercase;
-      letter-spacing: 0.14em; color: #64748b; margin-top: 0.4rem; display: block;
-    }
+.edit-hotzone {
+  position: fixed; top: 0; left: 0; width: 30px; height: 30px;
+  z-index: 9998; cursor: pointer;
+}
+.edit-toggle {
+  position: fixed; top: 12px; left: 12px; z-index: 9999;
+  padding: 6px 12px; border-radius: 8px; border: none;
+  background: rgba(0,0,0,0.50); color: rgba(255,255,255,0.70);
+  font-size: 0.75rem; cursor: pointer;
+  backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+  opacity: 0; transition: opacity 0.3s; pointer-events: none;
+}
+body:hover .edit-toggle { opacity: 1; pointer-events: auto; }
+body.editing .edit-toggle { opacity: 1; background: rgba(16,185,129,0.80); color: #fff; }
 
-    /* Slide 2 — Problem: two-col */
-    .two-col {
-      display: grid; grid-template-columns: 1fr 1fr;
-      gap: clamp(1.5rem, 3vw, 3rem); align-items: start;
-    }
-    @media (max-width: 680px) { .two-col { grid-template-columns: 1fr; } }
-    .pain-list { list-style: none; }
-    .pain-item {
-      display: flex; gap: 0.75rem; align-items: flex-start;
-      padding: clamp(0.75rem, 1.5vh, 1rem) 0;
-      border-bottom: 1px solid #1e293b;
-    }
-    .pain-item:first-child { border-top: 1px solid #1e293b; }
-    .pain-dot {
-      width: 6px; height: 6px; border-radius: 50%;
-      background: #ff6b6b; flex-shrink: 0; margin-top: 0.4rem;
-    }
-    .pain-dot.warn { background: #f59e0b; }
-    .pain-text { font-size: clamp(0.82rem, 1.2vw, 0.92rem); line-height: 1.55; color: #94a3b8; }
-    .pain-text strong { color: #e2e8f0; font-weight: 600; }
+#notes-panel {
+  position: fixed; bottom: 0; left: 0; right: 0; z-index: 9996;
+  background: rgba(0,0,0,0.85); backdrop-filter: blur(12px);
+  color: #fff; transform: translateY(100%); transition: transform 0.3s ease;
+  max-height: 40vh; display: flex; flex-direction: column;
+}
+#notes-panel.active { transform: translateY(0); }
+#notes-panel-header {
+  display: flex; align-items: center; gap: 8px;
+  padding: 8px 16px; border-bottom: 1px solid rgba(255,255,255,0.10);
+}
+#notes-panel-label { font-size: 0.7rem; letter-spacing: 0.1em; text-transform: uppercase; color: rgba(255,255,255,0.50); }
+#notes-body { flex: 1; padding: 8px; }
+#notes-textarea {
+  width: 100%; height: 100%; border: none; background: transparent;
+  color: rgba(255,255,255,0.75); font-size: 0.88rem; line-height: 1.65;
+  font-family: system-ui, sans-serif; resize: none; outline: none;
+}
 
-    /* Slide 3 — Show Don't Tell: 3 cards */
-    .step-cards {
-      display: grid; grid-template-columns: repeat(3, 1fr);
-      gap: clamp(1rem, 2vw, 1.5rem);
-      margin-top: clamp(1rem, 2vh, 1.5rem); flex: 1; align-items: stretch;
-    }
-    @media (max-width: 680px) { .step-cards { grid-template-columns: 1fr; } }
-    .step-card {
-      background: #1a1f2e; border: 1px solid #2d3748; border-radius: 8px;
-      padding: clamp(1rem, 2vw, 1.5rem); display: flex; flex-direction: column;
-      transition: border-color 0.2s;
-    }
-    .step-card:hover { border-color: #3b82f6; }
-    .step-num {
-      font-size: clamp(2rem, 4vw, 3rem); font-weight: 800;
-      font-variant-numeric: tabular-nums; color: #3b82f6;
-      line-height: 1; margin-bottom: 0.6rem;
-    }
-    .step-title { font-size: clamp(0.88rem, 1.3vw, 1rem); font-weight: 600;
-      color: #e2e8f0; margin-bottom: 0.4rem; }
-    .step-desc { font-size: clamp(0.78rem, 1.1vw, 0.88rem); color: #64748b; line-height: 1.6; }
 
-    /* Slide 4 — KPI grid */
-    .kpi-grid {
-      display: grid; grid-template-columns: repeat(4, 1fr);
-      gap: clamp(0.8rem, 1.5vw, 1.2rem);
-      margin-top: clamp(1rem, 2vh, 1.5rem); flex: 1; align-items: center;
-    }
-    @media (max-width: 800px) { .kpi-grid { grid-template-columns: repeat(2, 1fr); } }
-    .kpi-card {
-      background: #1a1f2e; border: 1px solid #2d3748; border-radius: 8px;
-      padding: clamp(1rem, 2vw, 1.5rem);
-    }
-    .kpi-card.highlight { border-color: #3b82f6; background: rgba(59,130,246,0.06); }
-
-    /* Slide 5 — Bar chart + insight */
-    .chart-layout {
-      display: grid; grid-template-columns: 1fr 1fr;
-      gap: clamp(2rem, 4vw, 4rem);
-      margin-top: clamp(1rem, 2vh, 1.5rem); flex: 1; align-items: center;
-    }
-    @media (max-width: 680px) { .chart-layout { grid-template-columns: 1fr; } }
-    .chart-wrap { width: 100%; }
-
-    /* Slide 6 — Features: table */
-    .feature-table { margin-top: clamp(1rem, 2vh, 1.5rem); }
-    .feature-row {
-      display: grid; grid-template-columns: 1fr 2.5fr; gap: 1.5rem;
-      padding: clamp(0.75rem, 1.4vh, 1rem) 0;
-      border-bottom: 1px solid #1e293b; align-items: baseline;
-    }
-    .feature-row:first-child { border-top: 1px solid #1e293b; }
-    .feature-name {
-      font-size: clamp(0.68rem, 0.95vw, 0.78rem); font-weight: 600;
-      text-transform: uppercase; letter-spacing: 0.1em; color: #3b82f6;
-    }
-    .feature-desc { font-size: clamp(0.8rem, 1.2vw, 0.9rem); color: #94a3b8; line-height: 1.55; }
-
-    /* Slide 7 — Install: code */
-    .install-grid {
-      display: grid; grid-template-columns: 1fr 1fr;
-      gap: clamp(1.5rem, 3vw, 2.5rem); margin-top: clamp(1rem, 2vh, 1.5rem);
-    }
-    @media (max-width: 680px) { .install-grid { grid-template-columns: 1fr; } }
-    .install-card {
-      background: #1a1f2e; border: 1px solid #2d3748; border-radius: 8px;
-      padding: clamp(1rem, 2vw, 1.5rem);
-    }
-    .install-label {
-      font-size: 11px; font-weight: 600; text-transform: uppercase;
-      letter-spacing: 0.12em; color: #64748b; margin-bottom: 0.75rem; display: block;
-    }
-    .code-block {
-      font-family: 'Courier New', monospace;
-      font-size: clamp(0.68rem, 1vw, 0.78rem);
-      line-height: 1.75; color: #94a3b8;
-    }
-    .code-block .cmd { color: #10b981; }
-    .code-block .comment { color: #334155; }
-
-    /* Slide 8 — CTA: hero number */
-    .cta-cmd {
-      font-size: clamp(3rem, 8vw, 6rem); font-weight: 800;
-      letter-spacing: -0.03em; color: #3b82f6; line-height: 1;
-      margin-top: clamp(1.5rem, 3vh, 2.5rem);
-    }
-    .cta-sub {
-      font-size: clamp(0.85rem, 1.3vw, 0.95rem); color: #64748b;
-      margin-top: clamp(0.8rem, 1.5vh, 1.2rem); max-width: 54ch;
-    }
-    .cta-chips {
-      display: flex; gap: 0.5rem; flex-wrap: wrap;
-      margin-top: clamp(1.2rem, 2.5vh, 2rem);
-    }
-    .chip {
-      font-size: 11px; font-weight: 600; text-transform: uppercase;
-      letter-spacing: 0.1em; color: #64748b;
-      border: 1px solid #2d3748; border-radius: 4px;
-      padding: 0.3rem 0.75rem; background: #1a1f2e;
-    }
-    .chip.active { color: #3b82f6; border-color: #3b82f6; background: rgba(59,130,246,0.08); }
-
-    /* Line chart slide */
-    .line-chart-layout {
-      display: grid; grid-template-columns: 2fr 1fr;
-      gap: clamp(2rem, 4vw, 3rem);
-      flex: 1; align-items: center;
-    }
-    @media (max-width: 680px) { .line-chart-layout { grid-template-columns: 1fr; } }
-    .insights-stack { display: flex; flex-direction: column; gap: 1rem; }
-  </style>
+@media (max-height: 700px) {
+    :root { --slide-padding: clamp(0.75rem, 3vw, 2rem); }
+}
+@media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.2s !important; }
+}
+</style>
 </head>
-<body>
+<body data-export-progress="true" data-preset="Data Story">
 
-<div id="progress"></div>
+<div class="progress-bar"></div>
+<nav class="nav-dots" aria-label="Slide navigation"></nav>
 
-<div id="nav-dots">
-  <div class="dot active" data-idx="0"></div>
-  <div class="dot" data-idx="1"></div>
-  <div class="dot" data-idx="2"></div>
-  <div class="dot" data-idx="3"></div>
-  <div class="dot" data-idx="4"></div>
-  <div class="dot" data-idx="5"></div>
-  <div class="dot" data-idx="6"></div>
-  <div class="dot" data-idx="7"></div>
+<div class="edit-hotzone"></div>
+<button class="edit-toggle" id="editToggle" title="编辑模式 (E)">✏ 编辑</button>
+<div id="notes-panel">
+  <div id="notes-panel-header">
+    <div id="notes-panel-label">演讲者备注</div>
+    <button id="notes-collapse-btn" title="折叠">&#9660;</button>
+  </div>
+  <div id="notes-body">
+    <textarea id="notes-textarea" placeholder="添加备注..."></textarea>
+  </div>
 </div>
 
-<div id="hotzone"></div>
-<div id="edit-indicator">Edit Mode — Ctrl+S to Save</div>
-
-<!-- SLIDE 01: Cover — Hero layout -->
-<section class="slide" id="slide-0">
-  <div class="content">
-    <div class="eyebrow reveal">slide-creator · 为 Claude Code 与 OpenClaw 设计的 HTML 演示工具</div>
-    <div class="hero-center reveal">
-      <p class="cover-tagline">零依赖演示。<br>数据就是论点。</p>
-      <div class="cover-stats-row">
-        <div>
-          <span class="cover-stat-val">19</span>
-          <span class="cover-stat-label">预设主题</span>
-        </div>
-        <div>
-          <span class="cover-stat-val">0</span>
-          <span class="cover-stat-label">依赖项</span>
-        </div>
-        <div>
-          <span class="cover-stat-val">&lt; 30秒</span>
-          <span class="cover-stat-label">生成时间</span>
-        </div>
-        <div>
-          <span class="cover-stat-val">∞</span>
-          <span class="cover-stat-label">幻灯片数量</span>
-        </div>
-      </div>
+<section class="slide" data-notes="欢迎观众。介绍产品愿景。">
+<div class="content" style="text-align:center;">
+    <div class="reveal">
+        <span class="pill">开源 · Claude Code · OpenClaw</span>
     </div>
-  </div>
+    <div class="reveal" style="transition-delay:0.1s">
+        <h1>slide<span style="color:#38bdf8;">-creator</span></h1>
+    </div>
+    <div class="reveal" style="transition-delay:0.2s; max-width:560px; margin:0 auto;">
+        <p style="font-size:clamp(16px,2vw,22px); margin-bottom:clamp(20px,3vw,36px);">
+            面向 Claude Code 与 OpenClaw 的<br>零依赖 HTML 演示文稿
+        </p>
+    </div>
+    <div class="reveal" style="transition-delay:0.3s">
+        <div class="stats" style="justify-content:center; display:flex; gap:clamp(24px,4vw,48px);">
+            <div class="stat">
+                <span class="stat-value" style="font-size:clamp(2rem,5vw,3.5rem); font-weight:800; color:#38bdf8;">21</span>
+                <span class="stat-label" style="font-size:clamp(10px,1.2vw,13px); color:rgba(241,245,249,0.35); text-transform:uppercase; letter-spacing:0.08em;">预设</span>
+            </div>
+            <div style="width:1px; background:rgba(56,189,248,0.20); align-self:stretch;"></div>
+            <div class="stat">
+                <span class="stat-value" style="font-size:clamp(2rem,5vw,3.5rem); font-weight:800; color:#38bdf8;">0</span>
+                <span class="stat-label" style="font-size:clamp(10px,1.2vw,13px); color:rgba(241,245,249,0.35); text-transform:uppercase; letter-spacing:0.08em;">依赖</span>
+            </div>
+            <div style="width:1px; background:rgba(56,189,248,0.20); align-self:stretch;"></div>
+            <div class="stat">
+                <span class="stat-value" style="font-size:clamp(2rem,5vw,3.5rem); font-weight:800; color:#38bdf8;">∞</span>
+                <span class="stat-label" style="font-size:clamp(10px,1.2vw,13px); color:rgba(241,245,249,0.35); text-transform:uppercase; letter-spacing:0.08em;">幻灯片</span>
+            </div>
+        </div>
+    </div>
+    <div class="reveal" style="transition-delay:0.4s; margin-top:clamp(20px,3vw,36px);">
+        <p style="font-size:clamp(12px,1.3vw,15px); color:rgba(241,245,249,0.35); letter-spacing:0.06em; text-transform:uppercase;">构建能拿下交易的演示文稿。</p>
+    </div>
+</div>
 </section>
 
-<section class="slide" id="slide-1">
-  <div class="content">
-    <div class="eyebrow reveal">问题所在</div>
-    <h2 class="reveal">演示文稿不应该需要<br>构建系统。</h2>
-    <hr class="divider reveal">
-    <div class="two-col reveal">
-      <ul class="pain-list">
-        <li class="pain-item">
-          <span class="pain-dot"></span>
-          <span class="pain-text"><strong>复杂的工具链。</strong>npm、webpack、300MB 的 node_modules — 仅仅是为了发布幻灯片。繁琐程度远超实际产出。</span>
-        </li>
-        <li class="pain-item">
-          <span class="pain-dot warn"></span>
-          <span class="pain-text"><strong>千篇一律的输出。</strong>每份 AI 演示：Inter 字体、紫色渐变、毫无差异。大规模看来完全无法区分。</span>
-        </li>
-        <li class="pain-item">
-          <span class="pain-dot"></span>
-          <span class="pain-text"><strong>没有所有权。</strong>封闭平台、导出锁定、内容反复收费。从根本上被设计成结构性依赖。</span>
-        </li>
-      </ul>
-      <div class="card" style="display:flex; flex-direction:column; gap:1rem;">
-        <div>
-          <div class="kpi-label">竞争工具的平均设置时间</div>
-          <div class="kpi-number neg" style="font-size: clamp(2rem,5vw,3.5rem);">47 分钟</div>
-          <div class="kpi-trend down">↓ 在第一张幻灯片之前</div>
-        </div>
-        <hr class="divider" style="margin: 0;">
-        <div>
-          <div class="kpi-label">使用 slide-creator 的设置时间</div>
-          <div class="kpi-number pos" style="font-size: clamp(2rem,5vw,3.5rem);">&lt; 30秒</div>
-          <div class="kpi-trend up">↑ git clone 后即可使用</div>
-        </div>
-      </div>
+<section class="slide" data-notes="提出问题：现有演示工具都是破碎的。">
+<div class="content">
+    <div class="reveal">
+        <span class="pill">问题所在</span>
     </div>
-  </div>
+    <div class="reveal" style="transition-delay:0.1s">
+        <h2 style="margin-top:clamp(12px,2vw,20px);">演示文稿不应该<br>需要一套<span style=color:{accent_text};>构建工具</span></h2>
+    </div>
+    <div class="sep reveal" style="transition-delay:0.15s; height:1px; background:rgba(56,189,248,0.20); margin:clamp(12px,2vw,20px) 0;"></div>
+    <div class="reveal" style="transition-delay:0.2s">
+        <div style="display:grid; gap:clamp(16px,3vw,32px);">
+            <div style="display:flex; gap:16px; align-items:start;">
+                <div style="flex-shrink:0; width:32px; height:32px; border-radius:8px; background:rgba(56,189,248,0.12); display:flex; align-items:center; justify-content:center; font-size:16px;">⚙️</div>
+                <div>
+                    <h3 style="font-size:clamp(14px,1.8vw,18px); font-weight:600; margin-bottom:4px;">复杂的工具链</h3>
+                    <p style="font-size:clamp(13px,1.4vw,15px); color:rgba(241,245,249,0.70);">Node、Webpack、npm、插件——只为做幻灯片。能讲之前要花几小时配置。</p>
+                </div>
+            </div>
+            <div style="display:flex; gap:16px; align-items:start;">
+                <div style="flex-shrink:0; width:32px; height:32px; border-radius:8px; background:rgba(56,189,248,0.12); display:flex; align-items:center; justify-content:center; font-size:16px;">📋</div>
+                <div>
+                    <h3 style="font-size:clamp(14px,1.8vw,18px); font-weight:600; margin-bottom:4px;">千篇一律的输出</h3>
+                    <p style="font-size:clamp(13px,1.4vw,15px); color:rgba(241,245,249,0.70);">每份 deck 看起来都一样。模板在呐喊"我和别人用的一样"。</p>
+                </div>
+            </div>
+            <div style="display:flex; gap:16px; align-items:start;">
+                <div style="flex-shrink:0; width:32px; height:32px; border-radius:8px; background:rgba(56,189,248,0.12); display:flex; align-items:center; justify-content:center; font-size:16px;">🔒</div>
+                <div>
+                    <h3 style="font-size:clamp(14px,1.8vw,18px); font-weight:600; margin-bottom:4px;">没有所有权</h3>
+                    <p style="font-size:clamp(13px,1.4vw,15px); color:rgba(241,245,249,0.70);">你的幻灯片存在别人的云里。导出是事后补救。供应商锁定就是商业模式。</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 </section>
 
-<section class="slide" id="slide-2">
-  <div class="content">
-    <div class="eyebrow reveal">发现工作流</div>
-    <h2 class="reveal">有效的风格发现。</h2>
-    <p class="reveal" style="margin-top: 0.5rem; margin-bottom: 0;">
-      你无法用言语描述设计偏好。slide-creator 生成预览 — 你凭直觉反应。
-    </p>
-    <div class="step-cards">
-      <div class="step-card reveal">
-        <div class="step-num">01</div>
-        <div class="step-title">询问风格气质</div>
-        <p class="step-desc">四个问题。语调、观众、能量、主题。设计上输入最少化。</p>
-      </div>
-      <div class="step-card reveal">
-        <div class="step-num">02</div>
-        <div class="step-title">3 个视觉预览</div>
-        <p class="step-desc">在浏览器中渲染。三个不同的方向。你的反应 — 无需描述。</p>
-      </div>
-      <div class="step-card reveal">
-        <div class="step-num">03</div>
-        <div class="step-title">选择。完成。</div>
-        <p class="step-desc">根据你选择的方向生成完整演示。在浏览器中打开。开始演示。</p>
-      </div>
+<section class="slide" data-notes="解释风格发现的工作流。">
+<div class="content">
+    <div class="reveal">
+        <span class="pill">工作流</span>
     </div>
-  </div>
+    <div class="reveal" style="transition-delay:0.1s">
+        <h2 style="margin-top:clamp(12px,2vw,20px);">风格发现<br><span style=color:{accent_text};>真正能用</span></h2>
+    </div>
+    <div class="sep reveal" style="transition-delay:0.15s; height:1px; background:rgba(56,189,248,0.20); margin:clamp(12px,2vw,20px) 0;"></div>
+    <div class="reveal" style="transition-delay:0.2s">
+        <p style="font-size:clamp(14px,1.6vw,17px); color:rgba(241,245,249,0.70);">描述你的心情。获得三个视觉预览。选一个感觉对的——在写第一页幻灯片之前。</p>
+    </div>
+    <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); gap:clamp(12px,2vw,24px); margin-top:clamp(16px,3vw,32px);" class="reveal" style="transition-delay:0.3s">
+        <div style="background:rgba(56,189,248,0.06); border:1px solid rgba(56,189,248,0.15); border-radius:12px; padding:clamp(16px,3vw,24px);">
+            <div style="font-size:24px; margin-bottom:8px;">🎨</div>
+            <h3 style="font-size:clamp(13px,1.5vw,16px); font-weight:600;">描述 mood</h3>
+            <p style="font-size:clamp(12px,1.3vw,14px); color:rgba(241,245,249,0.70); margin-top:4px;">"大胆且极简"或"温暖而创意"——自然语言输入。</p>
+        </div>
+        <div style="background:rgba(56,189,248,0.06); border:1px solid rgba(56,189,248,0.15); border-radius:12px; padding:clamp(16px,3vw,24px);">
+            <div style="font-size:24px; margin-bottom:8px;">👁</div>
+            <h3 style="font-size:clamp(13px,1.5vw,16px); font-weight:600;">3 个迷你预览</h3>
+            <p style="font-size:clamp(12px,1.3vw,14px); color:rgba(241,245,249,0.70); margin-top:4px;">完全生成前并排渲染三种匹配风格。</p>
+        </div>
+        <div style="background:rgba(56,189,248,0.06); border:1px solid rgba(56,189,248,0.15); border-radius:12px; padding:clamp(16px,3vw,24px);">
+            <div style="font-size:24px; margin-bottom:8px;">✓</div>
+            <h3 style="font-size:clamp(13px,1.5vw,16px); font-weight:600;">选择并构建</h3>
+            <p style="font-size:clamp(12px,1.3vw,14px); color:rgba(241,245,249,0.70); margin-top:4px;">选择你的风格。完整的演示文稿按你选的美学生成。</p>
+        </div>
+    </div>
+</div>
 </section>
 
-<section class="slide" id="slide-3">
-  <div class="content">
-    <div class="eyebrow reveal">设计系统</div>
-    <h2 class="reveal">19 个精心打造的预设。以工艺衡量。</h2>
-    <div class="kpi-grid">
-      <div class="kpi-card highlight reveal">
-        <div class="kpi-label">总预设数</div>
-        <div class="kpi-number blue">19</div>
-        <div class="kpi-trend up">↑ 本季度新增 6 个</div>
-      </div>
-      <div class="kpi-card reveal">
-        <div class="kpi-label">依赖项</div>
-        <div class="kpi-number pos">0</div>
-        <div class="kpi-trend up">↑ 浏览器原生</div>
-      </div>
-      <div class="kpi-card reveal">
-        <div class="kpi-label">生成时间</div>
-        <div class="kpi-number neu" style="font-size: clamp(2rem,5vw,3.5rem);">&lt; 30秒</div>
-        <div class="kpi-trend up">↑ 平均测量值</div>
-      </div>
-      <div class="kpi-card reveal">
-        <div class="kpi-label">文件大小</div>
-        <div class="kpi-number neu" style="font-size: clamp(2rem,5vw,3.5rem);">~50KB</div>
-        <div class="kpi-trend up">↑ 自包含</div>
-      </div>
+<section class="slide" data-notes="展示全部 21 个预设。高亮 Data Story。">
+<div class="content">
+    <div class="reveal">
+        <span class="pill">21 个预设</span>
     </div>
-    <div class="insight reveal" style="margin-top: clamp(1rem,2vh,1.5rem);">
-      每个预设都是一个完整的视觉系统 — 排版、布局、色彩、动画 — 在完整视口下构建和测试。
-      <strong>无混合。无妥协。无通用输出。</strong>
+    <div class="reveal" style="transition-delay:0.1s">
+        <h2 style="margin-top:clamp(12px,2vw,20px);">所有演示文稿风格，<br><span style=color:{accent_text};>已内置</span></h2>
     </div>
-  </div>
+    <div class="sep reveal" style="transition-delay:0.15s; height:1px; background:rgba(56,189,248,0.20); margin:clamp(12px,2vw,20px) 0;"></div>
+    <div class="reveal" style="transition-delay:0.2s; display:flex; flex-wrap:wrap; gap:8px;">
+        <span style="display:inline-block; padding:4px 12px; border-radius:999px; background:rgba(56,189,248,0.12); border:1px solid rgba(56,189,248,0.15); color:rgba(241,245,249,0.70); font-size:clamp(10px,1.2vw,13px); font-weight:500;">Aurora Mesh</span>
+        <span style="display:inline-block; padding:4px 12px; border-radius:999px; background:rgba(56,189,248,0.12); border:1px solid rgba(56,189,248,0.15); color:rgba(241,245,249,0.70); font-size:clamp(10px,1.2vw,13px); font-weight:500;">Bold Signal</span>
+        <span style="display:inline-block; padding:4px 12px; border-radius:999px; background:rgba(56,189,248,0.12); border:1px solid rgba(56,189,248,0.15); color:rgba(241,245,249,0.70); font-size:clamp(10px,1.2vw,13px); font-weight:500;">Blue Sky</span>
+        <span style="display:inline-block; padding:4px 12px; border-radius:999px; background:rgba(56,189,248,0.12); border:1px solid rgba(56,189,248,0.15); color:rgba(241,245,249,0.70); font-size:clamp(10px,1.2vw,13px); font-weight:500;">Chinese Chan</span>
+        <span style="display:inline-block; padding:4px 12px; border-radius:999px; background:rgba(56,189,248,0.12); border:1px solid rgba(56,189,248,0.15); color:rgba(241,245,249,0.70); font-size:clamp(10px,1.2vw,13px); font-weight:500;">Creative Voltage</span>
+        <span style="display:inline-block; padding:4px 12px; border-radius:999px; background:rgba(56,189,248,0.12); border:1px solid rgba(56,189,248,0.15); color:rgba(241,245,249,0.70); font-size:clamp(10px,1.2vw,13px); font-weight:500;">Dark Botanical</span>
+        <span style="display:inline-block; padding:4px 12px; border-radius:999px; background:rgba(56,189,248,0.12); border:1px solid rgba(56,189,248,0.25); color:#38bdf8; font-size:clamp(10px,1.2vw,13px); font-weight:600;">Data Story ✦</span>
+        <span style="display:inline-block; padding:4px 12px; border-radius:999px; background:rgba(56,189,248,0.12); border:1px solid rgba(56,189,248,0.15); color:rgba(241,245,249,0.70); font-size:clamp(10px,1.2vw,13px); font-weight:500;">Electric Studio</span>
+        <span style="display:inline-block; padding:4px 12px; border-radius:999px; background:rgba(56,189,248,0.12); border:1px solid rgba(56,189,248,0.15); color:rgba(241,245,249,0.70); font-size:clamp(10px,1.2vw,13px); font-weight:500;">Enterprise Dark</span>
+        <span style="display:inline-block; padding:4px 12px; border-radius:999px; background:rgba(56,189,248,0.12); border:1px solid rgba(56,189,248,0.15); color:rgba(241,245,249,0.70); font-size:clamp(10px,1.2vw,13px); font-weight:500;">Glassmorphism</span>
+        <span style="display:inline-block; padding:4px 12px; border-radius:999px; background:rgba(56,189,248,0.12); border:1px solid rgba(56,189,248,0.15); color:rgba(241,245,249,0.70); font-size:clamp(10px,1.2vw,13px); font-weight:500;">Modern Newspaper</span>
+        <span style="display:inline-block; padding:4px 12px; border-radius:999px; background:rgba(56,189,248,0.12); border:1px solid rgba(56,189,248,0.15); color:rgba(241,245,249,0.70); font-size:clamp(10px,1.2vw,13px); font-weight:500;">Neo Brutalism</span>
+        <span style="display:inline-block; padding:4px 12px; border-radius:999px; background:rgba(56,189,248,0.12); border:1px solid rgba(56,189,248,0.15); color:rgba(241,245,249,0.70); font-size:clamp(10px,1.2vw,13px); font-weight:500;">Neo Retro Dev</span>
+        <span style="display:inline-block; padding:4px 12px; border-radius:999px; background:rgba(56,189,248,0.12); border:1px solid rgba(56,189,248,0.15); color:rgba(241,245,249,0.70); font-size:clamp(10px,1.2vw,13px); font-weight:500;">Neon Cyber</span>
+        <span style="display:inline-block; padding:4px 12px; border-radius:999px; background:rgba(56,189,248,0.12); border:1px solid rgba(56,189,248,0.15); color:rgba(241,245,249,0.70); font-size:clamp(10px,1.2vw,13px); font-weight:500;">Notebook Tabs</span>
+        <span style="display:inline-block; padding:4px 12px; border-radius:999px; background:rgba(56,189,248,0.12); border:1px solid rgba(56,189,248,0.15); color:rgba(241,245,249,0.70); font-size:clamp(10px,1.2vw,13px); font-weight:500;">Paper & Ink</span>
+        <span style="display:inline-block; padding:4px 12px; border-radius:999px; background:rgba(56,189,248,0.12); border:1px solid rgba(56,189,248,0.15); color:rgba(241,245,249,0.70); font-size:clamp(10px,1.2vw,13px); font-weight:500;">Pastel Geometry</span>
+        <span style="display:inline-block; padding:4px 12px; border-radius:999px; background:rgba(56,189,248,0.12); border:1px solid rgba(56,189,248,0.15); color:rgba(241,245,249,0.70); font-size:clamp(10px,1.2vw,13px); font-weight:500;">Split Pastel</span>
+        <span style="display:inline-block; padding:4px 12px; border-radius:999px; background:rgba(56,189,248,0.12); border:1px solid rgba(56,189,248,0.15); color:rgba(241,245,249,0.70); font-size:clamp(10px,1.2vw,13px); font-weight:500;">Swiss Modern</span>
+        <span style="display:inline-block; padding:4px 12px; border-radius:999px; background:rgba(56,189,248,0.12); border:1px solid rgba(56,189,248,0.15); color:rgba(241,245,249,0.70); font-size:clamp(10px,1.2vw,13px); font-weight:500;">Terminal Green</span>
+        <span style="display:inline-block; padding:4px 12px; border-radius:999px; background:rgba(56,189,248,0.12); border:1px solid rgba(56,189,248,0.15); color:rgba(241,245,249,0.70); font-size:clamp(10px,1.2vw,13px); font-weight:500;">Vintage Editorial</span>
+    </div>
+</div>
 </section>
 
-<section class="slide" id="slide-4">
-  <div class="content">
-    <div class="eyebrow reveal">使用指标</div>
-    <h2 class="reveal">按月生成的演示文稿。</h2>
-    <div class="chart-layout reveal">
-      <div class="chart-wrap">
-        <svg viewBox="0 0 460 240" width="100%" style="display:block;" aria-label="按月生成的演示文稿数量">
-          <defs>
-            <linearGradient id="barGrad" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0%" stop-color="#3b82f6" stop-opacity="1"/>
-              <stop offset="100%" stop-color="#3b82f6" stop-opacity="0.6"/>
-            </linearGradient>
-            <linearGradient id="barGrad2" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0%" stop-color="#8b5cf6" stop-opacity="1"/>
-              <stop offset="100%" stop-color="#8b5cf6" stop-opacity="0.6"/>
-            </linearGradient>
-          </defs>
-          <line x1="48" y1="20" x2="48" y2="200" class="chart-axis"/>
-          <line x1="48" y1="200" x2="450" y2="200" class="chart-axis"/>
-          <line x1="48" y1="50" x2="450" y2="50" class="chart-grid"/>
-          <line x1="48" y1="80" x2="450" y2="80" class="chart-grid"/>
-          <line x1="48" y1="110" x2="450" y2="110" class="chart-grid"/>
-          <line x1="48" y1="140" x2="450" y2="140" class="chart-grid"/>
-          <line x1="48" y1="170" x2="450" y2="170" class="chart-grid"/>
-          <text x="40" y="54" class="chart-label" text-anchor="end">500</text>
-          <text x="40" y="84" class="chart-label" text-anchor="end">400</text>
-          <text x="40" y="114" class="chart-label" text-anchor="end">300</text>
-          <text x="40" y="144" class="chart-label" text-anchor="end">200</text>
-          <text x="40" y="174" class="chart-label" text-anchor="end">100</text>
-          <rect x="58"  y="168" width="32" height="32"  rx="3" fill="url(#barGrad)"/>
-          <rect x="108" y="156" width="32" height="44"  rx="3" fill="url(#barGrad)"/>
-          <rect x="158" y="144" width="32" height="56"  rx="3" fill="url(#barGrad)"/>
-          <rect x="208" y="134" width="32" height="66"  rx="3" fill="url(#barGrad)"/>
-          <rect x="258" y="116" width="32" height="84"  rx="3" fill="url(#barGrad)"/>
-          <rect x="308" y="96"  width="32" height="104" rx="3" fill="url(#barGrad)"/>
-          <rect x="358" y="64"  width="32" height="136" rx="3" fill="url(#barGrad2)"/>
-          <rect x="408" y="24"  width="32" height="176" rx="3" fill="url(#barGrad2)"/>
-          <text x="74"  y="164" class="chart-val" text-anchor="middle">80</text>
-          <text x="124" y="152" class="chart-val" text-anchor="middle">110</text>
-          <text x="174" y="140" class="chart-val" text-anchor="middle">140</text>
-          <text x="224" y="130" class="chart-val" text-anchor="middle">165</text>
-          <text x="274" y="112" class="chart-val" text-anchor="middle">210</text>
-          <text x="324" y="92"  class="chart-val" text-anchor="middle">260</text>
-          <text x="374" y="60"  class="chart-val" text-anchor="middle">340</text>
-          <text x="424" y="20"  class="chart-val" text-anchor="middle">440</text>
-          <text x="74"  y="216" class="chart-label" text-anchor="middle">一月</text>
-          <text x="124" y="216" class="chart-label" text-anchor="middle">二月</text>
-          <text x="174" y="216" class="chart-label" text-anchor="middle">三月</text>
-          <text x="224" y="216" class="chart-label" text-anchor="middle">四月</text>
-          <text x="274" y="216" class="chart-label" text-anchor="middle">五月</text>
-          <text x="324" y="216" class="chart-label" text-anchor="middle">六月</text>
-          <text x="374" y="216" class="chart-label" text-anchor="middle">七月</text>
-          <text x="424" y="216" class="chart-label" text-anchor="middle">八月</text>
-        </svg>
-      </div>
-      <div class="insights-stack reveal">
-        <div class="insight">
-          <strong>增长 450%</strong>，从一月到八月 — 由 OpenClaw 分发和 Claude Code 高级用户的口碑推动。
-        </div>
-        <div class="insight" style="border-left-color: #8b5cf6; background: rgba(139,92,246,0.08);">
-          <strong>七月至八月加速增长：</strong>新预设（新野蛮主义、中文禅、数据故事）推动了第一周采用率增长 31%。
-        </div>
-        <div style="margin-top: 0.5rem;">
-          <div class="kpi-label">月环比增长率</div>
-          <div class="kpi-number pos" style="font-size: clamp(2rem,4.5vw,3rem);">+29%</div>
-          <div class="kpi-trend up">↑ 8 个月平均</div>
-        </div>
-      </div>
+<section class="slide" data-notes="解释播放模式：F5、全屏、演讲者备注。">
+<div class="content">
+    <div class="reveal">
+        <span class="pill">播放模式</span>
     </div>
-  </div>
+    <div class="reveal" style="transition-delay:0.1s">
+        <h2 style="margin-top:clamp(12px,2vw,20px);">F5 即可播放。<br><span style=color:{accent_text};>任意屏幕，任意尺寸</span></h2>
+    </div>
+    <div class="sep reveal" style="transition-delay:0.15s; height:1px; background:rgba(56,189,248,0.20); margin:clamp(12px,2vw,20px) 0;"></div>
+    <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(180px,1fr)); gap:clamp(12px,2vw,20px);" class="reveal" style="transition-delay:0.2s">
+        <div style="background:rgba(56,189,248,0.06); border:1px solid rgba(56,189,248,0.15); border-radius:12px; padding:clamp(16px,3vw,24px);">
+            <div style="font-size:28px; margin-bottom:8px;">F5</div>
+            <h3 style="font-size:clamp(13px,1.5vw,16px); font-weight:600;">全屏</h3>
+            <p style="font-size:clamp(12px,1.3vw,14px); color:rgba(241,245,249,0.70); margin-top:4px;">幻灯片以 1440×900 比例缩放适配任何显示器。</p>
+        </div>
+        <div style="background:rgba(56,189,248,0.06); border:1px solid rgba(56,189,248,0.15); border-radius:12px; padding:clamp(16px,3vw,24px);">
+            <div style="font-size:28px; margin-bottom:8px;">P</div>
+            <h3 style="font-size:clamp(13px,1.5vw,16px); font-weight:600;">演讲者视图</h3>
+            <p style="font-size:clamp(12px,1.3vw,14px); color:rgba(241,245,249,0.70); margin-top:4px;">独立窗口，含备注、计时器和页数。</p>
+        </div>
+        <div style="background:rgba(56,189,248,0.06); border:1px solid rgba(56,189,248,0.15); border-radius:12px; padding:clamp(16px,3vw,24px);">
+            <div style="font-size:28px; margin-bottom:8px;">B</div>
+            <h3 style="font-size:clamp(13px,1.5vw,16px); font-weight:600;">黑屏</h3>
+            <p style="font-size:clamp(12px,1.3vw,14px); color:rgba(241,245,249,0.70); margin-top:4px;">问答时切换黑屏，集中注意力。</p>
+        </div>
+    </div>
+</div>
 </section>
 
-<section class="slide" id="slide-5">
-  <div class="content">
-    <div class="eyebrow reveal">功能特性</div>
-    <h2 class="reveal">为实际使用构建。</h2>
-    <div class="feature-table reveal">
-      <div class="feature-row">
-        <span class="feature-name">视口自适应</span>
-        <span class="feature-desc">每张幻灯片完全适配 100vh。无滚动、无裁剪 — 每个布局都为视口精密设计。</span>
-      </div>
-      <div class="feature-row">
-        <span class="feature-name">内联编辑</span>
-        <span class="feature-desc">按 E，点击任何文本，Ctrl+S 保存。编辑模式内置于每个演示。无需导出往返。</span>
-      </div>
-      <div class="feature-row">
-        <span class="feature-name">PPTX 导出</span>
-        <span class="feature-desc">/slide-creator --export pptx 转换为 PowerPoint。为需要它的董事会准备。</span>
-      </div>
-      <div class="feature-row">
-        <span class="feature-name">两阶段流程</span>
-        <span class="feature-desc">--plan 创建大纲。--generate 生成最终 HTML。在应用设计前检查你的结构。</span>
-      </div>
+<section class="slide" data-notes="解释编辑模式：E 键、contenteditable、保存。">
+<div class="content">
+    <div class="reveal">
+        <span class="pill">编辑模式</span>
     </div>
-    <div class="reveal" style="margin-top: clamp(1rem,2vh,1.5rem);">
-      <svg viewBox="0 0 460 80" width="100%" style="display:block;" aria-label="功能采用随时间推移的情况">
-        <defs>
-          <linearGradient id="areaGrad" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0%" stop-color="#3b82f6"/>
-            <stop offset="100%" stop-color="#3b82f6" stop-opacity="0"/>
-          </linearGradient>
-        </defs>
-        <line x1="0" y1="78" x2="460" y2="78" class="chart-grid"/>
-        <line x1="0" y1="40" x2="460" y2="40" class="chart-grid"/>
-        <polyline points="0,70 57,62 115,55 172,46 230,40 287,30 345,20 402,12 460,6" class="chart-line"/>
-        <polygon points="0,70 57,62 115,55 172,46 230,40 287,30 345,20 402,12 460,6 460,78 0,78" class="chart-area"/>
-      </svg>
-      <div class="eyebrow" style="margin-top: 0.4rem; margin-bottom: 0;">累积功能采用 — 编辑模式、导出、两阶段工作流</div>
+    <div class="reveal" style="transition-delay:0.1s">
+        <h2 style="margin-top:clamp(12px,2vw,20px);">在浏览器中编辑。<br><span style=color:{accent_text};>保存到本地</span></h2>
     </div>
-  </div>
+    <div class="sep reveal" style="transition-delay:0.15s; height:1px; background:rgba(56,189,248,0.20); margin:clamp(12px,2vw,20px) 0;"></div>
+    <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(180px,1fr)); gap:clamp(12px,2vw,20px);" class="reveal" style="transition-delay:0.2s">
+        <div style="background:rgba(56,189,248,0.06); border:1px solid rgba(56,189,248,0.15); border-radius:12px; padding:clamp(16px,3vw,24px);">
+            <div style="font-size:28px; margin-bottom:8px;">E</div>
+            <h3 style="font-size:clamp(13px,1.5vw,16px); font-weight:600;">切换编辑</h3>
+            <p style="font-size:clamp(12px,1.3vw,14px); color:rgba(241,245,249,0.70); margin-top:4px;">悬停左上角热区。点击 ✏ 编辑。所有文本变为可编辑。</p>
+        </div>
+        <div style="background:rgba(56,189,248,0.06); border:1px solid rgba(56,189,248,0.15); border-radius:12px; padding:clamp(16px,3vw,24px);">
+            <div style="font-size:28px; margin-bottom:8px;">📝</div>
+            <h3 style="font-size:clamp(13px,1.5vw,16px); font-weight:600;">演讲备注</h3>
+            <p style="font-size:clamp(12px,1.3vw,14px); color:rgba(241,245,249,0.70); margin-top:4px;">备注面板从底部滑出。备注同步到演讲者视图。</p>
+        </div>
+        <div style="background:rgba(56,189,248,0.06); border:1px solid rgba(56,189,248,0.15); border-radius:12px; padding:clamp(16px,3vw,24px);">
+            <div style="font-size:28px; margin-bottom:8px;">⌘S</div>
+            <h3 style="font-size:clamp(13px,1.5vw,16px); font-weight:600;">保存文件</h3>
+            <p style="font-size:clamp(12px,1.3vw,14px); color:rgba(241,245,249,0.70); margin-top:4px;">Ctrl+S 下载编辑后的 HTML。自包含，零依赖。</p>
+        </div>
+    </div>
+</div>
 </section>
 
-<section class="slide" id="slide-6">
-  <div class="content">
-    <div class="eyebrow reveal">安装</div>
-    <h2 class="reveal">两种方式。零摩擦。</h2>
-    <hr class="divider reveal">
-    <div class="install-grid reveal">
-      <div class="install-card">
-        <span class="install-label">Claude Code</span>
-        <div class="code-block">
-          <span class="cmd">git clone</span> https://github.com/<br>
-          &nbsp;&nbsp;kaisersong/slide-creator \<br>
-          &nbsp;&nbsp;~/.claude/skills/slide-creator<br>
-          <span class="comment"># 重启 Claude Code 以激活</span>
-        </div>
-        <hr class="divider" style="margin-top: 1rem; margin-bottom: 1rem;">
-        <div class="kpi-label">到第一张幻灯片的时间</div>
-        <div class="kpi-number pos" style="font-size: clamp(1.5rem,3vw,2.5rem);">&lt; 30秒</div>
-      </div>
-      <div class="install-card">
-        <span class="install-label">OpenClaw</span>
-        <div class="code-block">
-          <span class="cmd">clawhub install</span> html-slide-creator<br>
-          <span class="comment"># 立即可用</span><br>
-          <span class="comment"># 别名：html-slide-creator</span>
-        </div>
-        <hr class="divider" style="margin-top: 1rem; margin-bottom: 1rem;">
-        <div class="kpi-label">设置步骤</div>
-        <div class="kpi-number pos" style="font-size: clamp(1.5rem,3vw,2.5rem);">1</div>
-      </div>
+<section class="slide" data-notes="如何安装和使用 slide-creator。">
+<div class="content">
+    <div class="reveal">
+        <span class="pill">快速开始</span>
     </div>
-    <div class="insight reveal" style="margin-top: clamp(1rem,2vh,1.5rem);">
-      没有 npm。没有构建步骤。没有运行时依赖。<strong>一个单一的 HTML 文件就是完整的产品。</strong>
+    <div class="reveal" style="transition-delay:0.1s">
+        <h2 style="margin-top:clamp(12px,2vw,20px);">三条命令。<br><span style=color:{accent_text};>零摩擦</span></h2>
     </div>
-  </div>
+    <div class="sep reveal" style="transition-delay:0.15s; height:1px; background:rgba(56,189,248,0.20); margin:clamp(12px,2vw,20px) 0;"></div>
+    <div style="display:grid; gap:clamp(12px,2vw,20px);" class="reveal" style="transition-delay:0.2s">
+        <div style="background:rgba(56,189,248,0.06); border:1px solid rgba(56,189,248,0.15); border-radius:12px; padding:clamp(16px,3vw,24px); display:flex; align-items:center; gap:16px;">
+            <div style="font-size:clamp(14px,1.5vw,18px); font-weight:800; color:#38bdf8; font-family:monospace;">/slide-creator</div>
+            <p style="font-size:clamp(13px,1.4vw,15px); color:rgba(241,245,249,0.70); flex:1;">交互模式——描述心情，选择风格，获得演示文稿</p>
+        </div>
+        <div style="background:rgba(56,189,248,0.06); border:1px solid rgba(56,189,248,0.15); border-radius:12px; padding:clamp(16px,3vw,24px); display:flex; align-items:center; gap:16px;">
+            <div style="font-size:clamp(14px,1.5vw,18px); font-weight:800; color:#38bdf8; font-family:monospace;">/slide-creator --plan</div>
+            <p style="font-size:clamp(13px,1.4vw,15px); color:rgba(241,245,249,0.70); flex:1;">生成大纲——构建前审阅和编辑</p>
+        </div>
+        <div style="background:rgba(56,189,248,0.06); border:1px solid rgba(56,189,248,0.15); border-radius:12px; padding:clamp(16px,3vw,24px); display:flex; align-items:center; gap:16px;">
+            <div style="font-size:clamp(14px,1.5vw,18px); font-weight:800; color:#38bdf8; font-family:monospace;">/slide-creator --generate</div>
+            <p style="font-size:clamp(13px,1.4vw,15px); color:rgba(241,245,249,0.70); flex:1;">从 PLANNING.md 构建——完整 HTML 含所有模式</p>
+        </div>
+    </div>
+</div>
 </section>
 
-<section class="slide" id="slide-7">
-  <div class="content">
-    <div class="eyebrow reveal">开始</div>
-    <div class="cta-cmd reveal">/slide-creator</div>
-    <p class="cta-sub reveal">
-      适用于 Claude Code 和 OpenClaw。19 个预设。0 个依赖。<br>
-      你的文件，你的规则。数据就是论点 — 演示是你的。
-    </p>
-    <div class="cta-chips reveal">
-      <span class="chip active">19 个预设</span>
-      <span class="chip active">0 个依赖</span>
-      <span class="chip">内联编辑</span>
-      <span class="chip">PPTX 导出</span>
-      <span class="chip">两阶段工作流</span>
-      <span class="chip">触摸 + 键盘</span>
+<section class="slide" data-notes="结束 CTA。安装链接和总结。">
+<div class="content" style="text-align:center;">
+    <div class="reveal">
+        <h1 style="font-size:clamp(2rem,5.5vw,4rem);">别再"做幻灯片"了。<br>开始讲故事。</h1>
     </div>
-    <div style="margin-top: clamp(2rem,4vh,3rem);" class="reveal">
-      <svg viewBox="0 0 460 60" width="100%" style="display:block; max-width: 520px;" aria-label="总结指标">
-        <line x1="0" y1="58" x2="460" y2="58" class="chart-grid"/>
-        <polyline points="0,50 57,44 115,38 172,30 230,24 287,16 345,10 402,5 460,2" class="chart-line" stroke="#00d4aa"/>
-        <polygon points="0,50 57,44 115,38 172,30 230,24 287,16 345,10 402,5 460,2 460,58 0,58" fill="#00d4aa" opacity="0.08"/>
-      </svg>
-      <div class="eyebrow" style="margin-top: 0.4rem; margin-bottom: 0; color: #00d4aa;">采用轨迹 — 上升中。方向清晰。</div>
+    <div class="sep reveal" style="transition-delay:0.1s; height:1px; background:rgba(56,189,248,0.20); margin:clamp(16px,3vw,28px) auto; width:60px;"></div>
+    <div class="reveal" style="transition-delay:0.2s">
+        <p style="font-size:clamp(14px,2vw,20px); color:rgba(241,245,249,0.70); max-width:520px; margin:0 auto;">
+            一个 HTML 文件。涵盖所有风格。任意浏览器。无需构建步骤。
+        </p>
     </div>
-  </div>
+    <div class="reveal" style="transition-delay:0.3s; margin-top:clamp(20px,3vw,36px);">
+        <div style="font-size:clamp(13px,1.5vw,16px); font-family:monospace; background:rgba(56,189,248,0.06); border:1px solid rgba(56,189,248,0.15); border-radius:12px; padding:clamp(12px,2vw,20px); display:inline-block;">
+            <span style="color:#38bdf8;">$</span> clawhub install kai-slide-creator
+        </div>
+    </div>
+    <div class="reveal" style="transition-delay:0.4s; margin-top:clamp(12px,2vw,24px);">
+        <p style="font-size:clamp(11px,1.2vw,14px); color:rgba(241,245,249,0.35); letter-spacing:0.04em;">github.com/kaisersong/slide-creator</p>
+    </div>
+</div>
 </section>
+
 
 <script>
-  const slides = Array.from(document.querySelectorAll('.slide'));
-  const dots = Array.from(document.querySelectorAll('.dot'));
-  const progress = document.getElementById('progress');
-  let current = 0;
-  let editMode = false;
 
-  const observer = new IntersectionObserver(entries => {
-    entries.forEach(entry => {
-      if (entry.isIntersecting) {
-        entry.target.classList.add('visible');
-        const idx = slides.indexOf(entry.target);
-        if (idx !== -1) updateNav(idx);
-      }
+class PresentMode {
+  constructor(ctrl) {
+    this.ctrl = ctrl; this.DW = 1440; this.DH = 900; this.active = false;
+    this._resize = () => this._scale();
+    const btn = document.createElement('button');
+    btn.id = 'present-btn'; btn.title = 'Present (F5)';
+    btn.setAttribute('aria-label', 'Present'); btn.textContent = '\u25b6';
+    document.body.appendChild(btn);
+    const counter = document.createElement('div');
+    counter.id = 'present-counter'; document.body.appendChild(counter);
+    btn.addEventListener('click', () => this.enter());
+    document.addEventListener('keydown', e => {
+      if (e.key === 'F5') { e.preventDefault(); this.enter(); }
+      if (e.key === 'Escape' && this.active) this.exit();
+      if ((e.key === 'b' || e.key === 'B') && this.active) document.body.classList.toggle('presenting-black');
     });
-  }, { threshold: 0.6 });
-  slides.forEach(s => observer.observe(s));
-
-  function updateNav(idx) {
-    current = idx;
-    dots.forEach((d, i) => d.classList.toggle('active', i === idx));
-    progress.style.width = ((idx + 1) / slides.length * 100) + '%';
+    document.addEventListener('fullscreenchange', () => { if (!document.fullscreenElement && this.active) this.exit(); });
   }
-
-  function goTo(idx) {
-    if (idx < 0 || idx >= slides.length) return;
-    slides[idx].scrollIntoView({ behavior: 'smooth' });
+  enter() {
+    if (this.active) return; this.active = true;
+    document.body.classList.add('presenting');
+    document.documentElement.requestFullscreen?.().catch(() => {});
+    window.addEventListener('resize', this._resize); this._scale(); this._show(this.ctrl.currentSlide);
+    this._origGoTo = this.ctrl.goTo.bind(this.ctrl);
+    this.ctrl.goTo = (i) => {
+      const idx = Math.max(0, Math.min(i, this.ctrl.slides.length - 1));
+      this.ctrl.currentSlide = idx;
+      this.ctrl.slides.forEach((s, j) => s.classList.toggle('visible', j === idx));
+      this._show(idx); this.ctrl.updateProgress?.(); this.ctrl.updateDots?.(); this.ctrl.broadcastState?.();
+    };
   }
-
-  dots.forEach(d => d.addEventListener('click', () => goTo(+d.dataset.idx)));
-
-  document.addEventListener('keydown', e => {
-    if (editMode && (e.key === 's' || e.key === 'S') && (e.ctrlKey || e.metaKey)) {
-      e.preventDefault(); saveFile(); return;
-    }
-    if (editMode && e.key === 'Escape') { toggleEdit(); return; }
-    if (document.activeElement.isContentEditable) return;
-    if (e.key === 'ArrowDown' || e.key === ' ') { e.preventDefault(); goTo(current + 1); }
-    if (e.key === 'ArrowUp') { e.preventDefault(); goTo(current - 1); }
-    if (e.key === 'e' || e.key === 'E') toggleEdit();
-  });
-
-  // Trackpad/mouse wheel: handled natively by scroll-snap-type: y mandatory
-  // No JS wheel handler needed — IntersectionObserver keeps cur/dots in sync
-
-  let touchStart = null;
-  document.addEventListener('touchstart', e => { touchStart = e.touches[0].clientY; }, { passive: true });
-  document.addEventListener('touchend', e => {
-    if (!touchStart) return;
-    const diff = touchStart - e.changedTouches[0].clientY;
-    if (Math.abs(diff) > 50) { diff > 0 ? goTo(current + 1) : goTo(current - 1); }
-    touchStart = null;
-  });
-
-  function toggleEdit() {
-    editMode = !editMode;
-    document.body.classList.toggle('edit-mode', editMode);
-    slides.forEach(s => {
-      s.querySelectorAll('h1,h2,h3,p,.kpi-number,.cta-cmd,.feature-desc,.step-desc,.pain-text,.code-block,.cta-sub,.insight,.cover-tagline').forEach(el => {
-        el.contentEditable = editMode ? 'true' : 'false';
+  exit() {
+    if (!this.active) return; this.active = false;
+    document.body.classList.remove('presenting', 'presenting-black');
+    document.exitFullscreen?.().catch(() => {});
+    window.removeEventListener('resize', this._resize);
+    this.ctrl.goTo = this._origGoTo;
+    this.ctrl.goTo(this.ctrl.currentSlide);
+    setTimeout(() => this.ctrl.slides[this.ctrl.currentSlide]?.scrollIntoView(), 50);
+  }
+  _scale() {
+    const sw = window.innerWidth / this.DW, sh = window.innerHeight / this.DH, s = Math.min(sw, sh);
+    document.querySelectorAll('body.presenting .slide').forEach(sl => {
+      sl.style.transform = `translate(-50%, -50%) scale(${s})`;
+    });
+  }
+  _show(n) {
+    this.ctrl.slides.forEach((sl, i) => {
+      sl.classList.toggle('p-on', i === n);
+      sl.querySelectorAll('.reveal').forEach(r => {
+        r.classList.toggle('visible', i === n);
       });
     });
+    const counter = document.getElementById('present-counter');
+    if (counter) counter.textContent = `${n + 1} / ${this.ctrl.slides.length}`;
   }
+}
 
-  document.getElementById('hotzone').addEventListener('click', toggleEdit);
 
-  async function saveFile() {
-    const html = '<!DOCTYPE html>\n' + document.documentElement.outerHTML;
-    if (window.showSaveFilePicker) {
-      try {
-        const h = await window.showSaveFilePicker({ suggestedName: 'data-story.html', types: [{ accept: { 'text/html': ['.html'] } }] });
-        const w = await h.createWritable(); await w.write(html); await w.close();
-      } catch(e) { if (e.name !== 'AbortError') fallbackSave(html); }
-    } else fallbackSave(html);
+class SlidePresentation {
+  constructor() {
+    this.slides = document.querySelectorAll('.slide');
+    this.currentSlide = 0;
+    this.channel = new BroadcastChannel('slide-creator-presenter');
+    // CRITICAL: Make first slide visible immediately
+    this.slides[0]?.classList.add('visible');
+    this.slides[0]?.querySelectorAll('.reveal').forEach(function(r) { r.classList.add('visible'); });
+    this.setupNavDots();
+    this.setupObserver();
+    this.setupKeyboard();
+    this.setupTouch();
+    this.setupWheel();
+    this.setupPresenter();
+    this.updateProgress();
   }
-  function fallbackSave(html) {
-    const a = document.createElement('a');
-    a.href = URL.createObjectURL(new Blob([html], { type: 'text/html' }));
-    a.download = 'data-story.html'; a.click();
+  setupNavDots() {
+    const nav = document.querySelector('.nav-dots');
+    if (!nav) return;
+    this.slides.forEach((_, i) => {
+      const dot = document.createElement('button');
+      dot.setAttribute('aria-label', `Go to slide ${i + 1}`);
+      dot.style.cssText = 'width:8px;height:8px;border-radius:50%;border:none;cursor:pointer;background:rgba(255,255,255,0.3);transition:all 0.3s;';
+      dot.addEventListener('click', () => this.goTo(i));
+      nav.appendChild(dot);
+    });
+    nav.style.cssText = 'position:fixed;right:1.5rem;top:50%;transform:translateY(-50%);display:flex;flex-direction:column;gap:8px;z-index:100;';
   }
+  setupObserver() {
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
+          this.currentSlide = [...this.slides].indexOf(entry.target);
+          this.updateProgress();
+          this.updateDots();
+          this.broadcastState();
+          this.updateNotesPanel();
+        }
+      });
+    }, { threshold: 0.5 });
+    this.slides.forEach(s => observer.observe(s));
+  }
+  setupKeyboard() {
+    document.addEventListener('keydown', (e) => {
+      if (e.target.getAttribute('contenteditable')) return;
+      if (e.key === 'ArrowDown' || e.key === 'ArrowRight' || e.key === ' ' || e.key === 'PageDown' || e.key === 'Enter') {
+        e.preventDefault(); this.next();
+      } else if (e.key === 'ArrowUp' || e.key === 'ArrowLeft' || e.key === 'PageUp' || e.key === 'Backspace') {
+        e.preventDefault(); this.prev();
+      } else if (e.key === 'p' || e.key === 'P') {
+        const url = location.href.split('?')[0] + '?presenter';
+        window.open(url, 'slide-presenter-' + Date.now(), 'width=1100,menubar=no,toolbar=no,location=no');
+      }
+    });
+  }
+  setupTouch() {
+    let startY = 0;
+    document.addEventListener('touchstart', e => { startY = e.touches[0].clientY; }, { passive: true });
+    document.addEventListener('touchend', e => {
+      const delta = startY - e.changedTouches[0].clientY;
+      if (Math.abs(delta) > 50) delta > 0 ? this.next() : this.prev();
+    });
+  }
+  setupWheel() {}
+  setupPresenter() {
+    this.channel.addEventListener('message', e => {
+      if (e.data.type === 'nav-next') this.next();
+      else if (e.data.type === 'nav-prev') this.prev();
+      else if (e.data.type === 'request-state') this.broadcastState();
+    });
+  }
+  broadcastState() {
+    const slide = this.slides[this.currentSlide];
+    this.channel.postMessage({
+      type: 'state', index: this.currentSlide,
+      total: this.slides.length, notes: slide?.dataset.notes || ''
+    });
+  }
+  goTo(index) {
+    this.slides.forEach((slide, i) => {
+      slide.classList.toggle('visible', i === index);
+      var reveals = slide.querySelectorAll('.reveal');
+      reveals.forEach(function(r) { r.classList.toggle('visible', i === index); });
+    });
+    this.slides[index]?.scrollIntoView({ behavior: 'smooth' });
+  }
+  next() { this.goTo(Math.min(this.currentSlide + 1, this.slides.length - 1)); }
+  prev() { this.goTo(Math.max(this.currentSlide - 1, 0)); }
+  updateProgress() {
+    const pct = (this.currentSlide / (this.slides.length - 1)) * 100;
+    const bar = document.querySelector('.progress-bar');
+    if (bar) bar.style.width = pct + '%';
+  }
+  updateDots() {
+    document.querySelectorAll('.nav-dots button').forEach((dot, i) => {
+      dot.style.background = i === this.currentSlide ? 'var(--accent)' : 'rgba(255,255,255,0.3)';
+      dot.style.transform = i === this.currentSlide ? 'scale(1.3)' : 'scale(1)';
+    });
+  }
+  updateNotesPanel() {
+    const label = document.getElementById('notes-panel-label');
+    const textarea = document.getElementById('notes-textarea');
+    if (label) label.textContent = `SPEAKER NOTES — SLIDE ${this.currentSlide + 1} / ${this.slides.length}`;
+    if (textarea) textarea.value = this.slides[this.currentSlide]?.dataset.notes || '';
+  }
+  setupEditor() {
+    const panel = document.getElementById('notes-panel');
+    const textarea = document.getElementById('notes-textarea');
+    const toggle = document.getElementById('editToggle');
+    const hotzone = document.querySelector('.edit-hotzone');
+    const header = document.getElementById('notes-panel-header');
+    const collapseBtn = document.getElementById('notes-collapse-btn');
+    let hideTimeout = null;
+    this.editor = { active: false };
+    hotzone.addEventListener('mouseenter', () => { clearTimeout(hideTimeout); toggle.classList.add('show'); });
+    hotzone.addEventListener('mouseleave', () => { hideTimeout = setTimeout(() => { if (!this.editor.active) toggle.classList.remove('show'); }, 400); });
+    toggle.addEventListener('mouseenter', () => clearTimeout(hideTimeout));
+    toggle.addEventListener('mouseleave', () => { hideTimeout = setTimeout(() => { if (!this.editor.active) toggle.classList.remove('show'); }, 400); });
+    toggle.addEventListener('click', (e) => {
+      e.stopPropagation();
+      this.editor.active = !this.editor.active;
+      document.body.classList.toggle('editing', this.editor.active);
+      toggle.classList.toggle('active', this.editor.active);
+      toggle.textContent = this.editor.active ? '✓ Done' : '✏ Edit';
+      if (this.editor.active) {
+        panel.classList.add('active');
+        textarea.value = this.slides[this.currentSlide]?.dataset.notes || '';
+        textarea.focus();
+      } else {
+        panel.classList.remove('active');
+      }
+    });
+    header.addEventListener('click', (e) => {
+      if (e.target === collapseBtn) { panel.classList.toggle('collapsed'); return; }
+    });
+    textarea.addEventListener('input', () => {
+      const slide = this.slides[this.currentSlide];
+      if (slide) slide.dataset.notes = textarea.value;
+      this.channel.postMessage({ type: 'state', index: this.currentSlide, total: this.slides.length, notes: textarea.value });
+    });
+  }
+}
+
+/* Presenter Mode */
+
+if (new URLSearchParams(location.search).has('presenter')) {
+  document.title = 'Presenter — ' + document.title;
+  document.body.innerHTML = `
+  <style>
+  body { margin: 0; background: #111; color: #fff; font-family: system-ui, sans-serif; }
+  #pv { display: flex; height: 100vh; }
+  .pv-panel { background: #1a1a1a; border-right: 1px solid #333; padding: 12px; }
+  #pv-right { flex: 1; display: flex; flex-direction: column; }
+  #pv-nav { display: flex; align-items: center; gap: 12px; }
+  .pv-arrow { background: #333; color: #fff; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; }
+  #pv-counter { display: flex; align-items: baseline; gap: 4px; }
+  #pv-num { font-size: 1.5rem; font-weight: 700; }
+  #pv-of { font-size: 0.875rem; color: #888; }
+  #pv-timer-label { font-size: 0.7rem; color: #888; text-transform: uppercase; letter-spacing: 0.1em; }
+  #pv-timer { font-size: 2rem; font-weight: 700; font-family: monospace; }
+  #pv-notes { white-space: pre-wrap; font-size: 0.875rem; line-height: 1.6; color: #ccc; margin-top: 8px; }
+  #pv-label { font-weight: 600; font-size: 0.75rem; color: #888; text-transform: uppercase; letter-spacing: 0.1em; }
+  #pv-timer-box { margin-top: auto; padding: 12px !important; }
+  </style>
+  <div id="pv">
+    <div class="pv-panel"><div id="pv-label">Speaker Notes</div><div id="pv-notes">Waiting for main window...</div></div>
+    <div id="pv-right">
+      <div class="pv-panel"><div id="pv-nav"><button class="pv-arrow" id="pv-prev">←</button><div id="pv-counter"><div id="pv-num">—</div><div id="pv-of">/ —</div></div><button class="pv-arrow" id="pv-next">→</button></div></div>
+      <div class="pv-panel" id="pv-timer-box"><div id="pv-timer-label">Elapsed</div><div id="pv-timer">0:00</div></div>
+    </div>
+  </div>`;
+  const ch = new BroadcastChannel('slide-creator-presenter');
+  let startTime = null;
+  const pv = document.getElementById('pv');
+  let lastH = 0, roTimer = null;
+  new ResizeObserver(() => { clearTimeout(roTimer); roTimer = setTimeout(() => { const h = Math.ceil(pv.getBoundingClientRect().height); if (h === lastH) return; lastH = h; const chrome = window.outerHeight - window.innerHeight; window.resizeTo(window.outerWidth, Math.max(260, h + chrome + 4)); }, 40); }).observe(pv);
+  ch.addEventListener('message', e => { if (e.data.type !== 'state') return; if (!startTime) startTime = Date.now(); document.getElementById('pv-notes').textContent = e.data.notes || '(no notes for this slide)'; document.getElementById('pv-num').textContent = e.data.index + 1; document.getElementById('pv-of').textContent = `/ ${e.data.total}`; });
+  ch.postMessage({ type: 'request-state' });
+  setInterval(() => { if (!startTime) return; const s = Math.floor((Date.now() - startTime) / 1000); document.getElementById('pv-timer').textContent = `${Math.floor(s / 60)}:${String(s % 60).padStart(2, '0')}`; }, 1000);
+  document.getElementById('pv-prev').addEventListener('click', () => ch.postMessage({ type: 'nav-prev' }));
+  document.getElementById('pv-next').addEventListener('click', () => ch.postMessage({ type: 'nav-next' }));
+  document.addEventListener('keydown', e => {
+    if (e.key === 'ArrowRight' || e.key === 'ArrowDown' || e.key === ' ' || e.key === 'PageDown' || e.key === 'Enter') ch.postMessage({ type: 'nav-next' });
+    else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp' || e.key === 'PageUp' || e.key === 'Backspace') ch.postMessage({ type: 'nav-prev' });
+  });
+} else {
+
+  new PresentMode(new SlidePresentation());
+</script>
+<script>
+
+(function() {
+  var slides = document.querySelectorAll('.slide');
+  if (!slides.length) return;
+  var last = slides[slides.length - 1];
+  var credit = document.createElement('div');
+  credit.className = 'slide-credit';
+  credit.textContent = 'By kai-slide-creator v2.15.0 · Data Story';
+  last.appendChild(credit);
+})();
+
 </script>
 </body>
 </html>

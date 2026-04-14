@@ -591,7 +591,8 @@ class TestWatermark:
         _, content = demo
         non_script = re.sub(r'<script[^>]*>.*?</script>', '', content, flags=re.DOTALL)
 
-        if 'slide-credit' in non_script:
+        # Check for hardcoded <div class="slide-credit"> element (not CSS class definition)
+        if re.search(r'<div[^>]*class=["\'][^"\']*slide-credit', non_script):
             # Hardcoded watermark outside script — fail
             pytest.fail(
                 "Watermark <div class='slide-credit'> is hardcoded outside <script>. "

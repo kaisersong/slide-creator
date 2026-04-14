@@ -3,856 +3,719 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>slide-creator · Aurora Mesh</title>
+<title>Aurora Mesh · Next-Gen Developer Platform</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@700&family=DM+Sans:wght@400;500;600;700" rel="stylesheet">
 <style>
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
 :root {
-  --bg: #0a0a1a;
-  --accent: #00f5c4;
-  --text-primary: #ffffff;
-  --text-body: rgba(255,255,255,0.70);
-  --card-bg: rgba(255,255,255,0.05);
-  --card-border: rgba(255,255,255,0.10);
-  --separator: rgba(255,255,255,0.15);
+    --bg: #0a0a1a;
+    --accent: #00f5c4;
+    --text-primary: #ffffff;
+    --text-body: rgba(255,255,255,0.70);
+    --text-secondary: rgba(255,255,255,0.45);
+    --text-muted: rgba(255,255,255,0.35);
+    --card-bg: rgba(255,255,255,0.05);
+    --card-border: rgba(255,255,255,0.10);
+    --divider: rgba(255,255,255,0.15);
+    --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+    --duration-normal: 0.6s;
 }
 
-html {
-  scroll-snap-type: y mandatory;
-  height: 100%;
-}
+html { scroll-snap-type: y mandatory; height: 100%; }
 
 body {
-  height: 100%;
-  overflow-x: hidden;
-  font-family: 'Inter', system-ui, -apple-system, sans-serif;
-  background-color: var(--bg);
-  background-image:
-    radial-gradient(ellipse at 20% 50%, rgba(120,40,200,0.40) 0%, transparent 60%),
-    radial-gradient(ellipse at 80% 20%, rgba(0,180,255,0.30) 0%, transparent 50%),
-    radial-gradient(ellipse at 60% 80%, rgba(0,255,180,0.20) 0%, transparent 50%);
-  background-size: 200% 200%;
-  animation: auroraDrift 20s ease-in-out infinite alternate;
-  color: var(--text-primary);
+    height: 100%;
+    overflow-x: hidden;
+    font-family: 'DM Sans', system-ui, sans-serif;
+    color: var(--text-primary);
 }
 
+/* Background */
+body {
+    background-color: #0a0a1a;
+    background-image:
+        radial-gradient(ellipse at 20% 50%, rgba(120,40,200,0.40) 0%, transparent 60%),
+        radial-gradient(ellipse at 80% 20%, rgba(0,180,255,0.30) 0%, transparent 50%),
+        radial-gradient(ellipse at 60% 80%, rgba(0,255,180,0.20) 0%, transparent 50%);
+    animation: auroraDrift 20s ease-in-out infinite alternate;
+}
 @keyframes auroraDrift {
-  0%   { background-position: 0% 50%; }
-  50%  { background-position: 100% 20%; }
-  100% { background-position: 50% 100%; }
+    0% { background-position: 0% 50%; }
+    33% { background-position: 50% 20%; }
+    66% { background-position: 80% 80%; }
+    100% { background-position: 100% 50%; }
 }
 
 .slide {
-  width: 100vw;
-  height: 100vh;
-  height: 100dvh;
-  scroll-snap-align: start;
-  overflow: hidden;
-  position: relative;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
+    width: 100vw; height: 100vh; height: 100dvh;
+    scroll-snap-align: start; overflow: hidden;
+    position: relative; display: flex;
+    flex-direction: column; align-items: center; justify-content: center;
+    padding: clamp(1.5rem, 4vw, 4rem);
 }
 
-.content {
-  width: 100%;
-  max-width: 800px;
-  padding: clamp(24px, 5vw, 64px);
-  position: relative;
-  z-index: 1;
+.slide .content {
+    width: 100%; max-width: min(90vw, 800px);
+    padding: clamp(24px, 5vw, 64px);
+    position: relative; z-index: 1;
 }
 
-/* Glass card */
-.glass {
-  background: var(--card-bg);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border: 1px solid var(--card-border);
-  border-radius: 16px;
-  padding: clamp(20px, 3vw, 36px);
-}
+h1 { font-size: clamp(2rem, 5.5vw, 4rem); font-weight: 800; line-height: 1.1; letter-spacing: -0.02em; }
+h2 { font-size: clamp(1.4rem, 3.5vw, 2.4rem); font-weight: 700; line-height: 1.2; letter-spacing: -0.01em; }
+h3 { font-size: clamp(0.9rem, 1.6vw, 1.2rem); font-weight: 600; }
+p { font-size: clamp(0.82rem, 1.4vw, 1.05rem); line-height: 1.6; color: var(--text-body); }
 
-/* Pill badge */
 .pill {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  background: rgba(0,245,196,0.12);
-  border: 1px solid rgba(0,245,196,0.30);
-  border-radius: 100px;
-  padding: 5px 14px;
-  font-size: clamp(11px, 1.2vw, 13px);
-  font-weight: 600;
-  color: var(--accent);
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 4px 14px; border-radius: 999px;
+    font-size: 12px; font-weight: 600; letter-spacing: 0.05em;
+    background: rgba(0,245,196,0.12); color: #00f5c4;
+    border: 1px solid rgba(0,245,196,0.30);
 }
 
-/* Typography */
-h1 {
-  font-size: clamp(36px, 6vw, 72px);
-  font-weight: 800;
-  letter-spacing: -0.03em;
-  line-height: 1.05;
-  color: var(--text-primary);
-  margin-bottom: clamp(12px, 2vw, 20px);
+.reveal {
+    opacity: 0; transform: translateY(20px);
+    transition: opacity var(--duration-normal) var(--ease-out-expo),
+                transform var(--duration-normal) var(--ease-out-expo);
 }
-
-h2 {
-  font-size: clamp(26px, 4vw, 52px);
-  font-weight: 700;
-  letter-spacing: -0.02em;
-  line-height: 1.1;
-  color: var(--text-primary);
-  margin-bottom: clamp(10px, 1.5vw, 16px);
-}
-
-h3 {
-  font-size: clamp(16px, 2vw, 22px);
-  font-weight: 600;
-  letter-spacing: -0.01em;
-  color: var(--text-primary);
-  margin-bottom: 8px;
-}
-
-p {
-  font-size: clamp(14px, 1.6vw, 18px);
-  font-weight: 400;
-  color: var(--text-body);
-  line-height: 1.65;
-}
-
-.accent { color: var(--accent); }
-
-/* Separator */
-.sep {
-  width: 48px;
-  height: 1px;
-  background: var(--accent);
-  margin: clamp(12px, 2vw, 20px) 0;
-  opacity: 0.7;
-}
-
-/* Stat row */
-.stats {
-  display: flex;
-  gap: clamp(16px, 3vw, 32px);
-  margin-top: clamp(20px, 3vw, 32px);
-  flex-wrap: wrap;
-}
-
-.stat {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-}
-
-.stat-value {
-  font-size: clamp(28px, 4vw, 48px);
-  font-weight: 800;
-  letter-spacing: -0.03em;
-  color: var(--accent);
-  line-height: 1;
-}
-
-.stat-label {
-  font-size: clamp(11px, 1.2vw, 13px);
-  font-weight: 500;
-  color: var(--text-body);
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
-}
-
-/* Grid layouts */
-.grid-2 {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: clamp(12px, 2vw, 20px);
-  margin-top: clamp(16px, 2.5vw, 28px);
-}
-
-.grid-3 {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: clamp(10px, 1.5vw, 16px);
-  margin-top: clamp(16px, 2.5vw, 28px);
-}
-
-/* Card item */
-.card-item {
-  background: var(--card-bg);
-  border: 1px solid var(--card-border);
-  border-radius: 12px;
-  padding: clamp(14px, 2vw, 22px);
-}
-
-.card-item .icon {
-  font-size: clamp(18px, 2.2vw, 26px);
-  margin-bottom: 8px;
-  display: block;
-}
-
-/* Tag cloud */
-.tags {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-  margin-top: clamp(16px, 2vw, 24px);
-}
-
-.tag {
-  background: rgba(0,245,196,0.08);
-  border: 1px solid rgba(0,245,196,0.20);
-  border-radius: 8px;
-  padding: 5px 12px;
-  font-size: clamp(11px, 1.2vw, 13px);
-  font-weight: 500;
-  color: var(--text-body);
-  letter-spacing: 0.02em;
-}
-
-/* Steps */
-.steps {
-  display: flex;
-  flex-direction: column;
-  gap: clamp(10px, 1.5vw, 16px);
-  margin-top: clamp(16px, 2.5vw, 28px);
-}
-
-.step {
-  display: flex;
-  align-items: flex-start;
-  gap: clamp(12px, 1.8vw, 18px);
-  background: var(--card-bg);
-  border: 1px solid var(--card-border);
-  border-radius: 12px;
-  padding: clamp(12px, 1.8vw, 18px);
-}
-
-.step-num {
-  width: 30px;
-  height: 30px;
-  min-width: 30px;
-  border-radius: 50%;
-  background: rgba(0,245,196,0.15);
-  border: 1px solid rgba(0,245,196,0.30);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 13px;
-  font-weight: 700;
-  color: var(--accent);
-}
-
-/* Code block */
-.code-block {
-  background: rgba(0,0,0,0.40);
-  border: 1px solid rgba(255,255,255,0.08);
-  border-radius: 10px;
-  padding: clamp(14px, 2vw, 22px);
-  font-family: 'SF Mono', 'Fira Code', 'Consolas', monospace;
-  font-size: clamp(12px, 1.3vw, 15px);
-  color: var(--accent);
-  margin-top: clamp(14px, 2vw, 20px);
-  overflow-x: auto;
-  line-height: 1.7;
-}
-
-.code-block .comment { color: rgba(255,255,255,0.35); }
-.code-block .keyword { color: #c792ea; }
-.code-block .string  { color: #ecc48d; }
-
-/* CTA */
-.cta-btn {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  background: var(--accent);
-  color: #0a0a1a;
-  border-radius: 10px;
-  padding: clamp(12px, 1.5vw, 16px) clamp(20px, 2.5vw, 28px);
-  font-size: clamp(14px, 1.5vw, 17px);
-  font-weight: 700;
-  letter-spacing: -0.01em;
-  text-decoration: none;
-  margin-top: clamp(20px, 3vw, 32px);
-  cursor: default;
-}
-
-/* Problem list */
-.problem-list {
-  display: flex;
-  flex-direction: column;
-  gap: clamp(10px, 1.5vw, 14px);
-  margin-top: clamp(16px, 2.5vw, 28px);
-}
-
-.problem-item {
-  display: flex;
-  align-items: center;
-  gap: 14px;
-  padding: clamp(12px, 1.8vw, 18px);
-  background: var(--card-bg);
-  border: 1px solid var(--card-border);
-  border-radius: 12px;
-}
-
-.problem-icon {
-  width: 36px;
-  height: 36px;
-  min-width: 36px;
-  border-radius: 8px;
-  background: rgba(255,80,80,0.12);
-  border: 1px solid rgba(255,80,80,0.25);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 16px;
-}
-
-/* Nav dots */
-#nav-dots {
-  position: fixed;
-  right: clamp(14px, 2vw, 24px);
-  top: 50%;
-  transform: translateY(-50%);
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  z-index: 100;
-}
-
-.dot {
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-  background: rgba(255,255,255,0.25);
-  cursor: pointer;
-  transition: all 0.3s ease;
-  border: none;
-  padding: 0;
-}
-
-.dot.active {
-  background: var(--accent);
-  transform: scale(1.5);
-}
+.slide.visible .reveal { opacity: 1; transform: translateY(0); }
 
 /* Progress bar */
-#progress {
-  position: fixed;
-  top: 0;
-  left: 0;
-  height: 2px;
-  background: var(--accent);
-  transition: width 0.35s ease;
-  z-index: 100;
-  box-shadow: 0 0 8px rgba(0,245,196,0.5);
+.progress-bar { position: fixed; top: 0; left: 0; height: 3px; background: var(--accent); width: 0%; z-index: 100; transition: width 0.3s ease; }
+
+/* Nav dots placeholder */
+.nav-dots {}
+
+
+/* ═══════════════════════════════════════════════
+   Present Mode — F5 / ▶ to enter, ESC to exit
+   ═══════════════════════════════════════════════ */
+#present-btn {
+  position: fixed; bottom: 1.5rem; right: 1.5rem; z-index: 9997;
+  width: 44px; height: 44px; border-radius: 50%;
+  background: rgba(0,0,0,0.50); color: rgba(255,255,255,0.80);
+  border: 1.5px solid rgba(255,255,255,0.20);
+  font-size: 1rem; cursor: pointer;
+  backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+  display: flex; align-items: center; justify-content: center;
+  opacity: 0; transition: opacity 0.2s; pointer-events: none;
+}
+body:hover #present-btn { opacity: 1; pointer-events: auto; }
+#present-btn:hover { background: rgba(0,0,0,0.78); }
+
+#present-counter {
+  display: none; position: fixed; bottom: 1.4rem; left: 50%;
+  transform: translateX(-50%); z-index: 9997;
+  font-size: 0.65rem; letter-spacing: 0.14em; font-family: system-ui, sans-serif;
+  color: rgba(255,255,255,0.28);
 }
 
-/* Slide number */
-#slide-num {
-  position: fixed;
-  bottom: clamp(12px, 2vw, 20px);
-  right: clamp(16px, 2.5vw, 24px);
-  font-size: 11px;
-  font-weight: 600;
-  color: rgba(255,255,255,0.25);
-  letter-spacing: 0.08em;
-  z-index: 100;
-  font-family: 'SF Mono', monospace;
+body.presenting { background: #111 !important; overflow: hidden !important; }
+body.presenting .slide {
+  position: fixed !important; inset: 0;
+  width: 1440px !important; height: 900px !important;
+  transform-origin: top left;
+  display: none !important; margin: 0; padding: 0;
+}
+body.presenting .slide.p-on { display: flex !important; }
+body.presenting .slide.p-on .reveal { opacity: 1; transform: translateY(0); }
+body.presenting #present-btn { display: none !important; }
+body.presenting #present-counter { display: block; }
+body.presenting .nav-dots,
+body.presenting #slide-counter,
+body.presenting .orb,
+body.presenting #notes-panel,
+body.presenting .edit-hotzone,
+body.presenting .edit-toggle,
+body.presenting .keyboard-hint { display: none !important; }
+
+body.presenting.presenting-black { background: #000 !important; }
+body.presenting.presenting-black .slide { display: none !important; }
+
+
+.slide-credit {
+  position: absolute; bottom: 8px; right: 14px;
+  font-size: 9px; color: var(--text-secondary, #999);
+  opacity: 0.35; pointer-events: none; z-index: 1;
+  font-family: system-ui, sans-serif;
+}
+body.presenting .slide-credit { display: none; }
+
+
+.edit-hotzone {
+  position: fixed; top: 0; left: 0; width: 30px; height: 30px;
+  z-index: 9998; cursor: pointer;
+}
+.edit-toggle {
+  position: fixed; top: 12px; left: 12px; z-index: 9999;
+  padding: 6px 12px; border-radius: 8px; border: none;
+  background: rgba(0,0,0,0.50); color: rgba(255,255,255,0.70);
+  font-size: 0.75rem; cursor: pointer;
+  backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+  opacity: 0; transition: opacity 0.3s; pointer-events: none;
+}
+body:hover .edit-toggle { opacity: 1; pointer-events: auto; }
+body.editing .edit-toggle { opacity: 1; background: rgba(16,185,129,0.80); color: #fff; }
+
+#notes-panel {
+  position: fixed; bottom: 0; left: 0; right: 0; z-index: 9996;
+  background: rgba(0,0,0,0.85); backdrop-filter: blur(12px);
+  color: #fff; transform: translateY(100%); transition: transform 0.3s ease;
+  max-height: 40vh; display: flex; flex-direction: column;
+}
+#notes-panel.active { transform: translateY(0); }
+#notes-panel-header {
+  display: flex; align-items: center; gap: 8px;
+  padding: 8px 16px; border-bottom: 1px solid rgba(255,255,255,0.10);
+}
+#notes-panel-label { font-size: 0.7rem; letter-spacing: 0.1em; text-transform: uppercase; color: rgba(255,255,255,0.50); }
+#notes-body { flex: 1; padding: 8px; }
+#notes-textarea {
+  width: 100%; height: 100%; border: none; background: transparent;
+  color: rgba(255,255,255,0.75); font-size: 0.88rem; line-height: 1.65;
+  font-family: system-ui, sans-serif; resize: none; outline: none;
 }
 
-/* Edit mode */
-#hotzone {
-  position: fixed;
-  top: 0; left: 0;
-  width: 80px; height: 80px;
-  z-index: 200;
-  cursor: default;
+
+@media (max-height: 700px) {
+    :root { --slide-padding: clamp(0.75rem, 3vw, 2rem); }
 }
-
-body.edit-mode [contenteditable] { outline: 1px dashed rgba(0,245,196,0.4); border-radius: 4px; }
-body.edit-mode #edit-badge { display: flex; }
-
-#edit-badge {
-  display: none;
-  position: fixed;
-  top: 12px; left: 12px;
-  align-items: center;
-  gap: 6px;
-  background: rgba(0,245,196,0.15);
-  border: 1px solid rgba(0,245,196,0.35);
-  border-radius: 8px;
-  padding: 5px 11px;
-  font-size: 11px;
-  font-weight: 600;
-  color: var(--accent);
-  z-index: 200;
-  letter-spacing: 0.04em;
-}
-
-/* Reveal animations */
-.reveal {
-  opacity: 0;
-  transform: translateY(20px);
-  transition: opacity 0.7s ease, transform 0.7s ease;
-}
-
-.reveal.visible {
-  opacity: 1;
-  transform: translateY(0);
-}
-
-/* Slide 5 workflow */
-.workflow {
-  display: flex;
-  align-items: center;
-  gap: clamp(8px, 1.5vw, 16px);
-  margin-top: clamp(20px, 3vw, 32px);
-  flex-wrap: wrap;
-}
-
-.wf-step {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 6px;
-  flex: 1;
-  min-width: 100px;
-  background: var(--card-bg);
-  border: 1px solid var(--card-border);
-  border-radius: 12px;
-  padding: clamp(14px, 2vw, 20px) clamp(10px, 1.5vw, 16px);
-  text-align: center;
-}
-
-.wf-icon {
-  font-size: clamp(20px, 2.5vw, 28px);
-}
-
-.wf-arrow {
-  color: var(--accent);
-  font-size: clamp(16px, 2vw, 22px);
-  opacity: 0.5;
-  flex-shrink: 0;
-}
-
-/* Install block */
-.install-row {
-  display: flex;
-  flex-direction: column;
-  gap: clamp(10px, 1.5vw, 14px);
-  margin-top: clamp(16px, 2.5vw, 26px);
-}
-
-.install-item {
-  background: rgba(0,0,0,0.35);
-  border: 1px solid rgba(255,255,255,0.08);
-  border-radius: 10px;
-  padding: clamp(12px, 1.8vw, 18px);
-}
-
-.install-label {
-  font-size: clamp(10px, 1.1vw, 12px);
-  font-weight: 600;
-  color: var(--accent);
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-  margin-bottom: 6px;
-}
-
-.install-cmd {
-  font-family: 'SF Mono', 'Fira Code', monospace;
-  font-size: clamp(11px, 1.2vw, 14px);
-  color: rgba(255,255,255,0.85);
-  word-break: break-all;
+@media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.2s !important; }
 }
 </style>
 </head>
-<body>
+<body data-export-progress="true" data-preset="Aurora Mesh">
 
-<div id="progress"></div>
-<div id="nav-dots"></div>
-<div id="slide-num">1 / 8</div>
-<div id="edit-badge">EDIT MODE · Ctrl+S to save</div>
-<div id="hotzone"></div>
+<div class="progress-bar"></div>
+<nav class="nav-dots" aria-label="Slide navigation"></nav>
 
-<!-- SLIDE 1: Cover -->
-<section class="slide" id="s0">
-  <div class="content" style="text-align:center;">
-    <div class="reveal" style="margin-bottom: clamp(16px,2.5vw,28px);">
-      <span class="pill">Open Source · Claude Code · OpenClaw</span>
+<div class="edit-hotzone"></div>
+<button class="edit-toggle" id="editToggle" title="Edit mode (E)">✏ Edit</button>
+<div id="notes-panel">
+  <div id="notes-panel-header">
+    <div id="notes-panel-label">SPEAKER NOTES</div>
+    <button id="notes-collapse-btn" title="Collapse">&#9660;</button>
+  </div>
+  <div id="notes-body">
+    <textarea id="notes-textarea" placeholder="Add notes..."></textarea>
+  </div>
+</div>
+
+<section class="slide" data-notes="Welcome audience. Introduce slide-creator vision.">
+<div class="content" style="text-align:center;">
+    <div class="reveal">
+        <span class="pill">Open Source · Claude Code · OpenClaw</span>
     </div>
     <div class="reveal" style="transition-delay:0.1s">
-      <h1>slide<span class="accent">-creator</span></h1>
+        <h1>slide<span style="color:#00f5c4;">-creator</span></h1>
     </div>
     <div class="reveal" style="transition-delay:0.2s; max-width:560px; margin:0 auto;">
-      <p style="font-size:clamp(16px,2vw,22px); margin-bottom:clamp(20px,3vw,36px);">
-        Zero-dependency HTML presentations for<br>Claude Code &amp; OpenClaw
-      </p>
+        <p style="font-size:clamp(16px,2vw,22px); margin-bottom:clamp(20px,3vw,36px);">
+            Zero-dependency HTML presentations for<br>Claude Code &amp; OpenClaw
+        </p>
     </div>
     <div class="reveal" style="transition-delay:0.3s">
-      <div class="stats" style="justify-content:center;">
-        <div class="stat">
-          <span class="stat-value">19</span>
-          <span class="stat-label">Presets</span>
+        <div class="stats" style="justify-content:center; display:flex; gap:clamp(24px,4vw,48px);">
+            <div class="stat">
+                <span class="stat-value" style="font-size:clamp(2rem,5vw,3.5rem); font-weight:800; color:#00f5c4;">21</span>
+                <span class="stat-label" style="font-size:clamp(10px,1.2vw,13px); color:rgba(255,255,255,0.35); text-transform:uppercase; letter-spacing:0.08em;">Presets</span>
+            </div>
+            <div style="width:1px; background:rgba(255,255,255,0.15); align-self:stretch;"></div>
+            <div class="stat">
+                <span class="stat-value" style="font-size:clamp(2rem,5vw,3.5rem); font-weight:800; color:#00f5c4;">0</span>
+                <span class="stat-label" style="font-size:clamp(10px,1.2vw,13px); color:rgba(255,255,255,0.35); text-transform:uppercase; letter-spacing:0.08em;">Dependencies</span>
+            </div>
+            <div style="width:1px; background:rgba(255,255,255,0.15); align-self:stretch;"></div>
+            <div class="stat">
+                <span class="stat-value" style="font-size:clamp(2rem,5vw,3.5rem); font-weight:800; color:#00f5c4;">∞</span>
+                <span class="stat-label" style="font-size:clamp(10px,1.2vw,13px); color:rgba(255,255,255,0.35); text-transform:uppercase; letter-spacing:0.08em;">Slides</span>
+            </div>
         </div>
-        <div style="width:1px; background:var(--separator); align-self:stretch;"></div>
-        <div class="stat">
-          <span class="stat-value">0</span>
-          <span class="stat-label">Dependencies</span>
-        </div>
-        <div style="width:1px; background:var(--separator); align-self:stretch;"></div>
-        <div class="stat">
-          <span class="stat-value">∞</span>
-          <span class="stat-label">Slides</span>
-        </div>
-      </div>
     </div>
     <div class="reveal" style="transition-delay:0.4s; margin-top:clamp(20px,3vw,36px);">
-      <p style="font-size:clamp(12px,1.3vw,15px); color:rgba(255,255,255,0.35); letter-spacing:0.06em; text-transform:uppercase;">Build the deck that closes the deal.</p>
+        <p style="font-size:clamp(12px,1.3vw,15px); color:rgba(255,255,255,0.35); letter-spacing:0.06em; text-transform:uppercase;">Build the deck that closes the deal.</p>
     </div>
-  </div>
+</div>
 </section>
 
-<!-- SLIDE 2: Problem -->
-<section class="slide" id="s1">
-  <div class="content">
+<section class="slide" data-notes="Frame the problem: existing presentation tools are broken.">
+<div class="content">
     <div class="reveal">
-      <span class="pill">The Problem</span>
+        <span class="pill">The Problem</span>
     </div>
     <div class="reveal" style="transition-delay:0.1s">
-      <h2 style="margin-top:clamp(12px,2vw,20px);">"Presentations shouldn't<br>require a <span class="accent">build system</span>"</h2>
+        <h2 style="margin-top:clamp(12px,2vw,20px);">Presentations shouldn't<br>require a <span style=color:{accent_text};>build system</span></h2>
     </div>
-    <div class="sep reveal" style="transition-delay:0.15s"></div>
-    <div class="problem-list reveal" style="transition-delay:0.2s">
-      <div class="problem-item">
-        <div class="problem-icon">⚙️</div>
-        <div>
-          <h3 style="margin-bottom:4px;">Complex Toolchain</h3>
-          <p style="font-size:clamp(13px,1.4vw,15px);">Node, Webpack, npm, plugins — just to make slides. Hours before you can present anything.</p>
-        </div>
-      </div>
-      <div class="problem-item">
-        <div class="problem-icon">📋</div>
-        <div>
-          <h3 style="margin-bottom:4px;">Generic Output</h3>
-          <p style="font-size:clamp(13px,1.4vw,15px);">Every deck looks like every other deck. Templates that scream "I used the same tool as everyone else."</p>
-        </div>
-      </div>
-      <div class="problem-item">
-        <div class="problem-icon">🔒</div>
-        <div>
-          <h3 style="margin-bottom:4px;">No Ownership</h3>
-          <p style="font-size:clamp(13px,1.4vw,15px);">Your slides live in someone else's cloud. Export is an afterthought. Vendor lock-in is the business model.</p>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- SLIDE 3: Show Don't Tell -->
-<section class="slide" id="s2">
-  <div class="content">
-    <div class="reveal">
-      <span class="pill">Workflow</span>
-    </div>
-    <div class="reveal" style="transition-delay:0.1s">
-      <h2 style="margin-top:clamp(12px,2vw,20px);">Style discovery that<br><span class="accent">actually works</span></h2>
-    </div>
-    <div class="sep reveal" style="transition-delay:0.15s"></div>
+    <div class="sep reveal" style="transition-delay:0.15s; height:1px; background:rgba(255,255,255,0.15); margin:clamp(12px,2vw,20px) 0;"></div>
     <div class="reveal" style="transition-delay:0.2s">
-      <p>Describe your mood. Get three visual previews. Pick what feels right — before a single slide is written.</p>
+        <div style="display:grid; gap:clamp(16px,3vw,32px);">
+            <div style="display:flex; gap:16px; align-items:start;">
+                <div style="flex-shrink:0; width:32px; height:32px; border-radius:8px; background:rgba(0,245,196,0.12); display:flex; align-items:center; justify-content:center; font-size:16px;">⚙️</div>
+                <div>
+                    <h3 style="font-size:clamp(14px,1.8vw,18px); font-weight:600; margin-bottom:4px;">Complex Toolchain</h3>
+                    <p style="font-size:clamp(13px,1.4vw,15px); color:rgba(255,255,255,0.70);">Node, Webpack, npm, plugins — just to make slides. Hours before you can present anything.</p>
+                </div>
+            </div>
+            <div style="display:flex; gap:16px; align-items:start;">
+                <div style="flex-shrink:0; width:32px; height:32px; border-radius:8px; background:rgba(0,245,196,0.12); display:flex; align-items:center; justify-content:center; font-size:16px;">📋</div>
+                <div>
+                    <h3 style="font-size:clamp(14px,1.8vw,18px); font-weight:600; margin-bottom:4px;">Generic Output</h3>
+                    <p style="font-size:clamp(13px,1.4vw,15px); color:rgba(255,255,255,0.70);">Every deck looks like every other deck. Templates that scream "I used the same tool as everyone else."</p>
+                </div>
+            </div>
+            <div style="display:flex; gap:16px; align-items:start;">
+                <div style="flex-shrink:0; width:32px; height:32px; border-radius:8px; background:rgba(0,245,196,0.12); display:flex; align-items:center; justify-content:center; font-size:16px;">🔒</div>
+                <div>
+                    <h3 style="font-size:clamp(14px,1.8vw,18px); font-weight:600; margin-bottom:4px;">No Ownership</h3>
+                    <p style="font-size:clamp(13px,1.4vw,15px); color:rgba(255,255,255,0.70);">Your slides live in someone else's cloud. Export is an afterthought. Vendor lock-in is the business model.</p>
+                </div>
+            </div>
+        </div>
     </div>
-    <div class="grid-3 reveal" style="transition-delay:0.3s">
-      <div class="card-item" style="border-color:rgba(0,245,196,0.3);">
-        <span class="icon">🎨</span>
-        <h3 style="font-size:clamp(13px,1.5vw,16px);">Ask Mood</h3>
-        <p style="font-size:clamp(12px,1.3vw,14px);">"Bold and minimal" or "warm and creative" — natural language input.</p>
-      </div>
-      <div class="card-item" style="border-color:rgba(0,180,255,0.3);">
-        <span class="icon">👁</span>
-        <h3 style="font-size:clamp(13px,1.5vw,16px);">3 Mini Previews</h3>
-        <p style="font-size:clamp(12px,1.3vw,14px);">Side-by-side renders of three matched styles rendered before full generation.</p>
-      </div>
-      <div class="card-item" style="border-color:rgba(120,40,200,0.4);">
-        <span class="icon">✓</span>
-        <h3 style="font-size:clamp(13px,1.5vw,16px);">Pick &amp; Build</h3>
-        <p style="font-size:clamp(12px,1.3vw,14px);">Choose your style. The full presentation is generated in your chosen aesthetic.</p>
-      </div>
-    </div>
-    <div class="reveal" style="transition-delay:0.4s; margin-top:clamp(14px,2vw,22px);">
-      <p style="font-size:clamp(12px,1.3vw,15px); color:rgba(255,255,255,0.40); font-style:italic;">"No more committing to a style before you know how it looks."</p>
-    </div>
-  </div>
+</div>
 </section>
 
-<!-- SLIDE 4: 19 Presets -->
-<section class="slide" id="s3">
-  <div class="content">
+<section class="slide" data-notes="Explain the style discovery workflow.">
+<div class="content">
     <div class="reveal">
-      <span class="pill">19 Presets</span>
+        <span class="pill">Workflow</span>
     </div>
     <div class="reveal" style="transition-delay:0.1s">
-      <h2 style="margin-top:clamp(12px,2vw,20px);">Every presentation style,<br><span class="accent">already built</span></h2>
+        <h2 style="margin-top:clamp(12px,2vw,20px);">Style discovery that<br><span style=color:{accent_text};>actually works</span></h2>
     </div>
-    <div class="sep reveal" style="transition-delay:0.15s"></div>
-    <div class="tags reveal" style="transition-delay:0.2s">
-      <span class="tag">Bold Signal</span>
-      <span class="tag">Electric Studio</span>
-      <span class="tag">Creative Voltage</span>
-      <span class="tag">Dark Botanical</span>
-      <span class="tag">Blue Sky</span>
-      <span class="tag">Notebook Tabs</span>
-      <span class="tag">Pastel Geometry</span>
-      <span class="tag">Split Pastel</span>
-      <span class="tag">Vintage Editorial</span>
-      <span class="tag" style="background:rgba(0,245,196,0.12); border-color:rgba(0,245,196,0.35); color:var(--accent);">Aurora Mesh ✦</span>
-      <span class="tag">Neon Cyber</span>
-      <span class="tag">Terminal Green</span>
-      <span class="tag">Swiss Modern</span>
-      <span class="tag">Paper &amp; Ink</span>
-      <span class="tag">Enterprise Dark</span>
-      <span class="tag">Glassmorphism</span>
-      <span class="tag">Neo-Brutalism</span>
-      <span class="tag">Chinese Chan</span>
-      <span class="tag">Data Story</span>
+    <div class="sep reveal" style="transition-delay:0.15s; height:1px; background:rgba(255,255,255,0.15); margin:clamp(12px,2vw,20px) 0;"></div>
+    <div class="reveal" style="transition-delay:0.2s">
+        <p style="font-size:clamp(14px,1.6vw,17px); color:rgba(255,255,255,0.70);">Describe your mood. Get three visual previews. Pick what feels right — before a single slide is written.</p>
     </div>
-    <div class="reveal" style="transition-delay:0.35s; margin-top:clamp(14px,2vw,22px);">
-      <p style="font-size:clamp(13px,1.4vw,16px);">From executive boardrooms to creative pitches. Each preset is a complete visual system — not just a color swap.</p>
+    <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); gap:clamp(12px,2vw,24px); margin-top:clamp(16px,3vw,32px);" class="reveal" style="transition-delay:0.3s">
+        <div style="background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.10); border-radius:12px; padding:clamp(16px,3vw,24px);">
+            <div style="font-size:24px; margin-bottom:8px;">🎨</div>
+            <h3 style="font-size:clamp(13px,1.5vw,16px); font-weight:600;">Ask Mood</h3>
+            <p style="font-size:clamp(12px,1.3vw,14px); color:rgba(255,255,255,0.70); margin-top:4px;">"Bold and minimal" or "warm and creative" — natural language input.</p>
+        </div>
+        <div style="background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.10); border-radius:12px; padding:clamp(16px,3vw,24px);">
+            <div style="font-size:24px; margin-bottom:8px;">👁</div>
+            <h3 style="font-size:clamp(13px,1.5vw,16px); font-weight:600;">3 Mini Previews</h3>
+            <p style="font-size:clamp(12px,1.3vw,14px); color:rgba(255,255,255,0.70); margin-top:4px;">Side-by-side renders of three matched styles before full generation.</p>
+        </div>
+        <div style="background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.10); border-radius:12px; padding:clamp(16px,3vw,24px);">
+            <div style="font-size:24px; margin-bottom:8px;">✓</div>
+            <h3 style="font-size:clamp(13px,1.5vw,16px); font-weight:600;">Pick & Build</h3>
+            <p style="font-size:clamp(12px,1.3vw,14px); color:rgba(255,255,255,0.70); margin-top:4px;">Choose your style. The full presentation is generated in your chosen aesthetic.</p>
+        </div>
     </div>
-  </div>
+</div>
 </section>
 
-<!-- SLIDE 5: How It Works -->
-<section class="slide" id="s4">
-  <div class="content">
+<section class="slide" data-notes="Showcase all 21 presets. Highlight Aurora Mesh.">
+<div class="content">
     <div class="reveal">
-      <span class="pill">How It Works</span>
+        <span class="pill">21 Presets</span>
     </div>
     <div class="reveal" style="transition-delay:0.1s">
-      <h2 style="margin-top:clamp(12px,2vw,20px);">Three steps from<br><span class="accent">prompt to presentation</span></h2>
+        <h2 style="margin-top:clamp(12px,2vw,20px);">Every presentation style,<br><span style=color:{accent_text};>already built</span></h2>
     </div>
-    <div class="sep reveal" style="transition-delay:0.15s"></div>
-    <div class="workflow reveal" style="transition-delay:0.2s">
-      <div class="wf-step">
-        <span class="wf-icon">💬</span>
-        <h3 style="font-size:clamp(12px,1.4vw,15px);">Run /slide-creator</h3>
-        <p style="font-size:clamp(11px,1.2vw,13px);">Type your topic and content goals</p>
-      </div>
-      <span class="wf-arrow">→</span>
-      <div class="wf-step">
-        <span class="wf-icon">🖼</span>
-        <h3 style="font-size:clamp(12px,1.4vw,15px);">Pick from 3 Previews</h3>
-        <p style="font-size:clamp(11px,1.2vw,13px);">Visual style selection before full generation</p>
-      </div>
-      <span class="wf-arrow">→</span>
-      <div class="wf-step">
-        <span class="wf-icon">✦</span>
-        <h3 style="font-size:clamp(12px,1.4vw,15px);">Open HTML</h3>
-        <p style="font-size:clamp(11px,1.2vw,13px);">Self-contained file, zero dependencies</p>
-      </div>
+    <div class="sep reveal" style="transition-delay:0.15s; height:1px; background:rgba(255,255,255,0.15); margin:clamp(12px,2vw,20px) 0;"></div>
+    <div class="reveal" style="transition-delay:0.2s; display:flex; flex-wrap:wrap; gap:8px;">
+        <span class="tag" style="background:rgba(0,245,196,0.12); border-color:rgba(0,245,196,0.30); color:#00f5c4;">Aurora Mesh ✦</span>
+        <span class="tag">Bold Signal</span>
+        <span class="tag">Blue Sky</span>
+        <span class="tag">Chinese Chan</span>
+        <span class="tag">Creative Voltage</span>
+        <span class="tag">Dark Botanical</span>
+        <span class="tag">Data Story</span>
+        <span class="tag">Electric Studio</span>
+        <span class="tag">Enterprise Dark</span>
+        <span class="tag">Glassmorphism</span>
+        <span class="tag">Modern Newspaper</span>
+        <span class="tag">Neo Brutalism</span>
+        <span class="tag">Neo Retro Dev</span>
+        <span class="tag">Neon Cyber</span>
+        <span class="tag">Notebook Tabs</span>
+        <span class="tag">Paper & Ink</span>
+        <span class="tag">Pastel Geometry</span>
+        <span class="tag">Split Pastel</span>
+        <span class="tag">Swiss Modern</span>
+        <span class="tag">Terminal Green</span>
+        <span class="tag">Vintage Editorial</span>
     </div>
-    <div class="glass reveal" style="transition-delay:0.35s; margin-top:clamp(16px,2.5vw,28px);">
-      <p style="font-size:clamp(13px,1.4vw,16px);"><span class="accent" style="font-weight:600;">Two-stage workflow:</span> Use <code style="background:rgba(0,245,196,0.10); padding:1px 6px; border-radius:4px; font-size:0.9em;">--plan</code> to outline structure first, then <code style="background:rgba(0,245,196,0.10); padding:1px 6px; border-radius:4px; font-size:0.9em;">--generate</code> to produce the final deck. Iterate on the outline before committing to full generation.</p>
-    </div>
-  </div>
+</div>
 </section>
 
-<!-- SLIDE 6: Features -->
-<section class="slide" id="s5">
-  <div class="content">
+<section class="slide" data-notes="Explain present mode: F5, fullscreen, speaker notes.">
+<div class="content">
     <div class="reveal">
-      <span class="pill">Features</span>
+        <span class="pill">Present Mode</span>
     </div>
     <div class="reveal" style="transition-delay:0.1s">
-      <h2 style="margin-top:clamp(12px,2vw,20px);">Everything you need,<br><span class="accent">nothing you don't</span></h2>
+        <h2 style="margin-top:clamp(12px,2vw,20px);">F5 to present.<br><span style=color:{accent_text};>Any screen, any size</span></h2>
     </div>
-    <div class="sep reveal" style="transition-delay:0.15s"></div>
-    <div class="grid-2 reveal" style="transition-delay:0.2s">
-      <div class="card-item">
-        <span class="icon">📐</span>
-        <h3>Viewport Fitting</h3>
-        <p style="font-size:clamp(12px,1.3vw,14px);">Every slide is exactly 100dvh — perfect on any screen, any device, any projector.</p>
-      </div>
-      <div class="card-item">
-        <span class="icon">✏️</span>
-        <h3>Inline Editing</h3>
-        <p style="font-size:clamp(12px,1.3vw,14px);">Press E to edit directly in the browser. Ctrl+S saves to disk via File System Access API.</p>
-      </div>
-      <div class="card-item">
-        <span class="icon">📊</span>
-        <h3>PPTX Export</h3>
-        <p style="font-size:clamp(12px,1.3vw,14px);">Export to PowerPoint for stakeholders who need it. Your slides stay yours.</p>
-      </div>
-      <div class="card-item">
-        <span class="icon">⚡</span>
-        <h3>Two-Stage Workflow</h3>
-        <p style="font-size:clamp(12px,1.3vw,14px);">--plan → --generate. Refine structure before full generation. Ship faster, iterate smarter.</p>
-      </div>
+    <div class="sep reveal" style="transition-delay:0.15s; height:1px; background:rgba(255,255,255,0.15); margin:clamp(12px,2vw,20px) 0;"></div>
+    <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(180px,1fr)); gap:clamp(12px,2vw,20px);" class="reveal" style="transition-delay:0.2s">
+        <div style="background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.10); border-radius:12px; padding:clamp(16px,3vw,24px);">
+            <div style="font-size:28px; margin-bottom:8px;">F5</div>
+            <h3 style="font-size:clamp(13px,1.5vw,16px); font-weight:600;">Fullscreen</h3>
+            <p style="font-size:clamp(12px,1.3vw,14px); color:rgba(255,255,255,0.70); margin-top:4px;">Slides scale to fill any display at 1440×900 aspect ratio.</p>
+        </div>
+        <div style="background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.10); border-radius:12px; padding:clamp(16px,3vw,24px);">
+            <div style="font-size:28px; margin-bottom:8px;">P</div>
+            <h3 style="font-size:clamp(13px,1.5vw,16px); font-weight:600;">Presenter View</h3>
+            <p style="font-size:clamp(12px,1.3vw,14px); color:rgba(255,255,255,0.70); margin-top:4px;">Separate window with notes, timer, and slide counter.</p>
+        </div>
+        <div style="background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.10); border-radius:12px; padding:clamp(16px,3vw,24px);">
+            <div style="font-size:28px; margin-bottom:8px;">B</div>
+            <h3 style="font-size:clamp(13px,1.5vw,16px); font-weight:600;">Black Screen</h3>
+            <p style="font-size:clamp(12px,1.3vw,14px); color:rgba(255,255,255,0.70); margin-top:4px;">Toggle black background during Q&A to focus attention.</p>
+        </div>
     </div>
-  </div>
+</div>
 </section>
 
-<!-- SLIDE 7: Install -->
-<section class="slide" id="s6">
-  <div class="content">
+<section class="slide" data-notes="Explain edit mode: E key, contenteditable, save.">
+<div class="content">
     <div class="reveal">
-      <span class="pill">Install</span>
+        <span class="pill">Edit Mode</span>
     </div>
     <div class="reveal" style="transition-delay:0.1s">
-      <h2 style="margin-top:clamp(12px,2vw,20px);">Up and running<br>in <span class="accent">60 seconds</span></h2>
+        <h2 style="margin-top:clamp(12px,2vw,20px);">Edit in the browser.<br><span style=color:{accent_text};>Save to disk</span></h2>
     </div>
-    <div class="sep reveal" style="transition-delay:0.15s"></div>
-    <div class="install-row reveal" style="transition-delay:0.2s">
-      <div class="install-item">
-        <div class="install-label">Claude Code</div>
-        <div class="install-cmd">git clone https://github.com/kaisersong/slide-creator ~/.claude/skills/slide-creator</div>
-      </div>
-      <div class="install-item">
-        <div class="install-label">OpenClaw</div>
-        <div class="install-cmd">clawhub install html-slide-creator</div>
-      </div>
+    <div class="sep reveal" style="transition-delay:0.15s; height:1px; background:rgba(255,255,255,0.15); margin:clamp(12px,2vw,20px) 0;"></div>
+    <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(180px,1fr)); gap:clamp(12px,2vw,20px);" class="reveal" style="transition-delay:0.2s">
+        <div style="background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.10); border-radius:12px; padding:clamp(16px,3vw,24px);">
+            <div style="font-size:28px; margin-bottom:8px;">E</div>
+            <h3 style="font-size:clamp(13px,1.5vw,16px); font-weight:600;">Toggle Edit</h3>
+            <p style="font-size:clamp(12px,1.3vw,14px); color:rgba(255,255,255,0.70); margin-top:4px;">Hover the hotzone top-left. Click ✏ Edit. All text becomes editable.</p>
+        </div>
+        <div style="background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.10); border-radius:12px; padding:clamp(16px,3vw,24px);">
+            <div style="font-size:28px; margin-bottom:8px;">📝</div>
+            <h3 style="font-size:clamp(13px,1.5vw,16px); font-weight:600;">Speaker Notes</h3>
+            <p style="font-size:clamp(12px,1.3vw,14px); color:rgba(255,255,255,0.70); margin-top:4px;">Notes panel slides up from bottom. Notes sync to presenter view.</p>
+        </div>
+        <div style="background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.10); border-radius:12px; padding:clamp(16px,3vw,24px);">
+            <div style="font-size:28px; margin-bottom:8px;">⌘S</div>
+            <h3 style="font-size:clamp(13px,1.5vw,16px); font-weight:600;">Save File</h3>
+            <p style="font-size:clamp(12px,1.3vw,14px); color:rgba(255,255,255,0.70); margin-top:4px;">Ctrl+S downloads the edited HTML. Self-contained, zero dependencies.</p>
+        </div>
     </div>
-    <div class="glass reveal" style="transition-delay:0.35s; margin-top:clamp(14px,2vw,22px); display:flex; align-items:center; gap:14px;">
-      <span style="font-size:24px;">💡</span>
-      <p style="font-size:clamp(12px,1.3vw,15px);">No npm. No build step. No config files. Clone the repo and <span class="accent" style="font-weight:600;">it just works</span>.</p>
-    </div>
-  </div>
+</div>
 </section>
 
-<!-- SLIDE 8: Get Started -->
-<section class="slide" id="s7">
-  <div class="content" style="text-align:center;">
+<section class="slide" data-notes="How to install and use slide-creator.">
+<div class="content">
     <div class="reveal">
-      <span class="pill">Get Started</span>
+        <span class="pill">Getting Started</span>
     </div>
     <div class="reveal" style="transition-delay:0.1s">
-      <h1 style="margin-top:clamp(12px,2vw,20px);">Your next presentation<br>starts with <span class="accent">/slide-creator</span></h1>
+        <h2 style="margin-top:clamp(12px,2vw,20px);">Three commands.<br><span style=color:{accent_text};>Zero friction</span></h2>
     </div>
-    <div class="reveal" style="transition-delay:0.2s; max-width:520px; margin:clamp(12px,2vw,20px) auto 0;">
-      <p style="font-size:clamp(15px,1.8vw,20px);">Works with Claude Code and OpenClaw.<br>Runs entirely in your browser.</p>
+    <div class="sep reveal" style="transition-delay:0.15s; height:1px; background:rgba(255,255,255,0.15); margin:clamp(12px,2vw,20px) 0;"></div>
+    <div style="display:grid; gap:clamp(12px,2vw,20px);" class="reveal" style="transition-delay:0.2s">
+        <div style="background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.10); border-radius:12px; padding:clamp(16px,3vw,24px); display:flex; align-items:center; gap:16px;">
+            <div style="font-size:clamp(14px,1.5vw,18px); font-weight:800; color:#00f5c4; font-family:monospace;">/slide-creator</div>
+            <p style="font-size:clamp(13px,1.4vw,15px); color:rgba(255,255,255,0.70); flex:1;">Interactive mode — describe your mood, pick a style, get a deck</p>
+        </div>
+        <div style="background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.10); border-radius:12px; padding:clamp(16px,3vw,24px); display:flex; align-items:center; gap:16px;">
+            <div style="font-size:clamp(14px,1.5vw,18px); font-weight:800; color:#00f5c4; font-family:monospace;">/slide-creator --plan</div>
+            <p style="font-size:clamp(13px,1.4vw,15px); color:rgba(255,255,255,0.70); flex:1;">Generate outline — review and edit before building</p>
+        </div>
+        <div style="background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.10); border-radius:12px; padding:clamp(16px,3vw,24px); display:flex; align-items:center; gap:16px;">
+            <div style="font-size:clamp(14px,1.5vw,18px); font-weight:800; color:#00f5c4; font-family:monospace;">/slide-creator --generate</div>
+            <p style="font-size:clamp(13px,1.4vw,15px); color:rgba(255,255,255,0.70); flex:1;">Build from PLANNING.md — full HTML with all modes</p>
+        </div>
     </div>
-    <div class="reveal" style="transition-delay:0.3s">
-      <div class="cta-btn" style="display:inline-flex; margin-top:clamp(24px,4vw,40px);">
-        <span>/slide-creator</span>
-        <span style="opacity:0.6;">→</span>
-      </div>
-    </div>
-    <div class="reveal" style="transition-delay:0.4s; margin-top:clamp(20px,3vw,36px);">
-      <p style="font-size:clamp(11px,1.2vw,13px); color:rgba(255,255,255,0.25); letter-spacing:0.06em; text-transform:uppercase;">Aurora Mesh · slide-creator</p>
-    </div>
-  </div>
+</div>
 </section>
+
+<section class="slide" data-notes="Closing CTA. Install link and takeaway.">
+<div class="content" style="text-align:center;">
+    <div class="reveal">
+        <h1 style="font-size:clamp(2rem,5.5vw,4rem);">Stop making slides.<br>Start telling stories.</h1>
+    </div>
+    <div class="sep reveal" style="transition-delay:0.1s; height:1px; background:rgba(255,255,255,0.15); margin:clamp(16px,3vw,28px) auto; width:60px;"></div>
+    <div class="reveal" style="transition-delay:0.2s">
+        <p style="font-size:clamp(14px,2vw,20px); color:rgba(255,255,255,0.70); max-width:520px; margin:0 auto;">
+            One HTML file. Every style. Any browser. No build step.
+        </p>
+    </div>
+    <div class="reveal" style="transition-delay:0.3s; margin-top:clamp(20px,3vw,36px);">
+        <div style="font-size:clamp(13px,1.5vw,16px); font-family:monospace; background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.10); border-radius:12px; padding:clamp(12px,2vw,20px); display:inline-block;">
+            <span style="color:#00f5c4;">$</span> clawhub install kai-slide-creator
+        </div>
+    </div>
+    <div class="reveal" style="transition-delay:0.4s; margin-top:clamp(12px,2vw,24px);">
+        <p style="font-size:clamp(11px,1.2vw,14px); color:rgba(255,255,255,0.35); letter-spacing:0.04em;">github.com/kaisersong/slide-creator</p>
+    </div>
+</div>
+</section>
+
 
 <script>
-const slides = document.querySelectorAll('.slide');
-const total = slides.length;
-let cur = 0;
 
-// Nav dots
-const dotsEl = document.getElementById('nav-dots');
-const dots = [];
-for (let i = 0; i < total; i++) {
-  const d = document.createElement('button');
-  d.className = 'dot';
-  d.setAttribute('aria-label', `Slide ${i+1}`);
-  d.addEventListener('click', () => goTo(i));
-  dotsEl.appendChild(d);
-  dots.push(d);
-}
-
-function goTo(n) {
-  n = Math.max(0, Math.min(total - 1, n));
-  cur = n;
-  slides[cur].scrollIntoView({ behavior: 'smooth' });
-  updateUI();
-}
-
-function updateUI() {
-  dots.forEach((d, i) => d.classList.toggle('active', i === cur));
-  document.getElementById('progress').style.width = ((cur + 1) / total * 100) + '%';
-  document.getElementById('slide-num').textContent = `${cur + 1} / ${total}`;
-}
-
-// IntersectionObserver for reveal
-const observer = new IntersectionObserver((entries) => {
-  entries.forEach(entry => {
-    if (entry.isIntersecting) {
-      const el = entry.target;
-      const revealEls = el.querySelectorAll('.reveal');
-      revealEls.forEach((r, i) => {
-        setTimeout(() => r.classList.add('visible'), i * 100);
+class PresentMode {
+  constructor(ctrl) {
+    this.ctrl = ctrl; this.DW = 1440; this.DH = 900; this.active = false;
+    this._resize = () => this._scale();
+    const btn = document.createElement('button');
+    btn.id = 'present-btn'; btn.title = 'Present (F5)';
+    btn.setAttribute('aria-label', 'Present'); btn.textContent = '\u25b6';
+    document.body.appendChild(btn);
+    const counter = document.createElement('div');
+    counter.id = 'present-counter'; document.body.appendChild(counter);
+    btn.addEventListener('click', () => this.enter());
+    document.addEventListener('keydown', e => {
+      if (e.key === 'F5') { e.preventDefault(); this.enter(); }
+      if (e.key === 'Escape' && this.active) this.exit();
+      if ((e.key === 'b' || e.key === 'B') && this.active) document.body.classList.toggle('presenting-black');
+    });
+    document.addEventListener('fullscreenchange', () => { if (!document.fullscreenElement && this.active) this.exit(); });
+  }
+  enter() {
+    if (this.active) return; this.active = true;
+    document.body.classList.add('presenting');
+    document.documentElement.requestFullscreen?.().catch(() => {});
+    window.addEventListener('resize', this._resize); this._scale(); this._show(this.ctrl.currentSlide);
+    this._origGoTo = this.ctrl.goTo.bind(this.ctrl);
+    this.ctrl.goTo = (i) => {
+      const idx = Math.max(0, Math.min(i, this.ctrl.slides.length - 1));
+      this.ctrl.currentSlide = idx;
+      this.ctrl.slides.forEach((s, j) => s.classList.toggle('visible', j === idx));
+      this._show(idx); this.ctrl.updateProgress?.(); this.ctrl.updateDots?.(); this.ctrl.broadcastState?.();
+    };
+  }
+  exit() {
+    if (!this.active) return; this.active = false;
+    document.body.classList.remove('presenting', 'presenting-black');
+    document.exitFullscreen?.().catch(() => {});
+    window.removeEventListener('resize', this._resize);
+    this.ctrl.goTo = this._origGoTo;
+    this.ctrl.goTo(this.ctrl.currentSlide);
+    setTimeout(() => this.ctrl.slides[this.ctrl.currentSlide]?.scrollIntoView(), 50);
+  }
+  _scale() {
+    const sw = window.innerWidth / this.DW, sh = window.innerHeight / this.DH, s = Math.min(sw, sh);
+    document.querySelectorAll('body.presenting .slide').forEach(sl => {
+      sl.style.transform = `translate(-50%, -50%) scale(${s})`;
+    });
+  }
+  _show(n) {
+    this.ctrl.slides.forEach((sl, i) => {
+      sl.classList.toggle('p-on', i === n);
+      sl.querySelectorAll('.reveal').forEach(r => {
+        r.classList.toggle('visible', i === n);
       });
-      const idx = Array.from(slides).indexOf(el);
-      if (idx !== -1) { cur = idx; updateUI(); }
-    }
-  });
-}, { threshold: 0.5 });
-
-slides.forEach(s => observer.observe(s));
-
-// Keyboard
-document.addEventListener('keydown', e => {
-  if (editMode && e.key !== 'Escape') {
-    if ((e.ctrlKey || e.metaKey) && e.key === 's') { e.preventDefault(); saveFile(); }
-    return;
+    });
+    const counter = document.getElementById('present-counter');
+    if (counter) counter.textContent = `${n + 1} / ${this.ctrl.slides.length}`;
   }
-  if (e.key === 'ArrowDown' || e.key === 'ArrowRight' || e.key === ' ') { e.preventDefault(); goTo(cur + 1); }
-  if (e.key === 'ArrowUp'   || e.key === 'ArrowLeft')  { e.preventDefault(); goTo(cur - 1); }
-  if (e.key === 'e' || e.key === 'E') toggleEdit();
-  if (e.key === 'Escape' && editMode) toggleEdit();
-  if ((e.ctrlKey || e.metaKey) && e.key === 's') { e.preventDefault(); saveFile(); }
-});
-
-  // Trackpad/mouse wheel: handled natively by scroll-snap-type: y mandatory
-  // No JS wheel handler needed — IntersectionObserver keeps cur/dots in sync
-
-// Touch swipe
-let touchY = 0;
-document.addEventListener('touchstart', e => { touchY = e.touches[0].clientY; }, { passive: true });
-document.addEventListener('touchend', e => {
-  const dy = touchY - e.changedTouches[0].clientY;
-  if (Math.abs(dy) > 40) dy > 0 ? goTo(cur + 1) : goTo(cur - 1);
-}, { passive: true });
-
-// Edit mode
-let editMode = false;
-let fileHandle = null;
-
-function toggleEdit() {
-  editMode = !editMode;
-  document.body.classList.toggle('edit-mode', editMode);
-  const editable = document.querySelectorAll('h1,h2,h3,p,.tag,.stat-value,.stat-label,.pill,.install-cmd,.code-block');
-  editable.forEach(el => el.setAttribute('contenteditable', editMode ? 'true' : 'false'));
 }
 
-async function saveFile() {
-  const html = '<!DOCTYPE html>\n' + document.documentElement.outerHTML;
-  if (window.showSaveFilePicker) {
-    try {
-      if (!fileHandle) {
-        fileHandle = await window.showSaveFilePicker({ suggestedName: 'aurora-mesh.html', types: [{ description: 'HTML', accept: {'text/html': ['.html']} }] });
+
+class SlidePresentation {
+  constructor() {
+    this.slides = document.querySelectorAll('.slide');
+    this.currentSlide = 0;
+    this.channel = new BroadcastChannel('slide-creator-presenter');
+    // CRITICAL: Make first slide visible immediately
+    this.slides[0]?.classList.add('visible');
+    this.slides[0]?.querySelectorAll('.reveal').forEach(function(r) { r.classList.add('visible'); });
+    this.setupNavDots();
+    this.setupObserver();
+    this.setupKeyboard();
+    this.setupTouch();
+    this.setupWheel();
+    this.setupPresenter();
+    this.updateProgress();
+  }
+  setupNavDots() {
+    const nav = document.querySelector('.nav-dots');
+    if (!nav) return;
+    this.slides.forEach((_, i) => {
+      const dot = document.createElement('button');
+      dot.setAttribute('aria-label', `Go to slide ${i + 1}`);
+      dot.style.cssText = 'width:8px;height:8px;border-radius:50%;border:none;cursor:pointer;background:rgba(255,255,255,0.3);transition:all 0.3s;';
+      dot.addEventListener('click', () => this.goTo(i));
+      nav.appendChild(dot);
+    });
+    nav.style.cssText = 'position:fixed;right:1.5rem;top:50%;transform:translateY(-50%);display:flex;flex-direction:column;gap:8px;z-index:100;';
+  }
+  setupObserver() {
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
+          this.currentSlide = [...this.slides].indexOf(entry.target);
+          this.updateProgress();
+          this.updateDots();
+          this.broadcastState();
+          this.updateNotesPanel();
+        }
+      });
+    }, { threshold: 0.5 });
+    this.slides.forEach(s => observer.observe(s));
+  }
+  setupKeyboard() {
+    document.addEventListener('keydown', (e) => {
+      if (e.target.getAttribute('contenteditable')) return;
+      if (e.key === 'ArrowDown' || e.key === 'ArrowRight' || e.key === ' ' || e.key === 'PageDown' || e.key === 'Enter') {
+        e.preventDefault(); this.next();
+      } else if (e.key === 'ArrowUp' || e.key === 'ArrowLeft' || e.key === 'PageUp' || e.key === 'Backspace') {
+        e.preventDefault(); this.prev();
+      } else if (e.key === 'p' || e.key === 'P') {
+        const url = location.href.split('?')[0] + '?presenter';
+        window.open(url, 'slide-presenter-' + Date.now(), 'width=1100,menubar=no,toolbar=no,location=no');
       }
-      const writable = await fileHandle.createWritable();
-      await writable.write(html); await writable.close();
-      return;
-    } catch(_) {}
+    });
   }
-  const a = document.createElement('a');
-  a.href = URL.createObjectURL(new Blob([html], { type: 'text/html' }));
-  a.download = 'aurora-mesh.html'; a.click();
+  setupTouch() {
+    let startY = 0;
+    document.addEventListener('touchstart', e => { startY = e.touches[0].clientY; }, { passive: true });
+    document.addEventListener('touchend', e => {
+      const delta = startY - e.changedTouches[0].clientY;
+      if (Math.abs(delta) > 50) delta > 0 ? this.next() : this.prev();
+    });
+  }
+  setupWheel() {}
+  setupPresenter() {
+    this.channel.addEventListener('message', e => {
+      if (e.data.type === 'nav-next') this.next();
+      else if (e.data.type === 'nav-prev') this.prev();
+      else if (e.data.type === 'request-state') this.broadcastState();
+    });
+  }
+  broadcastState() {
+    const slide = this.slides[this.currentSlide];
+    this.channel.postMessage({
+      type: 'state', index: this.currentSlide,
+      total: this.slides.length, notes: slide?.dataset.notes || ''
+    });
+  }
+  goTo(index) {
+    this.slides.forEach((slide, i) => {
+      slide.classList.toggle('visible', i === index);
+      var reveals = slide.querySelectorAll('.reveal');
+      reveals.forEach(function(r) { r.classList.toggle('visible', i === index); });
+    });
+    this.slides[index]?.scrollIntoView({ behavior: 'smooth' });
+  }
+  next() { this.goTo(Math.min(this.currentSlide + 1, this.slides.length - 1)); }
+  prev() { this.goTo(Math.max(this.currentSlide - 1, 0)); }
+  updateProgress() {
+    const pct = (this.currentSlide / (this.slides.length - 1)) * 100;
+    const bar = document.querySelector('.progress-bar');
+    if (bar) bar.style.width = pct + '%';
+  }
+  updateDots() {
+    document.querySelectorAll('.nav-dots button').forEach((dot, i) => {
+      dot.style.background = i === this.currentSlide ? 'var(--accent)' : 'rgba(255,255,255,0.3)';
+      dot.style.transform = i === this.currentSlide ? 'scale(1.3)' : 'scale(1)';
+    });
+  }
+  updateNotesPanel() {
+    const label = document.getElementById('notes-panel-label');
+    const textarea = document.getElementById('notes-textarea');
+    if (label) label.textContent = `SPEAKER NOTES — SLIDE ${this.currentSlide + 1} / ${this.slides.length}`;
+    if (textarea) textarea.value = this.slides[this.currentSlide]?.dataset.notes || '';
+  }
+  setupEditor() {
+    const panel = document.getElementById('notes-panel');
+    const textarea = document.getElementById('notes-textarea');
+    const toggle = document.getElementById('editToggle');
+    const hotzone = document.querySelector('.edit-hotzone');
+    const header = document.getElementById('notes-panel-header');
+    const collapseBtn = document.getElementById('notes-collapse-btn');
+    let hideTimeout = null;
+    this.editor = { active: false };
+    hotzone.addEventListener('mouseenter', () => { clearTimeout(hideTimeout); toggle.classList.add('show'); });
+    hotzone.addEventListener('mouseleave', () => { hideTimeout = setTimeout(() => { if (!this.editor.active) toggle.classList.remove('show'); }, 400); });
+    toggle.addEventListener('mouseenter', () => clearTimeout(hideTimeout));
+    toggle.addEventListener('mouseleave', () => { hideTimeout = setTimeout(() => { if (!this.editor.active) toggle.classList.remove('show'); }, 400); });
+    toggle.addEventListener('click', (e) => {
+      e.stopPropagation();
+      this.editor.active = !this.editor.active;
+      document.body.classList.toggle('editing', this.editor.active);
+      toggle.classList.toggle('active', this.editor.active);
+      toggle.textContent = this.editor.active ? '✓ Done' : '✏ Edit';
+      if (this.editor.active) {
+        panel.classList.add('active');
+        textarea.value = this.slides[this.currentSlide]?.dataset.notes || '';
+        textarea.focus();
+      } else {
+        panel.classList.remove('active');
+      }
+    });
+    header.addEventListener('click', (e) => {
+      if (e.target === collapseBtn) { panel.classList.toggle('collapsed'); return; }
+    });
+    textarea.addEventListener('input', () => {
+      const slide = this.slides[this.currentSlide];
+      if (slide) slide.dataset.notes = textarea.value;
+      this.channel.postMessage({ type: 'state', index: this.currentSlide, total: this.slides.length, notes: textarea.value });
+    });
+  }
 }
 
-// Hotzone
-document.getElementById('hotzone').addEventListener('click', toggleEdit);
+/* Presenter Mode */
 
-// Init
-updateUI();
+if (new URLSearchParams(location.search).has('presenter')) {
+  document.title = 'Presenter — ' + document.title;
+  document.body.innerHTML = `
+  <style>
+  body { margin: 0; background: #111; color: #fff; font-family: system-ui, sans-serif; }
+  #pv { display: flex; height: 100vh; }
+  .pv-panel { background: #1a1a1a; border-right: 1px solid #333; padding: 12px; }
+  #pv-right { flex: 1; display: flex; flex-direction: column; }
+  #pv-nav { display: flex; align-items: center; gap: 12px; }
+  .pv-arrow { background: #333; color: #fff; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; }
+  #pv-counter { display: flex; align-items: baseline; gap: 4px; }
+  #pv-num { font-size: 1.5rem; font-weight: 700; }
+  #pv-of { font-size: 0.875rem; color: #888; }
+  #pv-timer-label { font-size: 0.7rem; color: #888; text-transform: uppercase; letter-spacing: 0.1em; }
+  #pv-timer { font-size: 2rem; font-weight: 700; font-family: monospace; }
+  #pv-notes { white-space: pre-wrap; font-size: 0.875rem; line-height: 1.6; color: #ccc; margin-top: 8px; }
+  #pv-label { font-weight: 600; font-size: 0.75rem; color: #888; text-transform: uppercase; letter-spacing: 0.1em; }
+  #pv-timer-box { margin-top: auto; padding: 12px !important; }
+  </style>
+  <div id="pv">
+    <div class="pv-panel"><div id="pv-label">Speaker Notes</div><div id="pv-notes">Waiting for main window...</div></div>
+    <div id="pv-right">
+      <div class="pv-panel"><div id="pv-nav"><button class="pv-arrow" id="pv-prev">←</button><div id="pv-counter"><div id="pv-num">—</div><div id="pv-of">/ —</div></div><button class="pv-arrow" id="pv-next">→</button></div></div>
+      <div class="pv-panel" id="pv-timer-box"><div id="pv-timer-label">Elapsed</div><div id="pv-timer">0:00</div></div>
+    </div>
+  </div>`;
+  const ch = new BroadcastChannel('slide-creator-presenter');
+  let startTime = null;
+  const pv = document.getElementById('pv');
+  let lastH = 0, roTimer = null;
+  new ResizeObserver(() => { clearTimeout(roTimer); roTimer = setTimeout(() => { const h = Math.ceil(pv.getBoundingClientRect().height); if (h === lastH) return; lastH = h; const chrome = window.outerHeight - window.innerHeight; window.resizeTo(window.outerWidth, Math.max(260, h + chrome + 4)); }, 40); }).observe(pv);
+  ch.addEventListener('message', e => { if (e.data.type !== 'state') return; if (!startTime) startTime = Date.now(); document.getElementById('pv-notes').textContent = e.data.notes || '(no notes for this slide)'; document.getElementById('pv-num').textContent = e.data.index + 1; document.getElementById('pv-of').textContent = `/ ${e.data.total}`; });
+  ch.postMessage({ type: 'request-state' });
+  setInterval(() => { if (!startTime) return; const s = Math.floor((Date.now() - startTime) / 1000); document.getElementById('pv-timer').textContent = `${Math.floor(s / 60)}:${String(s % 60).padStart(2, '0')}`; }, 1000);
+  document.getElementById('pv-prev').addEventListener('click', () => ch.postMessage({ type: 'nav-prev' }));
+  document.getElementById('pv-next').addEventListener('click', () => ch.postMessage({ type: 'nav-next' }));
+  document.addEventListener('keydown', e => {
+    if (e.key === 'ArrowRight' || e.key === 'ArrowDown' || e.key === ' ' || e.key === 'PageDown' || e.key === 'Enter') ch.postMessage({ type: 'nav-next' });
+    else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp' || e.key === 'PageUp' || e.key === 'Backspace') ch.postMessage({ type: 'nav-prev' });
+  });
+} else {
+
+  new PresentMode(new SlidePresentation());
+</script>
+<script>
+
+(function() {
+  var slides = document.querySelectorAll('.slide');
+  if (!slides.length) return;
+  var last = slides[slides.length - 1];
+  var credit = document.createElement('div');
+  credit.className = 'slide-credit';
+  credit.textContent = 'By kai-slide-creator v2.15.0 · Aurora Mesh';
+  last.appendChild(credit);
+})();
+
 </script>
 </body>
 </html>
