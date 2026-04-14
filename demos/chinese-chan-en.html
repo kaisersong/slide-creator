@@ -1,611 +1,713 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>slide-creator · Chinese Chan · Design Philosophy — Stillness as a Product Principle</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@300;400&family=EB+Garamond:ital,wght@0,400;1,400&display=swap" rel="stylesheet">
-  <style>
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    html { scroll-snap-type: y mandatory; height: 100%; }
-    body {
-      height: 100%; overflow-x: hidden;
-      background: #FAFAF8;
-      font-family: 'EB Garamond', 'Noto Serif SC', serif;
-      color: #1a1a18;
-      font-feature-settings: "palt";
-    }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Chinese Chan · Next-Gen Developer Platform</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@700&family=Noto+Sans+SC:wght@400;500;600" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-    .slide {
-      width: 100vw; height: 100vh; height: 100dvh;
-      scroll-snap-align: start; overflow: hidden;
-      position: relative; display: flex; flex-direction: column;
-      align-items: center; justify-content: center;
-      background: #FAFAF8;
-    }
+:root {
+    --bg: #faf8f5;
+    --accent: #c45d3e;
+    --text-primary: #2d2a26;
+    --text-body: rgba(45,42,38,0.70);
+    --text-secondary: rgba(45,42,38,0.55);
+    --text-muted: rgba(45,42,38,0.40);
+    --card-bg: rgba(196,93,62,0.06);
+    --card-border: rgba(196,93,62,0.15);
+    --divider: rgba(196,93,62,0.20);
+    --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+    --duration-normal: 0.6s;
+}
 
-    /* Content column — extreme horizontal margins */
-    .col {
-      width: 100%;
-      max-width: 560px;
-      padding: 0 clamp(2rem, 6vw, 4rem);
-    }
+html { scroll-snap-type: y mandatory; height: 100%; }
 
-    /* Progress bar */
-    #progress {
-      position: fixed; top: 0; left: 0; height: 1px;
-      background: #C41E3A; z-index: 1000;
-      transition: width 0.4s ease;
-    }
+body {
+    height: 100%;
+    overflow-x: hidden;
+    font-family: 'Noto Sans SC', 'Source Han Sans', system-ui, sans-serif;
+    color: var(--text-primary);
+}
 
-    /* Nav dots */
-    #nav-dots {
-      position: fixed; right: 2rem; top: 50%; transform: translateY(-50%);
-      display: flex; flex-direction: column; gap: 0.6rem; z-index: 1000;
-    }
-    .dot {
-      width: 5px; height: 5px; border-radius: 50%;
-      background: rgba(26,26,24,0.25); cursor: pointer;
-      transition: background 0.3s ease, transform 0.3s ease;
-    }
-    .dot.active { background: #1a1a18; transform: scale(1.4); }
+/* Background */
+body {
+    background: #faf8f5;
+    background-image:
+        radial-gradient(circle at 30% 70%, rgba(196,93,62,0.06) 0%, transparent 50%),
+        radial-gradient(circle at 70% 30%, rgba(45,42,38,0.03) 0%, transparent 50%);
+}
 
-    /* Edit indicator */
-    #edit-indicator {
-      position: fixed; bottom: 2rem; right: 2rem; z-index: 1000;
-      font-family: 'EB Garamond', serif; font-size: 0.75rem; font-style: italic;
-      color: #6b6b68; border-bottom: 1px solid rgba(26,26,24,0.2);
-      padding-bottom: 0.15rem; display: none;
-    }
-    body.edit-mode #edit-indicator { display: block; }
-    body.edit-mode [contenteditable] { outline: 1px solid rgba(196,30,58,0.25); }
-    #hotzone { position: fixed; top: 0; left: 0; width: 80px; height: 80px; z-index: 999; cursor: pointer; }
+.slide {
+    width: 100vw; height: 100vh; height: 100dvh;
+    scroll-snap-align: start; overflow: hidden;
+    position: relative; display: flex;
+    flex-direction: column; align-items: center; justify-content: center;
+    padding: clamp(1.5rem, 4vw, 4rem);
+}
 
-    /* Animations — opacity only */
-    @keyframes zenFadeIn { from { opacity: 0; } to { opacity: 1; } }
+.slide .content {
+    width: 100%; max-width: min(90vw, 800px);
+    padding: clamp(24px, 5vw, 64px);
+    position: relative; z-index: 1;
+}
 
-    .reveal { opacity: 0; }
-    .slide.visible .reveal { animation: zenFadeIn 0.8s ease forwards; }
-    .slide.visible .reveal:nth-child(1) { animation-delay: 0.1s; }
-    .slide.visible .reveal:nth-child(2) { animation-delay: 0.3s; }
-    .slide.visible .reveal:nth-child(3) { animation-delay: 0.5s; }
-    .slide.visible .reveal:nth-child(4) { animation-delay: 0.7s; }
-    .slide.visible .reveal:nth-child(5) { animation-delay: 0.9s; }
-    .slide.visible .reveal:nth-child(6) { animation-delay: 1.1s; }
-    .slide.visible .reveal:nth-child(7) { animation-delay: 1.3s; }
+h1 { font-size: clamp(2rem, 5.5vw, 4rem); font-weight: 800; line-height: 1.1; letter-spacing: -0.02em; }
+h2 { font-size: clamp(1.4rem, 3.5vw, 2.4rem); font-weight: 700; line-height: 1.2; letter-spacing: -0.01em; }
+h3 { font-size: clamp(0.9rem, 1.6vw, 1.2rem); font-weight: 600; }
+p { font-size: clamp(0.82rem, 1.4vw, 1.05rem); line-height: 1.6; color: var(--text-body); }
 
-    /* Decorative elements */
-    .vline {
-      width: 1px; height: 60px;
-      background: rgba(26,26,24,0.15);
-      margin: 0 auto 0 0;
-    }
+.pill {
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 4px 14px; border-radius: 999px;
+    font-size: 12px; font-weight: 600; letter-spacing: 0.05em;
+    background: rgba(196,93,62,0.10); color: #c45d3e;
+    border: 1px solid rgba(196,93,62,0.25);
+}
 
-    .flanked-rule {
-      display: flex; align-items: center; gap: 0.8rem;
-      margin: 0 0 0 0;
-    }
-    .flanked-rule::before, .flanked-rule::after {
-      content: '';
-      width: 5px; height: 5px; border-radius: 50%;
-      background: rgba(26,26,24,0.2); flex-shrink: 0;
-    }
-    .flanked-rule hr {
-      flex: 1; border: none; border-top: 1px solid rgba(26,26,24,0.12);
-    }
+.reveal {
+    opacity: 0; transform: translateY(20px);
+    transition: opacity var(--duration-normal) var(--ease-out-expo),
+                transform var(--duration-normal) var(--ease-out-expo);
+}
+.slide.visible .reveal { opacity: 1; transform: translateY(0); }
 
-    .ghost-kanji {
-      position: absolute;
-      font-family: 'Noto Serif SC', serif;
-      font-weight: 900;
-      font-size: clamp(120px, 25vw, 200px);
-      opacity: 0.05;
-      pointer-events: none;
-      user-select: none;
-      line-height: 1;
-      color: #1a1a18;
-    }
+/* Progress bar */
+.progress-bar { position: fixed; top: 0; left: 0; height: 3px; background: var(--accent); width: 0%; z-index: 100; transition: width 0.3s ease; }
 
-    /* Typography */
-    .eyebrow {
-      font-family: 'EB Garamond', serif;
-      font-size: clamp(0.65rem, 0.9vw, 0.72rem);
-      letter-spacing: 0.22em; text-transform: uppercase;
-      color: #6b6b68; margin-bottom: clamp(2rem, 4vh, 3rem);
-    }
+/* Nav dots placeholder */
+.nav-dots {}
 
-    h1 {
-      font-family: 'EB Garamond', 'Noto Serif SC', serif;
-      font-weight: 400;
-      font-size: clamp(2.8rem, 7vw, 5.5rem);
-      letter-spacing: -0.02em; line-height: 1.1;
-      color: #1a1a18;
-    }
 
-    h2 {
-      font-family: 'EB Garamond', 'Noto Serif SC', serif;
-      font-weight: 400;
-      font-size: clamp(1.8rem, 4vw, 3rem);
-      letter-spacing: -0.01em; line-height: 1.2;
-      color: #1a1a18;
-    }
+/* ═══════════════════════════════════════════════
+   Present Mode — F5 / ▶ to enter, ESC to exit
+   ═══════════════════════════════════════════════ */
+#present-btn {
+  position: fixed; bottom: 1.5rem; right: 1.5rem; z-index: 9997;
+  width: 44px; height: 44px; border-radius: 50%;
+  background: rgba(0,0,0,0.50); color: rgba(255,255,255,0.80);
+  border: 1.5px solid rgba(255,255,255,0.20);
+  font-size: 1rem; cursor: pointer;
+  backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+  display: flex; align-items: center; justify-content: center;
+  opacity: 0; transition: opacity 0.2s; pointer-events: none;
+}
+body:hover #present-btn { opacity: 1; pointer-events: auto; }
+#present-btn:hover { background: rgba(0,0,0,0.78); }
 
-    p {
-      font-family: 'EB Garamond', serif;
-      font-weight: 400;
-      font-size: clamp(0.95rem, 1.5vw, 1.05rem);
-      line-height: 1.9; color: #1a1a18;
-      margin-bottom: 40px;
-    }
-    p:last-child { margin-bottom: 0; }
+#present-counter {
+  display: none; position: fixed; bottom: 1.4rem; left: 50%;
+  transform: translateX(-50%); z-index: 9997;
+  font-size: 0.65rem; letter-spacing: 0.14em; font-family: system-ui, sans-serif;
+  color: rgba(255,255,255,0.28);
+}
 
-    p em { font-style: italic; }
+body.presenting { background: #111 !important; overflow: hidden !important; }
+body.presenting .slide {
+  position: fixed !important; inset: 0;
+  width: 1440px !important; height: 900px !important;
+  transform-origin: top left;
+  display: none !important; margin: 0; padding: 0;
+}
+body.presenting .slide.p-on { display: flex !important; }
+body.presenting .slide.p-on .reveal { opacity: 1; transform: translateY(0); }
+body.presenting #present-btn { display: none !important; }
+body.presenting #present-counter { display: block; }
+body.presenting .nav-dots,
+body.presenting #slide-counter,
+body.presenting .orb,
+body.presenting #notes-panel,
+body.presenting .edit-hotzone,
+body.presenting .edit-toggle,
+body.presenting .keyboard-hint { display: none !important; }
 
-    .muted { color: #6b6b68; }
+body.presenting.presenting-black { background: #000 !important; }
+body.presenting.presenting-black .slide { display: none !important; }
 
-    .accent { color: #C41E3A; }
 
-    /* Section spacing */
-    .section-gap { height: clamp(2rem, 5vh, 4rem); }
+.slide-credit {
+  position: absolute; bottom: 8px; right: 14px;
+  font-size: 9px; color: var(--text-secondary, #999);
+  opacity: 0.35; pointer-events: none; z-index: 1;
+  font-family: system-ui, sans-serif;
+}
+body.presenting .slide-credit { display: none; }
 
-    /* Slide 1 — Cover */
-    .cover-sub {
-      font-family: 'EB Garamond', serif; font-style: italic;
-      font-size: clamp(0.9rem, 1.5vw, 1.05rem);
-      color: #6b6b68; line-height: 1.7;
-      margin-top: 40px; margin-bottom: 0;
-    }
-    .cover-stats {
-      display: flex; gap: clamp(2rem, 5vw, 4rem);
-      margin-top: clamp(2.5rem, 5vh, 4rem);
-    }
-    .cover-stat-val {
-      font-family: 'EB Garamond', 'Noto Serif SC', serif;
-      font-size: clamp(2rem, 4vw, 3rem);
-      color: #1a1a18; line-height: 1; display: block;
-    }
-    .cover-stat-label {
-      font-size: clamp(0.65rem, 0.9vw, 0.72rem);
-      letter-spacing: 0.18em; text-transform: uppercase;
-      color: #6b6b68; margin-top: 0.4rem; display: block;
-    }
 
-    /* Slide 2 — Problem */
-    .problem-quote {
-      font-family: 'EB Garamond', serif;
-      font-size: clamp(1.3rem, 2.8vw, 2.1rem);
-      line-height: 1.5; font-style: italic;
-      color: #1a1a18; margin-bottom: 40px;
-    }
-    .pain-entry {
-      padding: clamp(1.2rem, 2.5vh, 1.8rem) 0;
-      border-top: 1px solid rgba(26,26,24,0.12);
-    }
-    .pain-entry:last-child { border-bottom: 1px solid rgba(26,26,24,0.12); }
-    .pain-label {
-      font-size: clamp(0.6rem, 0.85vw, 0.68rem);
-      letter-spacing: 0.22em; text-transform: uppercase;
-      color: #6b6b68; margin-bottom: 0.5rem; display: block;
-    }
-    .pain-text {
-      font-family: 'EB Garamond', serif;
-      font-size: clamp(0.9rem, 1.4vw, 1rem);
-      line-height: 1.75; color: #1a1a18; margin-bottom: 0;
-    }
+.edit-hotzone {
+  position: fixed; top: 0; left: 0; width: 30px; height: 30px;
+  z-index: 9998; cursor: pointer;
+}
+.edit-toggle {
+  position: fixed; top: 12px; left: 12px; z-index: 9999;
+  padding: 6px 12px; border-radius: 8px; border: none;
+  background: rgba(0,0,0,0.50); color: rgba(255,255,255,0.70);
+  font-size: 0.75rem; cursor: pointer;
+  backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+  opacity: 0; transition: opacity 0.3s; pointer-events: none;
+}
+body:hover .edit-toggle { opacity: 1; pointer-events: auto; }
+body.editing .edit-toggle { opacity: 1; background: rgba(16,185,129,0.80); color: #fff; }
 
-    /* Slide 3 — Show Don't Tell */
-    .process-steps { margin-top: 0; }
-    .process-step {
-      padding: clamp(1.2rem, 2.5vh, 1.8rem) 0;
-      border-top: 1px solid rgba(26,26,24,0.12);
-      display: flex; align-items: baseline; gap: 1.5rem;
-    }
-    .process-step:last-child { border-bottom: 1px solid rgba(26,26,24,0.12); }
-    .process-num {
-      font-family: 'EB Garamond', serif;
-      font-size: clamp(0.75rem, 1vw, 0.85rem);
-      color: #6b6b68; letter-spacing: 0.1em;
-      flex-shrink: 0; width: 2rem;
-    }
-    .process-body { flex: 1; }
-    .process-title {
-      font-family: 'EB Garamond', serif;
-      font-size: clamp(1rem, 1.6vw, 1.15rem);
-      color: #1a1a18; line-height: 1.4; margin-bottom: 0.3rem;
-    }
-    .process-desc {
-      font-family: 'EB Garamond', serif;
-      font-size: clamp(0.85rem, 1.2vw, 0.95rem);
-      color: #6b6b68; line-height: 1.65; margin-bottom: 0;
-    }
+#notes-panel {
+  position: fixed; bottom: 0; left: 0; right: 0; z-index: 9996;
+  background: rgba(0,0,0,0.85); backdrop-filter: blur(12px);
+  color: #fff; transform: translateY(100%); transition: transform 0.3s ease;
+  max-height: 40vh; display: flex; flex-direction: column;
+}
+#notes-panel.active { transform: translateY(0); }
+#notes-panel-header {
+  display: flex; align-items: center; gap: 8px;
+  padding: 8px 16px; border-bottom: 1px solid rgba(255,255,255,0.10);
+}
+#notes-panel-label { font-size: 0.7rem; letter-spacing: 0.1em; text-transform: uppercase; color: rgba(255,255,255,0.50); }
+#notes-body { flex: 1; padding: 8px; }
+#notes-textarea {
+  width: 100%; height: 100%; border: none; background: transparent;
+  color: rgba(255,255,255,0.75); font-size: 0.88rem; line-height: 1.65;
+  font-family: system-ui, sans-serif; resize: none; outline: none;
+}
 
-    /* Slide 4 — 19 Presets */
-    .preset-list {
-      list-style: none;
-      column-count: 2; column-gap: clamp(2rem, 4vw, 3rem);
-      margin-top: clamp(1.5rem, 3vh, 2rem);
-    }
-    .preset-item {
-      font-family: 'EB Garamond', serif;
-      font-size: clamp(0.85rem, 1.3vw, 0.95rem);
-      color: #1a1a18; line-height: 1.9;
-      padding: 0.25rem 0;
-      border-bottom: 1px solid rgba(26,26,24,0.07);
-    }
-    .preset-item.current { color: #C41E3A; }
-    .preset-num {
-      font-size: 0.72em; color: #6b6b68;
-      margin-right: 0.6rem; letter-spacing: 0.05em;
-    }
 
-    /* Slide 5 — How It Works */
-    .how-steps { margin-top: 0; }
-    .how-step {
-      padding: clamp(1.2rem, 2.5vh, 1.8rem) 0;
-      border-top: 1px solid rgba(26,26,24,0.12);
-    }
-    .how-step:last-child { border-bottom: 1px solid rgba(26,26,24,0.12); }
-    .how-step-label {
-      font-size: clamp(0.6rem, 0.85vw, 0.68rem);
-      letter-spacing: 0.22em; text-transform: uppercase;
-      color: #6b6b68; margin-bottom: 0.4rem; display: block;
-    }
-    .how-step-title {
-      font-family: 'EB Garamond', serif;
-      font-size: clamp(1rem, 1.6vw, 1.15rem);
-      color: #1a1a18; margin-bottom: 0.3rem;
-    }
-    .how-step-desc {
-      font-family: 'EB Garamond', serif;
-      font-size: clamp(0.85rem, 1.2vw, 0.95rem);
-      color: #6b6b68; line-height: 1.7; margin-bottom: 0;
-    }
-
-    /* Slide 6 — Features */
-    .feature-items { margin-top: 0; }
-    .feature-item {
-      padding: clamp(1rem, 2vh, 1.5rem) 0;
-      border-top: 1px solid rgba(26,26,24,0.12);
-      display: grid; grid-template-columns: 11ch 1fr; gap: 2rem;
-      align-items: baseline;
-    }
-    .feature-item:last-child { border-bottom: 1px solid rgba(26,26,24,0.12); }
-    .feature-name {
-      font-size: clamp(0.6rem, 0.85vw, 0.68rem);
-      letter-spacing: 0.18em; text-transform: uppercase; color: #6b6b68;
-    }
-    .feature-desc {
-      font-family: 'EB Garamond', serif;
-      font-size: clamp(0.88rem, 1.3vw, 0.98rem);
-      color: #1a1a18; line-height: 1.75; margin-bottom: 0;
-    }
-
-    /* Slide 7 — Install */
-    .code-block {
-      background: rgba(26,26,24,0.04);
-      border: 1px solid rgba(26,26,24,0.12);
-      font-family: 'Courier New', monospace;
-      font-size: clamp(0.72rem, 1.1vw, 0.82rem);
-      padding: clamp(1rem, 2vw, 1.5rem) clamp(1.2rem, 2.5vw, 1.8rem);
-      margin: clamp(0.8rem, 1.5vh, 1.2rem) 0; line-height: 1.8;
-      color: #1a1a18;
-    }
-    .code-comment { color: #6b6b68; }
-    .install-label {
-      font-size: clamp(0.6rem, 0.85vw, 0.68rem);
-      letter-spacing: 0.22em; text-transform: uppercase; color: #6b6b68;
-      margin-bottom: 0.4rem; display: block;
-    }
-
-    /* Slide 8 — CTA */
-    .cta-cmd {
-      font-family: 'EB Garamond', 'Noto Serif SC', serif;
-      font-size: clamp(2rem, 5vw, 3.5rem);
-      font-weight: 400; color: #1a1a18;
-      letter-spacing: -0.01em; line-height: 1.2;
-      margin-top: clamp(2rem, 4vh, 3rem);
-    }
-    .cta-sub {
-      font-family: 'EB Garamond', serif; font-style: italic;
-      font-size: clamp(0.9rem, 1.4vw, 1rem);
-      color: #6b6b68; line-height: 1.9; margin-top: 40px; margin-bottom: 0;
-    }
-  </style>
+@media (max-height: 700px) {
+    :root { --slide-padding: clamp(0.75rem, 3vw, 2rem); }
+}
+@media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.2s !important; }
+}
+</style>
 </head>
-<body>
+<body data-export-progress="true" data-preset="Chinese Chan">
 
-<div id="progress"></div>
+<div class="progress-bar"></div>
+<nav class="nav-dots" aria-label="Slide navigation"></nav>
 
-<div id="nav-dots">
-  <div class="dot active" data-idx="0"></div>
-  <div class="dot" data-idx="1"></div>
-  <div class="dot" data-idx="2"></div>
-  <div class="dot" data-idx="3"></div>
-  <div class="dot" data-idx="4"></div>
-  <div class="dot" data-idx="5"></div>
-  <div class="dot" data-idx="6"></div>
-  <div class="dot" data-idx="7"></div>
+<div class="edit-hotzone"></div>
+<button class="edit-toggle" id="editToggle" title="Edit mode (E)">✏ Edit</button>
+<div id="notes-panel">
+  <div id="notes-panel-header">
+    <div id="notes-panel-label">SPEAKER NOTES</div>
+    <button id="notes-collapse-btn" title="Collapse">&#9660;</button>
+  </div>
+  <div id="notes-body">
+    <textarea id="notes-textarea" placeholder="Add notes..."></textarea>
+  </div>
 </div>
 
-<div id="hotzone"></div>
-<div id="edit-indicator">Edit mode — Ctrl+S to save</div>
-
-<!-- SLIDE 01: Cover -->
-<section class="slide" id="slide-0">
-  <div class="ghost-kanji" style="right: -0.1em; bottom: -0.15em;">Create</div>
-  <div class="col">
-    <div class="eyebrow reveal">HTML presentations for Claude Code &amp; OpenClaw</div>
-    <div class="vline reveal" style="margin-bottom: clamp(2rem,4vh,3rem);"></div>
-    <h1 class="reveal">slide-<span class="accent">creator</span></h1>
-    <p class="cover-sub reveal">Zero-dependency HTML presentations, conceived for clarity.<br><em>Nineteen styles. Infinite possibility.</em></p>
-    <div class="cover-stats reveal">
-      <div>
-        <span class="cover-stat-val">19</span>
-        <span class="cover-stat-label">Presets</span>
-      </div>
-      <div>
-        <span class="cover-stat-val">0</span>
-        <span class="cover-stat-label">Dependencies</span>
-      </div>
-      <div>
-        <span class="cover-stat-val">∞</span>
-        <span class="cover-stat-label">Slides</span>
-      </div>
+<section class="slide" data-notes="Welcome audience. Introduce slide-creator vision.">
+<div class="content" style="text-align:center;">
+    <div class="reveal">
+        <span class="pill">Open Source · Claude Code · OpenClaw</span>
     </div>
-  </div>
-</section>
-
-<section class="slide" id="slide-1">
-  <div class="ghost-kanji" style="left: -0.05em; top: 0.1em;">Question</div>
-  <div class="col">
-    <div class="eyebrow reveal">The Problem</div>
-    <p class="problem-quote reveal">"Presentations shouldn't require<br>a build system."</p>
-    <div class="pain-entry reveal">
-      <span class="pain-label">Complexity</span>
-      <p class="pain-text">npm install, webpack config, three hundred megabytes of node_modules — to ship a handful of slides. The tool consumes the task.</p>
+    <div class="reveal" style="transition-delay:0.1s">
+        <h1>slide<span style="color:#c45d3e;">-creator</span></h1>
     </div>
-    <div class="pain-entry reveal">
-      <span class="pain-label">Sameness</span>
-      <p class="pain-text">Every AI-generated deck arrives identical: Inter font, purple gradient, zero character. Generic is the quietest form of failure.</p>
+    <div class="reveal" style="transition-delay:0.2s; max-width:560px; margin:0 auto;">
+        <p style="font-size:clamp(16px,2vw,22px); margin-bottom:clamp(20px,3vw,36px);">
+            Zero-dependency HTML presentations for<br>Claude Code &amp; OpenClaw
+        </p>
     </div>
-    <div class="pain-entry reveal">
-      <span class="pain-label">Ownership</span>
-      <p class="pain-text">Closed platforms, export locks, monthly fees for your own content. <span class="accent">That which you cannot hold, you do not own.</span></p>
-    </div>
-  </div>
-</section>
-
-<section class="slide" id="slide-2">
-  <div class="ghost-kanji" style="right: 0; bottom: -0.1em;">Feel</div>
-  <div class="col">
-    <div class="eyebrow reveal">Discovery</div>
-    <h2 class="reveal">Style discovery<br>that <span class="accent">works.</span></h2>
-    <div class="section-gap" style="height: clamp(1.5rem,3vh,2.5rem);"></div>
-    <div class="process-steps">
-      <div class="process-step reveal">
-        <span class="process-num">One</span>
-        <div class="process-body">
-          <div class="process-title">Ask mood</div>
-          <p class="process-desc">Four questions. Tone, audience, energy, topic. Language has limits — show is better.</p>
+    <div class="reveal" style="transition-delay:0.3s">
+        <div class="stats" style="justify-content:center; display:flex; gap:clamp(24px,4vw,48px);">
+            <div class="stat">
+                <span class="stat-value" style="font-size:clamp(2rem,5vw,3.5rem); font-weight:800; color:#c45d3e;">21</span>
+                <span class="stat-label" style="font-size:clamp(10px,1.2vw,13px); color:rgba(45,42,38,0.40); text-transform:uppercase; letter-spacing:0.08em;">Presets</span>
+            </div>
+            <div style="width:1px; background:rgba(196,93,62,0.20); align-self:stretch;"></div>
+            <div class="stat">
+                <span class="stat-value" style="font-size:clamp(2rem,5vw,3.5rem); font-weight:800; color:#c45d3e;">0</span>
+                <span class="stat-label" style="font-size:clamp(10px,1.2vw,13px); color:rgba(45,42,38,0.40); text-transform:uppercase; letter-spacing:0.08em;">Dependencies</span>
+            </div>
+            <div style="width:1px; background:rgba(196,93,62,0.20); align-self:stretch;"></div>
+            <div class="stat">
+                <span class="stat-value" style="font-size:clamp(2rem,5vw,3.5rem); font-weight:800; color:#c45d3e;">∞</span>
+                <span class="stat-label" style="font-size:clamp(10px,1.2vw,13px); color:rgba(45,42,38,0.40); text-transform:uppercase; letter-spacing:0.08em;">Slides</span>
+            </div>
         </div>
-      </div>
-      <div class="process-step reveal">
-        <span class="process-num">Two</span>
-        <div class="process-body">
-          <div class="process-title">Three visual previews</div>
-          <p class="process-desc">Rendered in-browser. You react by instinct. The gut knows what the mind cannot articulate.</p>
+    </div>
+    <div class="reveal" style="transition-delay:0.4s; margin-top:clamp(20px,3vw,36px);">
+        <p style="font-size:clamp(12px,1.3vw,15px); color:rgba(45,42,38,0.40); letter-spacing:0.06em; text-transform:uppercase;">Build the deck that closes the deal.</p>
+    </div>
+</div>
+</section>
+
+<section class="slide" data-notes="Frame the problem: existing presentation tools are broken.">
+<div class="content">
+    <div class="reveal">
+        <span class="pill">The Problem</span>
+    </div>
+    <div class="reveal" style="transition-delay:0.1s">
+        <h2 style="margin-top:clamp(12px,2vw,20px);">Presentations shouldn't<br>require a <span style=color:{accent_text};>build system</span></h2>
+    </div>
+    <div class="sep reveal" style="transition-delay:0.15s; height:1px; background:rgba(196,93,62,0.20); margin:clamp(12px,2vw,20px) 0;"></div>
+    <div class="reveal" style="transition-delay:0.2s">
+        <div style="display:grid; gap:clamp(16px,3vw,32px);">
+            <div style="display:flex; gap:16px; align-items:start;">
+                <div style="flex-shrink:0; width:32px; height:32px; border-radius:8px; background:rgba(196,93,62,0.10); display:flex; align-items:center; justify-content:center; font-size:16px;">⚙️</div>
+                <div>
+                    <h3 style="font-size:clamp(14px,1.8vw,18px); font-weight:600; margin-bottom:4px;">Complex Toolchain</h3>
+                    <p style="font-size:clamp(13px,1.4vw,15px); color:rgba(45,42,38,0.70);">Node, Webpack, npm, plugins — just to make slides. Hours before you can present anything.</p>
+                </div>
+            </div>
+            <div style="display:flex; gap:16px; align-items:start;">
+                <div style="flex-shrink:0; width:32px; height:32px; border-radius:8px; background:rgba(196,93,62,0.10); display:flex; align-items:center; justify-content:center; font-size:16px;">📋</div>
+                <div>
+                    <h3 style="font-size:clamp(14px,1.8vw,18px); font-weight:600; margin-bottom:4px;">Generic Output</h3>
+                    <p style="font-size:clamp(13px,1.4vw,15px); color:rgba(45,42,38,0.70);">Every deck looks like every other deck. Templates that scream "I used the same tool as everyone else."</p>
+                </div>
+            </div>
+            <div style="display:flex; gap:16px; align-items:start;">
+                <div style="flex-shrink:0; width:32px; height:32px; border-radius:8px; background:rgba(196,93,62,0.10); display:flex; align-items:center; justify-content:center; font-size:16px;">🔒</div>
+                <div>
+                    <h3 style="font-size:clamp(14px,1.8vw,18px); font-weight:600; margin-bottom:4px;">No Ownership</h3>
+                    <p style="font-size:clamp(13px,1.4vw,15px); color:rgba(45,42,38,0.70);">Your slides live in someone else's cloud. Export is an afterthought. Vendor lock-in is the business model.</p>
+                </div>
+            </div>
         </div>
-      </div>
-      <div class="process-step reveal">
-        <span class="process-num">Three</span>
-        <div class="process-body">
-          <div class="process-title">Pick. Done.</div>
-          <p class="process-desc">A complete presentation, from your chosen direction. Nothing more is needed.</p>
+    </div>
+</div>
+</section>
+
+<section class="slide" data-notes="Explain the style discovery workflow.">
+<div class="content">
+    <div class="reveal">
+        <span class="pill">Workflow</span>
+    </div>
+    <div class="reveal" style="transition-delay:0.1s">
+        <h2 style="margin-top:clamp(12px,2vw,20px);">Style discovery that<br><span style=color:{accent_text};>actually works</span></h2>
+    </div>
+    <div class="sep reveal" style="transition-delay:0.15s; height:1px; background:rgba(196,93,62,0.20); margin:clamp(12px,2vw,20px) 0;"></div>
+    <div class="reveal" style="transition-delay:0.2s">
+        <p style="font-size:clamp(14px,1.6vw,17px); color:rgba(45,42,38,0.70);">Describe your mood. Get three visual previews. Pick what feels right — before a single slide is written.</p>
+    </div>
+    <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); gap:clamp(12px,2vw,24px); margin-top:clamp(16px,3vw,32px);" class="reveal" style="transition-delay:0.3s">
+        <div style="background:rgba(196,93,62,0.06); border:1px solid rgba(196,93,62,0.15); border-radius:12px; padding:clamp(16px,3vw,24px);">
+            <div style="font-size:24px; margin-bottom:8px;">🎨</div>
+            <h3 style="font-size:clamp(13px,1.5vw,16px); font-weight:600;">Ask Mood</h3>
+            <p style="font-size:clamp(12px,1.3vw,14px); color:rgba(45,42,38,0.70); margin-top:4px;">"Bold and minimal" or "warm and creative" — natural language input.</p>
         </div>
-      </div>
+        <div style="background:rgba(196,93,62,0.06); border:1px solid rgba(196,93,62,0.15); border-radius:12px; padding:clamp(16px,3vw,24px);">
+            <div style="font-size:24px; margin-bottom:8px;">👁</div>
+            <h3 style="font-size:clamp(13px,1.5vw,16px); font-weight:600;">3 Mini Previews</h3>
+            <p style="font-size:clamp(12px,1.3vw,14px); color:rgba(45,42,38,0.70); margin-top:4px;">Side-by-side renders of three matched styles before full generation.</p>
+        </div>
+        <div style="background:rgba(196,93,62,0.06); border:1px solid rgba(196,93,62,0.15); border-radius:12px; padding:clamp(16px,3vw,24px);">
+            <div style="font-size:24px; margin-bottom:8px;">✓</div>
+            <h3 style="font-size:clamp(13px,1.5vw,16px); font-weight:600;">Pick & Build</h3>
+            <p style="font-size:clamp(12px,1.3vw,14px); color:rgba(45,42,38,0.70); margin-top:4px;">Choose your style. The full presentation is generated in your chosen aesthetic.</p>
+        </div>
     </div>
-  </div>
+</div>
 </section>
 
-<section class="slide" id="slide-3">
-  <div class="col">
-    <div class="eyebrow reveal">Design System</div>
-    <h2 class="reveal">Nineteen styles.<br><em>No generic aesthetics.</em></h2>
-    <ul class="preset-list reveal">
-      <li class="preset-item"><span class="preset-num">01</span>Bold Signal</li>
-      <li class="preset-item"><span class="preset-num">02</span>Electric Studio</li>
-      <li class="preset-item"><span class="preset-num">03</span>Creative Voltage</li>
-      <li class="preset-item"><span class="preset-num">04</span>Dark Botanical</li>
-      <li class="preset-item"><span class="preset-num">05</span>Blue Sky</li>
-      <li class="preset-item"><span class="preset-num">06</span>Notebook Tabs</li>
-      <li class="preset-item"><span class="preset-num">07</span>Pastel Geometry</li>
-      <li class="preset-item"><span class="preset-num">08</span>Split Pastel</li>
-      <li class="preset-item"><span class="preset-num">09</span>Vintage Editorial</li>
-      <li class="preset-item"><span class="preset-num">10</span>Neon Cyber</li>
-      <li class="preset-item"><span class="preset-num">11</span>Terminal Green</li>
-      <li class="preset-item"><span class="preset-num">12</span>Swiss Modern</li>
-      <li class="preset-item"><span class="preset-num">13</span>Paper &amp; Ink</li>
-      <li class="preset-item"><span class="preset-num">14</span>Aurora Mesh</li>
-      <li class="preset-item"><span class="preset-num">15</span>Enterprise Dark</li>
-      <li class="preset-item"><span class="preset-num">16</span>Glassmorphism</li>
-      <li class="preset-item"><span class="preset-num">17</span>Neo-Brutalism</li>
-      <li class="preset-item current"><span class="preset-num">18</span>Zen Stillness</li>
-      <li class="preset-item"><span class="preset-num">19</span>Data Story</li>
-    </ul>
-  </div>
+<section class="slide" data-notes="Showcase all 21 presets. Highlight Chinese Chan.">
+<div class="content">
+    <div class="reveal">
+        <span class="pill">21 Presets</span>
+    </div>
+    <div class="reveal" style="transition-delay:0.1s">
+        <h2 style="margin-top:clamp(12px,2vw,20px);">Every presentation style,<br><span style=color:{accent_text};>already built</span></h2>
+    </div>
+    <div class="sep reveal" style="transition-delay:0.15s; height:1px; background:rgba(196,93,62,0.20); margin:clamp(12px,2vw,20px) 0;"></div>
+    <div class="reveal" style="transition-delay:0.2s; display:flex; flex-wrap:wrap; gap:8px;">
+        <span style="display:inline-block; padding:4px 12px; border-radius:999px; background:rgba(196,93,62,0.10); border:1px solid rgba(196,93,62,0.15); color:rgba(45,42,38,0.70); font-size:clamp(10px,1.2vw,13px); font-weight:500;">Aurora Mesh</span>
+        <span style="display:inline-block; padding:4px 12px; border-radius:999px; background:rgba(196,93,62,0.10); border:1px solid rgba(196,93,62,0.15); color:rgba(45,42,38,0.70); font-size:clamp(10px,1.2vw,13px); font-weight:500;">Bold Signal</span>
+        <span style="display:inline-block; padding:4px 12px; border-radius:999px; background:rgba(196,93,62,0.10); border:1px solid rgba(196,93,62,0.15); color:rgba(45,42,38,0.70); font-size:clamp(10px,1.2vw,13px); font-weight:500;">Blue Sky</span>
+        <span style="display:inline-block; padding:4px 12px; border-radius:999px; background:rgba(196,93,62,0.10); border:1px solid rgba(196,93,62,0.25); color:#c45d3e; font-size:clamp(10px,1.2vw,13px); font-weight:600;">Chinese Chan ✦</span>
+        <span style="display:inline-block; padding:4px 12px; border-radius:999px; background:rgba(196,93,62,0.10); border:1px solid rgba(196,93,62,0.15); color:rgba(45,42,38,0.70); font-size:clamp(10px,1.2vw,13px); font-weight:500;">Creative Voltage</span>
+        <span style="display:inline-block; padding:4px 12px; border-radius:999px; background:rgba(196,93,62,0.10); border:1px solid rgba(196,93,62,0.15); color:rgba(45,42,38,0.70); font-size:clamp(10px,1.2vw,13px); font-weight:500;">Dark Botanical</span>
+        <span style="display:inline-block; padding:4px 12px; border-radius:999px; background:rgba(196,93,62,0.10); border:1px solid rgba(196,93,62,0.15); color:rgba(45,42,38,0.70); font-size:clamp(10px,1.2vw,13px); font-weight:500;">Data Story</span>
+        <span style="display:inline-block; padding:4px 12px; border-radius:999px; background:rgba(196,93,62,0.10); border:1px solid rgba(196,93,62,0.15); color:rgba(45,42,38,0.70); font-size:clamp(10px,1.2vw,13px); font-weight:500;">Electric Studio</span>
+        <span style="display:inline-block; padding:4px 12px; border-radius:999px; background:rgba(196,93,62,0.10); border:1px solid rgba(196,93,62,0.15); color:rgba(45,42,38,0.70); font-size:clamp(10px,1.2vw,13px); font-weight:500;">Enterprise Dark</span>
+        <span style="display:inline-block; padding:4px 12px; border-radius:999px; background:rgba(196,93,62,0.10); border:1px solid rgba(196,93,62,0.15); color:rgba(45,42,38,0.70); font-size:clamp(10px,1.2vw,13px); font-weight:500;">Glassmorphism</span>
+        <span style="display:inline-block; padding:4px 12px; border-radius:999px; background:rgba(196,93,62,0.10); border:1px solid rgba(196,93,62,0.15); color:rgba(45,42,38,0.70); font-size:clamp(10px,1.2vw,13px); font-weight:500;">Modern Newspaper</span>
+        <span style="display:inline-block; padding:4px 12px; border-radius:999px; background:rgba(196,93,62,0.10); border:1px solid rgba(196,93,62,0.15); color:rgba(45,42,38,0.70); font-size:clamp(10px,1.2vw,13px); font-weight:500;">Neo Brutalism</span>
+        <span style="display:inline-block; padding:4px 12px; border-radius:999px; background:rgba(196,93,62,0.10); border:1px solid rgba(196,93,62,0.15); color:rgba(45,42,38,0.70); font-size:clamp(10px,1.2vw,13px); font-weight:500;">Neo Retro Dev</span>
+        <span style="display:inline-block; padding:4px 12px; border-radius:999px; background:rgba(196,93,62,0.10); border:1px solid rgba(196,93,62,0.15); color:rgba(45,42,38,0.70); font-size:clamp(10px,1.2vw,13px); font-weight:500;">Neon Cyber</span>
+        <span style="display:inline-block; padding:4px 12px; border-radius:999px; background:rgba(196,93,62,0.10); border:1px solid rgba(196,93,62,0.15); color:rgba(45,42,38,0.70); font-size:clamp(10px,1.2vw,13px); font-weight:500;">Notebook Tabs</span>
+        <span style="display:inline-block; padding:4px 12px; border-radius:999px; background:rgba(196,93,62,0.10); border:1px solid rgba(196,93,62,0.15); color:rgba(45,42,38,0.70); font-size:clamp(10px,1.2vw,13px); font-weight:500;">Paper & Ink</span>
+        <span style="display:inline-block; padding:4px 12px; border-radius:999px; background:rgba(196,93,62,0.10); border:1px solid rgba(196,93,62,0.15); color:rgba(45,42,38,0.70); font-size:clamp(10px,1.2vw,13px); font-weight:500;">Pastel Geometry</span>
+        <span style="display:inline-block; padding:4px 12px; border-radius:999px; background:rgba(196,93,62,0.10); border:1px solid rgba(196,93,62,0.15); color:rgba(45,42,38,0.70); font-size:clamp(10px,1.2vw,13px); font-weight:500;">Split Pastel</span>
+        <span style="display:inline-block; padding:4px 12px; border-radius:999px; background:rgba(196,93,62,0.10); border:1px solid rgba(196,93,62,0.15); color:rgba(45,42,38,0.70); font-size:clamp(10px,1.2vw,13px); font-weight:500;">Swiss Modern</span>
+        <span style="display:inline-block; padding:4px 12px; border-radius:999px; background:rgba(196,93,62,0.10); border:1px solid rgba(196,93,62,0.15); color:rgba(45,42,38,0.70); font-size:clamp(10px,1.2vw,13px); font-weight:500;">Terminal Green</span>
+        <span style="display:inline-block; padding:4px 12px; border-radius:999px; background:rgba(196,93,62,0.10); border:1px solid rgba(196,93,62,0.15); color:rgba(45,42,38,0.70); font-size:clamp(10px,1.2vw,13px); font-weight:500;">Vintage Editorial</span>
+    </div>
+</div>
 </section>
 
-<section class="slide" id="slide-4">
-  <div class="ghost-kanji" style="left: -0.05em; bottom: -0.1em;">Method</div>
-  <div class="col">
-    <div class="eyebrow reveal">Process</div>
-    <h2 class="reveal">Three steps.<br><em>One presentation.</em></h2>
-    <div class="section-gap" style="height: clamp(1.5rem,3vh,2.5rem);"></div>
-    <div class="how-steps">
-      <div class="how-step reveal">
-        <span class="how-step-label">Step I</span>
-        <div class="how-step-title">/slide-creator</div>
-        <p class="how-step-desc">Type the command. Answer four questions. No configuration, no ceremony.</p>
-      </div>
-      <div class="how-step reveal">
-        <span class="how-step-label">Step II</span>
-        <div class="how-step-title">Choose your style</div>
-        <p class="how-step-desc">React to three visual previews. Your instinct selects more accurately than any description.</p>
-      </div>
-      <div class="how-step reveal">
-        <span class="how-step-label">Step III</span>
-        <div class="how-step-title">Open and present</div>
-        <p class="how-step-desc">Arrow keys. Space. Swipe. Pure HTML. No runtime, no cloud, no dependency.</p>
-      </div>
+<section class="slide" data-notes="Explain present mode: F5, fullscreen, speaker notes.">
+<div class="content">
+    <div class="reveal">
+        <span class="pill">Present Mode</span>
     </div>
-  </div>
+    <div class="reveal" style="transition-delay:0.1s">
+        <h2 style="margin-top:clamp(12px,2vw,20px);">F5 to present.<br><span style=color:{accent_text};>Any screen, any size</span></h2>
+    </div>
+    <div class="sep reveal" style="transition-delay:0.15s; height:1px; background:rgba(196,93,62,0.20); margin:clamp(12px,2vw,20px) 0;"></div>
+    <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(180px,1fr)); gap:clamp(12px,2vw,20px);" class="reveal" style="transition-delay:0.2s">
+        <div style="background:rgba(196,93,62,0.06); border:1px solid rgba(196,93,62,0.15); border-radius:12px; padding:clamp(16px,3vw,24px);">
+            <div style="font-size:28px; margin-bottom:8px;">F5</div>
+            <h3 style="font-size:clamp(13px,1.5vw,16px); font-weight:600;">Fullscreen</h3>
+            <p style="font-size:clamp(12px,1.3vw,14px); color:rgba(45,42,38,0.70); margin-top:4px;">Slides scale to fill any display at 1440×900 aspect ratio.</p>
+        </div>
+        <div style="background:rgba(196,93,62,0.06); border:1px solid rgba(196,93,62,0.15); border-radius:12px; padding:clamp(16px,3vw,24px);">
+            <div style="font-size:28px; margin-bottom:8px;">P</div>
+            <h3 style="font-size:clamp(13px,1.5vw,16px); font-weight:600;">Presenter View</h3>
+            <p style="font-size:clamp(12px,1.3vw,14px); color:rgba(45,42,38,0.70); margin-top:4px;">Separate window with notes, timer, and slide counter.</p>
+        </div>
+        <div style="background:rgba(196,93,62,0.06); border:1px solid rgba(196,93,62,0.15); border-radius:12px; padding:clamp(16px,3vw,24px);">
+            <div style="font-size:28px; margin-bottom:8px;">B</div>
+            <h3 style="font-size:clamp(13px,1.5vw,16px); font-weight:600;">Black Screen</h3>
+            <p style="font-size:clamp(12px,1.3vw,14px); color:rgba(45,42,38,0.70); margin-top:4px;">Toggle black background during Q&A to focus attention.</p>
+        </div>
+    </div>
+</div>
 </section>
 
-<section class="slide" id="slide-5">
-  <div class="ghost-kanji" style="right: 0; top: 0.1em;">Ability</div>
-  <div class="col">
-    <div class="eyebrow reveal">Capabilities</div>
-    <h2 class="reveal">Built for<br><em>real</em> use.</h2>
-    <div class="section-gap" style="height: clamp(1.5rem,3vh,2rem);"></div>
-    <div class="feature-items">
-      <div class="feature-item reveal">
-        <span class="feature-name">Viewport Fit</span>
-        <p class="feature-desc">Every slide fits exactly 100vh. No scrolling, no clipping — each layout is designed for the screen.</p>
-      </div>
-      <div class="feature-item reveal">
-        <span class="feature-name">Inline Edit</span>
-        <p class="feature-desc">Press <span class="accent">E</span>, click any text, Ctrl+S to save. Edit mode built into every presentation.</p>
-      </div>
-      <div class="feature-item reveal">
-        <span class="feature-name">PPTX Export</span>
-        <p class="feature-desc">/slide-creator --export pptx converts to PowerPoint when the boardroom demands it.</p>
-      </div>
-      <div class="feature-item reveal">
-        <span class="feature-name">Two-Stage</span>
-        <p class="feature-desc">--plan creates the outline. --generate produces final HTML. Review before committing.</p>
-      </div>
+<section class="slide" data-notes="Explain edit mode: E key, contenteditable, save.">
+<div class="content">
+    <div class="reveal">
+        <span class="pill">Edit Mode</span>
     </div>
-  </div>
+    <div class="reveal" style="transition-delay:0.1s">
+        <h2 style="margin-top:clamp(12px,2vw,20px);">Edit in the browser.<br><span style=color:{accent_text};>Save to disk</span></h2>
+    </div>
+    <div class="sep reveal" style="transition-delay:0.15s; height:1px; background:rgba(196,93,62,0.20); margin:clamp(12px,2vw,20px) 0;"></div>
+    <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(180px,1fr)); gap:clamp(12px,2vw,20px);" class="reveal" style="transition-delay:0.2s">
+        <div style="background:rgba(196,93,62,0.06); border:1px solid rgba(196,93,62,0.15); border-radius:12px; padding:clamp(16px,3vw,24px);">
+            <div style="font-size:28px; margin-bottom:8px;">E</div>
+            <h3 style="font-size:clamp(13px,1.5vw,16px); font-weight:600;">Toggle Edit</h3>
+            <p style="font-size:clamp(12px,1.3vw,14px); color:rgba(45,42,38,0.70); margin-top:4px;">Hover the hotzone top-left. Click ✏ Edit. All text becomes editable.</p>
+        </div>
+        <div style="background:rgba(196,93,62,0.06); border:1px solid rgba(196,93,62,0.15); border-radius:12px; padding:clamp(16px,3vw,24px);">
+            <div style="font-size:28px; margin-bottom:8px;">📝</div>
+            <h3 style="font-size:clamp(13px,1.5vw,16px); font-weight:600;">Speaker Notes</h3>
+            <p style="font-size:clamp(12px,1.3vw,14px); color:rgba(45,42,38,0.70); margin-top:4px;">Notes panel slides up from bottom. Notes sync to presenter view.</p>
+        </div>
+        <div style="background:rgba(196,93,62,0.06); border:1px solid rgba(196,93,62,0.15); border-radius:12px; padding:clamp(16px,3vw,24px);">
+            <div style="font-size:28px; margin-bottom:8px;">⌘S</div>
+            <h3 style="font-size:clamp(13px,1.5vw,16px); font-weight:600;">Save File</h3>
+            <p style="font-size:clamp(12px,1.3vw,14px); color:rgba(45,42,38,0.70); margin-top:4px;">Ctrl+S downloads the edited HTML. Self-contained, zero dependencies.</p>
+        </div>
+    </div>
+</div>
 </section>
 
-<section class="slide" id="slide-6">
-  <div class="ghost-kanji" style="left: -0.05em; bottom: -0.1em;">Enter</div>
-  <div class="col">
-    <div class="eyebrow reveal">Installation</div>
-    <h2 class="reveal">Two lines.<br><em>Zero setup.</em></h2>
-    <div class="section-gap" style="height: clamp(1.5rem,3vh,2.5rem);"></div>
-    <span class="install-label reveal">Claude Code</span>
-    <div class="code-block reveal">
-      git clone https://github.com/kaisersong/slide-creator \<br>
-      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;~/.claude/skills/slide-creator<br>
-      <span class="code-comment"># restart Claude Code to activate</span>
+<section class="slide" data-notes="How to install and use slide-creator.">
+<div class="content">
+    <div class="reveal">
+        <span class="pill">Getting Started</span>
     </div>
-    <span class="install-label reveal">OpenClaw</span>
-    <div class="code-block reveal">
-      clawhub install html-slide-creator<br>
-      <span class="code-comment"># available immediately</span>
+    <div class="reveal" style="transition-delay:0.1s">
+        <h2 style="margin-top:clamp(12px,2vw,20px);">Three commands.<br><span style=color:{accent_text};>Zero friction</span></h2>
     </div>
-  </div>
+    <div class="sep reveal" style="transition-delay:0.15s; height:1px; background:rgba(196,93,62,0.20); margin:clamp(12px,2vw,20px) 0;"></div>
+    <div style="display:grid; gap:clamp(12px,2vw,20px);" class="reveal" style="transition-delay:0.2s">
+        <div style="background:rgba(196,93,62,0.06); border:1px solid rgba(196,93,62,0.15); border-radius:12px; padding:clamp(16px,3vw,24px); display:flex; align-items:center; gap:16px;">
+            <div style="font-size:clamp(14px,1.5vw,18px); font-weight:800; color:#c45d3e; font-family:monospace;">/slide-creator</div>
+            <p style="font-size:clamp(13px,1.4vw,15px); color:rgba(45,42,38,0.70); flex:1;">Interactive mode — describe your mood, pick a style, get a deck</p>
+        </div>
+        <div style="background:rgba(196,93,62,0.06); border:1px solid rgba(196,93,62,0.15); border-radius:12px; padding:clamp(16px,3vw,24px); display:flex; align-items:center; gap:16px;">
+            <div style="font-size:clamp(14px,1.5vw,18px); font-weight:800; color:#c45d3e; font-family:monospace;">/slide-creator --plan</div>
+            <p style="font-size:clamp(13px,1.4vw,15px); color:rgba(45,42,38,0.70); flex:1;">Generate outline — review and edit before building</p>
+        </div>
+        <div style="background:rgba(196,93,62,0.06); border:1px solid rgba(196,93,62,0.15); border-radius:12px; padding:clamp(16px,3vw,24px); display:flex; align-items:center; gap:16px;">
+            <div style="font-size:clamp(14px,1.5vw,18px); font-weight:800; color:#c45d3e; font-family:monospace;">/slide-creator --generate</div>
+            <p style="font-size:clamp(13px,1.4vw,15px); color:rgba(45,42,38,0.70); flex:1;">Build from PLANNING.md — full HTML with all modes</p>
+        </div>
+    </div>
+</div>
 </section>
 
-<section class="slide" id="slide-7">
-  <div class="ghost-kanji" style="right: 0; bottom: -0.1em;">Begin</div>
-  <div class="col">
-    <div class="eyebrow reveal">Begin</div>
-    <div class="flanked-rule reveal">
-      <hr>
+<section class="slide" data-notes="Closing CTA. Install link and takeaway.">
+<div class="content" style="text-align:center;">
+    <div class="reveal">
+        <h1 style="font-size:clamp(2rem,5.5vw,4rem);">Stop making slides.<br>Start telling stories.</h1>
     </div>
-    <div class="section-gap" style="height: clamp(1.5rem,3vh,2.5rem);"></div>
-    <div class="cta-cmd reveal"><span class="accent">/</span>slide-creator</div>
-    <p class="cta-sub reveal">Works with Claude Code and OpenClaw.<br>Nineteen presets. Zero dependencies.<br><em>Your file. Your rules. Your voice.</em></p>
-    <div class="section-gap" style="height: clamp(1.5rem,3vh,2rem);"></div>
-    <div class="flanked-rule reveal">
-      <hr>
+    <div class="sep reveal" style="transition-delay:0.1s; height:1px; background:rgba(196,93,62,0.20); margin:clamp(16px,3vw,28px) auto; width:60px;"></div>
+    <div class="reveal" style="transition-delay:0.2s">
+        <p style="font-size:clamp(14px,2vw,20px); color:rgba(45,42,38,0.70); max-width:520px; margin:0 auto;">
+            One HTML file. Every style. Any browser. No build step.
+        </p>
     </div>
-  </div>
+    <div class="reveal" style="transition-delay:0.3s; margin-top:clamp(20px,3vw,36px);">
+        <div style="font-size:clamp(13px,1.5vw,16px); font-family:monospace; background:rgba(196,93,62,0.06); border:1px solid rgba(196,93,62,0.15); border-radius:12px; padding:clamp(12px,2vw,20px); display:inline-block;">
+            <span style="color:#c45d3e;">$</span> clawhub install kai-slide-creator
+        </div>
+    </div>
+    <div class="reveal" style="transition-delay:0.4s; margin-top:clamp(12px,2vw,24px);">
+        <p style="font-size:clamp(11px,1.2vw,14px); color:rgba(45,42,38,0.40); letter-spacing:0.04em;">github.com/kaisersong/slide-creator</p>
+    </div>
+</div>
 </section>
+
 
 <script>
-  const slides = Array.from(document.querySelectorAll('.slide'));
-  const dots = Array.from(document.querySelectorAll('.dot'));
-  const progress = document.getElementById('progress');
-  let current = 0;
-  let editMode = false;
 
-  const observer = new IntersectionObserver(entries => {
-    entries.forEach(entry => {
-      if (entry.isIntersecting) {
-        entry.target.classList.add('visible');
-        const idx = slides.indexOf(entry.target);
-        if (idx !== -1) updateNav(idx);
-      }
+class PresentMode {
+  constructor(ctrl) {
+    this.ctrl = ctrl; this.DW = 1440; this.DH = 900; this.active = false;
+    this._resize = () => this._scale();
+    const btn = document.createElement('button');
+    btn.id = 'present-btn'; btn.title = 'Present (F5)';
+    btn.setAttribute('aria-label', 'Present'); btn.textContent = '\u25b6';
+    document.body.appendChild(btn);
+    const counter = document.createElement('div');
+    counter.id = 'present-counter'; document.body.appendChild(counter);
+    btn.addEventListener('click', () => this.enter());
+    document.addEventListener('keydown', e => {
+      if (e.key === 'F5') { e.preventDefault(); this.enter(); }
+      if (e.key === 'Escape' && this.active) this.exit();
+      if ((e.key === 'b' || e.key === 'B') && this.active) document.body.classList.toggle('presenting-black');
     });
-  }, { threshold: 0.6 });
-  slides.forEach(s => observer.observe(s));
-
-  function updateNav(idx) {
-    current = idx;
-    dots.forEach((d, i) => d.classList.toggle('active', i === idx));
-    progress.style.width = ((idx + 1) / slides.length * 100) + '%';
+    document.addEventListener('fullscreenchange', () => { if (!document.fullscreenElement && this.active) this.exit(); });
   }
-
-  function goTo(idx) {
-    if (idx < 0 || idx >= slides.length) return;
-    slides[idx].scrollIntoView({ behavior: 'smooth' });
+  enter() {
+    if (this.active) return; this.active = true;
+    document.body.classList.add('presenting');
+    document.documentElement.requestFullscreen?.().catch(() => {});
+    window.addEventListener('resize', this._resize); this._scale(); this._show(this.ctrl.currentSlide);
+    this._origGoTo = this.ctrl.goTo.bind(this.ctrl);
+    this.ctrl.goTo = (i) => {
+      const idx = Math.max(0, Math.min(i, this.ctrl.slides.length - 1));
+      this.ctrl.currentSlide = idx;
+      this.ctrl.slides.forEach((s, j) => s.classList.toggle('visible', j === idx));
+      this._show(idx); this.ctrl.updateProgress?.(); this.ctrl.updateDots?.(); this.ctrl.broadcastState?.();
+    };
   }
-
-  dots.forEach(d => d.addEventListener('click', () => goTo(+d.dataset.idx)));
-
-  document.addEventListener('keydown', e => {
-    if (editMode && (e.key === 's' || e.key === 'S') && (e.ctrlKey || e.metaKey)) {
-      e.preventDefault(); saveFile(); return;
-    }
-    if (editMode && e.key === 'Escape') { toggleEdit(); return; }
-    if (document.activeElement.isContentEditable) return;
-    if (e.key === 'ArrowDown' || e.key === ' ') { e.preventDefault(); goTo(current + 1); }
-    if (e.key === 'ArrowUp') { e.preventDefault(); goTo(current - 1); }
-    if (e.key === 'e' || e.key === 'E') toggleEdit();
-  });
-
-  // Trackpad/mouse wheel: handled natively by scroll-snap-type: y mandatory
-  // No JS wheel handler needed — IntersectionObserver keeps cur/dots in sync
-
-  let touchStart = null;
-  document.addEventListener('touchstart', e => { touchStart = e.touches[0].clientY; }, { passive: true });
-  document.addEventListener('touchend', e => {
-    if (!touchStart) return;
-    const diff = touchStart - e.changedTouches[0].clientY;
-    if (Math.abs(diff) > 50) { diff > 0 ? goTo(current + 1) : goTo(current - 1); }
-    touchStart = null;
-  });
-
-  function toggleEdit() {
-    editMode = !editMode;
-    document.body.classList.toggle('edit-mode', editMode);
-    slides.forEach(s => {
-      s.querySelectorAll('h1,h2,h3,p,.cover-stat-val,.cta-cmd,.feature-desc,.process-desc,.how-step-desc,.pain-text,.code-block,.cta-sub').forEach(el => {
-        el.contentEditable = editMode ? 'true' : 'false';
+  exit() {
+    if (!this.active) return; this.active = false;
+    document.body.classList.remove('presenting', 'presenting-black');
+    document.exitFullscreen?.().catch(() => {});
+    window.removeEventListener('resize', this._resize);
+    this.ctrl.goTo = this._origGoTo;
+    this.ctrl.goTo(this.ctrl.currentSlide);
+    setTimeout(() => this.ctrl.slides[this.ctrl.currentSlide]?.scrollIntoView(), 50);
+  }
+  _scale() {
+    const sw = window.innerWidth / this.DW, sh = window.innerHeight / this.DH, s = Math.min(sw, sh);
+    document.querySelectorAll('body.presenting .slide').forEach(sl => {
+      sl.style.transform = `translate(-50%, -50%) scale(${s})`;
+    });
+  }
+  _show(n) {
+    this.ctrl.slides.forEach((sl, i) => {
+      sl.classList.toggle('p-on', i === n);
+      sl.querySelectorAll('.reveal').forEach(r => {
+        r.classList.toggle('visible', i === n);
       });
     });
+    const counter = document.getElementById('present-counter');
+    if (counter) counter.textContent = `${n + 1} / ${this.ctrl.slides.length}`;
   }
+}
 
-  document.getElementById('hotzone').addEventListener('click', toggleEdit);
 
-  async function saveFile() {
-    const html = '<!DOCTYPE html>\n' + document.documentElement.outerHTML;
-    if (window.showSaveFilePicker) {
-      try {
-        const h = await window.showSaveFilePicker({ suggestedName: 'chinese-chan.html', types: [{ accept: { 'text/html': ['.html'] } }] });
-        const w = await h.createWritable(); await w.write(html); await w.close();
-      } catch(e) { if (e.name !== 'AbortError') fallbackSave(html); }
-    } else fallbackSave(html);
+class SlidePresentation {
+  constructor() {
+    this.slides = document.querySelectorAll('.slide');
+    this.currentSlide = 0;
+    this.channel = new BroadcastChannel('slide-creator-presenter');
+    // CRITICAL: Make first slide visible immediately
+    this.slides[0]?.classList.add('visible');
+    this.slides[0]?.querySelectorAll('.reveal').forEach(function(r) { r.classList.add('visible'); });
+    this.setupNavDots();
+    this.setupObserver();
+    this.setupKeyboard();
+    this.setupTouch();
+    this.setupWheel();
+    this.setupPresenter();
+    this.updateProgress();
   }
-  function fallbackSave(html) {
-    const a = document.createElement('a');
-    a.href = URL.createObjectURL(new Blob([html], { type: 'text/html' }));
-    a.download = 'chinese-chan.html'; a.click();
+  setupNavDots() {
+    const nav = document.querySelector('.nav-dots');
+    if (!nav) return;
+    this.slides.forEach((_, i) => {
+      const dot = document.createElement('button');
+      dot.setAttribute('aria-label', `Go to slide ${i + 1}`);
+      dot.style.cssText = 'width:8px;height:8px;border-radius:50%;border:none;cursor:pointer;background:rgba(255,255,255,0.3);transition:all 0.3s;';
+      dot.addEventListener('click', () => this.goTo(i));
+      nav.appendChild(dot);
+    });
+    nav.style.cssText = 'position:fixed;right:1.5rem;top:50%;transform:translateY(-50%);display:flex;flex-direction:column;gap:8px;z-index:100;';
   }
+  setupObserver() {
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
+          this.currentSlide = [...this.slides].indexOf(entry.target);
+          this.updateProgress();
+          this.updateDots();
+          this.broadcastState();
+          this.updateNotesPanel();
+        }
+      });
+    }, { threshold: 0.5 });
+    this.slides.forEach(s => observer.observe(s));
+  }
+  setupKeyboard() {
+    document.addEventListener('keydown', (e) => {
+      if (e.target.getAttribute('contenteditable')) return;
+      if (e.key === 'ArrowDown' || e.key === 'ArrowRight' || e.key === ' ' || e.key === 'PageDown' || e.key === 'Enter') {
+        e.preventDefault(); this.next();
+      } else if (e.key === 'ArrowUp' || e.key === 'ArrowLeft' || e.key === 'PageUp' || e.key === 'Backspace') {
+        e.preventDefault(); this.prev();
+      } else if (e.key === 'p' || e.key === 'P') {
+        const url = location.href.split('?')[0] + '?presenter';
+        window.open(url, 'slide-presenter-' + Date.now(), 'width=1100,menubar=no,toolbar=no,location=no');
+      }
+    });
+  }
+  setupTouch() {
+    let startY = 0;
+    document.addEventListener('touchstart', e => { startY = e.touches[0].clientY; }, { passive: true });
+    document.addEventListener('touchend', e => {
+      const delta = startY - e.changedTouches[0].clientY;
+      if (Math.abs(delta) > 50) delta > 0 ? this.next() : this.prev();
+    });
+  }
+  setupWheel() {}
+  setupPresenter() {
+    this.channel.addEventListener('message', e => {
+      if (e.data.type === 'nav-next') this.next();
+      else if (e.data.type === 'nav-prev') this.prev();
+      else if (e.data.type === 'request-state') this.broadcastState();
+    });
+  }
+  broadcastState() {
+    const slide = this.slides[this.currentSlide];
+    this.channel.postMessage({
+      type: 'state', index: this.currentSlide,
+      total: this.slides.length, notes: slide?.dataset.notes || ''
+    });
+  }
+  goTo(index) {
+    this.slides.forEach((slide, i) => {
+      slide.classList.toggle('visible', i === index);
+      var reveals = slide.querySelectorAll('.reveal');
+      reveals.forEach(function(r) { r.classList.toggle('visible', i === index); });
+    });
+    this.slides[index]?.scrollIntoView({ behavior: 'smooth' });
+  }
+  next() { this.goTo(Math.min(this.currentSlide + 1, this.slides.length - 1)); }
+  prev() { this.goTo(Math.max(this.currentSlide - 1, 0)); }
+  updateProgress() {
+    const pct = (this.currentSlide / (this.slides.length - 1)) * 100;
+    const bar = document.querySelector('.progress-bar');
+    if (bar) bar.style.width = pct + '%';
+  }
+  updateDots() {
+    document.querySelectorAll('.nav-dots button').forEach((dot, i) => {
+      dot.style.background = i === this.currentSlide ? 'var(--accent)' : 'rgba(255,255,255,0.3)';
+      dot.style.transform = i === this.currentSlide ? 'scale(1.3)' : 'scale(1)';
+    });
+  }
+  updateNotesPanel() {
+    const label = document.getElementById('notes-panel-label');
+    const textarea = document.getElementById('notes-textarea');
+    if (label) label.textContent = `SPEAKER NOTES — SLIDE ${this.currentSlide + 1} / ${this.slides.length}`;
+    if (textarea) textarea.value = this.slides[this.currentSlide]?.dataset.notes || '';
+  }
+  setupEditor() {
+    const panel = document.getElementById('notes-panel');
+    const textarea = document.getElementById('notes-textarea');
+    const toggle = document.getElementById('editToggle');
+    const hotzone = document.querySelector('.edit-hotzone');
+    const header = document.getElementById('notes-panel-header');
+    const collapseBtn = document.getElementById('notes-collapse-btn');
+    let hideTimeout = null;
+    this.editor = { active: false };
+    hotzone.addEventListener('mouseenter', () => { clearTimeout(hideTimeout); toggle.classList.add('show'); });
+    hotzone.addEventListener('mouseleave', () => { hideTimeout = setTimeout(() => { if (!this.editor.active) toggle.classList.remove('show'); }, 400); });
+    toggle.addEventListener('mouseenter', () => clearTimeout(hideTimeout));
+    toggle.addEventListener('mouseleave', () => { hideTimeout = setTimeout(() => { if (!this.editor.active) toggle.classList.remove('show'); }, 400); });
+    toggle.addEventListener('click', (e) => {
+      e.stopPropagation();
+      this.editor.active = !this.editor.active;
+      document.body.classList.toggle('editing', this.editor.active);
+      toggle.classList.toggle('active', this.editor.active);
+      toggle.textContent = this.editor.active ? '✓ Done' : '✏ Edit';
+      if (this.editor.active) {
+        panel.classList.add('active');
+        textarea.value = this.slides[this.currentSlide]?.dataset.notes || '';
+        textarea.focus();
+      } else {
+        panel.classList.remove('active');
+      }
+    });
+    header.addEventListener('click', (e) => {
+      if (e.target === collapseBtn) { panel.classList.toggle('collapsed'); return; }
+    });
+    textarea.addEventListener('input', () => {
+      const slide = this.slides[this.currentSlide];
+      if (slide) slide.dataset.notes = textarea.value;
+      this.channel.postMessage({ type: 'state', index: this.currentSlide, total: this.slides.length, notes: textarea.value });
+    });
+  }
+}
+
+/* Presenter Mode */
+
+if (new URLSearchParams(location.search).has('presenter')) {
+  document.title = 'Presenter — ' + document.title;
+  document.body.innerHTML = `
+  <style>
+  body { margin: 0; background: #111; color: #fff; font-family: system-ui, sans-serif; }
+  #pv { display: flex; height: 100vh; }
+  .pv-panel { background: #1a1a1a; border-right: 1px solid #333; padding: 12px; }
+  #pv-right { flex: 1; display: flex; flex-direction: column; }
+  #pv-nav { display: flex; align-items: center; gap: 12px; }
+  .pv-arrow { background: #333; color: #fff; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; }
+  #pv-counter { display: flex; align-items: baseline; gap: 4px; }
+  #pv-num { font-size: 1.5rem; font-weight: 700; }
+  #pv-of { font-size: 0.875rem; color: #888; }
+  #pv-timer-label { font-size: 0.7rem; color: #888; text-transform: uppercase; letter-spacing: 0.1em; }
+  #pv-timer { font-size: 2rem; font-weight: 700; font-family: monospace; }
+  #pv-notes { white-space: pre-wrap; font-size: 0.875rem; line-height: 1.6; color: #ccc; margin-top: 8px; }
+  #pv-label { font-weight: 600; font-size: 0.75rem; color: #888; text-transform: uppercase; letter-spacing: 0.1em; }
+  #pv-timer-box { margin-top: auto; padding: 12px !important; }
+  </style>
+  <div id="pv">
+    <div class="pv-panel"><div id="pv-label">Speaker Notes</div><div id="pv-notes">Waiting for main window...</div></div>
+    <div id="pv-right">
+      <div class="pv-panel"><div id="pv-nav"><button class="pv-arrow" id="pv-prev">←</button><div id="pv-counter"><div id="pv-num">—</div><div id="pv-of">/ —</div></div><button class="pv-arrow" id="pv-next">→</button></div></div>
+      <div class="pv-panel" id="pv-timer-box"><div id="pv-timer-label">Elapsed</div><div id="pv-timer">0:00</div></div>
+    </div>
+  </div>`;
+  const ch = new BroadcastChannel('slide-creator-presenter');
+  let startTime = null;
+  const pv = document.getElementById('pv');
+  let lastH = 0, roTimer = null;
+  new ResizeObserver(() => { clearTimeout(roTimer); roTimer = setTimeout(() => { const h = Math.ceil(pv.getBoundingClientRect().height); if (h === lastH) return; lastH = h; const chrome = window.outerHeight - window.innerHeight; window.resizeTo(window.outerWidth, Math.max(260, h + chrome + 4)); }, 40); }).observe(pv);
+  ch.addEventListener('message', e => { if (e.data.type !== 'state') return; if (!startTime) startTime = Date.now(); document.getElementById('pv-notes').textContent = e.data.notes || '(no notes for this slide)'; document.getElementById('pv-num').textContent = e.data.index + 1; document.getElementById('pv-of').textContent = `/ ${e.data.total}`; });
+  ch.postMessage({ type: 'request-state' });
+  setInterval(() => { if (!startTime) return; const s = Math.floor((Date.now() - startTime) / 1000); document.getElementById('pv-timer').textContent = `${Math.floor(s / 60)}:${String(s % 60).padStart(2, '0')}`; }, 1000);
+  document.getElementById('pv-prev').addEventListener('click', () => ch.postMessage({ type: 'nav-prev' }));
+  document.getElementById('pv-next').addEventListener('click', () => ch.postMessage({ type: 'nav-next' }));
+  document.addEventListener('keydown', e => {
+    if (e.key === 'ArrowRight' || e.key === 'ArrowDown' || e.key === ' ' || e.key === 'PageDown' || e.key === 'Enter') ch.postMessage({ type: 'nav-next' });
+    else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp' || e.key === 'PageUp' || e.key === 'Backspace') ch.postMessage({ type: 'nav-prev' });
+  });
+} else {
+
+  new PresentMode(new SlidePresentation());
+</script>
+<script>
+
+(function() {
+  var slides = document.querySelectorAll('.slide');
+  if (!slides.length) return;
+  var last = slides[slides.length - 1];
+  var credit = document.createElement('div');
+  credit.className = 'slide-credit';
+  credit.textContent = 'By kai-slide-creator v2.15.0 · Chinese Chan';
+  last.appendChild(credit);
+})();
+
 </script>
 </body>
 </html>
