@@ -40,6 +40,17 @@ body {
         radial-gradient(ellipse at 0% 0%, rgba(14,165,233,0.08) 0%, transparent 50%),
         radial-gradient(ellipse at 100% 100%, rgba(99,102,241,0.06) 0%, transparent 50%);
 }
+body::before {
+    content: '';
+    position: fixed; inset: 0;
+    background-image:
+        linear-gradient(rgba(48,54,61,0.5) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(48,54,61,0.5) 1px, transparent 1px);
+    background-size: 24px 24px;
+    opacity: 0.03;
+    pointer-events: none;
+    z-index: 0;
+}
 
 .slide {
     width: 100vw; height: 100vh; height: 100dvh;
