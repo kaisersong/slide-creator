@@ -72,10 +72,10 @@ slide-creator now supports **two user-facing planning depths**:
 | 命令 | 加载内容 | 行为 |
 |------|----------|------|
 | `--plan [prompt]` | `references/planning-template.md` | 检测规划深度，创建 PLANNING.md，不生成 HTML |
-| `--generate` | SKILL.md HARD RULES + `references/html-template.md` + 风格文件 + `base-css.md` | 从 PLANNING.md 生成 HTML，执行 16 项生成前校验 |
+| `--generate` | SKILL.md HARD RULES + `references/html-template.md` + `references/composition-guide.md` + 风格文件 + `base-css.md` | 从 PLANNING.md 生成 HTML，执行 16 项生成前校验 |
 | `--review [file.html]` | `references/review-checklist.md` + 目标 HTML | 执行 16 项检查点 → 确认窗口 → 修复/报告 |
 | 无 flag (交互式) | `references/workflow.md` + 其他按需 | 遵循 Phase 0-5（Phase 3 Step 7 必须执行 16 项校验） |
-| 直接给内容 + 风格 | SKILL.md HARD RULES + `references/html-template.md` + 风格文件 + `base-css.md` | 立即生成，执行 16 项生成前校验 |
+| 直接给内容 + 风格 | SKILL.md HARD RULES + `references/html-template.md` + `references/composition-guide.md` + 风格文件 + `base-css.md` | 立即生成，执行 16 项生成前校验 |
 
 **渐进式披露：** 每个命令只加载所需文件。`--plan` 不接触 CSS。
 
@@ -89,6 +89,7 @@ slide-creator now supports **two user-facing planning depths**:
 2. **编辑模式** — 左上角热区，`✏ Edit` 开关，`contenteditable`，备注面板
 3. **水印** — 由 JS 注入到**最后一页幻灯片**（`slides[slides.length - 1].appendChild`），CSS 使用 `position: absolute`，禁止 `position: fixed`。播放模式下隐藏，HTML 源码中不得出现 `<div class="slide-credit">` 硬编码在 `</body>` 前
 4. **风格强制** — 所有 CSS 主题值（颜色、字体、图表色等）**必须且只能**来自选中的风格参考文件。模板 `html-template.md` 中的占位符（`[from style file]`）和注释示例值仅为结构示意，**禁止直接使用**。生成后对照风格文件的 checklist 验证。
+5. **叙事弧线** — 所有 demo 必须遵循 `references/composition-guide.md` 定义的 12 页叙事结构（Hero → Problem → Discovery → Solution → Playback → Presenter → Edit → Planning → Review → Style Guide → Technical → CTA）。每页必须有独特的布局模式，禁止连续两页使用相同布局。每页必须使用风格参考文件中 2-3 种不同的组件类型。如果每页都是"卡片+列表"，是生成错误。
 
 详见 `references/html-template.md`。**生成任何 HTML 前必读此文件**。
 
@@ -100,7 +101,7 @@ slide-creator now supports **two user-facing planning depths**:
 
 这些规则在组装完整 HTML 后、写入文件前**自动执行**。逐条搜索违规项并修复。
 
-**现有 8 项（HARD RULES Rule 1-7 + 标题质量）+ 9 项视觉/组件硬规则：**
+**现有 8 项（HARD RULES Rule 1-7 + 标题质量）+ 16 项视觉/组件硬规则：**
 1. 内容密度 ≥65%（Rule 1）
 2. 列平衡 ≥60%（Rule 2）
 3. 标题换行 ≤3 行（Rule 3）
@@ -122,6 +123,36 @@ slide-creator now supports **two user-facing planning depths**:
 17. **SVG 箭头连线可见：** `<line>` 元素的起点和终点距离必须 ≥30px，确保线段可见。箭头从外框边缘指向中心图形边缘（如圆外切点），不得指向圆心或进入圆内部。下侧/右侧/左侧的箭头都需要足够的连线长度，rect 位置应与圆保持 ≥30px 间距
 18. **播放模式 JS：** 必须包含 `PresentMode` 类或 `enterPresent()` 函数，且存在 `F5` 键监听器、`#present-btn` CSS、`body.presenting` CSS。缺失即生成错误
 19. **水印位置：** 水印必须由 JS 注入到最后一页（`slides[slides.length - 1].appendChild`），CSS 必须是 `position: absolute`，禁止 `position: fixed`，禁止 `<div class="slide-credit">` 硬编码在 `</body>` 前
+20. **架构隔离（非 Blue Sky 风格）：** 检测 `#stage`、`#track`、`calc(100vw * var(--slide-count))`、`translateX` 幻灯片导航 — 仅 Blue Sky 风格可使用这些模式。其他 20 个风格必须使用 `html-template.md` 的 `scroll-snap-type: y mandatory` + `SlidePresentation` 类架构。发现违规立即替换为 scroll-snap 模式
+21. **`.slide` 背景透明度：** 当风格参考文件中 `body` 定义了 `radial-gradient`、`linear-gradient`、`background-image` 图案或 `animation` 背景时，`.slide` 不得设置 `background` / `background-color` 覆盖体渐变——必须移除 `.slide` 的 `background` 声明，让 `body` 渐变透出来。通用模板建议的 `background: var(--bg-primary)` 安全网对此类风格不适用
+22. **Chinese Chan 幽灵汉字必须贴页面边角：** `.zen-ghost-kanji` 是底纹元素，必须放在 `.slide-content` 容器之外（作为 `.slide` 的直接子元素），使其 `position: absolute` 的 `right: -0.1em; bottom: -0.1em` 定位基准是 `.slide`（整个页面），而非 600px 内容块。禁止放在 `.slide-content` 内部，禁止使用 `left: 50%`、`top: 50%`、`translateX(-50%)` 等居中定位
+23. **叙事弧线完整性：** 检测幻灯片是否遵循 12 页叙事结构（Hero → Problem → Discovery → Solution → Playback → Presenter → Edit → Planning → Review → Style Guide → Technical → CTA）。标题不得全部使用通用标签（概览、Overview、Introduction、Summary 等）。连续两页不得使用相同布局模式（如连续 grid 3 列、连续 split panel、连续 2 列卡片）。每页必须使用风格参考文件中定义的 2-3 种不同组件类型，不得仅用通用 `div` + `ul` 堆砌
+24. **风格签名元素完整性（全部 21 风格）：** 读取选中风格的参考文件 `## Signature Elements` 章节，检查 HTML 中是否注入了对应的签名元素。按风格逐一检查：
+    - **Bold Signal:** 每页 `.slide-num`（左上角大数字）+ `.breadcrumb`（右上角面包屑）+ `.slide::after` 网格叠加
+    - **Enterprise Dark:** `.slide::after` 网格叠加（24px 间距，rgba(48,54,61,0.3)）
+    - **Neon Cyber:** `.slide::after` 青色网格叠加（40px 间距，rgba(0,255,255,0.06)）
+    - **Terminal Green:** `.slide::after` 扫描线叠加（repeating-linear-gradient，rgba(0,255,65,0.03)）
+    - **Creative Voltage:** `.slide::after` halftone 点阵（radial-gradient circle，rgba(212,255,0,0.08)）
+    - **Dark Botanical:** 每页 2-3 个 `.botanical-orb` 元素（terracotta/pink/gold 渐变软光球，200-400px）
+    - **Glassmorphism:** 每页 3 个 `.glass-orb` 元素 + 卡片 `backdrop-filter: blur(12px)`
+    - **Swiss Modern:** `.slide::after` 12 列网格叠加 + 硬水平规则 `2px solid #0a0a0a`
+    - **Neo-Retro Dev:** `.slide::after` 方格纸网格（20px 间距，rgba(70,130,180,0.08)，cream `#f5f2e8` 背景）
+    - **Chinese Chan:** 每页最多 1 个装饰元素（`.zen-rule` / `.zen-ghost-kanji` / `.zen-dot`），不得更多
+    - **Aurora Mesh:** body 上 mesh gradient 4-6 色标 + 卡片 `backdrop-filter: blur(12px)`，无 Google Fonts
+    - **Data Story:** 数据组件（`.chart-container` / `.data-callout` / `.data-stat`），无背景图案
+    - **Electric Studio:** 双面板垂直分割 + `.accent-bar`（4px 宽，var(--accent)），Manrope 字体
+    - **Modern Newspaper:** 黄色条 `#FFCC00`（8-14px）+ 列规则 `1px solid #111` + issue stamp（`VOL.01 · NO.03`）
+    - **Neo-Brutalism:** 所有容器 `box-shadow: 4px 4px 0 #000` + `border-radius: 0` + `border: 3px solid #000`
+    - **Notebook Tabs:** 彩色竖排标签（右侧 edge）+ 纸张容器阴影 + 左侧 binder hole 装饰
+    - **Paper & Ink:** 窄列布局（max-width ~680px 居中），无背景图案，纯 typography + rule divider
+    - **Pastel Geometry:** 白卡（border-radius: 20px）在粉蓝渐变背景上 + 右侧垂直 pills（不同高度）
+    - **Split Pastel:** 双色分割背景（peach 左 / lavender 右）+ 右面板网格叠加 + badge pills
+    - **Vintage Editorial:** cream `#f5f0e8` 背景 + 抽象几何（circle outline + line + dot）+ Cormorant italic
+    - **Blue Sky:** 使用 `blue-sky-starter.html` 作为基础，所有签名元素（orbs / clouds / glass cards）已预建
+    如果风格参考文件定义了背景纹理但 HTML 中缺失，即生成错误
+25. **字体加载无白屏：** 检查 Google Fonts URL 是否合并为单一链接（`&display=swap`），且 `<style>` 开头是否有 `body { background-color: ... }` 回退色。多个 `<link>` 标签加载字体 = 生成错误
+26. **布局分类一致性：** 检查每页是否遵循 `composition-guide.md` 的布局分类映射（Hero = 全屏宣告，Problem = 分栏证据，Solution = 大数字强调，CTA = 堆叠行动等）。Hero 页必须有装饰元素（大数字/几何/图形），不能只是"标题+列表"。CTA 页必须有堆叠命令/链接，不能只是"标题+列表"。Chinese Chan / Paper & Ink 允许布局重复（极简主义哲学），但其他风格至少一半的幻灯片必须使用 2-3 种不同组件类型
+27. **卡片内文字对比度（亮色卡片）：** 检测 `background: var(--card-bg)` 或高亮度纯色背景（`#FF5722`、`#FFEB3B`、`#0066ff` 等亮度 >40% 的颜色）的容器及其所有子元素。容器内不得出现 `color: #1a1a1a`、`rgba(26,26,26,*)`、`#333`、`#222` 等深色文字——必须使用 `color: var(--text-on-card)` 或 `rgba(255,255,255,*)` 等浅色文字。同样，暗色背景容器内不得出现深色文字。检测范围包括 CSS 类和 inline `style="color: ..."` 属性。这是三层问题：(1) 风格参考文件中 `--text-on-card` 变量定义错误 → 修复参考文件；(2) CSS 变量继承错误 → 修复 `:root`；(3) inline style 直接写死深色值覆盖变量 → 替换为 `var(--text-on-card)` 或 `rgba(255,255,255,*)`
 
 > 完整反模式映射表见 `references/impeccable-anti-patterns.md`。
 

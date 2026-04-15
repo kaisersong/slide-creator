@@ -86,6 +86,12 @@
 - **修复：** 加深文字颜色（如 `#1e293b`、`#334155`）或减淡背景色，确保 WCAG AA 对比度（≥4.5:1）
 - **slide-creator 已有：** 无直接对应
 
+### 12b. 深色文字在亮色卡片上（Dark Text on Bright Card）— CLI
+- **检测：** `background: var(--card-bg)` 或高亮度纯色背景（`#FF5722`、`#FF5733`、`#0066ff`、`#d4ff00` 等亮度 >40%）的容器内，子元素出现 `color: #1a1a1a`、`rgba(26,26,26,*)`、`#333`、`#222` 等深色文字（CSS 或 inline style）
+- **修复：** 三层排查：(1) `--text-on-card` 变量是否定义为 `#ffffff`（非 `#1a1a1a`）；(2) 容器是否设置了 `color: var(--text-on-card)`；(3) inline `style="color: ..."` 是否覆盖了变量 → 替换为 `rgba(255,255,255,*)` 或移除
+- **slide-creator 已有：** SKILL.md Pre-Write Validation Pipeline Rule 27
+- **根因：** AI 生成 inline style 时，将暗色主题下的"正确"深色值直接写入，未识别出该元素位于亮色卡片内部
+
 ---
 
 ## Motion（动画）
@@ -156,3 +162,4 @@
 | 20 | inconsistent align | 同一 `<section class="slide">` 内同时出现 left + center 的 text-align | 统一对齐 |
 | 21 | gradient no fallback | `-webkit-background-clip:\s*text` 前无 `color:` 声明 | 添加 color 降级 |
 | 22 | SVG 箭头连线不可见 | `<line>` 起点与终点距离 <30px；箭头指向圆内部而非圆边缘 | 调整 rect 位置与圆保持 ≥30px 间距，箭头从外框指向圆边缘 |
+| 27 | 深色文字在亮色卡片上 | `background: var(--card-bg)` 容器内子元素 `color:.*#1a1a1a` / `rgba\(26,26,26` / `#333` | 替换为 `var(--text-on-card)` 或 `rgba(255,255,255,*)` |
