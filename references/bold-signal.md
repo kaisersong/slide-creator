@@ -12,7 +12,7 @@ Confident, bold, modern, high-impact. Dark canvas with colored card focal points
     --bg-gradient: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 50%, #1a1a1a 100%);
     --card-bg: #FF5722;
     --text-primary: #ffffff;
-    --text-on-card: #1a1a1a;
+    --text-on-card: #ffffff;
 }
 ```
 
