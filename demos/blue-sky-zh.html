@@ -3,10 +3,10 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>slide-creator — AI-Powered HTML Presentations</title>
+<title>kai-slide-creator — 零依赖 HTML 演示文稿生成器</title>
 <style>
 
-:root { --slide-count: 8; }
+:root { --slide-count: 14; }
 
 /* ═══════════════════════════════════════════════
    BLUE SKY DESIGN TOKENS (untouched from starter)
@@ -37,7 +37,7 @@
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 html, body {
   width: 100%; height: 100%; overflow: hidden;
-  font-family: 'DM Sans', 'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  font-family: 'DM Sans', 'Inter', system-ui, -apple-system, 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif;
   background: linear-gradient(160deg, var(--bg-from), var(--bg-to));
 }
 
@@ -203,7 +203,7 @@ p, li { font-size: clamp(0.82rem, 1.4vw, 1.05rem); line-height: 1.6; color: var(
 
 ul.bl { list-style: none; padding: 0; display: flex; flex-direction: column; gap: 7px; }
 ul.bl li { display: flex; align-items: flex-start; gap: 8px; color: var(--text-secondary); }
-ul.bl li::before { content: '▸'; color: var(--accent-sky); flex-shrink: 0; margin-top: 2px; }
+ul.bl li::before { content: '\25B8'; color: var(--accent-sky); flex-shrink: 0; margin-top: 2px; }
 
 .step {
   width: 34px; height: 34px; border-radius: 50%; flex-shrink: 0;
@@ -308,7 +308,7 @@ body:hover #present-btn { opacity: 1; pointer-events: auto; }
 }
 
 /* ═══════════════════════════════════════════════════════
-   PRESENTATION MODE — CSS scaling, 1440×900 canvas
+   PRESENTATION MODE — CSS scaling, 1440x900 canvas
    ═══════════════════════════════════════════════════════ */
 body.presenting { background: #000 !important; overflow: hidden !important; }
 body.presenting .slide {
@@ -394,17 +394,17 @@ body.presenting #notes-panel { display: none !important; }
 <div class="orb" id="orb1"></div>
 <div class="orb" id="orb2"></div>
 <div class="orb" id="orb3"></div>
-<div id="slide-counter">01 / 10</div>
+<div id="slide-counter">01 / 14</div>
 <div id="nav-dots"></div>
 
 <div class="edit-hotzone"></div>
-<button class="edit-toggle" id="editToggle" title="Edit mode (E)">✏ Edit</button>
+<button class="edit-toggle" id="editToggle" title="Edit mode (E)">&#x270F; Edit</button>
 
 <div id="notes-panel">
   <div id="notes-panel-header">
-    <div id="notes-panel-label">SPEAKER NOTES — SLIDE 1 / 8</div>
+    <div id="notes-panel-label">SPEAKER NOTES — SLIDE 1 / 14</div>
     <div id="notes-drag-hint"></div>
-    <button id="notes-collapse-btn" title="Collapse / expand">▾</button>
+    <button id="notes-collapse-btn" title="Collapse / expand">&#x25BE;</button>
   </div>
   <div id="notes-body">
     <textarea id="notes-textarea" placeholder="Add speaker notes for this slide…"></textarea>
@@ -417,7 +417,7 @@ body.presenting #notes-panel { display: none !important; }
   <!-- ══════════════════════════════════════════
        01 — COVER
        ══════════════════════════════════════════ -->
-  <section class="slide cover" style="overflow:hidden;" data-notes="欢迎！slide-creator 从提示词生成精美的 HTML 演示文稿 — 零依赖，浏览器原生。21 个主题，单文件输出。">
+  <section class="slide cover" style="overflow:hidden;" data-notes="欢迎！kai-slide-creator 是零依赖 HTML 演示文稿生成器 — 21 种设计预设，纯浏览器运行。">
 
     <svg width="0" height="0" style="position:absolute;pointer-events:none;">
       <defs>
@@ -428,10 +428,12 @@ body.presenting #notes-panel { display: none !important; }
       </defs>
     </svg>
 
+    <!-- Ambient orbs -->
     <div style="position:absolute;width:50%;height:60%;top:5%;left:-10%;border-radius:50%;background:rgba(96,165,250,0.28);filter:blur(90px);pointer-events:none;z-index:1;"></div>
     <div style="position:absolute;width:55%;height:65%;top:8%;right:-12%;border-radius:50%;background:rgba(14,165,233,0.22);filter:blur(100px);pointer-events:none;z-index:1;"></div>
     <div style="position:absolute;width:35%;height:40%;bottom:32%;left:30%;border-radius:50%;background:rgba(99,102,241,0.18);filter:blur(80px);pointer-events:none;z-index:1;"></div>
 
+    <!-- Scrolling cloud bank -->
     <div class="cloud-layer" style="filter:url(#cloud-filter);">
       <div class="cloud-strip">
         <div style="position:relative;width:1920px;height:100%;flex-shrink:0;">
@@ -478,275 +480,475 @@ body.presenting #notes-panel { display: none !important; }
     </div>
 
     <div style="text-align:center;position:relative;z-index:10;">
-      <span class="pill" style="margin-bottom:20px;display:inline-block;">slide-creator v2.14</span>
-      <h1 class="gt" style="margin-bottom:14px;">AI 驱动的 HTML 演示文稿</h1>
+      <span class="pill" style="margin-bottom:20px;display:inline-block;">21 种设计预设</span>
+      <h1 class="gt" style="margin-bottom:14px;">kai-slide-creator</h1>
       <p style="font-size:1.1rem;max-width:560px;margin:0 auto 28px;">
-        从提示词到精美演示，秒速完成。零依赖。浏览器原生。无限编辑。
+        零依赖 HTML 演示文稿生成器<br>从设计预设开始，让内容自己说话
       </p>
       <div style="display:flex;gap:14px;justify-content:center;flex-wrap:wrap;">
         <div class="g" style="padding:16px 28px;text-align:center;">
           <div class="stat" style="font-size:2.8rem;">21</div>
-          <p style="font-size:0.78rem;margin-top:2px;">主题</p>
+          <p style="font-size:0.78rem;margin-top:2px;">设计预设</p>
         </div>
         <div class="g" style="padding:16px 28px;text-align:center;">
           <div class="stat" style="font-size:2.8rem;">0</div>
           <p style="font-size:0.78rem;margin-top:2px;">依赖</p>
         </div>
         <div class="g" style="padding:16px 28px;text-align:center;">
-          <div class="stat" style="font-size:2.8rem;">1</div>
-          <p style="font-size:0.78rem;margin-top:2px;">HTML 文件</p>
+          <div class="stat" style="font-size:2.8rem;">100%</div>
+          <p style="font-size:0.78rem;margin-top:2px;">浏览器运行</p>
         </div>
       </div>
     </div>
   </section>
 
   <!-- ══════════════════════════════════════════
-       02 — 传统工具限制了你
+       02 — CHAPTER: 问题
        ══════════════════════════════════════════ -->
-  <section class="slide" data-notes="解释传统幻灯片工具的摩擦点。让对比表发言 — 停留在 PPTX 兼容性和图表更新的痛点。">
+  <section class="slide chapter" data-notes="解释传统幻灯片工具的摩擦点。让对比表发言 — 停留在 PPTX 兼容性和模板千篇一律的痛点。">
+    <div class="chapter-num">01</div>
+    <h2 class="gt">为什么需要另一种演示工具</h2>
+    <p style="font-size:1rem;color:var(--text-muted);margin-top:8px;">现有工具的局限</p>
+  </section>
+
+  <!-- ══════════════════════════════════════════
+       03 — 问题详情：对比卡片
+       ══════════════════════════════════════════ -->
+  <section class="slide" data-notes="深入对比传统工具与 slide-creator 的差异。重点在 AI 生成通用审美、导出丢失设计细节这些问题。">
     <div style="max-width:860px;width:100%;">
       <span class="pill" style="margin-bottom:14px;display:inline-block;">为什么选择 slide-creator</span>
-      <h2 class="gt">传统工具限制了你</h2>
+      <h2 class="gt">为什么需要另一种演示工具</h2>
       <div class="divider"></div>
-      <div style="display:flex;flex-direction:column;gap:14px;">
-<div class="cols2">
-<div class="g" style="padding:22px 24px;border-left:4px solid #ef4444;">
-<h4 style="color:#b91c1c;;margin-bottom:10px;">❌ 传统方法</h4>
-<ul class="bl">
-<li>从空白幻灯片开始 — 结构是你的问题</li>
-<li>花费数小时调整字体、对齐和颜色</li>
-<li>PPTX 在其他机器上损坏，字体丢失</li>
-</ul></div><div class="g" style="padding:22px 24px;border-left:4px solid #10b981;">
-<h4 style="color:#065f46;;margin-bottom:10px;">✓ slide-creator</h4>
-<ul class="bl">
-<li>描述你的主题 — AI 规划结构</li>
-<li>21 个主题，自动匹配你的内容类型</li>
-<li>单个 HTML 文件，在任何地方呈现完全相同</li>
-</ul></div></div>
-<div class="info"><strong>设计原则：</strong>你拥有内容。AI 拥有结构和视觉表现。</div>
-</div>
+      <div class="cols2">
+        <div class="g" style="padding:22px 24px;border-left:4px solid #ef4444;">
+          <h4 style="color:#b91c1c;margin-bottom:10px;">传统工具的痛点</h4>
+          <ul class="bl">
+            <li>PPT 模板千篇一律，找不到差异化表达</li>
+            <li>AI 生成通用审美，缺乏签名视觉语言</li>
+            <li>导出丢失设计细节，跨设备展示不一致</li>
+          </ul>
+        </div>
+        <div class="g" style="padding:22px 24px;border-left:4px solid #10b981;">
+          <h4 style="color:#065f46;margin-bottom:10px;">slide-creator 的思路</h4>
+          <ul class="bl">
+            <li>从设计预设出发，每种都有签名视觉语言</li>
+            <li>纯 HTML 运行，任何浏览器打开都一样</li>
+            <li>浏览器内可编辑，修改即刻持久化</li>
+          </ul>
+        </div>
+      </div>
+      <div class="info" style="margin-top:14px;">
+        <strong>核心理念：</strong>你拥有内容，AI 拥有结构和视觉表现。
+        你没有提供的数字永远不会被编造 —— 只用 <code>[INSERT VALUE]</code> 占位符。
+      </div>
     </div>
   </section>
 
   <!-- ══════════════════════════════════════════
-       03 — 从想法到演示的三步
+       04 — 21 种设计预设
        ══════════════════════════════════════════ -->
-  <section class="slide" data-notes="三个命令：--plan 生成可编辑的结构化大纲。--generate 将大纲转换为样式化的 HTML。">
-    <div style="max-width:860px;width:100%;">
-      <span class="pill" style="margin-bottom:14px;display:inline-block;">工作流</span>
-      <h2 class="gt">从想法到演示的三步</h2>
+  <section class="slide" data-notes="21 个主题跨越 4 个类别 — 内容类型路由自动建议最适合的。Blue Sky 对业务内容最通用。">
+    <div style="max-width:940px;width:100%;">
+      <span class="pill" style="margin-bottom:14px;display:inline-block;">设计预设</span>
+      <h2 class="gt">21 种设计预设，每种都有签名视觉语言</h2>
+      <div class="divider"></div>
+      <div class="bento" style="grid-template-columns:repeat(2,1fr);grid-auto-rows:180px;">
+        <div class="g span2" style="padding:20px;">
+          <div style="font-size:1.6rem;margin-bottom:8px;">Bold Signal</div>
+          <h4 style="margin-bottom:4px;">商业路演</h4>
+          <p style="font-size:0.8rem;">高对比度深色背景，大号渐变标题，投资者/VC 路演首选</p>
+        </div>
+        <div class="g span2" style="padding:20px;">
+          <div style="font-size:1.6rem;margin-bottom:8px;">Blue Sky</div>
+          <h4 style="margin-bottom:4px;">清新技术</h4>
+          <p style="font-size:0.8rem;">天空渐变 + 玻璃卡片 + 网格叠加，适合产品介绍和技术分享</p>
+        </div>
+        <div class="g" style="padding:16px 18px;">
+          <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px;">
+            <div style="width:10px;height:10px;border-radius:50%;background:#10b981;flex-shrink:0;"></div>
+            <h4 style="font-size:0.88rem;">Terminal Green</h4>
+          </div>
+          <p style="font-size:0.76rem;color:var(--text-muted);">开发工具 / API 文档</p>
+        </div>
+        <div class="g" style="padding:16px 18px;">
+          <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px;">
+            <div style="width:10px;height:10px;border-radius:50%;background:#0f172a;flex-shrink:0;"></div>
+            <h4 style="font-size:0.88rem;">Enterprise Dark</h4>
+          </div>
+          <p style="font-size:0.76rem;color:var(--text-muted);">数据看板 / KPI 报告</p>
+        </div>
+        <div class="g span2" style="padding:20px;">
+          <div style="font-size:1.6rem;margin-bottom:8px;">Modern Newspaper</div>
+          <h4 style="margin-bottom:4px;">研究报告</h4>
+          <p style="font-size:0.8rem;">窄列排版 + 衬线字体，适合长篇思想领导力内容</p>
+        </div>
+        <div class="g span2" style="padding:20px;">
+          <div style="font-size:1.6rem;margin-bottom:8px;">Aurora Mesh</div>
+          <h4 style="margin-bottom:4px;">产品发布</h4>
+          <p style="font-size:0.8rem;">极光渐变叠加 + 光球效果，SaaS 产品发布首选</p>
+        </div>
+      </div>
+      <div class="info" style="margin-top:10px;padding:9px 14px;">
+        深色 &middot; 5 个主题 &nbsp;&nbsp; 浅色 &middot; 5 个主题 &nbsp;&nbsp; 专业 &middot; 4 个主题 &nbsp;&nbsp; v2.x 新增 &middot; 7 个主题
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════════
+       05 — CHAPTER: 核心功能
+       ══════════════════════════════════════════ -->
+  <section class="slide chapter" data-notes="三个核心模块：播放模式、演讲者模式、浏览器内编辑。一个文件全部搞定。">
+    <div class="chapter-num">02</div>
+    <h2 class="gt">三个核心模块，支撑全流程演示</h2>
+    <p style="font-size:1rem;color:var(--text-muted);margin-top:8px;">播放、演讲、编辑 —— 一个文件全部搞定</p>
+  </section>
+
+  <!-- ══════════════════════════════════════════
+       06 — 播放模式
+       ══════════════════════════════════════════ -->
+  <section class="slide" data-notes="按 F5 或点击播放按钮进入全屏。幻灯片缩放以填充任何屏幕。无需安装任何播放器。">
+    <div style="max-width:840px;width:100%;">
+      <span class="pill" style="margin-bottom:14px;display:inline-block;">播放</span>
+      <h2 class="gt">播放模式 — 按 F5 即全屏</h2>
       <div class="divider"></div>
       <div style="display:flex;flex-direction:column;gap:11px;">
-<div class="layer">
-<div class="step">1</div><div>
-<h4 style="margin-bottom:4px;">描述你的主题</h4>
-<p>告诉 slide-creator 你想呈现什么 — 受众、目标、核心信息</p>
-<div class="cmd" style="margin-top:7px;">/slide "第一季度业务审查，面向领导层 — 重点关注增长和留存"</div>
-</div>
-</div>
-<div class="layer">
-<div class="step">2</div><div>
-<h4 style="margin-bottom:4px;">审查计划（可选）</h4>
-<p>使用 <code>--plan</code> 先获得结构化大纲文件。编辑它，然后在准备好时运行 <code>--generate</code></p>
-</div>
-</div>
-<div class="layer">
-<div class="step">3</div><div>
-<h4 style="margin-bottom:4px;">在浏览器中打开 — 完成</h4>
-<p>单个自包含的 HTML 文件。内置键盘导航、触摸滑动、全屏和编辑模式</p>
-</div>
-</div>
-</div>
+        <div class="layer">
+          <div class="step">1</div>
+          <div>
+            <h4 style="margin-bottom:4px;"><kbd>F5</kbd> 或点击播放按钮进入全屏</h4>
+            <p>自动隐藏控制栏和计数器，纯净无干扰的演示体验。</p>
+          </div>
+        </div>
+        <div class="layer">
+          <div class="step">2</div>
+          <div>
+            <h4 style="margin-bottom:4px;">幻灯片自动缩放适配屏幕</h4>
+            <p>保持设计比例不变形，1440x900 画布 CSS 缩放到任何尺寸。</p>
+          </div>
+        </div>
+        <div class="layer">
+          <div class="step">3</div>
+          <div>
+            <h4 style="margin-bottom:4px;">方向键 / 滚轮 / 触摸滑动翻页</h4>
+            <p>弹簧物理过渡动画 <code>cubic-bezier(0.22, 1, 0.36, 1)</code>，自然不生硬。</p>
+          </div>
+        </div>
+        <div class="layer">
+          <div class="step">4</div>
+          <div>
+            <h4 style="margin-bottom:4px;">无需安装任何播放器</h4>
+            <p>浏览器就是投影仪 —— 零依赖，打开即用。</p>
+          </div>
+        </div>
+      </div>
+      <div class="info" style="margin-top:14px;">
+        零依赖播放体验，任何设备打开即用
+      </div>
     </div>
   </section>
 
   <!-- ══════════════════════════════════════════
-       04 — 21 个主题适应所有场景
+       07 — 演讲者模式
        ══════════════════════════════════════════ -->
-  <section class="slide" data-notes="21 个主题跨越 4 个类别 — 内容类型路由自动建议最适合的。Blue Sky 和 Aurora Mesh 对业务内容最通用。">
+  <section class="slide" data-notes="按 P 键打开演讲者窗口，与主窗口同步翻页。观众看不到备注，你能看到一切。">
     <div style="max-width:860px;width:100%;">
-      <span class="pill" style="margin-bottom:14px;display:inline-block;">按内容类型自动匹配</span>
-      <h2 class="gt">21 个主题适应所有场景</h2>
+      <span class="pill" style="margin-bottom:14px;display:inline-block;">演讲</span>
+      <h2 class="gt">演讲者模式 — P 键打开同步窗口</h2>
+      <div class="divider"></div>
+      <div class="cols2">
+        <div class="g" style="padding:22px 24px;">
+          <h4 style="margin-bottom:10px;">观众看到的</h4>
+          <ul class="bl">
+            <li>全屏幻灯片</li>
+            <li>纯净无干扰</li>
+            <li>自动缩放适配</li>
+          </ul>
+        </div>
+        <div class="cmd" style="padding:18px 20px;">
+          <div style="margin-bottom:8px;">
+            <strong>演讲者窗口</strong>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:6px;">
+            <div style="display:flex;align-items:center;gap:8px;">
+              <kbd>P</kbd> <span style="color:var(--text-secondary);font-size:0.82rem;">打开同步窗口</span>
+            </div>
+            <div style="display:flex;align-items:center;gap:8px;">
+              <span style="color:var(--text-secondary);font-size:0.82rem;">演讲者备注</span>
+            </div>
+            <div style="display:flex;align-items:center;gap:8px;">
+              <span style="color:var(--text-secondary);font-size:0.82rem;">倒计时器</span>
+            </div>
+            <div style="display:flex;align-items:center;gap:8px;">
+              <span style="color:var(--text-secondary);font-size:0.82rem;">当前页 / 总页数</span>
+            </div>
+            <div style="display:flex;align-items:center;gap:8px;">
+              <span style="color:var(--text-secondary);font-size:0.82rem;">翻页控制</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="co" style="margin-top:14px;">
+        <strong>按 P 键打开</strong>，与主窗口同步翻页。观众永远看不到你的备注。
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════════
+       08 — 浏览器内编辑
+       ══════════════════════════════════════════ -->
+  <section class="slide" data-notes="演示编辑模式：按 E 键进入，点击任何文字修改，Ctrl+S 保存。不用打开 PowerPoint 或 Figma。">
+    <div style="max-width:860px;width:100%;">
+      <span class="pill" style="margin-bottom:14px;display:inline-block;">编辑</span>
+      <h2 class="gt">浏览器内编辑 — 所见即所改</h2>
+      <div class="divider"></div>
+      <div style="display:flex;flex-direction:column;gap:11px;">
+        <div class="layer">
+          <div style="font-size:1.5rem;flex-shrink:0;">&#x270F;</div>
+          <div>
+            <h4 style="margin-bottom:4px;">按 <kbd>E</kbd> 键进入编辑模式</h4>
+            <p>所有文字变为可编辑，点击任何标题、段落或列表项即可修改。</p>
+          </div>
+        </div>
+        <div class="layer">
+          <div style="font-size:1.5rem;flex-shrink:0;">&#x1F4BB;</div>
+          <div>
+            <h4 style="margin-bottom:4px;">直接点击文字修改</h4>
+            <p>实时预览效果，无需切换到 PowerPoint 或 Figma。</p>
+          </div>
+        </div>
+        <div class="layer">
+          <div style="font-size:1.5rem;flex-shrink:0;">&#x1F4BE;</div>
+          <div>
+            <h4 style="margin-bottom:4px;"><kbd>Ctrl+S</kbd> 保存为 HTML</h4>
+            <p>修改持久化到文件，另存为网页即可捕获更改。</p>
+          </div>
+        </div>
+      </div>
+      <div class="info" style="margin-top:14px;">
+        编辑模式默认开启，无需额外配置
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════════
+       09 — CHAPTER: 使用方法
+       ══════════════════════════════════════════ -->
+  <section class="slide chapter" data-notes="一条命令，三分钟出稿。从规划到生成，全程自动化。">
+    <div class="chapter-num">03</div>
+    <h2 class="gt">一条命令，三分钟出稿</h2>
+    <p style="font-size:1rem;color:var(--text-muted);margin-top:8px;">从规划到生成，全程自动化</p>
+  </section>
+
+  <!-- ══════════════════════════════════════════
+       10 — 使用方法详情
+       ══════════════════════════════════════════ -->
+  <section class="slide" data-notes="三个命令：--plan 生成可编辑的结构化大纲。--generate 将大纲转换为样式化的 HTML。--review 对已有 HTML 执行检查点。">
+    <div style="max-width:860px;width:100%;">
+      <div class="cols3">
+        <div class="g" style="padding:18px 20px;">
+          <div class="cmd" style="margin-bottom:10px;">/slide-creator --plan</div>
+          <ul class="bl">
+            <li>生成 PLANNING.md 大纲</li>
+            <li>可编辑后再生成</li>
+          </ul>
+        </div>
+        <div class="g" style="padding:18px 20px;">
+          <div class="cmd" style="margin-bottom:10px;">/slide-creator --generate</div>
+          <ul class="bl">
+            <li>从 PLANNING.md 生成 HTML</li>
+            <li>执行 16 项质量校验</li>
+          </ul>
+        </div>
+        <div class="g" style="padding:18px 20px;">
+          <div class="cmd" style="margin-bottom:10px;">/slide-creator --review</div>
+          <ul class="bl">
+            <li>对已有 HTML 执行检查点</li>
+            <li>自动修复常见问题</li>
+          </ul>
+        </div>
+      </div>
+      <div class="divider"></div>
+      <div class="info">
+        也可直接给内容 + 风格，立即生成：<code>/slide-creator "你的主题" Blue Sky</code>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════════
+       11 — 内容类型与风格推荐
+       ══════════════════════════════════════════ -->
+  <section class="slide" data-notes="什么内容配什么风格，一眼匹配。自动建议适合内容类型的风格系列。">
+    <div style="max-width:860px;width:100%;">
+      <span class="pill" style="margin-bottom:14px;display:inline-block;">风格推荐</span>
+      <h2 class="gt">什么内容配什么风格，一眼匹配</h2>
+      <div class="divider"></div>
+      <div class="cols2">
+        <div class="g" style="padding:18px 20px;">
+          <h4 style="margin-bottom:10px;">数据报告 / KPI 看板</h4>
+          <ul class="bl">
+            <li>Data Story</li>
+            <li>Enterprise Dark</li>
+            <li>Swiss Modern</li>
+          </ul>
+        </div>
+        <div class="g" style="padding:18px 20px;">
+          <h4 style="margin-bottom:10px;">商业路演 / VC Deck</h4>
+          <ul class="bl">
+            <li>Bold Signal</li>
+            <li>Aurora Mesh</li>
+            <li>Enterprise Dark</li>
+          </ul>
+        </div>
+        <div class="g" style="padding:18px 20px;">
+          <h4 style="margin-bottom:10px;">开发工具 / API 文档</h4>
+          <ul class="bl">
+            <li>Terminal Green</li>
+            <li>Neon Cyber</li>
+            <li>Neo-Retro Dev</li>
+          </ul>
+        </div>
+        <div class="g" style="padding:18px 20px;">
+          <h4 style="margin-bottom:10px;">研究 / 思想领导力</h4>
+          <ul class="bl">
+            <li>Modern Newspaper</li>
+            <li>Paper &amp; Ink</li>
+            <li>Swiss Modern</li>
+          </ul>
+        </div>
+        <div class="g" style="padding:18px 20px;">
+          <h4 style="margin-bottom:10px;">创意 / 个人品牌</h4>
+          <ul class="bl">
+            <li>Vintage Editorial</li>
+            <li>Split Pastel</li>
+            <li>Neo-Brutalism</li>
+          </ul>
+        </div>
+        <div class="g" style="padding:18px 20px;">
+          <h4 style="margin-bottom:10px;">产品发布 / SaaS</h4>
+          <ul class="bl">
+            <li>Aurora Mesh</li>
+            <li>Glassmorphism</li>
+            <li>Electric Studio</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════════
+       12 — 技术特点
+       ══════════════════════════════════════════ -->
+  <section class="slide" data-notes="零依赖，纯浏览器运行。不依赖服务器、npm、构建工具。生成的 HTML 文件完整自包含。">
+    <div style="max-width:860px;width:100%;">
+      <span class="pill" style="margin-bottom:14px;display:inline-block;">技术架构</span>
+      <h2 class="gt">零依赖，纯浏览器运行</h2>
       <div class="divider"></div>
       <div class="cols4" style="gap:10px;align-items:start;">
-<div class="g" style="padding:16px 18px;">
-<div style="display:flex;align-items:center;gap:8px;margin-bottom:10px;">
-<div style="width:10px;height:10px;border-radius:50%;background:#0f172a;flex-shrink:0;"></div>
-<h4 style="font-size:0.88rem;">深色</h4>
-<span style="font-size:0.7rem;color:var(--text-muted);">4 个主题</span>
-</div>
-<div style="display:flex;flex-direction:column;gap:5px;">
-<span style="font-size:0.77rem;padding:3px 10px;background:rgba(15,23,42,0.08);border-radius:6px;color:#1e293b;">Bold Signal</span>
-<span style="font-size:0.77rem;padding:3px 10px;background:rgba(15,23,42,0.08);border-radius:6px;color:#1e293b;">Electric Studio</span>
-<span style="font-size:0.77rem;padding:3px 10px;background:rgba(15,23,42,0.08);border-radius:6px;color:#1e293b;">Creative Voltage</span>
-<span style="font-size:0.77rem;padding:3px 10px;background:rgba(15,23,42,0.08);border-radius:6px;color:#1e293b;">Dark Botanical</span>
-</div>
-<p style="font-size:0.72rem;color:var(--text-muted);margin-top:10px;">演讲 · 品牌 · 技术分享</p></div><div class="g" style="padding:16px 18px;border:1px solid rgba(37,99,235,0.25);">
-<div style="display:flex;align-items:center;gap:8px;margin-bottom:10px;">
-<div style="width:10px;height:10px;border-radius:50%;background:linear-gradient(135deg,#2563eb,#0ea5e9);flex-shrink:0;"></div>
-<h4 style="font-size:0.88rem;">浅色</h4>
-<span style="font-size:0.7rem;color:var(--text-muted);">5 个主题</span>
-</div>
-<div style="display:flex;flex-direction:column;gap:5px;">
-<span style="font-size:0.77rem;padding:3px 10px;background:rgba(37,99,235,0.08);border-radius:6px;color:#1e3a8a;display:flex;align-items:center;gap:6px;">Blue Sky <span class="pill green" style="font-size:0.65rem;padding:1px 7px;">本演示</span></span>
-<span style="font-size:0.77rem;padding:3px 10px;background:rgba(37,99,235,0.08);border-radius:6px;color:#1e3a8a;">Notebook Tabs</span>
-<span style="font-size:0.77rem;padding:3px 10px;background:rgba(37,99,235,0.08);border-radius:6px;color:#1e3a8a;">Pastel Geometry</span>
-<span style="font-size:0.77rem;padding:3px 10px;background:rgba(37,99,235,0.08);border-radius:6px;color:#1e3a8a;">Split Pastel</span>
-<span style="font-size:0.77rem;padding:3px 10px;background:rgba(37,99,235,0.08);border-radius:6px;color:#1e3a8a;">Vintage Editorial</span>
-</div>
-<p style="font-size:0.72rem;color:var(--text-muted);margin-top:10px;">教育 · 内部 · 创意</p></div><div class="g" style="padding:16px 18px;">
-<div style="display:flex;align-items:center;gap:8px;margin-bottom:10px;">
-<div style="width:10px;height:10px;border-radius:50%;background:#8b5cf6;flex-shrink:0;"></div>
-<h4 style="font-size:0.88rem;">专业</h4>
-<span style="font-size:0.7rem;color:var(--text-muted);">4 个主题</span>
-</div>
-<div style="display:flex;flex-direction:column;gap:5px;">
-<span style="font-size:0.77rem;padding:3px 10px;background:rgba(139,92,246,0.10);border-radius:6px;color:#4c1d95;">Neon Cyber</span>
-<span style="font-size:0.77rem;padding:3px 10px;background:rgba(139,92,246,0.10);border-radius:6px;color:#4c1d95;">Terminal Green</span>
-<span style="font-size:0.77rem;padding:3px 10px;background:rgba(139,92,246,0.10);border-radius:6px;color:#4c1d95;">Swiss Modern</span>
-<span style="font-size:0.77rem;padding:3px 10px;background:rgba(139,92,246,0.10);border-radius:6px;color:#4c1d95;">Paper & Ink</span>
-</div>
-<p style="font-size:0.72rem;color:var(--text-muted);margin-top:10px;">开发 · 学术 · 极简</p></div><div class="g" style="padding:16px 18px;border:1px solid rgba(37,99,235,0.25);">
-<div style="display:flex;align-items:center;gap:8px;margin-bottom:10px;">
-<div style="width:10px;height:10px;border-radius:50%;background:linear-gradient(135deg,#2563eb,#0ea5e9);flex-shrink:0;"></div>
-<h4 style="font-size:0.88rem;">v1.5 新增</h4>
-<span style="font-size:0.7rem;color:var(--text-muted);">8 个主题</span>
-</div>
-<div style="display:flex;flex-direction:column;gap:5px;">
-<span style="font-size:0.77rem;padding:3px 10px;background:rgba(37,99,235,0.08);border-radius:6px;color:#1e3a8a;">Aurora Mesh</span>
-<span style="font-size:0.77rem;padding:3px 10px;background:rgba(37,99,235,0.08);border-radius:6px;color:#1e3a8a;">Enterprise Dark</span>
-<span style="font-size:0.77rem;padding:3px 10px;background:rgba(37,99,235,0.08);border-radius:6px;color:#1e3a8a;">Glassmorphism</span>
-<span style="font-size:0.77rem;padding:3px 10px;background:rgba(37,99,235,0.08);border-radius:6px;color:#1e3a8a;">Neo-Brutalism</span>
-<span style="font-size:0.77rem;padding:3px 10px;background:rgba(37,99,235,0.08);border-radius:6px;color:#1e3a8a;">Chinese Chan</span>
-<span style="font-size:0.77rem;padding:3px 10px;background:rgba(37,99,235,0.08);border-radius:6px;color:#1e3a8a;">Data Story</span>
-<span style="font-size:0.77rem;padding:3px 10px;background:rgba(37,99,235,0.08);border-radius:6px;color:#1e3a8a;">Modern Newspaper</span>
-<span style="font-size:0.77rem;padding:3px 10px;background:rgba(37,99,235,0.08);border-radius:6px;color:#1e3a8a;">Neo-Retro Dev Deck</span>
-</div>
-<p style="font-size:0.72rem;color:var(--text-muted);margin-top:10px;">高级 · 数据 · 创意</p></div></div>
+        <div class="g" style="padding:22px;text-align:center;">
+          <div class="stat">0</div>
+          <p style="font-size:0.78rem;margin-top:6px;">npm 包依赖</p>
+        </div>
+        <div class="g" style="padding:22px;text-align:center;">
+          <div class="stat">3</div>
+          <p style="font-size:0.78rem;margin-top:6px;">核心文件 HTML/CSS/JS</p>
+        </div>
+        <div class="g" style="padding:22px;text-align:center;">
+          <div class="stat">&#x221E;</div>
+          <p style="font-size:0.78rem;margin-top:6px;">可扩展场景</p>
+        </div>
+        <div class="g" style="padding:22px;text-align:center;">
+          <div class="stat">1</div>
+          <p style="font-size:0.78rem;margin-top:6px;">浏览器即运行环境</p>
+        </div>
+      </div>
+      <div class="info" style="margin-top:14px;">
+        生成的 HTML 文件完整自包含，双击即可在浏览器中打开
+      </div>
     </div>
   </section>
 
   <!-- ══════════════════════════════════════════
-       05 — 演示模式 — 自由导航
+       13 — 版本历史
        ══════════════════════════════════════════ -->
-  <section class="slide" data-notes="单个 HTML 文件：内联 CSS、内联 JS、无 CDN。离线工作，可作为附件发送，在任何浏览器中打开。">
-    <div style="max-width:860px;width:100%;">
-      <span class="pill" style="margin-bottom:14px;display:inline-block;">功能</span>
-      <h2 class="gt">演示模式 — 自由导航</h2>
+  <section class="slide" data-notes="持续迭代，每周都在变强。从 v1.x 到 v2.16，功能不断增强。">
+    <div style="max-width:820px;width:100%;">
+      <span class="pill" style="margin-bottom:14px;display:inline-block;">版本历史</span>
+      <h2 class="gt">持续迭代，每周都在变强</h2>
       <div class="divider"></div>
-      <div class="cols2">
-<div class="g" style="padding:22px 24px;">
-<h4 >导航快捷键</h4>
-<div style="display:flex;align-items:center;gap:10px;padding:6px 0;border-bottom:1px solid rgba(14,165,233,0.10);">
-<kbd>→</kbd> <kbd>Space</kbd> <kbd>↓</kbd>
-<span style="color:var(--text-secondary);font-size:0.82rem;">下一个幻灯片</span>
-</div>
-
-<div style="display:flex;align-items:center;gap:10px;padding:6px 0;border-bottom:1px solid rgba(14,165,233,0.10);">
-<kbd>←</kbd> <kbd>↑</kbd>
-<span style="color:var(--text-secondary);font-size:0.82rem;">上一个幻灯片</span>
-</div>
-
-<div style="display:flex;align-items:center;gap:10px;padding:6px 0;border-bottom:1px solid rgba(14,165,233,0.10);">
-<kbd>Home</kbd> <kbd>/</kbd> <kbd>End</kbd>
-<span style="color:var(--text-secondary);font-size:0.82rem;">第一个/最后一个</span>
-</div>
-
-<div style="display:flex;align-items:center;gap:10px;padding:6px 0;border-bottom:1px solid rgba(14,165,233,0.10);">
-<kbd>F</kbd>
-<span style="color:var(--text-secondary);font-size:0.82rem;">切换全屏</span>
-</div>
-
-<div style="display:flex;align-items:center;gap:10px;padding:6px 0;border-bottom:1px solid rgba(14,165,233,0.10);">
-<kbd>E</kbd>
-<span style="color:var(--text-secondary);font-size:0.82rem;">切换编辑模式</span>
-</div>
-</div><div class="layer">
-<div style="font-size:1.5rem;flex-shrink:0;">⛶</div><div>
-<h4 style="margin-bottom:4px;">按 F 或点击按钮</h4>
-<p>进入原生浏览器全屏，模式栏和计数器自动隐藏</p>
-</div>
-</div><div class="layer">
-<div style="font-size:1.5rem;flex-shrink:0;">🎞</div><div>
-<h4 style="margin-bottom:4px;">弹簧物理过渡</h4>
-<p>水平轨道带 cubic-bezier — 幻灯片感觉有重量和自然</p>
-</div>
-</div><div class="layer">
-<div style="font-size:1.5rem;flex-shrink:0;">📱</div><div>
-<h4 style="margin-bottom:4px;">触摸和移动就绪</h4>
-<p>带惯性防抖的左/右滑动</p>
-</div>
-</div></div>
+      <div style="display:flex;flex-direction:column;gap:11px;">
+        <div class="layer">
+          <div class="step">1</div>
+          <div>
+            <h4 style="margin-bottom:4px;">v1.x — 基本框架</h4>
+            <p>播放模式、编辑模式、首批 7 个设计预设</p>
+          </div>
+        </div>
+        <div class="layer">
+          <div class="step">2</div>
+          <div>
+            <h4 style="margin-bottom:4px;">v1.5 — 风格扩展</h4>
+            <p>21 个预设、Cloud Bank Hero、Orbital Rings</p>
+          </div>
+        </div>
+        <div class="layer">
+          <div class="step">3</div>
+          <div>
+            <h4 style="margin-bottom:4px;">v2.x — 智能生成</h4>
+            <p>AI 规划、Review 系统、PPT 转换</p>
+          </div>
+        </div>
+        <div class="layer">
+          <div class="step">4</div>
+          <div>
+            <h4 style="margin-bottom:4px;">v2.16 — 渲染引擎升级</h4>
+            <p>主题卡片、组件修饰符、26 项回归测试</p>
+          </div>
+        </div>
+      </div>
+      <div class="co" style="margin-top:14px;">
+        <strong>GitHub + ClawHub 双渠道发布</strong>，持续迭代中
+      </div>
     </div>
   </section>
 
   <!-- ══════════════════════════════════════════
-       06 — 编辑模式 — 立即修复任何内容
+       14 — CLOSING
        ══════════════════════════════════════════ -->
-  <section class="slide" data-notes="演示：将鼠标悬停在左上角以显示编辑按钮。单击任何文本可实时编辑。Ctrl+S 保存。">
-    <div style="max-width:860px;width:100%;">
-      <span class="pill" style="margin-bottom:14px;display:inline-block;">功能</span>
-      <h2 class="gt">编辑模式 — 立即修复任何内容</h2>
-      <div class="divider"></div>
-      <div class="cols2">
-<div class="layer">
-<div style="font-size:1.5rem;flex-shrink:0;">✏</div><div>
-<h4 style="margin-bottom:4px;">点击任何文本进行编辑</h4>
-<p>每个标题、段落和列表项都变成 <code>contenteditable</code></p>
-</div>
-</div><div class="layer">
-<div style="font-size:1.5rem;flex-shrink:0;">⌨</div><div>
-<h4 style="margin-bottom:4px;">键盘快捷键</h4>
-<p>按 <code>E</code> 在演示文稿的任何位置切换编辑模式</p>
-</div>
-</div><div class="layer">
-<div style="font-size:1.5rem;flex-shrink:0;">💾</div><div>
-<h4 style="margin-bottom:4px;">在浏览器中实时编辑</h4>
-<p>使用 <code>⌘S</code> / <code>Ctrl+S</code> 保存文件以捕获更改</p>
-</div>
-</div><div class="info">立即切换到编辑模式 — 按 <code>E</code> 或点击左上角 <strong>✏ 编辑</strong></div></div>
+  <section class="slide cover" style="overflow:hidden;" data-notes="行动呼吁：在 Claude Code 中输入 /slide-creator 以开始使用。问答时间。">
+
+    <div class="cloud" style="width:440px;height:440px;background:rgba(147,197,253,0.30);top:-160px;right:-90px;animation-duration:11s;"></div>
+    <div class="cloud" style="width:320px;height:320px;background:rgba(196,233,251,0.35);bottom:-100px;left:-60px;animation-duration:9s;animation-delay:-2s;"></div>
+
+    <div style="text-align:center;position:relative;z-index:10;max-width:680px;">
+      <span class="pill" style="margin-bottom:20px;display:inline-block;">开始使用</span>
+      <h2 class="gt" style="margin-bottom:16px;">从设计预设开始，让内容自己说话</h2>
+      <div class="g" style="padding:28px 36px;">
+        <p style="margin-bottom:18px;font-size:0.95rem;">打开 Claude Code 并输入：</p>
+        <div class="cmd" style="text-align:left;margin-bottom:12px;">/slide-creator "你的主题" Blue Sky</div>
+        <div class="cmd" style="text-align:left;margin-bottom:18px;">/slide-creator --plan "你的主题" &nbsp;&nbsp;<span style="color:#64748b;"># 先查看大纲</span></div>
+        <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-top:8px;">
+          <div style="text-align:center;">
+            <kbd>E</kbd>
+            <p style="font-size:0.72rem;margin-top:4px;color:var(--text-muted);">编辑模式</p>
+          </div>
+          <div style="text-align:center;">
+            <kbd>F5</kbd>
+            <p style="font-size:0.72rem;margin-top:4px;color:var(--text-muted);">全屏</p>
+          </div>
+          <div style="text-align:center;">
+            <kbd>&rarr;</kbd>
+            <p style="font-size:0.72rem;margin-top:4px;color:var(--text-muted);">下一页</p>
+          </div>
+          <div style="text-align:center;">
+            <kbd>&larr;</kbd>
+            <p style="font-size:0.72rem;margin-top:4px;color:var(--text-muted);">上一页</p>
+          </div>
+        </div>
+      </div>
     </div>
   </section>
 
-  <!-- ══════════════════════════════════════════
-       07 — 为 AI 时代而建
-       ══════════════════════════════════════════ -->
-  <section class="slide" data-notes="按 F5 或点击 ▶ 按钮进入演示模式。幻灯片缩放以填充任何屏幕。按 P 打开演示者窗口。">
-    <div style="max-width:860px;width:100%;">
-      <span class="pill" style="margin-bottom:14px;display:inline-block;">架构</span>
-      <h2 class="gt">为 AI 时代而建</h2>
-      <div class="divider"></div>
-      <div style="display:flex;flex-direction:column;gap:14px;">
-<div class="cols3">
-<div class="g" style="padding:22px;text-align:center;">
-<div class="stat">0</div>
-<p style="font-size:0.8rem;">npm 包 — 纯 HTML/CSS/JS</p>
-</div><div class="g" style="padding:22px;text-align:center;">
-<div class="stat">3</div>
-<p style="font-size:0.8rem;">AI 可读层 — 摘要 JSON → 注释 → 组件数据</p>
-</div><div class="g" style="padding:22px;text-align:center;">
-<div class="stat">∞</div>
-<p style="font-size:0.8rem;">保质期 — 无 SaaS 订阅，无厂商锁定</p>
-</div></div>
-<div class="cols2">
-<div class="co"><strong>图表库：</strong>通过 CDN 使用 Chart.js。使用 <code>--bundle</code> 内联所有 JS 供离线使用。</div><div class="info"><strong>AI 管道友好：</strong>每个幻灯片嵌入 <code>data-component</code> 属性，下游代理可以解析和复用内容</div></div>
-</div>
-    </div>
-  </section>
-
-  <!-- ══════════════════════════════════════════
-       08 — 别再"做幻灯片"了，开始讲故事
-       ══════════════════════════════════════════ -->
-  <section class="slide" data-notes="行动呼吁：在 Claude Code 中输入 /slide-creator 以开始使用。">
-    <div style="max-width:860px;width:100%;">
-      <h2 class="gt">别再"做幻灯片"了，开始讲故事</h2>
-      <div class="divider"></div>
-      <h2 class="gt">GitHub Star → github.com/kaisersong/slide-creator</h2>
-<div class="cmd">pipx install slide-creator</div>
-    </div>
-  </section>
-
-  </div><!-- /#track -->
+</div><!-- /#track -->
 </div><!-- /#stage -->
 
 <script>
@@ -754,14 +956,20 @@ body.presenting #notes-panel { display: none !important; }
    ORB POSITIONS — one entry per slide [l%,t%,sz, l%,t%,sz, l%,t%,sz]
    ═══════════════════════════════════════════════════════ */
 const orbPositions = [
-  [-15, -20, 500, 80, -10, 400, 50, 65, 350],
-  [-20, 40, 460, 75, -15, 400, 55, 70, 300],
-  [-20, 40, 460, 75, -15, 400, 55, 70, 300],
-  [-20, 40, 460, 75, -15, 400, 55, 70, 300],
-  [-20, 40, 460, 75, -15, 400, 55, 70, 300],
-  [-20, 40, 460, 75, -15, 400, 55, 70, 300],
-  [-20, 40, 460, 75, -15, 400, 55, 70, 300],
-  [-20, 40, 460, 75, -15, 400, 55, 70, 300]
+  /* 01 Cover    */ [-15,-20,500,  80,-10,400,  50, 65,350],
+  /* 02 Ch:问题  */ [-20, 40,460,  75,-15,400,  55, 70,300],
+  /* 03 对比     */ [-10, 30,460,  72,-10,380,  40, 70,280],
+  /* 04 预设     */ [ 60,-10,440, -10, 50,380,  40, 75,300],
+  /* 05 Ch:功能  */ [-20, 40,460,  78,-15,400,  50, 72,300],
+  /* 06 播放     */ [-15, 35,500,  76,  0,420,  55, 65,290],
+  /* 07 演讲者   */ [ 65, 15,440, -15, 60,380,  40, 80,300],
+  /* 08 编辑     */ [-10, 25,480,  80,-10,400,  50, 70,310],
+  /* 09 Ch:用法  */ [-20, 40,460,  75,-15,400,  55, 70,300],
+  /* 10 命令     */ [ 60,-15,440, -10, 55,380,  45, 75,290],
+  /* 11 内容类型 */ [-15, 30,480,  78, -5,400,  50, 68,300],
+  /* 12 技术     */ [-10, 25,480,  80,-10,400,  50, 70,310],
+  /* 13 版本     */ [-15, 30,480,  78, -5,400,  50, 68,300],
+  /* 14 Closing  */ [-15,-20,500,  80,-10,400,  50, 60,350],
 ];
 
 /* ═══════════════════════════════════════════════════════
@@ -798,12 +1006,12 @@ if (new URLSearchParams(location.search).has('presenter')) {
     <div id="pv-right">
       <div class="pv-panel">
         <div id="pv-nav">
-          <button class="pv-arrow" id="pv-prev">←</button>
+          <button class="pv-arrow" id="pv-prev">&larr;</button>
           <div id="pv-counter">
             <div id="pv-num">—</div>
             <div id="pv-of">/ —</div>
           </div>
-          <button class="pv-arrow" id="pv-next">→</button>
+          <button class="pv-arrow" id="pv-next">&rarr;</button>
         </div>
       </div>
       <div class="pv-panel" id="pv-timer-box">
@@ -865,309 +1073,236 @@ const ctrEl  = document.getElementById('slide-counter');
 const o1 = document.getElementById('orb1');
 const o2 = document.getElementById('orb2');
 const o3 = document.getElementById('orb3');
-let cur = 0;
+let idx  = 0;
+let active = true;
 
-const channel = new BroadcastChannel('slide-creator-presenter');
-let _onSlideChange = null; /* hook for editor notes panel */
-
-document.documentElement.style.setProperty('--slide-count', TOTAL);
-
-/* Build dots */
+// Build dots
 for (let i = 0; i < TOTAL; i++) {
-  const d = document.createElement('button');
-  d.className = 'dot' + (i === 0 ? ' active' : '');
-  d.setAttribute('aria-label', 'Slide ' + (i + 1));
-  d.addEventListener('click', () => go(i));
-  dotsEl.appendChild(d);
+  const dot = document.createElement('button');
+  dot.className = 'dot';
+  dot.setAttribute('aria-label', `第 ${i + 1} 页`);
+  dot.addEventListener('click', () => goTo(i));
+  dotsEl.appendChild(dot);
 }
 
-function setOrbs(i) {
-  const p = orbPositions[i] || orbPositions[0];
-  const set = (el, l, t, s) => {
-    el.style.left = l + '%'; el.style.top = t + '%';
-    el.style.width = el.style.height = s + 'px';
-  };
-  set(o1, p[0], p[1], p[2]);
-  set(o2, p[3], p[4], p[5]);
-  set(o3, p[6], p[7], p[8]);
+function goTo(i) {
+  if (!active) return;
+  idx = Math.max(0, Math.min(i, TOTAL - 1));
+  track.style.transform = `translateX(${-idx * 100}vw)`;
+  updateDots();
+  updateCounter();
+  updateNotes();
+  moveOrbs();
 }
 
 function updateDots() {
-  document.querySelectorAll('.dot').forEach((d, i) => d.classList.toggle('active', i === cur));
+  dotsEl.querySelectorAll('.dot').forEach((d, i) => {
+    d.classList.toggle('active', i === idx);
+  });
 }
 
-function broadcastState() {
-  channel.postMessage({ type: 'state', index: cur, total: TOTAL, notes: slides[cur]?.dataset.notes || '' });
+function updateCounter() {
+  const n = String(idx + 1).padStart(2, '0');
+  const t = String(TOTAL).padStart(2, '0');
+  ctrEl.textContent = `${n} / ${t}`;
 }
 
-function go(n) {
-  if (n < 0 || n >= TOTAL) return;
-  slides[cur].classList.remove('active');
-  cur = n;
-  slides[cur].classList.add('active');
-  track.style.transform = `translateX(-${cur * 100}vw)`;
-  updateDots();
-  ctrEl.textContent = String(cur + 1).padStart(2, '0') + ' / ' + String(TOTAL).padStart(2, '0');
-  setOrbs(cur);
-  broadcastState();
-  _onSlideChange?.();
+function moveOrbs() {
+  const pos = orbPositions[idx] || orbPositions[0];
+  o1.style.left = pos[0] + '%'; o1.style.top = pos[1] + '%'; o1.style.width = pos[2] + 'px'; o1.style.height = pos[2] + 'px';
+  o2.style.left = pos[3] + '%'; o2.style.top = pos[4] + '%'; o2.style.width = pos[5] + 'px'; o2.style.height = pos[5] + 'px';
+  o3.style.left = pos[6] + '%'; o3.style.top = pos[7] + '%'; o3.style.width = pos[8] + 'px'; o3.style.height = pos[8] + 'px';
 }
 
-/* ctrl interface for PresentMode and editor */
-const ctrl = {
-  slides,
-  get currentSlide() { return cur; },
-  set currentSlide(v) { cur = v; },
-  goTo: go,
-  updateDots,
-  broadcastState,
-};
-
-go(0);
-
-/* Keyboard */
+// Keyboard
 document.addEventListener('keydown', e => {
-  if (e.target.getAttribute('contenteditable') || e.target.tagName === 'TEXTAREA') return;
-  if (e.key === 'ArrowRight' || e.key === ' ' || e.key === 'ArrowDown') { e.preventDefault(); ctrl.goTo(cur + 1); }
-  if (e.key === 'ArrowLeft'  || e.key === 'ArrowUp')                    { e.preventDefault(); ctrl.goTo(cur - 1); }
-  if (e.key === 'Home') ctrl.goTo(0);
-  if (e.key === 'End')  ctrl.goTo(TOTAL - 1);
-  if (e.key === 'p' || e.key === 'P') {
+  if (e.target.getAttribute('contenteditable')) return;
+  if (e.key === 'ArrowRight' || e.key === ' ' || e.key === 'PageDown') { e.preventDefault(); goTo(idx + 1); }
+  else if (e.key === 'ArrowLeft' || e.key === 'PageUp') { e.preventDefault(); goTo(idx - 1); }
+  else if (e.key === 'Home') { e.preventDefault(); goTo(0); }
+  else if (e.key === 'End') { e.preventDefault(); goTo(TOTAL - 1); }
+  else if (e.key === 'p' || e.key === 'P') {
     const url = location.href.split('?')[0] + '?presenter';
-    window.open(url, 'slide-presenter-' + Date.now(), 'width=1100,menubar=no,toolbar=no,location=no');
+    window.open(url, 'slide-presenter-' + Date.now(), 'width=1100,menubar=no,toolbar=no');
+  }
+  else if (e.key === 'F5' || e.key === 'F') {
+    if (window.enterPresent) window.enterPresent();
   }
 });
 
-/* Listen for commands from presenter window */
-channel.addEventListener('message', e => {
-  if (e.data.type === 'nav-next') ctrl.goTo(cur + 1);
-  else if (e.data.type === 'nav-prev') ctrl.goTo(cur - 1);
-  else if (e.data.type === 'request-state') broadcastState();
-});
-
-/* Wheel — gap-based momentum detection:
-   macOS sends momentum events continuously at ~16ms intervals.
-   A new intentional swipe arrives after lifting the finger (gap > 80ms).
-   No deltaY thresholds — pure timing.
-   Phase 1 (ANIMATING): first event navigates; all subsequent ignored.
-   Phase 2 (DRAINING): after transitionend, skip events arriving within
-   80ms of each other (continuous = momentum); navigate on first event
-   with gap > 80ms since the previous one (finger lifted = new swipe).
-   Fallback: reset after 1500ms if no events arrive in DRAINING state. */
-let wState = 'idle';
-let wLastTime = 0, wFallback = null;
-track.addEventListener('transitionend', e => {
-  if (e.propertyName !== 'transform') return;
-  wState = 'draining'; wLastTime = Date.now();
-  clearTimeout(wFallback);
-  wFallback = setTimeout(() => { wState = 'idle'; }, 1500);
-});
-document.addEventListener('wheel', e => {
-  e.preventDefault();
-  if (wState === 'animating') return;
-  const now = Date.now();
-  if (wState === 'draining') {
-    const gap = now - wLastTime;
-    wLastTime = now;
-    if (gap <= 80) return; // continuous stream = momentum
-    wState = 'idle'; clearTimeout(wFallback); // gap = finger lifted
-  }
-  wState = 'animating';
-  e.deltaY > 0 ? ctrl.goTo(cur + 1) : ctrl.goTo(cur - 1);
-}, { passive: false });
-
-/* Touch swipe */
-let touchStartX = 0;
-document.addEventListener('touchstart', e => { touchStartX = e.touches[0].clientX; }, { passive: true });
+// Touch
+let tx = 0;
+document.addEventListener('touchstart', e => { tx = e.touches[0].clientX; }, { passive: true });
 document.addEventListener('touchend', e => {
-  const dx = e.changedTouches[0].clientX - touchStartX;
-  if (Math.abs(dx) > 50) dx < 0 ? ctrl.goTo(cur + 1) : ctrl.goTo(cur - 1);
+  const d = tx - e.changedTouches[0].clientX;
+  if (Math.abs(d) > 50) goTo(idx + (d > 0 ? 1 : -1));
 });
 
-/* ═══════════════════════════════════════════════════════
-   PRESENTATION MODE CONTROLLER
-   F5 or ▶ button to enter. ESC to exit.
-   Scales slides to 1440×900 to fill any screen.
-   Note: clears #track transform on enter so position:fixed
-   works correctly (transform on ancestor breaks fixed positioning).
-   ═══════════════════════════════════════════════════════ */
-class PresentMode {
-  constructor(ctrl) {
-    this.ctrl = ctrl;
-    this.DW = 1440; this.DH = 900;
-    this.active = false;
-    this._resize = () => this._scale();
+// Wheel (debounced)
+let wheelTimer = null;
+document.addEventListener('wheel', e => {
+  if (!active) return;
+  if (wheelTimer) return;
+  wheelTimer = setTimeout(() => { wheelTimer = null; }, 800);
+  goTo(idx + (e.deltaY > 0 ? 1 : -1));
+}, { passive: true });
 
-    const btn = document.createElement('button');
-    btn.id = 'present-btn';
-    btn.title = 'Present (F5)';
-    btn.setAttribute('aria-label', 'Present');
-    btn.textContent = '▶';
-    document.body.appendChild(btn);
-
-    const counter = document.createElement('div');
-    counter.id = 'present-counter';
-    document.body.appendChild(counter);
-
-    btn.addEventListener('click', () => this.enter());
-    document.addEventListener('keydown', e => {
-      if (e.key === 'F5')                   { e.preventDefault(); this.enter(); }
-      if (e.key === 'Escape' && this.active) this.exit();
-    });
-    document.addEventListener('fullscreenchange', () => {
-      if (!document.fullscreenElement && this.active) this.exit();
-    });
+// BroadcastChannel (sync with presenter window)
+const bc = new BroadcastChannel('slide-creator-presenter');
+bc.addEventListener('message', e => {
+  if (e.data.type === 'request-state') {
+    bc.postMessage({ type: 'state', index: idx, total: TOTAL, notes: slides[idx]?.dataset.notes || '' });
   }
+});
 
-  enter() {
-    if (this.active) return;
-    this.active = true;
-    /* Clear track transform so position:fixed on slides works correctly */
-    track.style.transform = 'none';
-    track.style.willChange = 'auto';
-    document.body.classList.add('presenting');
-    document.documentElement.requestFullscreen?.().catch(() => {});
-    window.addEventListener('resize', this._resize);
-    this._scale();
-    this._show(this.ctrl.currentSlide);
-
-    this._origGoTo = this.ctrl.goTo;
-    this.ctrl.goTo = (i) => {
-      const idx = Math.max(0, Math.min(i, this.ctrl.slides.length - 1));
-      this.ctrl.currentSlide = idx;
-      this._show(idx);
-      this.ctrl.updateDots?.();
-      this.ctrl.broadcastState?.();
-      _onSlideChange?.();
-    };
-  }
-
-  exit() {
-    if (!this.active) return;
-    this.active = false;
-    document.body.classList.remove('presenting');
-    document.querySelectorAll('.slide').forEach(s => s.classList.remove('p-on'));
-    if (document.fullscreenElement) document.exitFullscreen?.();
-    window.removeEventListener('resize', this._resize);
-    if (this._origGoTo) { this.ctrl.goTo = this._origGoTo; this._origGoTo = null; }
-    /* Restore horizontal track position */
-    track.style.willChange = 'transform';
-    track.style.transform = `translateX(-${cur * 100}vw)`;
-  }
-
-  _scale() {
-    const s  = Math.min(window.innerWidth / this.DW, window.innerHeight / this.DH);
-    const ox = (window.innerWidth  - this.DW * s) / 2;
-    const oy = (window.innerHeight - this.DH * s) / 2;
-    const r  = document.documentElement;
-    r.style.setProperty('--pdw', this.DW + 'px');
-    r.style.setProperty('--pdh', this.DH + 'px');
-    r.style.setProperty('--ps',  s);
-    r.style.setProperty('--pox', ox + 'px');
-    r.style.setProperty('--poy', oy + 'px');
-  }
-
-  _show(i) {
-    document.querySelectorAll('.slide').forEach((s, idx) => {
-      s.classList.toggle('p-on', idx === i);
-      s.classList.toggle('active', idx === i);
-    });
-    const c = document.getElementById('present-counter');
-    if (c) c.textContent = `${i + 1} / ${this.ctrl.slides.length}`;
-  }
+function updateNotes() {
+  document.getElementById('notes-panel-label').textContent = `SPEAKER NOTES — SLIDE ${idx + 1} / ${TOTAL}`;
+  document.getElementById('notes-textarea').value = slides[idx]?.dataset.notes || '';
+  bc.postMessage({ type: 'state', index: idx, total: TOTAL, notes: slides[idx]?.dataset.notes || '' });
 }
 
-/* ═══════════════════════════════════════════════════════
-   EDIT MODE — hotzone top-left + notes panel
-   ═══════════════════════════════════════════════════════ */
+// Init
+moveOrbs();
+updateDots();
+updateCounter();
+slides[0]?.classList.add('active');
+
+// ═══════════════════════════════════════════════════════
+// EDIT MODE
+// ═══════════════════════════════════════════════════════
 function setupEditor() {
-  const panel    = document.getElementById('notes-panel');
-  const label    = document.getElementById('notes-panel-label');
-  const textarea = document.getElementById('notes-textarea');
-  const toggle   = document.getElementById('editToggle');
-  const hotzone  = document.querySelector('.edit-hotzone');
-  let hideTimeout = null;
+  const hotzone = document.querySelector('.edit-hotzone');
+  const btn = document.getElementById('editToggle');
+  const panel = document.getElementById('notes-panel');
+  let editing = false;
 
-  const editor = {
-    active: false,
-    toggle: () => editor.active ? editor.exit() : editor.enter(),
-    enter: () => {
-      editor.active = true;
-      toggle.classList.add('active');
-      toggle.textContent = '✓ Done';
-      slides.forEach(s => {
-        s.querySelectorAll('h1,h2,h3,h4,p,li,.stat').forEach(el => {
-          el.setAttribute('contenteditable', 'true');
-          el.style.outline = 'none';
-        });
-      });
-      panel.classList.add('active');
-      updateNotesPanel();
-    },
-    exit: () => {
-      editor.active = false;
-      toggle.classList.remove('active');
-      toggle.textContent = '✏ Edit';
-      slides.forEach(s => {
-        s.querySelectorAll('[contenteditable]').forEach(el => {
-          el.removeAttribute('contenteditable');
-          el.style.outline = '';
-        });
-      });
-      panel.classList.remove('active');
-      document.activeElement?.blur();
-    }
-  };
-
-  hotzone.addEventListener('mouseenter', () => { clearTimeout(hideTimeout); toggle.classList.add('show'); });
-  hotzone.addEventListener('mouseleave', () => { hideTimeout = setTimeout(() => { if (!editor.active) toggle.classList.remove('show'); }, 400); });
-  toggle.addEventListener('mouseenter', () => clearTimeout(hideTimeout));
-  toggle.addEventListener('mouseleave', () => { hideTimeout = setTimeout(() => { if (!editor.active) toggle.classList.remove('show'); }, 400); });
-  hotzone.addEventListener('click', () => editor.toggle());
-  toggle.addEventListener('click', () => editor.toggle());
-
-  document.getElementById('notes-panel-header').addEventListener('click', () => {
-    panel.classList.toggle('collapsed');
+  hotzone.addEventListener('click', () => {
+    editing = !editing;
+    btn.classList.toggle('active', editing);
+    btn.classList.add('show');
+    document.querySelectorAll('#track h1, #track h2, #track h3, #track h4, #track p, #track li, #track span.pill, #track .cmd').forEach(el => {
+      el.contentEditable = editing ? 'true' : 'false';
+    });
   });
 
-  textarea.addEventListener('input', () => {
-    if (slides[cur]) { slides[cur].dataset.notes = textarea.value; broadcastState(); }
+  btn.addEventListener('click', () => {
+    editing = !editing;
+    btn.classList.toggle('active', editing);
+    document.querySelectorAll('#track h1, #track h2, #track h3, #track h4, #track p, #track li, #track span.pill, #track .cmd').forEach(el => {
+      el.contentEditable = editing ? 'true' : 'false';
+    });
   });
 
   document.addEventListener('keydown', e => {
-    if (e.target.getAttribute('contenteditable') || e.target.tagName === 'TEXTAREA') return;
-    if (e.key === 'e' || e.key === 'E') editor.toggle();
-    if ((e.ctrlKey || e.metaKey) && e.key === 's') { e.preventDefault(); saveFile(); }
+    if (e.key === 'e' || e.key === 'E') {
+      if (e.target.getAttribute('contenteditable')) return;
+      hotzone.click();
+    }
+    if ((e.ctrlKey || e.metaKey) && e.key === 's') {
+      if (editing) {
+        e.preventDefault();
+        const html = document.documentElement.outerHTML;
+        const blob = new Blob([html], { type: 'text/html' });
+        const a = document.createElement('a');
+        a.href = URL.createObjectURL(blob);
+        a.download = document.title + '.html';
+        a.click();
+      }
+    }
   });
 
-  function updateNotesPanel() {
-    if (!editor.active) return;
-    label.textContent = `SPEAKER NOTES — SLIDE ${cur + 1} / ${TOTAL}`;
-    textarea.value = slides[cur]?.dataset.notes || '';
-  }
-
-  /* Called from go() on every slide change */
-  _onSlideChange = updateNotesPanel;
+  // Notes panel
+  const header = document.getElementById('notes-panel-header');
+  header.addEventListener('click', () => panel.classList.toggle('collapsed'));
 }
-
-function saveFile() {
-  const html = '<!DOCTYPE html>\n' + document.documentElement.outerHTML;
-  fetch(location.pathname, {
-    method: 'PUT', body: new TextEncoder().encode(html),
-    headers: { 'Content-Type': 'text/html' }
-  }).catch(() => {
-    const a = Object.assign(document.createElement('a'), {
-      href: URL.createObjectURL(new Blob([html], { type: 'text/html' })),
-      download: location.pathname.split('/').pop() || 'presentation.html'
-    });
-    a.click(); URL.revokeObjectURL(a.href);
-  });
-}
-
-new PresentMode(ctrl);
 setupEditor();
 
-} /* end else (main window) */
+// ═══════════════════════════════════════════════════════
+// PRESENT MODE
+// ═══════════════════════════════════════════════════════
+class PresentMode {
+  constructor() {
+    this.presenting = false;
+    this.W = 1440;
+    this.H = 900;
+    this.setup();
+  }
+  setup() {
+    document.addEventListener('keydown', e => {
+      if (this.presenting && (e.key === 'Escape' || e.key === 'F5')) {
+        e.preventDefault();
+        this.exit();
+      }
+      if (this.presenting && (e.key === 'ArrowRight' || e.key === ' ')) {
+        e.preventDefault();
+        goTo(idx + 1);
+      }
+      if (this.presenting && (e.key === 'ArrowLeft')) {
+        e.preventDefault();
+        goTo(idx - 1);
+      }
+    });
+  }
+  enter() {
+    this.presenting = true;
+    document.body.classList.add('presenting');
+    this.calc();
+    window.addEventListener('resize', () => this.calc());
+    this.syncSlides();
+  }
+  exit() {
+    this.presenting = false;
+    document.body.classList.remove('presenting');
+    window.removeEventListener('resize', () => this.calc());
+    slides.forEach(s => s.classList.remove('p-on'));
+    slides[idx]?.classList.add('active');
+  }
+  calc() {
+    const sw = window.innerWidth;
+    const sh = window.innerHeight;
+    const scale = Math.min(sw / this.W, sh / this.H);
+    const pw = this.W * scale;
+    const ph = this.H * scale;
+    const ox = (sw - pw) / 2;
+    const oy = (sh - ph) / 2;
+    document.body.style.setProperty('--pdw', this.W + 'px');
+    document.body.style.setProperty('--pdh', this.H + 'px');
+    document.body.style.setProperty('--ps', scale);
+    document.body.style.setProperty('--pox', ox + 'px');
+    document.body.style.setProperty('--poy', oy + 'px');
+  }
+  syncSlides() {
+    slides.forEach((s, i) => {
+      s.classList.remove('active');
+      s.classList.toggle('p-on', i === idx);
+    });
+  }
+}
+
+function enterPresent() {
+  if (!window.pm) window.pm = new PresentMode();
+  window.pm.enter();
+}
+
+// Present button
+const presentBtn = document.getElementById('present-btn');
+if (presentBtn) {
+  presentBtn.addEventListener('click', () => enterPresent());
+}
+
+const pm = new PresentMode();
+
+// Update slides on navigation in present mode
+const origGoTo = goTo;
+goTo = function(i) {
+  origGoTo(i);
+  if (pm.presenting) pm.syncSlides();
+};
+
+}
 </script>
+
+<div class="slide-credit">By kai-slide-creator v2.16.0 &middot; Blue Sky</div>
+
 </body>
 </html>

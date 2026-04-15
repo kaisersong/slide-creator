@@ -1,715 +1,511 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Creative Voltage · 下一代开发者平台</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
-<style>
-*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>slide-creator — 21 种设计预设</title>
 
-:root {
-    --bg: #0a0a0a;
-    --accent: #ff5722;
-    --text-primary: #ffffff;
-    --text-body: rgba(255,255,255,0.70);
-    --text-secondary: rgba(255,255,255,0.50);
-    --text-muted: rgba(255,255,255,0.35);
-    --card-bg: rgba(255,87,34,0.08);
-    --card-border: rgba(255,87,34,0.20);
-    --divider: rgba(255,87,34,0.25);
-    --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
-    --duration-normal: 0.6s;
-}
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;700;800&family=Space+Mono:wght@400;700&family=Noto+Sans+SC:wght@400;700;900&display=swap" rel="stylesheet">
 
-html { scroll-snap-type: y mandatory; height: 100%; }
+    <style>
+        :root {
+            --bg-primary: #1a1a2e;
+            --bg-blue: #0066ff;
+            --accent-neon: #d4ff00;
+            --text-primary: #ffffff;
+            --text-secondary: rgba(255,255,255,0.7);
+            --font-display: 'Syne', 'Noto Sans SC', sans-serif;
+            --font-body: 'Syne', 'Noto Sans SC', sans-serif;
+            --font-mono: 'Space Mono', monospace;
+            --title-size: clamp(1.5rem, 5vw, 4rem);
+            --h2-size: clamp(1.25rem, 3.5vw, 2.5rem);
+            --body-size: clamp(0.75rem, 1.5vw, 1.125rem);
+            --small-size: clamp(0.65rem, 1vw, 0.875rem);
+            --slide-padding: clamp(1rem, 4vw, 4rem);
+            --content-gap: clamp(0.5rem, 2vw, 2rem);
+            --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+            --duration-normal: 0.6s;
+        }
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+        html { scroll-snap-type: y mandatory; height: 100%; }
+        body { font-family: var(--font-body); background: var(--bg-primary); color: var(--text-primary); overflow-x: hidden; height: 100%; }
 
-body {
-    height: 100%;
-    overflow-x: hidden;
-    font-family: 'Roboto', system-ui, sans-serif;
-    color: var(--text-primary);
-}
+        .voltage-halftone { position: absolute; inset: 0; background-image: radial-gradient(circle, rgba(255,255,255,0.08) 1px, transparent 1px); background-size: 12px 12px; pointer-events: none; opacity: 0.5; z-index: 0; }
+        .voltage-glow { box-shadow: 0 0 20px rgba(212,255,0,0.3), 0 0 40px rgba(212,255,0,0.1); }
 
-/* Background */
-body {
-    background: #0a0a0a;
-    background-image:
-        radial-gradient(circle at 50% 50%, rgba(255,87,34,0.12) 0%, transparent 60%),
-        repeating-linear-gradient(0deg, rgba(255,87,34,0.03) 0px, rgba(255,87,34,0.03) 1px, transparent 1px, transparent 4px),
-        repeating-linear-gradient(90deg, rgba(255,87,34,0.03) 0px, rgba(255,87,34,0.03) 1px, transparent 1px, transparent 4px);
-}
+        .slide { width: 100vw; height: 100vh; height: 100dvh; padding: var(--slide-padding); scroll-snap-align: start; display: flex; flex-direction: column; justify-content: center; position: relative; overflow: hidden; background: var(--bg-primary); }
+        .slide-content { flex: 1; display: flex; flex-direction: column; justify-content: center; max-height: 100%; overflow: hidden; position: relative; z-index: 1; }
 
-.slide {
-    width: 100vw; height: 100vh; height: 100dvh;
-    scroll-snap-align: start; overflow: hidden;
-    position: relative; display: flex;
-    flex-direction: column; align-items: center; justify-content: center;
-    padding: clamp(1.5rem, 4vw, 4rem);
-}
+        @media (max-height: 700px) { :root { --slide-padding: clamp(0.75rem, 3vw, 2rem); --content-gap: clamp(0.4rem, 1.5vw, 1rem); --title-size: clamp(1.25rem, 4.5vw, 2.5rem); } }
+        @media (max-height: 600px) { :root { --slide-padding: clamp(0.5rem, 2.5vw, 1.5rem); --title-size: clamp(1.1rem, 4vw, 2rem); --body-size: clamp(0.7rem, 1.2vw, 0.95rem); } .nav-dots, .keyboard-hint, .decorative { display: none; } }
+        @media (max-height: 500px) { :root { --slide-padding: clamp(0.4rem, 2vw, 1rem); --title-size: clamp(1rem, 3.5vw, 1.5rem); } }
+        @media (max-width: 600px) { .voltage-split { grid-template-columns: 1fr !important; } }
+        @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.2s !important; } html { scroll-behavior: auto; } }
 
-.slide .content {
-    width: 100%; max-width: min(90vw, 800px);
-    padding: clamp(24px, 5vw, 64px);
-    position: relative; z-index: 1;
-}
+        .reveal { opacity: 0; transform: translateY(20px); transition: opacity var(--duration-normal) var(--ease-out-expo), transform var(--duration-normal) var(--ease-out-expo); }
+        .slide.visible .reveal { opacity: 1; transform: translateY(0); }
+        .reveal:nth-child(1) { transition-delay: 0.05s; }
+        .reveal:nth-child(2) { transition-delay: 0.15s; }
+        .reveal:nth-child(3) { transition-delay: 0.25s; }
+        .reveal:nth-child(4) { transition-delay: 0.35s; }
 
-h1 { font-size: clamp(2rem, 5.5vw, 4rem); font-weight: 800; line-height: 1.1; letter-spacing: -0.02em; }
-h2 { font-size: clamp(1.4rem, 3.5vw, 2.4rem); font-weight: 700; line-height: 1.2; letter-spacing: -0.01em; }
-h3 { font-size: clamp(0.9rem, 1.6vw, 1.2rem); font-weight: 600; }
-p { font-size: clamp(0.82rem, 1.4vw, 1.05rem); line-height: 1.6; color: var(--text-body); }
+        .voltage-neon-badge { display: inline-block; background: var(--accent-neon); color: var(--bg-primary); padding: 4px 12px; border-radius: 4px; font-family: var(--font-mono); font-size: clamp(10px, 1.1vw, 12px); font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; }
+        .voltage-title { font-family: var(--font-display); font-size: var(--title-size); font-weight: 800; color: var(--text-primary); line-height: 1.15; }
+        .voltage-body { font-family: var(--font-body); font-size: var(--body-size); font-weight: 400; color: var(--text-secondary); line-height: 1.7; }
+        .voltage-mono { font-family: var(--font-mono); font-size: var(--small-size); color: var(--accent-neon); }
+        .voltage-split { display: grid; grid-template-columns: 1fr 1fr; gap: 0; height: 100%; border-radius: 12px; overflow: hidden; }
+        .voltage-blue-panel { background: var(--bg-blue); padding: clamp(24px, 4vw, 60px); display: flex; flex-direction: column; justify-content: center; }
+        .voltage-dark-panel { background: var(--bg-primary); padding: clamp(24px, 4vw, 60px); display: flex; flex-direction: column; justify-content: center; }
+        .voltage-callout { border: 2px solid var(--accent-neon); border-radius: 8px; padding: clamp(16px, 2.5vw, 24px); background: rgba(212,255,0,0.05); }
+        .voltage-diamond { position: absolute; width: clamp(40px, 6vw, 60px); height: clamp(40px, 6vw, 60px); background: var(--accent-neon); transform: rotate(45deg); opacity: 0.08; pointer-events: none; }
+        .voltage-stat { font-family: var(--font-display); font-size: clamp(2rem, 5vw, 4rem); font-weight: 800; color: var(--accent-neon); line-height: 1; }
+        .voltage-features { list-style: none; padding: 0; }
+        .voltage-features li { padding: 0.5rem 0; border-bottom: 1px solid rgba(255,255,255,0.08); font-size: var(--body-size); color: var(--text-secondary); display: flex; align-items: center; gap: 0.75rem; }
+        .voltage-features li::before { content: '\25C6'; color: var(--accent-neon); font-size: 0.7em; flex-shrink: 0; }
+        .voltage-step { display: flex; gap: 1rem; align-items: flex-start; }
+        .voltage-step-num { font-family: var(--font-mono); font-size: var(--small-size); color: var(--accent-neon); background: rgba(212,255,0,0.1); border: 1px solid rgba(212,255,0,0.3); border-radius: 4px; padding: 2px 8px; flex-shrink: 0; }
+        .voltage-step-text { font-size: var(--body-size); color: var(--text-secondary); line-height: 1.6; }
+        .voltage-card { border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; padding: clamp(16px, 2vw, 24px); background: rgba(0,102,255,0.08); transition: border-color 0.3s; }
+        .voltage-card:hover { border-color: var(--accent-neon); }
+        .voltage-card h3 { font-family: var(--font-display); font-weight: 700; font-size: clamp(0.9rem, 1.5vw, 1.1rem); margin-bottom: 0.5rem; }
+        .voltage-card p { font-size: var(--small-size); color: var(--text-secondary); line-height: 1.5; }
+        kbd { display: inline-block; background: rgba(212,255,0,0.12); border: 1px solid rgba(212,255,0,0.3); border-radius: 4px; padding: 2px 8px; font-family: var(--font-mono); font-size: 0.85em; color: var(--accent-neon); }
+        .cmd { font-family: var(--font-mono); background: rgba(0,102,255,0.15); border: 1px solid rgba(0,102,255,0.3); border-radius: 4px; padding: 2px 8px; font-size: 0.85em; color: var(--accent-neon); }
 
-.pill {
-    display: inline-flex; align-items: center; gap: 6px;
-    padding: 4px 14px; border-radius: 999px;
-    font-size: 12px; font-weight: 600; letter-spacing: 0.05em;
-    background: rgba(255,87,34,0.15); color: #ff5722;
-    border: 1px solid rgba(255,87,34,0.35);
-}
+        #present-btn { position: fixed; bottom: 1.5rem; right: 1.5rem; z-index: 9997; width: 44px; height: 44px; border-radius: 50%; background: rgba(0,0,0,0.5); color: rgba(255,255,255,0.8); border: 1.5px solid rgba(255,255,255,0.2); font-size: 1rem; cursor: pointer; backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); display: flex; align-items: center; justify-content: center; opacity: 0; transition: opacity 0.2s; pointer-events: none; }
+        body:hover #present-btn { opacity: 1; pointer-events: auto; }
+        #present-btn:hover { background: rgba(0,0,0,0.78); }
+        #present-counter { display: none; position: fixed; bottom: 1.4rem; left: 50%; transform: translateX(-50%); z-index: 9997; font-size: 0.65rem; letter-spacing: 0.14em; font-family: system-ui, sans-serif; color: rgba(255,255,255,0.28); }
+        body.presenting { background: #000 !important; overflow: hidden !important; }
+        body.presenting .slide { position: fixed !important; inset: 0; width: var(--pdw, 1440px) !important; height: var(--pdh, 900px) !important; transform-origin: top left; transform: translate(var(--pox, 0px), var(--poy, 0px)) scale(var(--ps, 1)) !important; scroll-snap-align: none !important; display: none !important; }
+        body.presenting .slide.p-on { display: flex !important; }
+        body.presenting #present-btn { display: none !important; }
+        body.presenting #present-counter { display: block; }
+        body.presenting.presenting-black .slide { visibility: hidden !important; }
+        body.presenting.presenting-black::after { content: ''; position: fixed; inset: 0; background: #000; z-index: 99999; }
 
-.reveal {
-    opacity: 0; transform: translateY(20px);
-    transition: opacity var(--duration-normal) var(--ease-out-expo),
-                transform var(--duration-normal) var(--ease-out-expo);
-}
-.slide.visible .reveal { opacity: 1; transform: translateY(0); }
+        .slide-credit { position: absolute; bottom: 8px; right: 14px; font-size: 9px; color: var(--text-secondary, #999); opacity: 0.35; pointer-events: none; z-index: 1; font-family: system-ui, sans-serif; }
+        body.presenting .slide-credit { display: none !important; }
 
-/* Progress bar */
-.progress-bar { position: fixed; top: 0; left: 0; height: 3px; background: var(--accent); width: 0%; z-index: 100; transition: width 0.3s ease; }
-
-/* Nav dots placeholder */
-.nav-dots {}
-
-
-/* ═══════════════════════════════════════════════
-   Present Mode — F5 / ▶ to enter, ESC to exit
-   ═══════════════════════════════════════════════ */
-#present-btn {
-  position: fixed; bottom: 1.5rem; right: 1.5rem; z-index: 9997;
-  width: 44px; height: 44px; border-radius: 50%;
-  background: rgba(0,0,0,0.50); color: rgba(255,255,255,0.80);
-  border: 1.5px solid rgba(255,255,255,0.20);
-  font-size: 1rem; cursor: pointer;
-  backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
-  display: flex; align-items: center; justify-content: center;
-  opacity: 0; transition: opacity 0.2s; pointer-events: none;
-}
-body:hover #present-btn { opacity: 1; pointer-events: auto; }
-#present-btn:hover { background: rgba(0,0,0,0.78); }
-
-#present-counter {
-  display: none; position: fixed; bottom: 1.4rem; left: 50%;
-  transform: translateX(-50%); z-index: 9997;
-  font-size: 0.65rem; letter-spacing: 0.14em; font-family: system-ui, sans-serif;
-  color: rgba(255,255,255,0.28);
-}
-
-body.presenting { background: #111 !important; overflow: hidden !important; }
-body.presenting .slide {
-  position: fixed !important; inset: 0;
-  width: 1440px !important; height: 900px !important;
-  transform-origin: top left;
-  display: none !important; margin: 0; padding: 0;
-}
-body.presenting .slide.p-on { display: flex !important; }
-body.presenting .slide.p-on .reveal { opacity: 1; transform: translateY(0); }
-body.presenting #present-btn { display: none !important; }
-body.presenting #present-counter { display: block; }
-body.presenting .nav-dots,
-body.presenting #slide-counter,
-body.presenting .orb,
-body.presenting #notes-panel,
-body.presenting .edit-hotzone,
-body.presenting .edit-toggle,
-body.presenting .keyboard-hint { display: none !important; }
-
-body.presenting.presenting-black { background: #000 !important; }
-body.presenting.presenting-black .slide { display: none !important; }
-
-
-.slide-credit {
-  position: absolute; bottom: 8px; right: 14px;
-  font-size: 9px; color: var(--text-secondary, #999);
-  opacity: 0.35; pointer-events: none; z-index: 1;
-  font-family: system-ui, sans-serif;
-}
-body.presenting .slide-credit { display: none; }
-
-
-.edit-hotzone {
-  position: fixed; top: 0; left: 0; width: 30px; height: 30px;
-  z-index: 9998; cursor: pointer;
-}
-.edit-toggle {
-  position: fixed; top: 12px; left: 12px; z-index: 9999;
-  padding: 6px 12px; border-radius: 8px; border: none;
-  background: rgba(0,0,0,0.50); color: rgba(255,255,255,0.70);
-  font-size: 0.75rem; cursor: pointer;
-  backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
-  opacity: 0; transition: opacity 0.3s; pointer-events: none;
-}
-body:hover .edit-toggle { opacity: 1; pointer-events: auto; }
-body.editing .edit-toggle { opacity: 1; background: rgba(16,185,129,0.80); color: #fff; }
-
-#notes-panel {
-  position: fixed; bottom: 0; left: 0; right: 0; z-index: 9996;
-  background: rgba(0,0,0,0.85); backdrop-filter: blur(12px);
-  color: #fff; transform: translateY(100%); transition: transform 0.3s ease;
-  max-height: 40vh; display: flex; flex-direction: column;
-}
-#notes-panel.active { transform: translateY(0); }
-#notes-panel-header {
-  display: flex; align-items: center; gap: 8px;
-  padding: 8px 16px; border-bottom: 1px solid rgba(255,255,255,0.10);
-}
-#notes-panel-label { font-size: 0.7rem; letter-spacing: 0.1em; text-transform: uppercase; color: rgba(255,255,255,0.50); }
-#notes-body { flex: 1; padding: 8px; }
-#notes-textarea {
-  width: 100%; height: 100%; border: none; background: transparent;
-  color: rgba(255,255,255,0.75); font-size: 0.88rem; line-height: 1.65;
-  font-family: system-ui, sans-serif; resize: none; outline: none;
-}
-
-
-@media (max-height: 700px) {
-    :root { --slide-padding: clamp(0.75rem, 3vw, 2rem); }
-}
-@media (prefers-reduced-motion: reduce) {
-    *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.2s !important; }
-}
-</style>
+        .edit-hotzone { position: fixed; top: 0; left: 0; width: 80px; height: 80px; z-index: 10000; cursor: pointer; }
+        .edit-toggle { position: fixed; top: 16px; left: 16px; opacity: 0; pointer-events: none; transition: opacity 0.3s ease; z-index: 10001; background: rgba(0,0,0,0.5); color: rgba(255,255,255,0.8); border: 1.5px solid rgba(255,255,255,0.2); border-radius: 6px; padding: 6px 14px; font-size: 0.8rem; cursor: pointer; backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); }
+        .edit-toggle.show { opacity: 1; pointer-events: auto; }
+        .edit-toggle.active { opacity: 1; pointer-events: auto; background: var(--accent-neon); color: var(--bg-primary); border-color: var(--accent-neon); }
+        #notes-panel { display: none; position: fixed; bottom: 0; left: 0; right: 0; z-index: 9998; background: rgba(8, 8, 18, 0.94); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); border-top: 1px solid rgba(255,255,255,0.08); }
+        #notes-panel.active { display: flex; flex-direction: column; }
+        #notes-panel-header { display: flex; align-items: center; justify-content: space-between; padding: 0.45rem 1.4rem; cursor: pointer; user-select: none; }
+        #notes-panel-label { flex: 1; font-size: 0.58rem; letter-spacing: 0.16em; text-transform: uppercase; color: rgba(255,255,255,0.3); }
+        #notes-drag-hint { flex: 1; display: flex; justify-content: center; }
+        #notes-drag-hint::after { content: ''; display: block; width: 36px; height: 3px; border-radius: 2px; background: rgba(255,255,255,0.25); }
+        #notes-collapse-btn { flex: 1; text-align: right; font-size: 1rem; color: rgba(255,255,255,0.4); background: none; border: none; cursor: pointer; transition: color 0.15s, transform 0.2s; }
+        #notes-collapse-btn:hover { color: rgba(255,255,255,0.85); }
+        #notes-body { padding: 0 1.4rem 0.75rem; }
+        #notes-panel.collapsed #notes-body { display: none; }
+        #notes-panel.collapsed #notes-collapse-btn { transform: rotate(180deg); }
+        #notes-textarea { width: 100%; height: 72px; min-height: 48px; max-height: 200px; resize: vertical; background: transparent; border: none; outline: none; color: rgba(255,255,255,0.75); font-size: 0.88rem; line-height: 1.65; font-family: system-ui, sans-serif; caret-color: var(--accent-neon); }
+        #notes-textarea::placeholder { color: rgba(255,255,255,0.18); }
+    </style>
 </head>
 <body data-export-progress="true" data-preset="Creative Voltage">
-
-<div class="progress-bar"></div>
-<nav class="nav-dots" aria-label="Slide navigation"></nav>
-
-<div class="edit-hotzone"></div>
-<button class="edit-toggle" id="editToggle" title="编辑模式 (E)">✏ 编辑</button>
-<div id="notes-panel">
-  <div id="notes-panel-header">
-    <div id="notes-panel-label">演讲者备注</div>
-    <button id="notes-collapse-btn" title="折叠">&#9660;</button>
-  </div>
-  <div id="notes-body">
-    <textarea id="notes-textarea" placeholder="添加备注..."></textarea>
-  </div>
-</div>
-
-<section class="slide" data-notes="欢迎观众。介绍产品愿景。">
-<div class="content" style="text-align:center;">
-    <div class="reveal">
-        <span class="pill">开源 · Claude Code · OpenClaw</span>
-    </div>
-    <div class="reveal" style="transition-delay:0.1s">
-        <h1>slide<span style="color:#ff5722;">-creator</span></h1>
-    </div>
-    <div class="reveal" style="transition-delay:0.2s; max-width:560px; margin:0 auto;">
-        <p style="font-size:clamp(16px,2vw,22px); margin-bottom:clamp(20px,3vw,36px);">
-            面向 Claude Code 与 OpenClaw 的<br>零依赖 HTML 演示文稿
-        </p>
-    </div>
-    <div class="reveal" style="transition-delay:0.3s">
-        <div class="stats" style="justify-content:center; display:flex; gap:clamp(24px,4vw,48px);">
-            <div class="stat">
-                <span class="stat-value" style="font-size:clamp(2rem,5vw,3.5rem); font-weight:800; color:#ff5722;">21</span>
-                <span class="stat-label" style="font-size:clamp(10px,1.2vw,13px); color:rgba(255,255,255,0.35); text-transform:uppercase; letter-spacing:0.08em;">预设</span>
-            </div>
-            <div style="width:1px; background:rgba(255,87,34,0.25); align-self:stretch;"></div>
-            <div class="stat">
-                <span class="stat-value" style="font-size:clamp(2rem,5vw,3.5rem); font-weight:800; color:#ff5722;">0</span>
-                <span class="stat-label" style="font-size:clamp(10px,1.2vw,13px); color:rgba(255,255,255,0.35); text-transform:uppercase; letter-spacing:0.08em;">依赖</span>
-            </div>
-            <div style="width:1px; background:rgba(255,87,34,0.25); align-self:stretch;"></div>
-            <div class="stat">
-                <span class="stat-value" style="font-size:clamp(2rem,5vw,3.5rem); font-weight:800; color:#ff5722;">∞</span>
-                <span class="stat-label" style="font-size:clamp(10px,1.2vw,13px); color:rgba(255,255,255,0.35); text-transform:uppercase; letter-spacing:0.08em;">幻灯片</span>
-            </div>
+    <div class="progress-bar" style="position:fixed;top:0;left:0;height:3px;background:var(--accent-neon);width:0%;z-index:100;transition:width 0.3s ease;"></div>
+    <nav class="nav-dots" aria-label="Slide navigation"></nav>
+    <div class="edit-hotzone"></div>
+    <button class="edit-toggle" id="editToggle" title="编辑模式 (E)">✏ 编辑</button>
+    <div id="notes-panel">
+        <div id="notes-panel-header">
+            <div id="notes-panel-label">演讲者备注 — 第 1 页 / 共 N 页</div>
+            <div id="notes-drag-hint"></div>
+            <button id="notes-collapse-btn" title="折叠/展开">▾</button>
+        </div>
+        <div id="notes-body">
+            <textarea id="notes-textarea" placeholder="为本页添加演讲者备注…"></textarea>
         </div>
     </div>
-    <div class="reveal" style="transition-delay:0.4s; margin-top:clamp(20px,3vw,36px);">
-        <p style="font-size:clamp(12px,1.3vw,15px); color:rgba(255,255,255,0.35); letter-spacing:0.06em; text-transform:uppercase;">构建能拿下交易的演示文稿。</p>
-    </div>
-</div>
-</section>
 
-<section class="slide" data-notes="提出问题：现有演示工具都是破碎的。">
-<div class="content">
-    <div class="reveal">
-        <span class="pill">问题所在</span>
-    </div>
-    <div class="reveal" style="transition-delay:0.1s">
-        <h2 style="margin-top:clamp(12px,2vw,20px);">演示文稿不应该<br>需要一套<span style=&quot;color:var(--accent)&quot;>构建工具</span></h2>
-    </div>
-    <div class="sep reveal" style="transition-delay:0.15s; height:1px; background:rgba(255,87,34,0.25); margin:clamp(12px,2vw,20px) 0;"></div>
-    <div class="reveal" style="transition-delay:0.2s">
-        <div style="display:grid; gap:clamp(16px,3vw,32px);">
-            <div style="display:flex; gap:16px; align-items:start;">
-                <div style="flex-shrink:0; width:32px; height:32px; border-radius:8px; background:rgba(255,87,34,0.15); display:flex; align-items:center; justify-content:center; font-size:16px;">⚙️</div>
-                <div>
-                    <h3 style="font-size:clamp(14px,1.8vw,18px); font-weight:600; margin-bottom:4px;">复杂的工具链</h3>
-                    <p style="font-size:clamp(13px,1.4vw,15px); color:rgba(255,255,255,0.70);">Node、Webpack、npm、插件——只为做幻灯片。能讲之前要花几小时配置。</p>
+    <!-- 第1页：标题 -->
+    <section class="slide" data-notes="开场：slide-creator，21种预设，零依赖，纯浏览器运行。" aria-label="标题">
+        <div class="voltage-halftone"></div>
+        <div class="voltage-diamond" style="top: 10%; left: 5%;"></div>
+        <div class="voltage-diamond" style="bottom: 15%; right: 8%;"></div>
+        <div class="slide-content">
+            <div class="reveal voltage-neon-badge">零依赖 · 纯浏览器运行</div>
+            <h1 class="reveal voltage-title" style="margin-top: 1rem;">slide-creator</h1>
+            <p class="reveal voltage-body" style="margin-top: 0.75rem; font-size: clamp(1rem, 2vw, 1.5rem);">21 种设计预设。播放、演示、编辑——全部在 HTML 中完成。</p>
+            <p class="reveal voltage-mono" style="margin-top: 1rem;">v2.16.0 · kai-slide-creator</p>
+        </div>
+    </section>
+
+    <!-- 第2页：slide-creator 是什么 -->
+    <section class="slide" data-notes="核心理念：生成独立的 HTML 演示文稿。无需框架，无需构建步骤。" aria-label="slide-creator 是什么">
+        <div class="voltage-halftone"></div>
+        <div class="slide-content">
+            <div class="voltage-split">
+                <div class="voltage-blue-panel">
+                    <h2 class="reveal voltage-title" style="font-size: clamp(1.5rem, 3.5vw, 2.5rem);">slide-creator 是什么？</h2>
+                    <p class="reveal voltage-body" style="margin-top: 1rem;">一个生成自包含 HTML 演示文稿的技能。零外部依赖，任意浏览器运行。21 种截然不同的视觉风格——每一种都有设计意图，没有通用模板。</p>
                 </div>
-            </div>
-            <div style="display:flex; gap:16px; align-items:start;">
-                <div style="flex-shrink:0; width:32px; height:32px; border-radius:8px; background:rgba(255,87,34,0.15); display:flex; align-items:center; justify-content:center; font-size:16px;">📋</div>
-                <div>
-                    <h3 style="font-size:clamp(14px,1.8vw,18px); font-weight:600; margin-bottom:4px;">千篇一律的输出</h3>
-                    <p style="font-size:clamp(13px,1.4vw,15px); color:rgba(255,255,255,0.70);">每份 deck 看起来都一样。模板在呐喊"我和别人用的一样"。</p>
-                </div>
-            </div>
-            <div style="display:flex; gap:16px; align-items:start;">
-                <div style="flex-shrink:0; width:32px; height:32px; border-radius:8px; background:rgba(255,87,34,0.15); display:flex; align-items:center; justify-content:center; font-size:16px;">🔒</div>
-                <div>
-                    <h3 style="font-size:clamp(14px,1.8vw,18px); font-weight:600; margin-bottom:4px;">没有所有权</h3>
-                    <p style="font-size:clamp(13px,1.4vw,15px); color:rgba(255,255,255,0.70);">你的幻灯片存在别人的云里。导出是事后补救。供应商锁定就是商业模式。</p>
+                <div class="voltage-dark-panel">
+                    <ul class="reveal voltage-features">
+                        <li>无框架，无构建步骤</li>
+                        <li>21 种设计预设，不是换色主题</li>
+                        <li>播放模式——F5 全屏</li>
+                        <li>演讲者模式——备注、计时、同步</li>
+                        <li>编辑模式——E 键，Ctrl+S 保存</li>
+                    </ul>
                 </div>
             </div>
         </div>
-    </div>
-</div>
-</section>
+    </section>
 
-<section class="slide" data-notes="解释风格发现的工作流。">
-<div class="content">
-    <div class="reveal">
-        <span class="pill">工作流</span>
-    </div>
-    <div class="reveal" style="transition-delay:0.1s">
-        <h2 style="margin-top:clamp(12px,2vw,20px);">风格发现<br><span style=&quot;color:var(--accent)&quot;>真正能用</span></h2>
-    </div>
-    <div class="sep reveal" style="transition-delay:0.15s; height:1px; background:rgba(255,87,34,0.25); margin:clamp(12px,2vw,20px) 0;"></div>
-    <div class="reveal" style="transition-delay:0.2s">
-        <p style="font-size:clamp(14px,1.6vw,17px); color:rgba(255,255,255,0.70);">描述你的心情。获得三个视觉预览。选一个感觉对的——在写第一页幻灯片之前。</p>
-    </div>
-    <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); gap:clamp(12px,2vw,24px); margin-top:clamp(16px,3vw,32px);" class="reveal" style="transition-delay:0.3s">
-        <div style="background:rgba(255,87,34,0.08); border:1px solid rgba(255,87,34,0.20); border-radius:12px; padding:clamp(16px,3vw,24px);">
-            <div style="font-size:24px; margin-bottom:8px;">🎨</div>
-            <h3 style="font-size:clamp(13px,1.5vw,16px); font-weight:600;">描述 mood</h3>
-            <p style="font-size:clamp(12px,1.3vw,14px); color:rgba(255,255,255,0.70); margin-top:4px;">"大胆且极简"或"温暖而创意"——自然语言输入。</p>
+    <!-- 第3页：21 种设计预设 -->
+    <section class="slide" data-notes="展示广度：21种预设按使用场景分类。不是简单的颜色替换，是真正的架构差异。" aria-label="21 种设计预设">
+        <div class="voltage-halftone"></div>
+        <div class="slide-content">
+            <span class="reveal voltage-neon-badge">21 种预设</span>
+            <h2 class="reveal voltage-title" style="font-size: clamp(1.5rem, 3.5vw, 2.5rem); margin-top: 0.75rem;">21 种设计预设——按场景选，不按颜色挑</h2>
+            <div class="reveal" style="display: grid; grid-template-columns: repeat(3, 1fr); gap: clamp(8px, 1.5vw, 16px); margin-top: 1.5rem;">
+                <div class="voltage-card"><h3>Bold Signal</h3><p>暗色渐变配橙色，强势有力。</p></div>
+                <div class="voltage-card"><h3>Blue Sky</h3><p>明亮通透，水平滚动。</p></div>
+                <div class="voltage-card"><h3>Aurora Mesh</h3><p>动态色彩场域。</p></div>
+                <div class="voltage-card"><h3>Terminal Green</h3><p>等宽字体 + 扫描线。</p></div>
+                <div class="voltage-card"><h3>Glassmorphism</h3><p>毛玻璃层次。</p></div>
+                <div class="voltage-card"><h3>Enterprise Dark</h3><p>董事会级别。</p></div>
+                <div class="voltage-card"><h3>Data Story</h3><p>图表优先叙事。</p></div>
+                <div class="voltage-card"><h3>Swiss Modern</h3><p>网格纪律，排版驱动。</p></div>
+                <div class="voltage-card"><h3>+ 13 种</h3><p>Neo-Brutalism、Neon Cyber、Vintage Editorial…</p></div>
+            </div>
         </div>
-        <div style="background:rgba(255,87,34,0.08); border:1px solid rgba(255,87,34,0.20); border-radius:12px; padding:clamp(16px,3vw,24px);">
-            <div style="font-size:24px; margin-bottom:8px;">👁</div>
-            <h3 style="font-size:clamp(13px,1.5vw,16px); font-weight:600;">3 个迷你预览</h3>
-            <p style="font-size:clamp(12px,1.3vw,14px); color:rgba(255,255,255,0.70); margin-top:4px;">完全生成前并排渲染三种匹配风格。</p>
-        </div>
-        <div style="background:rgba(255,87,34,0.08); border:1px solid rgba(255,87,34,0.20); border-radius:12px; padding:clamp(16px,3vw,24px);">
-            <div style="font-size:24px; margin-bottom:8px;">✓</div>
-            <h3 style="font-size:clamp(13px,1.5vw,16px); font-weight:600;">选择并构建</h3>
-            <p style="font-size:clamp(12px,1.3vw,14px); color:rgba(255,255,255,0.70); margin-top:4px;">选择你的风格。完整的演示文稿按你选的美学生成。</p>
-        </div>
-    </div>
-</div>
-</section>
+    </section>
 
-<section class="slide" data-notes="展示全部 21 个预设。高亮 Creative Voltage。">
-<div class="content">
-    <div class="reveal">
-        <span class="pill">21 个预设</span>
-    </div>
-    <div class="reveal" style="transition-delay:0.1s">
-        <h2 style="margin-top:clamp(12px,2vw,20px);">所有演示文稿风格，<br><span style=&quot;color:var(--accent)&quot;>已内置</span></h2>
-    </div>
-    <div class="sep reveal" style="transition-delay:0.15s; height:1px; background:rgba(255,87,34,0.25); margin:clamp(12px,2vw,20px) 0;"></div>
-    <div class="reveal" style="transition-delay:0.2s; display:flex; flex-wrap:wrap; gap:8px;">
-        <span style="display:inline-block; padding:4px 12px; border-radius:999px; background:rgba(255,87,34,0.15); border:1px solid rgba(255,87,34,0.20); color:rgba(255,255,255,0.70); font-size:clamp(10px,1.2vw,13px); font-weight:500;">Aurora Mesh</span>
-        <span style="display:inline-block; padding:4px 12px; border-radius:999px; background:rgba(255,87,34,0.15); border:1px solid rgba(255,87,34,0.20); color:rgba(255,255,255,0.70); font-size:clamp(10px,1.2vw,13px); font-weight:500;">Bold Signal</span>
-        <span style="display:inline-block; padding:4px 12px; border-radius:999px; background:rgba(255,87,34,0.15); border:1px solid rgba(255,87,34,0.20); color:rgba(255,255,255,0.70); font-size:clamp(10px,1.2vw,13px); font-weight:500;">Blue Sky</span>
-        <span style="display:inline-block; padding:4px 12px; border-radius:999px; background:rgba(255,87,34,0.15); border:1px solid rgba(255,87,34,0.20); color:rgba(255,255,255,0.70); font-size:clamp(10px,1.2vw,13px); font-weight:500;">Chinese Chan</span>
-        <span style="display:inline-block; padding:4px 12px; border-radius:999px; background:rgba(255,87,34,0.15); border:1px solid rgba(255,87,34,0.35); color:#ff5722; font-size:clamp(10px,1.2vw,13px); font-weight:600;">Creative Voltage ✦</span>
-        <span style="display:inline-block; padding:4px 12px; border-radius:999px; background:rgba(255,87,34,0.15); border:1px solid rgba(255,87,34,0.20); color:rgba(255,255,255,0.70); font-size:clamp(10px,1.2vw,13px); font-weight:500;">Dark Botanical</span>
-        <span style="display:inline-block; padding:4px 12px; border-radius:999px; background:rgba(255,87,34,0.15); border:1px solid rgba(255,87,34,0.20); color:rgba(255,255,255,0.70); font-size:clamp(10px,1.2vw,13px); font-weight:500;">Data Story</span>
-        <span style="display:inline-block; padding:4px 12px; border-radius:999px; background:rgba(255,87,34,0.15); border:1px solid rgba(255,87,34,0.20); color:rgba(255,255,255,0.70); font-size:clamp(10px,1.2vw,13px); font-weight:500;">Electric Studio</span>
-        <span style="display:inline-block; padding:4px 12px; border-radius:999px; background:rgba(255,87,34,0.15); border:1px solid rgba(255,87,34,0.20); color:rgba(255,255,255,0.70); font-size:clamp(10px,1.2vw,13px); font-weight:500;">Enterprise Dark</span>
-        <span style="display:inline-block; padding:4px 12px; border-radius:999px; background:rgba(255,87,34,0.15); border:1px solid rgba(255,87,34,0.20); color:rgba(255,255,255,0.70); font-size:clamp(10px,1.2vw,13px); font-weight:500;">Glassmorphism</span>
-        <span style="display:inline-block; padding:4px 12px; border-radius:999px; background:rgba(255,87,34,0.15); border:1px solid rgba(255,87,34,0.20); color:rgba(255,255,255,0.70); font-size:clamp(10px,1.2vw,13px); font-weight:500;">Modern Newspaper</span>
-        <span style="display:inline-block; padding:4px 12px; border-radius:999px; background:rgba(255,87,34,0.15); border:1px solid rgba(255,87,34,0.20); color:rgba(255,255,255,0.70); font-size:clamp(10px,1.2vw,13px); font-weight:500;">Neo Brutalism</span>
-        <span style="display:inline-block; padding:4px 12px; border-radius:999px; background:rgba(255,87,34,0.15); border:1px solid rgba(255,87,34,0.20); color:rgba(255,255,255,0.70); font-size:clamp(10px,1.2vw,13px); font-weight:500;">Neo Retro Dev</span>
-        <span style="display:inline-block; padding:4px 12px; border-radius:999px; background:rgba(255,87,34,0.15); border:1px solid rgba(255,87,34,0.20); color:rgba(255,255,255,0.70); font-size:clamp(10px,1.2vw,13px); font-weight:500;">Neon Cyber</span>
-        <span style="display:inline-block; padding:4px 12px; border-radius:999px; background:rgba(255,87,34,0.15); border:1px solid rgba(255,87,34,0.20); color:rgba(255,255,255,0.70); font-size:clamp(10px,1.2vw,13px); font-weight:500;">Notebook Tabs</span>
-        <span style="display:inline-block; padding:4px 12px; border-radius:999px; background:rgba(255,87,34,0.15); border:1px solid rgba(255,87,34,0.20); color:rgba(255,255,255,0.70); font-size:clamp(10px,1.2vw,13px); font-weight:500;">Paper & Ink</span>
-        <span style="display:inline-block; padding:4px 12px; border-radius:999px; background:rgba(255,87,34,0.15); border:1px solid rgba(255,87,34,0.20); color:rgba(255,255,255,0.70); font-size:clamp(10px,1.2vw,13px); font-weight:500;">Pastel Geometry</span>
-        <span style="display:inline-block; padding:4px 12px; border-radius:999px; background:rgba(255,87,34,0.15); border:1px solid rgba(255,87,34,0.20); color:rgba(255,255,255,0.70); font-size:clamp(10px,1.2vw,13px); font-weight:500;">Split Pastel</span>
-        <span style="display:inline-block; padding:4px 12px; border-radius:999px; background:rgba(255,87,34,0.15); border:1px solid rgba(255,87,34,0.20); color:rgba(255,255,255,0.70); font-size:clamp(10px,1.2vw,13px); font-weight:500;">Swiss Modern</span>
-        <span style="display:inline-block; padding:4px 12px; border-radius:999px; background:rgba(255,87,34,0.15); border:1px solid rgba(255,87,34,0.20); color:rgba(255,255,255,0.70); font-size:clamp(10px,1.2vw,13px); font-weight:500;">Terminal Green</span>
-        <span style="display:inline-block; padding:4px 12px; border-radius:999px; background:rgba(255,87,34,0.15); border:1px solid rgba(255,87,34,0.20); color:rgba(255,255,255,0.70); font-size:clamp(10px,1.2vw,13px); font-weight:500;">Vintage Editorial</span>
-    </div>
-</div>
-</section>
+    <!-- 第4页：视觉风格探索 -->
+    <section class="slide" data-notes="独特的工作流：生成3个预览，看图选风格，而不是用文字描述。" aria-label="视觉风格探索">
+        <div class="voltage-halftone"></div>
+        <div class="slide-content">
+            <h2 class="reveal voltage-title" style="font-size: clamp(1.5rem, 3.5vw, 2.5rem);">先看到，再决定</h2>
+            <div class="voltage-callout reveal" style="margin-top: 1.5rem;">
+                <p class="voltage-body">为同一内容生成 3 种风格预览。用眼睛选，而不是用语言描述颜色。视觉探索永远胜过文字描述。</p>
+            </div>
+            <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; margin-top: 1.5rem;">
+                <div class="reveal voltage-card" style="text-align: center;">
+                    <div class="voltage-mono" style="margin-bottom: 0.5rem;">方案 A</div>
+                    <div style="height: 60px; background: linear-gradient(135deg, #0066ff, #1a1a2e); border-radius: 6px;"></div>
+                </div>
+                <div class="reveal voltage-card" style="text-align: center;">
+                    <div class="voltage-mono" style="margin-bottom: 0.5rem;">方案 B</div>
+                    <div style="height: 60px; background: linear-gradient(135deg, #d4ff00, #0066ff); border-radius: 6px;"></div>
+                </div>
+                <div class="reveal voltage-card" style="text-align: center;">
+                    <div class="voltage-mono" style="margin-bottom: 0.5rem;">方案 C</div>
+                    <div style="height: 60px; background: linear-gradient(135deg, #1a1a2e, #0066ff); border-radius: 6px;"></div>
+                </div>
+            </div>
+        </div>
+    </section>
 
-<section class="slide" data-notes="解释播放模式：F5、全屏、演讲者备注。">
-<div class="content">
-    <div class="reveal">
-        <span class="pill">播放模式</span>
-    </div>
-    <div class="reveal" style="transition-delay:0.1s">
-        <h2 style="margin-top:clamp(12px,2vw,20px);">F5 即可播放。<br><span style=&quot;color:var(--accent)&quot;>任意屏幕，任意尺寸</span></h2>
-    </div>
-    <div class="sep reveal" style="transition-delay:0.15s; height:1px; background:rgba(255,87,34,0.25); margin:clamp(12px,2vw,20px) 0;"></div>
-    <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(180px,1fr)); gap:clamp(12px,2vw,20px);" class="reveal" style="transition-delay:0.2s">
-        <div style="background:rgba(255,87,34,0.08); border:1px solid rgba(255,87,34,0.20); border-radius:12px; padding:clamp(16px,3vw,24px);">
-            <div style="font-size:28px; margin-bottom:8px;">F5</div>
-            <h3 style="font-size:clamp(13px,1.5vw,16px); font-weight:600;">全屏</h3>
-            <p style="font-size:clamp(12px,1.3vw,14px); color:rgba(255,255,255,0.70); margin-top:4px;">幻灯片以 1440×900 比例缩放适配任何显示器。</p>
+    <!-- 第5页：播放模式 -->
+    <section class="slide" data-notes="F5或点击播放按钮。全屏，CSS缩放到任意屏幕。" aria-label="播放模式">
+        <div class="voltage-halftone"></div>
+        <div class="slide-content">
+            <div style="display: flex; align-items: center; gap: 1.5rem;">
+                <div class="reveal" style="font-size: clamp(3rem, 6vw, 5rem); line-height: 1;">
+                    <span class="voltage-mono" style="font-size: inherit;">▶</span>
+                </div>
+                <div>
+                    <h2 class="reveal voltage-title" style="font-size: clamp(1.5rem, 3.5vw, 2.5rem);">播放模式</h2>
+                    <p class="reveal voltage-body" style="margin-top: 0.5rem;">按 <kbd>F5</kbd> 或点击播放按钮。幻灯片缩放到任意屏幕——1440×900 基准，CSS 缩放适配。控制栏自动隐藏。按 <kbd>B</kbd> 黑屏。</p>
+                </div>
+            </div>
+            <div class="voltage-callout reveal" style="margin-top: 1.5rem;">
+                <p class="voltage-mono">进入 PresentMode → 固定定位幻灯片 → CSS 缩放变换 → 充满任意显示器</p>
+            </div>
         </div>
-        <div style="background:rgba(255,87,34,0.08); border:1px solid rgba(255,87,34,0.20); border-radius:12px; padding:clamp(16px,3vw,24px);">
-            <div style="font-size:28px; margin-bottom:8px;">P</div>
-            <h3 style="font-size:clamp(13px,1.5vw,16px); font-weight:600;">演讲者视图</h3>
-            <p style="font-size:clamp(12px,1.3vw,14px); color:rgba(255,255,255,0.70); margin-top:4px;">独立窗口，含备注、计时器和页数。</p>
-        </div>
-        <div style="background:rgba(255,87,34,0.08); border:1px solid rgba(255,87,34,0.20); border-radius:12px; padding:clamp(16px,3vw,24px);">
-            <div style="font-size:28px; margin-bottom:8px;">B</div>
-            <h3 style="font-size:clamp(13px,1.5vw,16px); font-weight:600;">黑屏</h3>
-            <p style="font-size:clamp(12px,1.3vw,14px); color:rgba(255,255,255,0.70); margin-top:4px;">问答时切换黑屏，集中注意力。</p>
-        </div>
-    </div>
-</div>
-</section>
+    </section>
 
-<section class="slide" data-notes="解释编辑模式：E 键、contenteditable、保存。">
-<div class="content">
-    <div class="reveal">
-        <span class="pill">编辑模式</span>
-    </div>
-    <div class="reveal" style="transition-delay:0.1s">
-        <h2 style="margin-top:clamp(12px,2vw,20px);">在浏览器中编辑。<br><span style=&quot;color:var(--accent)&quot;>保存到本地</span></h2>
-    </div>
-    <div class="sep reveal" style="transition-delay:0.15s; height:1px; background:rgba(255,87,34,0.25); margin:clamp(12px,2vw,20px) 0;"></div>
-    <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(180px,1fr)); gap:clamp(12px,2vw,20px);" class="reveal" style="transition-delay:0.2s">
-        <div style="background:rgba(255,87,34,0.08); border:1px solid rgba(255,87,34,0.20); border-radius:12px; padding:clamp(16px,3vw,24px);">
-            <div style="font-size:28px; margin-bottom:8px;">E</div>
-            <h3 style="font-size:clamp(13px,1.5vw,16px); font-weight:600;">切换编辑</h3>
-            <p style="font-size:clamp(12px,1.3vw,14px); color:rgba(255,255,255,0.70); margin-top:4px;">悬停左上角热区。点击 ✏ 编辑。所有文本变为可编辑。</p>
+    <!-- 第6页：演讲者模式 -->
+    <section class="slide" data-notes="P键打开同步演讲者窗口。备注、计时器、页数——全部同步。" aria-label="演讲者模式">
+        <div class="voltage-halftone"></div>
+        <div class="slide-content">
+            <h2 class="reveal voltage-title" style="font-size: clamp(1.5rem, 3.5vw, 2.5rem);">演讲者模式——看到观众看不到的内容</h2>
+            <div class="voltage-split reveal" style="margin-top: 1.5rem; height: 60%;">
+                <div class="voltage-blue-panel">
+                    <div class="voltage-mono" style="margin-bottom: 0.5rem;">演讲者备注</div>
+                    <p class="voltage-body" style="font-size: clamp(0.7rem, 1.2vw, 0.95rem);">每页的备注在此显示。按 E 键在浏览器中编辑，Ctrl+S 保存。通过 BroadcastChannel 同步。</p>
+                </div>
+                <div class="voltage-dark-panel">
+                    <div style="display: flex; flex-direction: column; gap: 1.5rem; align-items: center;">
+                        <div>
+                            <div class="voltage-mono" style="font-size: 0.7rem; text-align: center;">页数</div>
+                            <div class="voltage-stat" style="text-align: center;">7 / 12</div>
+                        </div>
+                        <div>
+                            <div class="voltage-mono" style="font-size: 0.7rem; text-align: center;">已用时间</div>
+                            <div class="voltage-mono" style="font-size: clamp(1.2rem, 2.5vw, 2rem); text-align: center;">4:32</div>
+                        </div>
+                        <div style="display: flex; gap: 1rem;">
+                            <kbd style="font-size: 1.2rem; padding: 4px 12px;">←</kbd>
+                            <kbd style="font-size: 1.2rem; padding: 4px 12px;">→</kbd>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <p class="reveal voltage-mono" style="margin-top: 0.75rem; text-align: center;">按 <kbd>P</kbd> → 打开同步窗口 → BroadcastChannel 同步</p>
         </div>
-        <div style="background:rgba(255,87,34,0.08); border:1px solid rgba(255,87,34,0.20); border-radius:12px; padding:clamp(16px,3vw,24px);">
-            <div style="font-size:28px; margin-bottom:8px;">📝</div>
-            <h3 style="font-size:clamp(13px,1.5vw,16px); font-weight:600;">演讲备注</h3>
-            <p style="font-size:clamp(12px,1.3vw,14px); color:rgba(255,255,255,0.70); margin-top:4px;">备注面板从底部滑出。备注同步到演讲者视图。</p>
+    </section>
+
+    <!-- 第7页：浏览器编辑模式 -->
+    <section class="slide" data-notes="E键进入编辑模式。内容可编辑。Ctrl+S保存文件。" aria-label="编辑模式">
+        <div class="voltage-halftone"></div>
+        <div class="slide-content">
+            <h2 class="reveal voltage-title" style="font-size: clamp(1.5rem, 3.5vw, 2.5rem);">在浏览器中编辑，保存到磁盘</h2>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-top: 1.5rem;">
+                <div class="reveal voltage-card">
+                    <div class="voltage-mono" style="margin-bottom: 0.5rem;">E 键</div>
+                    <h3 style="font-family: var(--font-display); font-weight: 700; margin-bottom: 0.5rem;">进入编辑模式</h3>
+                    <p class="voltage-body">悬停左上角热区，点击 ✏ 编辑。所有文字变为可编辑。底部实时备注面板。</p>
+                </div>
+                <div class="reveal voltage-card">
+                    <div class="voltage-mono" style="margin-bottom: 0.5rem;">CTRL + S</div>
+                    <h3 style="font-family: var(--font-display); font-weight: 700; margin-bottom: 0.5rem;">保存到文件</h3>
+                    <p class="voltage-body">编辑通过浏览器下载持久化。你编辑的 HTML 就是最终产物——无需构建，无需导出。</p>
+                </div>
+            </div>
+            <div class="voltage-callout reveal" style="margin-top: 1.5rem;">
+                <p class="voltage-body">编辑模式默认始终启用。每个生成的 HTML 都是活文档。</p>
+            </div>
         </div>
-        <div style="background:rgba(255,87,34,0.08); border:1px solid rgba(255,87,34,0.20); border-radius:12px; padding:clamp(16px,3vw,24px);">
-            <div style="font-size:28px; margin-bottom:8px;">⌘S</div>
-            <h3 style="font-size:clamp(13px,1.5vw,16px); font-weight:600;">保存文件</h3>
-            <p style="font-size:clamp(12px,1.3vw,14px); color:rgba(255,255,255,0.70); margin-top:4px;">Ctrl+S 下载编辑后的 HTML。自包含，零依赖。</p>
+    </section>
+
+    <!-- 第8页：两种规划深度 -->
+    <section class="slide" data-notes="两种深度：Auto用于快速出稿，Polish用于深度规划带视觉锁定。" aria-label="规划深度">
+        <div class="voltage-halftone"></div>
+        <div class="slide-content">
+            <h2 class="reveal voltage-title" style="font-size: clamp(1.5rem, 3.5vw, 2.5rem);">两种规划深度——按重要程度选择</h2>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-top: 1.5rem;">
+                <div class="reveal voltage-card" style="border-color: rgba(212,255,0,0.3);">
+                    <div class="voltage-neon-badge" style="margin-bottom: 0.75rem;">自动</div>
+                    <h3 style="font-family: var(--font-display); font-weight: 700; margin-bottom: 0.5rem;">快速出稿</h3>
+                    <p class="voltage-body">3–6 分钟。快速大纲，立即生成。适用于内部评审和快速迭代。</p>
+                    <p class="voltage-mono" style="margin-top: 0.75rem;">/slide-creator --plan [主题]</p>
+                </div>
+                <div class="reveal voltage-card" style="border-color: var(--bg-blue);">
+                    <div class="voltage-neon-badge" style="margin-bottom: 0.75rem; background: var(--bg-blue);">精修</div>
+                    <h3 style="font-family: var(--font-display); font-weight: 700; margin-bottom: 0.5rem;">深度规划</h3>
+                    <p class="voltage-body">8–15 分钟。结构化叙事，每页视觉锁定，16 项审查自动执行。</p>
+                    <p class="voltage-mono" style="margin-top: 0.75rem;">/slide-creator --plan --polish [主题]</p>
+                </div>
+            </div>
         </div>
-    </div>
-</div>
-</section>
+    </section>
 
-<section class="slide" data-notes="如何安装和使用 slide-creator。">
-<div class="content">
-    <div class="reveal">
-        <span class="pill">快速开始</span>
-    </div>
-    <div class="reveal" style="transition-delay:0.1s">
-        <h2 style="margin-top:clamp(12px,2vw,20px);">三条命令。<br><span style=&quot;color:var(--accent)&quot;>零摩擦</span></h2>
-    </div>
-    <div class="sep reveal" style="transition-delay:0.15s; height:1px; background:rgba(255,87,34,0.25); margin:clamp(12px,2vw,20px) 0;"></div>
-    <div style="display:grid; gap:clamp(12px,2vw,20px);" class="reveal" style="transition-delay:0.2s">
-        <div style="background:rgba(255,87,34,0.08); border:1px solid rgba(255,87,34,0.20); border-radius:12px; padding:clamp(16px,3vw,24px); display:flex; align-items:center; gap:16px;">
-            <div style="font-size:clamp(14px,1.5vw,18px); font-weight:800; color:#ff5722; font-family:monospace;">/slide-creator</div>
-            <p style="font-size:clamp(13px,1.4vw,15px); color:rgba(255,255,255,0.70); flex:1;">交互模式——描述心情，选择风格，获得演示文稿</p>
+    <!-- 第9页：内容 Review 系统 -->
+    <section class="slide" data-notes="16个检查点在发布前捕获内容问题。密度、平衡、色彩、组件多样性。" aria-label="审查系统">
+        <div class="voltage-halftone"></div>
+        <div class="slide-content">
+            <span class="reveal voltage-neon-badge">16 个检查点</span>
+            <h2 class="reveal voltage-title" style="font-size: clamp(1.5rem, 3.5vw, 2.5rem); margin-top: 0.75rem;">内容审查——演示前发现问题</h2>
+            <div class="reveal" style="display: grid; grid-template-columns: repeat(2, 1fr); gap: clamp(8px, 1.5vw, 16px); margin-top: 1.5rem;">
+                <div class="voltage-step"><span class="voltage-step-num">R1</span><span class="voltage-step-text">内容密度 ≥65%</span></div>
+                <div class="voltage-step"><span class="voltage-step-num">R2</span><span class="voltage-step-text">列平衡 ≥60%</span></div>
+                <div class="voltage-step"><span class="voltage-step-num">R3</span><span class="voltage-step-text">标题换行 ≤3 行</span></div>
+                <div class="voltage-step"><span class="voltage-step-num">R4</span><span class="voltage-step-text">禁止通用标题标签</span></div>
+                <div class="voltage-step"><span class="voltage-step-num">R5</span><span class="voltage-step-text">连续同布局 ≤2 页</span></div>
+                <div class="voltage-step"><span class="voltage-step-num">R6</span><span class="voltage-step-text">三概念法则</span></div>
+                <div class="voltage-step"><span class="voltage-step-num">R7</span><span class="voltage-step-text">90/8/2 色彩律</span></div>
+                <div class="voltage-step"><span class="voltage-step-num">R8</span><span class="voltage-step-text">断言式标题质量</span></div>
+            </div>
+            <p class="reveal voltage-mono" style="margin-top: 1rem;">/slide-creator --review [file.html] → 审查 → 确认 → 修复</p>
         </div>
-        <div style="background:rgba(255,87,34,0.08); border:1px solid rgba(255,87,34,0.20); border-radius:12px; padding:clamp(16px,3vw,24px); display:flex; align-items:center; gap:16px;">
-            <div style="font-size:clamp(14px,1.5vw,18px); font-weight:800; color:#ff5722; font-family:monospace;">/slide-creator --plan</div>
-            <p style="font-size:clamp(13px,1.4vw,15px); color:rgba(255,255,255,0.70); flex:1;">生成大纲——构建前审阅和编辑</p>
+    </section>
+
+    <!-- 第10页：内容类型与风格推荐 -->
+    <section class="slide" data-notes="内容类型匹配风格。数据报告需要Data Story，不是Vintage Editorial。" aria-label="风格推荐">
+        <div class="voltage-halftone"></div>
+        <div class="slide-content">
+            <h2 class="reveal voltage-title" style="font-size: clamp(1.5rem, 3.5vw, 2.5rem);">内容类型匹配最佳风格</h2>
+            <div class="reveal" style="margin-top: 1.5rem; display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem;">
+                <div class="voltage-card">
+                    <div class="voltage-mono" style="margin-bottom: 0.4rem;">数据报告 / KPI</div>
+                    <p class="voltage-body" style="font-size: var(--small-size);">Data Story · Enterprise Dark · Swiss Modern</p>
+                </div>
+                <div class="voltage-card">
+                    <div class="voltage-mono" style="margin-bottom: 0.4rem;">商业路演 / VC</div>
+                    <p class="voltage-body" style="font-size: var(--small-size);">Bold Signal · Aurora Mesh · Enterprise Dark</p>
+                </div>
+                <div class="voltage-card">
+                    <div class="voltage-mono" style="margin-bottom: 0.4rem;">开发工具 / API</div>
+                    <p class="voltage-body" style="font-size: var(--small-size);">Terminal Green · Neon Cyber · Neo-Retro Dev</p>
+                </div>
+                <div class="voltage-card">
+                    <div class="voltage-mono" style="margin-bottom: 0.4rem;">研究 / 思想领导</div>
+                    <p class="voltage-body" style="font-size: var(--small-size);">Modern Newspaper · Paper & Ink · Swiss Modern</p>
+                </div>
+                <div class="voltage-card">
+                    <div class="voltage-mono" style="margin-bottom: 0.4rem;">创意 / 个人品牌</div>
+                    <p class="voltage-body" style="font-size: var(--small-size);">Vintage Editorial · Split Pastel · Neo-Brutalism</p>
+                </div>
+                <div class="voltage-card">
+                    <div class="voltage-mono" style="margin-bottom: 0.4rem;">产品发布 / SaaS</div>
+                    <p class="voltage-body" style="font-size: var(--small-size);">Aurora Mesh · Glassmorphism · Electric Studio</p>
+                </div>
+            </div>
         </div>
-        <div style="background:rgba(255,87,34,0.08); border:1px solid rgba(255,87,34,0.20); border-radius:12px; padding:clamp(16px,3vw,24px); display:flex; align-items:center; gap:16px;">
-            <div style="font-size:clamp(14px,1.5vw,18px); font-weight:800; color:#ff5722; font-family:monospace;">/slide-creator --generate</div>
-            <p style="font-size:clamp(13px,1.4vw,15px); color:rgba(255,255,255,0.70); flex:1;">从 PLANNING.md 构建——完整 HTML 含所有模式</p>
+    </section>
+
+    <!-- 第11页：技术特点 -->
+    <section class="slide" data-notes="零依赖意味着随处运行。纯浏览器，无需服务器。" aria-label="技术特点">
+        <div class="voltage-halftone"></div>
+        <div class="slide-content">
+            <div class="voltage-split" style="height: auto;">
+                <div class="voltage-blue-panel">
+                    <h2 class="reveal voltage-title" style="font-size: clamp(1.2rem, 2.5vw, 2rem);">零依赖</h2>
+                    <ul class="reveal voltage-features" style="margin-top: 1rem;">
+                        <li>单个 HTML 文件——无 JS 框架</li>
+                        <li>Google Fonts 是唯一外部资源</li>
+                        <li>无构建步骤，无 package.json</li>
+                        <li>任意带浏览器的设备均可运行</li>
+                    </ul>
+                </div>
+                <div class="voltage-dark-panel">
+                    <h2 class="reveal voltage-title" style="font-size: clamp(1.2rem, 2.5vw, 2rem);">纯浏览器</h2>
+                    <ul class="reveal voltage-features" style="margin-top: 1rem;">
+                        <li>编辑模式在页面内运行</li>
+                        <li>演讲者同步通过 BroadcastChannel</li>
+                        <li>通过 /kai-html-export CLI 导出</li>
+                        <li>作为文件分享或发布链接</li>
+                    </ul>
+                </div>
+            </div>
         </div>
-    </div>
-</div>
-</section>
+    </section>
 
-<section class="slide" data-notes="结束 CTA。安装链接和总结。">
-<div class="content" style="text-align:center;">
-    <div class="reveal">
-        <h1 style="font-size:clamp(2rem,5.5vw,4rem);">别再"做幻灯片"了。<br>开始讲故事。</h1>
-    </div>
-    <div class="sep reveal" style="transition-delay:0.1s; height:1px; background:rgba(255,87,34,0.25); margin:clamp(16px,3vw,28px) auto; width:60px;"></div>
-    <div class="reveal" style="transition-delay:0.2s">
-        <p style="font-size:clamp(14px,2vw,20px); color:rgba(255,255,255,0.70); max-width:520px; margin:0 auto;">
-            一个 HTML 文件。涵盖所有风格。任意浏览器。无需构建步骤。
-        </p>
-    </div>
-    <div class="reveal" style="transition-delay:0.3s; margin-top:clamp(20px,3vw,36px);">
-        <div style="font-size:clamp(13px,1.5vw,16px); font-family:monospace; background:rgba(255,87,34,0.08); border:1px solid rgba(255,87,34,0.20); border-radius:12px; padding:clamp(12px,2vw,20px); display:inline-block;">
-            <span style="color:#ff5722;">$</span> clawhub install kai-slide-creator
+    <!-- 第12页：开始使用 -->
+    <section class="slide" data-notes="当前版本2.16.0。快速增长。告诉观众如何开始使用。" aria-label="开始使用">
+        <div class="voltage-halftone"></div>
+        <div class="voltage-diamond" style="top: 5%; right: 10%;"></div>
+        <div class="slide-content">
+            <span class="reveal voltage-neon-badge">v2.16.0</span>
+            <h2 class="reveal voltage-title" style="font-size: clamp(1.5rem, 3.5vw, 2.5rem); margin-top: 0.75rem;">开始使用——用 HTML 制作你的下一份幻灯片</h2>
+            <div class="reveal" style="margin-top: 1.5rem;">
+                <div class="voltage-callout" style="margin-bottom: 1rem;">
+                    <p class="voltage-mono" style="font-size: clamp(0.8rem, 1.3vw, 1rem);">/slide-creator --plan "你的主题"</p>
+                </div>
+                <div class="voltage-callout" style="margin-bottom: 1rem;">
+                    <p class="voltage-mono" style="font-size: clamp(0.8rem, 1.3vw, 1rem);">/slide-creator --generate</p>
+                </div>
+                <div class="voltage-callout">
+                    <p class="voltage-mono" style="font-size: clamp(0.8rem, 1.3vw, 1rem);">/slide-creator --review [file.html]</p>
+                </div>
+            </div>
+            <p class="reveal voltage-body" style="margin-top: 1rem;">GitHub: <span class="voltage-mono">kaisersong/slide-creator</span> · ClawHub: <span class="voltage-mono">kai-slide-creator</span></p>
         </div>
-    </div>
-    <div class="reveal" style="transition-delay:0.4s; margin-top:clamp(12px,2vw,24px);">
-        <p style="font-size:clamp(11px,1.2vw,14px); color:rgba(255,255,255,0.35); letter-spacing:0.04em;">github.com/kaisersong/slide-creator</p>
-    </div>
-</div>
-</section>
+    </section>
 
-
-<script>
-
-class PresentMode {
-  constructor(ctrl) {
-    this.ctrl = ctrl; this.DW = 1440; this.DH = 900; this.active = false;
-    this._resize = () => this._scale();
-    const btn = document.createElement('button');
-    btn.id = 'present-btn'; btn.title = 'Present (F5)';
-    btn.setAttribute('aria-label', 'Present'); btn.textContent = '\u25b6';
-    document.body.appendChild(btn);
-    const counter = document.createElement('div');
-    counter.id = 'present-counter'; document.body.appendChild(counter);
-    btn.addEventListener('click', () => this.enter());
-    document.addEventListener('keydown', e => {
-      if (e.key === 'F5') { e.preventDefault(); this.enter(); }
-      if (e.key === 'Escape' && this.active) this.exit();
-      if ((e.key === 'b' || e.key === 'B') && this.active) document.body.classList.toggle('presenting-black');
-    });
-    document.addEventListener('fullscreenchange', () => { if (!document.fullscreenElement && this.active) this.exit(); });
-  }
-  enter() {
-    if (this.active) return; this.active = true;
-    document.body.classList.add('presenting');
-    document.documentElement.requestFullscreen?.().catch(() => {});
-    window.addEventListener('resize', this._resize); this._scale(); this._show(this.ctrl.currentSlide);
-    this._origGoTo = this.ctrl.goTo.bind(this.ctrl);
-    this.ctrl.goTo = (i) => {
-      const idx = Math.max(0, Math.min(i, this.ctrl.slides.length - 1));
-      this.ctrl.currentSlide = idx;
-      this.ctrl.slides.forEach((s, j) => s.classList.toggle('visible', j === idx));
-      this._show(idx); this.ctrl.updateProgress?.(); this.ctrl.updateDots?.(); this.ctrl.broadcastState?.();
-    };
-  }
-  exit() {
-    if (!this.active) return; this.active = false;
-    document.body.classList.remove('presenting', 'presenting-black');
-    document.exitFullscreen?.().catch(() => {});
-    window.removeEventListener('resize', this._resize);
-    this.ctrl.goTo = this._origGoTo;
-    this.ctrl.goTo(this.ctrl.currentSlide);
-    setTimeout(() => this.ctrl.slides[this.ctrl.currentSlide]?.scrollIntoView(), 50);
-  }
-  _scale() {
-    const sw = window.innerWidth / this.DW, sh = window.innerHeight / this.DH, s = Math.min(sw, sh);
-    document.querySelectorAll('body.presenting .slide').forEach(sl => {
-      sl.style.transform = `translate(-50%, -50%) scale(${s})`;
-    });
-  }
-  _show(n) {
-    this.ctrl.slides.forEach((sl, i) => {
-      sl.classList.toggle('p-on', i === n);
-      sl.querySelectorAll('.reveal').forEach(r => {
-        r.classList.toggle('visible', i === n);
-      });
-    });
-    const counter = document.getElementById('present-counter');
-    if (counter) counter.textContent = `${n + 1} / ${this.ctrl.slides.length}`;
-  }
-}
-
-
-class SlidePresentation {
-  constructor() {
-    this.slides = document.querySelectorAll('.slide');
-    this.currentSlide = 0;
-    this.channel = new BroadcastChannel('slide-creator-presenter');
-    // CRITICAL: Make first slide visible immediately
-    this.slides[0]?.classList.add('visible');
-    this.slides[0]?.querySelectorAll('.reveal').forEach(function(r) { r.classList.add('visible'); });
-    this.setupNavDots();
-    this.setupObserver();
-    this.setupKeyboard();
-    this.setupTouch();
-    this.setupWheel();
-    this.setupPresenter();
-    this.updateProgress();
-  }
-  setupNavDots() {
-    const nav = document.querySelector('.nav-dots');
-    if (!nav) return;
-    this.slides.forEach((_, i) => {
-      const dot = document.createElement('button');
-      dot.setAttribute('aria-label', `Go to slide ${i + 1}`);
-      dot.style.cssText = 'width:8px;height:8px;border-radius:50%;border:none;cursor:pointer;background:rgba(255,255,255,0.3);transition:all 0.3s;';
-      dot.addEventListener('click', () => this.goTo(i));
-      nav.appendChild(dot);
-    });
-    nav.style.cssText = 'position:fixed;right:1.5rem;top:50%;transform:translateY(-50%);display:flex;flex-direction:column;gap:8px;z-index:100;';
-  }
-  setupObserver() {
-    const observer = new IntersectionObserver((entries) => {
-      entries.forEach(entry => {
-        if (entry.isIntersecting) {
-          entry.target.classList.add('visible');
-          this.currentSlide = [...this.slides].indexOf(entry.target);
-          this.updateProgress();
-          this.updateDots();
-          this.broadcastState();
-          this.updateNotesPanel();
+    <script>
+        class SlidePresentation {
+            constructor() {
+                this.slides = document.querySelectorAll('.slide');
+                this.currentSlide = 0;
+                this.channel = new BroadcastChannel('slide-creator-presenter');
+                this.slides[0]?.classList.add('visible');
+                this.slides[0]?.querySelectorAll('.reveal').forEach(function(r) { r.classList.add('visible'); });
+                this.setupNavDots();
+                this.setupObserver();
+                this.setupKeyboard();
+                this.setupTouch();
+                this.setupWheel();
+                this.setupPresenter();
+                this.updateProgress();
+            }
+            setupNavDots() {
+                const nav = document.querySelector('.nav-dots');
+                if (!nav) return;
+                this.slides.forEach((_, i) => {
+                    const dot = document.createElement('button');
+                    dot.setAttribute('aria-label', `转到第 ${i + 1} 页`);
+                    dot.style.cssText = 'width:8px;height:8px;border-radius:50%;border:none;cursor:pointer;background:rgba(255,255,255,0.3);transition:all 0.3s;';
+                    dot.addEventListener('click', () => this.goTo(i));
+                    nav.appendChild(dot);
+                });
+                nav.style.cssText = 'position:fixed;right:1.5rem;top:50%;transform:translateY(-50%);display:flex;flex-direction:column;gap:8px;z-index:100;';
+            }
+            setupObserver() {
+                const observer = new IntersectionObserver((entries) => {
+                    entries.forEach(entry => {
+                        if (entry.isIntersecting) {
+                            entry.target.classList.add('visible');
+                            this.currentSlide = [...this.slides].indexOf(entry.target);
+                            this.updateProgress();
+                            this.updateDots();
+                            this.broadcastState();
+                            this.updateNotesPanel();
+                        }
+                    });
+                }, { threshold: 0.5 });
+                this.slides.forEach(s => observer.observe(s));
+            }
+            setupKeyboard() {
+                document.addEventListener('keydown', (e) => {
+                    if (e.target.getAttribute('contenteditable')) return;
+                    if (e.key === 'ArrowDown' || e.key === 'ArrowRight' || e.key === ' ' || e.key === 'PageDown' || e.key === 'Enter') { e.preventDefault(); this.next(); }
+                    else if (e.key === 'ArrowUp' || e.key === 'ArrowLeft' || e.key === 'PageUp' || e.key === 'Backspace') { e.preventDefault(); this.prev(); }
+                    else if (e.key === 'p' || e.key === 'P') { const url = location.href.split('?')[0] + '?presenter'; window.open(url, 'slide-presenter-' + Date.now(), 'width=1100,menubar=no,toolbar=no,location=no'); }
+                });
+            }
+            setupTouch() { let startY = 0; document.addEventListener('touchstart', e => { startY = e.touches[0].clientY; }, { passive: true }); document.addEventListener('touchend', e => { const delta = startY - e.changedTouches[0].clientY; if (Math.abs(delta) > 50) delta > 0 ? this.next() : this.prev(); }); }
+            setupWheel() {}
+            setupPresenter() { this.channel.addEventListener('message', e => { if (e.data.type === 'nav-next') this.next(); else if (e.data.type === 'nav-prev') this.prev(); else if (e.data.type === 'request-state') this.broadcastState(); }); }
+            broadcastState() { const slide = this.slides[this.currentSlide]; this.channel.postMessage({ type: 'state', index: this.currentSlide, total: this.slides.length, notes: slide?.dataset.notes || '' }); }
+            goTo(index) { this.slides.forEach((slide, i) => { slide.classList.toggle('visible', i === index); var reveals = slide.querySelectorAll('.reveal'); reveals.forEach(function(r) { r.classList.toggle('visible', i === index); }); }); this.slides[index]?.scrollIntoView({ behavior: 'smooth' }); }
+            next() { this.goTo(Math.min(this.currentSlide + 1, this.slides.length - 1)); }
+            prev() { this.goTo(Math.max(this.currentSlide - 1, 0)); }
+            updateProgress() { const pct = (this.currentSlide / (this.slides.length - 1)) * 100; const bar = document.querySelector('.progress-bar'); if (bar) bar.style.width = pct + '%'; }
+            updateDots() { document.querySelectorAll('.nav-dots button').forEach((dot, i) => { dot.style.background = i === this.currentSlide ? 'var(--accent-neon)' : 'rgba(255,255,255,0.3)'; dot.style.transform = i === this.currentSlide ? 'scale(1.3)' : 'scale(1)'; }); }
+            updateNotesPanel() { const label = document.getElementById('notes-panel-label'); const textarea = document.getElementById('notes-textarea'); if (label) label.textContent = `演讲者备注 — 第 ${this.currentSlide + 1} 页 / 共 ${this.slides.length} 页`; if (textarea) textarea.value = this.slides[this.currentSlide]?.dataset.notes || ''; }
         }
-      });
-    }, { threshold: 0.5 });
-    this.slides.forEach(s => observer.observe(s));
-  }
-  setupKeyboard() {
-    document.addEventListener('keydown', (e) => {
-      if (e.target.getAttribute('contenteditable')) return;
-      if (e.key === 'ArrowDown' || e.key === 'ArrowRight' || e.key === ' ' || e.key === 'PageDown' || e.key === 'Enter') {
-        e.preventDefault(); this.next();
-      } else if (e.key === 'ArrowUp' || e.key === 'ArrowLeft' || e.key === 'PageUp' || e.key === 'Backspace') {
-        e.preventDefault(); this.prev();
-      } else if (e.key === 'p' || e.key === 'P') {
-        const url = location.href.split('?')[0] + '?presenter';
-        window.open(url, 'slide-presenter-' + Date.now(), 'width=1100,menubar=no,toolbar=no,location=no');
-      }
-    });
-  }
-  setupTouch() {
-    let startY = 0;
-    document.addEventListener('touchstart', e => { startY = e.touches[0].clientY; }, { passive: true });
-    document.addEventListener('touchend', e => {
-      const delta = startY - e.changedTouches[0].clientY;
-      if (Math.abs(delta) > 50) delta > 0 ? this.next() : this.prev();
-    });
-  }
-  setupWheel() {}
-  setupPresenter() {
-    this.channel.addEventListener('message', e => {
-      if (e.data.type === 'nav-next') this.next();
-      else if (e.data.type === 'nav-prev') this.prev();
-      else if (e.data.type === 'request-state') this.broadcastState();
-    });
-  }
-  broadcastState() {
-    const slide = this.slides[this.currentSlide];
-    this.channel.postMessage({
-      type: 'state', index: this.currentSlide,
-      total: this.slides.length, notes: slide?.dataset.notes || ''
-    });
-  }
-  goTo(index) {
-    this.slides.forEach((slide, i) => {
-      slide.classList.toggle('visible', i === index);
-      var reveals = slide.querySelectorAll('.reveal');
-      reveals.forEach(function(r) { r.classList.toggle('visible', i === index); });
-    });
-    this.slides[index]?.scrollIntoView({ behavior: 'smooth' });
-  }
-  next() { this.goTo(Math.min(this.currentSlide + 1, this.slides.length - 1)); }
-  prev() { this.goTo(Math.max(this.currentSlide - 1, 0)); }
-  updateProgress() {
-    const pct = (this.currentSlide / (this.slides.length - 1)) * 100;
-    const bar = document.querySelector('.progress-bar');
-    if (bar) bar.style.width = pct + '%';
-  }
-  updateDots() {
-    document.querySelectorAll('.nav-dots button').forEach((dot, i) => {
-      dot.style.background = i === this.currentSlide ? 'var(--accent)' : 'rgba(255,255,255,0.3)';
-      dot.style.transform = i === this.currentSlide ? 'scale(1.3)' : 'scale(1)';
-    });
-  }
-  updateNotesPanel() {
-    const label = document.getElementById('notes-panel-label');
-    const textarea = document.getElementById('notes-textarea');
-    if (label) label.textContent = `SPEAKER NOTES — SLIDE ${this.currentSlide + 1} / ${this.slides.length}`;
-    if (textarea) textarea.value = this.slides[this.currentSlide]?.dataset.notes || '';
-  }
-  setupEditor() {
-    const panel = document.getElementById('notes-panel');
-    const textarea = document.getElementById('notes-textarea');
-    const toggle = document.getElementById('editToggle');
-    const hotzone = document.querySelector('.edit-hotzone');
-    const header = document.getElementById('notes-panel-header');
-    const collapseBtn = document.getElementById('notes-collapse-btn');
-    let hideTimeout = null;
-    this.editor = { active: false };
-    hotzone.addEventListener('mouseenter', () => { clearTimeout(hideTimeout); toggle.classList.add('show'); });
-    hotzone.addEventListener('mouseleave', () => { hideTimeout = setTimeout(() => { if (!this.editor.active) toggle.classList.remove('show'); }, 400); });
-    toggle.addEventListener('mouseenter', () => clearTimeout(hideTimeout));
-    toggle.addEventListener('mouseleave', () => { hideTimeout = setTimeout(() => { if (!this.editor.active) toggle.classList.remove('show'); }, 400); });
-    toggle.addEventListener('click', (e) => {
-      e.stopPropagation();
-      this.editor.active = !this.editor.active;
-      document.body.classList.toggle('editing', this.editor.active);
-      toggle.classList.toggle('active', this.editor.active);
-      toggle.textContent = this.editor.active ? '✓ Done' : '✏ Edit';
-      if (this.editor.active) {
-        panel.classList.add('active');
-        textarea.value = this.slides[this.currentSlide]?.dataset.notes || '';
-        textarea.focus();
-      } else {
-        panel.classList.remove('active');
-      }
-    });
-    header.addEventListener('click', (e) => {
-      if (e.target === collapseBtn) { panel.classList.toggle('collapsed'); return; }
-    });
-    textarea.addEventListener('input', () => {
-      const slide = this.slides[this.currentSlide];
-      if (slide) slide.dataset.notes = textarea.value;
-      this.channel.postMessage({ type: 'state', index: this.currentSlide, total: this.slides.length, notes: textarea.value });
-    });
-  }
-}
 
-/* Presenter Mode */
+        SlidePresentation.prototype.setupEditor = function() {
+            const panel = document.getElementById('notes-panel'); const toggle = document.getElementById('editToggle'); const hotzone = document.querySelector('.edit-hotzone'); const textarea = document.getElementById('notes-textarea'); let hideTimeout = null;
+            hotzone.addEventListener('mouseenter', () => { clearTimeout(hideTimeout); toggle.classList.add('show'); });
+            hotzone.addEventListener('mouseleave', () => { hideTimeout = setTimeout(() => { if (!this.editor.active) toggle.classList.remove('show'); }, 400); });
+            toggle.addEventListener('mouseenter', () => clearTimeout(hideTimeout));
+            toggle.addEventListener('mouseleave', () => { hideTimeout = setTimeout(() => { if (!this.editor.active) toggle.classList.remove('show'); }, 400); });
+            hotzone.addEventListener('click', () => this.editor.toggle());
+            toggle.addEventListener('click', () => this.editor.toggle());
+            document.getElementById('notes-panel-header').addEventListener('click', () => panel.classList.toggle('collapsed'));
+            textarea.addEventListener('input', () => { const slide = this.slides[this.currentSlide]; if (slide) { slide.dataset.notes = textarea.value; this.broadcastState(); } });
+            document.addEventListener('keydown', (e) => { if ((e.ctrlKey || e.metaKey) && e.key === 's') { e.preventDefault(); this.saveFile(); } });
+            this.editor = { active: false, toggle: () => this.editor.active ? this.editor.exit() : this.editor.enter(), enter: () => { this.editor.active = true; toggle.classList.add('active'); toggle.textContent = '✏ 编辑中'; panel.classList.add('active'); this.slides.forEach(s => { s.querySelectorAll('.slide-content > *').forEach(el => { if (el.tagName !== 'STYLE' && el.tagName !== 'SCRIPT') el.setAttribute('contenteditable', 'true'); }); }); this.updateNotesPanel(); }, exit: () => { this.editor.active = false; toggle.classList.remove('active'); toggle.textContent = '✏ 编辑'; panel.classList.remove('active'); this.slides.forEach(s => s.querySelectorAll('[contenteditable]').forEach(el => el.removeAttribute('contenteditable'))); } };
+        };
 
-if (new URLSearchParams(location.search).has('presenter')) {
-  document.title = 'Presenter — ' + document.title;
-  document.body.innerHTML = `
-  <style>
-  body { margin: 0; background: #111; color: #fff; font-family: system-ui, sans-serif; }
-  #pv { display: flex; height: 100vh; }
-  .pv-panel { background: #1a1a1a; border-right: 1px solid #333; padding: 12px; }
-  #pv-right { flex: 1; display: flex; flex-direction: column; }
-  #pv-nav { display: flex; align-items: center; gap: 12px; }
-  .pv-arrow { background: #333; color: #fff; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; }
-  #pv-counter { display: flex; align-items: baseline; gap: 4px; }
-  #pv-num { font-size: 1.5rem; font-weight: 700; }
-  #pv-of { font-size: 0.875rem; color: #888; }
-  #pv-timer-label { font-size: 0.7rem; color: #888; text-transform: uppercase; letter-spacing: 0.1em; }
-  #pv-timer { font-size: 2rem; font-weight: 700; font-family: monospace; }
-  #pv-notes { white-space: pre-wrap; font-size: 0.875rem; line-height: 1.6; color: #ccc; margin-top: 8px; }
-  #pv-label { font-weight: 600; font-size: 0.75rem; color: #888; text-transform: uppercase; letter-spacing: 0.1em; }
-  #pv-timer-box { margin-top: auto; padding: 12px !important; }
-  </style>
-  <div id="pv">
-    <div class="pv-panel"><div id="pv-label">Speaker Notes</div><div id="pv-notes">Waiting for main window...</div></div>
-    <div id="pv-right">
-      <div class="pv-panel"><div id="pv-nav"><button class="pv-arrow" id="pv-prev">←</button><div id="pv-counter"><div id="pv-num">—</div><div id="pv-of">/ —</div></div><button class="pv-arrow" id="pv-next">→</button></div></div>
-      <div class="pv-panel" id="pv-timer-box"><div id="pv-timer-label">Elapsed</div><div id="pv-timer">0:00</div></div>
-    </div>
-  </div>`;
-  const ch = new BroadcastChannel('slide-creator-presenter');
-  let startTime = null;
-  const pv = document.getElementById('pv');
-  let lastH = 0, roTimer = null;
-  new ResizeObserver(() => { clearTimeout(roTimer); roTimer = setTimeout(() => { const h = Math.ceil(pv.getBoundingClientRect().height); if (h === lastH) return; lastH = h; const chrome = window.outerHeight - window.innerHeight; window.resizeTo(window.outerWidth, Math.max(260, h + chrome + 4)); }, 40); }).observe(pv);
-  ch.addEventListener('message', e => { if (e.data.type !== 'state') return; if (!startTime) startTime = Date.now(); document.getElementById('pv-notes').textContent = e.data.notes || '(no notes for this slide)'; document.getElementById('pv-num').textContent = e.data.index + 1; document.getElementById('pv-of').textContent = `/ ${e.data.total}`; });
-  ch.postMessage({ type: 'request-state' });
-  setInterval(() => { if (!startTime) return; const s = Math.floor((Date.now() - startTime) / 1000); document.getElementById('pv-timer').textContent = `${Math.floor(s / 60)}:${String(s % 60).padStart(2, '0')}`; }, 1000);
-  document.getElementById('pv-prev').addEventListener('click', () => ch.postMessage({ type: 'nav-prev' }));
-  document.getElementById('pv-next').addEventListener('click', () => ch.postMessage({ type: 'nav-next' }));
-  document.addEventListener('keydown', e => {
-    if (e.key === 'ArrowRight' || e.key === 'ArrowDown' || e.key === ' ' || e.key === 'PageDown' || e.key === 'Enter') ch.postMessage({ type: 'nav-next' });
-    else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp' || e.key === 'PageUp' || e.key === 'Backspace') ch.postMessage({ type: 'nav-prev' });
-  });
-} else {
+        SlidePresentation.prototype.saveFile = function() { this.slides.forEach(s => { s.querySelectorAll('[contenteditable]').forEach(el => el.removeAttribute('contenteditable')); }); this.editor?.exit?.(); const html = '<!DOCTYPE html>\n' + document.documentElement.outerHTML; const blob = new Blob([html], { type: 'text/html' }); const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = document.title + '.html'; a.click(); URL.revokeObjectURL(a.href); };
 
-  new PresentMode(new SlidePresentation());
-}
-</script>
-<script>
-
-(function() {
-  var slides = document.querySelectorAll('.slide');
-  if (!slides.length) return;
-  var last = slides[slides.length - 1];
-  var credit = document.createElement('div');
-  credit.className = 'slide-credit';
-  credit.textContent = 'By kai-slide-creator v2.15.0 · Creative Voltage';
-  last.appendChild(credit);
-})();
-
-</script>
+        if (new URLSearchParams(location.search).has('presenter')) {
+            document.title = 'Presenter — ' + document.title;
+            document.body.innerHTML = `<style>*{box-sizing:border-box;margin:0}body{background:#111;color:#fff;font-family:system-ui,sans-serif}#pv{display:grid;grid-template-columns:1fr 220px;gap:1rem;padding:1.25rem;align-items:start}.pv-panel{background:#1e1e1e;border-radius:12px;padding:1.25rem}#pv-label{font-size:.6rem;letter-spacing:.18em;text-transform:uppercase;color:#555;margin-bottom:.6rem}#pv-notes{font-size:1.05rem;line-height:1.85;color:#d0d0d0}#pv-right{display:flex;flex-direction:column;gap:1rem}#pv-nav{display:flex;align-items:center;justify-content:space-between;gap:.5rem}.pv-arrow{width:32px;height:32px;border-radius:6px;border:1px solid #333;background:#2a2a2a;color:#aaa;font-size:1rem;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:background .15s,color .15s;flex-shrink:0}.pv-arrow:hover{background:#383838;color:#fff}#pv-counter{text-align:center;flex:1}#pv-num{font-size:1.6rem;font-weight:700;font-variant-numeric:tabular-nums;line-height:1}#pv-of{color:#555;font-size:.75rem;margin-top:.2rem}#pv-timer-box{text-align:center}#pv-timer-label{font-size:.6rem;letter-spacing:.18em;text-transform:uppercase;color:#555;margin-bottom:.3rem}#pv-timer{font-size:1.5rem;font-weight:700;font-family:monospace;font-variant-numeric:tabular-nums}</style><div id="pv"><div class="pv-panel"><div id="pv-label">演讲者备注</div><div id="pv-notes">等待主窗口…</div></div><div id="pv-right"><div class="pv-panel"><div id="pv-nav"><button class="pv-arrow" id="pv-prev">←</button><div id="pv-counter"><div id="pv-num">—</div><div id="pv-of">/ —</div></div><button class="pv-arrow" id="pv-next">→</button></div></div><div class="pv-panel" id="pv-timer-box"><div id="pv-timer-label">已用时间</div><div id="pv-timer">0:00</div></div></div></div>`;
+            const ch = new BroadcastChannel('slide-creator-presenter'); let startTime = null;
+            const pv = document.getElementById('pv'); let lastH = 0, roTimer = null;
+            new ResizeObserver(() => { clearTimeout(roTimer); roTimer = setTimeout(() => { const h = Math.ceil(pv.getBoundingClientRect().height); if (h === lastH) return; lastH = h; const chrome = window.outerHeight - window.innerHeight; window.resizeTo(window.outerWidth, Math.max(260, h + chrome + 4)); }, 40); }).observe(pv);
+            ch.addEventListener('message', e => { if (e.data.type !== 'state') return; if (!startTime) startTime = Date.now(); document.getElementById('pv-notes').textContent = e.data.notes || '（此页暂无备注）'; document.getElementById('pv-num').textContent = e.data.index + 1; document.getElementById('pv-of').textContent = `/ ${e.data.total}`; });
+            ch.postMessage({ type: 'request-state' });
+            setInterval(() => { if (!startTime) return; const s = Math.floor((Date.now() - startTime) / 1000); document.getElementById('pv-timer').textContent = `${Math.floor(s / 60)}:${String(s % 60).padStart(2, '0')}`; }, 1000);
+            document.getElementById('pv-prev').addEventListener('click', () => ch.postMessage({ type: 'nav-prev' }));
+            document.getElementById('pv-next').addEventListener('click', () => ch.postMessage({ type: 'nav-next' }));
+            document.addEventListener('keydown', e => { if (e.key === 'ArrowRight' || e.key === 'ArrowDown' || e.key === ' ' || e.key === 'PageDown' || e.key === 'Enter') ch.postMessage({ type: 'nav-next' }); else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp' || e.key === 'PageUp' || e.key === 'Backspace') ch.postMessage({ type: 'nav-prev' }); });
+        } else {
+            class PresentMode {
+                constructor(ctrl) { this.ctrl = ctrl; this.DW = 1440; this.DH = 900; this.active = false; this._resize = () => this._scale(); const btn = document.createElement('button'); btn.id = 'present-btn'; btn.title = 'Present (F5)'; btn.setAttribute('aria-label', 'Present'); btn.textContent = '▶'; document.body.appendChild(btn); const counter = document.createElement('div'); counter.id = 'present-counter'; document.body.appendChild(counter); btn.addEventListener('click', () => this.enter()); document.addEventListener('keydown', e => { if (e.key === 'F5') { e.preventDefault(); this.enter(); } if (e.key === 'Escape' && this.active) this.exit(); if ((e.key === 'b' || e.key === 'B') && this.active) document.body.classList.toggle('presenting-black'); }); document.addEventListener('fullscreenchange', () => { if (!document.fullscreenElement && this.active) this.exit(); }); }
+                enter() { if (this.active) return; this.active = true; document.body.classList.add('presenting'); document.documentElement.requestFullscreen?.().catch(() => {}); window.addEventListener('resize', this._resize); this._scale(); this._show(this.ctrl.currentSlide); this._origGoTo = this.ctrl.goTo.bind(this.ctrl); this.ctrl.goTo = (i) => { const idx = Math.max(0, Math.min(i, this.ctrl.slides.length - 1)); this.ctrl.currentSlide = idx; this.ctrl.slides.forEach((s, j) => s.classList.toggle('visible', j === idx)); this._show(idx); this.ctrl.updateProgress?.(); this.ctrl.updateDots?.(); this.ctrl.broadcastState?.(); }; }
+                exit() { if (!this.active) return; this.active = false; document.body.classList.remove('presenting', 'presenting-black'); document.querySelectorAll('.slide').forEach(s => s.classList.remove('p-on')); if (document.fullscreenElement) document.exitFullscreen?.(); window.removeEventListener('resize', this._resize); if (this._origGoTo) { this.ctrl.goTo = this._origGoTo; this._origGoTo = null; } this.ctrl.slides[this.ctrl.currentSlide]?.scrollIntoView({ behavior: 'instant' }); }
+                _scale() { const s = Math.min(window.innerWidth / this.DW, window.innerHeight / this.DH); const ox = (window.innerWidth - this.DW * s) / 2; const oy = (window.innerHeight - this.DH * s) / 2; const r = document.documentElement; r.style.setProperty('--pdw', this.DW + 'px'); r.style.setProperty('--pdh', this.DH + 'px'); r.style.setProperty('--ps', s); r.style.setProperty('--pox', ox + 'px'); r.style.setProperty('--poy', oy + 'px'); }
+                _show(i) { document.querySelectorAll('.slide').forEach((s, idx) => s.classList.toggle('p-on', idx === i)); const c = document.getElementById('present-counter'); if (c) c.textContent = `${i + 1} / ${this.ctrl.slides.length}`; }
+            }
+            const ctrl = new SlidePresentation(); ctrl.setupEditor(); new PresentMode(ctrl);
+        }
+    </script>
+    <script>
+    (function() { var slides = document.querySelectorAll('.slide'); if (!slides.length) return; var last = slides[slides.length - 1]; var credit = document.createElement('div'); credit.className = 'slide-credit'; credit.textContent = 'By kai-slide-creator v2.16.0 · Creative Voltage'; last.appendChild(credit); })();
+    </script>
 </body>
 </html>

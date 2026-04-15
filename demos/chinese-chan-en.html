@@ -2,526 +2,583 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Chinese Chan · Next-Gen Developer Platform</title>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>kai-slide-creator — Zero-Dependency HTML Presentation Generator</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@700&family=Noto+Sans+SC:wght@400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,600;0,700;1,400&family=Noto+Serif+SC:wght@300;400;700&display=swap" rel="stylesheet">
 <style>
-*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
+:root { --slide-count: 12; }
+
+/* ═══════════════════════════════════════════════
+   CHINESE CHAN DESIGN TOKENS
+   ═══════════════════════════════════════════════ */
 :root {
-    --bg: #faf8f5;
-    --accent: #c45d3e;
-    --text-primary: #2d2a26;
-    --text-body: rgba(45,42,38,0.70);
-    --text-secondary: rgba(45,42,38,0.55);
-    --text-muted: rgba(45,42,38,0.40);
-    --card-bg: rgba(196,93,62,0.06);
-    --card-border: rgba(196,93,62,0.15);
-    --divider: rgba(196,93,62,0.20);
-    --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
-    --duration-normal: 0.6s;
+  --bg:          #FAFAF8;
+  --text:        #1a1a18;
+  --text-muted:  #6b6b68;
+  --accent:      #C41E3A;
+  --accent-alt:  #1B3A6B;
+  --rule:        rgba(26,26,24,0.15);
 }
+
+::selection { background: rgba(196,30,58,0.12); color: var(--accent); }
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
 html { scroll-snap-type: y mandatory; height: 100%; }
 
 body {
-    height: 100%;
-    overflow-x: hidden;
-    font-family: 'Noto Sans SC', 'Source Han Sans', system-ui, sans-serif;
-    color: var(--text-primary);
+  font-family: "EB Garamond", "Noto Serif SC", Georgia, serif;
+  background-color: var(--bg);
+  color: var(--text);
+  overflow-x: hidden; height: 100%;
 }
 
-/* Background */
-body {
-    background: #faf8f5;
-    background-image:
-        radial-gradient(circle at 30% 70%, rgba(196,93,62,0.06) 0%, transparent 50%),
-        radial-gradient(circle at 70% 30%, rgba(45,42,38,0.03) 0%, transparent 50%);
-}
+/* Subtle ink wash texture */
 body::before {
-    content: '';
-    position: fixed;
-    inset: 0;
-    background: radial-gradient(ellipse at 30% 20%, rgba(26,26,24,0.03) 0%, transparent 70%);
-    pointer-events: none;
-    z-index: 0;
+  content: ''; position: fixed; inset: 0; pointer-events: none; z-index: 0;
+  background: radial-gradient(ellipse at 30% 20%, rgba(26,26,24,0.03) 0%, transparent 70%);
 }
 
 .slide {
-    width: 100vw; height: 100vh; height: 100dvh;
-    scroll-snap-align: start; overflow: hidden;
-    position: relative; display: flex;
-    flex-direction: column; align-items: center; justify-content: center;
-    padding: clamp(1.5rem, 4vw, 4rem);
+  width: 100vw; height: 100vh; height: 100dvh;
+  padding: clamp(3rem, 8vw, 8rem) clamp(2rem, 6vw, 6rem);
+  scroll-snap-align: start;
+  display: flex; flex-direction: column;
+  justify-content: center; align-items: center;
+  position: relative; overflow: hidden;
+  background: var(--bg);
 }
 
-.slide .content {
-    width: 100%; max-width: min(90vw, 800px);
-    padding: clamp(24px, 5vw, 64px);
-    position: relative; z-index: 1;
+.slide-content {
+  width: 100%; max-width: 600px;
+  display: flex; flex-direction: column;
+  position: relative; z-index: 1;
 }
 
-h1 { font-size: clamp(2rem, 5.5vw, 4rem); font-weight: 800; line-height: 1.1; letter-spacing: -0.02em; }
-h2 { font-size: clamp(1.4rem, 3.5vw, 2.4rem); font-weight: 700; line-height: 1.2; letter-spacing: -0.01em; }
-h3 { font-size: clamp(0.9rem, 1.6vw, 1.2rem); font-weight: 600; }
-p { font-size: clamp(0.82rem, 1.4vw, 1.05rem); line-height: 1.6; color: var(--text-body); }
-
-.pill {
-    display: inline-flex; align-items: center; gap: 6px;
-    padding: 4px 14px; border-radius: 999px;
-    font-size: 12px; font-weight: 600; letter-spacing: 0.05em;
-    background: rgba(196,93,62,0.10); color: #c45d3e;
-    border: 1px solid rgba(196,93,62,0.25);
+/* ── Typography ── */
+.zen-title {
+  font-size: clamp(1.8rem, 5vw, 4rem);
+  font-weight: 400; letter-spacing: 0.08em;
+  line-height: 1.3; color: var(--text);
 }
 
+.zen-h2 {
+  font-size: clamp(1.2rem, 3.5vw, 2rem);
+  font-weight: 400; letter-spacing: 0.05em;
+  line-height: 1.3; color: var(--text);
+  margin-bottom: clamp(0.5rem, 1.5vw, 1rem);
+}
+
+.zen-subtitle {
+  font-size: clamp(0.85rem, 1.5vw, 1.1rem);
+  color: var(--text-muted); line-height: 1.7;
+  margin-top: 0.5rem;
+}
+
+.zen-body {
+  font-size: clamp(0.85rem, 1.5vw, 1.05rem);
+  font-weight: 300; line-height: 1.9;
+  color: var(--text);
+}
+
+.zen-caption {
+  font-size: clamp(0.65rem, 1vw, 0.8rem);
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+.zen-accent { color: var(--accent); font-weight: 600; }
+
+/* ── Decorative ── */
+.zen-rule {
+  display: flex; align-items: center; gap: 12px;
+  margin: clamp(1.5rem, 3vh, 2.5rem) 0;
+}
+.zen-rule::before,
+.zen-rule::after {
+  content: '';
+  width: 4px; height: 4px;
+  border-radius: 50%;
+  background: var(--rule);
+  flex-shrink: 0;
+}
+.zen-rule-line {
+  flex: 1; height: 1px;
+  background: var(--rule);
+}
+
+.zen-ghost-kanji {
+  position: absolute;
+  font-size: clamp(120px, 25vw, 240px);
+  font-weight: 900;
+  color: var(--text);
+  opacity: 0.06;
+  pointer-events: none; user-select: none;
+  font-family: "Noto Serif SC", serif;
+  line-height: 1;
+  right: -0.1em; bottom: -0.1em;
+}
+
+.zen-vline {
+  width: 1px; height: clamp(40px, 8vh, 80px);
+  background: var(--rule); margin: 0 auto;
+}
+
+.zen-seal {
+  display: inline-block;
+  width: 24px; height: 24px;
+  border: 1px solid var(--accent);
+  background: rgba(196,30,58,0.08);
+  border-radius: 2px;
+  vertical-align: middle;
+}
+
+/* ── Components ── */
+.zen-card {
+  padding: clamp(16px, 2.5vw, 24px);
+  border: 1px solid var(--rule);
+  border-radius: 2px;
+}
+
+.zen-list {
+  list-style: none; padding: 0;
+}
+.zen-list li {
+  padding: clamp(8px, 1.2vw, 14px) 0;
+  border-bottom: 1px solid var(--rule);
+  font-size: clamp(0.8rem, 1.3vw, 0.95rem);
+  line-height: 1.8;
+  color: var(--text);
+}
+.zen-list li:last-child { border-bottom: none; }
+
+.zen-stat {
+  text-align: center;
+  padding: clamp(16px, 2vw, 24px) 0;
+}
+.zen-stat .num {
+  font-family: "EB Garamond", serif;
+  font-size: clamp(2rem, 4vw, 3.5rem);
+  font-weight: 600; color: var(--text);
+}
+.zen-stat .label {
+  font-size: clamp(0.6rem, 1vw, 0.75rem);
+  letter-spacing: 0.15em; text-transform: uppercase;
+  color: var(--text-muted); margin-top: 4px;
+}
+
+kbd {
+  display: inline-block; padding: 2px 8px;
+  font-size: 0.8em; font-weight: 600;
+  background: transparent;
+  border: 1px solid var(--rule);
+  border-radius: 3px; color: var(--text);
+  vertical-align: middle;
+}
+
+.cmd {
+  padding: clamp(8px, 1.5vw, 14px) clamp(12px, 2vw, 18px);
+  border: 1px solid var(--rule);
+  border-radius: 2px;
+  font-family: "EB Garamond", monospace;
+  font-size: clamp(0.75rem, 1.2vw, 0.9rem);
+  color: var(--text); line-height: 1.6;
+}
+.cmd::before { content: '$ '; color: var(--text-muted); }
+
+/* ── Reveal ── */
 .reveal {
-    opacity: 0; transform: translateY(20px);
-    transition: opacity var(--duration-normal) var(--ease-out-expo),
-                transform var(--duration-normal) var(--ease-out-expo);
+  opacity: 0;
+  transition: opacity 0.8s ease;
 }
-.slide.visible .reveal { opacity: 1; transform: translateY(0); }
+.slide.visible .reveal { opacity: 1; }
+.reveal:nth-child(1) { transition-delay: 0.1s; }
+.reveal:nth-child(2) { transition-delay: 0.3s; }
+.reveal:nth-child(3) { transition-delay: 0.5s; }
 
-/* Progress bar */
-.progress-bar { position: fixed; top: 0; left: 0; height: 3px; background: var(--accent); width: 0%; z-index: 100; transition: width 0.3s ease; }
+/* ── Progress bar ── */
+.progress-bar {
+  position: fixed; top: 0; left: 0; height: 2px; z-index: 100;
+  background: var(--accent); width: 0%; transition: width 0.6s ease;
+}
 
-/* Nav dots placeholder */
-.nav-dots {}
+/* ── Nav dots ── */
+.nav-dots {
+  position: fixed; right: 1.5rem; top: 50%; transform: translateY(-50%);
+  display: flex; flex-direction: column; gap: 12px; z-index: 100;
+}
+.nav-dots button {
+  width: 6px; height: 6px; border-radius: 50%;
+  border: none; cursor: pointer;
+  background: var(--rule); transition: all 0.3s ease;
+}
+.nav-dots button.active {
+  background: var(--accent); transform: scale(1.5);
+}
 
+/* ── Responsive ── */
+@media (max-height: 700px) {
+  .slide { padding: clamp(1.5rem, 4vw, 3rem) clamp(1.5rem, 4vw, 3rem); }
+  .zen-title { font-size: clamp(1.4rem, 4vw, 2.5rem); }
+}
+@media (max-height: 600px) {
+  .nav-dots { display: none; }
+  .zen-title { font-size: clamp(1.2rem, 3.5vw, 2rem); }
+}
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.2s !important; }
+}
 
-/* ═══════════════════════════════════════════════
-   Present Mode — F5 / ▶ to enter, ESC to exit
-   ═══════════════════════════════════════════════ */
+/* ── Present Mode ── */
 #present-btn {
   position: fixed; bottom: 1.5rem; right: 1.5rem; z-index: 9997;
   width: 44px; height: 44px; border-radius: 50%;
-  background: rgba(0,0,0,0.50); color: rgba(255,255,255,0.80);
-  border: 1.5px solid rgba(255,255,255,0.20);
+  background: rgba(0,0,0,0.5); color: rgba(255,255,255,0.8);
+  border: 1.5px solid rgba(255,255,255,0.2);
   font-size: 1rem; cursor: pointer;
   backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
   display: flex; align-items: center; justify-content: center;
   opacity: 0; transition: opacity 0.2s; pointer-events: none;
 }
 body:hover #present-btn { opacity: 1; pointer-events: auto; }
-#present-btn:hover { background: rgba(0,0,0,0.78); }
 
 #present-counter {
   display: none; position: fixed; bottom: 1.4rem; left: 50%;
   transform: translateX(-50%); z-index: 9997;
-  font-size: 0.65rem; letter-spacing: 0.14em; font-family: system-ui, sans-serif;
-  color: rgba(255,255,255,0.28);
+  font-size: 0.65rem; letter-spacing: 0.14em;
+  color: var(--text-muted); opacity: 0.5;
 }
 
-body.presenting { background: #111 !important; overflow: hidden !important; }
+body.presenting { background: #000 !important; overflow: hidden !important; }
 body.presenting .slide {
   position: fixed !important; inset: 0;
-  width: 1440px !important; height: 900px !important;
+  width: var(--pdw, 1440px) !important; height: var(--pdh, 900px) !important;
   transform-origin: top left;
-  display: none !important; margin: 0; padding: 0;
+  transform: translate(var(--pox, 0px), var(--poy, 0px)) scale(var(--ps, 1)) !important;
+  scroll-snap-align: none !important; display: none !important;
 }
 body.presenting .slide.p-on { display: flex !important; }
-body.presenting .slide.p-on .reveal { opacity: 1; transform: translateY(0); }
 body.presenting #present-btn { display: none !important; }
 body.presenting #present-counter { display: block; }
-body.presenting .nav-dots,
-body.presenting #slide-counter,
-body.presenting .orb,
-body.presenting #notes-panel,
-body.presenting .edit-hotzone,
-body.presenting .edit-toggle,
-body.presenting .keyboard-hint { display: none !important; }
-
-body.presenting.presenting-black { background: #000 !important; }
-body.presenting.presenting-black .slide { display: none !important; }
-
+body.presenting .slide-credit { display: none !important; }
+body.presenting .nav-dots { display: none !important; }
 
 .slide-credit {
   position: absolute; bottom: 8px; right: 14px;
-  font-size: 9px; color: var(--text-secondary, #999);
+  font-size: 9px; color: var(--text-muted);
   opacity: 0.35; pointer-events: none; z-index: 1;
   font-family: system-ui, sans-serif;
 }
-body.presenting .slide-credit { display: none; }
 
-
+/* ── Edit Mode ── */
 .edit-hotzone {
-  position: fixed; top: 0; left: 0; width: 30px; height: 30px;
-  z-index: 9998; cursor: pointer;
+  position: fixed; top: 0; left: 0;
+  width: 80px; height: 80px; z-index: 10000; cursor: pointer;
 }
 .edit-toggle {
-  position: fixed; top: 12px; left: 12px; z-index: 9999;
-  padding: 6px 12px; border-radius: 8px; border: none;
-  background: rgba(0,0,0,0.50); color: rgba(255,255,255,0.70);
-  font-size: 0.75rem; cursor: pointer;
-  backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
-  opacity: 0; transition: opacity 0.3s; pointer-events: none;
+  position: fixed; top: 16px; left: 16px;
+  opacity: 0; pointer-events: none;
+  transition: opacity 0.3s ease; z-index: 10001;
+  background: var(--bg); border: 1px solid var(--rule); border-radius: 3px;
+  padding: 3px 8px; font-size: 0.65rem; color: var(--text-muted); cursor: pointer;
+  font-family: system-ui, sans-serif;
 }
-body:hover .edit-toggle { opacity: 1; pointer-events: auto; }
-body.editing .edit-toggle { opacity: 1; background: rgba(16,185,129,0.80); color: #fff; }
+.edit-toggle.show { opacity: 1; pointer-events: auto; }
+.edit-toggle.active { opacity: 1; pointer-events: auto; background: var(--accent); color: #fff; border-color: var(--accent); }
 
 #notes-panel {
-  position: fixed; bottom: 0; left: 0; right: 0; z-index: 9996;
-  background: rgba(0,0,0,0.85); backdrop-filter: blur(12px);
-  color: #fff; transform: translateY(100%); transition: transform 0.3s ease;
-  max-height: 40vh; display: flex; flex-direction: column;
+  display: none; position: fixed; bottom: 0; left: 0; right: 0;
+  z-index: 9998; background: var(--bg);
+  border-top: 1px solid var(--rule);
 }
-#notes-panel.active { transform: translateY(0); }
+#notes-panel.active { display: flex; flex-direction: column; }
 #notes-panel-header {
-  display: flex; align-items: center; gap: 8px;
-  padding: 8px 16px; border-bottom: 1px solid rgba(255,255,255,0.10);
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0.45rem 1.4rem; cursor: pointer; user-select: none;
 }
-#notes-panel-label { font-size: 0.7rem; letter-spacing: 0.1em; text-transform: uppercase; color: rgba(255,255,255,0.50); }
-#notes-body { flex: 1; padding: 8px; }
+#notes-panel-label {
+  flex: 1; font-size: 0.58rem; letter-spacing: 0.16em;
+  text-transform: uppercase; color: var(--text-muted);
+}
+#notes-collapse-btn {
+  flex: 1; text-align: right; font-size: 1rem;
+  color: var(--text-muted); background: none; border: none; cursor: pointer;
+}
+#notes-panel.collapsed #notes-collapse-btn { transform: rotate(180deg); }
 #notes-textarea {
-  width: 100%; height: 100%; border: none; background: transparent;
-  color: rgba(255,255,255,0.75); font-size: 0.88rem; line-height: 1.65;
-  font-family: system-ui, sans-serif; resize: none; outline: none;
-}
-
-
-@media (max-height: 700px) {
-    :root { --slide-padding: clamp(0.75rem, 3vw, 2rem); }
-}
-@media (prefers-reduced-motion: reduce) {
-    *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.2s !important; }
+  width: 100%; height: 72px; min-height: 48px; max-height: 200px;
+  resize: vertical; background: transparent; border: none; outline: none;
+  color: var(--text); font-size: 0.88rem; line-height: 1.65;
+  font-family: system-ui, sans-serif; padding: 0 1.4rem 0.75rem;
 }
 </style>
 </head>
 <body data-export-progress="true" data-preset="Chinese Chan">
 
 <div class="progress-bar"></div>
-<nav class="nav-dots" aria-label="Slide navigation"></nav>
+<nav class="nav-dots"></nav>
+
+<!-- Slide 1: Cover -->
+<section class="slide" data-notes="Welcome. This is kai-slide-creator — presentations that embrace silence.">
+<div class="reveal zen-ghost-kanji" style="font-size: clamp(8rem, 18vw, 14rem); opacity: 0.04;">空</div>
+<div class="slide-content" style="text-align: center; align-items: center;">
+  <div class="reveal zen-caption" style="margin-bottom: 16px; letter-spacing: 0.3em;">v2.16.0</div>
+  <div class="reveal zen-title" style="letter-spacing: 0.12em;">kai-slide-creator</div>
+  <div class="reveal zen-subtitle" style="margin-top: 12px;">Zero-Dependency HTML Presentations</div>
+  <div class="reveal" style="margin-top: 32px;">
+    <span class="zen-vline"></span>
+  </div>
+  <div class="reveal" style="margin-top: 20px; display: flex; gap: 20px; justify-content: center; font-size: clamp(0.7rem, 1.1vw, 0.8rem); color: var(--text-muted); letter-spacing: 0.1em;">
+    <span>21 presets</span>
+    <span>zero dependencies</span>
+    <span>pure browser</span>
+  </div>
+</div>
+</section>
+
+<!-- Slide 2: The Problem -->
+<section class="slide" data-notes="Most presentation tools prioritize features over clarity.">
+<div class="slide-content">
+  <div class="reveal zen-caption" style="margin-bottom: 8px;">The Problem</div>
+  <div class="reveal zen-h2">Clarity Lost in Complexity</div>
+  <div class="reveal zen-rule"></div>
+  <div class="reveal zen-body">
+    Presentation tools have become bloated with features nobody needs. Template marketplaces sell the same designs with different fonts. AI generators produce slides that all look the same — polished, generic, forgettable.
+  </div>
+  <div class="reveal zen-body" style="margin-top: 24px;">
+    We started from a simpler premise: <span class="zen-accent">content should breathe</span>. The space between elements communicates as much as the elements themselves.
+  </div>
+</div>
+</section>
+
+<!-- Slide 3: The Approach -->
+<section class="slide" data-notes="Design presets as the starting point, not an afterthought.">
+<div class="reveal zen-ghost-kanji" style="font-size: clamp(8rem, 18vw, 14rem); opacity: 0.04;">道</div>
+<div class="slide-content">
+  <div class="reveal zen-caption" style="margin-bottom: 8px;">The Way</div>
+  <div class="reveal zen-h2">Twenty-One Paths, One Principle</div>
+  <div class="reveal zen-rule"></div>
+  <div class="reveal zen-body" style="line-height: 2.2;">
+    Bold Signal &mdash; conviction<br>
+    Blue Sky &mdash; clarity<br>
+    Terminal Green &mdash; craft<br>
+    Enterprise Dark &mdash; structure<br>
+    Aurora Mesh &mdash; motion<br>
+    Modern Newspaper &mdash; narrative
+  </div>
+  <div class="reveal zen-body" style="margin-top: 20px;">
+    Each preset is a <span class="zen-accent">complete design language</span>, not a color swap. Fonts, spacing, components, rhythm — all cohesive.
+  </div>
+</div>
+</section>
+
+<!-- Slide 4: Core Modules -->
+<section class="slide" data-notes="Three modules, one file, no dependencies.">
+<div class="slide-content">
+  <div class="reveal zen-caption" style="margin-bottom: 8px;">Structure</div>
+  <div class="reveal zen-h2">Three Modules, One File</div>
+  <div class="reveal zen-rule"></div>
+  <div class="reveal" style="display: flex; gap: clamp(20px, 3vw, 40px); justify-content: center;">
+    <div class="reveal zen-stat">
+      <div class="num" style="font-size: clamp(2.5rem, 5vw, 4rem); color: var(--accent);">F5</div>
+      <div class="label">Play</div>
+    </div>
+    <div class="reveal zen-stat">
+      <div class="num" style="font-size: clamp(2.5rem, 5vw, 4rem); color: var(--accent);">P</div>
+      <div class="label">Present</div>
+    </div>
+    <div class="reveal zen-stat">
+      <div class="num" style="font-size: clamp(2.5rem, 5vw, 4rem); color: var(--accent);">E</div>
+      <div class="label">Edit</div>
+    </div>
+  </div>
+  <div class="reveal zen-body" style="text-align: center; margin-top: 16px;">
+    Fullscreen playback &middot; Speaker notes &middot; In-browser editing
+  </div>
+</div>
+</section>
+
+<!-- Slide 5: Play Mode -->
+<section class="slide" data-notes="Press F5. That's all it takes.">
+<div class="slide-content">
+  <div class="reveal zen-caption" style="margin-bottom: 8px;">Play</div>
+  <div class="reveal zen-h2">The Browser Is Your Projector</div>
+  <div class="reveal zen-rule"></div>
+  <ul class="reveal zen-list">
+    <li><kbd>F5</kbd> enters fullscreen — controls fade away</li>
+    <li>Arrow keys, scroll wheel, touch — all navigate</li>
+    <li>CSS scales to any screen without distortion</li>
+    <li>Zero installation, zero configuration</li>
+  </ul>
+  <div class="reveal zen-body" style="margin-top: 20px; color: var(--text-muted);">
+    No media player. No runtime. No build step.
+  </div>
+</div>
+</section>
+
+<!-- Slide 6: Presenter Mode -->
+<section class="slide" data-notes="Press P for your private window.">
+<div class="slide-content">
+  <div class="reveal zen-caption" style="margin-bottom: 8px;">Present</div>
+  <div class="reveal zen-h2">What You See, They Don't</div>
+  <div class="reveal zen-rule"></div>
+  <div class="reveal zen-body" style="line-height: 2;">
+    Speaker notes &mdash; invisible to the audience<br>
+    Slide counter &mdash; know where you are<br>
+    Elapsed timer &mdash; stay on schedule<br>
+    Navigation &mdash; flip without turning around
+  </div>
+  <div class="reveal zen-body" style="margin-top: 20px;">
+    Press <kbd>P</kbd>. A new window opens. The two stay <span class="zen-accent">in sync</span>.
+  </div>
+</div>
+</section>
+
+<!-- Slide 7: Edit Mode -->
+<section class="slide" data-notes="Press E, click text, save. No PowerPoint needed.">
+<div class="slide-content">
+  <div class="reveal zen-caption" style="margin-bottom: 8px;">Edit</div>
+  <div class="reveal zen-h2">Change It Where You See It</div>
+  <div class="reveal zen-rule"></div>
+  <div class="reveal zen-body" style="line-height: 2.4;">
+    <kbd>E</kbd> &mdash; enter edit mode<br>
+    Click any text &mdash; modify in place<br>
+    <kbd>Ctrl</kbd>+<kbd>S</kbd> &mdash; save the file
+  </div>
+  <div class="reveal zen-body" style="margin-top: 20px; color: var(--text-muted);">
+    No PowerPoint. No Figma. No build pipeline. Just the file, as it is.
+  </div>
+</div>
+</section>
+
+<!-- Slide 8: Commands -->
+<section class="slide" data-notes="Three commands cover the full lifecycle.">
+<div class="slide-content">
+  <div class="reveal zen-caption" style="margin-bottom: 8px;">Commands</div>
+  <div class="reveal zen-h2">Three Commands</div>
+  <div class="reveal zen-rule"></div>
+  <div class="reveal zen-body" style="line-height: 2.4;">
+    <span class="cmd">/slide-creator --plan</span><br>
+    <span style="color: var(--text-muted); font-size: clamp(0.75rem, 1.2vw, 0.85rem);">Generate an editable outline</span>
+  </div>
+  <div class="reveal zen-body" style="line-height: 2.4; margin-top: 8px;">
+    <span class="cmd">/slide-creator --generate</span><br>
+    <span style="color: var(--text-muted); font-size: clamp(0.75rem, 1.2vw, 0.85rem);">Build HTML with 16 quality checks</span>
+  </div>
+  <div class="reveal zen-body" style="line-height: 2.4; margin-top: 8px;">
+    <span class="cmd">/slide-creator --review</span><br>
+    <span style="color: var(--text-muted); font-size: clamp(0.75rem, 1.2vw, 0.85rem);">Inspect and fix existing files</span>
+  </div>
+</div>
+</section>
+
+<!-- Slide 9: Content Types -->
+<section class="slide" data-notes="Match your content to the right style.">
+<div class="slide-content">
+  <div class="reveal zen-caption" style="margin-bottom: 8px;">Matching</div>
+  <div class="reveal zen-h2">Content Knows Its Style</div>
+  <div class="reveal zen-rule"></div>
+  <div class="reveal zen-body" style="line-height: 2;">
+    Data reports &mdash; <span style="color: var(--text-muted);">Data Story, Enterprise Dark</span><br>
+    Pitch decks &mdash; <span style="color: var(--text-muted);">Bold Signal, Aurora Mesh</span><br>
+    Dev tools &mdash; <span style="color: var(--text-muted);">Terminal Green, Neon Cyber</span><br>
+    Research &mdash; <span style="color: var(--text-muted);">Modern Newspaper, Paper &amp; Ink</span><br>
+    Personal brand &mdash; <span style="color: var(--text-muted);">Split Pastel, Chinese Chan</span>
+  </div>
+</div>
+</section>
+
+<!-- Slide 10: Zero Dependencies -->
+<section class="slide" data-notes="No npm, no server, no build tools.">
+<div class="slide-content" style="text-align: center; align-items: center;">
+  <div class="reveal zen-caption" style="margin-bottom: 8px;">Foundation</div>
+  <div class="reveal zen-h2" style="text-align: center;">Nothing Between You and the Browser</div>
+  <div class="reveal zen-rule"></div>
+  <div class="reveal" style="display: flex; gap: clamp(24px, 4vw, 48px); justify-content: center;">
+    <div class="reveal zen-stat">
+      <div class="num">0</div>
+      <div class="label">Dependencies</div>
+    </div>
+    <div class="reveal zen-stat">
+      <div class="num">3</div>
+      <div class="label">Files</div>
+    </div>
+    <div class="reveal zen-stat">
+      <div class="num">1</div>
+      <div class="label">Requirement</div>
+    </div>
+  </div>
+  <div class="reveal zen-body" style="text-align: center; margin-top: 16px; color: var(--text-muted);">
+    HTML, CSS, JavaScript. That is all.
+  </div>
+</div>
+</section>
+
+<!-- Slide 11: Version History -->
+<section class="slide" data-notes="The tool evolves like a craft — steadily.">
+<div class="slide-content">
+  <div class="reveal zen-caption" style="margin-bottom: 8px;">Evolution</div>
+  <div class="reveal zen-h2">What Was Built, What Comes Next</div>
+  <div class="reveal zen-rule"></div>
+  <div class="reveal zen-body" style="line-height: 2.2;">
+    <span class="zen-accent">v1.x</span> &mdash; Play mode, edit mode, 7 presets<br>
+    <span class="zen-accent">v1.5</span> &mdash; 21 presets, cloud effects, orbital rings<br>
+    <span class="zen-accent">v2.x</span> &mdash; AI planning, review system, PPT export<br>
+    <span class="zen-accent">v2.16</span> &mdash; Render engine, component modifiers, 26 tests
+  </div>
+  <div class="reveal zen-body" style="margin-top: 16px; color: var(--text-muted);">
+    GitHub and ClawHub, dual-channel release.
+  </div>
+</div>
+</section>
+
+<!-- Slide 12: End -->
+<section class="slide" data-notes="Start with a preset. Let the content speak.">
+<div class="reveal zen-ghost-kanji" style="font-size: clamp(8rem, 16vw, 12rem); opacity: 0.04;">始</div>
+<div class="slide-content" style="text-align: center; align-items: center;">
+  <div class="reveal" style="margin-top: 40px;">
+    <div class="zen-seal" style="margin-bottom: 20px;"></div>
+  </div>
+  <div class="reveal zen-title" style="font-size: clamp(1.2rem, 3vw, 1.8rem); letter-spacing: 0.1em;">
+    Start with a Preset
+  </div>
+  <div class="reveal zen-subtitle" style="text-align: center; margin-top: 8px;">
+    Let the content speak for itself
+  </div>
+  <div class="reveal zen-rule" style="max-width: 200px; margin: 24px auto 0;"></div>
+  <div class="reveal cmd" style="text-align: left; margin-top: 16px; font-size: clamp(0.7rem, 1.1vw, 0.85rem);">
+    /slide-creator "your topic" --style "Chinese Chan"
+  </div>
+  <div class="reveal zen-body" style="text-align: center; margin-top: 12px; color: var(--text-muted); font-size: clamp(0.7rem, 1.1vw, 0.8rem);">
+    Three minutes to your first draft.
+  </div>
+</div>
+</section>
 
 <div class="edit-hotzone"></div>
 <button class="edit-toggle" id="editToggle" title="Edit mode (E)">✏ Edit</button>
 <div id="notes-panel">
   <div id="notes-panel-header">
-    <div id="notes-panel-label">SPEAKER NOTES</div>
-    <button id="notes-collapse-btn" title="Collapse">&#9660;</button>
+    <div id="notes-panel-label">SPEAKER NOTES — SLIDE 1 / 12</div>
+    <button id="notes-collapse-btn" title="Collapse / expand">▾</button>
   </div>
-  <div id="notes-body">
-    <textarea id="notes-textarea" placeholder="Add notes..."></textarea>
-  </div>
+  <textarea id="notes-textarea" placeholder="Add speaker notes…"></textarea>
 </div>
-
-<section class="slide" data-notes="Welcome audience. Introduce slide-creator vision.">
-<div class="content" style="text-align:center;">
-    <div class="reveal">
-        <span class="pill">Open Source · Claude Code · OpenClaw</span>
-    </div>
-    <div class="reveal" style="transition-delay:0.1s">
-        <h1>slide<span style="color:#c45d3e;">-creator</span></h1>
-    </div>
-    <div class="reveal" style="transition-delay:0.2s; max-width:560px; margin:0 auto;">
-        <p style="font-size:clamp(16px,2vw,22px); margin-bottom:clamp(20px,3vw,36px);">
-            Zero-dependency HTML presentations for<br>Claude Code &amp; OpenClaw
-        </p>
-    </div>
-    <div class="reveal" style="transition-delay:0.3s">
-        <div class="stats" style="justify-content:center; display:flex; gap:clamp(24px,4vw,48px);">
-            <div class="stat">
-                <span class="stat-value" style="font-size:clamp(2rem,5vw,3.5rem); font-weight:800; color:#c45d3e;">21</span>
-                <span class="stat-label" style="font-size:clamp(10px,1.2vw,13px); color:rgba(45,42,38,0.40); text-transform:uppercase; letter-spacing:0.08em;">Presets</span>
-            </div>
-            <div style="width:1px; background:rgba(196,93,62,0.20); align-self:stretch;"></div>
-            <div class="stat">
-                <span class="stat-value" style="font-size:clamp(2rem,5vw,3.5rem); font-weight:800; color:#c45d3e;">0</span>
-                <span class="stat-label" style="font-size:clamp(10px,1.2vw,13px); color:rgba(45,42,38,0.40); text-transform:uppercase; letter-spacing:0.08em;">Dependencies</span>
-            </div>
-            <div style="width:1px; background:rgba(196,93,62,0.20); align-self:stretch;"></div>
-            <div class="stat">
-                <span class="stat-value" style="font-size:clamp(2rem,5vw,3.5rem); font-weight:800; color:#c45d3e;">∞</span>
-                <span class="stat-label" style="font-size:clamp(10px,1.2vw,13px); color:rgba(45,42,38,0.40); text-transform:uppercase; letter-spacing:0.08em;">Slides</span>
-            </div>
-        </div>
-    </div>
-    <div class="reveal" style="transition-delay:0.4s; margin-top:clamp(20px,3vw,36px);">
-        <p style="font-size:clamp(12px,1.3vw,15px); color:rgba(45,42,38,0.40); letter-spacing:0.06em; text-transform:uppercase;">Build the deck that closes the deal.</p>
-    </div>
-</div>
-</section>
-
-<section class="slide" data-notes="Frame the problem: existing presentation tools are broken.">
-<div class="content">
-    <div class="reveal">
-        <span class="pill">The Problem</span>
-    </div>
-    <div class="reveal" style="transition-delay:0.1s">
-        <h2 style="margin-top:clamp(12px,2vw,20px);">Presentations shouldn't<br>require a <span style=&quot;color:var(--accent)&quot;>build system</span></h2>
-    </div>
-    <div class="sep reveal" style="transition-delay:0.15s; height:1px; background:rgba(196,93,62,0.20); margin:clamp(12px,2vw,20px) 0;"></div>
-    <div class="reveal" style="transition-delay:0.2s">
-        <div style="display:grid; gap:clamp(16px,3vw,32px);">
-            <div style="display:flex; gap:16px; align-items:start;">
-                <div style="flex-shrink:0; width:32px; height:32px; border-radius:8px; background:rgba(196,93,62,0.10); display:flex; align-items:center; justify-content:center; font-size:16px;">⚙️</div>
-                <div>
-                    <h3 style="font-size:clamp(14px,1.8vw,18px); font-weight:600; margin-bottom:4px;">Complex Toolchain</h3>
-                    <p style="font-size:clamp(13px,1.4vw,15px); color:rgba(45,42,38,0.70);">Node, Webpack, npm, plugins — just to make slides. Hours before you can present anything.</p>
-                </div>
-            </div>
-            <div style="display:flex; gap:16px; align-items:start;">
-                <div style="flex-shrink:0; width:32px; height:32px; border-radius:8px; background:rgba(196,93,62,0.10); display:flex; align-items:center; justify-content:center; font-size:16px;">📋</div>
-                <div>
-                    <h3 style="font-size:clamp(14px,1.8vw,18px); font-weight:600; margin-bottom:4px;">Generic Output</h3>
-                    <p style="font-size:clamp(13px,1.4vw,15px); color:rgba(45,42,38,0.70);">Every deck looks like every other deck. Templates that scream "I used the same tool as everyone else."</p>
-                </div>
-            </div>
-            <div style="display:flex; gap:16px; align-items:start;">
-                <div style="flex-shrink:0; width:32px; height:32px; border-radius:8px; background:rgba(196,93,62,0.10); display:flex; align-items:center; justify-content:center; font-size:16px;">🔒</div>
-                <div>
-                    <h3 style="font-size:clamp(14px,1.8vw,18px); font-weight:600; margin-bottom:4px;">No Ownership</h3>
-                    <p style="font-size:clamp(13px,1.4vw,15px); color:rgba(45,42,38,0.70);">Your slides live in someone else's cloud. Export is an afterthought. Vendor lock-in is the business model.</p>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-</section>
-
-<section class="slide" data-notes="Explain the style discovery workflow.">
-<div class="content">
-    <div class="reveal">
-        <span class="pill">Workflow</span>
-    </div>
-    <div class="reveal" style="transition-delay:0.1s">
-        <h2 style="margin-top:clamp(12px,2vw,20px);">Style discovery that<br><span style=&quot;color:var(--accent)&quot;>actually works</span></h2>
-    </div>
-    <div class="sep reveal" style="transition-delay:0.15s; height:1px; background:rgba(196,93,62,0.20); margin:clamp(12px,2vw,20px) 0;"></div>
-    <div class="reveal" style="transition-delay:0.2s">
-        <p style="font-size:clamp(14px,1.6vw,17px); color:rgba(45,42,38,0.70);">Describe your mood. Get three visual previews. Pick what feels right — before a single slide is written.</p>
-    </div>
-    <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); gap:clamp(12px,2vw,24px); margin-top:clamp(16px,3vw,32px);" class="reveal" style="transition-delay:0.3s">
-        <div style="background:rgba(196,93,62,0.06); border:1px solid rgba(196,93,62,0.15); border-radius:12px; padding:clamp(16px,3vw,24px);">
-            <div style="font-size:24px; margin-bottom:8px;">🎨</div>
-            <h3 style="font-size:clamp(13px,1.5vw,16px); font-weight:600;">Ask Mood</h3>
-            <p style="font-size:clamp(12px,1.3vw,14px); color:rgba(45,42,38,0.70); margin-top:4px;">"Bold and minimal" or "warm and creative" — natural language input.</p>
-        </div>
-        <div style="background:rgba(196,93,62,0.06); border:1px solid rgba(196,93,62,0.15); border-radius:12px; padding:clamp(16px,3vw,24px);">
-            <div style="font-size:24px; margin-bottom:8px;">👁</div>
-            <h3 style="font-size:clamp(13px,1.5vw,16px); font-weight:600;">3 Mini Previews</h3>
-            <p style="font-size:clamp(12px,1.3vw,14px); color:rgba(45,42,38,0.70); margin-top:4px;">Side-by-side renders of three matched styles before full generation.</p>
-        </div>
-        <div style="background:rgba(196,93,62,0.06); border:1px solid rgba(196,93,62,0.15); border-radius:12px; padding:clamp(16px,3vw,24px);">
-            <div style="font-size:24px; margin-bottom:8px;">✓</div>
-            <h3 style="font-size:clamp(13px,1.5vw,16px); font-weight:600;">Pick & Build</h3>
-            <p style="font-size:clamp(12px,1.3vw,14px); color:rgba(45,42,38,0.70); margin-top:4px;">Choose your style. The full presentation is generated in your chosen aesthetic.</p>
-        </div>
-    </div>
-</div>
-</section>
-
-<section class="slide" data-notes="Showcase all 21 presets. Highlight Chinese Chan.">
-<div class="content">
-    <div class="reveal">
-        <span class="pill">21 Presets</span>
-    </div>
-    <div class="reveal" style="transition-delay:0.1s">
-        <h2 style="margin-top:clamp(12px,2vw,20px);">Every presentation style,<br><span style=&quot;color:var(--accent)&quot;>already built</span></h2>
-    </div>
-    <div class="sep reveal" style="transition-delay:0.15s; height:1px; background:rgba(196,93,62,0.20); margin:clamp(12px,2vw,20px) 0;"></div>
-    <div class="reveal" style="transition-delay:0.2s; display:flex; flex-wrap:wrap; gap:8px;">
-        <span style="display:inline-block; padding:4px 12px; border-radius:999px; background:rgba(196,93,62,0.10); border:1px solid rgba(196,93,62,0.15); color:rgba(45,42,38,0.70); font-size:clamp(10px,1.2vw,13px); font-weight:500;">Aurora Mesh</span>
-        <span style="display:inline-block; padding:4px 12px; border-radius:999px; background:rgba(196,93,62,0.10); border:1px solid rgba(196,93,62,0.15); color:rgba(45,42,38,0.70); font-size:clamp(10px,1.2vw,13px); font-weight:500;">Bold Signal</span>
-        <span style="display:inline-block; padding:4px 12px; border-radius:999px; background:rgba(196,93,62,0.10); border:1px solid rgba(196,93,62,0.15); color:rgba(45,42,38,0.70); font-size:clamp(10px,1.2vw,13px); font-weight:500;">Blue Sky</span>
-        <span style="display:inline-block; padding:4px 12px; border-radius:999px; background:rgba(196,93,62,0.10); border:1px solid rgba(196,93,62,0.25); color:#c45d3e; font-size:clamp(10px,1.2vw,13px); font-weight:600;">Chinese Chan ✦</span>
-        <span style="display:inline-block; padding:4px 12px; border-radius:999px; background:rgba(196,93,62,0.10); border:1px solid rgba(196,93,62,0.15); color:rgba(45,42,38,0.70); font-size:clamp(10px,1.2vw,13px); font-weight:500;">Creative Voltage</span>
-        <span style="display:inline-block; padding:4px 12px; border-radius:999px; background:rgba(196,93,62,0.10); border:1px solid rgba(196,93,62,0.15); color:rgba(45,42,38,0.70); font-size:clamp(10px,1.2vw,13px); font-weight:500;">Dark Botanical</span>
-        <span style="display:inline-block; padding:4px 12px; border-radius:999px; background:rgba(196,93,62,0.10); border:1px solid rgba(196,93,62,0.15); color:rgba(45,42,38,0.70); font-size:clamp(10px,1.2vw,13px); font-weight:500;">Data Story</span>
-        <span style="display:inline-block; padding:4px 12px; border-radius:999px; background:rgba(196,93,62,0.10); border:1px solid rgba(196,93,62,0.15); color:rgba(45,42,38,0.70); font-size:clamp(10px,1.2vw,13px); font-weight:500;">Electric Studio</span>
-        <span style="display:inline-block; padding:4px 12px; border-radius:999px; background:rgba(196,93,62,0.10); border:1px solid rgba(196,93,62,0.15); color:rgba(45,42,38,0.70); font-size:clamp(10px,1.2vw,13px); font-weight:500;">Enterprise Dark</span>
-        <span style="display:inline-block; padding:4px 12px; border-radius:999px; background:rgba(196,93,62,0.10); border:1px solid rgba(196,93,62,0.15); color:rgba(45,42,38,0.70); font-size:clamp(10px,1.2vw,13px); font-weight:500;">Glassmorphism</span>
-        <span style="display:inline-block; padding:4px 12px; border-radius:999px; background:rgba(196,93,62,0.10); border:1px solid rgba(196,93,62,0.15); color:rgba(45,42,38,0.70); font-size:clamp(10px,1.2vw,13px); font-weight:500;">Modern Newspaper</span>
-        <span style="display:inline-block; padding:4px 12px; border-radius:999px; background:rgba(196,93,62,0.10); border:1px solid rgba(196,93,62,0.15); color:rgba(45,42,38,0.70); font-size:clamp(10px,1.2vw,13px); font-weight:500;">Neo Brutalism</span>
-        <span style="display:inline-block; padding:4px 12px; border-radius:999px; background:rgba(196,93,62,0.10); border:1px solid rgba(196,93,62,0.15); color:rgba(45,42,38,0.70); font-size:clamp(10px,1.2vw,13px); font-weight:500;">Neo Retro Dev</span>
-        <span style="display:inline-block; padding:4px 12px; border-radius:999px; background:rgba(196,93,62,0.10); border:1px solid rgba(196,93,62,0.15); color:rgba(45,42,38,0.70); font-size:clamp(10px,1.2vw,13px); font-weight:500;">Neon Cyber</span>
-        <span style="display:inline-block; padding:4px 12px; border-radius:999px; background:rgba(196,93,62,0.10); border:1px solid rgba(196,93,62,0.15); color:rgba(45,42,38,0.70); font-size:clamp(10px,1.2vw,13px); font-weight:500;">Notebook Tabs</span>
-        <span style="display:inline-block; padding:4px 12px; border-radius:999px; background:rgba(196,93,62,0.10); border:1px solid rgba(196,93,62,0.15); color:rgba(45,42,38,0.70); font-size:clamp(10px,1.2vw,13px); font-weight:500;">Paper & Ink</span>
-        <span style="display:inline-block; padding:4px 12px; border-radius:999px; background:rgba(196,93,62,0.10); border:1px solid rgba(196,93,62,0.15); color:rgba(45,42,38,0.70); font-size:clamp(10px,1.2vw,13px); font-weight:500;">Pastel Geometry</span>
-        <span style="display:inline-block; padding:4px 12px; border-radius:999px; background:rgba(196,93,62,0.10); border:1px solid rgba(196,93,62,0.15); color:rgba(45,42,38,0.70); font-size:clamp(10px,1.2vw,13px); font-weight:500;">Split Pastel</span>
-        <span style="display:inline-block; padding:4px 12px; border-radius:999px; background:rgba(196,93,62,0.10); border:1px solid rgba(196,93,62,0.15); color:rgba(45,42,38,0.70); font-size:clamp(10px,1.2vw,13px); font-weight:500;">Swiss Modern</span>
-        <span style="display:inline-block; padding:4px 12px; border-radius:999px; background:rgba(196,93,62,0.10); border:1px solid rgba(196,93,62,0.15); color:rgba(45,42,38,0.70); font-size:clamp(10px,1.2vw,13px); font-weight:500;">Terminal Green</span>
-        <span style="display:inline-block; padding:4px 12px; border-radius:999px; background:rgba(196,93,62,0.10); border:1px solid rgba(196,93,62,0.15); color:rgba(45,42,38,0.70); font-size:clamp(10px,1.2vw,13px); font-weight:500;">Vintage Editorial</span>
-    </div>
-</div>
-</section>
-
-<section class="slide" data-notes="Explain present mode: F5, fullscreen, speaker notes.">
-<div class="content">
-    <div class="reveal">
-        <span class="pill">Present Mode</span>
-    </div>
-    <div class="reveal" style="transition-delay:0.1s">
-        <h2 style="margin-top:clamp(12px,2vw,20px);">F5 to present.<br><span style=&quot;color:var(--accent)&quot;>Any screen, any size</span></h2>
-    </div>
-    <div class="sep reveal" style="transition-delay:0.15s; height:1px; background:rgba(196,93,62,0.20); margin:clamp(12px,2vw,20px) 0;"></div>
-    <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(180px,1fr)); gap:clamp(12px,2vw,20px);" class="reveal" style="transition-delay:0.2s">
-        <div style="background:rgba(196,93,62,0.06); border:1px solid rgba(196,93,62,0.15); border-radius:12px; padding:clamp(16px,3vw,24px);">
-            <div style="font-size:28px; margin-bottom:8px;">F5</div>
-            <h3 style="font-size:clamp(13px,1.5vw,16px); font-weight:600;">Fullscreen</h3>
-            <p style="font-size:clamp(12px,1.3vw,14px); color:rgba(45,42,38,0.70); margin-top:4px;">Slides scale to fill any display at 1440×900 aspect ratio.</p>
-        </div>
-        <div style="background:rgba(196,93,62,0.06); border:1px solid rgba(196,93,62,0.15); border-radius:12px; padding:clamp(16px,3vw,24px);">
-            <div style="font-size:28px; margin-bottom:8px;">P</div>
-            <h3 style="font-size:clamp(13px,1.5vw,16px); font-weight:600;">Presenter View</h3>
-            <p style="font-size:clamp(12px,1.3vw,14px); color:rgba(45,42,38,0.70); margin-top:4px;">Separate window with notes, timer, and slide counter.</p>
-        </div>
-        <div style="background:rgba(196,93,62,0.06); border:1px solid rgba(196,93,62,0.15); border-radius:12px; padding:clamp(16px,3vw,24px);">
-            <div style="font-size:28px; margin-bottom:8px;">B</div>
-            <h3 style="font-size:clamp(13px,1.5vw,16px); font-weight:600;">Black Screen</h3>
-            <p style="font-size:clamp(12px,1.3vw,14px); color:rgba(45,42,38,0.70); margin-top:4px;">Toggle black background during Q&A to focus attention.</p>
-        </div>
-    </div>
-</div>
-</section>
-
-<section class="slide" data-notes="Explain edit mode: E key, contenteditable, save.">
-<div class="content">
-    <div class="reveal">
-        <span class="pill">Edit Mode</span>
-    </div>
-    <div class="reveal" style="transition-delay:0.1s">
-        <h2 style="margin-top:clamp(12px,2vw,20px);">Edit in the browser.<br><span style=&quot;color:var(--accent)&quot;>Save to disk</span></h2>
-    </div>
-    <div class="sep reveal" style="transition-delay:0.15s; height:1px; background:rgba(196,93,62,0.20); margin:clamp(12px,2vw,20px) 0;"></div>
-    <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(180px,1fr)); gap:clamp(12px,2vw,20px);" class="reveal" style="transition-delay:0.2s">
-        <div style="background:rgba(196,93,62,0.06); border:1px solid rgba(196,93,62,0.15); border-radius:12px; padding:clamp(16px,3vw,24px);">
-            <div style="font-size:28px; margin-bottom:8px;">E</div>
-            <h3 style="font-size:clamp(13px,1.5vw,16px); font-weight:600;">Toggle Edit</h3>
-            <p style="font-size:clamp(12px,1.3vw,14px); color:rgba(45,42,38,0.70); margin-top:4px;">Hover the hotzone top-left. Click ✏ Edit. All text becomes editable.</p>
-        </div>
-        <div style="background:rgba(196,93,62,0.06); border:1px solid rgba(196,93,62,0.15); border-radius:12px; padding:clamp(16px,3vw,24px);">
-            <div style="font-size:28px; margin-bottom:8px;">📝</div>
-            <h3 style="font-size:clamp(13px,1.5vw,16px); font-weight:600;">Speaker Notes</h3>
-            <p style="font-size:clamp(12px,1.3vw,14px); color:rgba(45,42,38,0.70); margin-top:4px;">Notes panel slides up from bottom. Notes sync to presenter view.</p>
-        </div>
-        <div style="background:rgba(196,93,62,0.06); border:1px solid rgba(196,93,62,0.15); border-radius:12px; padding:clamp(16px,3vw,24px);">
-            <div style="font-size:28px; margin-bottom:8px;">⌘S</div>
-            <h3 style="font-size:clamp(13px,1.5vw,16px); font-weight:600;">Save File</h3>
-            <p style="font-size:clamp(12px,1.3vw,14px); color:rgba(45,42,38,0.70); margin-top:4px;">Ctrl+S downloads the edited HTML. Self-contained, zero dependencies.</p>
-        </div>
-    </div>
-</div>
-</section>
-
-<section class="slide" data-notes="How to install and use slide-creator.">
-<div class="content">
-    <div class="reveal">
-        <span class="pill">Getting Started</span>
-    </div>
-    <div class="reveal" style="transition-delay:0.1s">
-        <h2 style="margin-top:clamp(12px,2vw,20px);">Three commands.<br><span style=&quot;color:var(--accent)&quot;>Zero friction</span></h2>
-    </div>
-    <div class="sep reveal" style="transition-delay:0.15s; height:1px; background:rgba(196,93,62,0.20); margin:clamp(12px,2vw,20px) 0;"></div>
-    <div style="display:grid; gap:clamp(12px,2vw,20px);" class="reveal" style="transition-delay:0.2s">
-        <div style="background:rgba(196,93,62,0.06); border:1px solid rgba(196,93,62,0.15); border-radius:12px; padding:clamp(16px,3vw,24px); display:flex; align-items:center; gap:16px;">
-            <div style="font-size:clamp(14px,1.5vw,18px); font-weight:800; color:#c45d3e; font-family:monospace;">/slide-creator</div>
-            <p style="font-size:clamp(13px,1.4vw,15px); color:rgba(45,42,38,0.70); flex:1;">Interactive mode — describe your mood, pick a style, get a deck</p>
-        </div>
-        <div style="background:rgba(196,93,62,0.06); border:1px solid rgba(196,93,62,0.15); border-radius:12px; padding:clamp(16px,3vw,24px); display:flex; align-items:center; gap:16px;">
-            <div style="font-size:clamp(14px,1.5vw,18px); font-weight:800; color:#c45d3e; font-family:monospace;">/slide-creator --plan</div>
-            <p style="font-size:clamp(13px,1.4vw,15px); color:rgba(45,42,38,0.70); flex:1;">Generate outline — review and edit before building</p>
-        </div>
-        <div style="background:rgba(196,93,62,0.06); border:1px solid rgba(196,93,62,0.15); border-radius:12px; padding:clamp(16px,3vw,24px); display:flex; align-items:center; gap:16px;">
-            <div style="font-size:clamp(14px,1.5vw,18px); font-weight:800; color:#c45d3e; font-family:monospace;">/slide-creator --generate</div>
-            <p style="font-size:clamp(13px,1.4vw,15px); color:rgba(45,42,38,0.70); flex:1;">Build from PLANNING.md — full HTML with all modes</p>
-        </div>
-    </div>
-</div>
-</section>
-
-<section class="slide" data-notes="Closing CTA. Install link and takeaway.">
-<div class="content" style="text-align:center;">
-    <div class="reveal">
-        <h1 style="font-size:clamp(2rem,5.5vw,4rem);">Stop making slides.<br>Start telling stories.</h1>
-    </div>
-    <div class="sep reveal" style="transition-delay:0.1s; height:1px; background:rgba(196,93,62,0.20); margin:clamp(16px,3vw,28px) auto; width:60px;"></div>
-    <div class="reveal" style="transition-delay:0.2s">
-        <p style="font-size:clamp(14px,2vw,20px); color:rgba(45,42,38,0.70); max-width:520px; margin:0 auto;">
-            One HTML file. Every style. Any browser. No build step.
-        </p>
-    </div>
-    <div class="reveal" style="transition-delay:0.3s; margin-top:clamp(20px,3vw,36px);">
-        <div style="font-size:clamp(13px,1.5vw,16px); font-family:monospace; background:rgba(196,93,62,0.06); border:1px solid rgba(196,93,62,0.15); border-radius:12px; padding:clamp(12px,2vw,20px); display:inline-block;">
-            <span style="color:#c45d3e;">$</span> clawhub install kai-slide-creator
-        </div>
-    </div>
-    <div class="reveal" style="transition-delay:0.4s; margin-top:clamp(12px,2vw,24px);">
-        <p style="font-size:clamp(11px,1.2vw,14px); color:rgba(45,42,38,0.40); letter-spacing:0.04em;">github.com/kaisersong/slide-creator</p>
-    </div>
-</div>
-</section>
-
 
 <script>
-
-class PresentMode {
-  constructor(ctrl) {
-    this.ctrl = ctrl; this.DW = 1440; this.DH = 900; this.active = false;
-    this._resize = () => this._scale();
-    const btn = document.createElement('button');
-    btn.id = 'present-btn'; btn.title = 'Present (F5)';
-    btn.setAttribute('aria-label', 'Present'); btn.textContent = '\u25b6';
-    document.body.appendChild(btn);
-    const counter = document.createElement('div');
-    counter.id = 'present-counter'; document.body.appendChild(counter);
-    btn.addEventListener('click', () => this.enter());
-    document.addEventListener('keydown', e => {
-      if (e.key === 'F5') { e.preventDefault(); this.enter(); }
-      if (e.key === 'Escape' && this.active) this.exit();
-      if ((e.key === 'b' || e.key === 'B') && this.active) document.body.classList.toggle('presenting-black');
-    });
-    document.addEventListener('fullscreenchange', () => { if (!document.fullscreenElement && this.active) this.exit(); });
-  }
-  enter() {
-    if (this.active) return; this.active = true;
-    document.body.classList.add('presenting');
-    document.documentElement.requestFullscreen?.().catch(() => {});
-    window.addEventListener('resize', this._resize); this._scale(); this._show(this.ctrl.currentSlide);
-    this._origGoTo = this.ctrl.goTo.bind(this.ctrl);
-    this.ctrl.goTo = (i) => {
-      const idx = Math.max(0, Math.min(i, this.ctrl.slides.length - 1));
-      this.ctrl.currentSlide = idx;
-      this.ctrl.slides.forEach((s, j) => s.classList.toggle('visible', j === idx));
-      this._show(idx); this.ctrl.updateProgress?.(); this.ctrl.updateDots?.(); this.ctrl.broadcastState?.();
-    };
-  }
-  exit() {
-    if (!this.active) return; this.active = false;
-    document.body.classList.remove('presenting', 'presenting-black');
-    document.exitFullscreen?.().catch(() => {});
-    window.removeEventListener('resize', this._resize);
-    this.ctrl.goTo = this._origGoTo;
-    this.ctrl.goTo(this.ctrl.currentSlide);
-    setTimeout(() => this.ctrl.slides[this.ctrl.currentSlide]?.scrollIntoView(), 50);
-  }
-  _scale() {
-    const sw = window.innerWidth / this.DW, sh = window.innerHeight / this.DH, s = Math.min(sw, sh);
-    document.querySelectorAll('body.presenting .slide').forEach(sl => {
-      sl.style.transform = `translate(-50%, -50%) scale(${s})`;
-    });
-  }
-  _show(n) {
-    this.ctrl.slides.forEach((sl, i) => {
-      sl.classList.toggle('p-on', i === n);
-      sl.querySelectorAll('.reveal').forEach(r => {
-        r.classList.toggle('visible', i === n);
-      });
-    });
-    const counter = document.getElementById('present-counter');
-    if (counter) counter.textContent = `${n + 1} / ${this.ctrl.slides.length}`;
-  }
-}
-
-
 class SlidePresentation {
   constructor() {
     this.slides = document.querySelectorAll('.slide');
     this.currentSlide = 0;
     this.channel = new BroadcastChannel('slide-creator-presenter');
-    // CRITICAL: Make first slide visible immediately
+
     this.slides[0]?.classList.add('visible');
     this.slides[0]?.querySelectorAll('.reveal').forEach(function(r) { r.classList.add('visible'); });
+
     this.setupNavDots();
     this.setupObserver();
     this.setupKeyboard();
@@ -529,194 +586,309 @@ class SlidePresentation {
     this.setupWheel();
     this.setupPresenter();
     this.updateProgress();
+    this.setupEditor();
   }
+
   setupNavDots() {
-    const nav = document.querySelector('.nav-dots');
+    var nav = document.querySelector('.nav-dots');
+    var self = this;
     if (!nav) return;
-    this.slides.forEach((_, i) => {
-      const dot = document.createElement('button');
-      dot.setAttribute('aria-label', `Go to slide ${i + 1}`);
-      dot.style.cssText = 'width:8px;height:8px;border-radius:50%;border:none;cursor:pointer;background:rgba(255,255,255,0.3);transition:all 0.3s;';
-      dot.addEventListener('click', () => this.goTo(i));
+    this.slides.forEach(function(_, i) {
+      var dot = document.createElement('button');
+      dot.setAttribute('aria-label', 'Go to slide ' + (i + 1));
+      dot.addEventListener('click', function() { self.goTo(i); });
       nav.appendChild(dot);
     });
-    nav.style.cssText = 'position:fixed;right:1.5rem;top:50%;transform:translateY(-50%);display:flex;flex-direction:column;gap:8px;z-index:100;';
   }
+
   setupObserver() {
-    const observer = new IntersectionObserver((entries) => {
-      entries.forEach(entry => {
+    var self = this;
+    var observer = new IntersectionObserver(function(entries) {
+      entries.forEach(function(entry) {
         if (entry.isIntersecting) {
           entry.target.classList.add('visible');
-          this.currentSlide = [...this.slides].indexOf(entry.target);
-          this.updateProgress();
-          this.updateDots();
-          this.broadcastState();
-          this.updateNotesPanel();
+          self.currentSlide = Array.prototype.indexOf.call(self.slides, entry.target);
+          self.updateProgress();
+          self.updateDots();
+          self.broadcastState();
+          self.updateNotesPanel();
         }
       });
     }, { threshold: 0.5 });
-    this.slides.forEach(s => observer.observe(s));
+    this.slides.forEach(function(s) { observer.observe(s); });
   }
+
   setupKeyboard() {
-    document.addEventListener('keydown', (e) => {
-      if (e.target.getAttribute('contenteditable')) return;
+    var self = this;
+    document.addEventListener('keydown', function(e) {
+      if (e.target.getAttribute('contenteditable') || e.target.tagName === 'TEXTAREA') return;
       if (e.key === 'ArrowDown' || e.key === 'ArrowRight' || e.key === ' ' || e.key === 'PageDown' || e.key === 'Enter') {
-        e.preventDefault(); this.next();
-      } else if (e.key === 'ArrowUp' || e.key === 'ArrowLeft' || e.key === 'PageUp' || e.key === 'Backspace') {
-        e.preventDefault(); this.prev();
+        e.preventDefault(); self.next();
+      } else if (e.key === 'ArrowUp' || e.key === 'ArrowLeft' || e.key === 'PageUp') {
+        e.preventDefault(); self.prev();
       } else if (e.key === 'p' || e.key === 'P') {
-        const url = location.href.split('?')[0] + '?presenter';
+        var url = location.href.split('?')[0] + '?presenter';
         window.open(url, 'slide-presenter-' + Date.now(), 'width=1100,menubar=no,toolbar=no,location=no');
       }
     });
   }
+
   setupTouch() {
-    let startY = 0;
-    document.addEventListener('touchstart', e => { startY = e.touches[0].clientY; }, { passive: true });
-    document.addEventListener('touchend', e => {
-      const delta = startY - e.changedTouches[0].clientY;
-      if (Math.abs(delta) > 50) delta > 0 ? this.next() : this.prev();
+    var self = this;
+    var startY = 0;
+    document.addEventListener('touchstart', function(e) { startY = e.touches[0].clientY; }, { passive: true });
+    document.addEventListener('touchend', function(e) {
+      var delta = startY - e.changedTouches[0].clientY;
+      if (Math.abs(delta) > 50) delta > 0 ? self.next() : self.prev();
     });
   }
+
   setupWheel() {}
+
   setupPresenter() {
-    this.channel.addEventListener('message', e => {
-      if (e.data.type === 'nav-next') this.next();
-      else if (e.data.type === 'nav-prev') this.prev();
-      else if (e.data.type === 'request-state') this.broadcastState();
+    var self = this;
+    this.channel.addEventListener('message', function(e) {
+      if (e.data.type === 'nav-next') self.next();
+      else if (e.data.type === 'nav-prev') self.prev();
+      else if (e.data.type === 'request-state') self.broadcastState();
     });
   }
+
   broadcastState() {
-    const slide = this.slides[this.currentSlide];
+    var slide = this.slides[this.currentSlide];
     this.channel.postMessage({
       type: 'state', index: this.currentSlide,
-      total: this.slides.length, notes: slide?.dataset.notes || ''
+      total: this.slides.length,
+      notes: slide ? slide.dataset.notes || '' : ''
     });
   }
+
   goTo(index) {
-    this.slides.forEach((slide, i) => {
+    this.slides.forEach(function(slide, i) {
       slide.classList.toggle('visible', i === index);
-      var reveals = slide.querySelectorAll('.reveal');
-      reveals.forEach(function(r) { r.classList.toggle('visible', i === index); });
+      slide.querySelectorAll('.reveal').forEach(function(r) { r.classList.toggle('visible', i === index); });
     });
     this.slides[index]?.scrollIntoView({ behavior: 'smooth' });
   }
   next() { this.goTo(Math.min(this.currentSlide + 1, this.slides.length - 1)); }
   prev() { this.goTo(Math.max(this.currentSlide - 1, 0)); }
+
   updateProgress() {
-    const pct = (this.currentSlide / (this.slides.length - 1)) * 100;
-    const bar = document.querySelector('.progress-bar');
+    var pct = (this.currentSlide / (this.slides.length - 1)) * 100;
+    var bar = document.querySelector('.progress-bar');
     if (bar) bar.style.width = pct + '%';
   }
+
   updateDots() {
-    document.querySelectorAll('.nav-dots button').forEach((dot, i) => {
-      dot.style.background = i === this.currentSlide ? 'var(--accent)' : 'rgba(255,255,255,0.3)';
-      dot.style.transform = i === this.currentSlide ? 'scale(1.3)' : 'scale(1)';
+    var self = this;
+    document.querySelectorAll('.nav-dots button').forEach(function(dot, i) {
+      dot.classList.toggle('active', i === self.currentSlide);
     });
   }
-  updateNotesPanel() {
-    const label = document.getElementById('notes-panel-label');
-    const textarea = document.getElementById('notes-textarea');
-    if (label) label.textContent = `SPEAKER NOTES — SLIDE ${this.currentSlide + 1} / ${this.slides.length}`;
-    if (textarea) textarea.value = this.slides[this.currentSlide]?.dataset.notes || '';
-  }
+
   setupEditor() {
-    const panel = document.getElementById('notes-panel');
-    const textarea = document.getElementById('notes-textarea');
-    const toggle = document.getElementById('editToggle');
-    const hotzone = document.querySelector('.edit-hotzone');
-    const header = document.getElementById('notes-panel-header');
-    const collapseBtn = document.getElementById('notes-collapse-btn');
-    let hideTimeout = null;
-    this.editor = { active: false };
-    hotzone.addEventListener('mouseenter', () => { clearTimeout(hideTimeout); toggle.classList.add('show'); });
-    hotzone.addEventListener('mouseleave', () => { hideTimeout = setTimeout(() => { if (!this.editor.active) toggle.classList.remove('show'); }, 400); });
-    toggle.addEventListener('mouseenter', () => clearTimeout(hideTimeout));
-    toggle.addEventListener('mouseleave', () => { hideTimeout = setTimeout(() => { if (!this.editor.active) toggle.classList.remove('show'); }, 400); });
-    toggle.addEventListener('click', (e) => {
-      e.stopPropagation();
-      this.editor.active = !this.editor.active;
-      document.body.classList.toggle('editing', this.editor.active);
-      toggle.classList.toggle('active', this.editor.active);
-      toggle.textContent = this.editor.active ? '✓ Done' : '✏ Edit';
-      if (this.editor.active) {
-        panel.classList.add('active');
-        textarea.value = this.slides[this.currentSlide]?.dataset.notes || '';
-        textarea.focus();
-      } else {
-        panel.classList.remove('active');
+    var self = this;
+    var panel = document.getElementById('notes-panel');
+    var label = document.getElementById('notes-panel-label');
+    var textarea = document.getElementById('notes-textarea');
+    var toggle = document.getElementById('editToggle');
+    var hotzone = document.querySelector('.edit-hotzone');
+    var hideTimeout = null;
+
+    hotzone.addEventListener('mouseenter', function() { clearTimeout(hideTimeout); toggle.classList.add('show'); });
+    hotzone.addEventListener('mouseleave', function() { hideTimeout = setTimeout(function() { if (!self.editor.active) toggle.classList.remove('show'); }, 400); });
+    toggle.addEventListener('mouseenter', function() { clearTimeout(hideTimeout); });
+    toggle.addEventListener('mouseleave', function() { hideTimeout = setTimeout(function() { if (!self.editor.active) toggle.classList.remove('show'); }, 400); });
+    hotzone.addEventListener('click', function() { self.editor.toggle(); });
+    toggle.addEventListener('click', function() { self.editor.toggle(); });
+
+    document.getElementById('notes-panel-header').addEventListener('click', function() {
+      panel.classList.toggle('collapsed');
+    });
+
+    textarea.addEventListener('input', function() {
+      var slide = self.slides[self.currentSlide];
+      if (slide) { slide.dataset.notes = textarea.value; self.broadcastState(); }
+    });
+
+    document.addEventListener('keydown', function(e) {
+      if ((e.ctrlKey || e.metaKey) && e.key === 's') {
+        e.preventDefault(); self.saveFile();
+      }
+      if ((e.key === 'e' || e.key === 'E') && !e.target.getAttribute('contenteditable') && e.target.tagName !== 'TEXTAREA') {
+        self.editor.toggle();
       }
     });
-    header.addEventListener('click', (e) => {
-      if (e.target === collapseBtn) { panel.classList.toggle('collapsed'); return; }
-    });
-    textarea.addEventListener('input', () => {
-      const slide = this.slides[this.currentSlide];
-      if (slide) slide.dataset.notes = textarea.value;
-      this.channel.postMessage({ type: 'state', index: this.currentSlide, total: this.slides.length, notes: textarea.value });
-    });
+
+    this._notesLabel = label;
+    this._notesTextarea = textarea;
+
+    this.editor = {
+      active: false,
+      toggle: function() { self.editor.active ? self.editor.exit() : self.editor.enter(); },
+      enter: function() {
+        self.editor.active = true;
+        toggle.classList.add('active');
+        toggle.textContent = '\u2713 Done';
+        self.slides.forEach(function(s) {
+          s.querySelectorAll('h1,h2,h3,p,li,span,td,th,.zen-title,.zen-h2,.zen-body,.zen-subtitle,.zen-caption,.zen-accent,.cmd,.zen-stat .num,.zen-stat .label').forEach(function(el) {
+            el.setAttribute('contenteditable', 'true');
+            el.style.outline = 'none';
+          });
+        });
+        panel.classList.add('active');
+        self.updateNotesPanel();
+      },
+      exit: function() {
+        self.editor.active = false;
+        toggle.classList.remove('active');
+        toggle.textContent = '\u270F Edit';
+        self.slides.forEach(function(s) {
+          s.querySelectorAll('[contenteditable]').forEach(function(el) {
+            el.removeAttribute('contenteditable');
+            el.style.outline = '';
+          });
+        });
+        panel.classList.remove('active');
+      }
+    };
+  }
+
+  updateNotesPanel() {
+    if (!this.editor || !this.editor.active) return;
+    var slide = this.slides[this.currentSlide];
+    this._notesLabel.textContent = 'SPEAKER NOTES — SLIDE ' + (this.currentSlide + 1) + ' / ' + this.slides.length;
+    this._notesTextarea.value = slide ? slide.dataset.notes || '' : '';
+  }
+
+  saveFile() {
+    var html = '<!DOCTYPE html>\n' + document.documentElement.outerHTML;
+    var a = document.createElement('a');
+    a.href = URL.createObjectURL(new Blob([html], { type: 'text/html' }));
+    a.download = location.pathname.split('/').pop() || 'presentation.html';
+    a.click();
   }
 }
-
-/* Presenter Mode */
 
 if (new URLSearchParams(location.search).has('presenter')) {
   document.title = 'Presenter — ' + document.title;
-  document.body.innerHTML = `
-  <style>
-  body { margin: 0; background: #111; color: #fff; font-family: system-ui, sans-serif; }
-  #pv { display: flex; height: 100vh; }
-  .pv-panel { background: #1a1a1a; border-right: 1px solid #333; padding: 12px; }
-  #pv-right { flex: 1; display: flex; flex-direction: column; }
-  #pv-nav { display: flex; align-items: center; gap: 12px; }
-  .pv-arrow { background: #333; color: #fff; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; }
-  #pv-counter { display: flex; align-items: baseline; gap: 4px; }
-  #pv-num { font-size: 1.5rem; font-weight: 700; }
-  #pv-of { font-size: 0.875rem; color: #888; }
-  #pv-timer-label { font-size: 0.7rem; color: #888; text-transform: uppercase; letter-spacing: 0.1em; }
-  #pv-timer { font-size: 2rem; font-weight: 700; font-family: monospace; }
-  #pv-notes { white-space: pre-wrap; font-size: 0.875rem; line-height: 1.6; color: #ccc; margin-top: 8px; }
-  #pv-label { font-weight: 600; font-size: 0.75rem; color: #888; text-transform: uppercase; letter-spacing: 0.1em; }
-  #pv-timer-box { margin-top: auto; padding: 12px !important; }
-  </style>
-  <div id="pv">
-    <div class="pv-panel"><div id="pv-label">Speaker Notes</div><div id="pv-notes">Waiting for main window...</div></div>
-    <div id="pv-right">
-      <div class="pv-panel"><div id="pv-nav"><button class="pv-arrow" id="pv-prev">←</button><div id="pv-counter"><div id="pv-num">—</div><div id="pv-of">/ —</div></div><button class="pv-arrow" id="pv-next">→</button></div></div>
-      <div class="pv-panel" id="pv-timer-box"><div id="pv-timer-label">Elapsed</div><div id="pv-timer">0:00</div></div>
-    </div>
-  </div>`;
-  const ch = new BroadcastChannel('slide-creator-presenter');
-  let startTime = null;
-  const pv = document.getElementById('pv');
-  let lastH = 0, roTimer = null;
-  new ResizeObserver(() => { clearTimeout(roTimer); roTimer = setTimeout(() => { const h = Math.ceil(pv.getBoundingClientRect().height); if (h === lastH) return; lastH = h; const chrome = window.outerHeight - window.innerHeight; window.resizeTo(window.outerWidth, Math.max(260, h + chrome + 4)); }, 40); }).observe(pv);
-  ch.addEventListener('message', e => { if (e.data.type !== 'state') return; if (!startTime) startTime = Date.now(); document.getElementById('pv-notes').textContent = e.data.notes || '(no notes for this slide)'; document.getElementById('pv-num').textContent = e.data.index + 1; document.getElementById('pv-of').textContent = `/ ${e.data.total}`; });
+  document.body.innerHTML =
+    '<style>' +
+    '* { box-sizing: border-box; margin: 0; }' +
+    'body { background: #FAFAF8; color: #1a1a18; font-family: system-ui, sans-serif; }' +
+    '#pv { display: grid; grid-template-columns: 1fr 220px; gap: 1rem; padding: 1.25rem; align-items: start; }' +
+    '.pv-panel { background: #fff; border: 1px solid rgba(26,26,24,0.12); border-radius: 4px; padding: 1.25rem; }' +
+    '#pv-label { font-size: 0.6rem; letter-spacing: 0.18em; text-transform: uppercase; color: #6b6b68; margin-bottom: 0.6rem; }' +
+    '#pv-notes { font-size: 1.05rem; line-height: 1.85; color: #333; }' +
+    '#pv-right { display: flex; flex-direction: column; gap: 1rem; }' +
+    '#pv-nav { display: flex; align-items: center; justify-content: space-between; gap: 0.5rem; }' +
+    '.pv-arrow { width: 32px; height: 32px; border-radius: 3px; border: 1px solid rgba(26,26,24,0.15); background: #fff; color: #6b6b68; font-size: 1rem; cursor: pointer; display: flex; align-items: center; justify-content: center; }' +
+    '.pv-arrow:hover { background: #f0f0ee; }' +
+    '#pv-num { font-size: 1.6rem; font-weight: 700; line-height: 1; }' +
+    '#pv-of { color: #6b6b68; font-size: 0.75rem; margin-top: 0.2rem; }' +
+    '#pv-timer { font-size: 1.5rem; font-weight: 700; font-family: monospace; }' +
+    '</style>' +
+    '<div id="pv">' +
+    '<div class="pv-panel"><div id="pv-label">Speaker Notes</div><div id="pv-notes">Loading...</div></div>' +
+    '<div id="pv-right">' +
+    '<div class="pv-panel"><div id="pv-nav">' +
+    '<button class="pv-arrow" id="pv-prev">←</button>' +
+    '<div><div id="pv-num">—</div><div id="pv-of">/ —</div></div>' +
+    '<button class="pv-arrow" id="pv-next">→</button>' +
+    '</div></div>' +
+    '<div class="pv-panel"><div style="font-size:0.6rem;letter-spacing:0.18em;text-transform:uppercase;color:#6b6b68;margin-bottom:0.3rem;">Elapsed</div><div id="pv-timer">0:00</div></div>' +
+    '</div></div>';
+
+  var ch = new BroadcastChannel('slide-creator-presenter');
+  var startTime = null;
+  var pv = document.getElementById('pv');
+  new ResizeObserver(function() {
+    var h = Math.ceil(pv.getBoundingClientRect().height);
+    var chrome = window.outerHeight - window.innerHeight;
+    window.resizeTo(window.outerWidth, Math.max(260, h + chrome + 4));
+  }).observe(pv);
+
+  ch.addEventListener('message', function(e) {
+    if (e.data.type !== 'state') return;
+    if (!startTime) startTime = Date.now();
+    document.getElementById('pv-notes').textContent = e.data.notes || '(no notes)';
+    document.getElementById('pv-num').textContent = e.data.index + 1;
+    document.getElementById('pv-of').textContent = '/ ' + e.data.total;
+  });
   ch.postMessage({ type: 'request-state' });
-  setInterval(() => { if (!startTime) return; const s = Math.floor((Date.now() - startTime) / 1000); document.getElementById('pv-timer').textContent = `${Math.floor(s / 60)}:${String(s % 60).padStart(2, '0')}`; }, 1000);
-  document.getElementById('pv-prev').addEventListener('click', () => ch.postMessage({ type: 'nav-prev' }));
-  document.getElementById('pv-next').addEventListener('click', () => ch.postMessage({ type: 'nav-next' }));
-  document.addEventListener('keydown', e => {
-    if (e.key === 'ArrowRight' || e.key === 'ArrowDown' || e.key === ' ' || e.key === 'PageDown' || e.key === 'Enter') ch.postMessage({ type: 'nav-next' });
-    else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp' || e.key === 'PageUp' || e.key === 'Backspace') ch.postMessage({ type: 'nav-prev' });
+  setInterval(function() {
+    if (!startTime) return;
+    var s = Math.floor((Date.now() - startTime) / 1000);
+    document.getElementById('pv-timer').textContent = Math.floor(s / 60) + ':' + String(s % 60).padStart(2, '0');
+  }, 1000);
+  document.getElementById('pv-prev').addEventListener('click', function() { ch.postMessage({ type: 'nav-prev' }); });
+  document.getElementById('pv-next').addEventListener('click', function() { ch.postMessage({ type: 'nav-next' }); });
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'ArrowRight' || e.key === ' ' || e.key === 'PageDown' || e.key === 'Enter') ch.postMessage({ type: 'nav-next' });
+    else if (e.key === 'ArrowLeft' || e.key === 'PageUp') ch.postMessage({ type: 'nav-prev' });
   });
 } else {
-
+  class PresentMode {
+    constructor(ctrl) {
+      this.ctrl = ctrl; this.DW = 1440; this.DH = 900; this.active = false;
+      var self = this; this._resize = function() { self._scale(); };
+      var btn = document.createElement('button');
+      btn.id = 'present-btn'; btn.title = 'Present (F5)'; btn.setAttribute('aria-label', 'Present'); btn.textContent = '▶';
+      document.body.appendChild(btn);
+      var counter = document.createElement('div');
+      counter.id = 'present-counter'; document.body.appendChild(counter);
+      btn.addEventListener('click', function() { self.enter(); });
+      document.addEventListener('keydown', function(e) {
+        if (e.key === 'F5') { e.preventDefault(); self.enter(); }
+        if (e.key === 'Escape' && self.active) self.exit();
+      });
+      document.addEventListener('fullscreenchange', function() {
+        if (!document.fullscreenElement && self.active) self.exit();
+      });
+    }
+    enter() {
+      if (this.active) return; this.active = true;
+      document.body.classList.add('presenting');
+      document.documentElement.requestFullscreen?.().catch(function() {});
+      window.addEventListener('resize', this._resize); this._scale(); this._show(this.ctrl.currentSlide);
+      var self = this; this._origGoTo = this.ctrl.goTo.bind(this.ctrl);
+      this.ctrl.goTo = function(i) {
+        var idx = Math.max(0, Math.min(i, self.ctrl.slides.length - 1));
+        self.ctrl.currentSlide = idx;
+        self.ctrl.slides.forEach(function(s, j) { s.classList.toggle('visible', j === idx); });
+        self._show(idx); self.ctrl.updateProgress?.(); self.ctrl.updateDots?.(); self.ctrl.broadcastState?.();
+      };
+    }
+    exit() {
+      if (!this.active) return; this.active = false;
+      document.body.classList.remove('presenting');
+      document.querySelectorAll('.slide').forEach(function(s) { s.classList.remove('p-on'); });
+      if (document.fullscreenElement) document.exitFullscreen?.();
+      window.removeEventListener('resize', this._resize);
+      if (this._origGoTo) { this.ctrl.goTo = this._origGoTo; this._origGoTo = null; }
+      this.ctrl.slides[this.ctrl.currentSlide]?.scrollIntoView({ behavior: 'instant' });
+    }
+    _scale() {
+      var s = Math.min(window.innerWidth / this.DW, window.innerHeight / this.DH);
+      var ox = (window.innerWidth - this.DW * s) / 2;
+      var oy = (window.innerHeight - this.DH * s) / 2;
+      var r = document.documentElement;
+      r.style.setProperty('--pdw', this.DW + 'px');
+      r.style.setProperty('--pdh', this.DH + 'px');
+      r.style.setProperty('--ps', s);
+      r.style.setProperty('--pox', ox + 'px');
+      r.style.setProperty('--poy', oy + 'px');
+    }
+    _show(i) {
+      var self = this;
+      document.querySelectorAll('.slide').forEach(function(s, idx) { s.classList.toggle('p-on', idx === i); });
+      var c = document.getElementById('present-counter');
+      if (c) c.textContent = (i + 1) + ' / ' + this.ctrl.slides.length;
+    }
+  }
   new PresentMode(new SlidePresentation());
 }
 </script>
-<script>
 
-(function() {
-  var slides = document.querySelectorAll('.slide');
-  if (!slides.length) return;
-  var last = slides[slides.length - 1];
-  var credit = document.createElement('div');
-  credit.className = 'slide-credit';
-  credit.textContent = 'By kai-slide-creator v2.15.0 · Chinese Chan';
-  last.appendChild(credit);
-})();
-
-</script>
 </body>
 </html>
