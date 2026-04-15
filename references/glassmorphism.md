@@ -231,6 +231,42 @@ body {
 
 ---
 
+## Named Layout Variations
+
+### 1. Glass Hero (全屏宣告)
+
+3-color gradient background (`linear-gradient(135deg, #667eea, #764ba2, #f093fb)`). 3 blurred color orbs (`.glass-orb`). Centered white/dark headline, `clamp(2rem, 6vw, 5rem)`, weight 700. Subtitle below. No card on hero — text sits directly on gradient.
+
+```html
+<section class="slide">
+    <div class="glass-orb orb-1"></div>
+    <div class="glass-orb orb-2"></div>
+    <div class="glass-orb orb-3"></div>
+    <div class="slide-content" style="text-align:center;">
+        <h1 class="glass-title">Big Statement</h1>
+        <p class="glass-body">Supporting line</p>
+    </div>
+</section>
+```
+
+### 2. Glass Card (功能亮点/双列功能卡)
+
+Single `.glass-card` centered on orb background. Card: `backdrop-filter: blur(20px) saturate(1.5)`, `background: rgba(255,255,255,0.15)`, `border: 1px solid rgba(255,255,255,0.30)`, `border-radius: 16px`. Content: title, body, optional `.glass-icon` badge.
+
+### 3. Glass Split (分屏对比)
+
+Two `.glass-card` elements side by side. `display: grid; grid-template-columns: 1fr 1fr; gap: clamp(0.75rem, 1.5vw, 1.2rem)`. Each card has different content. Orbs visible behind both cards.
+
+### 4. Glass Trio (多选项对比)
+
+Three glass cards in a row. `grid-template-columns: repeat(3, 1fr)`. Active card uses full `.glass-card` styling. Inactive cards use `.glass-card-sm` (lower opacity: `rgba(255,255,255,0.08)`). Each card: number + name + descriptor.
+
+### 5. Glass Stat (大数字强调)
+
+Large gradient text number centered. Label below in `.glass-body`. 1-2 orbs positioned to frame the number without competing. Clean, minimal.
+
+---
+
 ## Signature Elements
 
 - **Frosted glass cards** — `backdrop-filter: blur(20px) saturate(1.5)`, `background: rgba(255,255,255,0.15)`, `border: 1px solid rgba(255,255,255,0.30)`

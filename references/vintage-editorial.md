@@ -137,6 +137,41 @@ body {
 
 ---
 
+## Named Layout Variations
+
+### 1. Editorial Hero (全屏宣告)
+
+Cream `#f5f3ee` background. Abstract geometric shapes: `.editorial-circle` (border outline, opacity 0.15), `.editorial-line` (1px vertical), `.editorial-dot` (6px circle). Headline in Fraunces 900, `clamp(28px, 5.5vw, 56px)`. Bottom or center anchored.
+
+```html
+<section class="slide">
+    <div class="editorial-circle" style="width:200px;height:200px;top:10%;right:10%;"></div>
+    <div class="editorial-line" style="bottom:20%;left:8%;"></div>
+    <div class="editorial-dot" style="top:15%;left:15%;"></div>
+    <div class="slide-content">
+        <h1 class="editorial-title">Title</h1>
+    </div>
+</section>
+```
+
+### 2. Editorial Split (分栏证据)
+
+Two columns. Left: section number + headline in Fraunces 900. Right: body text in Work Sans. Geometric shapes float in background at 15% opacity. Thin 1px rule between columns (optional).
+
+### 3. Editorial Cards (功能亮点/双列功能卡)
+
+2 cards side by side. Each card: `.editorial-cta-box` style (border `2px solid #1a1a1a`, `border-radius: 4px`, `padding: clamp(16px, 2.5vw, 24px)`). Feature name + description. Geometric dot or line decoration between cards.
+
+### 4. Editorial Quote (功能亮点)
+
+Full-width `.editorial-quote` in Fraunces 700 italic, `clamp(20px, 3vw, 32px)`. Attribution in `.editorial-body` muted. Circle outline decoration behind quote at 15% opacity.
+
+### 5. Editorial CTA (堆叠行动)
+
+Stacked `.editorial-cta-box` blocks. Each: `border: 2px solid #1a1a1a`, `border-radius: 4px`, centered text. Number + command text. Geometric shapes (circle + line + dot) as background decoration. Clean editorial close.
+
+---
+
 ## Signature Elements
 
 - Abstract geometric shapes (circle outline + line + dot)

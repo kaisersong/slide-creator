@@ -33,10 +33,22 @@ Every presentation follows this structure:
     <title>Presentation Title</title>
 
     <!-- Fonts: MUST come from the selected style reference file (e.g., references/data-story.md).
-         DO NOT use Clash Display / Satoshi unless the style file explicitly specifies them. -->
-    <link rel="stylesheet" href="[FONT CDN URL FROM STYLE FILE]">
+         DO NOT use Clash Display / Satoshi unless the style file explicitly specifies them.
+         
+         FONT LOADING RULE: Combine ALL font families into a SINGLE Google Fonts URL.
+         Use display=swap so the browser renders immediately with system fonts, then swaps.
+         Example: https://fonts.googleapis.com/css2?family=Archivo+Black&family=Space+Grotesk:wght@400;500;700&family=Noto+Sans+SC:wght@400;700&display=swap
+         
+         CRITICAL: Add a background-color fallback immediately after <style> starts,
+         so the page never flashes white while fonts load. -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="[SINGLE COMBINED GOOGLE FONTS URL]&display=swap" rel="stylesheet">
 
     <style>
+        /* Background fallback — must match the style's body background color
+           so the page never flashes white while Google Fonts loads. */
+        body { background-color: [from style file, e.g. #1a1a1a or #ffffff]; }
         /* ===========================================
            CSS CUSTOM PROPERTIES (THEME)
            CRITICAL: ALL values below MUST come from the selected
@@ -109,7 +121,12 @@ Every presentation follows this structure:
             position: relative;
             overflow: hidden;
             /* Must carry its own background so present mode (body.presenting = #000)
-               doesn't bleed through the transparent slide */
+               doesn't bleed through the transparent slide.
+               
+               EXCEPTION: If the style reference file defines body with radial-gradient,
+               linear-gradient, background-image pattern, or animation background,
+               DO NOT set background on .slide — let the body gradient show through.
+               Instead, set background: transparent. The style file should handle this. */
             background: var(--bg-primary);
         }
 
@@ -640,6 +657,663 @@ Every presentation follows this structure:
 </body>
 </html>
 ```
+
+---
+
+## Signature Elements Per Style
+
+**CRITICAL:** Each style has signature visual elements that MUST be injected into **every slide** as direct children of `<section class="slide">`. These are NOT optional — they are what gives each preset its distinctive identity.
+
+When generating, read the selected style's reference file and check its `## Signature Elements` section. For each signature element, inject the corresponding HTML into every slide.
+
+### Bold Signal
+
+Every slide must have:
+```html
+<section class="slide" data-notes="..." aria-label="...">
+    <div class="slide-num">01</div>          <!-- top-left large section number -->
+    <div class="breadcrumb">Title</div>       <!-- top-right breadcrumb -->
+    <div class="slide-content">...</div>
+</section>
+```
+Plus `.slide::after` grid overlay CSS (see style file).
+
+### Enterprise Dark
+
+Every slide must have `.slide::after` grid overlay:
+```css
+.slide::after {
+    content: ''; position: absolute; inset: 0;
+    background-image:
+        linear-gradient(rgba(48,54,61,0.3) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(48,54,61,0.3) 1px, transparent 1px);
+    background-size: 24px 24px;
+    pointer-events: none; z-index: 0;
+}
+```
+
+### Neon Cyber
+
+Every slide must have `.slide::after` grid overlay (cyan):
+```css
+.slide::after {
+    content: ''; position: absolute; inset: 0;
+    background-image:
+        linear-gradient(rgba(0,255,255,0.06) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0,255,255,0.06) 1px, transparent 1px);
+    background-size: 40px 40px;
+    pointer-events: none; z-index: 0;
+}
+```
+
+### Terminal Green
+
+Every slide must have `.slide::after` scan-line overlay:
+```css
+.slide::after {
+    content: ''; position: absolute; inset: 0;
+    background: repeating-linear-gradient(
+        0deg, transparent, transparent 2px, rgba(0,255,65,0.03) 2px, rgba(0,255,65,0.03) 4px
+    );
+    pointer-events: none; z-index: 0;
+}
+```
+
+### Creative Voltage
+
+Every slide must have `.slide::after` halftone pattern:
+```css
+.slide::after {
+    content: ''; position: absolute; inset: 0;
+    background-image: radial-gradient(circle, rgba(212,255,0,0.08) 1px, transparent 1px);
+    background-size: 8px 8px;
+    pointer-events: none; z-index: 0;
+}
+```
+
+### Dark Botanical
+
+Every slide must have 2-3 `.botanical-orb` elements placed in background corners:
+```html
+<section class="slide">
+    <div class="botanical-orb orb-terracotta" style="width:300px;height:300px;top:-5%;right:-5%;"></div>
+    <div class="botanical-orb orb-pink" style="width:200px;height:200px;bottom:10%;left:-3%;"></div>
+    <div class="slide-content">...</div>
+</section>
+```
+
+### Glassmorphism
+
+Every slide must have 3 `.glass-orb` elements:
+```html
+<section class="slide">
+    <div class="glass-orb orb-1"></div>
+    <div class="glass-orb orb-2"></div>
+    <div class="glass-orb orb-3"></div>
+    <div class="slide-content">...</div>
+</section>
+```
+
+### Swiss Modern
+
+Every slide must have `.slide::after` 12-column grid overlay:
+```css
+.slide::after {
+    content: ''; position: absolute; inset: 0;
+    background-image:
+        linear-gradient(rgba(10,10,10,0.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(10,10,10,0.04) 1px, transparent 1px);
+    background-size: calc(100% / 12) 24px;
+    pointer-events: none; z-index: 0;
+}
+```
+
+### Neo-Retro Dev
+
+Every slide must have `.slide::after` graph-paper grid:
+```css
+.slide::after {
+    content: ''; position: absolute; inset: 0;
+    background-image:
+        linear-gradient(rgba(70,130,180,0.08) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(70,130,180,0.08) 1px, transparent 1px);
+    background-size: 20px 20px;
+    pointer-events: none; z-index: 0;
+}
+```
+
+### Chinese Chan
+
+Every slide may have at most ONE decorative element (`.zen-rule`, `.zen-ghost-kanji`, or `.zen-dot`). Never more than one per slide.
+
+### Aurora Mesh
+
+Every slide must have a mesh gradient body background with 4-6 color stops. No `.slide::after` pattern — the background IS the signature element.
+
+```css
+body {
+    background:
+        radial-gradient(ellipse at 20% 50%, rgba(120, 0, 255, 0.4) 0%, transparent 50%),
+        radial-gradient(ellipse at 80% 20%, rgba(0, 255, 200, 0.3) 0%, transparent 50%),
+        radial-gradient(ellipse at 40% 80%, rgba(255, 0, 128, 0.25) 0%, transparent 50%),
+        radial-gradient(ellipse at 90% 80%, rgba(0, 128, 255, 0.3) 0%, transparent 50%),
+        #0a0a1a;
+    background-attachment: fixed;
+}
+```
+
+Cards must use frosted glass treatment:
+```css
+.glass-card {
+    background: rgba(255, 255, 255, 0.06);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 16px;
+}
+```
+
+No Google Fonts — use system font stack: `font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif`.
+
+### Data Story
+
+Clean white/light background. No background patterns or overlays. Signature comes from data-focused components:
+
+```html
+<section class="slide">
+    <div class="slide-content">
+        <div class="chart-container">
+            <!-- SVG or canvas chart goes here -->
+        </div>
+        <div class="data-callout">
+            <span class="data-stat">87%</span>
+            <span class="data-label">Key metric</span>
+        </div>
+    </div>
+</section>
+```
+
+Chart components: `.chart-container`, `.data-callout`, `.data-stat`, `.data-label`, `.mini-chart`. White cards with subtle shadow on light background. Typography: clear hierarchy with numbers as focal points.
+
+### Electric Studio
+
+Every slide must have a two-panel vertical split layout with accent bar:
+
+```html
+<section class="slide">
+    <div class="split-left">
+        <div class="accent-bar"></div>
+        <div class="slide-content">...</div>
+    </div>
+    <div class="split-right">
+        <div class="slide-content">...</div>
+    </div>
+</section>
+```
+
+```css
+.split-left { flex: 1; position: relative; padding-left: 4px; }
+.accent-bar {
+    position: absolute; left: 0; top: 0; bottom: 0;
+    width: 4px; background: var(--accent);
+}
+.split-right { flex: 1; }
+.slide { flex-direction: row; }
+```
+
+Bold color blocking with electric blue + hot pink accents. Manrope font family. No background patterns — split colors create the visual interest.
+
+### Modern Newspaper
+
+Every slide must have yellow accent bar and issue stamp:
+
+```html
+<section class="slide">
+    <div class="yellow-bar"></div>
+    <div class="issue-stamp">VOL.01 · NO.03</div>
+    <div class="slide-content">
+        <div class="headline">...</div>
+        <div class="columns">
+            <div class="col">...</div>
+            <div class="col">...</div>
+        </div>
+    </div>
+</section>
+```
+
+```css
+.yellow-bar {
+    position: absolute; top: 0; left: 0; right: 0;
+    height: 12px; background: #FFCC00;
+}
+.issue-stamp {
+    position: absolute; top: 20px; right: 20px;
+    font-size: 0.65rem; letter-spacing: 0.12em;
+    text-transform: uppercase; color: var(--text-secondary);
+    border: 1px solid currentColor; padding: 4px 8px;
+}
+.columns { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem; }
+.col { border-left: 1px solid #111111; padding-left: 1rem; }
+```
+
+Cream background `#faf8f0`. Serif display font + sans-serif body. Column rules `1px solid #111111`. Yellow bar `#FFCC00` (8-14px) as section opener.
+
+### Neo-Brutalism
+
+Every container must have hard offset shadows and zero border-radius:
+
+```css
+.brutal-card {
+    background: var(--card-bg);
+    border: 3px solid #000;
+    border-radius: 0;
+    box-shadow: 4px 4px 0 #000;
+    padding: 1rem;
+}
+.brutal-stat {
+    font-size: clamp(2rem, 5vw, 4rem);
+    font-weight: 900;
+    background: var(--accent);
+    border: 3px solid #000;
+    box-shadow: 6px 6px 0 #000;
+    padding: 0.75rem 1.5rem;
+    display: inline-block;
+}
+.brutal-btn {
+    background: var(--accent);
+    border: 3px solid #000;
+    border-radius: 0;
+    box-shadow: 4px 4px 0 #000;
+    padding: 0.75rem 1.5rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: transform 0.1s, box-shadow 0.1s;
+}
+.brutal-btn:hover { transform: translate(2px, 2px); box-shadow: 2px 2px 0 #000; }
+```
+
+High-contrast color blocking. Thick borders everywhere. No rounded corners. Offset shadows are the signature — every elevated element casts a hard 4px shadow.
+
+### Notebook Tabs
+
+Every slide must have paper container, binder holes, and side tabs:
+
+```html
+<section class="slide">
+    <div class="paper-container">
+        <div class="binder-holes">
+            <div class="hole"></div>
+            <div class="hole"></div>
+            <div class="hole"></div>
+        </div>
+        <div class="side-tabs">
+            <div class="tab active">Section 1</div>
+            <div class="tab">Section 2</div>
+            <div class="tab">Section 3</div>
+        </div>
+        <div class="slide-content">...</div>
+    </div>
+</section>
+```
+
+```css
+.paper-container {
+    background: #faf8f0;
+    box-shadow: 2px 4px 12px rgba(0,0,0,0.15);
+    border-radius: 2px;
+    position: relative;
+    padding: 2rem;
+}
+.binder-holes {
+    position: absolute; left: 12px; top: 0; bottom: 0;
+    display: flex; flex-direction: column; gap: 80px;
+    padding: 40px 0;
+}
+.hole {
+    width: 16px; height: 16px;
+    border-radius: 50%;
+    background: var(--bg-primary);
+    box-shadow: inset 0 1px 3px rgba(0,0,0,0.3);
+}
+.side-tabs {
+    position: absolute; right: -60px; top: 20px;
+    display: flex; flex-direction: column; gap: 4px;
+}
+.tab {
+    background: var(--tab-color);
+    color: #fff; font-size: 0.6rem; font-weight: 700;
+    padding: 6px 12px; border-radius: 0 4px 4px 0;
+    writing-mode: vertical-lr; text-orientation: mixed;
+    letter-spacing: 0.08em;
+}
+.tab.active { background: var(--accent); padding-right: 16px; }
+```
+
+Kraft paper aesthetic. Warm background. Colorful vertical tabs on right edge. Binder hole decorations on left. Paper container with subtle shadow.
+
+### Paper & Ink
+
+Narrow column layout — no background patterns, no geometric shapes, no gradients:
+
+```html
+<section class="slide">
+    <div class="narrow-column">
+        <div class="slide-content">
+            <h1 class="display-title">Title</h1>
+            <p class="body-text">Content</p>
+        </div>
+    </div>
+</section>
+```
+
+```css
+.narrow-column {
+    max-width: 680px;
+    margin: 0 auto;
+    padding: var(--slide-padding);
+}
+.display-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(2rem, 5vw, 3.5rem);
+    font-weight: 400;
+    line-height: 1.15;
+}
+.body-text {
+    font-size: clamp(0.875rem, 1.8vw, 1.125rem);
+    line-height: 1.7;
+    color: var(--text-secondary);
+}
+.rule-divider {
+    width: 40px; height: 1px;
+    background: var(--text-primary);
+    margin: 1rem 0;
+}
+```
+
+Typography-driven design. Narrow centered column. Generous whitespace. Rule dividers between sections. Serif display font + clean sans-serif body. No bright colors, no geometric shapes, no gradients.
+
+### Pastel Geometry
+
+White card on pastel background with vertical pills:
+
+```html
+<section class="slide">
+    <div class="pastel-bg"></div>
+    <div class="white-card">
+        <div class="slide-content">...</div>
+    </div>
+    <div class="pill-strip">
+        <div class="pill" style="height: 40px;"></div>
+        <div class="pill" style="height: 60px;"></div>
+        <div class="pill" style="height: 30px;"></div>
+    </div>
+</section>
+```
+
+```css
+.pastel-bg {
+    position: absolute; inset: 0;
+    background: linear-gradient(135deg, #fce4ec, #e3f2fd, #f3e5f5);
+}
+.white-card {
+    position: relative; z-index: 1;
+    background: #fff;
+    border-radius: 20px;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.08);
+    padding: 2rem;
+    max-width: 900px;
+    margin: 0 auto;
+}
+.pill-strip {
+    position: absolute; right: 2rem; top: 50%;
+    transform: translateY(-50%);
+    display: flex; flex-direction: column; gap: 8px;
+}
+.pill {
+    width: 12px; border-radius: 6px;
+    background: var(--pill-color);
+}
+```
+
+Pink/blue gradient background. Clean white card with generous rounded corners (20px). Vertical pill strips on right edge with varying heights. Soft pastel colors throughout.
+
+### Split Pastel
+
+Split background colors with grid overlay on right panel:
+
+```html
+<section class="slide">
+    <div class="split-bg-left"></div>
+    <div class="split-bg-right">
+        <div class="grid-overlay"></div>
+    </div>
+    <div class="slide-content">
+        <div class="left-panel">...</div>
+        <div class="right-panel">...</div>
+    </div>
+    <div class="badge-pill">
+        <span class="badge-icon">★</span>
+        <span class="badge-text">Highlight</span>
+    </div>
+</section>
+```
+
+```css
+.split-bg-left {
+    position: absolute; left: 0; top: 0; bottom: 0; width: 50%;
+    background: var(--split-left-color); /* e.g. peach */
+}
+.split-bg-right {
+    position: absolute; right: 0; top: 0; bottom: 0; width: 50%;
+    background: var(--split-right-color); /* e.g. lavender */
+}
+.grid-overlay {
+    position: absolute; inset: 0;
+    background-image:
+        linear-gradient(rgba(0,0,0,0.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0,0,0,0.04) 1px, transparent 1px);
+    background-size: 24px 24px;
+    pointer-events: none;
+}
+.badge-pill {
+    display: inline-flex; align-items: center; gap: 6px;
+    background: var(--accent);
+    border-radius: 20px;
+    padding: 6px 14px;
+    font-size: 0.75rem;
+    font-weight: 600;
+}
+```
+
+Peach left / lavender right split. Grid pattern overlay on right panel only. Badge pills with icons. Soft pastel color palette.
+
+### Vintage Editorial
+
+Cream background with abstract geometric shapes and serif typography:
+
+```html
+<section class="slide">
+    <div class="geo-circle"></div>
+    <div class="geo-line"></div>
+    <div class="geo-dot"></div>
+    <div class="slide-content">
+        <div class="editorial-headline">...</div>
+        <div class="editorial-body">...</div>
+    </div>
+</section>
+```
+
+```css
+.geo-circle {
+    position: absolute;
+    width: 200px; height: 200px;
+    border: 1px solid rgba(0,0,0,0.15);
+    border-radius: 50%;
+    top: 10%; right: 10%;
+}
+.geo-line {
+    position: absolute;
+    width: 120px; height: 1px;
+    background: rgba(0,0,0,0.2);
+    bottom: 20%; left: 8%;
+    transform: rotate(-15deg);
+}
+.geo-dot {
+    position: absolute;
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    background: var(--accent);
+    top: 15%; left: 15%;
+}
+.editorial-headline {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: clamp(1.5rem, 4vw, 3rem);
+    line-height: 1.2;
+}
+.editorial-body {
+    font-family: 'Source Sans 3', sans-serif;
+    font-size: clamp(0.8rem, 1.5vw, 1rem);
+    line-height: 1.6;
+    color: var(--text-secondary);
+}
+```
+
+Cream background `#f5f0e8`. Abstract geometric shapes: circle outline + line + dot positioned at various points. Cormorant Garamond italic for display, Source Sans 3 for body. Editorial column feel.
+
+### Blue Sky
+
+Use `blue-sky-starter.html` as the base. All signature elements are pre-built (orbs, clouds, glass cards). Only fill in slide content. Do not regenerate the CSS from scratch.
+
+### Creative Voltage
+
+Every slide must have `.slide::after` halftone pattern:
+```css
+.slide::after {
+    content: ''; position: absolute; inset: 0;
+    background-image: radial-gradient(circle, rgba(212,255,0,0.08) 1px, transparent 1px);
+    background-size: 8px 8px;
+    pointer-events: none; z-index: 0;
+}
+```
+
+Neon yellow accent `#d4ff00` on dark `#1a1a2e`. Diamond-shaped decorative elements. Bold, high-contrast visual treatment.
+
+### Dark Botanical
+
+Every slide must have 2-3 `.botanical-orb` elements placed in background corners:
+```html
+<div class="botanical-orb orb-terracotta" style="width:300px;height:300px;top:-5%;right:-5%;"></div>
+<div class="botanical-orb orb-pink" style="width:200px;height:200px;bottom:10%;left:-3%;"></div>
+```
+
+Soft gradient orbs in terracotta/pink/gold on `#0f0f0f` background. Orbs are large (200-400px) with soft radial gradients.
+
+### Glassmorphism
+
+Every slide must have 3 `.glass-orb` elements:
+```html
+<div class="glass-orb orb-1"></div>
+<div class="glass-orb orb-2"></div>
+<div class="glass-orb orb-3"></div>
+```
+
+Cards use `backdrop-filter: blur(12px)`. Orbs are positioned at different corners with varying sizes and colors.
+
+### Neo-Brutalism
+
+All containers: `box-shadow: 4px 4px 0 #000`, `border-radius: 0`, `border: 3px solid #000` minimum. High-contrast color blocking. Zero border-radius everywhere.
+
+### Neo-Retro Dev
+
+Every slide must have `.slide::after` graph-paper grid:
+```css
+.slide::after {
+    content: ''; position: absolute; inset: 0;
+    background-image:
+        linear-gradient(rgba(70,130,180,0.08) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(70,130,180,0.08) 1px, transparent 1px);
+    background-size: 20px 20px;
+    pointer-events: none; z-index: 0;
+}
+```
+
+Cream background `#f5f2e8` with faint blue grid. Monospace + sans-serif font pairing.
+
+### Neon Cyber
+
+Every slide must have `.slide::after` grid overlay (cyan):
+```css
+.slide::after {
+    content: ''; position: absolute; inset: 0;
+    background-image:
+        linear-gradient(rgba(0,255,255,0.06) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0,255,255,0.06) 1px, transparent 1px);
+    background-size: 40px 40px;
+    pointer-events: none; z-index: 0;
+}
+```
+
+Dark `#0a0f1c` with cyan grid. Neon glow effects on accent elements.
+
+### Notebook Tabs
+
+Must have colorful section tabs on right edge (vertical text). Paper container with subtle shadow. Binder hole decorations on left edge.
+
+### Paper & Ink
+
+Narrow column layout. No background patterns. Typography and rules only — no bright colors, no geometric shapes, no gradients. Max-width ~680px centered.
+
+### Pastel Geometry
+
+White card on pink/blue gradient background. Vertical pills on right edge with varying heights. Soft pastel colors. Rounded corners (20px) on cards.
+
+### Split Pastel
+
+Split background colors (peach left, lavender right). Grid pattern overlay on right panel. Badge pills with icons.
+
+### Swiss Modern
+
+Every slide must have `.slide::after` 12-column grid overlay:
+```css
+.slide::after {
+    content: ''; position: absolute; inset: 0;
+    background-image:
+        linear-gradient(rgba(10,10,10,0.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(10,10,10,0.04) 1px, transparent 1px);
+    background-size: calc(100% / 12) 24px;
+    pointer-events: none; z-index: 0;
+}
+```
+
+White background. Hard horizontal rules `2px solid #0a0a0a`. 12-column grid system.
+
+### Terminal Green
+
+Every slide must have `.slide::after` scan-line overlay:
+```css
+.slide::after {
+    content: ''; position: absolute; inset: 0;
+    background: repeating-linear-gradient(
+        0deg, transparent, transparent 2px, rgba(0,255,65,0.03) 2px, rgba(0,255,65,0.03) 4px
+    );
+    pointer-events: none; z-index: 0;
+}
+```
+
+Monospace font, dark background. Green `#00ff41` as primary accent. Terminal-style command blocks.
+
+### Vintage Editorial
+
+Cream background `#f5f0e8` with abstract geometric shapes: circle outline (`border: 1px solid`) + line (`1px` rule) + dot (`border-radius: 50%`). Serif typography (Cormorant italic).
+
+### All Other Styles
+
+If the style reference file's `## Signature Elements` section mentions background patterns (grids, orbs, lines, halftones, scan-lines, geometric shapes), those patterns MUST be injected as either:
+- `.slide::after` / `.slide::before` CSS pseudo-elements (for grid/line patterns)
+- Direct child `<div>` elements of `.slide` (for orbs, shapes, kanji)
+
+**Rule of thumb:** If a style's original demos had visible background textures that are NOT just a solid color, the generated HTML MUST replicate those textures. A missing grid overlay or missing orb elements = generation error.
 
 ---
 

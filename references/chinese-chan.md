@@ -236,6 +236,56 @@ body::before {
 
 ---
 
+## Named Layout Variations
+
+### 1. Zen Center (全屏宣告)
+
+Narrow column centered vertically. Title in Noto Serif CJK SC, `clamp(1.8rem, 5vw, 4rem)`, weight 400 (never bold). Subtitle in `.zen-body` below. Maximum ONE decorative element: `.zen-rule` (horizontal rule with dots) OR `.zen-ghost-kanji` OR `.zen-dot`. 50%+ empty space required.
+
+```html
+<section class="slide">
+    <div class="zen-content zen-center">
+        <h1 class="zen-title zen-cn">Title</h1>
+        <p class="zen-body zen-cn">Subtitle</p>
+        <div class="zen-rule">
+            <span class="zen-rule-line"></span>
+        </div>
+    </div>
+</section>
+```
+
+### 2. Zen Split (分栏证据)
+
+Single column, vertical flow. Section label in `.zen-caption` (small, uppercase, muted). Headline in `.zen-title`. Divider `.zen-rule`. Body text or numbered list below. No side-by-side panels — everything flows vertically.
+
+```html
+<section class="slide">
+    <div class="zen-content">
+        <span class="zen-caption">Section 01</span>
+        <h2 class="zen-title zen-cn">Headline</h2>
+        <div class="zen-rule"><span class="zen-rule-line"></span></div>
+        <ol class="zen-list">
+            <li>Point one</li>
+            <li>Point two</li>
+            <li>Point three</li>
+        </ol>
+    </div>
+</section>
+```
+
+### 3. Zen Vertical (竖排标题 — optional)
+
+Vertical writing mode for title slides. `writing-mode: vertical-rl`. Title runs top-to-bottom, right-to-left. Used for hero covers or philosophical statements. No other content except maybe a small seal (`.zen-accent` small square in vermilion `#C41E3A`).
+
+```html
+<section class="slide">
+    <div class="zen-vertical-title zen-cn">竖排标题</div>
+    <div class="zen-seal" style="width:12px;height:12px;background:#C41E3A;border-radius:2px;position:absolute;bottom:20%;left:15%;"></div>
+</section>
+```
+
+---
+
 ## Signature Elements
 
 - **Extreme negative space** — 50%+ of slide should be empty, this is the design

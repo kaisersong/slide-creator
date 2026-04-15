@@ -149,31 +149,87 @@ When running checked-in demos or formal validation, record segmented timing for:
 - `polish`
 - `total`
 
-### Step 1: Load the right references
+### Step 1: Load and integrate references (3-step process)
 
-**If Blue Sky style:** Read [blue-sky-starter.html](blue-sky-starter.html) and use it as the base. All 10 signature visual elements are pre-built — only fill in slide content. Do not rewrite the visual system CSS. Content goes inside `.slide` wrappers using pre-built classes: `.g` (glass card), `.gt` (gradient text), `.pill`, `.stat`, `.divider`, `.cols2/3/4`, `.ctable`, `.co` (amber callout), `.warn`, `.info`, `.layer`, `ul.bl`, `.step`, `.cmd`, `kbd`, cloud bank SVG, inline ambient orbs.
+**Step 1a: Read composition-guide.md** → Get the 12 narrative roles and their layout categories.
+The composition guide defines the layout category for each slide role:
+- Slide 1 (Hero Cover) = 全屏宣告 (Full-Bleed Statement)
+- Slide 2 (Problem Frame) = 分栏证据 (Split Evidence)
+- Slide 3 (Style Discovery) = 多选项对比 (Multi-Option)
+- Slide 4 (Solution Reveal) = 大数字强调 (Big Stat)
+- Slide 5 (Playback Mode) = 功能亮点 (Feature Spotlight)
+- Slide 6 (Presenter Mode) = 分屏对比 (Side-by-Side)
+- Slide 7 (Edit Mode) = 双列功能卡 (Two-Column Cards)
+- Slide 8 (Planning Depths) = 流程步骤 (Process Track)
+- Slide 9 (Review System) = 网格检查点 (Grid Checklist)
+- Slide 10 (Style Guide) = 推荐网格 (Recommendation Grid)
+- Slide 11 (Technical Proof) = 证据列表 (Proof Points)
+- Slide 12 (CTA / Close) = 堆叠行动 (Stacked Action)
 
-**CRITICAL: Use the full component palette.** Do NOT default to only `.g` + `.bl` on every slide — that produces sparse, draft-looking decks. Each slide should use at least 2-3 distinct component types from the template. Examples: cover = SVG cloud filter + stat cards + inline orbs; workflow = `.layer` rows + `.step` circles + `.cmd` blocks; features = `.g` cards + `.pill` tags + gradient text; commands = `.ctable` + `kbd` badges + `.info` callouts. If every slide in your deck looks like "glass card with bullet list," redesign at least half of them before writing HTML.
+**Step 1b: Read the selected style's reference file** → Extract:
+- Named layout variations (match each to a layout category from Step 1a)
+- Signature element CSS (grid overlay / orbs / scan-lines / geometric shapes / etc.)
+- Visual tokens (colors, fonts, component classes, background patterns)
+- Style Preview Checklist (all items MUST appear in generated HTML)
+
+**Step 1c: Read html-template.md + base-css.md** → Get:
+- HTML architecture (scroll-snap, slide structure, present mode, edit mode)
+- Animation patterns, responsive breakpoints, density limits
+
+**If Blue Sky style:** Read [blue-sky-starter.html](blue-sky-starter.html) instead. All 10 signature visual elements are pre-built — only fill in slide content. Do not rewrite the visual system CSS.
 
 **If a custom theme from themes/:** Read the theme's `reference.md`. If a `starter.html` exists in the theme folder, use it as the base.
 
-**For all other styles:** Read [html-template.md](html-template.md) + [base-css.md](base-css.md). If the style has a dedicated reference file in `references/` (e.g. `aurora-mesh.md`, `enterprise-dark.md`), read that instead of scanning STYLE-DESC.md. Otherwise read the relevant section in STYLE-DESC.md.
+---
 
-**CRITICAL: Use the style's full component palette.** Every style template provides multiple component patterns — cards, callouts, stat blocks, comparison tables, quote layouts, badge rows, etc. Do NOT put every piece of content inside a generic card with bullets. Each slide should use 2-3 distinct component types. If every slide looks like "card + bullet list," redesign at least half before writing HTML.
+### Step 1.5: Map layout categories to style-specific layouts
 
-Honor the chosen preset exactly. `自动` and `精修` may produce different structure, density, and diagrams, but they should still render inside the same preset family unless the user explicitly changed the style.
+For each of the 12 slides:
 
-### Step 1.5: Style value extraction (MANDATORY)
+1. Get the layout category from composition-guide.md (Step 1a)
+2. Search the style file's `## Named Layout Variations` section for a matching layout
+3. If a matching named layout exists → use its HTML structure
+4. If no matching named layout exists → use the layout category definition from composition-guide.md to compose the layout from the style's individual components
+5. Inject the style's signature elements as direct children of `<section class="slide">` (grid overlays via `.slide::after`, orbs as direct child divs, etc.)
+6. Fill content and components with the style's visual tokens
+
+**Architecture note:** Signature elements ARE layout constraints, not a separate injection step. The `.bold-ghost` positioned at the bottom-right, the `.slide-num` at the top-left — these define the spatial composition that all other content responds to.
+
+**CRITICAL: Use the style's full component palette.** Every style provides multiple component patterns. Do NOT put every piece of content inside a generic card with bullets. Each slide should use 2-3 distinct component types. If every slide looks like "card + bullet list," redesign at least half before writing HTML.
+
+**Exception for minimalist styles:** Chinese Chan, Paper & Ink, and similar minimalist styles may repeat the core narrow-column layout. For these styles, diversity comes from content treatment (different decorative elements, typography scale) rather than layout structure.
+
+---
+
+### Step 1.6: Style value extraction (MANDATORY)
 
 **Before writing any CSS**, extract ALL theme values from the style reference file:
 
 1. **Colors** — background, text, accent, semantic colors (success/error/etc.)
-2. **Fonts** — display font, body font, CDN URL
+2. **Fonts** — display font, body font, CDN URL (combine into SINGLE Google Fonts link with `&display=swap`)
 3. **Typography** — title/body sizes, line-heights, letter-spacing
 4. **Components** — any style-specific classes (e.g. Data Story's `.ds-kpi`, `.ds-kpi-card`)
-5. **Checklist** — each style file has a "Style Preview Checklist" section; these items MUST appear in the generated HTML
+5. **Background pattern** — grid / gradient / orbs / scan-lines / halftone (MUST be present in generated HTML)
+6. **Checklist** — each style file has a "Style Preview Checklist" section; these items MUST appear in the generated HTML
+
+**Font loading rule:** Combine ALL font families into a SINGLE `<link>` tag with `&display=swap`. Add `body { background-color: [style's bg color]; }` as the first rule inside `<style>` so the page never flashes white while fonts load.
 
 **Critical:** The template `html-template.md` uses placeholder values (`[from style file]`). **Never emit these placeholders into the final HTML.** Every color, font, and token must resolve to an actual value from the style reference file.
+
+---
+
+### Architectural Firewall — Read Before Generating
+
+Blue Sky is the **only** style that uses `#stage` (fixed container) + `#track` (flex row) + `translateX` navigation. This architecture is **exclusive** to `blue-sky-starter.html`. All other 20 styles **MUST** use `html-template.md`'s architecture:
+- `<html>` with `scroll-snap-type: y mandatory`
+- `<section class="slide">` elements with `scroll-snap-align: start`
+- `.slide-content` wrapper inside each slide
+- `SlidePresentation` JS class (IntersectionObserver + BroadcastChannel)
+- `PresentMode` class for fullscreen playback
+
+**Do NOT** emit `#stage`, `#track`, `calc(100vw * var(--slide-count))`, or `translateX` navigation CSS/JS for any style other than Blue Sky. These are Blue Sky's internal patterns, not a universal template. If the generated HTML contains `#stage` or `#track` for a non-Blue-Sky style, it is a generation error — revert to `html-template.md`'s scroll-snap architecture.
+
+Honor the chosen preset exactly. `自动` and `精修` may produce different structure, density, and diagrams, but they should still render inside the same preset family unless the user explicitly changed the style.
 
 ### Step 2: Viewport fitting
 
@@ -234,6 +290,8 @@ Before writing the final HTML, scan the assembled output for these violations an
 16. **Search component monotony** → if >50% of slides use the same component pattern (e.g., only `.g` + `.bl`) → redesign at least half to use 2-3 distinct component types (step/callout/stat/kbd/table/quote)
 17. **Search present mode JS** → must contain `PresentMode` class or `enterPresent()` function, `'F5'` key listener, `#present-btn` CSS, and `body.presenting` CSS → missing = generation error, must fix
 18. **Search watermark placement** → must be JS-injected into last slide (`slides[slides.length - 1].appendChild`), CSS must be `position: absolute` → if `position: fixed` or hardcoded `<div class="slide-credit">` before `</body>`, move to JS injection
+19. **Search architecture contamination (non-Blue-Sky only)** → if style is NOT Blue Sky, search for `#stage`, `#track`, `calc(100vw * var(--slide-count))`, or `translateX` slide navigation → these are Blue Sky-exclusive patterns. Replace with `html-template.md`'s `scroll-snap-type: y mandatory` + `SlidePresentation` class architecture
+20. **Search `.slide` background overriding body gradient** → if the style reference file defines `radial-gradient`, `linear-gradient`, `background-image` patterns, or `animation` on `body`, search for `.slide` elements with `background` / `background-color` → these block the body gradient. Remove `background` from `.slide` rules. The template's `background: var(--bg-primary)` safety net does NOT apply to gradient/animated body backgrounds
 
 > Load `references/impeccable-anti-patterns.md` for the full detection patterns and fix guidance.
 

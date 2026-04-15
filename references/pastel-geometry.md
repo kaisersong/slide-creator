@@ -97,6 +97,39 @@ body {
 
 ---
 
+## Named Layout Variations
+
+### 1. Pastel Hero (全屏宣告)
+
+Pastel blue background `#c8d9e6`. Centered white `.pastel-card` with soft shadow `0 8px 32px rgba(0,0,0,0.08)`, `border-radius: 16px`. Headline in Plus Jakarta Sans 800, `clamp(28px, 5vw, 48px)`. Vertical pills on right edge (`.pastel-pill` short/medium/tall in pink/mint/lavender).
+
+```html
+<section class="slide">
+    <div class="pastel-pill short pink" style="top:20%;"></div>
+    <div class="pastel-pill medium mint" style="top:40%;"></div>
+    <div class="pastel-pill tall lavender" style="top:55%;"></div>
+    <div class="pastel-pill medium sage" style="top:75%;"></div>
+    <div class="pastel-card" style="max-width:800px;margin:0 auto;">
+        <h1 class="pastel-title">Title</h1>
+        <p class="pastel-body">Subtitle</p>
+    </div>
+</section>
+```
+
+### 2. Pastel Split (分栏证据)
+
+Two columns inside `.pastel-card`. Left: section label + headline. Right: numbered list or evidence. Pills on right edge outside the card. Clean white card on pastel background.
+
+### 3. Pastel Grid (网格检查点/推荐网格)
+
+2×2 or 2×3 grid of `.pastel-card` sub-cards inside the main card. Each sub-card: `.pastel-label` + item name + descriptor. Pills on right edge. Soft, approachable grid feel.
+
+### 4. Pastel Stat (大数字强调)
+
+Large number in Plus Jakarta Sans 800, `clamp(3rem, 8vw, 6rem)`, `letter-spacing: -0.02em`. Label above in `.pastel-label`. Card below with 2-3 line supporting text. Pills on right edge frame the content.
+
+---
+
 ## Signature Elements
 
 - Rounded card with soft shadow

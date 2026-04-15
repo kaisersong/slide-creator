@@ -111,6 +111,40 @@ body {
 
 ---
 
+## Named Layout Variations
+
+### 1. Studio Hero (全屏宣告)
+
+Dark `#0a0a0a` background. White panel on one side (45-55% width) with headline in Manrope 800, `clamp(32px, 6vw, 64px)`. Blue accent bar `.elec-accent-bar` (4px) on panel edge. Label in `.elec-label` (small, uppercase, blue).
+
+```html
+<section class="slide" style="padding:0;">
+    <div class="elec-split">
+        <div class="elec-panel-dark">
+            <span class="elec-label">Studio</span>
+            <h1 class="elec-title" style="color:#fff;">Big Statement</h1>
+        </div>
+        <div class="elec-panel-white">
+            <p class="elec-body">Supporting content</p>
+        </div>
+    </div>
+</section>
+```
+
+### 2. Studio Split (分屏对比/分栏证据)
+
+Full `.elec-split` — white left, dark right (or reversed). Left: section number + headline. Right: bullet list or evidence. No divider — color split creates the boundary. `.elec-accent-bar` between panels.
+
+### 3. Studio Quote (功能亮点)
+
+Single panel (white or dark) with `.elec-quote-block`: `border-left: 4px solid var(--accent-blue)`, `padding-left: clamp(16px, 2.5vw, 24px)`. Quote in `.elec-quote` (Manrope 800, `clamp(20px, 3vw, 36px)`). Attribution in `.elec-body` muted.
+
+### 4. Studio Stat (大数字强调)
+
+Dark background. Large white number in Manrope 800, `clamp(48px, 8vw, 96px)`. Blue accent label above. Clean, minimal — single focal point.
+
+---
+
 ## Signature Elements
 
 - Two-panel vertical split

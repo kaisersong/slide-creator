@@ -112,6 +112,38 @@ body {
 
 ---
 
+## Named Layout Variations
+
+### 1. Notebook Hero (全屏宣告)
+
+Cream paper `#f8f6f1` on dark outer `#2d2d2d`. `.notebook-page` container with shadow. Headline in Bodoni Moda 700, `clamp(28px, 5vw, 52px)`. Colorful `.notebook-tab` on right edge (vertical text). Optional binder holes on left.
+
+```html
+<section class="slide">
+    <div class="notebook-page">
+        <div class="notebook-tab tab-1">INTRO</div>
+        <div class="slide-content" style="padding:2rem;">
+            <h1 class="notebook-title">Title</h1>
+            <p class="notebook-body">Subtitle</p>
+        </div>
+    </div>
+</section>
+```
+
+### 2. Notebook Split (分屏对比)
+
+Two columns inside `.notebook-page`. Left: headline + body. Right: evidence list or data. Colorful tab on right edge changes per section. Binder holes on left edge visible against dark outer background.
+
+### 3. Notebook Cards (双列功能卡/网格检查点)
+
+2 `.notebook-body` sections inside `.notebook-page`, separated by thin rule. Each section: `.notebook-label` + title + body. Tab color changes to indicate active section. Clean, organized feel.
+
+### 4. Notebook CTA (堆叠行动)
+
+Single column inside `.notebook-page`. Numbered steps as list items. `.notebook-cta` button at bottom. Multiple tabs visible on right edge showing progression. Clean editorial close.
+
+---
+
 ## Signature Elements
 
 - Paper container with subtle shadow

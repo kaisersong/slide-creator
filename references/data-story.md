@@ -135,7 +135,7 @@ body {
 
 ---
 
-## Layout Templates
+## Named Layout Variations
 
 ### 1. Hero Number (full-screen single KPI)
 

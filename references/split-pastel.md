@@ -121,6 +121,39 @@ body {
 
 ---
 
+## Named Layout Variations
+
+### 1. Split Hero (全屏宣告)
+
+Peach `#f5e6dc` left panel, lavender `#e4dff0` right panel. Grid pattern overlay on right (`.split-pastel-grid`). Headline in Outfit 800, `clamp(28px, 5vw, 48px)`, spans both panels. `.split-badge` (mint/yellow/pink) as accent.
+
+```html
+<section class="slide" style="padding:0;position:relative;">
+    <div class="split-pastel-left" style="position:absolute;left:0;top:0;bottom:0;width:50%;"></div>
+    <div class="split-pastel-right" style="position:absolute;right:0;top:0;bottom:0;width:50%;">
+        <div class="split-pastel-grid"></div>
+    </div>
+    <div class="slide-content" style="position:relative;z-index:1;">
+        <h1 class="split-title">Title</h1>
+        <span class="split-badge mint">Badge</span>
+    </div>
+</section>
+```
+
+### 2. Split Evidence (分栏证据)
+
+Full split layout. Left panel: `.split-label` + headline in Outfit 800. Right panel (with grid overlay): bullet list or evidence. Badge pill at top of right panel. Color boundary creates natural divider.
+
+### 3. Split Cards (多选项对比/双列功能卡)
+
+2-3 cards on split background. Each card: white/light background, `border-radius: 12px`, subtle shadow. Active card has mint badge. `.split-badge` pills scattered as accents. Grid visible behind cards on right side.
+
+### 4. Split CTA (堆叠行动)
+
+Single column centered over split. Numbered command blocks with rounded corners. `.split-cta` buttons (pill-shaped, dark bg, light text). Badge pills at top. Grid overlay on right panel visible behind content.
+
+---
+
 ## Signature Elements
 
 - Split background colors (peach left, lavender right)
