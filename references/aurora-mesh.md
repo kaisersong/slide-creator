@@ -148,6 +148,79 @@ Centered single-column layout. No side panels. Content sits in centered cards ov
 
 ---
 
+## Named Layout Variations
+
+### 1. Aurora Hero (全屏宣告)
+
+Full-bleed animated aurora background. Centered white headline in Space Grotesk, `clamp(2.5rem, 7vw, 6rem)`, weight 700, negative letter-spacing. Subtitle in `rgba(255,255,255,0.70)`. Optional accent line `.aurora-divider` below. No card on hero — text sits directly on gradient.
+
+```html
+<section class="slide aurora-slide">
+    <h1 class="aurora-title">Big Statement</h1>
+    <p class="aurora-subtitle">Supporting line</p>
+</section>
+```
+
+### 2. Aurora Card (功能亮点)
+
+Centered frosted glass card on animated background. Card uses `backdrop-filter: blur(12px)`, `rgba(255,255,255,0.05)` background, `1px solid rgba(255,255,255,0.10)` border, `16px` border-radius. Content inside: title, body, optional badge.
+
+```html
+<section class="slide aurora-slide">
+    <div class="aurora-content">
+        <div class="aurora-card">
+            <h2>Feature Name</h2>
+            <p>1-2 line description</p>
+            <span class="aurora-badge">Badge</span>
+        </div>
+    </div>
+</section>
+```
+
+### 3. Aurora Stat (大数字强调)
+
+Large gradient text number centered on slide. Use `-webkit-background-clip: text` with aurora gradient for hero numbers. Label below in muted text. Optional vertical divider.
+
+```html
+<section class="slide aurora-slide">
+    <div class="aurora-stat" style="-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-image:linear-gradient(135deg,#00f5c4,#00b4ff);font-size:clamp(3rem,10vw,8rem);font-weight:700;">97%</div>
+    <p class="aurora-subtitle">Metric label</p>
+</section>
+```
+
+### 4. Aurora Split (分屏对比)
+
+Two frosted glass cards side by side on animated background. `display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;`. Each card has its own content. Left panel = View A, right panel = View B.
+
+```html
+<section class="slide aurora-slide">
+    <div class="aurora-content" style="display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;">
+        <div class="aurora-card"><h3>View A</h3><p>Content</p></div>
+        <div class="aurora-card"><h3>View B</h3><p>Content</p></div>
+    </div>
+</section>
+```
+
+### 5. Aurora Trio (多选项对比)
+
+Three glass cards in a row. `grid-template-columns: repeat(3, 1fr)`. Active card has stronger border: `border-color: rgba(0,245,196,0.40)` and slightly more opaque background: `rgba(255,255,255,0.08)`. Each card: number + name + descriptor.
+
+```html
+<section class="slide aurora-slide">
+    <div class="aurora-content" style="display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;">
+        <div class="aurora-card active">01 Active</div>
+        <div class="aurora-card">02 Option</div>
+        <div class="aurora-card">03 Option</div>
+    </div>
+</section>
+```
+
+### 6. Aurora Timeline (流程步骤)
+
+Horizontal step sequence with frosted glass cards as step markers. Active step: full accent border. Completed: outlined. Future: lower opacity. Track line: `2px solid rgba(0,245,196,0.3)`. Arrows between steps in accent color.
+
+---
+
 ## Signature Elements
 
 - **Mesh gradient background** — multi-stop gradient with 4-6 color positions, organic blending

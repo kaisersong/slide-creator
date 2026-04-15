@@ -256,6 +256,37 @@ body {
 
 ---
 
+## Named Layout Variations
+
+### 1. Brute Hero (全屏宣告)
+
+Bold background color (yellow `#FFEB3B` / orange-red `#FF5733` / mint `#E8F5E9`). Headline in Space Grotesk 900, `clamp(3rem, 10vw, 9rem)`, uppercase, `#000000`. Bottom-anchored layout (`.brute-slide` uses `justify-content: flex-end`). Optional `.brute-tag` badge. Dot pattern `body::before` visible.
+
+```html
+<section class="slide brute-slide">
+    <h1 class="brute-title">BIG STATEMENT</h1>
+    <span class="brute-tag">Tagline</span>
+</section>
+```
+
+### 2. Brute Split (分栏证据)
+
+Two-column grid. Left: section number + headline. Right: `.brute-list` with hard-bordered rows (`.brute-list li { border-top: 2px solid #000; }`). Each list item: number + bold lead word + description. No divider — content density creates the split.
+
+### 3. Brute Cards (多选项对比/双列功能卡)
+
+2-3 `.brute-card` elements in a row. Each card: `background: #fff`, `border: 3px solid #000`, `border-radius: 0`, `box-shadow: 4px 4px 0 #000`. Active card: full black background with yellow text (`.brute-btn` style). Hover: `transform: translate(2px, 2px)`, shadow shrinks — instant, no easing.
+
+### 4. Brute Stat (大数字强调)
+
+Large black number in Space Grotesk 900, `clamp(3rem, 10vw, 9rem)`. Label in `.brute-tag` (black bg, yellow text). All text `#000000`. Optional `.brute-stripe` decoration at 15% opacity behind the number.
+
+### 5. Brute CTA (堆叠行动)
+
+Stacked `.editorial-cta-box` style blocks but brutalist: black border `3px solid #000`, `border-radius: 0`, `box-shadow: 4px 4px 0 #000`. Each block: number + command text. `.brute-btn` for action buttons. All transitions instant — `transition: none`.
+
+---
+
 ## Signature Elements
 
 - **Hard offset shadows** — `box-shadow: 4px 4px 0 #000` on all content blocks, no blur
