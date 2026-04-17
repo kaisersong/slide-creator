@@ -178,9 +178,10 @@ Centered headline in cyan glow. Below: 3 CTA/contact panels in a row (bordered, 
 - `@keyframes particleDrift`: Floating particles rising from bottom (scale 0 to 1, opacity fade in/out)
 
 ### Required CSS Classes
-- `.cyber-title`: Main title with glitch effect — requires `data-text` attribute for pseudo-element duplication. `font-family: 'Clash Display'`, cyan color, `neonPulse` animation.
+- `.cyber-title`: 主标题 — **必须有 `neonPulse` 动画产生呼吸光晕**（`text-shadow` 从 20px 扩展到 80px），**同时**通过 `data-text` 属性实现 glitch 伪元素叠加。两者缺一不可：光晕 = 基础层呼吸发光，glitch = 伪元素色彩偏移
+- `.neon-title.glow`: 静态霓虹光晕 — `text-shadow: 0 0 16px rgba(0,255,204,0.35), 0 0 48px rgba(0,255,204,0.1)`。用于内容页 h2 标题和需要光晕但不需要 glitch 的元素
 - `.cyber-label`: Section label in cyan with `neonPulse` animation, uppercase, `letter-spacing: 0.2em`
-- `.cyber-heading`: Sub-headline with `.accent` (cyan pulse) and `.magenta` (magenta pulse) spans
+- `.cyber-heading`: Sub-headline — **基元素本身应有 `.neon-title.glow` 的 text-shadow 光晕**，`.accent` (cyan pulse) 和 `.mg` (magenta pulse) spans 额外加 `neonPulse`/`magentaPulse` 动画
 - `.cyber-card`: Terminal-style card with cyan border, `::before` (top accent bar, 40px), `::after` (left accent bar, 40px)
 - `.corner-br` / `.corner-tl`: Bottom-right and top-left bracket decorations (1px cyan borders)
 - `.particle`: Floating dots (JS-generated, 18 particles, 3 color variants)
@@ -196,12 +197,13 @@ Centered headline in cyan glow. Below: 3 CTA/contact panels in a row (bordered, 
 
 ### Signature Checklist
 - [ ] Dark `#0a0f1c` background with cyan grid + scanline overlays
-- [ ] `.cyber-title` with `data-text` attribute for glitch effect
+- [ ] `.cyber-title` 同时有 `neonPulse` 呼吸光晕 AND `data-text` glitch 效果
+- [ ] 内容页 h2 标题有 `.neon-title.glow` 静态光晕（text-shadow）
 - [ ] `neonPulse` animation on cyan text and borders
 - [ ] Corner bracket decorations (`.corner-br` / `.corner-tl`)
 - [ ] At least one magenta accent (`.magenta` span or `.mg` class)
 - [ ] Floating particles (18 dots, 3 colors)
-- [ ] Satoshi for body, Clash Display for headlines, Courier New for code
+- [ ] Satoshi for body, Clash Display for headlines, JetBrains Mono for code/labels
 
 ---
 
