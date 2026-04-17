@@ -289,7 +289,12 @@ Large gradient text number centered. Label below in `.glass-body`. 1-2 orbs posi
 - `.slide-0` 到 `.slide-7`: 每张幻灯片的渐变背景（3 种渐变模式循环）
 
 ### Background Rule
-`.slide` 必须设置背景。每张幻灯片使用独立的 3 色渐变（`linear-gradient(135deg, ...)`）。三种渐变模式：紫色系（`#667eea → #764ba2 → #f093fb`）、粉蓝系（`#f8cdda → #a6c1ee → #1d6fa4`）、薄荷系（`#a8edea → #fed6e3`）。光球直接放在 `.slide` 内、卡片后方。
+`.slide` 必须设置背景。每张幻灯片使用独立的 3 色渐变（`linear-gradient(135deg, ...)`）。三种渐变模式，文字主题必须匹配：
+- **紫色系（深底 → 白字 `.text-dark`）：** `#667eea → #764ba2 → #f093fb`
+- **粉蓝系（浅底 → 深字 `.text-light-theme`）：** `#f8cdda → #a6c1ee → #1d6fa4` — 起始色 `#f8cdda` 亮度高，白色文字对比度不足，必须使用深色文字
+- **薄荷系（浅底 → 深字 `.text-light-theme`）：** `#a8edea → #fed6e3` — 整体亮度高，必须使用深色文字
+
+光球直接放在 `.slide` 内、卡片后方。
 
 ### Style-Specific Rules
 - `backdrop-filter: blur()` 必须有彩色背景在其后方才能生效——光球是必需的，不是装饰

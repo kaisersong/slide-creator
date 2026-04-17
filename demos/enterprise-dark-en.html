@@ -455,10 +455,11 @@ body.editing .edit-toggle { opacity: 1; background: rgba(16,185,129,0.80); color
 
 class PresentMode {
   constructor(ctrl) {
-    this.ctrl = ctrl; this.baseW = 1440; this.baseH = 900; this.active = false;
+    this.ctrl = ctrl; this.DW = 1440; this.DH = 900; this.active = false;
+    this._resize = () => this._scale();
     const btn = document.createElement('button');
     btn.id = 'present-btn'; btn.title = 'Present (F5)';
-    btn.setAttribute('aria-label', 'Present'); btn.textContent = '\u25b6';
+    btn.setAttribute('aria-label', 'Present'); btn.textContent = '▶';
     document.body.appendChild(btn);
     const counter = document.createElement('div');
     counter.id = 'present-counter'; document.body.appendChild(counter);
@@ -468,14 +469,13 @@ class PresentMode {
       if (e.key === 'Escape' && this.active) this.exit();
       if ((e.key === 'b' || e.key === 'B') && this.active) document.body.classList.toggle('presenting-black');
     });
-    document.addEventListener('fullscreenchange', () => { if (this.active) { setTimeout(() => this._scale(), 100); } if (!document.fullscreenElement && this.active) this.exit(); });
-                window.addEventListener('resize', () => { if (this.active) this._scale(); });
+    document.addEventListener('fullscreenchange', () => { if (!document.fullscreenElement && this.active) this.exit(); });
   }
   enter() {
     if (this.active) return; this.active = true;
     document.body.classList.add('presenting');
     document.documentElement.requestFullscreen?.().catch(() => {});
-    this._scale(); this._show(this.ctrl.currentSlide);
+    window.addEventListener('resize', this._resize); this._scale(); this._show(this.ctrl.currentSlide);
     this._origGoTo = this.ctrl.goTo.bind(this.ctrl);
     this.ctrl.goTo = (i) => {
       const idx = Math.max(0, Math.min(i, this.ctrl.slides.length - 1));
@@ -485,33 +485,26 @@ class PresentMode {
     };
   }
   exit() {
-    if (!this.active) return;
-                this._reset(); this.active = false;
+    if (!this.active) return; this.active = false;
     document.body.classList.remove('presenting', 'presenting-black');
-    document.exitFullscreen?.().catch(() => {});
-    this.ctrl.goTo = this._origGoTo;
-    this.ctrl.goTo(this.ctrl.currentSlide);
-    setTimeout(() => this.ctrl.slides[this.ctrl.currentSlide]?.scrollIntoView(), 50);
+    document.querySelectorAll('.slide').forEach(s => s.classList.remove('p-on'));
+    if (document.fullscreenElement) document.exitFullscreen?.();
+    window.removeEventListener('resize', this._resize);
+    if (this._origGoTo) { this.ctrl.goTo = this._origGoTo; this._origGoTo = null; }
+    this.ctrl.slides[this.ctrl.currentSlide]?.scrollIntoView({ behavior: 'instant' });
   }
   _scale() {
-    const sw = window.innerWidth / this.baseW, sh = window.innerHeight / this.baseH, s = Math.min(sw, sh);
-    document.querySelectorAll('body.presenting .slide').forEach(sl => {
-      sl.style.transform = `translate(-50%, -50%) scale(${s}
-  _reset() {
-    this.ctrl.slides.forEach(slide => { slide.style.transform = ''; slide.classList.remove('p-on'); });
+    const s = Math.min(window.innerWidth / this.DW, window.innerHeight / this.DH);
+    const ox = (window.innerWidth - this.DW * s) / 2;
+    const oy = (window.innerHeight - this.DH * s) / 2;
+    const r = document.documentElement;
+    r.style.setProperty('--pdw', this.DW + 'px'); r.style.setProperty('--pdh', this.DH + 'px');
+    r.style.setProperty('--ps', s); r.style.setProperty('--pox', ox + 'px'); r.style.setProperty('--poy', oy + 'px');
   }
-)`;
-    });
-  }
-  _show(n) {
-    this.ctrl.slides.forEach((sl, i) => {
-      sl.classList.toggle('p-on', i === n);
-      sl.querySelectorAll('.reveal').forEach(r => {
-        r.classList.toggle('visible', i === n);
-      });
-    });
-    const counter = document.getElementById('present-counter');
-    if (counter) counter.textContent = `${n + 1} / ${this.ctrl.slides.length}`;
+  _show(i) {
+    document.querySelectorAll('.slide').forEach((s, idx) => s.classList.toggle('p-on', idx === i));
+    const c = document.getElementById('present-counter');
+    if (c) c.textContent = `${i + 1} / ${this.ctrl.slides.length}`;
   }
 }
 
@@ -569,8 +562,8 @@ class SlidePresentation {
       } else if (e.key === 'p' || e.key === 'P') {
         const url = location.href.split('?')[0] + '?presenter';
         window.open(url, 'slide-presenter-' + Date.now(), 'width=1100,menubar=no,toolbar=no,location=no');
-      }} else if (e.key === 'e' || e.key === 'E') { if (!this.editor?.active) this.editor?.enter(); else this.editor?.exit();
-});
+      }
+    });
   }
   setupTouch() {
     let startY = 0;
@@ -580,7 +573,7 @@ class SlidePresentation {
       if (Math.abs(delta) > 50) delta > 0 ? this.next() : this.prev();
     });
   }
-  setupWheel() {}
+  setupWheel() { /* scroll-snap handles natively */ }
   setupPresenter() {
     this.channel.addEventListener('message', e => {
       if (e.data.type === 'nav-next') this.next();
@@ -666,20 +659,22 @@ if (new URLSearchParams(location.search).has('presenter')) {
   document.title = 'Presenter — ' + document.title;
   document.body.innerHTML = `
   <style>
-  body { margin: 0; background: #111; color: #fff; font-family: system-ui, sans-serif; }
-  #pv { display: flex; height: 100vh; }
-  .pv-panel { background: #1a1a1a; border-right: 1px solid #333; padding: 12px; }
-  #pv-right { flex: 1; display: flex; flex-direction: column; }
-  #pv-nav { display: flex; align-items: center; gap: 12px; }
-  .pv-arrow { background: #333; color: #fff; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; }
-  #pv-counter { display: flex; align-items: baseline; gap: 4px; }
-  #pv-num { font-size: 1.5rem; font-weight: 700; }
-  #pv-of { font-size: 0.875rem; color: #888; }
-  #pv-timer-label { font-size: 0.7rem; color: #888; text-transform: uppercase; letter-spacing: 0.1em; }
-  #pv-timer { font-size: 2rem; font-weight: 700; font-family: monospace; }
-  #pv-notes { white-space: pre-wrap; font-size: 0.875rem; line-height: 1.6; color: #ccc; margin-top: 8px; }
-  #pv-label { font-weight: 600; font-size: 0.75rem; color: #888; text-transform: uppercase; letter-spacing: 0.1em; }
-  #pv-timer-box { margin-top: auto; padding: 12px !important; }
+    * { box-sizing: border-box; margin: 0; }
+    body { background: #111; color: #fff; font-family: system-ui, sans-serif; }
+    #pv { display: grid; grid-template-columns: 1fr 220px; gap: 1rem; padding: 1.25rem; align-items: start; }
+    .pv-panel { background: #1e1e1e; border-radius: 12px; padding: 1.25rem; }
+    #pv-label { font-size: 0.6rem; letter-spacing: 0.18em; text-transform: uppercase; color: #555; margin-bottom: 0.6rem; }
+    #pv-notes { font-size: 1.05rem; line-height: 1.85; color: #d0d0d0; }
+    #pv-right { display: flex; flex-direction: column; gap: 1rem; }
+    #pv-nav { display: flex; align-items: center; justify-content: space-between; gap: 0.5rem; }
+    .pv-arrow { width: 32px; height: 32px; border-radius: 6px; border: 1px solid #333; background: #2a2a2a; color: #aaa; font-size: 1rem; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: background 0.15s, color 0.15s; flex-shrink: 0; }
+    .pv-arrow:hover { background: #383838; color: #fff; }
+    #pv-counter { text-align: center; flex: 1; }
+    #pv-num { font-size: 1.6rem; font-weight: 700; font-variant-numeric: tabular-nums; line-height: 1; }
+    #pv-of { color: #555; font-size: 0.75rem; margin-top: 0.2rem; }
+    #pv-timer-box { text-align: center; }
+    #pv-timer-label { font-size: 0.6rem; letter-spacing: 0.18em; text-transform: uppercase; color: #555; margin-bottom: 0.3rem; }
+    #pv-timer { font-size: 1.5rem; font-weight: 700; font-family: monospace; font-variant-numeric: tabular-nums; }
   </style>
   <div id="pv">
     <div class="pv-panel"><div id="pv-label">Speaker Notes</div><div id="pv-notes">Waiting for main window...</div></div>
@@ -703,9 +698,9 @@ if (new URLSearchParams(location.search).has('presenter')) {
     else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp' || e.key === 'PageUp' || e.key === 'Backspace') ch.postMessage({ type: 'nav-prev' });
   });
 } else {
-
   new PresentMode(new SlidePresentation());
 }
+
 </script>
 <script>
 
