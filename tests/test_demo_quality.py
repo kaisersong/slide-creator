@@ -17,8 +17,9 @@ from bs4 import BeautifulSoup
 
 DEMOS_DIR = Path(__file__).parent.parent / "demos"
 
-# All demo HTML files
-ALL_DEMOS = sorted(DEMOS_DIR.glob("*.html"))
+# All demo HTML files (excluding experiment/backup variants)
+ALL_DEMOS = sorted(p for p in DEMOS_DIR.glob("*.html")
+                   if not p.name.endswith(("-backup.html", "-experiment.html")))
 
 # Demos that include the full edit-mode feature set (hotzone + contenteditable + saveFile).
 # Filter by actual DOM element presence ('id="hotzone"'), not just CSS selector.
@@ -607,3 +608,65 @@ class TestWatermark:
         )
         assert has_js_inject, \
             "Watermark must be injected by JS into last slide (slides[slides.length-1].appendChild)"
+
+
+class TestJavaScriptSyntax:
+    """All inline JavaScript in demo files must be syntactically valid.
+
+    This catches truncated template literals, mismatched braces,
+    and other JS syntax errors that cause entire scripts to fail
+    (making slides invisible since .reveal elements never get .visible).
+    """
+
+    @pytest.fixture(params=ALL_DEMOS, ids=lambda p: p.name)
+    def demo(self, request):
+        return load(request.param)
+
+    def test_all_script_blocks_parse(self, demo):
+        """Every <script> block must be valid JavaScript.
+
+        Regression for: truncated _scale() template literals,
+        }} else if brace mismatches, missing closing parens in
+        forEach callbacks, and `const self = this` redeclarations.
+        """
+        import subprocess
+        _, content = demo
+        scripts = re.findall(r'<script[^>]*>(.*?)</script>', content, re.DOTALL)
+        for i, js in enumerate(scripts):
+            tmp = "/tmp/test_js_syntax.js"
+            with open(tmp, "w") as out:
+                out.write(js)
+            result = subprocess.run(
+                ["node", "--check", tmp],
+                capture_output=True, text=True
+            )
+            assert result.returncode == 0, (
+                f"JavaScript syntax error in script block [{i}]: "
+                f"{result.stderr.strip().split(chr(10))[-1]}"
+            )
+
+    def test_present_mode_class_exists(self, demo):
+        """Demo must include a valid PresentMode class with _scale method.
+
+        Guards against missing or truncated present mode implementations.
+        """
+        _, content = demo
+        assert "class PresentMode" in content or "enterPresent" in content, \
+            "Missing PresentMode class or enterPresent function"
+        assert "_scale" in content or "scale(" in content, \
+            "PresentMode missing _scale() method"
+
+    def test_scale_method_properly_closed(self, demo):
+        """_scale() method must not have truncated template literals.
+
+        Catches the pattern: `translate(...) scale(${s}\n  _reset() {...} )`;
+        which causes entire JS to fail parsing.
+        """
+        _, content = demo
+        # Detect truncated template literal in _scale
+        bad = re.search(
+            r'scale\(\$\{[a-z]+\}\s*\n\s*_reset\(\)',
+            content
+        )
+        assert not bad, \
+            "_scale() has truncated template literal — JS will fail to parse"

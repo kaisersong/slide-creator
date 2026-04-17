@@ -647,7 +647,7 @@ class SlidePresentation {
   }
 
   setupKeyboard() {
-    const self = this;
+    const _self = this;
     document.addEventListener('keydown', function(e) {
       if (e.target.getAttribute('contenteditable')) return;
       if (e.key === 'ArrowDown' || e.key === 'ArrowRight' || e.key === ' ' || e.key === 'PageDown' || e.key === 'Enter') {
@@ -660,14 +660,14 @@ class SlidePresentation {
         const url = location.href.split('?')[0] + '?presenter';
         window.open(url, 'slide-presenter-' + Date.now(), 'width=1100,menubar=no,toolbar=no');
       } else if (e.key === 'e' || e.key === 'E') {
-        if (!self.editor?.active) self.editor?.enter();
-        else self.editor?.exit();
+        if (this.editor && !this.editor.active) this.editor.enter();
+        else if (this.editor) this.editor.exit();
       }
     });
   }
 
   setupTouch() {
-    const self = this;
+    const _self = this;
     let startY = 0;
     document.addEventListener('touchstart', e => { startY = e.touches[0].clientY; }, { passive: true });
     document.addEventListener('touchend', e => {
@@ -681,7 +681,7 @@ class SlidePresentation {
   }
 
   setupPresenter() {
-    const self = this;
+    const _self = this;
     this.channel.addEventListener('message', function(e) {
       if (e.data.type === 'nav-next') self.next();
       else if (e.data.type === 'nav-prev') self.prev();
@@ -721,7 +721,7 @@ class SlidePresentation {
   }
 
   setupEditor() {
-    const self = this;
+    const _self = this;
     const panel = document.getElementById('notes-panel');
     const label = document.getElementById('notes-panel-label');
     const textarea = document.getElementById('notes-textarea');
@@ -730,9 +730,9 @@ class SlidePresentation {
     let hideTimeout = null;
 
     hotzone.addEventListener('mouseenter', function() { clearTimeout(hideTimeout); toggle.classList.add('show'); });
-    hotzone.addEventListener('mouseleave', function() { hideTimeout = setTimeout(function() { if (!self.editor.active) toggle.classList.remove('show'); }, 400); });
+    hotzone.addEventListener('mouseleave', function() { hideTimeout = setTimeout(function() { if (!this.editor?.active) toggle.classList.remove('show'); }, 400); });
     toggle.addEventListener('mouseenter', function() { clearTimeout(hideTimeout); });
-    toggle.addEventListener('mouseleave', function() { hideTimeout = setTimeout(function() { if (!self.editor.active) toggle.classList.remove('show'); }, 400); });
+    toggle.addEventListener('mouseleave', function() { hideTimeout = setTimeout(function() { if (!this.editor?.active) toggle.classList.remove('show'); }, 400); });
     hotzone.addEventListener('click', function() { self.editor.toggle(); });
     toggle.addEventListener('click', function() { self.editor.toggle(); });
 
@@ -888,7 +888,6 @@ if (new URLSearchParams(location.search).has('presenter')) {
                 const scale = Math.min(vw / this.baseW, vh / this.baseH);
                 this.ctrl.slides.forEach(slide => { slide.style.transform = 'scale(' + scale + ')'; });
             }
-    }
     _show(i) {
       document.querySelectorAll('.slide').forEach((s, idx) => s.classList.toggle('p-on', idx === i));
       const c = document.getElementById('present-counter');

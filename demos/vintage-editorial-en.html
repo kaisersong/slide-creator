@@ -483,14 +483,15 @@ class PresentMode {
     setTimeout(() => this.ctrl.slides[this.ctrl.currentSlide]?.scrollIntoView(), 50);
   }
   _scale() {
-    const sw = window.innerWidth / this.baseW, sh = window.innerHeight / this.baseH, s = Math.min(sw, sh);
-    document.querySelectorAll('body.presenting .slide').forEach(sl => {
-      sl.style.transform = `translate(-50%, -50%) scale(${s}
+    const s = Math.min(window.innerWidth / this.baseW, window.innerHeight / this.baseH);
+    const ox = (window.innerWidth - this.baseW * s) / 2;
+    const oy = (window.innerHeight - this.baseH * s) / 2;
+    const r = document.documentElement;
+    r.style.setProperty('--pdw', this.baseW + 'px'); r.style.setProperty('--pdh', this.baseH + 'px');
+    r.style.setProperty('--ps', s); r.style.setProperty('--pox', ox + 'px'); r.style.setProperty('--poy', oy + 'px');
+  }
   _reset() {
     this.ctrl.slides.forEach(slide => { slide.style.transform = ''; slide.classList.remove('p-on'); });
-  }
-)`;
-    });
   }
   _show(n) {
     this.ctrl.slides.forEach((sl, i) => {
@@ -558,9 +559,11 @@ class SlidePresentation {
       } else if (e.key === 'p' || e.key === 'P') {
         const url = location.href.split('?')[0] + '?presenter';
         window.open(url, 'slide-presenter-' + Date.now(), 'width=1100,menubar=no,toolbar=no,location=no');
-      }} else if (e.key === 'e' || e.key === 'E') {
-        if (!self.editor?.active) self.editor?.enter();
-        else self.editor?.exit();    });
+      } else if (e.key === 'e' || e.key === 'E') {
+        if (!this.editor?.active) this.editor?.enter();
+        else this.editor?.exit();
+      }
+    });
   }
   setupTouch() {
     let startY = 0;

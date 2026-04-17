@@ -480,317 +480,268 @@ clawhub install kai-slide-creator</div>
     </div>
 
     <script>
-        class SlidePresentation {
-            constructor() {
-                this.slides = document.querySelectorAll('.slide');
-                this.currentSlide = 0;
-                this.channel = new BroadcastChannel('slide-creator-presenter');
-                this.slides[0]?.classList.add('visible');
-                this.slides[0]?.querySelectorAll('.reveal').forEach(function(r) { r.classList.add('visible'); });
-                this.setupNavDots(); this.setupObserver(); this.setupKeyboard();
-                this.setupTouch(); this.setupWheel(); this.setupPresenter(); this.setupEditor(); this.updateProgress();
-            }
 
-            setupNavDots() {
-                const nav = document.querySelector('.nav-dots');
-                if (!nav) return;
-                const self = this;
-                this.slides.forEach(function(_, i) {
-                    const dot = document.createElement('button');
-                    dot.setAttribute('aria-label', 'Go to slide ' + (i + 1));
-                    dot.style.cssText = 'width:8px;height:8px;border-radius:0;border:none;cursor:pointer;background:#000;transition:none;';
-                    dot.addEventListener('click', function() { self.goTo(i); });
-                    nav.appendChild(dot);
-                });
-                nav.style.cssText = 'position:fixed;right:1.5rem;top:50%;transform:translateY(-50%);display:flex;flex-direction:column;gap:8px;z-index:100;';
-            }
+class PresentMode {
+  constructor(ctrl) {
+    this.ctrl = ctrl; this.DW = 1440; this.DH = 900; this.active = false;
+    this._resize = () => this._scale();
+    const btn = document.createElement('button');
+    btn.id = 'present-btn'; btn.title = 'Present (F5)';
+    btn.setAttribute('aria-label', 'Present'); btn.textContent = '▶';
+    document.body.appendChild(btn);
+    const counter = document.createElement('div');
+    counter.id = 'present-counter'; document.body.appendChild(counter);
+    btn.addEventListener('click', () => this.enter());
+    document.addEventListener('keydown', e => {
+      if (e.key === 'F5') { e.preventDefault(); this.enter(); }
+      if (e.key === 'Escape' && this.active) this.exit();
+      if ((e.key === 'b' || e.key === 'B') && this.active) document.body.classList.toggle('presenting-black');
+    });
+    document.addEventListener('fullscreenchange', () => { if (!document.fullscreenElement && this.active) this.exit(); });
+  }
+  enter() {
+    if (this.active) return; this.active = true;
+    document.body.classList.add('presenting');
+    document.documentElement.requestFullscreen?.().catch(() => {});
+    window.addEventListener('resize', this._resize); this._scale(); this._show(this.ctrl.currentSlide);
+    this._origGoTo = this.ctrl.goTo.bind(this.ctrl);
+    this.ctrl.goTo = (i) => {
+      const idx = Math.max(0, Math.min(i, this.ctrl.slides.length - 1));
+      this.ctrl.currentSlide = idx;
+      this.ctrl.slides.forEach((s, j) => s.classList.toggle('visible', j === idx));
+      this._show(idx); this.ctrl.updateProgress?.(); this.ctrl.updateDots?.(); this.ctrl.broadcastState?.();
+    };
+  }
+  exit() {
+    if (!this.active) return; this.active = false;
+    document.body.classList.remove('presenting', 'presenting-black');
+    document.querySelectorAll('.slide').forEach(s => s.classList.remove('p-on'));
+    if (document.fullscreenElement) document.exitFullscreen?.();
+    window.removeEventListener('resize', this._resize);
+    if (this._origGoTo) { this.ctrl.goTo = this._origGoTo; this._origGoTo = null; }
+    this.ctrl.slides[this.ctrl.currentSlide]?.scrollIntoView({ behavior: 'instant' });
+  }
+  _scale() {
+    const s = Math.min(window.innerWidth / this.DW, window.innerHeight / this.DH);
+    const ox = (window.innerWidth - this.DW * s) / 2;
+    const oy = (window.innerHeight - this.DH * s) / 2;
+    const r = document.documentElement;
+    r.style.setProperty('--pdw', this.DW + 'px'); r.style.setProperty('--pdh', this.DH + 'px');
+    r.style.setProperty('--ps', s); r.style.setProperty('--pox', ox + 'px'); r.style.setProperty('--poy', oy + 'px');
+  }
+  _show(i) {
+    document.querySelectorAll('.slide').forEach((s, idx) => s.classList.toggle('p-on', idx === i));
+    const c = document.getElementById('present-counter');
+    if (c) c.textContent = `${i + 1} / ${this.ctrl.slides.length}`;
+  }
+}
 
-            setupObserver() {
-                const self = this;
-                const observer = new IntersectionObserver(function(entries) {
-                    entries.forEach(function(entry) {
-                        if (entry.isIntersecting) {
-                            entry.target.classList.add('visible');
-                            self.currentSlide = Array.prototype.indexOf.call(self.slides, entry.target);
-                            self.updateProgress(); self.updateDots(); self.broadcastState(); self.updateNotesPanel();
-                        }
-                    });
-                }, { threshold: 0.5 });
-                this.slides.forEach(function(s) { observer.observe(s); });
-            }
 
-            setupKeyboard() {
-                const self = this;
-                document.addEventListener('keydown', function(e) {
-                    if (e.target.getAttribute('contenteditable') || e.target.tagName === 'TEXTAREA') return;
-                    if (e.key === 'e' || e.key === 'E') { e.preventDefault(); self.editor.toggle(); return; }
-                    if (['ArrowDown','ArrowRight',' ','PageDown','Enter'].includes(e.key)) { e.preventDefault(); self.next(); }
-                    else if (['ArrowUp','ArrowLeft','PageUp','Backspace'].includes(e.key)) { e.preventDefault(); self.prev(); }
-                    else if (e.key === 'p' || e.key === 'P') { window.open(location.href.split('?')[0] + '?presenter', 'slide-presenter-' + Date.now(), 'width=1100,menubar=no,toolbar=no,location=no'); }
-                });
-            }
-
-            setupTouch() {
-                const self = this;
-                let startY = 0;
-                document.addEventListener('touchstart', function(e) { startY = e.touches[0].clientY; }, { passive: true });
-                document.addEventListener('touchend', function(e) { const d = startY - e.changedTouches[0].clientY; if (Math.abs(d) > 50) d > 0 ? self.next() : self.prev(); });
-            }
-
-            setupWheel() {}
-
-            setupPresenter() {
-                const self = this;
-                this.channel.addEventListener('message', function(e) {
-                    if (e.data.type === 'nav-next') self.next();
-                    else if (e.data.type === 'nav-prev') self.prev();
-                    else if (e.data.type === 'request-state') self.broadcastState();
-                });
-            }
-
-            broadcastState() {
-                const slide = this.slides[this.currentSlide];
-                this.channel.postMessage({ type: 'state', index: this.currentSlide, total: this.slides.length, notes: slide?.dataset.notes || '' });
-            }
-
-            goTo(index) {
-                const self = this;
-                const idx = Math.max(0, Math.min(index, this.slides.length - 1));
-                this.currentSlide = idx;
-                this.slides.forEach(function(s, j) { s.classList.toggle('visible', j === idx); });
-                this.slides[idx]?.scrollIntoView({ behavior: 'smooth' });
-                this.updateProgress(); this.updateDots(); this.broadcastState(); this.updateNotesPanel();
-            }
-            next() { this.goTo(Math.min(this.currentSlide + 1, this.slides.length - 1)); }
-            prev() { this.goTo(Math.max(this.currentSlide - 1, 0)); }
-
-            updateProgress() {
-                const pct = (this.currentSlide / (this.slides.length - 1)) * 100;
-                const bar = document.querySelector('.progress-bar');
-                if (bar) bar.style.width = pct + '%';
-                const counter = document.getElementById('present-counter');
-                if (counter) counter.textContent = (this.currentSlide + 1) + ' / ' + this.slides.length;
-            }
-
-            updateDots() {
-                const self = this;
-                document.querySelectorAll('.nav-dots button').forEach(function(dot, i) {
-                    dot.style.background = i === self.currentSlide ? '#000' : 'rgba(0,0,0,0.2)';
-                    dot.style.height = i === self.currentSlide ? '20px' : '8px';
-                });
-            }
-
-            setupEditor() {
-                const self = this;
-                const panel = document.getElementById('notes-panel');
-                const label = document.getElementById('notes-panel-label');
-                const textarea = document.getElementById('notes-textarea');
-                const toggle = document.getElementById('editToggle');
-                const hotzone = document.querySelector('.edit-hotzone');
-                const header = document.getElementById('notes-panel-header');
-                const collapseBtn = document.getElementById('notes-collapse-btn');
-                let hideTimeout = null;
-
-                hotzone.addEventListener('mouseenter', function() { clearTimeout(hideTimeout); toggle.classList.add('show'); });
-                hotzone.addEventListener('mouseleave', function() { hideTimeout = setTimeout(function() { if (!self.editor.active) toggle.classList.remove('show'); }, 400); });
-                toggle.addEventListener('mouseenter', function() { clearTimeout(hideTimeout); });
-                toggle.addEventListener('mouseleave', function() { hideTimeout = setTimeout(function() { if (!self.editor.active) toggle.classList.remove('show'); }, 400); });
-                toggle.addEventListener('click', function(e) { e.stopPropagation(); self.editor.toggle(); });
-                hotzone.addEventListener('click', function() { self.editor.toggle(); });
-
-                header.addEventListener('click', function(e) {
-                    if (e.target === collapseBtn) { panel.classList.toggle('collapsed'); return; }
-                });
-
-                textarea.addEventListener('input', function() {
-                    const slide = self.slides[self.currentSlide];
-                    if (slide) { slide.dataset.notes = textarea.value; self.broadcastState(); }
-                });
-
-                document.addEventListener('keydown', function(e) {
-                    if ((e.ctrlKey || e.metaKey) && e.key === 's') { e.preventDefault(); self.saveFile(); }
-                });
-
-                this.editor = {
-                    active: false,
-                    toggle: function() { self.editor.active ? self.editor.exit() : self.editor.enter(); },
-                    enter: function() {
-                        self.editor.active = true;
-                        toggle.classList.add('active'); toggle.textContent = '✓ Done';
-                        self.slides.forEach(function(s) {
-                            s.querySelectorAll('h1,h2,h3,p,li,span,td,th').forEach(function(el) {
-                                el.setAttribute('contenteditable', 'true'); el.style.outline = 'none';
-                            });
-                        });
-                        panel.classList.add('active'); self.updateNotesPanel();
-                    },
-                    exit: function() {
-                        self.editor.active = false;
-                        toggle.classList.remove('active'); toggle.textContent = '✏ Edit';
-                        self.slides.forEach(function(s) {
-                            s.querySelectorAll('[contenteditable]').forEach(function(el) {
-                                el.removeAttribute('contenteditable'); el.style.outline = '';
-                            });
-                        });
-                        panel.classList.remove('active');
-                    }
-                };
-                this._notesLabel = label; this._notesTextarea = textarea;
-            }
-
-            updateNotesPanel() {
-                if (!this.editor) return;
-                const slide = this.slides[this.currentSlide];
-                if (this._notesLabel) this._notesLabel.textContent = 'SPEAKER NOTES — SLIDE ' + (this.currentSlide + 1) + ' / ' + this.slides.length;
-                if (this._notesTextarea) this._notesTextarea.value = slide?.dataset.notes || '';
-            }
-
-            saveFile() {
-                const html = '<!DOCTYPE html>\n' + document.documentElement.outerHTML;
-                const bytes = new TextEncoder().encode(html);
-                fetch(location.pathname, { method: 'PUT', body: bytes, headers: { 'Content-Type': 'text/html' } })
-                    .catch(function() {
-                        const a = Object.assign(document.createElement('a'), {
-                            href: URL.createObjectURL(new Blob([html], { type: 'text/html' })),
-                            download: location.pathname.split('/').pop() || 'presentation.html'
-                        }); a.click(); URL.revokeObjectURL(a.href);
-                    });
-            }
+class SlidePresentation {
+  constructor() {
+    this.slides = document.querySelectorAll('.slide');
+    this.currentSlide = 0;
+    this.channel = new BroadcastChannel('slide-creator-presenter');
+    // CRITICAL: Make first slide visible immediately
+    this.slides[0]?.classList.add('visible');
+    this.slides[0]?.querySelectorAll('.reveal').forEach(function(r) { r.classList.add('visible'); });
+    this.setupNavDots();
+    this.setupObserver();
+    this.setupKeyboard();
+    this.setupTouch();
+    this.setupWheel();
+    this.setupPresenter();
+    this.updateProgress();
+  }
+  setupNavDots() {
+    const nav = document.querySelector('.nav-dots');
+    if (!nav) return;
+    this.slides.forEach((_, i) => {
+      const dot = document.createElement('button');
+      dot.setAttribute('aria-label', `Go to slide ${i + 1}`);
+      dot.style.cssText = 'width:8px;height:8px;border-radius:50%;border:none;cursor:pointer;background:rgba(255,255,255,0.3);transition:all 0.3s;';
+      dot.addEventListener('click', () => this.goTo(i));
+      nav.appendChild(dot);
+    });
+    nav.style.cssText = 'position:fixed;right:1.5rem;top:50%;transform:translateY(-50%);display:flex;flex-direction:column;gap:8px;z-index:100;';
+  }
+  setupObserver() {
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
+          this.currentSlide = [...this.slides].indexOf(entry.target);
+          this.updateProgress();
+          this.updateDots();
+          this.broadcastState();
+          this.updateNotesPanel();
         }
+      });
+    }, { threshold: 0.5 });
+    this.slides.forEach(s => observer.observe(s));
+  }
+  setupKeyboard() {
+    document.addEventListener('keydown', (e) => {
+      if (e.target.getAttribute('contenteditable')) return;
+      if (e.key === 'ArrowDown' || e.key === 'ArrowRight' || e.key === ' ' || e.key === 'PageDown' || e.key === 'Enter') {
+        e.preventDefault(); this.next();
+      } else if (e.key === 'ArrowUp' || e.key === 'ArrowLeft' || e.key === 'PageUp' || e.key === 'Backspace') {
+        e.preventDefault(); this.prev();
+      } else if (e.key === 'p' || e.key === 'P') {
+        const url = location.href.split('?')[0] + '?presenter';
+        window.open(url, 'slide-presenter-' + Date.now(), 'width=1100,menubar=no,toolbar=no,location=no');
+      }
+    });
+  }
+  setupTouch() {
+    let startY = 0;
+    document.addEventListener('touchstart', e => { startY = e.touches[0].clientY; }, { passive: true });
+    document.addEventListener('touchend', e => {
+      const delta = startY - e.changedTouches[0].clientY;
+      if (Math.abs(delta) > 50) delta > 0 ? this.next() : this.prev();
+    });
+  }
+  setupWheel() { /* scroll-snap handles natively */ }
+  setupPresenter() {
+    this.channel.addEventListener('message', e => {
+      if (e.data.type === 'nav-next') this.next();
+      else if (e.data.type === 'nav-prev') this.prev();
+      else if (e.data.type === 'request-state') this.broadcastState();
+    });
+  }
+  broadcastState() {
+    const slide = this.slides[this.currentSlide];
+    this.channel.postMessage({
+      type: 'state', index: this.currentSlide,
+      total: this.slides.length, notes: slide?.dataset.notes || ''
+    });
+  }
+  goTo(index) {
+    this.slides.forEach((slide, i) => {
+      slide.classList.toggle('visible', i === index);
+      var reveals = slide.querySelectorAll('.reveal');
+      reveals.forEach(function(r) { r.classList.toggle('visible', i === index); });
+    });
+    this.slides[index]?.scrollIntoView({ behavior: 'smooth' });
+  }
+  next() { this.goTo(Math.min(this.currentSlide + 1, this.slides.length - 1)); }
+  prev() { this.goTo(Math.max(this.currentSlide - 1, 0)); }
+  updateProgress() {
+    const pct = (this.currentSlide / (this.slides.length - 1)) * 100;
+    const bar = document.querySelector('.progress-bar');
+    if (bar) bar.style.width = pct + '%';
+  }
+  updateDots() {
+    document.querySelectorAll('.nav-dots button').forEach((dot, i) => {
+      dot.style.background = i === this.currentSlide ? 'var(--accent)' : 'rgba(255,255,255,0.3)';
+      dot.style.transform = i === this.currentSlide ? 'scale(1.3)' : 'scale(1)';
+    });
+  }
+  updateNotesPanel() {
+    const label = document.getElementById('notes-panel-label');
+    const textarea = document.getElementById('notes-textarea');
+    if (label) label.textContent = `SPEAKER NOTES — SLIDE ${this.currentSlide + 1} / ${this.slides.length}`;
+    if (textarea) textarea.value = this.slides[this.currentSlide]?.dataset.notes || '';
+  }
+  setupEditor() {
+    const panel = document.getElementById('notes-panel');
+    const textarea = document.getElementById('notes-textarea');
+    const toggle = document.getElementById('editToggle');
+    const hotzone = document.querySelector('.edit-hotzone');
+    const header = document.getElementById('notes-panel-header');
+    const collapseBtn = document.getElementById('notes-collapse-btn');
+    let hideTimeout = null;
+    this.editor = { active: false };
+    hotzone.addEventListener('mouseenter', () => { clearTimeout(hideTimeout); toggle.classList.add('show'); });
+    hotzone.addEventListener('mouseleave', () => { hideTimeout = setTimeout(() => { if (!this.editor.active) toggle.classList.remove('show'); }, 400); });
+    toggle.addEventListener('mouseenter', () => clearTimeout(hideTimeout));
+    toggle.addEventListener('mouseleave', () => { hideTimeout = setTimeout(() => { if (!this.editor.active) toggle.classList.remove('show'); }, 400); });
+    toggle.addEventListener('click', (e) => {
+      e.stopPropagation();
+      this.editor.active = !this.editor.active;
+      document.body.classList.toggle('editing', this.editor.active);
+      toggle.classList.toggle('active', this.editor.active);
+      toggle.textContent = this.editor.active ? '✓ Done' : '✏ Edit';
+      if (this.editor.active) {
+        panel.classList.add('active');
+        textarea.value = this.slides[this.currentSlide]?.dataset.notes || '';
+        textarea.focus();
+      } else {
+        panel.classList.remove('active');
+      }
+    });
+    header.addEventListener('click', (e) => {
+      if (e.target === collapseBtn) { panel.classList.toggle('collapsed'); return; }
+    });
+    textarea.addEventListener('input', () => {
+      const slide = this.slides[this.currentSlide];
+      if (slide) slide.dataset.notes = textarea.value;
+      this.channel.postMessage({ type: 'state', index: this.currentSlide, total: this.slides.length, notes: textarea.value });
+    });
+  }
+}
 
-        /* Presenter window */
-        if (new URLSearchParams(location.search).has('presenter')) {
-            document.title = 'Presenter — ' + document.title;
-            document.body.innerHTML = '<style>body{margin:0;background:#111;color:#fff;font-family:system-ui,sans-serif;}#pv{display:grid;grid-template-columns:1fr 220px;gap:1rem;padding:1.25rem;align-items:start;}.pv-panel{background:#1e1e1e;border-radius:0;padding:1.25rem;}#pv-label{font-size:0.6rem;letter-spacing:0.18em;text-transform:uppercase;color:#555;margin-bottom:0.6rem;}#pv-notes{font-size:1.05rem;line-height:1.85;color:#d0d0d0;}#pv-right{display:flex;flex-direction:column;gap:1rem;}#pv-nav{display:flex;align-items:center;justify-content:space-between;gap:0.5rem;}.pv-arrow{width:32px;height:32px;border-radius:0;border:2px solid #333;background:#2a2a2a;color:#aaa;font-size:1rem;cursor:pointer;display:flex;align-items:center;justify-content:center;}.pv-arrow:hover{background:#383838;color:#fff;}#pv-counter{text-align:center;flex:1;}#pv-num{font-size:1.6rem;font-weight:700;font-variant-numeric:tabular-nums;line-height:1;}#pv-of{color:#555;font-size:0.75rem;margin-top:0.2rem;}#pv-timer{font-size:1.5rem;font-weight:700;font-family:monospace;font-variant-numeric:tabular-nums;}#pv-timer-label{font-size:0.6rem;letter-spacing:0.18em;text-transform:uppercase;color:#555;}</style><div id="pv"><div class="pv-panel"><div id="pv-label">Speaker Notes</div><div id="pv-notes">Waiting for main window…</div></div><div id="pv-right"><div class="pv-panel"><div id="pv-nav"><button class="pv-arrow" id="pv-prev">←</button><div id="pv-counter"><div id="pv-num">—</div><div id="pv-of">/ —</div></div><button class="pv-arrow" id="pv-next">→</button></div></div><div class="pv-panel"><div id="pv-timer-label">Elapsed</div><div id="pv-timer">0:00</div></div></div></div>';
+/* Presenter Mode */
 
-            const ch = new BroadcastChannel('slide-creator-presenter');
-            let startTime = null;
-            const pv = document.getElementById('pv');
-            let lastH = 0, roTimer = null;
-            new ResizeObserver(function() {
-                clearTimeout(roTimer);
-                roTimer = setTimeout(function() {
-                    const h = Math.ceil(pv.getBoundingClientRect().height);
-                    if (h === lastH) return;
-                    lastH = h;
-                    const chrome = window.outerHeight - window.innerHeight;
-                    window.resizeTo(window.outerWidth, Math.max(260, h + chrome + 4));
-                }, 40);
-            }).observe(pv);
+if (new URLSearchParams(location.search).has('presenter')) {
+  document.title = 'Presenter — ' + document.title;
+  document.body.innerHTML = `
+  <style>
+    * { box-sizing: border-box; margin: 0; }
+    body { background: #111; color: #fff; font-family: system-ui, sans-serif; }
+    #pv { display: grid; grid-template-columns: 1fr 220px; gap: 1rem; padding: 1.25rem; align-items: start; }
+    .pv-panel { background: #1e1e1e; border-radius: 12px; padding: 1.25rem; }
+    #pv-label { font-size: 0.6rem; letter-spacing: 0.18em; text-transform: uppercase; color: #555; margin-bottom: 0.6rem; }
+    #pv-notes { font-size: 1.05rem; line-height: 1.85; color: #d0d0d0; }
+    #pv-right { display: flex; flex-direction: column; gap: 1rem; }
+    #pv-nav { display: flex; align-items: center; justify-content: space-between; gap: 0.5rem; }
+    .pv-arrow { width: 32px; height: 32px; border-radius: 6px; border: 1px solid #333; background: #2a2a2a; color: #aaa; font-size: 1rem; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: background 0.15s, color 0.15s; flex-shrink: 0; }
+    .pv-arrow:hover { background: #383838; color: #fff; }
+    #pv-counter { text-align: center; flex: 1; }
+    #pv-num { font-size: 1.6rem; font-weight: 700; font-variant-numeric: tabular-nums; line-height: 1; }
+    #pv-of { color: #555; font-size: 0.75rem; margin-top: 0.2rem; }
+    #pv-timer-box { text-align: center; }
+    #pv-timer-label { font-size: 0.6rem; letter-spacing: 0.18em; text-transform: uppercase; color: #555; margin-bottom: 0.3rem; }
+    #pv-timer { font-size: 1.5rem; font-weight: 700; font-family: monospace; font-variant-numeric: tabular-nums; }
+  </style>
+  <div id="pv">
+    <div class="pv-panel"><div id="pv-label">Speaker Notes</div><div id="pv-notes">Waiting for main window...</div></div>
+    <div id="pv-right">
+      <div class="pv-panel"><div id="pv-nav"><button class="pv-arrow" id="pv-prev">←</button><div id="pv-counter"><div id="pv-num">—</div><div id="pv-of">/ —</div></div><button class="pv-arrow" id="pv-next">→</button></div></div>
+      <div class="pv-panel" id="pv-timer-box"><div id="pv-timer-label">Elapsed</div><div id="pv-timer">0:00</div></div>
+    </div>
+  </div>`;
+  const ch = new BroadcastChannel('slide-creator-presenter');
+  let startTime = null;
+  const pv = document.getElementById('pv');
+  let lastH = 0, roTimer = null;
+  new ResizeObserver(() => { clearTimeout(roTimer); roTimer = setTimeout(() => { const h = Math.ceil(pv.getBoundingClientRect().height); if (h === lastH) return; lastH = h; const chrome = window.outerHeight - window.innerHeight; window.resizeTo(window.outerWidth, Math.max(260, h + chrome + 4)); }, 40); }).observe(pv);
+  ch.addEventListener('message', e => { if (e.data.type !== 'state') return; if (!startTime) startTime = Date.now(); document.getElementById('pv-notes').textContent = e.data.notes || '(no notes for this slide)'; document.getElementById('pv-num').textContent = e.data.index + 1; document.getElementById('pv-of').textContent = `/ ${e.data.total}`; });
+  ch.postMessage({ type: 'request-state' });
+  setInterval(() => { if (!startTime) return; const s = Math.floor((Date.now() - startTime) / 1000); document.getElementById('pv-timer').textContent = `${Math.floor(s / 60)}:${String(s % 60).padStart(2, '0')}`; }, 1000);
+  document.getElementById('pv-prev').addEventListener('click', () => ch.postMessage({ type: 'nav-prev' }));
+  document.getElementById('pv-next').addEventListener('click', () => ch.postMessage({ type: 'nav-next' }));
+  document.addEventListener('keydown', e => {
+    if (e.key === 'ArrowRight' || e.key === 'ArrowDown' || e.key === ' ' || e.key === 'PageDown' || e.key === 'Enter') ch.postMessage({ type: 'nav-next' });
+    else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp' || e.key === 'PageUp' || e.key === 'Backspace') ch.postMessage({ type: 'nav-prev' });
+  });
+} else {
+  new PresentMode(new SlidePresentation());
+}
 
-            ch.addEventListener('message', function(e) {
-                if (e.data.type !== 'state') return;
-                if (!startTime) startTime = Date.now();
-                document.getElementById('pv-notes').textContent = e.data.notes || '(no notes for this slide)';
-                document.getElementById('pv-num').textContent = e.data.index + 1;
-                document.getElementById('pv-of').textContent = '/ ' + e.data.total;
-            });
-            ch.postMessage({ type: 'request-state' });
+</script>
+<script>
 
-            setInterval(function() {
-                if (!startTime) return;
-                const s = Math.floor((Date.now() - startTime) / 1000);
-                document.getElementById('pv-timer').textContent = Math.floor(s / 60) + ':' + String(s % 60).padStart(2, '0');
-            }, 1000);
+(function() {
+  var slides = document.querySelectorAll('.slide');
+  if (!slides.length) return;
+  var last = slides[slides.length - 1];
+  var credit = document.createElement('div');
+  credit.className = 'slide-credit';
+  credit.textContent = 'By kai-slide-creator v2.15.0 · Neo-Brutalism';
+  last.appendChild(credit);
+})();
 
-            document.getElementById('pv-prev').addEventListener('click', function() { ch.postMessage({ type: 'nav-prev' }); });
-            document.getElementById('pv-next').addEventListener('click', function() { ch.postMessage({ type: 'nav-next' }); });
-            document.addEventListener('keydown', function(e) {
-                if (e.key === 'ArrowRight' || e.key === 'ArrowDown' || e.key === ' ' || e.key === 'PageDown' || e.key === 'Enter') ch.postMessage({ type: 'nav-next' });
-                else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp' || e.key === 'PageUp' || e.key === 'Backspace') ch.postMessage({ type: 'nav-prev' });
-            });
-
-        } else {
-            class PresentMode {
-                constructor(ctrl) {
-                    this.ctrl = ctrl;
-                    this.baseW = 1440; this.baseH = 900;
-                    this.active = false;
-                    const btn = document.createElement('button');
-                    btn.id = 'present-btn'; btn.title = 'Present (F5)'; btn.setAttribute('aria-label', 'Present'); btn.textContent = '▶';
-                    document.body.appendChild(btn);
-                    const counter = document.createElement('div');
-                    counter.id = 'present-counter'; document.body.appendChild(counter);
-
-                    const self = this;
-                    btn.addEventListener('click', function() { self.enter(); });
-                    document.addEventListener('keydown', function(e) {
-                        if (e.key === 'F5') { e.preventDefault(); self.enter(); }
-                        if (e.key === 'Escape' && self.active) self.exit();
-                        if ((e.key === 'b' || e.key === 'B') && self.active) document.body.classList.toggle('presenting-black');
-                    });
-                    document.addEventListener('fullscreenchange', function() { if (!document.fullscreenElement && self.active) self.exit();
-      window.addEventListener('resize', () => { if (this.active) this._scale(); }); });
-                }
-
-                enter() {
-                    if (this.active) return;
-                    this.active = true;
-                    document.body.classList.add('presenting');
-                    const self = this;
-                    document.documentElement.requestFullscreen?.().catch(function() {});
-                    this._scale();
-                    this._show(this.ctrl.currentSlide);
-
-                    this._origGoTo = this.ctrl.goTo.bind(this.ctrl);
-                    const self = this;
-                    this.ctrl.goTo = function(i) {
-                        const idx = Math.max(0, Math.min(i, self.ctrl.slides.length - 1));
-                        self.ctrl.currentSlide = idx;
-                        self.ctrl.slides.forEach(function(s, j) { s.classList.toggle('visible', j === idx); s.classList.toggle('p-on', j === idx); });
-                        self._show(idx);
-                        self.ctrl.updateProgress?.();
-                        self.ctrl.updateDots?.();
-                        self.ctrl.broadcastState?.();
-                    };
-                }
-
-                _reset() {
-                this.ctrl.slides.forEach(slide => { slide.style.transform = ''; slide.classList.remove('p-on'); });
-            }
-    exit() {
-                    if (!this.active) return;
-                this._reset();
-                    this.active = false;
-                    document.body.classList.remove('presenting', 'presenting-black');
-                    document.querySelectorAll('.slide').forEach(function(s) { s.classList.remove('p-on'); });
-                    if (document.fullscreenElement) document.exitFullscreen?.();
-                    if (this._origGoTo) { this.ctrl.goTo = this._origGoTo; this._origGoTo = null; }
-                    this.ctrl.slides[this.ctrl.currentSlide]?.scrollIntoView({ behavior: 'instant' });
-                }
-
-                _scale() {
-                const vw = window.innerWidth;
-                const vh = window.innerHeight;
-                const scale = Math.min(vw / this.baseW, vh / this.baseH);
-                this.ctrl.slides.forEach(slide => { slide.style.transform = 'scale(' + scale + ')'; });
-            }
-                }
-
-                _show(i) {
-                    const self = this;
-                    document.querySelectorAll('.slide').forEach(function(s, idx) { s.classList.toggle('p-on', idx === i); });
-                    const c = document.getElementById('present-counter');
-                    if (c) c.textContent = (i + 1) + ' / ' + self.ctrl.slides.length;
-                }
-            }
-
-            const ctrl = new SlidePresentation();
-            ctrl.setupEditor();
-            new PresentMode(ctrl);
-        }
-    </script>
-
-    <script>
-    (function() {
-        var slides = document.querySelectorAll('.slide');
-        if (!slides.length) return;
-        var last = slides[slides.length - 1];
-        var credit = document.createElement('div');
-        credit.className = 'slide-credit';
-        credit.textContent = 'By kai-slide-creator v2.17.0 · Neo-Brutalism';
-        last.appendChild(credit);
-    })();
-    </script>
+</script>
 </body>
 </html>

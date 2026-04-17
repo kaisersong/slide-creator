@@ -159,7 +159,7 @@
 | 17 | monospace body | `font-family.*monospace` 非 `<pre>`/`<code>` 内 | 改为 system-ui |
 | 18 | all-caps body | `text-transform:\s*uppercase` 非标签/芯片元素 | 移除 |
 | 19 | icon tile | 独立的圆角方形 `<div>` 含图标 + 紧随其后的 `<h2>` | 内联到标题 |
-| 20 | inconsistent align | 同一 `<section class="slide">` 内同时出现 left + center 的 text-align | 统一对齐 |
+| 20 | inconsistent align | 同一 `<section class="slide">` 内同时出现 left + center 的 text-align；或标题无 `text-align`（默认 left）但子容器使用 `margin.*auto` 或 `justify-content:\s*center`（视觉居中） | 统一对齐：标题加 `text-align:center` 或子容器去掉居中 |
 | 21 | gradient no fallback | `-webkit-background-clip:\s*text` 前无 `color:` 声明 | 添加 color 降级 |
 | 22 | SVG 箭头连线不可见 | `<line>` 起点与终点距离 <30px；箭头指向圆内部而非圆边缘 | 调整 rect 位置与圆保持 ≥30px 间距，箭头从外框指向圆边缘 |
 | 27 | 深色文字在亮色卡片上 | `background: var(--card-bg)` 容器内子元素 `color:.*#1a1a1a` / `rgba\(26,26,26` / `#333` | 替换为 `var(--text-on-card)` 或 `rgba(255,255,255,*)` |

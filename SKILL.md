@@ -72,10 +72,10 @@ slide-creator now supports **two user-facing planning depths**:
 | 命令 | 加载内容 | 行为 |
 |------|----------|------|
 | `--plan [prompt]` | `references/planning-template.md` | 检测规划深度，创建 PLANNING.md，不生成 HTML |
-| `--generate` | SKILL.md HARD RULES + `references/html-template.md` + composition 源（见 deck_type 路由）+ 风格文件 + `base-css.md` | 从 PLANNING.md 生成 HTML，执行 14 项生成前校验 |
+| `--generate` | SKILL.md HARD RULES + `references/html-template.md` + `references/js-engine.md` + composition 源（见 deck_type 路由）+ 风格文件 + `base-css.md` | 从 PLANNING.md 生成 HTML，执行 14 项生成前校验 |
 | `--review [file.html]` | `references/review-checklist.md` + 目标 HTML | 执行 16 项检查点 → 确认窗口 → 修复/报告 |
 | 无 flag (交互式) | `references/workflow.md` + 其他按需 | 遵循 Phase 0-5（Phase 3 Step 7 必须执行 14 项校验） |
-| 直接给内容 + 风格 | SKILL.md HARD RULES + `references/html-template.md` + composition 源（见 deck_type 路由）+ 风格文件 + `base-css.md` | 立即生成，执行 14 项生成前校验 |
+| 直接给内容 + 风格 | SKILL.md HARD RULES + `references/html-template.md` + `references/js-engine.md` + composition 源（见 deck_type 路由）+ 风格文件 + `base-css.md` | 立即生成，执行 14 项生成前校验 |
 
 **渐进式披露：** 每个命令只加载所需文件。`--plan` 不接触 CSS。
 
