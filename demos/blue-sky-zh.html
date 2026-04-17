@@ -311,13 +311,7 @@ body:hover #present-btn { opacity: 1; pointer-events: auto; }
    PRESENTATION MODE — CSS scaling, 1440x900 canvas
    ═══════════════════════════════════════════════════════ */
 body.presenting { background: #000 !important; overflow: hidden !important; }
-body.presenting .slide {
-  position: fixed !important; inset: 0;
-  width: var(--pdw, 1440px) !important; height: var(--pdh, 900px) !important;
-  transform-origin: top left;
-  transform: translate(var(--pox, 0px), var(--poy, 0px)) scale(var(--ps, 1)) !important;
-  display: none !important;
-}
+body.presenting .slide { position: fixed !important; inset: 0; width: 100vw !important; height: 100vh !important; transform-origin: center center; scroll-snap-align: none !important; display: none !important; }
 body.presenting .slide.p-on { display: flex !important; }
 body.presenting #present-btn { display: none !important; }
 body.presenting #present-counter { display: block; }

@@ -154,12 +154,54 @@ Centered headline in cyan glow. Below: 3 CTA/contact panels in a row (bordered, 
 
 ## Signature Elements
 
-- **Neon glow** — `box-shadow: 0 0 16px rgba(0,255,204,0.35), 0 0 48px rgba(0,255,204,0.1)` on borders and key headings
-- **Grid overlay** — 40px spacing, masked to center
-- **Corner-cut panels** — `clip-path: polygon(0 0, calc(100% - 14px) 0, 100% 14px, 100% 100%, 0 100%)` for sci-fi HUD feel
-- **Gradient accent dividers** — `linear-gradient(90deg, var(--cyan), var(--magenta))` for `2px` horizontal rules
-- **Mono metadata** — timestamps / coordinates / system IDs in `JetBrains Mono` 10px at 40% opacity
-- No illustrations. Geometric CSS shapes and inline SVG only.
+### CSS Overlays
+- `body::before`: Cyan grid overlay (50px spacing, `rgba(0,255,204,0.03)`) —
+  ```css
+  body::before { content: ''; position: fixed; inset: 0; z-index: 0; pointer-events: none;
+    background-image: linear-gradient(rgba(0,255,204,0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(0,255,204,0.03) 1px, transparent 1px);
+    background-size: 50px 50px; }
+  ```
+- `body::after`: Scanline overlay (alternating 2px/4px rows) —
+  ```css
+  body::after { content: ''; position: fixed; inset: 0; z-index: 1; pointer-events: none;
+    background: repeating-linear-gradient(0deg, transparent, transparent 2px,
+      rgba(0,255,204,0.01) 2px, rgba(0,255,204,0.01) 4px); }
+  ```
+
+### Animations
+- `@keyframes glitch-1`: Cyan title glitch (clip-path shifts at 92-98% timestamps) — `clip-path: inset(20% 0 60% 0); transform: translate(-4px, 1px)`
+- `@keyframes glitch-2`: Magenta/blue title glitch (offset timing, opacity fades) — `clip-path: inset(60% 0 20% 0); transform: translate(4px, -2px)`
+- `@keyframes neonPulse`: Cyan text-shadow breathing (20px to 80px glow spread) — `text-shadow: 0 0 20px rgba(0,255,204,0.5), 0 0 40px rgba(0,255,204,0.2)` to `0 0 80px rgba(0,255,204,0.1)`
+- `@keyframes magentaPulse`: Magenta text-shadow breathing (same pattern, different color)
+- `@keyframes borderPulse`: Card border glow oscillation (1px to 2px box-shadow spread)
+- `@keyframes particleDrift`: Floating particles rising from bottom (scale 0 to 1, opacity fade in/out)
+
+### Required CSS Classes
+- `.cyber-title`: Main title with glitch effect — requires `data-text` attribute for pseudo-element duplication. `font-family: 'Clash Display'`, cyan color, `neonPulse` animation.
+- `.cyber-label`: Section label in cyan with `neonPulse` animation, uppercase, `letter-spacing: 0.2em`
+- `.cyber-heading`: Sub-headline with `.accent` (cyan pulse) and `.magenta` (magenta pulse) spans
+- `.cyber-card`: Terminal-style card with cyan border, `::before` (top accent bar, 40px), `::after` (left accent bar, 40px)
+- `.corner-br` / `.corner-tl`: Bottom-right and top-left bracket decorations (1px cyan borders)
+- `.particle`: Floating dots (JS-generated, 18 particles, 3 color variants)
+
+### Background Rule
+`.slide` sets `background: #0a0f1c` with `z-index: 2`, preventing body gradient from showing through. Body overlays (`::before`/`::after`) are fixed-position and visible behind slides.
+
+### Style-Specific Rules
+- **Glitch title requires `data-text` attribute**: `<h1 class="cyber-title" data-text="slide-creator">` — pseudo-elements use `content: attr(data-text)` to create glitch layers
+- **No illustrations** — geometric CSS shapes and inline SVG only
+- **Code blocks** have a 3px cyan left bar with `neonPulse` animation via `::before`
+- **Progress bar** uses cyan-to-magenta gradient with `box-shadow: 0 0 8px rgba(0,255,204,0.6)` glow
+
+### Signature Checklist
+- [ ] Dark `#0a0f1c` background with cyan grid + scanline overlays
+- [ ] `.cyber-title` with `data-text` attribute for glitch effect
+- [ ] `neonPulse` animation on cyan text and borders
+- [ ] Corner bracket decorations (`.corner-br` / `.corner-tl`)
+- [ ] At least one magenta accent (`.magenta` span or `.mg` class)
+- [ ] Floating particles (18 dots, 3 colors)
+- [ ] Satoshi for body, Clash Display for headlines, Courier New for code
 
 ---
 

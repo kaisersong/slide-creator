@@ -168,12 +168,52 @@ Centered, small text only. Publication/deck title in `Cormorant Garamond` italic
 
 ## Signature Elements
 
-- **Drop caps** — First letter at `clamp(3rem,6vw,5rem)`, `Cormorant Garamond` 900, `float: left`, `line-height: 0.85`, color `--crimson`
-- **Horizontal rules** — `1px solid var(--rule)`, full column width, `margin: 2rem 0`. Double-rule variant: two thin lines 4px apart for section breaks.
-- **Pull quotes** — Italic `Cormorant Garamond` 400, preceded and followed by thin rule, 20px left indent. No typographic quote marks needed.
-- **Roman numeral section markers** — `I`, `II`, `III` in `Cormorant Garamond` 400 small, `--text-muted`, above headings
-- **Narrow column** — Content `max-width: 680px`, centered, `padding: 0 clamp(2rem,8vw,6rem)`. Feels like a page, not a screen.
-- No bright colors. No geometric shapes. No gradients. Typography and rules only.
+### CSS Overlays
+- No body-level overlays. Clean cream canvas throughout.
+
+### Animations
+- `@keyframes crossFade`: Simple opacity 0 to 1 (no transform, no movement) —
+  ```css
+  @keyframes crossFade { from { opacity: 0; } to { opacity: 1; } }
+  .reveal { opacity: 0; }
+  .slide.visible .reveal { animation: crossFade 0.8s ease forwards; }
+  ```
+- Stagger delays: 0.1s, 0.2s, 0.35s, 0.5s, 0.65s, 0.8s, 0.95s, 1.1s (up to 8 elements)
+
+### Required CSS Classes
+- `.rule`: Ornamental horizontal rule with flanking crimson diamonds —
+  ```css
+  .rule { display: flex; align-items: center; gap: 0.8rem; }
+  .rule::before, .rule::after { content: '◆'; color: #c41e3a; font-size: 0.4rem; }
+  .rule-line { flex: 1; height: 1px; background: #c41e3a; }
+  ```
+- `.drop-cap` (on `.body-text`): First letter at `4em`, crimson, `float: left`, `line-height: 0.8`
+- `.pull-quote`: Centered, italic, crimson (`#c41e3a`), `max-width: 30ch`
+- `.eyebrow`: Small-caps section label, `font-variant: small-caps`, `letter-spacing: 0.2em`, muted color
+- `.page-footer`: Centered page number at bottom, small-caps, `— NN —` format
+- `.pain-marker`: Crimson italic roman numeral (`.`, `ii`, `iii`) prefix for pain points
+- `.install-block`: Dark code block (`#1a1a1a`) with `border-left: 3px solid #c41e3a`
+
+### Background Rule
+`body` and `.slide` both set `background: #faf9f7` (warm cream). No gradient, no pattern, no overlay. Pure typographic canvas.
+
+### Style-Specific Rules
+- **Crimson is the ONLY accent color** (`#c41e3a`) — max one use per slide for emphasis
+- **No geometric shapes, no gradients, no illustrations** — typography and rules only
+- **Narrow content column**: `max-width: 58ch` on `.body-text`, feels like a printed page
+- **Two serif fonts**: Cormorant Garamond for headlines/stats, Source Serif 4 for body
+- **Preset items**: Active item gets crimson italic styling (`.preset-item.active`)
+- **Feature names**: Small-caps + crimson + `letter-spacing: 0.1em`
+- **Progress bar**: Solid crimson `#c41e3a`, 2px height
+
+### Signature Checklist
+- [ ] Warm cream background `#faf9f7` — no gradients, no patterns
+- [ ] Ornamental rules with crimson diamonds (`.rule::before/after`)
+- [ ] Cormorant Garamond serif for headlines
+- [ ] Source Serif 4 for body text
+- [ ] Crimson accent `#c41e3a` used sparingly (once per slide max)
+- [ ] Cross-fade animation only (no movement, no transforms)
+- [ ] Small-caps for labels and page numbers
 
 ---
 

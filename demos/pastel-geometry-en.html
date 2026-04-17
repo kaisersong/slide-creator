@@ -108,8 +108,8 @@ body:hover #present-btn { opacity: 1; pointer-events: auto; }
 body.presenting { background: #111 !important; overflow: hidden !important; }
 body.presenting .slide {
   position: fixed !important; inset: 0;
-  width: 1440px !important; height: 900px !important;
-  transform-origin: top left;
+  width: 100vw !important; height: 100vh !important;
+  transform-origin: center center;
   display: none !important; margin: 0; padding: 0;
 }
 body.presenting .slide.p-on { display: flex !important; }
@@ -479,7 +479,8 @@ class PresentMode {
     };
   }
   exit() {
-    if (!this.active) return; this.active = false;
+    if (!this.active) return;
+    this._reset(); this.active = false;
     document.body.classList.remove('presenting', 'presenting-black');
     document.exitFullscreen?.().catch(() => {});
     window.removeEventListener('resize', this._resize);
@@ -492,6 +493,9 @@ class PresentMode {
     document.querySelectorAll('body.presenting .slide').forEach(sl => {
       sl.style.transform = `translate(-50%, -50%) scale(${s})`;
     });
+  }
+    _reset() {
+    this.ctrl.slides.forEach(sl => { sl.style.transform = ''; sl.classList.remove('p-on'); });
   }
   _show(n) {
     this.ctrl.slides.forEach((sl, i) => {

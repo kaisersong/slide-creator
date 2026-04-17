@@ -499,13 +499,45 @@ Every Enterprise Dark presentation should use these patterns per slide type:
 
 ## Signature Elements
 
-- **Faint grid overlay** — `rgba(48,54,61,0.3)` on `#0d1117` background, `24px` grid spacing
-- **Consulting-style labels** — small mono text above data, `0.7rem`, `--text-secondary`
-- **KPI hero numbers** — `48px+`, `--accent-green` for positive, `--accent-blue` for neutral
-- **Dark panels with subtle borders** — `1px solid #30363d`, `border-radius: 6px`
-- **Tabular numbers** — `font-variant-numeric: tabular-nums` on all numeric content
-- **Left-aligned content** — never centered, signals professional/consulting tone
-- No gradients on large areas. No bright accent colors. No decorative elements.
+### CSS Overlays
+- `body::before`: 密度网格叠加（24px 间距，极淡）— `background-image: linear-gradient(rgba(48,54,61,0.5) 1px, transparent 1px), linear-gradient(90deg, rgba(48,54,61,0.5) 1px, transparent 1px); background-size: 24px 24px; opacity: 0.03; pointer-events: none; z-index: 0`
+
+### Animations
+- 无 `@keyframes`，全部使用 CSS transitions
+- `.reveal`: 入场淡入 — `opacity: 0; transition: opacity 0.3s ease;`；`.reveal.visible { opacity: 1; }`
+- Stagger delays: `.reveal:nth-child(1-4)` — `0.05s, 0.12s, 0.19s, 0.26s`
+
+### Required CSS Classes
+- `.label-tag` (`.ent-label-tag`): 章节标签 — `background: var(--bg-secondary); border: 1px solid var(--border); border-radius: 4px; padding: 3px 10px; font-size: 10-12px; text-transform: uppercase; letter-spacing: 0.06em`
+- `.kpi` (`.ent-kpi-card`): KPI 卡片 — `background: var(--bg-secondary); border: 1px solid var(--border); border-radius: 6px; padding: 16-24px`
+- `.kpi-value` (`.ent-kpi-number`): KPI 数值 — `font-size: clamp(36px, 5vw, 56px); font-weight: 700; font-variant-numeric: tabular-nums`
+- `.kpi-label` (`.ent-kpi-label`): KPI 标签 — `font-size: 10-12px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-muted)`
+- `.card`: 通用卡片容器 — `background: var(--bg-card); border: 1px solid var(--border); border-radius: 6px`
+- `.badge` / `.badge-blue` / `.badge-green`: 状态徽章 — `padding: 2px 8px; border-radius: 4px; font-variant-numeric: tabular-nums`
+- `.status-dot` / `.dot-green` / `.dot-blue` / `.dot-red`: 状态圆点 — `width: 7px; height: 7px; border-radius: 50%`
+- `.sep`: 水平分隔线 — `height: 1px; background: var(--border)`
+- `.code`: 代码块 — `font-family: 'SF Mono', monospace; background: var(--bg); border: 1px solid var(--border); border-radius: 6px; color: var(--accent-blue)`
+- `.accent-blue` / `.accent-green` / `.accent-red` / `.accent-orange`: 强调色工具类
+
+### Background Rule
+`.slide` 不设置 background。body 使用 `#0d1117` 深色背景 + 24px 网格叠加。所有卡片使用 `--bg-secondary (#161b22)` 形成层次感。
+
+### Style-Specific Rules
+- 所有数值内容必须使用 `font-variant-numeric: tabular-nums`
+- 内容始终左对齐，从不居中（consulting 风格信号）
+-  accent 色仅用于数据强调：blue=中性，green=正向，red=负向，amber=警告
+- 卡片 border-radius 最大 6px，不使用圆角装饰
+- 网格间距固定 24px，`rgba(48,54,61,0.5)` 线条色
+- 不使用渐变、明亮装饰色、或纯黑色 `#000` 背景
+
+### Signature Checklist
+- [ ] `#0d1117` 深色背景 + faint 24px 网格可见
+- [ ] 至少一个 KPI 数字（48px+）使用绿色或蓝色
+- [ ] 所有面板有 `1px solid #30363d` 边框
+- [ ] 章节标签（uppercase mono text）出现在数据上方
+- [ ] 所有数值使用 tabular-nums
+- [ ] 内容左对齐，无居中布局
+- [ ] 动画仅限 300ms 淡入
 
 ---
 

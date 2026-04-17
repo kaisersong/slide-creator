@@ -164,13 +164,46 @@ Pixel-style bar chart: bars are thick-bordered rectangles (not rounded), fill wi
 
 ## Signature Elements
 
-- **Thick bordered blocks** — `border: 3px solid var(--border)`, `border-radius: 0` or `4px` max
-- **Hard offset shadow** — `box-shadow: 4px 4px 0 var(--border)` on all content blocks
-- **Color coding** (consistent across the deck): pink = AI/intelligence, yellow = tools/builds, cyan = web/networking
-- **Pixel-style SVG icons** — 32×32px, flat colors, `2px` grid-aligned strokes, black outlines, zero gradients
-- **Section badge** — `IBM Plex Mono` uppercase label in `background: var(--yellow)` pill, `border: 2px solid var(--border)`, `border-radius: 0`
-- **Opinionated annotations** — `// short comment` in `IBM Plex Mono` 0.8rem, max 8 words
-- No stock photos. No gradients on large areas. No rounded corners above 4px.
+### CSS Overlays
+- `.slide::after`: 方格纸网格叠加（24px 间距，淡蓝）— `background-image: linear-gradient(rgba(80,100,170,0.10) 1px, transparent 1px), linear-gradient(90deg, rgba(80,100,170,0.10) 1px, transparent 1px); background-size: 24px 24px; pointer-events: none; z-index: 0`（注意：备份 HTML 中网格直接设置在 body 上而非 `::after`，两者等效）
+
+### Animations
+- 无 `@keyframes`，全部使用 CSS transitions
+- `.reveal`: 入场动画 — `opacity: 0; transform: translateY(20px); transition: opacity 0.5s cubic-bezier(0.16,1,0.3,1), transform 0.5s cubic-bezier(0.16,1,0.3,1)`；`.slide.visible .reveal { opacity: 1; transform: translateY(0); }`
+- Stagger delays: `.reveal:nth-child(1-7)` — `0.05s, 0.12s, 0.19s, 0.26s, 0.33s, 0.40s, 0.47s`
+
+### Required CSS Classes
+- `.block` (`.retro-block`): 厚边框卡片 — `background: var(--block-bg); border: 3px solid var(--border); box-shadow: 4px 4px 0 var(--border); padding: clamp(0.8rem,2vw,1.5rem)`
+- `.block-dark` (`.retro-block` dark var): 深色变体 — `background: var(--block-dark); color: #f7f5f0`
+- `.accent-pink` / `.accent-yellow` / `.accent-cyan`: 顶部彩色边框 — `border-top: 5px solid var(--pink/yellow/cyan)`
+- `.badge` / `.badge-pink` / `.badge-cyan` (`.retro-badge`): 章节徽章 — `font-family: 'IBM Plex Mono'; text-transform: uppercase; border: 2px solid var(--border); background: var(--yellow)`
+- `.hl` / `.hl-pink` / `.hl-cyan` (`.retro-highlight`): 行内高亮 — `background: var(--yellow); border: 1.5px solid var(--border); padding: 0 4px`
+- `.headline` (`.retro-title`): 标题 — `font-family: 'Barlow Condensed'; font-weight: 900; text-transform: uppercase`
+- `.comment` (`.retro-comment`): 注释风格 — `font-family: 'IBM Plex Mono'; color: #666; &::before { content: '// ' }`
+- `.bc`: Barlow Condensed 缩写类
+- `.mono`: IBM Plex Mono 缩写类
+
+### Background Rule
+`.slide` 不设置 background。body 使用米色 `#f5f2e8` + 24px 淡蓝网格（`rgba(80,100,170,0.10)`）。网格通过 `body` 的 `background-image` 设置。
+
+### Style-Specific Rules
+- 颜色编码（全 deck 一致）：pink=AI/intelligence，yellow=tools/builds，cyan=web/networking
+- 硬偏移阴影 `box-shadow: 4px 4px 0 var(--border)` 在所有内容块上
+- 所有容器 `border: 3px solid #000`，`border-radius: 0`（或最大 4px）
+- `//` 注释风格用于子点和标注，`IBM Plex Mono`，最多 8 个词
+- 声明式语句：只用 `"It runs 3x faster"` 不用 `"We're excited to share..."`
+- 数字胜过形容词：`"83ms p95"` 不用 `"blazing fast"`
+- 禁止：库存照片、大面积渐变、超过 4px 的圆角、buzzwords（"revolutionary"、"game-changing" 等）
+- 导航点使用厚边框方块（`border: 2px solid var(--border)`），激活时 `background: var(--yellow); box-shadow: 2px 2px 0 var(--border)`
+
+### Signature Checklist
+- [ ] 米色背景 `#f5f2e8` + 淡蓝 24px 网格可见
+- [ ] 厚边框卡片（`3px solid #000`）+ 硬偏移阴影（`4px 4px 0 #000`）
+- [ ] Barlow Condensed 900 weight，UPPERCASE 标题
+- [ ] `//` 注释风格标注（mono 文字）
+- [ ] 颜色编码（pink/yellow/cyan）全 deck 一致
+- [ ] 无超过 4px 的圆角
+- [ ] 无大面积渐变
 
 ## Tone Rules
 

@@ -146,10 +146,49 @@ Single column inside `.notebook-page`. Numbered steps as list items. `.notebook-
 
 ## Signature Elements
 
-- Paper container with subtle shadow
-- Colorful section tabs on right edge (vertical text)
-- Binder hole decorations on left
-- Tab text must scale with viewport: `font-size: clamp(0.5rem, 1vh, 0.7rem)`
+### CSS Overlays
+- `.paper::after`: Ruled line pattern (28px spacing, 27px transparent + 1px `rgba(0,0,0,0.05)`) —
+  ```css
+  .paper::after { content: ''; position: absolute; inset: 0; pointer-events: none; z-index: 1;
+    background-image: repeating-linear-gradient(to bottom, transparent, transparent 27px,
+      rgba(0,0,0,0.05) 27px, rgba(0,0,0,0.05) 28px);
+    background-position: 0 56px; border-radius: 8px; }
+  ```
+
+### Animations
+- `.reveal`: Horizontal slide-in (`translateX(-14px)` to `0`, 0.3s ease) —
+  ```css
+  .reveal { opacity: 0; transform: translateX(-14px); transition: opacity 0.3s ease, transform 0.3s ease; }
+  .slide.visible .reveal { opacity: 1; transform: translateX(0); }
+  ```
+
+### Required CSS Classes
+- `.paper`: Cream card (`#f8f6f1`) with `border-radius: 8px`, heavy shadow (`0 8px 48px rgba(0,0,0,0.5)`), `width: 90vw; max-width: 1100px`
+- `.tabs`: Container for right-edge tabs, `position: absolute; right: -52px`, full height
+- `.tab`: Individual tab with `writing-mode: vertical-rl`, `text-orientation: mixed`, color variants via `data-color` attribute
+- `.tab.active`: Wider (64px), full opacity, `box-shadow: 2px 0 8px rgba(0,0,0,0.15)`
+- `.binder-holes`: Left-edge hole container, `position: absolute; left: -16px`, `justify-content: space-evenly`
+- `.hole`: 12px circle, `background: #2d2d2d` (matches outer), `box-shadow: inset 0 1px 3px rgba(0,0,0,0.5)`
+- `.paper-content`: Content area with `padding-left: 56px` (offset for binder holes), `z-index: 2`
+
+### Background Rule
+`body` sets `background: #2d2d2d` (dark outer). `.paper` card has cream background that fully covers the slide center. No gradient bleed-through.
+
+### Style-Specific Rules
+- **Tab colors** via `data-color` attribute: `mint` (#98d4bb), `lavender` (#c7b8ea), `pink` (#f4b8c5), `sky` (#a8d8ea), `cream` (#ffe6a7), `peach` (#f4c4a4), `sage` (#b4d4b4), `coral` (#f4b4a4)
+- **Active tab sync**: JS `.updateNav(idx)` toggles `.active` class on tabs matching current slide index
+- **Tab click navigation**: Each tab's `data-index` maps to slide number
+- **Progress bar**: Gradient from mint to lavender to pink
+- **Typography duality**: Bodoni Moda serif for headlines, DM Sans for body
+
+### Signature Checklist
+- [ ] Cream paper `#f8f6f1` on dark outer `#2d2d2d`
+- [ ] Ruled line overlay on paper (`.paper::after`)
+- [ ] Colorful tabs on right edge (vertical text, at least 2 visible)
+- [ ] Active tab wider (64px) with shadow
+- [ ] Binder holes on left edge (3 circles, dark fill)
+- [ ] Bodoni Moda serif for headlines
+- [ ] Tab color changes per section/slide
 
 ---
 

@@ -288,13 +288,46 @@ Vertical writing mode for title slides. `writing-mode: vertical-rl`. Title runs 
 
 ## Signature Elements
 
-- **Extreme negative space** — 50%+ of slide should be empty, this is the design
-- **Vermilion seal** — `#C41E3A` used exactly once per slide maximum, as a small square or single character
-- **Thin horizontal rules** — `1px solid var(--rule)`, full width or partial, for section division
-- **CJK punctuation** — `font-feature-settings: "palt"` for proper spacing
-- **Ink-wash texture** — subtle `radial-gradient` overlay at 3% opacity
-- **Single column** — no multi-column layouts, content flows vertically
-- No gradients. No geometric shapes. No bright colors. No drop shadows. No borders above 1px.
+### CSS Overlays
+- `body::before`: 水墨纹理 — `radial-gradient(ellipse at 30% 20%, rgba(26,26,24,0.03) 0%, transparent 70%)`，`position: fixed; inset: 0; pointer-events: none; z-index: 0`（可选）
+
+### Animations
+- `@keyframes zenFadeIn`: 淡入 — `from { opacity: 0; } to { opacity: 1; }`，配合 `.slide.visible .reveal` 使用长间隔 staggered delays (0.1s, 0.3s, 0.5s, 0.7s, 0.9s, 1.1s, 1.3s)，仅透明度变化，无位移
+
+### Required CSS Classes
+- `.ghost-kanji`: 幽灵汉字底纹 — `position: absolute; font-family: 'Noto Serif SC', serif; font-weight: 900; font-size: clamp(120px, 25vw, 200px); opacity: 0.05; color: #1a1a18; pointer-events: none; user-select: none; line-height: 1`；必须放在 `.slide` 直接子元素位置
+- `.flanked-rule`: 带点分隔线 — `display: flex; align-items: center; gap: 12px`；`.flanked-rule::before` / `.flanked-rule::after` 为 5px 圆点 `rgba(26,26,24,0.2)`；内部 `hr` 为 `1px solid rgba(26,26,24,0.12)`
+- `.vline`: 垂直线 — `width: 1px; height: 60px; background: rgba(26,26,24,0.15)`
+- `.col`: 内容列 — `max-width: min(90vw, 580px); padding: 0 clamp(24px, 6vw, 60px)`
+- `.eyebrow`: 小标签 — `font-size: 11px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--text-muted)`
+- `.accent`: 强调色 — `color: var(--accent)`（朱红 `#C41E3A`）
+
+### Background Rule
+`.slide` 必须设置 `background: #FAFAF8`。body 为暖白纸色，可选 `body::before` 水墨纹理叠加。不使用渐变。
+
+### Style-Specific Rules
+- `.ghost-kanji` 必须作为 `.slide` 的直接子元素，使用 `position: absolute` 定位在页面边角（如 `right: -0.1em; bottom: -0.15em` 或 `left: -0.05em; top: 0.1em`）
+- 每页最多一个装饰元素：`.ghost-kanji` 或 `.flanked-rule` 或 `.vline`，不得同时使用多个
+- 内容列最大宽度 580px，极端水平留白
+- 标题权重 400，永远不使用 bold
+- 行高 ≥ 1.8（中文）/ 1.85（英文）
+- 使用 Noto Serif CJK SC + EB Garamond 字体组合
+- `font-feature-settings: "palt"` 用于中文标点压缩
+- 朱红 `#C41E3A` 每页最多使用一次（单个字或小方块）
+
+### Signature Checklist
+- [ ] body::before 水墨纹理（可选，3% 不透明度）
+- [ ] @keyframes zenFadeIn（纯淡入，长间隔 staggered）
+- [ ] .ghost-kanji 幽灵汉字（absolute, 25vw, opacity 0.05）
+- [ ] .ghost-kanji 定位在 .slide 边角（right/bottom 或 left/top 负偏移）
+- [ ] .flanked-rule 带点分隔线（5px 圆点 + 1px 线）
+- [ ] .vline 垂直线（60px, opacity 0.15）
+- [ ] .col 窄内容列（max-width 580px）
+- [ ] .accent 朱红强调（#C41E3A, 每页最多一次）
+- [ ] 50%+ 空白区域
+- [ ] 标题 weight 400（非 bold）
+- [ ] 行高 ≥ 1.8
+- [ ] font-feature-settings: "palt"
 
 ---
 

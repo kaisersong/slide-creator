@@ -392,13 +392,7 @@ body:hover #present-btn { opacity: 1; pointer-events: auto; }
 }
 
 body.presenting { background: #111 !important; overflow: hidden !important; }
-body.presenting .slide {
-  position: fixed !important; inset: 0;
-  width: var(--pdw, 1440px) !important; height: var(--pdh, 900px) !important;
-  transform-origin: top left;
-  transform: translate(var(--pox, 0px), var(--poy, 0px)) scale(var(--ps, 1)) !important;
-  scroll-snap-align: none !important; display: none !important;
-}
+body.presenting .slide { position: fixed !important; inset: 0; width: 100vw !important; height: 100vh !important; transform-origin: center center; scroll-snap-align: none !important; display: none !important; }
 body.presenting .slide.p-on { display: flex !important; }
 body.presenting .nav-dots,
 body.presenting .keyboard-hint,
@@ -610,209 +604,53 @@ body.presenting #present-counter { display: block; }
   </div>
 </section>
 
-<section class="slide" data-notes="按 F5 即可进入全屏播放模式。">
-  <div class="slide-content">
-    <div class="reveal t-h2 t-prompt">按 F5 即全屏播放</div>
-    <div class="reveal t-subtitle" style="margin-top: -4px;">自动缩放适配，控制栏智能隐藏</div>
-    <div class="reveal" style="margin-top: clamp(12px, 2vw, 20px);">
-      <div class="layer"><div class="layer-num">01</div><div class="t-body"><kbd>F5</kbd> 或点击播放按钮进入全屏<br><span class="t-comment">自动隐藏控制栏和计数器</span></div></div>
-      <div class="layer"><div class="layer-num">02</div><div class="t-body">幻灯片自动缩放适配屏幕<br><span class="t-comment">保持设计比例不变形</span></div></div>
-      <div class="layer"><div class="layer-num">03</div><div class="t-body">方向键/滚轮/触摸滑动翻页<br><span class="t-comment">弹簧物理过渡动画</span></div></div>
-      <div class="layer"><div class="layer-num">04</div><div class="t-body">无需安装任何播放器<br><span class="t-comment">浏览器就是投影仪</span></div></div>
-    </div>
-    <div class="reveal" style="margin-top: 12px;">
-      <div class="info-callout">零依赖播放体验，任何设备打开即用。</div>
-    </div>
-  </div>
-</section>
-
-<section class="slide" data-notes="按 P 键打开演讲者窗口。">
-  <div class="slide-content">
-    <div class="reveal t-h2 t-prompt">按 P 键打开同步窗口</div>
-    <div class="reveal t-subtitle" style="margin-top: -4px;">演讲者模式——观众看不到备注，你能看到一切</div>
-    <div class="reveal" style="margin-top: clamp(12px, 2vw, 20px);">
-      <div class="cols2">
-        <div class="g">
-          <div class="t-label" style="margin-bottom: 8px;"><span class="dot green"></span>观众看到的</div>
-          <div class="t-body" style="font-size: clamp(0.65rem, 1.1vw, 0.8rem); line-height: 2.2;">
-            全屏幻灯片<br>
-            纯净无干扰<br>
-            自动缩放适配<br>
-            无 UI 元素
-          </div>
-        </div>
-        <div class="g">
-          <div class="t-label" style="margin-bottom: 8px;"><span class="dot yellow"></span>演讲者看到的</div>
-          <div class="t-body" style="font-size: clamp(0.65rem, 1.1vw, 0.8rem); line-height: 2.2;">
-            演讲者备注<br>
-            倒计时器<br>
-            当前页/总页数<br>
-            翻页控制
-          </div>
-        </div>
-      </div>
-    </div>
-    <div class="reveal" style="margin-top: 12px;">
-      <div class="co">按 <kbd>P</kbd> 键打开，与主窗口同步翻页。</div>
-    </div>
-  </div>
-</section>
-
-<section class="slide" data-notes="按 E 键进入编辑模式，点击文字即可修改。">
-  <div class="slide-content">
-    <div class="reveal t-h2 t-prompt">浏览器内编辑——所见即所改</div>
-    <div class="reveal t-subtitle" style="margin-top: -4px;">不用打开 PowerPoint 或 Figma</div>
-    <div class="reveal" style="margin-top: clamp(12px, 2vw, 20px);">
-      <div class="cols3">
-        <div class="g">
-          <div class="step" data-step="步骤 1">
-            <div class="t-body" style="font-size: clamp(0.65rem, 1.1vw, 0.8rem); line-height: 1.8;">
-              按 <kbd>E</kbd> 键进入编辑模式<br>
-              <span class="t-comment">所有文字变为可编辑</span>
+    <section class="slide" data-notes="三种核心模式：F5 播放、P 演讲者、E 编辑。" aria-label="核心模式">
+        <div style="max-width:900px;width:100%;">
+            <div class="reveal a-label" style="margin-bottom:12px;">Core Modes</div>
+            <div class="reveal a-h2" style="text-align:center;">Play, Present, Edit — One File</div>
+            <div class="reveal" style="margin-top:clamp(20px,3vw,36px);display:flex;gap:clamp(16px,3vw,32px);justify-content:center;">
+                <div class="reveal g" style="text-align:center;padding:20px;"><div class="stat"><div class="num" style="font-size:clamp(2rem,5vw,4rem);">F5</div><div class="label">Play</div></div><div class="a-body" style="font-size:clamp(0.65rem,1vw,0.75rem);margin-top:8px;">Fullscreen, auto-scale</div></div>
+                <div class="reveal g" style="text-align:center;padding:20px;"><div class="stat"><div class="num" style="font-size:clamp(2rem,5vw,4rem);">P</div><div class="label">Present</div></div><div class="a-body" style="font-size:clamp(0.65rem,1vw,0.75rem);margin-top:8px;">Notes, timer, sync</div></div>
+                <div class="reveal g" style="text-align:center;padding:20px;"><div class="stat"><div class="num" style="font-size:clamp(2rem,5vw,4rem);">E</div><div class="label">Edit</div></div><div class="a-body" style="font-size:clamp(0.65rem,1vw,0.75rem);margin-top:8px;">contenteditable, Ctrl+S</div></div>
             </div>
-          </div>
         </div>
-        <div class="g">
-          <div class="step" data-step="步骤 2">
-            <div class="t-body" style="font-size: clamp(0.65rem, 1.1vw, 0.8rem); line-height: 1.8;">
-              直接点击文字修改<br>
-              <span class="t-comment">实时预览效果</span>
+    </section>
+
+    <section class="slide" data-notes="三个命令：plan、generate、review。" aria-label="命令">
+        <div style="max-width:900px;width:100%;">
+            <div class="reveal a-label" style="margin-bottom:12px;">Commands</div>
+            <div class="reveal a-h2">Three Commands, One Pipeline</div>
+            <div class="reveal" style="margin-top:clamp(16px,2vw,24px);display:grid;grid-template-columns:repeat(3,1fr);gap:clamp(12px,2vw,20px);">
+                <div class="reveal g"><div class="a-label" style="margin-bottom:6px;">01 Plan</div><div class="cmd">/slide-creator --plan</div><div class="a-body" style="font-size:clamp(0.65rem,1vw,0.75rem);">Generate outline</div></div>
+                <div class="reveal g"><div class="a-label" style="margin-bottom:6px;">02 Generate</div><div class="cmd">/slide-creator --generate</div><div class="a-body" style="font-size:clamp(0.65rem,1vw,0.75rem);">Build with quality checks</div></div>
+                <div class="reveal g"><div class="a-label" style="margin-bottom:6px;">03 Review</div><div class="cmd">/slide-creator --review</div><div class="a-body" style="font-size:clamp(0.65rem,1vw,0.75rem);">Inspect and fix</div></div>
             </div>
-          </div>
         </div>
-        <div class="g">
-          <div class="step" data-step="步骤 3">
-            <div class="t-body" style="font-size: clamp(0.65rem, 1.1vw, 0.8rem); line-height: 1.8;">
-              <kbd>Ctrl</kbd>+<kbd>S</kbd> 保存为 HTML<br>
-              <span class="t-comment">修改持久化到文件</span>
+    </section>
+
+    <section class="slide" data-notes="零依赖，纯浏览器运行。" aria-label="零依赖">
+        <div style="max-width:900px;width:100%;text-align:center;">
+            <div class="reveal a-label" style="margin-bottom:12px;">Foundation</div>
+            <div class="reveal a-h2" style="text-align:center;">Nothing Between You and the Browser</div>
+            <div class="reveal" style="margin-top:clamp(20px,3vw,36px);display:flex;gap:clamp(24px,4vw,48px);justify-content:center;">
+                <div class="reveal stat"><div class="num">0</div><div class="label">Dependencies</div></div>
+                <div class="reveal stat"><div class="num">21</div><div class="label">Presets</div></div>
+                <div class="reveal stat"><div class="num">1</div><div class="label">Requirement</div></div>
             </div>
-          </div>
+            <div class="reveal a-body" style="text-align:center;margin-top:16px;color:var(--text-muted, var(--text-m, #64748b));">HTML, CSS, JavaScript. That is all.</div>
         </div>
-      </div>
-    </div>
-    <div class="reveal" style="margin-top: 12px;">
-      <div class="info-callout">编辑模式默认开启，无需额外配置。</div>
-    </div>
-  </div>
-</section>
+    </section>
 
-<section class="slide" data-notes="一条命令，三分钟出稿。">
-  <div class="slide-content">
-    <div class="reveal chapter-num">03</div>
-    <div class="reveal" style="margin-top: -24px;">
-      <div class="t-h2 t-prompt">一条命令，三分钟出稿</div>
-      <div class="t-subtitle">从规划到生成，全程自动化</div>
-    </div>
-    <div class="reveal" style="margin-top: clamp(16px, 2vw, 24px);">
-      <div class="cols3">
-        <div class="g">
-          <div class="t-label" style="margin-bottom: 6px;">--plan</div>
-          <div class="cmd" style="border: none; padding: 6px 0;">/slide-creator --plan</div>
-          <div class="t-body" style="font-size: clamp(0.6rem, 1vw, 0.7rem); margin-top: 6px;">生成 PLANNING.md 大纲<br>可编辑后再生成</div>
+    <section class="slide" data-notes="行动号召：/slide-creator" aria-label="CTA">
+        <div style="max-width:900px;width:100%;text-align:center;">
+            <div class="reveal"><span class="pill" style="margin-bottom:16px;">Start Now</span></div>
+            <div class="reveal a-title" style="margin-bottom:16px;">Start with a Preset</div>
+            <div class="reveal"><div class="cmd" style="text-align:center;font-size:clamp(0.9rem,1.5vw,1.2rem);">/slide-creator</div></div>
+            <div class="reveal a-subtitle" style="margin-top:12px;text-align:center;">Tell Claude to install kai-slide-creator</div>
         </div>
-        <div class="g">
-          <div class="t-label" style="margin-bottom: 6px;">--generate</div>
-          <div class="cmd" style="border: none; padding: 6px 0;">/slide-creator --generate</div>
-          <div class="t-body" style="font-size: clamp(0.6rem, 1vw, 0.7rem); margin-top: 6px;">从大纲生成 HTML<br>16 项质量校验</div>
-        </div>
-        <div class="g">
-          <div class="t-label" style="margin-bottom: 6px;">--review</div>
-          <div class="cmd" style="border: none; padding: 6px 0;">/slide-creator --review</div>
-          <div class="t-body" style="font-size: clamp(0.6rem, 1vw, 0.7rem); margin-top: 6px;">检查已有 HTML<br>自动修复常见问题</div>
-        </div>
-      </div>
-    </div>
-    <div class="reveal" style="margin-top: 12px;">
-      <div class="t-divider"></div>
-      <div class="co">也可直接给内容 + 风格，立即生成。</div>
-    </div>
-  </div>
-</section>
+    </section>
 
-<section class="slide" data-notes="不同的内容类型适配不同的风格。">
-  <div class="slide-content">
-    <div class="reveal t-h2 t-prompt">什么内容配什么风格</div>
-    <div class="reveal t-subtitle" style="margin-top: -4px;">一眼匹配的内容风格推荐</div>
-    <div class="reveal" style="margin-top: clamp(12px, 2vw, 20px);">
-      <table class="t-table">
-        <thead><tr><th>内容类型</th><th>推荐风格</th></tr></thead>
-        <tbody>
-          <tr><td><span class="pill">数据报告 / KPI</span></td><td class="t-comment">Data Story, Enterprise Dark, Swiss Modern</td></tr>
-          <tr><td><span class="pill warn">商业路演 / VC</span></td><td class="t-comment">Bold Signal, Aurora Mesh, Enterprise Dark</td></tr>
-          <tr><td><span class="pill info">开发工具 / API</span></td><td class="t-comment">Terminal Green, Neon Cyber, Neo-Retro Dev</td></tr>
-          <tr><td><span class="pill">研究报告</span></td><td class="t-comment">Modern Newspaper, Paper &amp; Ink, Swiss Modern</td></tr>
-          <tr><td><span class="pill warn">创意 / 个人品牌</span></td><td class="t-comment">Vintage Editorial, Split Pastel, Neo-Brutalism</td></tr>
-          <tr><td><span class="pill info">产品发布 / SaaS</span></td><td class="t-comment">Aurora Mesh, Glassmorphism, Electric Studio</td></tr>
-        </tbody>
-      </table>
-    </div>
-  </div>
-</section>
 
-<section class="slide" data-notes="零 npm 依赖，三个核心文件，任何浏览器都能运行。">
-  <div class="slide-content">
-    <div class="reveal t-h2 t-prompt">零依赖，纯浏览器运行</div>
-    <div class="reveal t-subtitle" style="margin-top: -4px;">不依赖服务器、npm、构建工具</div>
-    <div class="reveal" style="margin-top: clamp(16px, 2vw, 24px);">
-      <div class="cols4">
-        <div class="g" style="text-align: center;">
-          <div class="stat"><div class="num">0</div><div class="label">npm 依赖</div></div>
-        </div>
-        <div class="g" style="text-align: center;">
-          <div class="stat"><div class="num" style="color: var(--blue);">3</div><div class="label">核心文件</div></div>
-          <div class="t-body" style="font-size: clamp(0.55rem, 0.9vw, 0.7rem); margin-top: 4px;">HTML / CSS / JS</div>
-        </div>
-        <div class="g" style="text-align: center;">
-          <div class="stat"><div class="num" style="color: var(--yellow);">\u221e</div><div class="label">可扩展</div></div>
-          <div class="t-body" style="font-size: clamp(0.55rem, 0.9vw, 0.7rem); margin-top: 4px;">自定义主题</div>
-        </div>
-        <div class="g" style="text-align: center;">
-          <div class="stat"><div class="num">1</div><div class="label">运行环境</div></div>
-          <div class="t-body" style="font-size: clamp(0.55rem, 0.9vw, 0.7rem); margin-top: 4px;">浏览器即可</div>
-        </div>
-      </div>
-    </div>
-    <div class="reveal" style="margin-top: 12px;">
-      <div class="info-callout">生成的 HTML 文件完整自包含，双击即可在浏览器中打开。</div>
-    </div>
-  </div>
-</section>
-
-<section class="slide" data-notes="持续迭代中，v1.x 是基础框架，v2.x 增加了智能生成。">
-  <div class="slide-content">
-    <div class="reveal t-h2 t-prompt">持续迭代，每周都在变强</div>
-    <div class="reveal t-subtitle" style="margin-top: -4px;">版本演进历程</div>
-    <div class="reveal" style="margin-top: clamp(12px, 2vw, 20px);">
-      <div class="layer"><div class="layer-num">v1.x</div><div class="t-body"><span class="t-info">基础框架</span> — 播放模式、编辑模式、首批 7 个预设</div></div>
-      <div class="layer"><div class="layer-num">v1.5</div><div class="t-body"><span class="t-info">风格扩展</span> — 21 个预设、Cloud Bank Hero、Orbital Rings</div></div>
-      <div class="layer"><div class="layer-num">v2.x</div><div class="t-body"><span class="t-info">智能生成</span> — AI 规划、Review 系统、PPT 转换</div></div>
-      <div class="layer"><div class="layer-num">v2.16</div><div class="t-body"><span class="t-info">渲染引擎升级</span> — 主题卡片、组件修饰符、26 项回归测试</div></div>
-    </div>
-    <div class="reveal" style="margin-top: 12px;">
-      <div class="co">GitHub + ClawHub 双渠道发布</div>
-    </div>
-  </div>
-</section>
-
-<section class="slide" data-notes="从设计预设开始，让内容自己说话。">
-  <div class="slide-content" style="text-align: center; align-items: center;">
-    <div class="reveal">
-      <div class="g" style="padding: clamp(24px, 4vw, 48px); max-width: min(80vw, 700px); margin: 0 auto; border-color: var(--green);">
-        <span class="pill" style="margin-bottom: 12px;">开始使用</span>
-        <div style="font-size: clamp(1.2rem, 3vw, 2rem); font-weight: 700; color: var(--green); margin-top: 12px;">从设计预设开始</div>
-        <div class="t-subtitle" style="margin-top: 8px;">让内容自己说话</div>
-        <div class="t-divider"></div>
-        <div class="cmd" style="text-align: left; margin-top: 8px;">/slide-creator "你的主题" --style "Terminal Green"</div>
-        <div class="t-comment" style="font-size: clamp(0.6rem, 1vw, 0.75rem); margin-top: 8px;">3 分钟出第一稿。</div>
-      </div>
-    </div>
-    <div class="reveal" style="margin-top: 16px;">
-      <div class="t-eof-sub">exit 0 <span class="t-cursor"></span></div>
-    </div>
-  </div>
-</section>
-
-<!-- Edit mode UI -->
 <div class="edit-hotzone"></div>
 <button class="edit-toggle" id="editToggle">Edit</button>
 
@@ -1062,9 +900,8 @@ if (new URLSearchParams(location.search).has('presenter')) {
   class PresentMode {
     constructor(ctrl) {
       this.ctrl = ctrl;
-      this.DW = 1440; this.DH = 900;
+      this.baseW = 1440; this.baseH = 900;
       this.active = false;
-      this._resize = () => this._scale();
       const btn = document.createElement('button');
       btn.id = 'present-btn'; btn.title = 'Present (F5)';
       btn.setAttribute('aria-label', 'Present'); btn.textContent = '\u25B6';
@@ -1077,16 +914,14 @@ if (new URLSearchParams(location.search).has('presenter')) {
         if (e.key === 'Escape' && this.active) this.exit();
         if ((e.key === 'b' || e.key === 'B') && this.active) document.body.classList.toggle('presenting-black');
       });
-      document.addEventListener('fullscreenchange', () => {
-        if (!document.fullscreenElement && this.active) this.exit();
-      });
+      document.addEventListener('fullscreenchange', () => { if (this.active) { setTimeout(() => this._scale(), 100); } if (!document.fullscreenElement && this.active) this.exit(); });
+                window.addEventListener('resize', () => { if (this.active) this._scale(); });
     }
     enter() {
       if (this.active) return;
       this.active = true;
       document.body.classList.add('presenting');
       document.documentElement.requestFullscreen?.().catch(() => {});
-      window.addEventListener('resize', this._resize);
       this._scale();
       this._show(this.ctrl.currentSlide);
       this._origGoTo = this.ctrl.goTo.bind(this.ctrl);
@@ -1100,32 +935,35 @@ if (new URLSearchParams(location.search).has('presenter')) {
         this.ctrl.broadcastState?.();
       };
     }
+    _reset() {
+                this.ctrl.slides.forEach(slide => { slide.style.transform = ''; slide.classList.remove('p-on'); });
+            }
     exit() {
-      if (!this.active) return;
-      this.active = false;
-      document.body.classList.remove('presenting', 'presenting-black');
-      document.querySelectorAll('.slide').forEach(s => s.classList.remove('p-on'));
+                if (!this.active) return;
+                this.active = false;
+                document.body.classList.remove('presenting', 'presenting-black');
+                this._reset();
       if (document.fullscreenElement) document.exitFullscreen?.();
-      window.removeEventListener('resize', this._resize);
       if (this._origGoTo) { this.ctrl.goTo = this._origGoTo; this._origGoTo = null; }
       this.ctrl.slides[this.ctrl.currentSlide]?.scrollIntoView({ behavior: 'instant' });
     }
     _scale() {
-      const s = Math.min(window.innerWidth / this.DW, window.innerHeight / this.DH);
-      const ox = (window.innerWidth - this.DW * s) / 2;
-      const oy = (window.innerHeight - this.DH * s) / 2;
-      const r = document.documentElement;
-      r.style.setProperty('--pdw', this.DW + 'px');
-      r.style.setProperty('--pdh', this.DH + 'px');
-      r.style.setProperty('--ps', s);
-      r.style.setProperty('--pox', ox + 'px');
-      r.style.setProperty('--poy', oy + 'px');
+                const vw = window.innerWidth;
+                const vh = window.innerHeight;
+                const scale = Math.min(vw / this.baseW, vh / this.baseH);
+                this.ctrl.slides.forEach(slide => { slide.style.transform = 'scale(' + scale + ')'; });
+            }
     }
     _show(i) {
       document.querySelectorAll('.slide').forEach((s, idx) => s.classList.toggle('p-on', idx === i));
       const c = document.getElementById('present-counter');
       if (c) c.textContent = (i + 1) + ' / ' + this.ctrl.slides.length;
     }
+
+            _updateCounter() {
+                const c = document.getElementById('present-counter');
+                if (c) c.textContent = (this.ctrl.currentSlide + 1) + ' / ' + this.ctrl.slides.length;
+            }
   }
 
   new PresentMode(new SlidePresentation());
