@@ -327,13 +327,60 @@ body {
 
 ## Signature Elements
 
-- **Hero KPI numbers** — `clamp(4rem, 12vw, 10rem)`, tabular-nums, colored by sentiment (positive/negative/neutral)
-- **Pure CSS bar charts** — no external libraries, `div` elements with percentage heights
-- **Trend arrows** — CSS-only `↑` / `↓` with color coding
-- **Data cards** — `var(--bg-card)` background, `1px solid var(--border)`, `border-radius: 8px`
-- **Annotation callouts** — small `--text-muted` text explaining data context
-- **12-column grid** — for aligning chart elements and data points
-- No decorative elements. No gradients on large areas. Data is the visual focus.
+### CSS Overlays
+- `.slide::before`: 数据网格叠加 — `background-image: linear-gradient(rgba(30,41,59,0.5) 1px, transparent 1px), linear-gradient(90deg, rgba(30,41,59,0.5) 1px, transparent 1px); background-size: clamp(40px,6vw,80px) clamp(40px,6vw,80px); position: absolute; inset: 0; pointer-events: none`
+
+### Animations
+- `@keyframes fadeInUp`: 淡入上移 — `from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: none; }`，配合 `.slide.visible .reveal` staggered delays (0.05s, 0.12s, 0.19s, 0.26s, 0.33s, 0.40s, 0.47s)
+- `@keyframes fadeIn`: 纯淡入 — `from { opacity: 0; } to { opacity: 1; }`
+- `@keyframes growBar`: 柱状图生长 — `from { transform: scaleY(0); transform-origin: bottom; } to { transform: scaleY(1); transform-origin: bottom; }`
+
+### Required CSS Classes
+- `.kpi-number`: KPI 大数字 — `font-size: clamp(4rem, 10vw, 8rem); font-weight: 800; font-variant-numeric: tabular-nums; line-height: 1; letter-spacing: -0.02em`；变体 `.pos`（#00d4aa）、`.neg`（#ff6b6b）、`.neu`（#e2e8f0）、`.blue`（#3b82f6）
+- `.kpi-label`: KPI 标签 — `font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.12em; color: #64748b`
+- `.kpi-trend`: 趋势箭头 — `display: inline-flex; align-items: center; gap: 4px; font-size: 13px; font-weight: 600`；`.up`（#00d4aa）、`.down`（#ff6b6b）
+- `.kpi-grid`: KPI 网格 — `display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: clamp(0.5rem, 1.5vw, 1rem)`
+- `.kpi-card`: KPI 卡片 — `background: var(--bg-card); border: 1px solid var(--border); border-radius: 8px; padding: clamp(16px, 2.5vw, 24px)`；`.highlight` 变体使用 `border-color: #3b82f6; background: rgba(59,130,246,0.06)`
+- `.chart-axis`: SVG 轴线 — `stroke: #334155; stroke-width: 1; fill: none`
+- `.chart-grid`: SVG 网格 — `stroke: #1e293b; stroke-width: 1; stroke-dasharray: 4 4; fill: none`
+- `.chart-bar`: SVG 柱状图 — `fill: #3b82f6`；`.secondary`（#8b5cf6）、`.tertiary`（#10b981）
+- `.chart-line`: SVG 折线 — `stroke: #3b82f6; stroke-width: 2.5; fill: none; stroke-linecap: round; stroke-linejoin: round`
+- `.chart-area`: SVG 面积填充 — `fill: url(#areaGrad); opacity: 0.15`
+- `.chart-label` / `.chart-val`: SVG 文字标签
+- `.chart-layout`: 图表布局 — `display: grid; grid-template-columns: 1fr 1.5fr; gap: clamp(1rem, 3vw, 2.5rem)`
+- `.eyebrow`: 小标签 — `font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.12em; color: #64748b`
+- `.divider`: 分隔线 — `border: none; border-top: 1px solid var(--border)`
+- `.ds-insight`: 洞察卡片 — `border-left: 3px solid var(--chart-primary); padding: 0.75rem 1rem; background: rgba(59,130,246,0.08); border-radius: 0 6px 6px 0`
+
+### Background Rule
+`.slide` 必须设置 `background: #0f1117`（深色）或 `var(--bg)`（浅色变体）。网格通过 `.slide::before` 叠加在幻灯片自身上，不使用 `body::before`。
+
+### Style-Specific Rules
+- 所有数字元素必须使用 `font-variant-numeric: tabular-nums`
+- 不使用外部图表库 — 纯 CSS + SVG 图表
+- 图表颜色 token：`--chart-primary: #3b82f6`、`--chart-secondary: #8b5cf6`、`--chart-tertiary: #10b981`
+- 情感颜色编码：`--positive: #00d4aa`（上升/好）、`--negative: #ff6b6b`（下降/差）
+- 背景网格 `opacity: 0.3`（深色）/ `opacity: 0.3`（浅色）
+- 不使用装饰性元素 — 数据是视觉焦点
+- 不使用大面积渐变
+- Insight 卡片必须使用左侧 3px 彩色边框 + 淡色背景
+
+### Signature Checklist
+- [ ] .slide::before 数据网格叠加（clamp(40px,6vw,80px) 间距）
+- [ ] @keyframes fadeInUp（staggered 0.05s-0.47s）
+- [ ] @keyframes growBar（柱状图生长动画）
+- [ ] .kpi-number KPI 大数字（tabular-nums, 4-8rem）
+- [ ] .kpi-label KPI 标签（11px uppercase）
+- [ ] .kpi-trend 趋势箭头（.up/.down 颜色编码）
+- [ ] .kpi-grid KPI 网格（auto-fit, minmax 160px）
+- [ ] .kpi-card KPI 卡片（border-radius: 8px）
+- [ ] .chart-bar SVG 柱状图（主/次/第三色）
+- [ ] .chart-line SVG 折线（stroke-width: 2.5）
+- [ ] .chart-grid SVG 网格线（stroke-dasharray: 4 4）
+- [ ] .ds-insight 洞察卡片（左侧 3px 彩色边框）
+- [ ] .divider 分隔线（1px solid var(--border)）
+- [ ] font-variant-numeric: tabular-nums
+- [ ] 无外部图表库，纯 SVG
 
 ---
 

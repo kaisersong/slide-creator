@@ -156,10 +156,61 @@ Single column centered over split. Numbered command blocks with rounded corners.
 
 ## Signature Elements
 
-- Split background colors (peach left, lavender right)
-- Playful badge pills with icons
-- Grid pattern overlay on right panel
-- Rounded CTA buttons
+### CSS Overlays
+- `.slide::before`: Two-color vertical split gradient —
+  ```css
+  .slide::before { content: ''; position: absolute; inset: 0;
+    background: linear-gradient(to right, #f5e6dc 50%, #e4dff0 50%); z-index: 0; }
+  ```
+- `.slide::after`: Dot pattern on right half only (radial gradient dots, 24px grid) —
+  ```css
+  .slide::after { content: ''; position: absolute; top: 0; right: 0;
+    width: 50%; height: 100%; z-index: 1; pointer-events: none;
+    background-image: radial-gradient(circle, rgba(100,80,160,0.12) 1.5px, transparent 1.5px);
+    background-size: 24px 24px; }
+  ```
+
+### Animations
+- `.slide-content`: Scale + translate entrance (`translateY(40px) scale(0.97)` to `0`, 0.5s cubic-bezier) —
+  ```css
+  .slide-content { opacity: 0; transform: translateY(40px) scale(0.97);
+    transition: opacity 0.5s cubic-bezier(0.34,1.2,0.64,1),
+                transform 0.5s cubic-bezier(0.34,1.2,0.64,1); }
+  .slide.visible .slide-content { opacity: 1; transform: translateY(0) scale(1); }
+  ```
+- `.card`: Staggered card entrance (4 cards, 0.05s/0.12s/0.19s/0.26s delays)
+- `.step`: Staggered step entrance from left (3 steps, 0.1s/0.2s/0.3s delays)
+
+### Required CSS Classes
+- `.slide-content`: Centered content wrapper, `width: min(780px, 90vw)`, `z-index: 2`, text-align center
+- `.badge` / `.badge-mint` / `.badge-yellow` / `.badge-pink` / `.badge-lavender` / `.badge-peach`: Rounded pill (`border-radius: 100px`) with colored background and dark text
+- `.stat-pill`: White rounded card (`border-radius: 100px`), `box-shadow: 0 4px 16px rgba(0,0,0,0.08)`, centered stat number + label
+- `.card`: White rounded card (`border-radius: 24px`), soft shadow, per-card entrance animation
+- `.grid-item`: White rounded card (`border-radius: 16px`), small shadow, for preset grid items
+- `.step`: White rounded card (`border-radius: 20px`) with colored circular step number
+- `.step-num-N`: Colored circle backgrounds (mint, lavender, pink) with dark text
+- `.slide-num`: White pill-shaped badge, `position: absolute; top: 24px; right: 24px`
+- `.cta-btn` / `.cta-primary` / `.cta-secondary`: Rounded pill buttons, primary = dark bg, secondary = lavender bg
+
+### Background Rule
+No body background set. `.slide::before` creates the peach/lavender split gradient. `.slide::after` dots overlay only the right 50%. Content sits at `z-index: 2` above both.
+
+### Style-Specific Rules
+- **Split is always 50/50 vertical**: peach (`#f5e6dc`) left, lavender (`#e4dff0`) right
+- **Dot pattern only on right half**: `width: 50%; right: 0` on `::after`
+- **Badge pills use semantic colors**: mint (#c8f0d8), yellow (#f0f0c8), pink (#f0d4e0), lavender (#d4cef5), peach (#f5d4c4) — each with matching dark text color
+- **Progress bar**: Gradient mint to lavender
+- **Nav dots**: Bottom-centered, pill-shaped (8px circles, active stretches to 24px)
+- **Install cards**: White background, `border-radius: 20px`, code blocks in dark (`#1a1a1a`) with mint text
+
+### Signature Checklist
+- [ ] Peach `#f5e6dc` left / lavender `#e4dff0` right split
+- [ ] Dot pattern overlay on right half only
+- [ ] Badge pills (mint/yellow/pink/lavender/peach) visible
+- [ ] Rounded white cards with soft shadows
+- [ ] Outfit at 800 weight for headlines
+- [ ] Centered content layout (min 780px, 90vw)
+- [ ] Pill-shaped CTA buttons
 
 ---
 

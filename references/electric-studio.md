@@ -147,10 +147,55 @@ Dark background. Large white number in Manrope 800, `clamp(48px, 8vw, 96px)`. Bl
 
 ## Signature Elements
 
-- Two-panel vertical split
-- Accent bar on panel edge
-- Quote typography as hero element
-- Minimal, confident spacing
+### CSS Overlays
+- `.left-panel::after`: 垂直 4px 强调条 — `position: absolute; right: 0; top: 12%; bottom: 12%; width: 4px; background: #4361ee`
+- `.top-panel::after`: 水平 4px 强调条 — `position: absolute; bottom: 0; left: 8%; right: 8%; height: 4px; background: #4361ee`
+- `#slide-8 .left-panel::after`: CTA 页变体 — `background: rgba(255,255,255,0.08)`（白色而非蓝色）
+
+### Animations
+- 无 `@keyframes`，全部使用 CSS transitions
+- `.reveal`: 入场动画 — `opacity: 0; transform: translateY(18px); transition: opacity 0.4s ease, transform 0.4s ease`；stagger delays `0.05s, 0.13s, 0.21s, 0.29s`
+
+### Required CSS Classes
+- `.left-panel`: 左侧面板 — `flex: 0 0 58%; display: flex; flex-direction: column; justify-content: center; padding: 80px 60px 80px 80px`
+- `.right-panel`: 右侧面板 — `flex: 0 0 42%; display: flex; flex-direction: column; justify-content: center; padding: 80px 48px`
+- `.top-panel`: 上方面板 — `flex: 0 0 52%; width: 100%; display: flex; flex-direction: column; justify-content: flex-end; padding: 56px 80px 40px`
+- `.bottom-panel`: 下方面板 — `flex: 0 0 48%; width: 100%; display: flex; flex-direction: column; justify-content: flex-start; padding: 40px 80px 56px`
+- `#brand-mark`: 固定品牌标识 — `position: fixed; top: 20px; left: 28px; font-family: 'Manrope'; font-weight: 800; font-size: 15px; color: #4361ee; z-index: 1000`
+- `.label`: 蓝色小标签 — `font-size: 10px; font-weight: 700; letter-spacing: 0.22em; text-transform: uppercase; color: #4361ee`
+- `.label.white`: 暗面板上的白色标签 — `color: rgba(255,255,255,0.5)`
+- `.slide-num-label`: 页码 — `position: absolute; bottom: 28px; right: 36px; font-size: 11px; color: rgba(0,0,0,0.18)`；`.light` 变体 `rgba(255,255,255,0.2)`
+- `.badge-pill`: 描边标签 — `padding: 6px 16px; border: 1.5px solid rgba(67,97,238,0.3); font-size: 12px; font-weight: 600; color: #4361ee`
+- `.code-block`: 代码块 — `background: #0a0a0a; padding: 14px 18px;` 内含 `code { font-family: 'Manrope', monospace; font-size: 12px; color: rgba(255,255,255,0.8) }`
+- `.feat-name::before`: 功能列表蓝点 — `content: ''; display: inline-block; width: 6px; height: 6px; background: #4361ee`
+- `.cta-pill`: CTA 圆角块 — `background: #fff; color: #4361ee; font-weight: 800; font-size: 26px; padding: 18px 36px`
+- `.dot` / `.dot.active`: 导航圆点 — 默认 `rgba(67,97,238,0.25) + 1px solid rgba(67,97,238,0.4)`；激活 `#4361ee + scale(1.5)`
+- `.pt-cell` / `.pt-cell.featured`: 预设网格单元 — featured 为 `background: #4361ee`
+
+### Background Rule
+`.slide` 不设固定 background。各面板自行定义背景色：`.left-panel` / `.right-panel` / `.top-panel` / `.bottom-panel` 通过内联 style 设置为 `#ffffff`、`#0a0a0a`、`#f8f9ff`、`#f2f4ff` 等。无 body 渐变或伪元素覆盖。
+
+### Style-Specific Rules
+- 双面板垂直分割为主（58/42 或 55/45），水平分割为辅（52/48）
+- 强调条 4px 蓝色自动出现在面板边缘（`::after`），不需要手动添加
+- 所有文字使用 Manrope 字体，权重 400/500/700/800
+- 装饰极少 — 通过留白和间距传递信心，无纹理/网格/图案
+- `#brand-mark` 固定在左上角，全程可见
+
+### Signature Checklist
+- [ ] `.left-panel::after` 垂直 4px 蓝色强调条（top 12% to bottom 12%）
+- [ ] `.top-panel::after` 水平 4px 蓝色强调条（left 8% to right 8%）
+- [ ] `#brand-mark` 固定品牌标识（Manrope 800, 15px, #4361ee）
+- [ ] `.label` / `.label.white` 蓝色小标签
+- [ ] `.slide-num-label` / `.light` 右下角页码
+- [ ] `.badge-pill` 蓝色描边标签
+- [ ] `.feat-name::before` 蓝色圆点列表标记
+- [ ] `.cta-pill` 白色背景蓝色文字 CTA
+- [ ] `.code-block` 暗黑代码块
+- [ ] `.dot` 导航圆点（激活 scale 1.5）
+- [ ] `.reveal` 入场动画（translateY 18px，stagger 0.05s-0.29s）
+- [ ] 双面板分割布局（垂直 58/42 或水平 52/48）
+- [ ] 无纹理/网格/图案 — 纯面板背景色
 
 ---
 

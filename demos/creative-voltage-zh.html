@@ -79,7 +79,7 @@
         #present-btn:hover { background: rgba(0,0,0,0.78); }
         #present-counter { display: none; position: fixed; bottom: 1.4rem; left: 50%; transform: translateX(-50%); z-index: 9997; font-size: 0.65rem; letter-spacing: 0.14em; font-family: system-ui, sans-serif; color: rgba(255,255,255,0.28); }
         body.presenting { background: #000 !important; overflow: hidden !important; }
-        body.presenting .slide { position: fixed !important; inset: 0; width: var(--pdw, 1440px) !important; height: var(--pdh, 900px) !important; transform-origin: top left; transform: translate(var(--pox, 0px), var(--poy, 0px)) scale(var(--ps, 1)) !important; scroll-snap-align: none !important; display: none !important; }
+        body.presenting .slide { position: fixed !important; inset: 0; width: 100vw !important; height: 100vh !important; transform-origin: center center; scroll-snap-align: none !important; display: none !important; }
         body.presenting .slide.p-on { display: flex !important; }
         body.presenting #present-btn { display: none !important; }
         body.presenting #present-counter { display: block; }
@@ -205,202 +205,57 @@
     </section>
 
     <!-- 第5页：播放模式 -->
-    <section class="slide" data-notes="F5或点击播放按钮。全屏，CSS缩放到任意屏幕。" aria-label="播放模式">
-        <div class="voltage-halftone"></div>
-        <div class="slide-content">
-            <div style="display: flex; align-items: center; gap: 1.5rem;">
-                <div class="reveal" style="font-size: clamp(3rem, 6vw, 5rem); line-height: 1;">
-                    <span class="voltage-mono" style="font-size: inherit;">▶</span>
-                </div>
-                <div>
-                    <h2 class="reveal voltage-title" style="font-size: clamp(1.5rem, 3.5vw, 2.5rem);">播放模式</h2>
-                    <p class="reveal voltage-body" style="margin-top: 0.5rem;">按 <kbd>F5</kbd> 或点击播放按钮。幻灯片缩放到任意屏幕——1440×900 基准，CSS 缩放适配。控制栏自动隐藏。按 <kbd>B</kbd> 黑屏。</p>
-                </div>
-            </div>
-            <div class="voltage-callout reveal" style="margin-top: 1.5rem;">
-                <p class="voltage-mono">进入 PresentMode → 固定定位幻灯片 → CSS 缩放变换 → 充满任意显示器</p>
+    
+    <!-- Slide 5: Three Modes -->
+    <section class="slide" data-notes="Play, Present, Edit — three modes in one file." aria-label="Core Modes">
+        <div style="max-width:900px;width:100%;">
+            <div class="reveal a-label" style="margin-bottom:12px;">Core Modes</div>
+            <div class="reveal a-h2">Play, Present, Edit — One File</div>
+            <div style="display:flex;gap:clamp(16px,3vw,32px);justify-content:center;margin-top:clamp(20px,3vw,36px);">
+                <div class="reveal g" style="text-align:center;padding:20px;"><div class="stat"><div class="num" style="font-size:clamp(2rem,5vw,4rem);">F5</div><div class="label">Play</div></div><div class="a-body" style="font-size:clamp(0.65rem,1vw,0.75rem);margin-top:8px;">Fullscreen, auto-scale</div></div>
+                <div class="reveal g" style="text-align:center;padding:20px;"><div class="stat"><div class="num" style="font-size:clamp(2rem,5vw,4rem);">P</div><div class="label">Present</div></div><div class="a-body" style="font-size:clamp(0.65rem,1vw,0.75rem);margin-top:8px;">Notes, timer, sync</div></div>
+                <div class="reveal g" style="text-align:center;padding:20px;"><div class="stat"><div class="num" style="font-size:clamp(2rem,5vw,4rem);">E</div><div class="label">Edit</div></div><div class="a-body" style="font-size:clamp(0.65rem,1vw,0.75rem);margin-top:8px;">contenteditable, Ctrl+S</div></div>
             </div>
         </div>
     </section>
 
-    <!-- 第6页：演讲者模式 -->
-    <section class="slide" data-notes="P键打开同步演讲者窗口。备注、计时器、页数——全部同步。" aria-label="演讲者模式">
-        <div class="voltage-halftone"></div>
-        <div class="slide-content">
-            <h2 class="reveal voltage-title" style="font-size: clamp(1.5rem, 3.5vw, 2.5rem);">演讲者模式——看到观众看不到的内容</h2>
-            <div class="voltage-split reveal" style="margin-top: 1.5rem; height: 60%;">
-                <div class="voltage-blue-panel">
-                    <div class="voltage-mono" style="margin-bottom: 0.5rem;">演讲者备注</div>
-                    <p class="voltage-body" style="font-size: clamp(0.7rem, 1.2vw, 0.95rem);">每页的备注在此显示。按 E 键在浏览器中编辑，Ctrl+S 保存。通过 BroadcastChannel 同步。</p>
-                </div>
-                <div class="voltage-dark-panel">
-                    <div style="display: flex; flex-direction: column; gap: 1.5rem; align-items: center;">
-                        <div>
-                            <div class="voltage-mono" style="font-size: 0.7rem; text-align: center;">页数</div>
-                            <div class="voltage-stat" style="text-align: center;">7 / 12</div>
-                        </div>
-                        <div>
-                            <div class="voltage-mono" style="font-size: 0.7rem; text-align: center;">已用时间</div>
-                            <div class="voltage-mono" style="font-size: clamp(1.2rem, 2.5vw, 2rem); text-align: center;">4:32</div>
-                        </div>
-                        <div style="display: flex; gap: 1rem;">
-                            <kbd style="font-size: 1.2rem; padding: 4px 12px;">←</kbd>
-                            <kbd style="font-size: 1.2rem; padding: 4px 12px;">→</kbd>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <p class="reveal voltage-mono" style="margin-top: 0.75rem; text-align: center;">按 <kbd>P</kbd> → 打开同步窗口 → BroadcastChannel 同步</p>
-        </div>
-    </section>
-
-    <!-- 第7页：浏览器编辑模式 -->
-    <section class="slide" data-notes="E键进入编辑模式。内容可编辑。Ctrl+S保存文件。" aria-label="编辑模式">
-        <div class="voltage-halftone"></div>
-        <div class="slide-content">
-            <h2 class="reveal voltage-title" style="font-size: clamp(1.5rem, 3.5vw, 2.5rem);">在浏览器中编辑，保存到磁盘</h2>
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-top: 1.5rem;">
-                <div class="reveal voltage-card">
-                    <div class="voltage-mono" style="margin-bottom: 0.5rem;">E 键</div>
-                    <h3 style="font-family: var(--font-display); font-weight: 700; margin-bottom: 0.5rem;">进入编辑模式</h3>
-                    <p class="voltage-body">悬停左上角热区，点击 ✏ 编辑。所有文字变为可编辑。底部实时备注面板。</p>
-                </div>
-                <div class="reveal voltage-card">
-                    <div class="voltage-mono" style="margin-bottom: 0.5rem;">CTRL + S</div>
-                    <h3 style="font-family: var(--font-display); font-weight: 700; margin-bottom: 0.5rem;">保存到文件</h3>
-                    <p class="voltage-body">编辑通过浏览器下载持久化。你编辑的 HTML 就是最终产物——无需构建，无需导出。</p>
-                </div>
-            </div>
-            <div class="voltage-callout reveal" style="margin-top: 1.5rem;">
-                <p class="voltage-body">编辑模式默认始终启用。每个生成的 HTML 都是活文档。</p>
+    <!-- Slide 6: Commands -->
+    <section class="slide" data-notes="Three commands: plan, generate, review." aria-label="Commands">
+        <div style="max-width:900px;width:100%;">
+            <div class="reveal a-label" style="margin-bottom:12px;">Commands</div>
+            <div class="reveal a-h2">Three Commands, One Pipeline</div>
+            <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:clamp(12px,2vw,20px);margin-top:clamp(16px,2vw,24px);">
+                <div class="reveal g"><div class="a-label" style="margin-bottom:6px;">01 Plan</div><div class="cmd">/slide-creator --plan</div><div class="a-body" style="font-size:clamp(0.65rem,1vw,0.75rem);">Generate outline</div></div>
+                <div class="reveal g"><div class="a-label" style="margin-bottom:6px;">02 Generate</div><div class="cmd">/slide-creator --generate</div><div class="a-body" style="font-size:clamp(0.65rem,1vw,0.75rem);">Build with checks</div></div>
+                <div class="reveal g"><div class="a-label" style="margin-bottom:6px;">03 Review</div><div class="cmd">/slide-creator --review</div><div class="a-body" style="font-size:clamp(0.65rem,1vw,0.75rem);">Inspect and fix</div></div>
             </div>
         </div>
     </section>
 
-    <!-- 第8页：两种规划深度 -->
-    <section class="slide" data-notes="两种深度：Auto用于快速出稿，Polish用于深度规划带视觉锁定。" aria-label="规划深度">
-        <div class="voltage-halftone"></div>
-        <div class="slide-content">
-            <h2 class="reveal voltage-title" style="font-size: clamp(1.5rem, 3.5vw, 2.5rem);">两种规划深度——按重要程度选择</h2>
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-top: 1.5rem;">
-                <div class="reveal voltage-card" style="border-color: rgba(212,255,0,0.3);">
-                    <div class="voltage-neon-badge" style="margin-bottom: 0.75rem;">自动</div>
-                    <h3 style="font-family: var(--font-display); font-weight: 700; margin-bottom: 0.5rem;">快速出稿</h3>
-                    <p class="voltage-body">3–6 分钟。快速大纲，立即生成。适用于内部评审和快速迭代。</p>
-                    <p class="voltage-mono" style="margin-top: 0.75rem;">/slide-creator --plan [主题]</p>
-                </div>
-                <div class="reveal voltage-card" style="border-color: var(--bg-blue);">
-                    <div class="voltage-neon-badge" style="margin-bottom: 0.75rem; background: var(--bg-blue);">精修</div>
-                    <h3 style="font-family: var(--font-display); font-weight: 700; margin-bottom: 0.5rem;">深度规划</h3>
-                    <p class="voltage-body">8–15 分钟。结构化叙事，每页视觉锁定，16 项审查自动执行。</p>
-                    <p class="voltage-mono" style="margin-top: 0.75rem;">/slide-creator --plan --polish [主题]</p>
-                </div>
+    <!-- Slide 7: Zero Dependencies -->
+    <section class="slide" data-notes="Zero dependencies, pure browser." aria-label="Zero Deps">
+        <div style="max-width:900px;width:100%;text-align:center;">
+            <div class="reveal a-label" style="margin-bottom:12px;">Foundation</div>
+            <div class="reveal a-h2" style="text-align:center;">Nothing Between You and the Browser</div>
+            <div style="display:flex;gap:clamp(24px,4vw,48px);justify-content:center;margin-top:clamp(20px,3vw,36px);">
+                <div class="reveal stat"><div class="num">0</div><div class="label">Dependencies</div></div>
+                <div class="reveal stat"><div class="num">21</div><div class="label">Presets</div></div>
+                <div class="reveal stat"><div class="num">1</div><div class="label">Requirement</div></div>
             </div>
+            <div class="reveal a-body" style="text-align:center;margin-top:16px;color:var(--text-muted, var(--text-m, #64748b));">HTML, CSS, JavaScript. That is all.</div>
         </div>
     </section>
 
-    <!-- 第9页：内容 Review 系统 -->
-    <section class="slide" data-notes="16个检查点在发布前捕获内容问题。密度、平衡、色彩、组件多样性。" aria-label="审查系统">
-        <div class="voltage-halftone"></div>
-        <div class="slide-content">
-            <span class="reveal voltage-neon-badge">16 个检查点</span>
-            <h2 class="reveal voltage-title" style="font-size: clamp(1.5rem, 3.5vw, 2.5rem); margin-top: 0.75rem;">内容审查——演示前发现问题</h2>
-            <div class="reveal" style="display: grid; grid-template-columns: repeat(2, 1fr); gap: clamp(8px, 1.5vw, 16px); margin-top: 1.5rem;">
-                <div class="voltage-step"><span class="voltage-step-num">R1</span><span class="voltage-step-text">内容密度 ≥65%</span></div>
-                <div class="voltage-step"><span class="voltage-step-num">R2</span><span class="voltage-step-text">列平衡 ≥60%</span></div>
-                <div class="voltage-step"><span class="voltage-step-num">R3</span><span class="voltage-step-text">标题换行 ≤3 行</span></div>
-                <div class="voltage-step"><span class="voltage-step-num">R4</span><span class="voltage-step-text">禁止通用标题标签</span></div>
-                <div class="voltage-step"><span class="voltage-step-num">R5</span><span class="voltage-step-text">连续同布局 ≤2 页</span></div>
-                <div class="voltage-step"><span class="voltage-step-num">R6</span><span class="voltage-step-text">三概念法则</span></div>
-                <div class="voltage-step"><span class="voltage-step-num">R7</span><span class="voltage-step-text">90/8/2 色彩律</span></div>
-                <div class="voltage-step"><span class="voltage-step-num">R8</span><span class="voltage-step-text">断言式标题质量</span></div>
-            </div>
-            <p class="reveal voltage-mono" style="margin-top: 1rem;">/slide-creator --review [file.html] → 审查 → 确认 → 修复</p>
+    <!-- Slide 8: CTA -->
+    <section class="slide" data-notes="Call to action." aria-label="CTA">
+        <div style="max-width:900px;width:100%;text-align:center;">
+            <div class="reveal"><span class="pill" style="margin-bottom:16px;">Start Now</span></div>
+            <div class="reveal a-title">Start with a Preset</div>
+            <div class="reveal" style="margin-top:12px;"><div class="cmd" style="text-align:center;font-size:clamp(0.9rem,1.5vw,1.2rem);">/slide-creator</div></div>
+            <div class="reveal a-subtitle" style="margin-top:12px;text-align:center;">Tell Claude to install kai-slide-creator</div>
         </div>
     </section>
 
-    <!-- 第10页：内容类型与风格推荐 -->
-    <section class="slide" data-notes="内容类型匹配风格。数据报告需要Data Story，不是Vintage Editorial。" aria-label="风格推荐">
-        <div class="voltage-halftone"></div>
-        <div class="slide-content">
-            <h2 class="reveal voltage-title" style="font-size: clamp(1.5rem, 3.5vw, 2.5rem);">内容类型匹配最佳风格</h2>
-            <div class="reveal" style="margin-top: 1.5rem; display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem;">
-                <div class="voltage-card">
-                    <div class="voltage-mono" style="margin-bottom: 0.4rem;">数据报告 / KPI</div>
-                    <p class="voltage-body" style="font-size: var(--small-size);">Data Story · Enterprise Dark · Swiss Modern</p>
-                </div>
-                <div class="voltage-card">
-                    <div class="voltage-mono" style="margin-bottom: 0.4rem;">商业路演 / VC</div>
-                    <p class="voltage-body" style="font-size: var(--small-size);">Bold Signal · Aurora Mesh · Enterprise Dark</p>
-                </div>
-                <div class="voltage-card">
-                    <div class="voltage-mono" style="margin-bottom: 0.4rem;">开发工具 / API</div>
-                    <p class="voltage-body" style="font-size: var(--small-size);">Terminal Green · Neon Cyber · Neo-Retro Dev</p>
-                </div>
-                <div class="voltage-card">
-                    <div class="voltage-mono" style="margin-bottom: 0.4rem;">研究 / 思想领导</div>
-                    <p class="voltage-body" style="font-size: var(--small-size);">Modern Newspaper · Paper & Ink · Swiss Modern</p>
-                </div>
-                <div class="voltage-card">
-                    <div class="voltage-mono" style="margin-bottom: 0.4rem;">创意 / 个人品牌</div>
-                    <p class="voltage-body" style="font-size: var(--small-size);">Vintage Editorial · Split Pastel · Neo-Brutalism</p>
-                </div>
-                <div class="voltage-card">
-                    <div class="voltage-mono" style="margin-bottom: 0.4rem;">产品发布 / SaaS</div>
-                    <p class="voltage-body" style="font-size: var(--small-size);">Aurora Mesh · Glassmorphism · Electric Studio</p>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- 第11页：技术特点 -->
-    <section class="slide" data-notes="零依赖意味着随处运行。纯浏览器，无需服务器。" aria-label="技术特点">
-        <div class="voltage-halftone"></div>
-        <div class="slide-content">
-            <div class="voltage-split" style="height: auto;">
-                <div class="voltage-blue-panel">
-                    <h2 class="reveal voltage-title" style="font-size: clamp(1.2rem, 2.5vw, 2rem);">零依赖</h2>
-                    <ul class="reveal voltage-features" style="margin-top: 1rem;">
-                        <li>单个 HTML 文件——无 JS 框架</li>
-                        <li>Google Fonts 是唯一外部资源</li>
-                        <li>无构建步骤，无 package.json</li>
-                        <li>任意带浏览器的设备均可运行</li>
-                    </ul>
-                </div>
-                <div class="voltage-dark-panel">
-                    <h2 class="reveal voltage-title" style="font-size: clamp(1.2rem, 2.5vw, 2rem);">纯浏览器</h2>
-                    <ul class="reveal voltage-features" style="margin-top: 1rem;">
-                        <li>编辑模式在页面内运行</li>
-                        <li>演讲者同步通过 BroadcastChannel</li>
-                        <li>通过 /kai-html-export CLI 导出</li>
-                        <li>作为文件分享或发布链接</li>
-                    </ul>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- 第12页：开始使用 -->
-    <section class="slide" data-notes="当前版本2.16.0。快速增长。告诉观众如何开始使用。" aria-label="开始使用">
-        <div class="voltage-halftone"></div>
-        <div class="voltage-diamond" style="top: 5%; right: 10%;"></div>
-        <div class="slide-content">
-            <span class="reveal voltage-neon-badge">v2.16.0</span>
-            <h2 class="reveal voltage-title" style="font-size: clamp(1.5rem, 3.5vw, 2.5rem); margin-top: 0.75rem;">开始使用——用 HTML 制作你的下一份幻灯片</h2>
-            <div class="reveal" style="margin-top: 1.5rem;">
-                <div class="voltage-callout" style="margin-bottom: 1rem;">
-                    <p class="voltage-mono" style="font-size: clamp(0.8rem, 1.3vw, 1rem);">/slide-creator --plan "你的主题"</p>
-                </div>
-                <div class="voltage-callout" style="margin-bottom: 1rem;">
-                    <p class="voltage-mono" style="font-size: clamp(0.8rem, 1.3vw, 1rem);">/slide-creator --generate</p>
-                </div>
-                <div class="voltage-callout">
-                    <p class="voltage-mono" style="font-size: clamp(0.8rem, 1.3vw, 1rem);">/slide-creator --review [file.html]</p>
-                </div>
-            </div>
-            <p class="reveal voltage-body" style="margin-top: 1rem;">GitHub: <span class="voltage-mono">kaisersong/slide-creator</span> · ClawHub: <span class="voltage-mono">kai-slide-creator</span></p>
-        </div>
-    </section>
 
     <script>
         class SlidePresentation {
@@ -450,8 +305,8 @@
                     if (e.target.getAttribute('contenteditable')) return;
                     if (e.key === 'ArrowDown' || e.key === 'ArrowRight' || e.key === ' ' || e.key === 'PageDown' || e.key === 'Enter') { e.preventDefault(); this.next(); }
                     else if (e.key === 'ArrowUp' || e.key === 'ArrowLeft' || e.key === 'PageUp' || e.key === 'Backspace') { e.preventDefault(); this.prev(); }
-                    else if (e.key === 'p' || e.key === 'P') { const url = location.href.split('?')[0] + '?presenter'; window.open(url, 'slide-presenter-' + Date.now(), 'width=1100,menubar=no,toolbar=no,location=no'); }
-                });
+                    else if (e.key === 'p' || e.key === 'P') { const url = location.href.split('?')[0] + '?presenter'; window.open(url, 'slide-presenter-' + Date.now(), 'width=1100,menubar=no,toolbar=no,location=no'); }} else if (e.key === 'e' || e.key === 'E') { if (!this.editor?.active) this.editor?.enter(); else this.editor?.exit();
+});
             }
             setupTouch() { let startY = 0; document.addEventListener('touchstart', e => { startY = e.touches[0].clientY; }, { passive: true }); document.addEventListener('touchend', e => { const delta = startY - e.changedTouches[0].clientY; if (Math.abs(delta) > 50) delta > 0 ? this.next() : this.prev(); }); }
             setupWheel() {}
@@ -495,10 +350,23 @@
             document.addEventListener('keydown', e => { if (e.key === 'ArrowRight' || e.key === 'ArrowDown' || e.key === ' ' || e.key === 'PageDown' || e.key === 'Enter') ch.postMessage({ type: 'nav-next' }); else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp' || e.key === 'PageUp' || e.key === 'Backspace') ch.postMessage({ type: 'nav-prev' }); });
         } else {
             class PresentMode {
-                constructor(ctrl) { this.ctrl = ctrl; this.DW = 1440; this.DH = 900; this.active = false; this._resize = () => this._scale(); const btn = document.createElement('button'); btn.id = 'present-btn'; btn.title = 'Present (F5)'; btn.setAttribute('aria-label', 'Present'); btn.textContent = '▶'; document.body.appendChild(btn); const counter = document.createElement('div'); counter.id = 'present-counter'; document.body.appendChild(counter); btn.addEventListener('click', () => this.enter()); document.addEventListener('keydown', e => { if (e.key === 'F5') { e.preventDefault(); this.enter(); } if (e.key === 'Escape' && this.active) this.exit(); if ((e.key === 'b' || e.key === 'B') && this.active) document.body.classList.toggle('presenting-black'); }); document.addEventListener('fullscreenchange', () => { if (!document.fullscreenElement && this.active) this.exit(); }); }
-                enter() { if (this.active) return; this.active = true; document.body.classList.add('presenting'); document.documentElement.requestFullscreen?.().catch(() => {}); window.addEventListener('resize', this._resize); this._scale(); this._show(this.ctrl.currentSlide); this._origGoTo = this.ctrl.goTo.bind(this.ctrl); this.ctrl.goTo = (i) => { const idx = Math.max(0, Math.min(i, this.ctrl.slides.length - 1)); this.ctrl.currentSlide = idx; this.ctrl.slides.forEach((s, j) => s.classList.toggle('visible', j === idx)); this._show(idx); this.ctrl.updateProgress?.(); this.ctrl.updateDots?.(); this.ctrl.broadcastState?.(); }; }
-                exit() { if (!this.active) return; this.active = false; document.body.classList.remove('presenting', 'presenting-black'); document.querySelectorAll('.slide').forEach(s => s.classList.remove('p-on')); if (document.fullscreenElement) document.exitFullscreen?.(); window.removeEventListener('resize', this._resize); if (this._origGoTo) { this.ctrl.goTo = this._origGoTo; this._origGoTo = null; } this.ctrl.slides[this.ctrl.currentSlide]?.scrollIntoView({ behavior: 'instant' }); }
-                _scale() { const s = Math.min(window.innerWidth / this.DW, window.innerHeight / this.DH); const ox = (window.innerWidth - this.DW * s) / 2; const oy = (window.innerHeight - this.DH * s) / 2; const r = document.documentElement; r.style.setProperty('--pdw', this.DW + 'px'); r.style.setProperty('--pdh', this.DH + 'px'); r.style.setProperty('--ps', s); r.style.setProperty('--pox', ox + 'px'); r.style.setProperty('--poy', oy + 'px'); }
+                constructor(ctrl) { this.ctrl = ctrl; this.baseW = 1440; this.baseH = 900; this.active = false; const btn = document.createElement('button'); btn.id = 'present-btn'; btn.title = 'Present (F5)'; btn.setAttribute('aria-label', 'Present'); btn.textContent = '▶'; document.body.appendChild(btn); const counter = document.createElement('div'); counter.id = 'present-counter'; document.body.appendChild(counter); btn.addEventListener('click', () => this.enter()); document.addEventListener('keydown', e => { if (e.key === 'F5') { e.preventDefault(); this.enter(); } if (e.key === 'Escape' && this.active) this.exit(); if ((e.key === 'b' || e.key === 'B') && this.active) document.body.classList.toggle('presenting-black'); }); document.addEventListener('fullscreenchange', () => { if (this.active) { setTimeout(() => this._scale(), 100); } if (!document.fullscreenElement && this.active) this.exit(); });
+                window.addEventListener('resize', () => { if (this.active) this._scale(); }); }
+                enter() { if (this.active) return; this.active = true; document.body.classList.add('presenting'); document.documentElement.requestFullscreen?.().catch(() => {}); this._scale(); this._show(this.ctrl.currentSlide); this._origGoTo = this.ctrl.goTo.bind(this.ctrl); this.ctrl.goTo = (i) => { const idx = Math.max(0, Math.min(i, this.ctrl.slides.length - 1)); this.ctrl.currentSlide = idx; this.ctrl.slides.forEach((s, j) => s.classList.toggle('visible', j === idx)); this._show(idx); this.ctrl.updateProgress?.(); this.ctrl.updateDots?.(); this.ctrl.broadcastState?.(); }; }
+                _reset() {
+                this.ctrl.slides.forEach(slide => { slide.style.transform = ''; slide.classList.remove('p-on'); });
+            }
+    exit() {
+                if (!this.active) return;
+                this.active = false;
+                document.body.classList.remove('presenting', 'presenting-black');
+                this._reset(); if (document.fullscreenElement) document.exitFullscreen?.(); if (this._origGoTo) { this.ctrl.goTo = this._origGoTo; this._origGoTo = null; } this.ctrl.slides[this.ctrl.currentSlide]?.scrollIntoView({ behavior: 'instant' }); }
+                _scale() {
+                const vw = window.innerWidth;
+                const vh = window.innerHeight;
+                const scale = Math.min(vw / this.baseW, vh / this.baseH);
+                this.ctrl.slides.forEach(slide => { slide.style.transform = 'scale(' + scale + ')'; });
+            } }
                 _show(i) { document.querySelectorAll('.slide').forEach((s, idx) => s.classList.toggle('p-on', idx === i)); const c = document.getElementById('present-counter'); if (c) c.textContent = `${i + 1} / ${this.ctrl.slides.length}`; }
             }
             const ctrl = new SlidePresentation(); ctrl.setupEditor(); new PresentMode(ctrl);

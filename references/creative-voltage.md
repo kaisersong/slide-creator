@@ -186,11 +186,56 @@ Neon callout box `.voltage-callout` with `border: 2px solid #d4ff00`, `backgroun
 
 ## Signature Elements
 
-- Electric blue + neon yellow contrast
-- Halftone texture patterns
-- Neon badges/callouts
-- Script typography for creative flair
-- Diamond-shaped decorative elements
+### CSS Overlays
+- `.halftone::before`: 半调点阵纹理 — `background-image: radial-gradient(circle, rgba(255,255,255,0.055) 1px, transparent 1px); background-size: 22px 22px; pointer-events: none; z-index: 0`
+- `#slide-8 .deco-bg`: CTA 页右侧深色装饰条 — `width: 34%; background: rgba(0,0,0,0.14);` 内含 Syne 800 180px 装饰文字
+
+### Animations
+- 无 `@keyframes`，全部使用 CSS transitions + cubic-bezier(0.34, 1.56, 0.64, 1) 弹性曲线
+- `.reveal`: 入场动画 — `opacity: 0; transform: translateY(22px); transition: opacity 0.35s cubic-bezier(...), transform 0.35s cubic-bezier(...)`；stagger delays `0.04s, 0.11s, 0.18s, 0.25s`
+- `#progress-bar` 过渡使用同一条弹性曲线，0.35s
+
+### Required CSS Classes
+- `.halftone`: 应用到需要半调纹理的 `.slide` 上（通过 `::before` 伪元素）
+- `.pill`: 霓虹黄色药丸标签 — `background: #d4ff00; color: #0a0a14; font-family: 'Space Mono'; font-size: 10px; font-weight: 700; padding: 5px 14px`
+- `.pill.outline`: 描边变体 — `background: transparent; border: 1.5px solid #d4ff00; color: #d4ff00`
+- `.pill.small`: 小号变体 — `font-size: 9px; padding: 4px 10px`
+- `.blue-panel`: 电蓝面板 — `background: #0066ff; position: relative; overflow: hidden`
+- `.dark-panel`: 暗黑面板 — `background: #1a1a2e; position: relative; overflow: hidden`
+- `.neon`: 霓虹文字色 — `color: #d4ff00`
+- `.panel-content`: 面板内容容器 — `position: relative; z-index: 2; padding: 60px 52px; height: 100%`
+- `.big-mark`: 大型装饰符号 — `font-family: 'Syne'; font-weight: 800; font-size: 130px; color: rgba(212,255,0,0.14)`
+- `.deco-num`: 背景装饰数字 — `position: absolute; right: -30px; bottom: -60px; font-family: 'Syne'; font-size: 42vw; color: rgba(212,255,0,0.04)`
+- `.dot` / `.dot.active`: 导航菱形点 — `transform: rotate(45deg)` 默认 `rgba(212,255,0,0.22)`；激活 `#d4ff00 + scale(1.4)`
+- `.voltage-grid`: 预设网格 — `display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px`
+- `.vg-cell`: 网格单元 — 半透明背景 + 1px 边框，hover 时霓虹黄 tint
+- `.vg-cell.hot`: 高亮单元 — `background: rgba(212,255,0,0.07); border-color: rgba(212,255,0,0.3)`
+- `.step-card`: 步骤卡片 — `background: rgba(212,255,0,0.05); border: 1px solid rgba(212,255,0,0.14)`
+- `.how-card`: 流程卡片 — `background: rgba(255,255,255,0.03); border-left: 3px solid rgba(212,255,0,0.18)`
+- `.terminal-block`: 终端代码块 — `background: rgba(0,0,0,0.5); border: 1px solid rgba(212,255,0,0.14);` 含 `::before { content: '$ '; color: #d4ff00 }`
+
+### Background Rule
+`.slide` 不设固定 background，由各面板（`.blue-panel` / `.dark-panel`）或父级 slide 自行定义。`.slide::before` 无内容。纹理通过 `.halftone::before` 在选中 slide 上启用。CTA 页 `#slide-8` 使用 `background: #0066ff`。
+
+### Style-Specific Rules
+- 双面板布局（flex row）：`.blue-panel` + `.dark-panel` 比例自由组合（36/64, 55/45, 40/60, 46/54）
+- 所有标点/序号/装饰文字优先使用霓虹黄 `#d4ff00` 或低透明度版本
+- Syne 800 仅用于标题和大装饰文字，Space Mono 用于所有标签/正文
+- `.halftone` class 显式加到 slide 上，非全局应用
+
+### Signature Checklist
+- [ ] `.halftone::before` 半调点阵纹理（22px 间距，5.5% 白点）
+- [ ] `.pill` / `.pill.outline` 霓虹黄标签系统
+- [ ] `.blue-panel` + `.dark-panel` 双面板分割布局
+- [ ] `.panel-content` 面板内容容器（z-index: 2）
+- [ ] `.big-mark` 大型装饰符号（Syne 800, 130px）
+- [ ] `.deco-num` / `.deco-bg` 背景装饰文字
+- [ ] `.dot` 导航菱形点（rotate 45deg）
+- [ ] `.voltage-grid` + `.vg-cell` 预设网格
+- [ ] `.step-card` 步骤卡片（霓虹黄边框）
+- [ ] `.how-card` 流程卡片（左侧霓虹黄 3px 边框）
+- [ ] `.terminal-block` 终端代码块（含 `$ ` 前缀）
+- [ ] `.reveal` 弹性曲线动画（cubic-bezier(0.34, 1.56, 0.64, 1)）
 
 ---
 

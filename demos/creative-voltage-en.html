@@ -79,7 +79,7 @@
         #present-btn:hover { background: rgba(0,0,0,0.78); }
         #present-counter { display: none; position: fixed; bottom: 1.4rem; left: 50%; transform: translateX(-50%); z-index: 9997; font-size: 0.65rem; letter-spacing: 0.14em; font-family: system-ui, sans-serif; color: rgba(255,255,255,0.28); }
         body.presenting { background: #000 !important; overflow: hidden !important; }
-        body.presenting .slide { position: fixed !important; inset: 0; width: var(--pdw, 1440px) !important; height: var(--pdh, 900px) !important; transform-origin: top left; transform: translate(var(--pox, 0px), var(--poy, 0px)) scale(var(--ps, 1)) !important; scroll-snap-align: none !important; display: none !important; }
+        body.presenting .slide { position: fixed !important; inset: 0; width: 100vw !important; height: 100vh !important; transform-origin: center center; scroll-snap-align: none !important; display: none !important; }
         body.presenting .slide.p-on { display: flex !important; }
         body.presenting #present-btn { display: none !important; }
         body.presenting #present-counter { display: block; }
@@ -205,202 +205,57 @@
     </section>
 
     <!-- Slide 5: Playback Mode -->
-    <section class="slide" data-notes="F5 or click the play button. Fullscreen, scaled to fill any screen." aria-label="Playback Mode">
-        <div class="voltage-halftone"></div>
-        <div class="slide-content">
-            <div style="display: flex; align-items: center; gap: 1.5rem;">
-                <div class="reveal" style="font-size: clamp(3rem, 6vw, 5rem); line-height: 1;">
-                    <span class="voltage-mono" style="font-size: inherit;">▶</span>
-                </div>
-                <div>
-                    <h2 class="reveal voltage-title" style="font-size: clamp(1.5rem, 3.5vw, 2.5rem);">Playback mode</h2>
-                    <p class="reveal voltage-body" style="margin-top: 0.5rem;">Press <kbd>F5</kbd> or click the play button. Slides scale to fill any screen — 1440×900 base, CSS scaled. Control bar auto-hides. Press <kbd>B</kbd> for blackout.</p>
-                </div>
-            </div>
-            <div class="voltage-callout reveal" style="margin-top: 1.5rem;">
-                <p class="voltage-mono">Enter PresentMode → fixed position slides → CSS scale transform → fills any display</p>
+    
+    <!-- Slide 5: Three Modes -->
+    <section class="slide" data-notes="Play, Present, Edit — three modes in one file." aria-label="Core Modes">
+        <div style="max-width:900px;width:100%;">
+            <div class="reveal a-label" style="margin-bottom:12px;">Core Modes</div>
+            <div class="reveal a-h2">Play, Present, Edit — One File</div>
+            <div style="display:flex;gap:clamp(16px,3vw,32px);justify-content:center;margin-top:clamp(20px,3vw,36px);">
+                <div class="reveal g" style="text-align:center;padding:20px;"><div class="stat"><div class="num" style="font-size:clamp(2rem,5vw,4rem);">F5</div><div class="label">Play</div></div><div class="a-body" style="font-size:clamp(0.65rem,1vw,0.75rem);margin-top:8px;">Fullscreen, auto-scale</div></div>
+                <div class="reveal g" style="text-align:center;padding:20px;"><div class="stat"><div class="num" style="font-size:clamp(2rem,5vw,4rem);">P</div><div class="label">Present</div></div><div class="a-body" style="font-size:clamp(0.65rem,1vw,0.75rem);margin-top:8px;">Notes, timer, sync</div></div>
+                <div class="reveal g" style="text-align:center;padding:20px;"><div class="stat"><div class="num" style="font-size:clamp(2rem,5vw,4rem);">E</div><div class="label">Edit</div></div><div class="a-body" style="font-size:clamp(0.65rem,1vw,0.75rem);margin-top:8px;">contenteditable, Ctrl+S</div></div>
             </div>
         </div>
     </section>
 
-    <!-- Slide 6: Presenter Mode -->
-    <section class="slide" data-notes="P key opens a synced presenter window. Notes, timer, slide counter — all in sync." aria-label="Presenter Mode">
-        <div class="voltage-halftone"></div>
-        <div class="slide-content">
-            <h2 class="reveal voltage-title" style="font-size: clamp(1.5rem, 3.5vw, 2.5rem);">Presenter mode — see what the audience doesn't</h2>
-            <div class="voltage-split reveal" style="margin-top: 1.5rem; height: 60%;">
-                <div class="voltage-blue-panel">
-                    <div class="voltage-mono" style="margin-bottom: 0.5rem;">Speaker Notes</div>
-                    <p class="voltage-body" style="font-size: clamp(0.7rem, 1.2vw, 0.95rem);">Notes appear here per slide. Edit them in browser with E key, Ctrl+S to save. Synced via BroadcastChannel.</p>
-                </div>
-                <div class="voltage-dark-panel">
-                    <div style="display: flex; flex-direction: column; gap: 1.5rem; align-items: center;">
-                        <div>
-                            <div class="voltage-mono" style="font-size: 0.7rem; text-align: center;">SLIDES</div>
-                            <div class="voltage-stat" style="text-align: center;">7 / 12</div>
-                        </div>
-                        <div>
-                            <div class="voltage-mono" style="font-size: 0.7rem; text-align: center;">ELAPSED</div>
-                            <div class="voltage-mono" style="font-size: clamp(1.2rem, 2.5vw, 2rem); text-align: center;">4:32</div>
-                        </div>
-                        <div style="display: flex; gap: 1rem;">
-                            <kbd style="font-size: 1.2rem; padding: 4px 12px;">←</kbd>
-                            <kbd style="font-size: 1.2rem; padding: 4px 12px;">→</kbd>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <p class="reveal voltage-mono" style="margin-top: 0.75rem; text-align: center;">Press <kbd>P</kbd> → opens synced window → BroadcastChannel sync</p>
-        </div>
-    </section>
-
-    <!-- Slide 7: Browser Edit Mode -->
-    <section class="slide" data-notes="E key enters edit mode. Content becomes editable. Ctrl+S saves the file." aria-label="Edit Mode">
-        <div class="voltage-halftone"></div>
-        <div class="slide-content">
-            <h2 class="reveal voltage-title" style="font-size: clamp(1.5rem, 3.5vw, 2.5rem);">Edit in the browser, save to disk</h2>
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-top: 1.5rem;">
-                <div class="reveal voltage-card">
-                    <div class="voltage-mono" style="margin-bottom: 0.5rem;">E KEY</div>
-                    <h3 style="font-family: var(--font-display); font-weight: 700; margin-bottom: 0.5rem;">Enter edit mode</h3>
-                    <p class="voltage-body">Hover the top-left hotzone. Click ✏ Edit. All text becomes contenteditable. Live notes panel at the bottom.</p>
-                </div>
-                <div class="reveal voltage-card">
-                    <div class="voltage-mono" style="margin-bottom: 0.5rem;">CTRL + S</div>
-                    <h3 style="font-family: var(--font-display); font-weight: 700; margin-bottom: 0.5rem;">Save to file</h3>
-                    <p class="voltage-body">Edits persist via browser download. The HTML you edit is the final artifact — no build step, no export.</p>
-                </div>
-            </div>
-            <div class="voltage-callout reveal" style="margin-top: 1.5rem;">
-                <p class="voltage-body">Edit mode is always enabled by default. Every generated HTML is a living document.</p>
+    <!-- Slide 6: Commands -->
+    <section class="slide" data-notes="Three commands: plan, generate, review." aria-label="Commands">
+        <div style="max-width:900px;width:100%;">
+            <div class="reveal a-label" style="margin-bottom:12px;">Commands</div>
+            <div class="reveal a-h2">Three Commands, One Pipeline</div>
+            <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:clamp(12px,2vw,20px);margin-top:clamp(16px,2vw,24px);">
+                <div class="reveal g"><div class="a-label" style="margin-bottom:6px;">01 Plan</div><div class="cmd">/slide-creator --plan</div><div class="a-body" style="font-size:clamp(0.65rem,1vw,0.75rem);">Generate outline</div></div>
+                <div class="reveal g"><div class="a-label" style="margin-bottom:6px;">02 Generate</div><div class="cmd">/slide-creator --generate</div><div class="a-body" style="font-size:clamp(0.65rem,1vw,0.75rem);">Build with checks</div></div>
+                <div class="reveal g"><div class="a-label" style="margin-bottom:6px;">03 Review</div><div class="cmd">/slide-creator --review</div><div class="a-body" style="font-size:clamp(0.65rem,1vw,0.75rem);">Inspect and fix</div></div>
             </div>
         </div>
     </section>
 
-    <!-- Slide 8: Two Planning Depths -->
-    <section class="slide" data-notes="Two depths: Auto for quick drafts, Polish for deeper planning with visual locking." aria-label="Planning Depths">
-        <div class="voltage-halftone"></div>
-        <div class="slide-content">
-            <h2 class="reveal voltage-title" style="font-size: clamp(1.5rem, 3.5vw, 2.5rem);">Two planning depths — match the deck to the stakes</h2>
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-top: 1.5rem;">
-                <div class="reveal voltage-card" style="border-color: rgba(212,255,0,0.3);">
-                    <div class="voltage-neon-badge" style="margin-bottom: 0.75rem;">Auto</div>
-                    <h3 style="font-family: var(--font-display); font-weight: 700; margin-bottom: 0.5rem;">Fast draft</h3>
-                    <p class="voltage-body">3–6 minutes. Quick outline, immediate generation. For internal reviews and quick iterations.</p>
-                    <p class="voltage-mono" style="margin-top: 0.75rem;">/slide-creator --plan [topic]</p>
-                </div>
-                <div class="reveal voltage-card" style="border-color: var(--bg-blue);">
-                    <div class="voltage-neon-badge" style="margin-bottom: 0.75rem; background: var(--bg-blue);">Polish</div>
-                    <h3 style="font-family: var(--font-display); font-weight: 700; margin-bottom: 0.5rem;">Deep planning</h3>
-                    <p class="voltage-body">8–15 minutes. Structural narrative, visual lock per slide, 16-point review auto-executed.</p>
-                    <p class="voltage-mono" style="margin-top: 0.75rem;">/slide-creator --plan --polish [topic]</p>
-                </div>
+    <!-- Slide 7: Zero Dependencies -->
+    <section class="slide" data-notes="Zero dependencies, pure browser." aria-label="Zero Deps">
+        <div style="max-width:900px;width:100%;text-align:center;">
+            <div class="reveal a-label" style="margin-bottom:12px;">Foundation</div>
+            <div class="reveal a-h2" style="text-align:center;">Nothing Between You and the Browser</div>
+            <div style="display:flex;gap:clamp(24px,4vw,48px);justify-content:center;margin-top:clamp(20px,3vw,36px);">
+                <div class="reveal stat"><div class="num">0</div><div class="label">Dependencies</div></div>
+                <div class="reveal stat"><div class="num">21</div><div class="label">Presets</div></div>
+                <div class="reveal stat"><div class="num">1</div><div class="label">Requirement</div></div>
             </div>
+            <div class="reveal a-body" style="text-align:center;margin-top:16px;color:var(--text-muted, var(--text-m, #64748b));">HTML, CSS, JavaScript. That is all.</div>
         </div>
     </section>
 
-    <!-- Slide 9: Content Review System -->
-    <section class="slide" data-notes="16 checkpoints catch content issues before they ship. Density, balance, color, component variety." aria-label="Review System">
-        <div class="voltage-halftone"></div>
-        <div class="slide-content">
-            <span class="reveal voltage-neon-badge">16 Checkpoints</span>
-            <h2 class="reveal voltage-title" style="font-size: clamp(1.5rem, 3.5vw, 2.5rem); margin-top: 0.75rem;">Content review — catch problems before you present</h2>
-            <div class="reveal" style="display: grid; grid-template-columns: repeat(2, 1fr); gap: clamp(8px, 1.5vw, 16px); margin-top: 1.5rem;">
-                <div class="voltage-step"><span class="voltage-step-num">R1</span><span class="voltage-step-text">Content density ≥65%</span></div>
-                <div class="voltage-step"><span class="voltage-step-num">R2</span><span class="voltage-step-text">Column balance ≥60%</span></div>
-                <div class="voltage-step"><span class="voltage-step-num">R3</span><span class="voltage-step-text">Title wrap ≤3 lines</span></div>
-                <div class="voltage-step"><span class="voltage-step-num">R4</span><span class="voltage-step-text">No generic title labels</span></div>
-                <div class="voltage-step"><span class="voltage-step-num">R5</span><span class="voltage-step-text">≤2 same-layout slides in a row</span></div>
-                <div class="voltage-step"><span class="voltage-step-num">R6</span><span class="voltage-step-text">Three concept rule</span></div>
-                <div class="voltage-step"><span class="voltage-step-num">R7</span><span class="voltage-step-text">90/8/2 color law</span></div>
-                <div class="voltage-step"><span class="voltage-step-num">R8</span><span class="voltage-step-text">Assertive headline quality</span></div>
-            </div>
-            <p class="reveal voltage-mono" style="margin-top: 1rem;">/slide-creator --review [file.html] → review → confirm → fix</p>
+    <!-- Slide 8: CTA -->
+    <section class="slide" data-notes="Call to action." aria-label="CTA">
+        <div style="max-width:900px;width:100%;text-align:center;">
+            <div class="reveal"><span class="pill" style="margin-bottom:16px;">Start Now</span></div>
+            <div class="reveal a-title">Start with a Preset</div>
+            <div class="reveal" style="margin-top:12px;"><div class="cmd" style="text-align:center;font-size:clamp(0.9rem,1.5vw,1.2rem);">/slide-creator</div></div>
+            <div class="reveal a-subtitle" style="margin-top:12px;text-align:center;">Tell Claude to install kai-slide-creator</div>
         </div>
     </section>
 
-    <!-- Slide 10: Content Types & Styles -->
-    <section class="slide" data-notes="Match content type to style. Data reports need Data Story, not Vintage Editorial." aria-label="Style Recommendations">
-        <div class="voltage-halftone"></div>
-        <div class="slide-content">
-            <h2 class="reveal voltage-title" style="font-size: clamp(1.5rem, 3.5vw, 2.5rem);">Match content type to the right style</h2>
-            <div class="reveal" style="margin-top: 1.5rem; display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem;">
-                <div class="voltage-card">
-                    <div class="voltage-mono" style="margin-bottom: 0.4rem;">DATA / KPI</div>
-                    <p class="voltage-body" style="font-size: var(--small-size);">Data Story · Enterprise Dark · Swiss Modern</p>
-                </div>
-                <div class="voltage-card">
-                    <div class="voltage-mono" style="margin-bottom: 0.4rem;">PITCH / VC</div>
-                    <p class="voltage-body" style="font-size: var(--small-size);">Bold Signal · Aurora Mesh · Enterprise Dark</p>
-                </div>
-                <div class="voltage-card">
-                    <div class="voltage-mono" style="margin-bottom: 0.4rem;">DEV TOOLS</div>
-                    <p class="voltage-body" style="font-size: var(--small-size);">Terminal Green · Neon Cyber · Neo-Retro Dev</p>
-                </div>
-                <div class="voltage-card">
-                    <div class="voltage-mono" style="margin-bottom: 0.4rem;">RESEARCH</div>
-                    <p class="voltage-body" style="font-size: var(--small-size);">Modern Newspaper · Paper & Ink · Swiss Modern</p>
-                </div>
-                <div class="voltage-card">
-                    <div class="voltage-mono" style="margin-bottom: 0.4rem;">CREATIVE</div>
-                    <p class="voltage-body" style="font-size: var(--small-size);">Vintage Editorial · Split Pastel · Neo-Brutalism</p>
-                </div>
-                <div class="voltage-card">
-                    <div class="voltage-mono" style="margin-bottom: 0.4rem;">PRODUCT LAUNCH</div>
-                    <p class="voltage-body" style="font-size: var(--small-size);">Aurora Mesh · Glassmorphism · Electric Studio</p>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Slide 11: Technical Features -->
-    <section class="slide" data-notes="Zero dependency means it runs anywhere. Pure browser, no server needed." aria-label="Technical Features">
-        <div class="voltage-halftone"></div>
-        <div class="slide-content">
-            <div class="voltage-split" style="height: auto;">
-                <div class="voltage-blue-panel">
-                    <h2 class="reveal voltage-title" style="font-size: clamp(1.2rem, 2.5vw, 2rem);">Zero dependency</h2>
-                    <ul class="reveal voltage-features" style="margin-top: 1rem;">
-                        <li>Single HTML file — no JS framework</li>
-                        <li>Google Fonts only external resource</li>
-                        <li>No build step, no package.json</li>
-                        <li>Runs on any device with a browser</li>
-                    </ul>
-                </div>
-                <div class="voltage-dark-panel">
-                    <h2 class="reveal voltage-title" style="font-size: clamp(1.2rem, 2.5vw, 2rem);">Pure browser</h2>
-                    <ul class="reveal voltage-features" style="margin-top: 1rem;">
-                        <li>Edit mode runs in-page</li>
-                        <li>Presenter sync via BroadcastChannel</li>
-                        <li>Export via /kai-html-export CLI</li>
-                        <li>Share as file or publish link</li>
-                    </ul>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Slide 12: Get Started -->
-    <section class="slide" data-notes="Current version 2.16.0. Growing fast. Tell the audience how to get started." aria-label="Get Started">
-        <div class="voltage-halftone"></div>
-        <div class="voltage-diamond" style="top: 5%; right: 10%;"></div>
-        <div class="slide-content">
-            <span class="reveal voltage-neon-badge">v2.16.0</span>
-            <h2 class="reveal voltage-title" style="font-size: clamp(1.5rem, 3.5vw, 2.5rem); margin-top: 0.75rem;">Get started — make your next deck in HTML</h2>
-            <div class="reveal" style="margin-top: 1.5rem;">
-                <div class="voltage-callout" style="margin-bottom: 1rem;">
-                    <p class="voltage-mono" style="font-size: clamp(0.8rem, 1.3vw, 1rem);">/slide-creator --plan "Your Topic"</p>
-                </div>
-                <div class="voltage-callout" style="margin-bottom: 1rem;">
-                    <p class="voltage-mono" style="font-size: clamp(0.8rem, 1.3vw, 1rem);">/slide-creator --generate</p>
-                </div>
-                <div class="voltage-callout">
-                    <p class="voltage-mono" style="font-size: clamp(0.8rem, 1.3vw, 1rem);">/slide-creator --review [file.html]</p>
-                </div>
-            </div>
-            <p class="reveal voltage-body" style="margin-top: 1rem;">GitHub: <span class="voltage-mono">kaisersong/slide-creator</span> · ClawHub: <span class="voltage-mono">kai-slide-creator</span></p>
-        </div>
-    </section>
 
     <script>
         class SlidePresentation {
@@ -450,8 +305,8 @@
                     if (e.target.getAttribute('contenteditable')) return;
                     if (e.key === 'ArrowDown' || e.key === 'ArrowRight' || e.key === ' ' || e.key === 'PageDown' || e.key === 'Enter') { e.preventDefault(); this.next(); }
                     else if (e.key === 'ArrowUp' || e.key === 'ArrowLeft' || e.key === 'PageUp' || e.key === 'Backspace') { e.preventDefault(); this.prev(); }
-                    else if (e.key === 'p' || e.key === 'P') { const url = location.href.split('?')[0] + '?presenter'; window.open(url, 'slide-presenter-' + Date.now(), 'width=1100,menubar=no,toolbar=no,location=no'); }
-                });
+                    else if (e.key === 'p' || e.key === 'P') { const url = location.href.split('?')[0] + '?presenter'; window.open(url, 'slide-presenter-' + Date.now(), 'width=1100,menubar=no,toolbar=no,location=no'); }} else if (e.key === 'e' || e.key === 'E') { if (!this.editor?.active) this.editor?.enter(); else this.editor?.exit();
+});
             }
             setupTouch() { let startY = 0; document.addEventListener('touchstart', e => { startY = e.touches[0].clientY; }, { passive: true }); document.addEventListener('touchend', e => { const delta = startY - e.changedTouches[0].clientY; if (Math.abs(delta) > 50) delta > 0 ? this.next() : this.prev(); }); }
             setupWheel() {}
@@ -495,10 +350,23 @@
             document.addEventListener('keydown', e => { if (e.key === 'ArrowRight' || e.key === 'ArrowDown' || e.key === ' ' || e.key === 'PageDown' || e.key === 'Enter') ch.postMessage({ type: 'nav-next' }); else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp' || e.key === 'PageUp' || e.key === 'Backspace') ch.postMessage({ type: 'nav-prev' }); });
         } else {
             class PresentMode {
-                constructor(ctrl) { this.ctrl = ctrl; this.DW = 1440; this.DH = 900; this.active = false; this._resize = () => this._scale(); const btn = document.createElement('button'); btn.id = 'present-btn'; btn.title = 'Present (F5)'; btn.setAttribute('aria-label', 'Present'); btn.textContent = '▶'; document.body.appendChild(btn); const counter = document.createElement('div'); counter.id = 'present-counter'; document.body.appendChild(counter); btn.addEventListener('click', () => this.enter()); document.addEventListener('keydown', e => { if (e.key === 'F5') { e.preventDefault(); this.enter(); } if (e.key === 'Escape' && this.active) this.exit(); if ((e.key === 'b' || e.key === 'B') && this.active) document.body.classList.toggle('presenting-black'); }); document.addEventListener('fullscreenchange', () => { if (!document.fullscreenElement && this.active) this.exit(); }); }
-                enter() { if (this.active) return; this.active = true; document.body.classList.add('presenting'); document.documentElement.requestFullscreen?.().catch(() => {}); window.addEventListener('resize', this._resize); this._scale(); this._show(this.ctrl.currentSlide); this._origGoTo = this.ctrl.goTo.bind(this.ctrl); this.ctrl.goTo = (i) => { const idx = Math.max(0, Math.min(i, this.ctrl.slides.length - 1)); this.ctrl.currentSlide = idx; this.ctrl.slides.forEach((s, j) => s.classList.toggle('visible', j === idx)); this._show(idx); this.ctrl.updateProgress?.(); this.ctrl.updateDots?.(); this.ctrl.broadcastState?.(); }; }
-                exit() { if (!this.active) return; this.active = false; document.body.classList.remove('presenting', 'presenting-black'); document.querySelectorAll('.slide').forEach(s => s.classList.remove('p-on')); if (document.fullscreenElement) document.exitFullscreen?.(); window.removeEventListener('resize', this._resize); if (this._origGoTo) { this.ctrl.goTo = this._origGoTo; this._origGoTo = null; } this.ctrl.slides[this.ctrl.currentSlide]?.scrollIntoView({ behavior: 'instant' }); }
-                _scale() { const s = Math.min(window.innerWidth / this.DW, window.innerHeight / this.DH); const ox = (window.innerWidth - this.DW * s) / 2; const oy = (window.innerHeight - this.DH * s) / 2; const r = document.documentElement; r.style.setProperty('--pdw', this.DW + 'px'); r.style.setProperty('--pdh', this.DH + 'px'); r.style.setProperty('--ps', s); r.style.setProperty('--pox', ox + 'px'); r.style.setProperty('--poy', oy + 'px'); }
+                constructor(ctrl) { this.ctrl = ctrl; this.baseW = 1440; this.baseH = 900; this.active = false; const btn = document.createElement('button'); btn.id = 'present-btn'; btn.title = 'Present (F5)'; btn.setAttribute('aria-label', 'Present'); btn.textContent = '▶'; document.body.appendChild(btn); const counter = document.createElement('div'); counter.id = 'present-counter'; document.body.appendChild(counter); btn.addEventListener('click', () => this.enter()); document.addEventListener('keydown', e => { if (e.key === 'F5') { e.preventDefault(); this.enter(); } if (e.key === 'Escape' && this.active) this.exit(); if ((e.key === 'b' || e.key === 'B') && this.active) document.body.classList.toggle('presenting-black'); }); document.addEventListener('fullscreenchange', () => { if (this.active) { setTimeout(() => this._scale(), 100); } if (!document.fullscreenElement && this.active) this.exit(); });
+                window.addEventListener('resize', () => { if (this.active) this._scale(); }); }
+                enter() { if (this.active) return; this.active = true; document.body.classList.add('presenting'); document.documentElement.requestFullscreen?.().catch(() => {}); this._scale(); this._show(this.ctrl.currentSlide); this._origGoTo = this.ctrl.goTo.bind(this.ctrl); this.ctrl.goTo = (i) => { const idx = Math.max(0, Math.min(i, this.ctrl.slides.length - 1)); this.ctrl.currentSlide = idx; this.ctrl.slides.forEach((s, j) => s.classList.toggle('visible', j === idx)); this._show(idx); this.ctrl.updateProgress?.(); this.ctrl.updateDots?.(); this.ctrl.broadcastState?.(); }; }
+                _reset() {
+                this.ctrl.slides.forEach(slide => { slide.style.transform = ''; slide.classList.remove('p-on'); });
+            }
+    exit() {
+                if (!this.active) return;
+                this.active = false;
+                document.body.classList.remove('presenting', 'presenting-black');
+                this._reset(); if (document.fullscreenElement) document.exitFullscreen?.(); if (this._origGoTo) { this.ctrl.goTo = this._origGoTo; this._origGoTo = null; } this.ctrl.slides[this.ctrl.currentSlide]?.scrollIntoView({ behavior: 'instant' }); }
+                _scale() {
+                const vw = window.innerWidth;
+                const vh = window.innerHeight;
+                const scale = Math.min(vw / this.baseW, vh / this.baseH);
+                this.ctrl.slides.forEach(slide => { slide.style.transform = 'scale(' + scale + ')'; });
+            } }
                 _show(i) { document.querySelectorAll('.slide').forEach((s, idx) => s.classList.toggle('p-on', idx === i)); const c = document.getElementById('present-counter'); if (c) c.textContent = `${i + 1} / ${this.ctrl.slides.length}`; }
             }
             const ctrl = new SlidePresentation(); ctrl.setupEditor(); new PresentMode(ctrl);

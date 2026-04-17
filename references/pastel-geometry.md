@@ -132,10 +132,46 @@ Large number in Plus Jakarta Sans 800, `clamp(3rem, 8vw, 6rem)`, `letter-spacing
 
 ## Signature Elements
 
-- Rounded card with soft shadow
-- **Vertical pills on right edge** with varying heights (like tabs)
-- Consistent pill width, heights: short → medium → tall → medium → short
-- Download/action icon in corner
+### CSS Overlays
+- No body-level overlays. Clean pastel blue canvas.
+- `.geo-accent`: Floating decorative circles (absolute position, `border-radius: 50%`, `opacity: 0.08`) — placed per-slide as background decoration
+
+### Animations
+- `.reveal`: Bouncy scale + translate (`translateY(16px) scale(0.97)` to `0`) —
+  ```css
+  .reveal { opacity: 0; transform: translateY(16px) scale(0.97);
+    transition: opacity 0.4s cubic-bezier(0.34, 1.56, 0.64, 1),
+                transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1); }
+  .slide.visible .reveal { opacity: 1; transform: translateY(0) scale(1); }
+  ```
+- Stagger delays: 0.05s, 0.12s, 0.2s, 0.3s, 0.4s, 0.5s (up to 6 elements)
+
+### Required CSS Classes
+- `.card`: White card (`#faf9f7`) with `border-radius: 20px`, soft shadow (`0 4px 32px rgba(100,120,140,0.18)`), `width: clamp(320px, 88vw, 1000px)`, `height: clamp(500px, 84vh, 780px)`
+- `.pills`: Vertical pill container on right edge, `position: absolute; right: 20px`, centered vertically, flex-column with `gap: 6px`
+- `.pill`: Individual pill (`width: 12px`, `border-radius: 6px`), heights vary: 40px, 80px, 120px, 80px, 60px, 40px (short-tall-short rhythm)
+- `.card-content`: Content area with `padding-right: clamp(56px, 6vw, 80px)` (offset for pills), `z-index: 10`
+- `.divider`: 40px wide, 4px tall colored accent bar (`border-radius: 2px`)
+
+### Background Rule
+`body` sets `background: #c8d9e6` (pastel blue). Card has solid white background that covers the center. No gradient bleed-through.
+
+### Style-Specific Rules
+- **Pill color sequence** (nth-child): pink (#f0b4d4), mint (#a8d4c4), sage (#8fad9a), lavender (#9b8dc4), sky (#7bb8d4), peach (#f0c4a0)
+- **Geo accents**: Positioned absolutely per-slide, 5 pastel colors, low opacity circles
+- **Progress bar**: Gradient pink to mint to lavender
+- **Nav dots**: Bottom-centered, 8px circles, active stretches to 28px width
+- **Preset tags**: Hover `scale(1.05)` with bouncy cubic-bezier
+- **Code blocks**: Dark background (`#1a2530`) with mint text (`#a8d4c4`), contrasting with pastel theme
+
+### Signature Checklist
+- [ ] Pastel blue background `#c8d9e6`
+- [ ] White card with soft shadow, `border-radius: 20px`
+- [ ] Vertical pills on right edge with varying heights (short-tall-short rhythm)
+- [ ] At least 3 pill colors visible
+- [ ] Plus Jakarta Sans at 800 weight for headlines
+- [ ] Geometric accent circles (low opacity, per-slide)
+- [ ] Bouncy animation (`cubic-bezier(0.34, 1.56, 0.64, 1)`)
 
 ---
 

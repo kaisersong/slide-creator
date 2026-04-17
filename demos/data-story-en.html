@@ -107,12 +107,7 @@ body:hover #present-btn { opacity: 1; pointer-events: auto; }
 }
 
 body.presenting { background: #111 !important; overflow: hidden !important; }
-body.presenting .slide {
-  position: fixed !important; inset: 0;
-  width: 1440px !important; height: 900px !important;
-  transform-origin: top left;
-  display: none !important; margin: 0; padding: 0;
-}
+body.presenting .slide { position: fixed !important; inset: 0; width: 100vw !important; height: 100vh !important; transform-origin: center center; scroll-snap-align: none !important; display: none !important; }
 body.presenting .slide.p-on { display: flex !important; }
 body.presenting .slide.p-on .reveal { opacity: 1; transform: translateY(0); }
 body.presenting #present-btn { display: none !important; }
@@ -450,8 +445,7 @@ body.editing .edit-toggle { opacity: 1; background: rgba(16,185,129,0.80); color
 
 class PresentMode {
   constructor(ctrl) {
-    this.ctrl = ctrl; this.DW = 1440; this.DH = 900; this.active = false;
-    this._resize = () => this._scale();
+    this.ctrl = ctrl; this.baseW = 1440; this.baseH = 900; this.active = false;
     const btn = document.createElement('button');
     btn.id = 'present-btn'; btn.title = 'Present (F5)';
     btn.setAttribute('aria-label', 'Present'); btn.textContent = '\u25b6';
@@ -464,13 +458,14 @@ class PresentMode {
       if (e.key === 'Escape' && this.active) this.exit();
       if ((e.key === 'b' || e.key === 'B') && this.active) document.body.classList.toggle('presenting-black');
     });
-    document.addEventListener('fullscreenchange', () => { if (!document.fullscreenElement && this.active) this.exit(); });
+    document.addEventListener('fullscreenchange', () => { if (this.active) { setTimeout(() => this._scale(), 100); } if (!document.fullscreenElement && this.active) this.exit(); });
+                window.addEventListener('resize', () => { if (this.active) this._scale(); });
   }
   enter() {
     if (this.active) return; this.active = true;
     document.body.classList.add('presenting');
     document.documentElement.requestFullscreen?.().catch(() => {});
-    window.addEventListener('resize', this._resize); this._scale(); this._show(this.ctrl.currentSlide);
+    this._scale(); this._show(this.ctrl.currentSlide);
     this._origGoTo = this.ctrl.goTo.bind(this.ctrl);
     this.ctrl.goTo = (i) => {
       const idx = Math.max(0, Math.min(i, this.ctrl.slides.length - 1));
@@ -480,18 +475,22 @@ class PresentMode {
     };
   }
   exit() {
-    if (!this.active) return; this.active = false;
+    if (!this.active) return;
+                this._reset(); this.active = false;
     document.body.classList.remove('presenting', 'presenting-black');
     document.exitFullscreen?.().catch(() => {});
-    window.removeEventListener('resize', this._resize);
     this.ctrl.goTo = this._origGoTo;
     this.ctrl.goTo(this.ctrl.currentSlide);
     setTimeout(() => this.ctrl.slides[this.ctrl.currentSlide]?.scrollIntoView(), 50);
   }
   _scale() {
-    const sw = window.innerWidth / this.DW, sh = window.innerHeight / this.DH, s = Math.min(sw, sh);
+    const sw = window.innerWidth / this.baseW, sh = window.innerHeight / this.baseH, s = Math.min(sw, sh);
     document.querySelectorAll('body.presenting .slide').forEach(sl => {
-      sl.style.transform = `translate(-50%, -50%) scale(${s})`;
+      sl.style.transform = `translate(-50%, -50%) scale(${s}
+  _reset() {
+    this.ctrl.slides.forEach(slide => { slide.style.transform = ''; slide.classList.remove('p-on'); });
+  }
+)`;
     });
   }
   _show(n) {
@@ -560,8 +559,8 @@ class SlidePresentation {
       } else if (e.key === 'p' || e.key === 'P') {
         const url = location.href.split('?')[0] + '?presenter';
         window.open(url, 'slide-presenter-' + Date.now(), 'width=1100,menubar=no,toolbar=no,location=no');
-      }
-    });
+      }} else if (e.key === 'e' || e.key === 'E') { if (!this.editor?.active) this.editor?.enter(); else this.editor?.exit();
+});
   }
   setupTouch() {
     let startY = 0;

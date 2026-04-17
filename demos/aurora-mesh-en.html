@@ -368,13 +368,7 @@ body:hover #present-btn { opacity: 1; pointer-events: auto; }
 }
 
 body.presenting { background: #000 !important; overflow: hidden !important; }
-body.presenting .slide {
-  position: fixed !important; inset: 0;
-  width: var(--pdw, 1440px) !important; height: var(--pdh, 900px) !important;
-  transform-origin: top left;
-  transform: translate(var(--pox, 0px), var(--poy, 0px)) scale(var(--ps, 1)) !important;
-  scroll-snap-align: none !important; display: none !important;
-}
+body.presenting .slide { position: fixed !important; inset: 0; width: 100vw !important; height: 100vh !important; transform-origin: center center; scroll-snap-align: none !important; display: none !important; }
 body.presenting .slide.p-on { display: flex !important; }
 body.presenting .nav-dots,
 body.presenting .keyboard-hint,
@@ -452,241 +446,140 @@ body.presenting #present-counter { display: block; }
 
 <!-- ═══════════════════════ SLIDES ═══════════════════════ -->
 
-<section class="slide" data-notes="Welcome to kai-slide-creator — zero-dependency HTML presentations with stunning visual presets.">
+<!-- Slide 1: Hero — Full-screen declaration -->
+<section class="slide" data-notes="kai-slide-creator product intro, zero dependencies and 21 presets" aria-label="Hero">
   <div class="slide-content" style="text-align: center; align-items: center;">
-    <div class="reveal a-label" style="margin-bottom: 8px;">kai-slide-creator v2.16.0</div>
+    <div class="reveal a-label" style="margin-bottom: 8px;">Zero-Dependency HTML Presentations</div>
     <div class="reveal a-title" style="background: linear-gradient(135deg, #fff 30%, rgba(var(--accent-rgb),0.8)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; margin-bottom: 16px;">kai-slide-creator</div>
-    <div class="reveal a-subtitle">Zero-Dependency HTML Presentation Generator</div>
+    <div class="reveal a-subtitle">Three commands. 21 design presets. Pure HTML.<br>No templates, no exports, no platforms.</div>
     <div class="reveal" style="margin-top: clamp(20px, 3vw, 36px); display: flex; gap: 8px; flex-wrap: wrap; justify-content: center;">
+      <span class="pill">0 Dependencies</span>
       <span class="pill">21 Presets</span>
-      <span class="pill" style="border-color: rgba(0,180,255,0.30); color: #00b4d8; background: rgba(0,180,255,0.12);">0 Dependencies</span>
-      <span class="pill" style="border-color: rgba(120,40,200,0.30); color: #b388ff; background: rgba(120,40,200,0.12);">100% Browser</span>
+      <span class="pill" style="border-color: rgba(120,40,200,0.30); color: #b388ff; background: rgba(120,40,200,0.12);">Pure HTML</span>
     </div>
   </div>
 </section>
 
-<section class="slide" data-notes="Traditional presentation tools have real limitations we set out to solve.">
+<!-- Slide 2: Problem — Split evidence -->
+<section class="slide" data-notes="Three major pain points with existing tools" aria-label="Problem">
   <div class="slide-content">
-    <div class="reveal chapter-num">01</div>
-    <div class="reveal" style="margin-top: -24px;">
-      <div class="a-h2">Why We Need Another Presentation Tool</div>
-      <div class="a-subtitle">The limits of traditional tools</div>
-    </div>
-    <div class="reveal" style="margin-top: clamp(16px, 2vw, 24px);">
-      <div class="cols2">
-        <div class="g">
-          <div class="a-label" style="margin-bottom: 8px; color: #f85149;">Traditional Problems</div>
-          <div class="a-body" style="line-height: 2.2;">
-            PPT templates all look identical<br>
-            AI generates bland, generic slides<br>
-            Export breaks visual consistency
-          </div>
-        </div>
-        <div class="g" style="border-color: rgba(var(--accent-rgb),0.30);">
-          <div class="a-label" style="margin-bottom: 8px;">Our Approach</div>
-          <div class="a-body" style="line-height: 2.2;">
-            <span class="a-accent">From design presets</span><br>
-            21 signature visual languages<br>
-            <span class="a-accent">Pure HTML output</span><br>
-            Every file runs in any browser<br>
-            <span class="a-accent">In-browser editing</span><br>
-            Change content, save as HTML
-          </div>
-        </div>
-      </div>
-    </div>
-    <div class="reveal" style="margin-top: 12px;">
-      <div class="co">You own the content. AI owns the structure and visual presentation.</div>
+    <div class="reveal a-label" style="margin-bottom: 12px; color: var(--accent);">Core Pain Points</div>
+    <div class="reveal a-h2">Why Do Existing Presentation Tools Always Fall Short?</div>
+    <div class="reveal" style="margin-top: clamp(16px, 2vw, 24px); display: flex; flex-direction: column; gap: 12px;">
+      <div class="layer"><div class="layer-num">01</div><div class="a-body"><span class="a-accent">Complex toolchains</span> — Install dependencies, configure environments, manage versions — too much friction for a single deck</div></div>
+      <div class="layer"><div class="layer-num">02</div><div class="a-body"><span class="a-accent">Generic AI aesthetics</span> — Every slide looks the same: gradients, rounded corners, purple tones, zero identity</div></div>
+      <div class="layer"><div class="layer-num">03</div><div class="a-body"><span class="a-accent">Platform lock-in</span> — Use a platform, get trapped. Files don't export, formats are proprietary</div></div>
     </div>
   </div>
 </section>
 
-<section class="slide" data-notes="21 design presets, each with its own signature visual language.">
+<!-- Slide 3: Discovery — Flow steps -->
+<section class="slide" data-notes="Show the visual selection philosophy" aria-label="Discovery">
+  <div class="slide-content" style="text-align: center; align-items: center;">
+    <div class="reveal a-label" style="margin-bottom: 12px;">Core Philosophy</div>
+    <div class="reveal a-h2" style="text-align: center;">See Styles, Don't Describe Them</div>
+    <div class="reveal" style="margin-top: clamp(20px, 3vw, 36px); display: grid; grid-template-columns: repeat(3, 1fr); gap: clamp(12px, 2vw, 20px);">
+      <div class="g" style="text-align: center;"><div class="stat"><div class="num">3</div><div class="label">Previews</div></div><div class="a-body" style="font-size: clamp(0.65rem, 1vw, 0.75rem); margin-top: 8px;">Generate 3 style previews</div></div>
+      <div class="g" style="text-align: center; border-color: rgba(var(--accent-rgb),0.30);"><div class="stat"><div class="num">→</div><div class="label">Visual Choice</div></div><div class="a-body" style="font-size: clamp(0.65rem, 1vw, 0.75rem); margin-top: 8px;">Pick with your eyes</div></div>
+      <div class="g" style="text-align: center;"><div class="stat"><div class="num">21</div><div class="label">Presets</div></div><div class="a-body" style="font-size: clamp(0.65rem, 1vw, 0.75rem); margin-top: 8px;">Signature visual languages</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- Slide 4: Solution — Preset grid -->
+<section class="slide" data-notes="Showcase 21 presets" aria-label="Solution">
   <div class="slide-content">
-    <div class="reveal a-h2">21 Design Presets, Avoiding Generic AI Aesthetic</div>
-    <div class="reveal a-subtitle" style="margin-top: -4px;">Each with signature visual language</div>
+    <div class="reveal a-label" style="margin-bottom: 12px;">Design Presets</div>
+    <div class="reveal a-h2">21 Styles. No Generic AI Look.</div>
     <div class="reveal" style="margin-top: clamp(12px, 2vw, 20px);">
       <div class="bento">
-        <div class="g span2" style="border-left: 3px solid var(--accent);"><div class="a-label">Bold Signal</div><div class="a-body" style="font-size: clamp(0.65rem, 1vw, 0.75rem); margin-top: 4px;">Commercial pitch — high contrast, bold type</div></div>
-        <div class="g span2" style="border-left: 3px solid #00b4d8;"><div class="a-label" style="color: #00b4d8;">Blue Sky</div><div class="a-body" style="font-size: clamp(0.65rem, 1vw, 0.75rem); margin-top: 4px;">Fresh &amp; technical — sky gradient, glass cards</div></div>
-        <div class="g" style="border-left: 3px solid var(--accent);"><div class="a-label">Terminal Green</div><div class="a-body" style="font-size: clamp(0.65rem, 1vw, 0.75rem); margin-top: 4px;">Dev tools — monospace, scan lines</div></div>
+        <div class="g span2" style="border-left: 3px solid var(--accent);"><div class="a-label">Bold Signal</div><div class="a-body" style="font-size: clamp(0.65rem, 1vw, 0.75rem); margin-top: 4px;">Pitch decks — high contrast, bold type</div></div>
+        <div class="g" style="border-left: 3px solid var(--accent); border-color: rgba(var(--accent-rgb),0.40); background: rgba(0,245,196,0.08);"><div class="a-label" style="color: var(--accent);">Aurora Mesh</div><div class="a-body" style="font-size: clamp(0.65rem, 1vw, 0.75rem); margin-top: 4px;">Product launch — animated gradient, frosted glass</div></div>
+        <div class="g" style="border-left: 3px solid #00b4d8;"><div class="a-label" style="color: #00b4d8;">Terminal Green</div><div class="a-body" style="font-size: clamp(0.65rem, 1vw, 0.75rem); margin-top: 4px;">Dev tools — monospace, scan lines</div></div>
+        <div class="g" style="border-left: 3px solid #b388ff;"><div class="a-label" style="color: #b388ff;">Modern Newspaper</div><div class="a-body" style="font-size: clamp(0.65rem, 1vw, 0.75rem); margin-top: 4px;">Research — editorial typography</div></div>
         <div class="g" style="border-left: 3px solid var(--text-m);"><div class="a-label" style="color: var(--text-m);">Enterprise Dark</div><div class="a-body" style="font-size: clamp(0.65rem, 1vw, 0.75rem); margin-top: 4px;">Data dashboard — dark panels</div></div>
-        <div class="g span2" style="border-left: 3px solid #b388ff;"><div class="a-label" style="color: #b388ff;">Modern Newspaper</div><div class="a-body" style="font-size: clamp(0.65rem, 1vw, 0.75rem); margin-top: 4px;">Research — editorial typography</div></div>
-        <div class="g span2" style="border-color: rgba(var(--accent-rgb),0.20);"><div class="a-label">Aurora Mesh</div><div class="a-body" style="font-size: clamp(0.65rem, 1vw, 0.75rem); margin-top: 4px;">Product launch — animated gradient, frosted glass</div></div>
       </div>
     </div>
   </div>
 </section>
 
-<section class="slide" data-notes="Three core modules power the full presentation lifecycle.">
+<!-- Slide 5: Workflow — Flow steps -->
+<section class="slide" data-notes="Three steps to create a presentation" aria-label="Workflow">
   <div class="slide-content">
-    <div class="reveal chapter-num">02</div>
-    <div class="reveal" style="margin-top: -24px;">
-      <div class="a-h2">Three Core Modules, Full Lifecycle Support</div>
-      <div class="a-subtitle">Playback, presenting, editing — one file does it all</div>
-    </div>
+    <div class="reveal a-label" style="margin-bottom: 12px;">Workflow</div>
+    <div class="reveal a-h2">Three Commands. Idea to Deck.</div>
     <div class="reveal" style="margin-top: clamp(16px, 2vw, 24px);">
       <div class="cols3">
-        <div class="g" style="text-align: center;"><div class="stat"><div class="num">F5</div><div class="label">Playback</div></div><div class="a-body" style="font-size: clamp(0.6rem, 1vw, 0.75rem); margin-top: 8px;">Full-screen, auto-scale, smart controls</div></div>
-        <div class="g" style="text-align: center;"><div class="stat"><div class="num">P</div><div class="label">Presenter</div></div><div class="a-body" style="font-size: clamp(0.6rem, 1vw, 0.75rem); margin-top: 8px;">Notes, timer, page count — synced</div></div>
-        <div class="g" style="text-align: center;"><div class="stat"><div class="num">E</div><div class="label">Editor</div></div><div class="a-body" style="font-size: clamp(0.6rem, 1vw, 0.75rem); margin-top: 8px;">Click to edit, Ctrl+S to save</div></div>
+        <div class="g"><div class="a-label" style="margin-bottom: 6px; color: var(--accent);">01 Plan</div><div class="a-body" style="line-height: 1.8;"><span class="a-accent">/slide-creator --plan</span><br>Tell the AI what you need</div></div>
+        <div class="g"><div class="a-label" style="margin-bottom: 6px; color: var(--accent);">02 Generate</div><div class="a-body" style="line-height: 1.8;"><span class="a-accent">/slide-creator --generate</span><br>Pick a style, auto-generate</div></div>
+        <div class="g"><div class="a-label" style="margin-bottom: 6px; color: var(--accent);">03 Present</div><div class="a-body" style="line-height: 1.8;"><span class="a-accent">Open in browser</span><br>Zero install, F5 to play</div></div>
       </div>
     </div>
-  </div>
-</section>
-
-<section class="slide" data-notes="Press F5 for instant fullscreen playback.">
-  <div class="slide-content">
-    <div class="reveal a-h2">Press F5 — Instant Fullscreen Playback</div>
-    <div class="reveal a-subtitle" style="margin-top: -4px;">Auto-scale to fit screen, smart controls</div>
-    <div class="reveal" style="margin-top: clamp(12px, 2vw, 20px);">
-      <div class="layer"><div class="layer-num">01</div><div class="a-body"><kbd>F5</kbd> or click play to enter fullscreen — control bar auto-hides</div></div>
-      <div class="layer"><div class="layer-num">02</div><div class="a-body">Slides auto-scale to fit screen — preserves design ratio, no distortion</div></div>
-      <div class="layer"><div class="layer-num">03</div><div class="a-body">Arrow keys / scroll / swipe to navigate — spring physics animation</div></div>
-      <div class="layer"><div class="layer-num">04</div><div class="a-body">No player install required — your browser IS the projector</div></div>
-    </div>
     <div class="reveal" style="margin-top: 12px;">
-      <div class="info-callout">Zero-dependency playback — opens on any device, any OS.</div>
+      <div class="co">Or skip planning — give content + style, generate immediately.</div>
     </div>
   </div>
 </section>
 
-<section class="slide" data-notes="Press P to open the synced presenter window.">
+<!-- Slide 6: Features — Grid checkpoints -->
+<section class="slide" data-notes="Four key capabilities" aria-label="Features">
   <div class="slide-content">
-    <div class="reveal a-h2">Presenter Mode — P Key Opens Synced Window</div>
-    <div class="reveal a-subtitle" style="margin-top: -4px;">The audience sees clean fullscreen, you see everything</div>
-    <div class="reveal" style="margin-top: clamp(12px, 2vw, 20px);">
+    <div class="reveal a-label" style="margin-bottom: 12px;">Key Features</div>
+    <div class="reveal a-h2">Four Capabilities. Full Workflow.</div>
+    <div class="reveal" style="margin-top: clamp(16px, 2vw, 24px);">
       <div class="cols2">
-        <div class="g">
-          <div class="a-label" style="margin-bottom: 8px;">Audience Sees</div>
-          <div class="a-body" style="line-height: 2.2;">
-            Full-screen slides<br>
-            Clean, distraction-free<br>
-            Auto-scale to screen<br>
-            No UI elements
-          </div>
+        <div class="g" style="text-align: center;">
+          <div class="stat"><div class="num">F5</div><div class="label">Playback</div></div>
+          <div class="a-body" style="font-size: clamp(0.65rem, 1vw, 0.75rem); margin-top: 8px;">Auto-scale, controls auto-hide</div>
         </div>
-        <div class="g">
-          <div class="a-label" style="margin-bottom: 8px;">Presenter Sees</div>
-          <div class="a-body" style="line-height: 2.2;">
-            Speaker notes<br>
-            Countdown timer<br>
-            Current / total slides<br>
-            Navigation controls
-          </div>
+        <div class="g" style="text-align: center;">
+          <div class="stat"><div class="num">E</div><div class="label">Edit Mode</div></div>
+          <div class="a-body" style="font-size: clamp(0.65rem, 1vw, 0.75rem); margin-top: 8px;">contenteditable, Ctrl+S save</div>
+        </div>
+        <div class="g" style="text-align: center;">
+          <div class="stat"><div class="num">P</div><div class="label">Presenter</div></div>
+          <div class="a-body" style="font-size: clamp(0.65rem, 1vw, 0.75rem); margin-top: 8px;">Notes, timer, sync via BroadcastChannel</div>
+        </div>
+        <div class="g" style="text-align: center;">
+          <div class="stat"><div class="num">PPTX</div><div class="label">Export</div></div>
+          <div class="a-body" style="font-size: clamp(0.65rem, 1vw, 0.75rem); margin-top: 8px;">/kai-html-export to PPTX</div>
         </div>
       </div>
     </div>
-    <div class="reveal" style="margin-top: 12px;">
-      <div class="co">Press <kbd>P</kbd> to open — syncs via BroadcastChannel.</div>
-    </div>
   </div>
 </section>
 
-<section class="slide" data-notes="Press E to enter edit mode, click any text to modify.">
+<!-- Slide 7: Install — Evidence list -->
+<section class="slide" data-notes="Installation methods" aria-label="Install">
   <div class="slide-content">
-    <div class="reveal a-h2">Browser Editor — Edit In-Place, Save as HTML</div>
-    <div class="reveal a-subtitle" style="margin-top: -4px;">No PowerPoint or Figma needed</div>
-    <div class="reveal" style="margin-top: clamp(12px, 2vw, 20px);">
-      <div class="cols3">
-        <div class="g"><div class="step" data-step="Step 1"><div class="a-body" style="line-height: 1.8;">Press <kbd>E</kbd> to enter edit mode<br><span style="color: var(--text-m);">All text becomes editable</span></div></div></div>
-        <div class="g"><div class="step" data-step="Step 2"><div class="a-body" style="line-height: 1.8;">Click any text to modify<br><span style="color: var(--text-m);">Real-time preview</span></div></div></div>
-        <div class="g"><div class="step" data-step="Step 3"><div class="a-body" style="line-height: 1.8;"><kbd>Ctrl</kbd>+<kbd>S</kbd> saves as HTML<br><span style="color: var(--text-m);">Changes persist to file</span></div></div></div>
+    <div class="reveal a-label" style="margin-bottom: 12px;">Installation</div>
+    <div class="reveal a-h2">One Command. Zero Dependencies.</div>
+    <div class="reveal" style="margin-top: clamp(16px, 2vw, 24px); display: flex; flex-direction: column; gap: 12px;">
+      <div class="g">
+        <div class="a-label" style="margin-bottom: 6px;">Claude Code</div>
+        <div class="a-body">Tell Claude: install kai-slide-creator</div>
+      </div>
+      <div class="g" style="border-color: rgba(var(--accent-rgb),0.30);">
+        <div class="a-label" style="margin-bottom: 6px; color: var(--accent);">OpenClaw</div>
+        <div class="a-body"><span class="a-accent">clawhub install kai-slide-creator</span></div>
       </div>
     </div>
-    <div class="reveal" style="margin-top: 12px;">
-      <div class="info-callout">Edit mode is always on. No extra config, no build step.</div>
-    </div>
+    <div class="reveal" style="margin-top: 12px;"><div class="co">Python 3 only. No npm, no node, no build step.</div></div>
   </div>
 </section>
 
-<section class="slide" data-notes="One command, three minutes to a draft.">
-  <div class="slide-content">
-    <div class="reveal chapter-num">03</div>
-    <div class="reveal" style="margin-top: -24px;">
-      <div class="a-h2">One Command, Three Minutes to Draft</div>
-      <div class="a-subtitle">From planning to generation, fully automated</div>
-    </div>
-    <div class="reveal" style="margin-top: clamp(16px, 2vw, 24px);">
-      <div class="cols3">
-        <div class="g"><div class="a-label" style="margin-bottom: 6px;">--plan</div><div class="cmd">/slide-creator --plan</div><div class="a-body" style="font-size: clamp(0.6rem, 1vw, 0.7rem); margin-top: 6px;">Generates PLANNING.md outline.<br>Edit before generating.</div></div>
-        <div class="g"><div class="a-label" style="margin-bottom: 6px;">--generate</div><div class="cmd">/slide-creator --generate</div><div class="a-body" style="font-size: clamp(0.6rem, 1vw, 0.7rem); margin-top: 6px;">Generates HTML from outline.<br>16 quality checks.</div></div>
-        <div class="g"><div class="a-label" style="margin-bottom: 6px;">--review</div><div class="cmd">/slide-creator --review</div><div class="a-body" style="font-size: clamp(0.6rem, 1vw, 0.7rem); margin-top: 6px;">Checks existing HTML.<br>Auto-fixes common issues.</div></div>
-      </div>
-    </div>
-    <div class="reveal" style="margin-top: 12px;">
-      <div class="a-divider"></div>
-      <div class="co">Or just give content + style name — generate immediately.</div>
-    </div>
-  </div>
-</section>
-
-<section class="slide" data-notes="Match content type to the right style.">
-  <div class="slide-content">
-    <div class="reveal a-h2">Match Content to Style at a Glance</div>
-    <div class="reveal a-subtitle" style="margin-top: -4px;">What content deserves what style</div>
-    <div class="reveal" style="margin-top: clamp(12px, 2vw, 20px);">
-      <table class="a-table">
-        <thead><tr><th>Content Type</th><th>Recommended Styles</th></tr></thead>
-        <tbody>
-          <tr><td><span class="pill">Data / KPI</span></td><td style="color: var(--text-m);">Data Story, Enterprise Dark, Swiss Modern</td></tr>
-          <tr><td><span class="pill" style="border-color: rgba(120,40,200,0.30); color: #b388ff; background: rgba(120,40,200,0.12);">Pitch / VC</span></td><td style="color: var(--text-m);">Bold Signal, Aurora Mesh, Enterprise Dark</td></tr>
-          <tr><td><span class="pill" style="border-color: rgba(0,180,255,0.30); color: #00b4d8; background: rgba(0,180,255,0.12);">Dev Tool / API</span></td><td style="color: var(--text-m);">Terminal Green, Neon Cyber, Neo-Retro Dev</td></tr>
-          <tr><td><span class="pill">Research</span></td><td style="color: var(--text-m);">Modern Newspaper, Paper &amp; Ink, Swiss Modern</td></tr>
-          <tr><td><span class="pill" style="border-color: rgba(120,40,200,0.30); color: #b388ff; background: rgba(120,40,200,0.12);">Creative</span></td><td style="color: var(--text-m);">Vintage Editorial, Split Pastel, Neo-Brutalism</td></tr>
-          <tr><td><span class="pill" style="border-color: rgba(0,180,255,0.30); color: #00b4d8; background: rgba(0,180,255,0.12);">Product / SaaS</span></td><td style="color: var(--text-m);">Aurora Mesh, Glassmorphism, Electric Studio</td></tr>
-        </tbody>
-      </table>
-    </div>
-  </div>
-</section>
-
-<section class="slide" data-notes="Zero dependencies, pure browser runtime.">
-  <div class="slide-content">
-    <div class="reveal a-h2">Zero Dependencies, Pure Browser Runtime</div>
-    <div class="reveal a-subtitle" style="margin-top: -4px;">No server, no npm, no build tools</div>
-    <div class="reveal" style="margin-top: clamp(16px, 2vw, 24px);">
-      <div class="cols4">
-        <div class="g" style="text-align: center;"><div class="stat"><div class="num">0</div><div class="label">npm packages</div></div></div>
-        <div class="g" style="text-align: center;"><div class="stat"><div class="num">3</div><div class="label">core files</div></div><div class="a-body" style="font-size: clamp(0.55rem, 0.9vw, 0.7rem); margin-top: 4px;">HTML / CSS / JS</div></div>
-        <div class="g" style="text-align: center;"><div class="stat"><div class="num">\u221e</div><div class="label">extensible</div></div><div class="a-body" style="font-size: clamp(0.55rem, 0.9vw, 0.7rem); margin-top: 4px;">custom themes</div></div>
-        <div class="g" style="text-align: center;"><div class="stat"><div class="num">1</div><div class="label">runtime</div></div><div class="a-body" style="font-size: clamp(0.55rem, 0.9vw, 0.7rem); margin-top: 4px;">browser only</div></div>
-      </div>
-    </div>
-    <div class="reveal" style="margin-top: 12px;">
-      <div class="info-callout">Every HTML file is self-contained. Double-click to open.</div>
-    </div>
-  </div>
-</section>
-
-<section class="slide" data-notes="Continuous iteration, getting stronger every week.">
-  <div class="slide-content">
-    <div class="reveal a-h2">Continuous Iteration, Getting Stronger Weekly</div>
-    <div class="reveal a-subtitle" style="margin-top: -4px;">Version history</div>
-    <div class="reveal" style="margin-top: clamp(12px, 2vw, 20px);">
-      <div class="layer"><div class="layer-num">v1.x</div><div class="a-body"><span class="a-accent">Foundation</span> — Playback, editor, first 7 presets</div></div>
-      <div class="layer"><div class="layer-num">v1.5</div><div class="a-body"><span class="a-accent">Style expansion</span> — 21 presets, Cloud Bank Hero, Orbital Rings</div></div>
-      <div class="layer"><div class="layer-num">v2.x</div><div class="a-body"><span class="a-accent">Smart generation</span> — AI planning, review system, PPT conversion</div></div>
-      <div class="layer"><div class="layer-num">v2.16</div><div class="a-body"><span class="a-accent">Render engine upgrade</span> — Theme cards, component modifiers, 26 regression tests</div></div>
-    </div>
-    <div class="reveal" style="margin-top: 12px;">
-      <div class="co">Dual-channel release: GitHub + ClawHub</div>
-    </div>
-  </div>
-</section>
-
-<section class="slide" data-notes="Start with a design preset. Let your content speak.">
+<!-- Slide 8: CTA — Stacked action -->
+<section class="slide" data-notes="Call to action" aria-label="CTA">
   <div class="slide-content" style="text-align: center; align-items: center;">
     <div class="reveal">
-      <div class="g" style="padding: clamp(24px, 4vw, 48px); max-width: min(80vw, 700px); margin: 0 auto; border-color: rgba(var(--accent-rgb),0.20);">
-        <span class="pill" style="margin-bottom: 12px;">Start Here</span>
-        <div class="a-eof" style="font-size: clamp(1.2rem, 3vw, 2rem); margin-top: 12px;">Start with a Design Preset</div>
-        <div class="a-subtitle" style="margin-top: 8px;">Let Your Content Speak for Itself</div>
-        <div class="a-divider"></div>
-        <div class="cmd" style="text-align: left; margin-top: 8px;">/slide-creator "your topic" --style "Aurora Mesh"</div>
-        <div style="font-size: clamp(0.65rem, 1vw, 0.8rem); color: var(--text-m); margin-top: 8px;">First draft in 3 minutes.</div>
-      </div>
+      <span class="pill" style="margin-bottom: 16px;">Start Now</span>
     </div>
+    <div class="reveal a-title" style="background: linear-gradient(135deg, #fff 30%, rgba(var(--accent-rgb),0.8)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; margin-bottom: 16px;">Start Now</div>
+    <div class="a-divider" style="background: rgba(var(--accent-rgb),0.30); margin: 20px auto; max-width: 80px;"></div>
+    <div class="reveal">
+      <div class="cmd" style="text-align: center; font-size: clamp(0.9rem, 1.5vw, 1.2rem);">/slide-creator</div>
+    </div>
+    <div class="reveal a-subtitle" style="margin-top: 12px; text-align: center;">Tell Claude to install kai-slide-creator</div>
   </div>
 </section>
 
@@ -816,6 +709,8 @@ class SlidePresentation {
     const pct = (this.currentSlide / (this.slides.length - 1)) * 100;
     const bar = document.querySelector('.progress-bar');
     if (bar) bar.style.width = pct + '%';
+    var counter = document.getElementById('present-counter');
+    if (counter) counter.textContent = (this.currentSlide + 1) + ' / ' + this.slides.length;
   }
 
   updateDots() {
@@ -940,9 +835,8 @@ if (new URLSearchParams(location.search).has('presenter')) {
   class PresentMode {
     constructor(ctrl) {
       this.ctrl = ctrl;
-      this.DW = 1440; this.DH = 900;
+      this.baseW = 1440; this.baseH = 900;
       this.active = false;
-      this._resize = () => this._scale();
       const btn = document.createElement('button');
       btn.id = 'present-btn'; btn.title = 'Present (F5)';
       btn.setAttribute('aria-label', 'Present'); btn.textContent = '\u25B6';
@@ -955,16 +849,14 @@ if (new URLSearchParams(location.search).has('presenter')) {
         if (e.key === 'Escape' && this.active) this.exit();
         if ((e.key === 'b' || e.key === 'B') && this.active) document.body.classList.toggle('presenting-black');
       });
-      document.addEventListener('fullscreenchange', () => {
-        if (!document.fullscreenElement && this.active) this.exit();
-      });
+      document.addEventListener('fullscreenchange', () => { if (this.active) { setTimeout(() => this._scale(), 100); } if (!document.fullscreenElement && this.active) this.exit(); });
+                window.addEventListener('resize', () => { if (this.active) this._scale(); });
     }
     enter() {
       if (this.active) return;
       this.active = true;
       document.body.classList.add('presenting');
       document.documentElement.requestFullscreen?.().catch(() => {});
-      window.addEventListener('resize', this._resize);
       this._scale();
       this._show(this.ctrl.currentSlide);
       this._origGoTo = this.ctrl.goTo.bind(this.ctrl);
@@ -978,32 +870,35 @@ if (new URLSearchParams(location.search).has('presenter')) {
         this.ctrl.broadcastState?.();
       };
     }
+    _reset() {
+                this.ctrl.slides.forEach(slide => { slide.style.transform = ''; slide.classList.remove('p-on'); });
+            }
     exit() {
-      if (!this.active) return;
-      this.active = false;
-      document.body.classList.remove('presenting', 'presenting-black');
-      document.querySelectorAll('.slide').forEach(s => s.classList.remove('p-on'));
+                if (!this.active) return;
+                this.active = false;
+                document.body.classList.remove('presenting', 'presenting-black');
+                this._reset();
       if (document.fullscreenElement) document.exitFullscreen?.();
-      window.removeEventListener('resize', this._resize);
       if (this._origGoTo) { this.ctrl.goTo = this._origGoTo; this._origGoTo = null; }
       this.ctrl.slides[this.ctrl.currentSlide]?.scrollIntoView({ behavior: 'instant' });
     }
     _scale() {
-      const s = Math.min(window.innerWidth / this.DW, window.innerHeight / this.DH);
-      const ox = (window.innerWidth - this.DW * s) / 2;
-      const oy = (window.innerHeight - this.DH * s) / 2;
-      const r = document.documentElement;
-      r.style.setProperty('--pdw', this.DW + 'px');
-      r.style.setProperty('--pdh', this.DH + 'px');
-      r.style.setProperty('--ps', s);
-      r.style.setProperty('--pox', ox + 'px');
-      r.style.setProperty('--poy', oy + 'px');
+                const vw = window.innerWidth;
+                const vh = window.innerHeight;
+                const scale = Math.min(vw / this.baseW, vh / this.baseH);
+                this.ctrl.slides.forEach(slide => { slide.style.transform = 'scale(' + scale + ')'; });
+            }
     }
     _show(i) {
       document.querySelectorAll('.slide').forEach((s, idx) => s.classList.toggle('p-on', idx === i));
       const c = document.getElementById('present-counter');
       if (c) c.textContent = (i + 1) + ' / ' + this.ctrl.slides.length;
     }
+
+            _updateCounter() {
+                const c = document.getElementById('present-counter');
+                if (c) c.textContent = (this.ctrl.currentSlide + 1) + ' / ' + this.ctrl.slides.length;
+            }
   }
 
   new PresentMode(new SlidePresentation());

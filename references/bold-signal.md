@@ -154,10 +154,46 @@ Left 42%: section number in 3rem + headline in 2rem + 1-line sub. `1px` vertical
 
 ## Signature Elements
 
-- Bold colored card as focal point (orange, coral, or vibrant accent)
-- Large section numbers (01, 02, etc.)
-- Navigation breadcrumbs with active/inactive opacity states
-- Grid-based layout for precise alignment
+### CSS Overlays
+- `.slide::after`: 半透明网格叠加 — `background-image: linear-gradient(rgba(255,87,34,0.04) 1px, transparent 1px), linear-gradient(90deg, rgba(255,87,34,0.04) 1px, transparent 1px); background-size: 60px 60px; pointer-events: none; z-index: 0`
+- `#slide-8::after`: CTA 页禁用网格 — `display: none;`（全橙色背景页不需要网格）
+
+### Animations
+- 无 `@keyframes`，全部使用 CSS transitions
+- `.reveal`: 入场动画 — `opacity: 0; transform: translateY(28px); transition: opacity 0.5s ease-out, transform 0.5s ease-out;`；`.slide.visible .reveal` 触发恢复
+- Stagger delays: `.slide.visible .reveal:nth-child(1-4)` — `0.05s, 0.15s, 0.25s, 0.35s`
+
+### Required CSS Classes
+- `.slide-num`: 幽灵章节号 — `position: absolute; font-family: 'Archivo Black'; font-size: 120px; color: #FF5722; opacity: 0.12; z-index: 1; pointer-events: none`
+- `.breadcrumb`: 顶部导航面包屑 — `position: absolute; top: 36px; right: 56px; font-size: 12px; font-weight: 600; letter-spacing: 0.15em; color: rgba(255,255,255,0.3); text-transform: uppercase`
+- `.corner-accent`: 左上角强调条 — `position: absolute; top: 0; left: 0; width: 100px; height: 3px; background: #FF5722`
+- `.big-num-bg`: 背景装饰大字 — `position: absolute; font-family: 'Archivo Black'; font-size: 38vw; color: rgba(255,87,34,0.04); pointer-events: none`
+- `.badge`: 实心底色标签 — `background: #FF5722; color: #fff; font-family: 'Archivo Black'; padding: 9px 20px; font-size: 13px`
+- `.badge.outline`: 描边标签 — `background: transparent; border: 1.5px solid rgba(255,87,34,0.4); color: rgba(255,255,255,0.55)`
+- `.hero-card`: 主强调卡片 — `background: #FF5722; padding: 52px 56px; color: #fff; position: relative; z-index: 2`
+- `.deco-text`: CTA 页装饰文字 — `position: absolute; right: -40px; bottom: -60px; font-family: 'Archivo Black'; font-size: 36vw; color: rgba(255,255,255,0.06); pointer-events: none`
+- `.dot` / `.dot.active`: 导航圆点 — 默认 `rgba(255,87,34,0.3)` + `1px solid rgba(255,87,34,0.5)`；激活 `background: #FF5722; transform: scale(1.4)`
+
+### Background Rule
+`.slide` 必须设置 `background: #1a1a1a`（纯色，非渐变）。body 设置 `background: #1a1a1a`。网格叠加通过 `.slide::after` 伪元素实现。CTA 页（`#slide-8`）使用 `background: #FF5722` 并禁用 `::after`。
+
+### Style-Specific Rules
+- 所有章节号使用 Archivo Black 字体，大尺寸半透明作为纹理
+- 导航面包屑固定于右上角，使用 rgba 透明度区分活跃状态
+- 彩色卡片 `#FF5722` 作为唯一强调色，不引入其他颜色
+- 装饰文字（`.big-num-bg`, `.deco-text`）使用超大字号 + 极低透明度
+
+### Signature Checklist
+- [ ] `.slide::after` 网格叠加（rgba(255,87,34,0.04)，60px 间距）
+- [ ] `.slide-num` 幽灵章节号（Archivo Black, 120px, opacity 0.12）
+- [ ] `.breadcrumb` 顶部导航面包屑
+- [ ] `.hero-card` 彩色主卡片（#FF5722）
+- [ ] `.badge` + `.badge.outline` 标签系统
+- [ ] `.corner-accent` 左上角强调条
+- [ ] `.big-num-bg` / `.deco-text` 背景装饰文字
+- [ ] `.dot` 导航圆点（橙色 + 激活缩放）
+- [ ] `.reveal` 入场动画（translateY 28px，stagger 0.05s-0.35s）
+- [ ] CTA 页 `background: #FF5722` 且 `::after { display: none }`
 
 ---
 

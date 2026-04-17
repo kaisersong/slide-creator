@@ -57,9 +57,9 @@
             position: absolute;
             inset: 0;
             background-image:
-                linear-gradient(rgba(255,87,34,0.06) 1px, transparent 1px),
-                linear-gradient(90deg, rgba(255,87,34,0.06) 1px, transparent 1px);
-            background-size: 24px 24px;
+                linear-gradient(rgba(255,87,34,0.04) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255,87,34,0.04) 1px, transparent 1px);
+            background-size: 60px 60px;
             pointer-events: none;
             z-index: 0;
         }
@@ -68,6 +68,8 @@
         .slide > .breadcrumb,
         .slide > .bold-ghost,
         .slide-content { position: relative; z-index: 1; }
+
+        #slide-8::after { display: none; }
 
         .slide-content {
             flex: 1;
@@ -80,13 +82,15 @@
 
         .slide-num {
             position: absolute;
-            top: 120px;
-            left: 120px;
+            top: 20px;
+            left: 44px;
             font-family: var(--font-display);
-            font-size: clamp(2.5rem, 5vw, 4rem);
-            color: var(--card-bg);
-            opacity: 0.9;
+            font-size: 120px;
             line-height: 1;
+            color: var(--card-bg);
+            opacity: 0.12;
+            user-select: none;
+            pointer-events: none;
         }
 
         .breadcrumb {
@@ -127,6 +131,36 @@
             font-size: clamp(3rem, 8vw, 6rem);
             color: var(--card-bg);
             line-height: 1;
+        }
+
+        .badge {
+            display: inline-flex; align-items: center;
+            padding: 9px 20px; background: var(--card-bg);
+            color: var(--text-on-card); font-family: var(--font-display);
+            font-size: 13px; letter-spacing: 0.04em;
+        }
+        .badge.outline {
+            background: transparent; border: 1.5px solid rgba(255,87,34,0.4);
+            color: rgba(255,255,255,0.55);
+        }
+
+        .corner-accent {
+            position: absolute; top: 0; left: 0;
+            width: 100px; height: 3px; background: var(--card-bg);
+        }
+
+        .big-num-bg {
+            position: absolute; top: -10px; right: 40px;
+            font-family: var(--font-display); font-size: 38vw;
+            line-height: 1; color: rgba(255,87,34,0.04);
+            user-select: none; pointer-events: none;
+        }
+
+        .deco-text {
+            position: absolute; right: -40px; bottom: -60px;
+            font-family: var(--font-display); font-size: 36vw;
+            line-height: 1; color: rgba(255,255,255,0.06);
+            user-select: none; pointer-events: none;
         }
 
         .bold-label {
@@ -254,7 +288,7 @@
 
         .reveal {
             opacity: 0;
-            transform: translateY(30px);
+            transform: translateY(28px);
             transition: opacity var(--duration-normal) var(--ease-out-expo),
                         transform var(--duration-normal) var(--ease-out-expo);
         }
@@ -285,13 +319,7 @@
         }
 
         body.presenting { background: #000 !important; overflow: hidden !important; }
-        body.presenting .slide {
-            position: fixed !important; inset: 0;
-            width: var(--pdw, 1440px) !important; height: var(--pdh, 900px) !important;
-            transform-origin: top left;
-            transform: translate(var(--pox, 0px), var(--poy, 0px)) scale(var(--ps, 1)) !important;
-            scroll-snap-align: none !important; display: none !important;
-        }
+        body.presenting .slide { position: fixed !important; inset: 0; width: 100vw !important; height: 100vh !important; transform-origin: center center; scroll-snap-align: none !important; display: none !important; }
         body.presenting .slide.p-on { display: flex !important; }
         body.presenting #present-btn { display: none !important; }
         body.presenting #present-counter { display: block; }
@@ -486,106 +514,47 @@
         </div>
     </section>
 
-    <!-- Slide 5: Playback Mode - 功能亮点 (Manifesto Statement layout) -->
-    <section class="slide" data-notes="展示播放模式的核心功能，F5 全屏是最大卖点。" aria-label="播放模式">
+    <!-- Slide 5: Three Modes - 核心能力 (Manifesto Statement layout) -->
+    <section class="slide" data-notes="三种模式，一个文件。F5 播放、P 演讲者、E 编辑。" aria-label="核心模式">
         <div class="slide-num">05</div>
-        <div class="breadcrumb">kai-slide-creator<span class="sep">/</span>播放模式</div>
+        <div class="breadcrumb">kai-slide-creator<span class="sep">/</span>核心模式</div>
         <div class="bold-ghost">05</div>
         <div class="slide-content">
-            <div class="reveal">
-                <div style="font-family:var(--font-display);font-size:clamp(4rem,10vw,8rem);color:var(--card-bg);line-height:1;margin-bottom:0.5rem;">F5</div>
-                <h2 style="font-family:var(--font-display);font-size:clamp(1.5rem,3vw,2.5rem);font-weight:900;line-height:1.1;margin-bottom:1rem;">播放模式 — 按 F5 即全屏</h2>
-                <p style="font-size:clamp(0.8rem,1.4vw,1rem);color:var(--text-secondary);line-height:1.7;max-width:600px;">自动缩放适配任何屏幕，控制栏智能隐藏。浏览器就是你的投影仪。</p>
+            <div class="reveal" style="margin-bottom:1rem;">
+                <div class="bold-label" style="margin-bottom:0.5rem;">三种模式</div>
+                <h2 style="font-family:var(--font-display);font-size:clamp(1.5rem,3vw,2.5rem);font-weight:900;line-height:1.1;">播放、演讲、编辑 — 一个文件搞定</h2>
             </div>
-            <div class="reveal" style="margin-top:1.5rem;display:flex;gap:1.5rem;flex-wrap:wrap;">
-                <div style="border:1px solid rgba(255,87,34,0.3);border-radius:4px;padding:0.75rem 1rem;">
-                    <div style="font-size:0.65rem;text-transform:uppercase;letter-spacing:0.12em;color:var(--card-bg);margin-bottom:0.25rem;">快捷键</div>
-                    <div style="font-size:0.85rem;color:var(--text-secondary);">F5 或点击播放按钮</div>
+            <div class="reveal" style="display:flex;gap:clamp(16px,3vw,32px);justify-content:center;">
+                <div style="text-align:center;border:1px solid rgba(255,87,34,0.2);border-radius:4px;padding:1.5rem;">
+                    <div style="font-family:var(--font-display);font-size:clamp(2rem,5vw,3.5rem);font-weight:900;color:var(--card-bg);">F5</div>
+                    <div style="font-weight:700;margin:0.5rem 0 0.25rem;">播放</div>
+                    <div style="font-size:0.75rem;color:var(--text-secondary);">全屏缩放，控制栏隐藏</div>
                 </div>
-                <div style="border:1px solid rgba(255,87,34,0.3);border-radius:4px;padding:0.75rem 1rem;">
-                    <div style="font-size:0.65rem;text-transform:uppercase;letter-spacing:0.12em;color:var(--card-bg);margin-bottom:0.25rem;">缩放</div>
-                    <div style="font-size:0.85rem;color:var(--text-secondary);">CSS 缩放适配，保持比例</div>
+                <div style="text-align:center;border:1px solid rgba(255,87,34,0.2);border-radius:4px;padding:1.5rem;">
+                    <div style="font-family:var(--font-display);font-size:clamp(2rem,5vw,3.5rem);font-weight:900;color:var(--card-bg);">P</div>
+                    <div style="font-weight:700;margin:0.5rem 0 0.25rem;">演讲</div>
+                    <div style="font-size:0.75rem;color:var(--text-secondary);">备注、计时器、同步</div>
                 </div>
-                <div style="border:1px solid rgba(255,87,34,0.3);border-radius:4px;padding:0.75rem 1rem;">
-                    <div style="font-size:0.65rem;text-transform:uppercase;letter-spacing:0.12em;color:var(--card-bg);margin-bottom:0.25rem;">导航</div>
-                    <div style="font-size:0.85rem;color:var(--text-secondary);">方向键 / 滚轮 / 触摸滑动</div>
+                <div style="text-align:center;border:1px solid rgba(255,87,34,0.2);border-radius:4px;padding:1.5rem;">
+                    <div style="font-family:var(--font-display);font-size:clamp(2rem,5vw,3.5rem);font-weight:900;color:var(--card-bg);">E</div>
+                    <div style="font-weight:700;margin:0.5rem 0 0.25rem;">编辑</div>
+                    <div style="font-size:0.75rem;color:var(--text-secondary);">所见即所改，Ctrl+S 保存</div>
                 </div>
+            </div>
+            <div class="reveal" style="text-align:center;margin-top:1rem;color:var(--text-muted);font-size:0.85rem;">
+                无需播放器，无需 PowerPoint，浏览器就够了。
             </div>
         </div>
     </section>
 
-    <!-- Slide 6: Presenter Mode - 分屏对比 (Side-by-Side layout) -->
-    <section class="slide" data-notes="展示演讲者模式与观众视角的对比，强调同步性。" aria-label="演讲者模式">
+    <!-- Slide 6: Commands - 流程步骤 (Timeline Track layout) -->
+    <section class="slide" data-notes="三个命令覆盖完整生命周期。" aria-label="使用方法">
         <div class="slide-num">06</div>
-        <div class="breadcrumb">kai-slide-creator<span class="sep">/</span>演讲者模式</div>
+        <div class="breadcrumb">kai-slide-creator<span class="sep">/</span>使用方法</div>
         <div class="bold-ghost">06</div>
         <div class="slide-content">
-            <div class="reveal" style="margin-bottom:1rem;">
-                <div class="bold-label" style="margin-bottom:0.5rem;">演讲者模式</div>
-                <h2 style="font-family:var(--font-display);font-size:clamp(1.3rem,3vw,2rem);font-weight:900;line-height:1.1;">P 键打开同步窗口</h2>
-            </div>
-            <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;">
-                <div class="reveal" style="border:1px solid rgba(255,87,34,0.2);border-radius:4px;padding:1.25rem;">
-                    <div style="font-size:0.65rem;text-transform:uppercase;letter-spacing:0.12em;color:var(--card-bg);margin-bottom:0.75rem;">观众看到的</div>
-                    <ul class="bold-bullet-list">
-                        <li>全屏幻灯片</li>
-                        <li>纯净无干扰</li>
-                        <li>自动缩放适配</li>
-                    </ul>
-                </div>
-                <div class="reveal" style="border:1px solid rgba(255,87,34,0.2);border-radius:4px;padding:1.25rem;">
-                    <div style="font-size:0.65rem;text-transform:uppercase;letter-spacing:0.12em;color:var(--card-bg);margin-bottom:0.75rem;">演讲者窗口</div>
-                    <ul class="bold-bullet-list">
-                        <li>演讲者备注</li>
-                        <li>倒计时器</li>
-                        <li>当前页 / 总页数</li>
-                        <li>翻页控制</li>
-                    </ul>
-                </div>
-            </div>
-            <div class="bold-callout reveal" style="margin-top:1rem;">按 P 键打开，与主窗口通过 BroadcastChannel 同步翻页。</div>
-        </div>
-    </section>
-
-    <!-- Slide 7: Edit Mode - 双列功能卡 (Two-Column Cards layout) -->
-    <section class="slide" data-notes="展示编辑模式的三个步骤，强调所见即所改。" aria-label="编辑模式">
-        <div class="slide-num">07</div>
-        <div class="breadcrumb">kai-slide-creator<span class="sep">/</span>编辑模式</div>
-        <div class="bold-ghost">07</div>
-        <div class="slide-content">
-            <div class="reveal" style="margin-bottom:1rem;">
-                <div class="bold-label" style="margin-bottom:0.5rem;">浏览器内编辑</div>
-                <h2 style="font-family:var(--font-display);font-size:clamp(1.3rem,3vw,2rem);font-weight:900;line-height:1.1;">所见即所改，不用打开 PowerPoint</h2>
-            </div>
-            <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:0.75rem;">
-                <div class="reveal" style="border:2px solid var(--card-bg);border-radius:4px;padding:1.25rem;">
-                    <div style="font-family:var(--font-display);font-size:1.5rem;color:var(--card-bg);margin-bottom:0.5rem;">01</div>
-                    <div style="font-weight:700;font-size:0.9rem;margin-bottom:0.25rem;">按 E 键进入编辑</div>
-                    <div style="font-size:0.8rem;color:var(--text-secondary);">所有文字变为可编辑</div>
-                </div>
-                <div class="reveal" style="border:2px solid var(--card-bg);border-radius:4px;padding:1.25rem;">
-                    <div style="font-family:var(--font-display);font-size:1.5rem;color:var(--card-bg);margin-bottom:0.5rem;">02</div>
-                    <div style="font-weight:700;font-size:0.9rem;margin-bottom:0.25rem;">直接点击修改</div>
-                    <div style="font-size:0.8rem;color:var(--text-secondary);">实时预览效果</div>
-                </div>
-                <div class="reveal" style="border:2px solid var(--card-bg);border-radius:4px;padding:1.25rem;">
-                    <div style="font-family:var(--font-display);font-size:1.5rem;color:var(--card-bg);margin-bottom:0.5rem;">03</div>
-                    <div style="font-weight:700;font-size:0.9rem;margin-bottom:0.25rem;">Ctrl+S 保存</div>
-                    <div style="font-size:0.8rem;color:var(--text-secondary);">修改持久化到文件</div>
-                </div>
-            </div>
-            <div class="bold-callout reveal" style="margin-top:1rem;">编辑模式默认开启，无需额外配置。</div>
-        </div>
-    </section>
-
-    <!-- Slide 8: Planning Depths - 流程步骤 (Timeline Track layout) -->
-    <section class="slide" data-notes="展示从规划到生成的完整流程，突出自动化。" aria-label="使用方法">
-        <div class="slide-num">08</div>
-        <div class="breadcrumb">kai-slide-creator<span class="sep">/</span>使用方法</div>
-        <div class="bold-ghost">08</div>
-        <div class="slide-content">
             <div class="reveal" style="margin-bottom:1.5rem;">
-                <div class="bold-label" style="margin-bottom:0.5rem;">一条命令，三分钟出稿</div>
+                <div class="bold-label" style="margin-bottom:0.5rem;">三个命令，一个流水线</div>
                 <h2 style="font-family:var(--font-display);font-size:clamp(1.3rem,3vw,2rem);font-weight:900;line-height:1.1;">从规划到生成，全程自动化</h2>
             </div>
             <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:0.75rem;">
@@ -597,141 +566,53 @@
                 <div class="reveal" style="border:1px solid rgba(255,87,34,0.2);border-radius:4px;padding:1.25rem;">
                     <div class="bold-cmd" style="margin-bottom:0.75rem;">/slide-creator --generate</div>
                     <div style="font-weight:700;font-size:0.9rem;margin-bottom:0.25rem;">生成 HTML</div>
-                    <div style="font-size:0.8rem;color:var(--text-secondary);">从规划文件生成，执行 16 项质量校验</div>
+                    <div style="font-size:0.8rem;color:var(--text-secondary);">从规划文件生成，执行质量校验</div>
                 </div>
                 <div class="reveal" style="border:1px solid rgba(255,87,34,0.2);border-radius:4px;padding:1.25rem;">
                     <div class="bold-cmd" style="margin-bottom:0.75rem;">/slide-creator --review</div>
                     <div style="font-weight:700;font-size:0.9rem;margin-bottom:0.25rem;">检查与修复</div>
-                    <div style="font-size:0.8rem;color:var(--text-secondary);">对已有 HTML 执行检查点，自动修复</div>
+                    <div style="font-size:0.8rem;color:var(--text-secondary);">对已有 HTML 执行检查点</div>
                 </div>
             </div>
+            <div class="bold-callout reveal" style="margin-top:1rem;">或者直接给内容 + 风格，立即生成。</div>
         </div>
     </section>
 
-    <!-- Slide 9: Review System - 网格检查点 (Grid Checklist layout) -->
-    <section class="slide" data-notes="展示内容类型和风格的匹配关系，让选择更直观。" aria-label="风格推荐">
-        <div class="slide-num">09</div>
-        <div class="breadcrumb">kai-slide-creator<span class="sep">/</span>风格推荐</div>
-        <div class="bold-ghost">09</div>
-        <div class="slide-content">
-            <div class="reveal" style="margin-bottom:1.5rem;">
-                <div class="bold-label" style="margin-bottom:0.5rem;">什么内容配什么风格</div>
-                <h2 style="font-family:var(--font-display);font-size:clamp(1.3rem,3vw,2rem);font-weight:900;line-height:1.1;">一眼匹配</h2>
-            </div>
-            <div class="bold-check-grid reveal">
-                <div class="bold-check-item">
-                    <span class="check">&#x2713;</span>
-                    <div><strong style="color:var(--text-primary);font-size:0.75rem;">数据报告 / KPI</strong><br><span style="font-size:0.7rem;color:var(--text-secondary);">Data Story, Enterprise Dark, Swiss Modern</span></div>
-                </div>
-                <div class="bold-check-item">
-                    <span class="check">&#x2713;</span>
-                    <div><strong style="color:var(--text-primary);font-size:0.75rem;">商业路演 / VC</strong><br><span style="font-size:0.7rem;color:var(--text-secondary);">Bold Signal, Aurora Mesh, Enterprise Dark</span></div>
-                </div>
-                <div class="bold-check-item">
-                    <span class="check">&#x2713;</span>
-                    <div><strong style="color:var(--text-primary);font-size:0.75rem;">开发工具 / API</strong><br><span style="font-size:0.7rem;color:var(--text-secondary);">Terminal Green, Neon Cyber, Neo-Retro Dev</span></div>
-                </div>
-                <div class="bold-check-item">
-                    <span class="check">&#x2713;</span>
-                    <div><strong style="color:var(--text-primary);font-size:0.75rem;">研究报告</strong><br><span style="font-size:0.7rem;color:var(--text-secondary);">Modern Newspaper, Paper & Ink, Swiss Modern</span></div>
-                </div>
-                <div class="bold-check-item">
-                    <span class="check">&#x2713;</span>
-                    <div><strong style="color:var(--text-primary);font-size:0.75rem;">创意 / 个人品牌</strong><br><span style="font-size:0.7rem;color:var(--text-secondary);">Vintage Editorial, Split Pastel, Neo-Brutalism</span></div>
-                </div>
-                <div class="bold-check-item">
-                    <span class="check">&#x2713;</span>
-                    <div><strong style="color:var(--text-primary);font-size:0.75rem;">产品发布 / SaaS</strong><br><span style="font-size:0.7rem;color:var(--text-secondary);">Aurora Mesh, Glassmorphism, Electric Studio</span></div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Slide 10: Style Guide - 推荐网格 (Recommendation Grid layout) -->
-    <section class="slide" data-notes="强调零依赖、纯浏览器的技术优势。" aria-label="技术特点">
-        <div class="slide-num">10</div>
-        <div class="breadcrumb">kai-slide-creator<span class="sep">/</span>技术特点</div>
-        <div class="bold-ghost">10</div>
+    <!-- Slide 7: Zero Dependencies - 推荐网格 (Recommendation Grid layout) -->
+    <section class="slide" data-notes="零依赖，纯浏览器运行。" aria-label="零依赖">
+        <div class="slide-num">07</div>
+        <div class="breadcrumb">kai-slide-creator<span class="sep">/</span>零依赖</div>
+        <div class="bold-ghost">07</div>
         <div class="slide-content">
             <div class="reveal" style="margin-bottom:1.5rem;">
                 <div class="bold-label" style="margin-bottom:0.5rem;">零依赖，纯浏览器运行</div>
-                <h2 style="font-family:var(--font-display);font-size:clamp(1.3rem,3vw,2.5rem);font-weight:900;line-height:1.1;">不依赖服务器、npm、构建工具</h2>
+                <h2 style="font-family:var(--font-display);font-size:clamp(1.3rem,3vw,2.5rem);font-weight:900;line-height:1.1;">你与浏览器之间，没有中间商</h2>
             </div>
-            <div style="display:flex;gap:clamp(1.5rem,4vw,3rem);align-items:start;">
-                <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.75rem;">
-                    <div class="reveal" style="border:1px solid rgba(255,87,34,0.2);border-radius:4px;padding:1rem;text-align:center;">
-                        <div class="bold-stat" style="font-size:clamp(2rem,5vw,3.5rem);">0</div>
-                        <div class="bold-label">npm 依赖</div>
-                    </div>
-                    <div class="reveal" style="border:1px solid rgba(255,87,34,0.2);border-radius:4px;padding:1rem;text-align:center;">
-                        <div class="bold-stat" style="font-size:clamp(2rem,5vw,3.5rem);">3</div>
-                        <div class="bold-label">核心文件</div>
-                    </div>
-                    <div class="reveal" style="border:1px solid rgba(255,87,34,0.2);border-radius:4px;padding:1rem;text-align:center;">
-                        <div class="bold-stat" style="font-size:clamp(2rem,5vw,3.5rem);">&#x221E;</div>
-                        <div class="bold-label">可扩展场景</div>
-                    </div>
-                    <div class="reveal" style="border:1px solid rgba(255,87,34,0.2);border-radius:4px;padding:1rem;text-align:center;">
-                        <div class="bold-stat" style="font-size:clamp(2rem,5vw,3.5rem);">1</div>
-                        <div class="bold-label">浏览器即环境</div>
-                    </div>
+            <div style="display:flex;gap:clamp(1.5rem,4vw,3rem);align-items:center;justify-content:center;">
+                <div style="text-align:center;">
+                    <div class="bold-stat" style="font-size:clamp(2rem,5vw,3.5rem);">0</div>
+                    <div class="bold-label">npm 依赖</div>
                 </div>
-                <div class="reveal">
-                    <ul class="bold-bullet-list">
-                        <li>HTML / CSS / JS 全部自包含</li>
-                        <li>双击即可在浏览器中打开</li>
-                        <li>无需构建工具，零配置</li>
-                        <li>可离线运行，无网络依赖</li>
-                    </ul>
+                <div style="text-align:center;">
+                    <div class="bold-stat" style="font-size:clamp(2rem,5vw,3.5rem);">21</div>
+                    <div class="bold-label">设计预设</div>
                 </div>
+                <div style="text-align:center;">
+                    <div class="bold-stat" style="font-size:clamp(2rem,5vw,3.5rem);">1</div>
+                    <div class="bold-label">浏览器即环境</div>
+                </div>
+            </div>
+            <div class="reveal" style="text-align:center;margin-top:1rem;color:var(--text-muted);font-size:0.85rem;">
+                HTML / CSS / JS 全部自包含，双击即可打开。
             </div>
         </div>
     </section>
 
-    <!-- Slide 11: Technical Proof - 证据列表 (Proof Points layout) -->
-    <section class="slide" data-notes="展示版本历史和持续迭代，建立信任。" aria-label="版本历史">
-        <div class="slide-num">11</div>
-        <div class="breadcrumb">kai-slide-creator<span class="sep">/</span>版本历史</div>
-        <div class="bold-ghost">11</div>
-        <div class="slide-content">
-            <div class="reveal" style="margin-bottom:1.5rem;">
-                <div class="bold-label" style="margin-bottom:0.5rem;">持续迭代</div>
-                <h2 style="font-family:var(--font-display);font-size:clamp(1.3rem,3vw,2rem);font-weight:900;line-height:1.1;">每周都在变强</h2>
-            </div>
-            <div class="bold-step-row reveal">
-                <div class="bold-step active">v1.x<br><span style="font-size:0.65rem;opacity:0.7;">基础框架</span></div>
-                <span class="bold-step-arrow">&#x2192;</span>
-                <div class="bold-step">v1.5<br><span style="font-size:0.65rem;opacity:0.7;">风格扩展</span></div>
-                <span class="bold-step-arrow">&#x2192;</span>
-                <div class="bold-step">v2.x<br><span style="font-size:0.65rem;opacity:0.7;">智能生成</span></div>
-                <span class="bold-step-arrow">&#x2192;</span>
-                <div class="bold-step">v2.16<br><span style="font-size:0.65rem;opacity:0.7;">渲染升级</span></div>
-            </div>
-            <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-top:1.5rem;">
-                <div class="reveal" style="border:1px solid rgba(255,87,34,0.2);border-radius:4px;padding:1rem;">
-                    <div style="font-size:0.65rem;text-transform:uppercase;letter-spacing:0.12em;color:var(--card-bg);margin-bottom:0.5rem;">v1.x 基础框架</div>
-                    <ul class="bold-bullet-list" style="font-size:0.8rem;">
-                        <li>播放模式、编辑模式</li>
-                        <li>首批 7 个预设</li>
-                    </ul>
-                </div>
-                <div class="reveal" style="border:1px solid rgba(255,87,34,0.2);border-radius:4px;padding:1rem;">
-                    <div style="font-size:0.65rem;text-transform:uppercase;letter-spacing:0.12em;color:var(--card-bg);margin-bottom:0.5rem;">v2.16 渲染升级</div>
-                    <ul class="bold-bullet-list" style="font-size:0.8rem;">
-                        <li>主题卡片、组件修饰符</li>
-                        <li>26 项回归测试</li>
-                    </ul>
-                </div>
-            </div>
-            <div class="bold-callout reveal" style="margin-top:1rem;">GitHub + ClawHub 双渠道发布</div>
-        </div>
-    </section>
-
-    <!-- Slide 12: CTA / Close - 堆叠行动 (Stacked Action layout) -->
+    <!-- Slide 8: CTA - 堆叠行动 (Stacked Action layout) -->
     <section class="slide" data-notes="行动号召，给出明确的开始步骤。" aria-label="开始使用">
-        <div class="slide-num">12</div>
+        <div class="slide-num">08</div>
         <div class="breadcrumb">kai-slide-creator<span class="sep">/</span>开始使用</div>
-        <div class="bold-ghost">12</div>
+        <div class="bold-ghost">08</div>
         <div class="slide-content">
             <div class="reveal" style="margin-bottom:1.5rem;">
                 <div class="bold-hero-card" style="max-width:70%;padding:clamp(1.5rem,3vw,2.5rem);">
@@ -755,7 +636,7 @@
     <button class="edit-toggle" id="editToggle" title="Edit mode (E)">✏ Edit</button>
     <div id="notes-panel">
         <div id="notes-panel-header">
-            <div id="notes-panel-label">SPEAKER NOTES — SLIDE 1 / 12</div>
+            <div id="notes-panel-label">SPEAKER NOTES — SLIDE 1 / 8</div>
             <div id="notes-drag-hint"></div>
             <button id="notes-collapse-btn" title="Collapse / expand">&#x25BE;</button>
         </div>
@@ -895,21 +776,17 @@
             }
 
             enterPresentMode() {
+                this.presentMode = true;
                 document.body.classList.add('presenting');
                 const self = this;
-                const pw = window.innerWidth, ph = window.innerHeight;
-                const dw = 1440, dh = 900;
-                const scale = Math.min(pw / dw, ph / dh);
-                const ox = (pw - dw * scale) / 2;
-                const oy = (ph - dh * scale) / 2;
-                document.body.style.setProperty('--pdw', dw + 'px');
-                document.body.style.setProperty('--pdh', dh + 'px');
-                document.body.style.setProperty('--ps', scale);
-                document.body.style.setProperty('--pox', ox + 'px');
-                document.body.style.setProperty('--poy', oy + 'px');
+                if (document.documentElement.requestFullscreen) document.documentElement.requestFullscreen().catch(() => {});
+                this._presentScale();
                 this.updatePresentSlide();
                 const counter = document.getElementById('present-counter');
                 if (counter) counter.textContent = (this.currentSlide + 1) + ' / ' + this.slides.length;
+                const resizeHandler = () => { if (this.presentMode) this._presentScale(); };
+                window.addEventListener('resize', resizeHandler);
+                document.addEventListener('fullscreenchange', () => { if (this.presentMode && !document.fullscreenElement) this.exitPresentMode(); });
                 const exitHandler = function(e) {
                     if (e.key === 'Escape') {
                         self.exitPresentMode();
@@ -920,13 +797,27 @@
             }
 
             exitPresentMode() {
-                document.body.classList.remove('presenting');
+                this.presentMode = false;
+                document.body.classList.remove('presenting', 'presenting-black');
+                this._presentReset();
+                if (document.fullscreenElement) document.exitFullscreen?.();
             }
 
             updatePresentSlide() {
                 this.slides.forEach(function(slide, i) {
                     slide.classList.toggle('p-on', i === this.currentSlide);
                 }.bind(this));
+                if (this.presentMode) this._presentScale();
+            }
+
+            _presentScale() {
+                const vw = window.innerWidth, vh = window.innerHeight;
+                const scale = Math.min(vw / 1440, vh / 900);
+                this.slides.forEach(slide => { slide.style.transform = 'scale(' + scale + ')'; });
+            }
+
+            _presentReset() {
+                this.slides.forEach(slide => { slide.style.transform = ''; slide.classList.remove('p-on'); });
             }
 
             insertWatermark() {

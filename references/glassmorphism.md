@@ -269,12 +269,43 @@ Large gradient text number centered. Label below in `.glass-body`. 1-2 orbs posi
 
 ## Signature Elements
 
-- **Frosted glass cards** — `backdrop-filter: blur(20px) saturate(1.5)`, `background: rgba(255,255,255,0.15)`, `border: 1px solid rgba(255,255,255,0.30)`
-- **Blurred color orbs** — `filter: blur(60px)`, placed behind cards, never overlapping content
-- **Gradient background** — 3-color diagonal gradient (135deg) as base, never solid color
-- **Rounded corners** — 12-16px on all cards, consistent with iOS design language
-- **System font stack** — SF Pro / -apple-system, no custom web fonts needed
-- No borders on body. No grid patterns. No geometric shapes. Only gradients and blurs.
+### CSS Overlays
+- `.orb` / `.orb1` / `.orb2` / `.orb3` / `.orb4`: 模糊光球（3-4 个）— `position: absolute; border-radius: 50%; filter: blur(60px); pointer-events: none; z-index: 0`。尺寸使用 vw 单位（25vw-40vw），半透明渐变颜色
+
+### Animations
+- 无 `@keyframes`，全部使用 CSS transitions
+- `.reveal`: 浮动入场 — `opacity: 0; transform: translateY(16px); transition: opacity 0.6s cubic-bezier(0.34,1.2,0.64,1), transform 0.6s cubic-bezier(0.34,1.2,0.64,1)`；`.reveal.visible { opacity: 1; transform: translateY(0); }`
+- Stagger delays: 100ms 递增，最大 400ms
+
+### Required CSS Classes
+- `.glass-card`: 主玻璃卡片 — `background: rgba(255,255,255,0.15); backdrop-filter: blur(20px) saturate(1.5); border: 1px solid rgba(255,255,255,0.30); border-radius: 16px; box-shadow: 0 8px 32px rgba(0,0,0,0.10)`
+- `.glass-item`: 次级玻璃元素 — `background: rgba(255,255,255,0.08); backdrop-filter: blur(12px); border: 1px solid rgba(255,255,255,0.20); border-radius: 12px`
+- `.pill` / `.pill-dark` / `.pill-light`: 药丸徽章 — `background: rgba(255,255,255,0.20); border-radius: 100px; backdrop-filter: blur(8px)`
+- `.stat-card`: 统计卡片（配合 `.glass-card` 使用）
+- `.icon-circle`: SF Symbols 风格圆形图标 — `border-radius: 50%; border: 1.5px solid rgba(255,255,255,0.45)`
+- `.tag` / `.tag-dark` / `.tag-light` / `.tag-highlight`: 标签变体
+- `.text-dark` / `.text-light-theme`: 幻灯片文字主题切换
+- `.sep` / `.sep-dark`: 分隔线
+- `.slide-0` 到 `.slide-7`: 每张幻灯片的渐变背景（3 种渐变模式循环）
+
+### Background Rule
+`.slide` 必须设置背景。每张幻灯片使用独立的 3 色渐变（`linear-gradient(135deg, ...)`）。三种渐变模式：紫色系（`#667eea → #764ba2 → #f093fb`）、粉蓝系（`#f8cdda → #a6c1ee → #1d6fa4`）、薄荷系（`#a8edea → #fed6e3`）。光球直接放在 `.slide` 内、卡片后方。
+
+### Style-Specific Rules
+- `backdrop-filter: blur()` 必须有彩色背景在其后方才能生效——光球是必需的，不是装饰
+- 所有圆角遵循 iOS 设计语言：卡片 16px，次级元素 12px，药丸 100px
+- 系统字体栈：`-apple-system, "SF Pro Display", BlinkMacSystemFont, sans-serif`——不使用自定义 web 字体
+- 不使用边框（body）、网格图案、或几何形状装饰——只有渐变和模糊
+- 暗色幻灯片文字用 `rgba(255,255,255,0.92)`，浅色幻灯片文字用 `#1a1a2e`
+- PPTX 导出注意：`backdrop-filter` 效果仅浏览器支持，PPTX 中玻璃卡片会退化为半透明纯色填充
+
+### Signature Checklist
+- [ ] 彩色渐变或光球背景可见
+- [ ] 至少一张卡片有 `backdrop-filter: blur(20px)` 磨砂效果
+- [ ] `1px solid rgba(255,255,255,0.30)` 边框在卡片上可见
+- [ ] 模糊光球放在卡片后方（不重叠内容）
+- [ ] 圆角一致：12-16px
+- [ ] 无 body 边框、无网格、无几何形状
 
 ---
 

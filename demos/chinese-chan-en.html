@@ -9,7 +9,7 @@
 <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,600;0,700;1,400&family=Noto+Serif+SC:wght@300;400;700&display=swap" rel="stylesheet">
 <style>
 
-:root { --slide-count: 12; }
+:root { --slide-count: 8; }
 
 /* ═══════════════════════════════════════════════
    CHINESE CHAN DESIGN TOKENS
@@ -254,13 +254,7 @@ body:hover #present-btn { opacity: 1; pointer-events: auto; }
 }
 
 body.presenting { background: #000 !important; overflow: hidden !important; }
-body.presenting .slide {
-  position: fixed !important; inset: 0;
-  width: var(--pdw, 1440px) !important; height: var(--pdh, 900px) !important;
-  transform-origin: top left;
-  transform: translate(var(--pox, 0px), var(--poy, 0px)) scale(var(--ps, 1)) !important;
-  scroll-snap-align: none !important; display: none !important;
-}
+body.presenting .slide { position: fixed !important; inset: 0; width: 100vw !important; height: 100vh !important; transform-origin: center center; scroll-snap-align: none !important; display: none !important; }
 body.presenting .slide.p-on { display: flex !important; }
 body.presenting #present-btn { display: none !important; }
 body.presenting #present-counter { display: block; }
@@ -402,168 +396,64 @@ body.presenting .nav-dots { display: none !important; }
 </div>
 </section>
 
-<!-- Slide 5: Play Mode -->
-<section class="slide" data-notes="Press F5. That's all it takes.">
+<!-- SLIDE 5: Three Modes -->
+<section class="slide">
+<div class="slide-content" style="text-align:center;align-items:center;">
+  <div class="reveal a-label" style="margin-bottom:12px;">Core Modes</div>
+  <div class="reveal a-h2" style="text-align:center;">Play, Present, Edit — One File</div>
+  <div class="reveal" style="margin-top:clamp(20px,3vw,36px);display:flex;gap:clamp(16px,3vw,32px);justify-content:center;">
+    <div class="reveal g" style="text-align:center;padding:20px;"><div class="stat"><div class="num">F5</div><div class="label">Play</div></div><div class="a-body" style="font-size:clamp(0.65rem,1vw,0.75rem);margin-top:8px;">Fullscreen, auto-scale</div></div>
+    <div class="reveal g" style="text-align:center;padding:20px;"><div class="stat"><div class="num">P</div><div class="label">Present</div></div><div class="a-body" style="font-size:clamp(0.65rem,1vw,0.75rem);margin-top:8px;">Notes, timer, sync</div></div>
+    <div class="reveal g" style="text-align:center;padding:20px;"><div class="stat"><div class="num">E</div><div class="label">Edit</div></div><div class="a-body" style="font-size:clamp(0.65rem,1vw,0.75rem);margin-top:8px;">contenteditable, Ctrl+S</div></div>
+  </div>
+</div>
+</section>
+
+<!-- SLIDE 6: Commands -->
+<section class="slide">
 <div class="slide-content">
-  <div class="reveal zen-caption" style="margin-bottom: 8px;">Play</div>
-  <div class="reveal zen-h2">The Browser Is Your Projector</div>
-  <div class="reveal zen-rule"></div>
-  <ul class="reveal zen-list">
-    <li><kbd>F5</kbd> enters fullscreen — controls fade away</li>
-    <li>Arrow keys, scroll wheel, touch — all navigate</li>
-    <li>CSS scales to any screen without distortion</li>
-    <li>Zero installation, zero configuration</li>
-  </ul>
-  <div class="reveal zen-body" style="margin-top: 20px; color: var(--text-muted);">
-    No media player. No runtime. No build step.
+  <div class="reveal a-label" style="margin-bottom:12px;">Commands</div>
+  <div class="reveal a-h2">Three Commands, One Pipeline</div>
+  <div class="reveal" style="margin-top:clamp(16px,2vw,24px);display:grid;grid-template-columns:repeat(3,1fr);gap:clamp(12px,2vw,20px);">
+    <div class="reveal g"><div class="a-label" style="margin-bottom:6px;">01 Plan</div><div class="cmd" style="margin-bottom:4px;">/slide-creator --plan</div><div class="a-body" style="font-size:clamp(0.65rem,1vw,0.75rem);">Generate outline</div></div>
+    <div class="reveal g"><div class="a-label" style="margin-bottom:6px;">02 Generate</div><div class="cmd" style="margin-bottom:4px;">/slide-creator --generate</div><div class="a-body" style="font-size:clamp(0.65rem,1vw,0.75rem);">Build with quality checks</div></div>
+    <div class="reveal g"><div class="a-label" style="margin-bottom:6px;">03 Review</div><div class="cmd" style="margin-bottom:4px;">/slide-creator --review</div><div class="a-body" style="font-size:clamp(0.65rem,1vw,0.75rem);">Inspect and fix</div></div>
   </div>
 </div>
 </section>
 
-<!-- Slide 6: Presenter Mode -->
-<section class="slide" data-notes="Press P for your private window.">
-<div class="slide-content">
-  <div class="reveal zen-caption" style="margin-bottom: 8px;">Present</div>
-  <div class="reveal zen-h2">What You See, They Don't</div>
-  <div class="reveal zen-rule"></div>
-  <div class="reveal zen-body" style="line-height: 2;">
-    Speaker notes &mdash; invisible to the audience<br>
-    Slide counter &mdash; know where you are<br>
-    Elapsed timer &mdash; stay on schedule<br>
-    Navigation &mdash; flip without turning around
+<!-- SLIDE 7: Zero Dependencies -->
+<section class="slide">
+<div class="slide-content" style="text-align:center;align-items:center;">
+  <div class="reveal a-label" style="margin-bottom:12px;">Foundation</div>
+  <div class="reveal a-h2" style="text-align:center;">Nothing Between You and the Browser</div>
+  <div class="reveal" style="margin-top:clamp(20px,3vw,36px);display:flex;gap:clamp(24px,4vw,48px);justify-content:center;">
+    <div class="reveal stat"><div class="num">0</div><div class="label">Dependencies</div></div>
+    <div class="reveal stat"><div class="num">21</div><div class="label">Presets</div></div>
+    <div class="reveal stat"><div class="num">1</div><div class="label">Requirement</div></div>
   </div>
-  <div class="reveal zen-body" style="margin-top: 20px;">
-    Press <kbd>P</kbd>. A new window opens. The two stay <span class="zen-accent">in sync</span>.
-  </div>
+  <div class="reveal a-body" style="text-align:center;margin-top:16px;color:var(--text-muted, var(--text-m, #64748b));">HTML, CSS, JavaScript. That is all.</div>
 </div>
 </section>
 
-<!-- Slide 7: Edit Mode -->
-<section class="slide" data-notes="Press E, click text, save. No PowerPoint needed.">
-<div class="slide-content">
-  <div class="reveal zen-caption" style="margin-bottom: 8px;">Edit</div>
-  <div class="reveal zen-h2">Change It Where You See It</div>
-  <div class="reveal zen-rule"></div>
-  <div class="reveal zen-body" style="line-height: 2.4;">
-    <kbd>E</kbd> &mdash; enter edit mode<br>
-    Click any text &mdash; modify in place<br>
-    <kbd>Ctrl</kbd>+<kbd>S</kbd> &mdash; save the file
+<!-- SLIDE 8: CTA -->
+<section class="slide">
+<div class="slide-content" style="text-align:center;align-items:center;">
+  <div class="reveal">
+    <span class="pill" style="margin-bottom:16px;">Start Now</span>
   </div>
-  <div class="reveal zen-body" style="margin-top: 20px; color: var(--text-muted);">
-    No PowerPoint. No Figma. No build pipeline. Just the file, as it is.
+  <div class="reveal a-title" style="margin-bottom:16px;">Start with a Preset</div>
+  <div class="reveal" style="margin-top:12px;">
+    <div class="cmd" style="text-align:center;font-size:clamp(0.9rem,1.5vw,1.2rem);">/slide-creator</div>
   </div>
+  <div class="reveal a-subtitle" style="margin-top:12px;text-align:center;">Tell Claude to install kai-slide-creator</div>
 </div>
 </section>
-
-<!-- Slide 8: Commands -->
-<section class="slide" data-notes="Three commands cover the full lifecycle.">
-<div class="slide-content">
-  <div class="reveal zen-caption" style="margin-bottom: 8px;">Commands</div>
-  <div class="reveal zen-h2">Three Commands</div>
-  <div class="reveal zen-rule"></div>
-  <div class="reveal zen-body" style="line-height: 2.4;">
-    <span class="cmd">/slide-creator --plan</span><br>
-    <span style="color: var(--text-muted); font-size: clamp(0.75rem, 1.2vw, 0.85rem);">Generate an editable outline</span>
-  </div>
-  <div class="reveal zen-body" style="line-height: 2.4; margin-top: 8px;">
-    <span class="cmd">/slide-creator --generate</span><br>
-    <span style="color: var(--text-muted); font-size: clamp(0.75rem, 1.2vw, 0.85rem);">Build HTML with 16 quality checks</span>
-  </div>
-  <div class="reveal zen-body" style="line-height: 2.4; margin-top: 8px;">
-    <span class="cmd">/slide-creator --review</span><br>
-    <span style="color: var(--text-muted); font-size: clamp(0.75rem, 1.2vw, 0.85rem);">Inspect and fix existing files</span>
-  </div>
-</div>
-</section>
-
-<!-- Slide 9: Content Types -->
-<section class="slide" data-notes="Match your content to the right style.">
-<div class="slide-content">
-  <div class="reveal zen-caption" style="margin-bottom: 8px;">Matching</div>
-  <div class="reveal zen-h2">Content Knows Its Style</div>
-  <div class="reveal zen-rule"></div>
-  <div class="reveal zen-body" style="line-height: 2;">
-    Data reports &mdash; <span style="color: var(--text-muted);">Data Story, Enterprise Dark</span><br>
-    Pitch decks &mdash; <span style="color: var(--text-muted);">Bold Signal, Aurora Mesh</span><br>
-    Dev tools &mdash; <span style="color: var(--text-muted);">Terminal Green, Neon Cyber</span><br>
-    Research &mdash; <span style="color: var(--text-muted);">Modern Newspaper, Paper &amp; Ink</span><br>
-    Personal brand &mdash; <span style="color: var(--text-muted);">Split Pastel, Chinese Chan</span>
-  </div>
-</div>
-</section>
-
-<!-- Slide 10: Zero Dependencies -->
-<section class="slide" data-notes="No npm, no server, no build tools.">
-<div class="slide-content" style="text-align: center; align-items: center;">
-  <div class="reveal zen-caption" style="margin-bottom: 8px;">Foundation</div>
-  <div class="reveal zen-h2" style="text-align: center;">Nothing Between You and the Browser</div>
-  <div class="reveal zen-rule"></div>
-  <div class="reveal" style="display: flex; gap: clamp(24px, 4vw, 48px); justify-content: center;">
-    <div class="reveal zen-stat">
-      <div class="num">0</div>
-      <div class="label">Dependencies</div>
-    </div>
-    <div class="reveal zen-stat">
-      <div class="num">3</div>
-      <div class="label">Files</div>
-    </div>
-    <div class="reveal zen-stat">
-      <div class="num">1</div>
-      <div class="label">Requirement</div>
-    </div>
-  </div>
-  <div class="reveal zen-body" style="text-align: center; margin-top: 16px; color: var(--text-muted);">
-    HTML, CSS, JavaScript. That is all.
-  </div>
-</div>
-</section>
-
-<!-- Slide 11: Version History -->
-<section class="slide" data-notes="The tool evolves like a craft — steadily.">
-<div class="slide-content">
-  <div class="reveal zen-caption" style="margin-bottom: 8px;">Evolution</div>
-  <div class="reveal zen-h2">What Was Built, What Comes Next</div>
-  <div class="reveal zen-rule"></div>
-  <div class="reveal zen-body" style="line-height: 2.2;">
-    <span class="zen-accent">v1.x</span> &mdash; Play mode, edit mode, 7 presets<br>
-    <span class="zen-accent">v1.5</span> &mdash; 21 presets, cloud effects, orbital rings<br>
-    <span class="zen-accent">v2.x</span> &mdash; AI planning, review system, PPT export<br>
-    <span class="zen-accent">v2.16</span> &mdash; Render engine, component modifiers, 26 tests
-  </div>
-  <div class="reveal zen-body" style="margin-top: 16px; color: var(--text-muted);">
-    GitHub and ClawHub, dual-channel release.
-  </div>
-</div>
-</section>
-
-<!-- Slide 12: End -->
-<section class="slide" data-notes="Start with a preset. Let the content speak.">
-<div class="reveal zen-ghost-kanji" style="font-size: clamp(8rem, 16vw, 12rem); opacity: 0.04;">始</div>
-<div class="slide-content" style="text-align: center; align-items: center;">
-  <div class="reveal" style="margin-top: 40px;">
-    <div class="zen-seal" style="margin-bottom: 20px;"></div>
-  </div>
-  <div class="reveal zen-title" style="font-size: clamp(1.2rem, 3vw, 1.8rem); letter-spacing: 0.1em;">
-    Start with a Preset
-  </div>
-  <div class="reveal zen-subtitle" style="text-align: center; margin-top: 8px;">
-    Let the content speak for itself
-  </div>
-  <div class="reveal zen-rule" style="max-width: 200px; margin: 24px auto 0;"></div>
-  <div class="reveal cmd" style="text-align: left; margin-top: 16px; font-size: clamp(0.7rem, 1.1vw, 0.85rem);">
-    /slide-creator "your topic" --style "Chinese Chan"
-  </div>
-  <div class="reveal zen-body" style="text-align: center; margin-top: 12px; color: var(--text-muted); font-size: clamp(0.7rem, 1.1vw, 0.8rem);">
-    Three minutes to your first draft.
-  </div>
-</div>
-</section>
-
 <div class="edit-hotzone"></div>
 <button class="edit-toggle" id="editToggle" title="Edit mode (E)">✏ Edit</button>
 <div id="notes-panel">
   <div id="notes-panel-header">
-    <div id="notes-panel-label">SPEAKER NOTES — SLIDE 1 / 12</div>
+    <div id="notes-panel-label">SPEAKER NOTES — SLIDE 1 / 8</div>
     <button id="notes-collapse-btn" title="Collapse / expand">▾</button>
   </div>
   <textarea id="notes-textarea" placeholder="Add speaker notes…"></textarea>
@@ -830,7 +720,7 @@ if (new URLSearchParams(location.search).has('presenter')) {
 } else {
   class PresentMode {
     constructor(ctrl) {
-      this.ctrl = ctrl; this.DW = 1440; this.DH = 900; this.active = false;
+      this.ctrl = ctrl; this.baseW = 1440; this.baseH = 900; this.active = false;
       var self = this; this._resize = function() { self._scale(); };
       var btn = document.createElement('button');
       btn.id = 'present-btn'; btn.title = 'Present (F5)'; btn.setAttribute('aria-label', 'Present'); btn.textContent = '▶';
@@ -844,13 +734,14 @@ if (new URLSearchParams(location.search).has('presenter')) {
       });
       document.addEventListener('fullscreenchange', function() {
         if (!document.fullscreenElement && self.active) self.exit();
+      window.addEventListener('resize', () => { if (this.active) this._scale(); });
       });
     }
     enter() {
       if (this.active) return; this.active = true;
       document.body.classList.add('presenting');
       document.documentElement.requestFullscreen?.().catch(function() {});
-      window.addEventListener('resize', this._resize); this._scale(); this._show(this.ctrl.currentSlide);
+      this._scale(); this._show(this.ctrl.currentSlide);
       var self = this; this._origGoTo = this.ctrl.goTo.bind(this.ctrl);
       this.ctrl.goTo = function(i) {
         var idx = Math.max(0, Math.min(i, self.ctrl.slides.length - 1));
@@ -859,32 +750,35 @@ if (new URLSearchParams(location.search).has('presenter')) {
         self._show(idx); self.ctrl.updateProgress?.(); self.ctrl.updateDots?.(); self.ctrl.broadcastState?.();
       };
     }
+    _reset() {
+                this.ctrl.slides.forEach(slide => { slide.style.transform = ''; slide.classList.remove('p-on'); });
+            }
     exit() {
-      if (!this.active) return; this.active = false;
+      if (!this.active) return;
+                this._reset(); this.active = false;
       document.body.classList.remove('presenting');
       document.querySelectorAll('.slide').forEach(function(s) { s.classList.remove('p-on'); });
       if (document.fullscreenElement) document.exitFullscreen?.();
-      window.removeEventListener('resize', this._resize);
       if (this._origGoTo) { this.ctrl.goTo = this._origGoTo; this._origGoTo = null; }
       this.ctrl.slides[this.ctrl.currentSlide]?.scrollIntoView({ behavior: 'instant' });
     }
     _scale() {
-      var s = Math.min(window.innerWidth / this.DW, window.innerHeight / this.DH);
-      var ox = (window.innerWidth - this.DW * s) / 2;
-      var oy = (window.innerHeight - this.DH * s) / 2;
-      var r = document.documentElement;
-      r.style.setProperty('--pdw', this.DW + 'px');
-      r.style.setProperty('--pdh', this.DH + 'px');
-      r.style.setProperty('--ps', s);
-      r.style.setProperty('--pox', ox + 'px');
-      r.style.setProperty('--poy', oy + 'px');
-    }
+                const vw = window.innerWidth;
+                const vh = window.innerHeight;
+                const scale = Math.min(vw / this.baseW, vh / this.baseH);
+                this.ctrl.slides.forEach(slide => { slide.style.transform = 'scale(' + scale + ')'; });
+            }
     _show(i) {
       var self = this;
       document.querySelectorAll('.slide').forEach(function(s, idx) { s.classList.toggle('p-on', idx === i); });
       var c = document.getElementById('present-counter');
       if (c) c.textContent = (i + 1) + ' / ' + this.ctrl.slides.length;
     }
+
+            _updateCounter() {
+                const c = document.getElementById('present-counter');
+                if (c) c.textContent = (this.ctrl.currentSlide + 1) + ' / ' + this.ctrl.slides.length;
+            }
   }
   new PresentMode(new SlidePresentation());
 }

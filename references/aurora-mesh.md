@@ -223,12 +223,49 @@ Horizontal step sequence with frosted glass cards as step markers. Active step: 
 
 ## Signature Elements
 
-- **Mesh gradient background** — multi-stop gradient with 4-6 color positions, organic blending
-- **Aurora light strips** — horizontal gradient bands at 20-30% opacity, simulating northern lights
-- **Frosted overlay cards** — `backdrop-filter: blur(12px)` on semi-transparent dark cards
-- **Gradient text** — `-webkit-background-clip: text` with gradient for hero numbers
-- **Dark-first design** — all variants are dark backgrounds, never white
-- **System font stack** — no custom web fonts, uses -apple-system / Segoe UI
+### CSS Overlays
+- `body`: Mesh gradient 背景 — 3-4 个 `radial-gradient` 椭圆叠加，色标包括 `rgba(120,40,200,0.40)` / `rgba(0,180,255,0.30)` / `rgba(0,255,180,0.20)`，`background-size: 200% 200%`
+
+### Animations
+- `@keyframes auroraDrift`: 极光漂移 — `0% { background-position: 0% 50%; } 50% { background-position: 100% 20%; } 100% { background-position: 50% 100%; }`，`20s ease-in-out infinite alternate`，应用于 `body`
+
+### Required CSS Classes
+- `.aurora-card`: 毛玻璃卡片 — `background: rgba(255,255,255,0.05); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border: 1px solid var(--card-border); border-radius: 16px; padding: clamp(20px, 3vw, 36px)`
+- `.aurora-slide`: 极光幻灯片容器 — `display: flex; flex-direction: column; align-items: center; justify-content: center; padding: clamp(2rem, 5vw, 5rem)`
+- `.aurora-content`: 内容容器 — `width: 100%; max-width: min(90vw, 800px)`
+- `.aurora-title`: 标题 — `font-size: clamp(2.5rem, 7vw, 6rem); font-weight: 700; letter-spacing: -0.03em; color: #ffffff`
+- `.aurora-subtitle`: 副标题 — `font-size: clamp(1rem, 2vw, 1.4rem); color: rgba(255,255,255,0.70)`
+- `.aurora-divider`: 分隔线 — `height: 1px; background: rgba(0,245,196,0.3); border: none; margin: 16px 0`
+- `.aurora-accent` / `.aurora-emphasis`: 强调文字 — `color: #00f5c4; font-weight: 500/600`
+- `.aurora-badge`: 徽章 — `display: inline-flex; padding: 4px 14px; background: rgba(0,245,196,0.12); border: 1px solid rgba(0,245,196,0.30); border-radius: 9999px; color: #00f5c4; font-size: clamp(0.65rem, 1vw, 0.75rem); text-transform: uppercase; letter-spacing: 0.12em`
+- `.pill`: 同 `.aurora-badge` 的别名
+- `.aurora-stat`: 渐变数字 — 使用 `-webkit-background-clip: text; -webkit-text-fill-color: transparent; background-image: linear-gradient(135deg, #00f5c4, #00b4ff)`
+- `.reveal`: 淡入动画 — `opacity: 0; transform: translateY(20px); transition: opacity 0.7s cubic-bezier(0.16,1,0.3,1), transform 0.7s cubic-bezier(0.16,1,0.3,1)`
+
+### Background Rule
+`.slide` 不设 `background`，完全透出 `body` 上的 mesh gradient。`body` 使用 `background-color: #0a0a1a` + 多层 `radial-gradient` + `auroraDrift` 动画。所有幻灯片共享同一动态背景。
+
+### Style-Specific Rules
+- 卡片必须使用 `backdrop-filter: blur(12px)` 实现毛玻璃效果
+- 不使用 Google Fonts 以外的字体（标题用 Space Grotesk，正文用 DM Sans）
+- 强调色 `#00f5c4`（青绿）用于徽章、分隔线、数字
+- 所有变体均为深色背景，不使用白色背景
+- 卡片 `border-radius: 16px`，边框 `1px solid rgba(255,255,255,0.10)`
+- 英雄页（hero）文字直接放在渐变上，不用卡片包裹
+- 激活卡片使用更强边框 `border-color: rgba(0,245,196,0.40)` + 更高不透明度背景 `rgba(255,255,255,0.08)`
+
+### Signature Checklist
+- [ ] body mesh gradient（3-4 个 radial-gradient，可见色彩混合）
+- [ ] @keyframes auroraDrift（20s 循环，可见运动）
+- [ ] .aurora-card 毛玻璃卡片（backdrop-filter: blur(12px)）
+- [ ] .aurora-slide 居中容器
+- [ ] .aurora-title 白色大标题（letter-spacing: -0.03em）
+- [ ] .aurora-badge 青绿徽章（rgba(0,245,196,0.12) 背景）
+- [ ] .aurora-divider 青绿分隔线
+- [ ] .aurora-stat 渐变文字数字（background-clip: text）
+- [ ] 青绿色 #00f5c4 至少一处使用
+- [ ] 无白色背景变体
+- [ ] reveal 动画使用 cubic-bezier(0.16,1,0.3,1)
 
 ---
 

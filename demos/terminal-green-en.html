@@ -2,1145 +2,640 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>kai-slide-creator — Zero-Dependency HTML Presentation Generator</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Terminal Green — slide-creator</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
 <style>
+body { background-color: #0d1117; }
 
 /* ═══════════════════════════════════════════════
    TERMINAL GREEN DESIGN TOKENS
    ═══════════════════════════════════════════════ */
 :root {
-  --bg:        #0d1117;
-  --bg-panel:  #161b22;
-  --border:    #30363d;
-  --green:     #39d353;
-  --green-m:   rgba(57,211,83,0.40);
-  --text:      #e6edf3;
-  --text-m:    #8b949e;
-  --comment:   #6e7681;
-  --yellow:    #e3b341;
-  --red:       #f85149;
-  --blue:      #79c0ff;
-
-  /* Typography */
-  --font-mono: 'JetBrains Mono', 'Fira Code', monospace;
-  --title-size: clamp(1.25rem, 3.5vw, 2.5rem);
-  --subtitle-size: clamp(0.75rem, 1.5vw, 1.1rem);
-  --body-size: clamp(0.7rem, 1.3vw, 0.95rem);
-  --slide-padding: clamp(1.5rem, 4vw, 4rem);
-  --content-gap: clamp(1rem, 2vw, 2rem);
-
-  /* Animation */
-  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
-  --duration-normal: 0.6s;
-  --accent: var(--green);
-  --text-primary: var(--text);
-  --text-secondary: var(--text-m);
-  --bg-primary: var(--bg);
+    --bg: #0d1117;
+    --bg-panel: #161b22;
+    --border: #30363d;
+    --green: #39d353;
+    --green-muted: rgba(57, 211, 83, 0.4);
+    --text: #c9d1d9;
+    --text-muted: #8b949e;
+    --comment: #484f58;
+    --yellow: #e3b341;
+    --red: #f85149;
+    --blue: #58a6ff;
+    --font-mono: 'JetBrains Mono', 'Courier New', monospace;
+    --title-size: clamp(2.5rem, 7vw, 5rem);
+    --h2-size: clamp(1.4rem, 3.5vw, 2.5rem);
+    --body-size: clamp(0.85rem, 1.5vw, 1rem);
+    --small-size: clamp(0.6rem, 1vw, 0.75rem);
+    --slide-padding: clamp(2rem, 5vw, 4rem);
+    --content-gap: clamp(1rem, 2vh, 1.5rem);
+    --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+    --duration-normal: 0.6s;
 }
 
-::selection { background: rgba(57,211,83,0.30); color: #39d353; }
-
-/* Reset */
-*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
-
-html {
-  scroll-snap-type: y mandatory;
-  height: 100%;
-}
-
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-snap-type: y mandatory; height: 100%; }
 body {
-  font-family: var(--font-mono);
-  background: var(--bg);
-  color: var(--text);
-  overflow-x: hidden;
-  height: 100%;
+    height: 100%; overflow-x: hidden;
+    background: var(--bg);
+    font-family: var(--font-mono);
+    color: var(--text);
 }
 
-/* Scan lines */
-.terminal-scanlines {
-  position: fixed; inset: 0; pointer-events: none; z-index: 0;
-  background: repeating-linear-gradient(
-    transparent, transparent 2px,
-    rgba(0,0,0,0.04) 2px, rgba(0,0,0,0.04) 4px
-  );
-  opacity: 0.5;
+/* CRT scanline overlay */
+body::before {
+    content: '';
+    position: fixed; inset: 0; z-index: 9999;
+    pointer-events: none;
+    background: repeating-linear-gradient(
+        0deg,
+        transparent, transparent 2px,
+        rgba(0,255,65,0.01) 2px, rgba(0,255,65,0.01) 4px
+    );
+}
+/* CRT edge vignette */
+body::after {
+    content: '';
+    position: fixed; inset: 0; z-index: 9998;
+    pointer-events: none;
+    box-shadow: inset 0 0 120px rgba(0,0,0,0.6), inset 0 0 40px rgba(0,255,65,0.04);
 }
 
-/* Blinking cursor */
-@keyframes blink {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0; }
-}
-.t-cursor::after {
-  content: '\2588';
-  animation: blink 1s step-end infinite;
-  color: var(--green);
-  margin-left: 2px;
-}
-
-/* ── Slide Container ── */
+/* Slide base */
 .slide {
-  width: 100vw;
-  height: 100vh;
-  height: 100dvh;
-  padding: var(--slide-padding);
-  scroll-snap-align: start;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  position: relative;
-  overflow: hidden;
-  background: var(--bg);
+    width: 100vw; height: 100vh; height: 100dvh;
+    scroll-snap-align: start; overflow: hidden;
+    position: relative; display: flex; flex-direction: column;
+    background: var(--bg);
+    padding: var(--slide-padding);
+    border-bottom: 1px solid rgba(57,211,83,0.15);
 }
 
-.slide-content {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  max-height: 100%;
-  overflow: hidden;
-  max-width: min(90vw, 1000px);
-  position: relative;
-  z-index: 1;
+/* Animations */
+@keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
+@keyframes lineReveal { from { opacity: 0; max-height: 0; } to { opacity: 1; max-height: 3rem; } }
+@keyframes glow { 0%, 100% { text-shadow: 0 0 8px rgba(57,211,83,0.6); } 50% { text-shadow: 0 0 20px rgba(57,211,83,0.9), 0 0 40px rgba(57,211,83,0.4); } }
+
+.cursor { display: inline-block; color: var(--green); animation: blink 1s step-end infinite; }
+
+/* Reveal stagger */
+.reveal { opacity: 0; transform: translateY(8px); transition: opacity 0.3s ease, transform 0.3s ease; }
+.slide.visible .reveal { opacity: 1; transform: none; }
+.slide.visible .reveal:nth-child(1) { transition-delay: 0.05s; }
+.slide.visible .reveal:nth-child(2) { transition-delay: 0.1s; }
+.slide.visible .reveal:nth-child(3) { transition-delay: 0.15s; }
+.slide.visible .reveal:nth-child(4) { transition-delay: 0.2s; }
+.slide.visible .reveal:nth-child(5) { transition-delay: 0.25s; }
+.slide.visible .reveal:nth-child(6) { transition-delay: 0.3s; }
+.slide.visible .reveal:nth-child(7) { transition-delay: 0.35s; }
+
+/* Common elements */
+.slide-num { font-size: var(--small-size); color: var(--green); letter-spacing: 0.1em; margin-bottom: clamp(1.5rem, 4vh, 3rem); }
+.label { font-size: var(--small-size); color: var(--green); letter-spacing: 0.12em; margin-bottom: 0.6rem; opacity: 0.8; }
+.rule { border: none; border-top: 1px solid rgba(57,211,83,0.2); margin: clamp(1rem, 2vh, 1.5rem) 0; }
+
+h1 {
+    font-family: var(--font-mono); font-weight: 700;
+    font-size: var(--title-size);
+    color: var(--green); letter-spacing: -0.02em;
+    animation: glow 3s ease-in-out infinite;
+    line-height: 1;
+}
+h2 {
+    font-family: var(--font-mono); font-weight: 700;
+    font-size: var(--h2-size);
+    color: var(--text); line-height: 1.2;
+}
+h2 span.accent { color: var(--green); }
+p { font-size: var(--body-size); color: var(--text-muted); line-height: 1.7; max-width: 64ch; }
+
+/* Boot sequence — title slide only */
+.boot-lines { margin: clamp(1rem, 2vh, 2rem) 0; }
+.boot-line {
+    font-size: clamp(0.75rem, 1.3vw, 0.9rem);
+    color: var(--text-muted); line-height: 2;
+    overflow: hidden; max-height: 0; opacity: 0;
+}
+.boot-line .ok { color: var(--green); }
+.slide.visible .boot-line:nth-child(1) { animation: lineReveal 0.3s ease forwards 0.3s; }
+.slide.visible .boot-line:nth-child(2) { animation: lineReveal 0.3s ease forwards 0.8s; }
+.slide.visible .boot-line:nth-child(3) { animation: lineReveal 0.3s ease forwards 1.3s; }
+.slide.visible .boot-line:nth-child(4) { animation: lineReveal 0.3s ease forwards 1.8s; }
+.main-title { opacity: 0; transition: opacity 0.5s ease 2.3s; }
+.slide.visible .main-title { opacity: 1; }
+
+/* Stat row */
+.stat-row { display: flex; gap: clamp(1.5rem, 4vw, 3rem); margin-top: clamp(1rem, 2vh, 2rem); flex-wrap: wrap; }
+.stat { display: flex; flex-direction: column; }
+.stat-val { font-size: clamp(1.2rem, 2.5vw, 1.8rem); color: var(--blue); font-weight: 700; }
+.stat-label { font-size: 0.65rem; color: var(--green); opacity: 0.7; letter-spacing: 0.1em; }
+
+/* Terminal block */
+.terminal-block {
+    background: var(--bg-panel);
+    border: 1px solid rgba(57,211,83,0.2);
+    border-left: 3px solid var(--green);
+    padding: clamp(0.8rem, 2vw, 1.2rem) clamp(1rem, 2vw, 1.5rem);
+    margin: clamp(0.8rem, 1.5vh, 1.2rem) 0;
+    font-size: clamp(0.7rem, 1.2vw, 0.85rem);
+    color: var(--text); line-height: 1.8;
+}
+.terminal-block .prompt { color: var(--green); }
+.terminal-block .cmd { color: var(--blue); }
+.terminal-block .comment { color: var(--comment); }
+
+/* Pain points */
+.pain-list { list-style: none; margin: clamp(1rem, 2vh, 1.5rem) 0; }
+.pain-list li {
+    font-size: clamp(0.8rem, 1.4vw, 0.95rem);
+    color: var(--text-muted); padding: 0.6rem 0;
+    border-bottom: 1px solid rgba(57,211,83,0.1);
+    display: flex; gap: 0.8rem; line-height: 1.5;
+}
+.pain-list li::before { content: '✗'; color: var(--red); flex-shrink: 0; }
+
+/* Steps */
+.steps { display: flex; flex-direction: column; gap: clamp(0.8rem, 1.5vh, 1.2rem); margin-top: clamp(1rem, 2vh, 1.5rem); }
+.step {
+    display: flex; align-items: flex-start; gap: 1rem;
+    background: var(--bg-panel); border: 1px solid rgba(57,211,83,0.15);
+    padding: clamp(0.7rem, 1.5vw, 1rem) clamp(1rem, 2vw, 1.4rem);
+}
+.step-num { color: var(--green); font-weight: 700; flex-shrink: 0; font-size: clamp(0.8rem, 1.3vw, 1rem); }
+.step-text { font-size: clamp(0.75rem, 1.2vw, 0.9rem); color: var(--text); line-height: 1.5; }
+.step-text .accent { color: var(--blue); }
+
+/* Preset grid */
+.preset-grid { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: clamp(1rem, 2vh, 1.5rem); }
+.preset-tag {
+    font-size: clamp(0.6rem, 1vw, 0.75rem);
+    color: var(--green); border: 1px solid rgba(57,211,83,0.3);
+    padding: 0.3rem 0.7rem; background: rgba(57,211,83,0.05);
+    letter-spacing: 0.05em;
 }
 
-/* ── Typography ── */
-.t-title {
-  font-size: var(--title-size);
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
-  color: var(--green);
-  line-height: 1.2;
+/* Feature grid */
+.feature-grid {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: clamp(0.8rem, 1.5vw, 1.2rem); margin-top: clamp(1rem, 2vh, 1.5rem);
 }
+.feature-card {
+    background: var(--bg-panel); border: 1px solid rgba(57,211,83,0.15);
+    border-top: 2px solid var(--green);
+    padding: clamp(0.8rem, 1.5vw, 1.2rem);
+}
+.feature-title { color: var(--green); font-size: clamp(0.7rem, 1.1vw, 0.85rem); margin-bottom: 0.4rem; font-weight: 700; }
+.feature-desc { color: var(--text-muted); font-size: clamp(0.65rem, 1vw, 0.78rem); line-height: 1.6; }
 
-.t-h2 {
-  font-size: clamp(1rem, 2.5vw, 1.75rem);
-  font-weight: 700;
-  color: var(--green);
-  line-height: 1.3;
-  margin-bottom: clamp(0.5rem, 1.5vw, 1rem);
-}
+/* How it works */
+.how-steps { display: flex; flex-direction: column; gap: clamp(1rem, 2vh, 1.5rem); margin-top: clamp(1rem, 2vh, 1.5rem); max-width: 650px; }
+.how-step { display: grid; grid-template-columns: 2.5rem 1fr; gap: 1rem; align-items: start; }
+.how-num { font-size: clamp(1rem, 2vw, 1.4rem); font-weight: 700; color: var(--green); padding-top: 0.1rem; }
+.how-content h3 { color: var(--text); font-size: clamp(0.85rem, 1.4vw, 1rem); margin-bottom: 0.25rem; }
+.how-content p { font-size: clamp(0.7rem, 1.1vw, 0.82rem); color: var(--comment); }
 
-.t-body {
-  font-size: var(--body-size);
-  font-weight: 400;
-  color: var(--text);
-  line-height: 1.75;
+/* CTA */
+.cta-block {
+    margin-top: clamp(1.5rem, 3vh, 2.5rem);
+    background: rgba(57,211,83,0.08);
+    border: 1px solid rgba(57,211,83,0.4);
+    padding: clamp(1rem, 2.5vw, 2rem) clamp(1.5rem, 3vw, 2.5rem);
+    display: inline-block;
 }
+.cta-cmd { font-size: clamp(1.5rem, 3.5vw, 2.5rem); color: var(--green); font-weight: 700; animation: glow 2s ease-in-out infinite; }
+.cta-sub { font-size: clamp(0.65rem, 1vw, 0.8rem); color: var(--text-muted); margin-top: 0.5rem; }
 
-.t-subtitle {
-  font-size: var(--subtitle-size);
-  color: var(--text-m);
-  line-height: 1.6;
-  margin-top: 0.5rem;
-}
-
-.t-prompt { color: var(--green-m); }
-.t-prompt::before { content: '$ '; }
-
-.t-comment { color: var(--comment); }
-.t-warning { color: var(--yellow); }
-.t-error   { color: var(--red); }
-.t-info    { color: var(--blue); }
-
-.t-label {
-  font-size: clamp(0.6rem, 1.1vw, 0.75rem);
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.12em;
-  color: var(--text-m);
-}
-
-/* ── Components ── */
-.g {
-  background: var(--bg-panel);
-  border: 1px solid var(--border);
-  border-radius: 6px;
-  padding: clamp(12px, 2vw, 20px);
-}
-
-.stat {
-  text-align: center;
-  padding: clamp(12px, 2vw, 20px);
-}
-.stat .num {
-  font-size: clamp(1.5rem, 3vw, 2.5rem);
-  font-weight: 700;
-  color: var(--green);
-  letter-spacing: -0.02em;
-}
-.stat .label {
-  font-size: clamp(0.6rem, 1vw, 0.75rem);
-  color: var(--text-m);
-  text-transform: uppercase;
-  letter-spacing: 0.1em;
-  margin-top: 4px;
-}
-
-.pill {
-  display: inline-flex; align-items: center; gap: 4px;
-  padding: 3px 12px; border-radius: 9999px;
-  font-size: clamp(0.6rem, 1vw, 0.7rem);
-  font-weight: 600; letter-spacing: 0.08em;
-  text-transform: uppercase;
-  background: rgba(57,211,83,0.12);
-  border: 1px solid rgba(57,211,83,0.30);
-  color: var(--green);
-}
-.pill.warn {
-  background: rgba(227,179,65,0.12);
-  border-color: rgba(227,179,65,0.30);
-  color: var(--yellow);
-}
-.pill.info {
-  background: rgba(121,192,255,0.12);
-  border-color: rgba(121,192,255,0.30);
-  color: var(--blue);
-}
-
-kbd {
-  display: inline-block; padding: 2px 8px;
-  font-size: 0.8em; font-weight: 700;
-  background: var(--bg-panel);
-  border: 1px solid var(--border);
-  border-radius: 4px;
-  color: var(--green);
-  vertical-align: middle;
-}
-
-.co, .info-callout {
-  padding: clamp(8px, 1.5vw, 14px) clamp(12px, 2vw, 18px);
-  border-radius: 6px;
-  font-size: clamp(0.65rem, 1.1vw, 0.8rem);
-  line-height: 1.6;
-}
-.co {
-  background: rgba(57,211,83,0.08);
-  border-left: 3px solid var(--green);
-  color: var(--text);
-}
-.info-callout {
-  background: rgba(121,192,255,0.08);
-  border-left: 3px solid var(--blue);
-  color: var(--text);
-}
-
-.cmd {
-  background: var(--bg-panel);
-  border: 1px solid var(--border);
-  border-radius: 6px;
-  padding: clamp(8px, 1.5vw, 14px) clamp(12px, 2vw, 18px);
-  font-size: clamp(0.65rem, 1.1vw, 0.8rem);
-  color: var(--text);
-  line-height: 1.6;
-}
-.cmd::before { content: '$ '; color: var(--green-m); }
-
-.layer {
-  display: flex; gap: 12px;
-  padding: clamp(8px, 1.2vw, 12px) 0;
-  border-bottom: 1px solid rgba(48,54,61,0.4);
-  align-items: flex-start;
-}
-.layer:last-child { border-bottom: none; }
-.layer-num {
-  font-size: 0.75rem; font-weight: 700;
-  color: var(--green);
-  min-width: 24px;
-}
-
-.cols2 { display: grid; grid-template-columns: 1fr 1fr; gap: clamp(12px, 2vw, 20px); }
-.cols3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: clamp(12px, 2vw, 20px); }
-.cols4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: clamp(8px, 1.5vw, 16px); }
-
-.bento {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  grid-auto-rows: minmax(60px, auto);
-  gap: clamp(8px, 1.5vw, 14px);
-}
-.bento .span2 { grid-column: span 2; }
-
-.dot { display: inline-block; width: 8px; height: 8px; border-radius: 50%; margin-right: 6px; vertical-align: middle; }
-.dot.green { background: var(--green); }
-.dot.yellow { background: var(--yellow); }
-
-.t-divider { height: 1px; background: var(--border); margin: clamp(12px, 2vw, 20px) 0; }
-
-.step { position: relative; padding-left: 32px; }
-.step::before {
-  content: attr(data-step);
-  position: absolute; left: 0; top: 0;
-  font-size: 0.7rem; font-weight: 700;
-  color: var(--green);
-  text-transform: uppercase;
-  letter-spacing: 0.1em;
-}
-
-/* ── Reveal animations ── */
-.reveal {
-  opacity: 0; transform: translateY(16px);
-  transition: opacity var(--duration-normal) var(--ease-out-expo),
-              transform var(--duration-normal) var(--ease-out-expo);
-}
-.slide.visible .reveal { opacity: 1; transform: translateY(0); }
-.reveal:nth-child(1) { transition-delay: 0.05s; }
-.reveal:nth-child(2) { transition-delay: 0.1s; }
-.reveal:nth-child(3) { transition-delay: 0.15s; }
-.reveal:nth-child(4) { transition-delay: 0.2s; }
-
-.chapter-num {
-  font-size: clamp(3rem, 10vw, 8rem);
-  font-weight: 700;
-  color: var(--green);
-  opacity: 0.15;
-  line-height: 1;
-}
-
-.t-eof {
-  font-size: clamp(2rem, 5vw, 4rem);
-  font-weight: 700;
-  color: var(--green);
-  text-align: center;
-}
-.t-eof-sub {
-  font-size: clamp(0.75rem, 1.5vw, 1rem);
-  color: var(--comment);
-  text-align: center;
-  margin-top: 8px;
-}
-
-.t-table {
-  width: 100%; border-collapse: collapse;
-  font-size: clamp(0.6rem, 1.1vw, 0.8rem);
-}
-.t-table th {
-  text-align: left; padding: 6px 10px;
-  border-bottom: 2px solid var(--border);
-  color: var(--green); font-weight: 700;
-  text-transform: uppercase; letter-spacing: 0.08em;
-  font-size: clamp(0.55rem, 1vw, 0.7rem);
-}
-.t-table td {
-  padding: 6px 10px;
-  border-bottom: 1px solid rgba(48,54,61,0.3);
-  color: var(--text);
-}
-.t-table tr:last-child td { border-bottom: none; }
-
-/* ── Responsive ── */
-@media (max-height: 700px) {
-  :root {
-    --slide-padding: clamp(0.75rem, 3vw, 2rem);
-    --content-gap: clamp(0.4rem, 1.5vw, 1rem);
-    --title-size: clamp(1rem, 3.5vw, 2rem);
-  }
-}
-@media (max-height: 600px) {
-  :root {
-    --slide-padding: clamp(0.5rem, 2.5vw, 1.5rem);
-    --title-size: clamp(1.1rem, 4vw, 2rem);
-    --body-size: clamp(0.7rem, 1.2vw, 0.95rem);
-  }
-  .nav-dots, .keyboard-hint, .decorative { display: none; }
-}
-@media (max-height: 500px) {
-  :root {
-    --slide-padding: clamp(0.4rem, 2vw, 1rem);
-    --title-size: clamp(1rem, 3.5vw, 1.5rem);
-  }
-}
-@media (max-width: 600px) {
-  .cols2, .cols3, .cols4, .bento { grid-template-columns: 1fr; }
-  .bento .span2 { grid-column: span 1; }
-}
-@media (prefers-reduced-motion: reduce) {
-  *, *::before, *::after {
-    animation-duration: 0.01ms !important;
-    transition-duration: 0.2s !important;
-  }
-  html { scroll-behavior: auto; }
-}
+/* Responsive */
+@media (max-height: 700px) { :root { --slide-padding: clamp(1rem, 3vw, 2rem); } }
+@media (max-height: 600px) { :root { --slide-padding: clamp(0.75rem, 2.5vw, 1.5rem); --title-size: clamp(1.5rem, 5vw, 3rem); } .nav-dots { display: none; } }
+@media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.2s !important; } html { scroll-behavior: auto; } }
 
 /* ═══════════════════════════════════════════════
-   PRESENT MODE CSS
+   PRESENT MODE
    ═══════════════════════════════════════════════ */
 #present-btn {
-  position: fixed; bottom: 1.5rem; right: 1.5rem; z-index: 9997;
-  width: 44px; height: 44px; border-radius: 50%;
-  background: rgba(57,211,83,0.3); color: var(--green);
-  border: 1.5px solid var(--green-m);
-  font-size: 1rem; cursor: pointer;
-  backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
-  display: flex; align-items: center; justify-content: center;
-  opacity: 0; transition: opacity 0.2s; pointer-events: none;
+    position: fixed; bottom: 1.5rem; right: 1.5rem; z-index: 9997;
+    width: 44px; height: 44px; border-radius: 50%;
+    background: rgba(0,0,0,0.5); color: var(--green);
+    border: 1.5px solid var(--green-muted);
+    font-size: 1rem; cursor: pointer;
+    backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+    display: flex; align-items: center; justify-content: center;
+    opacity: 0; transition: opacity 0.2s; pointer-events: none;
 }
 body:hover #present-btn { opacity: 1; pointer-events: auto; }
-#present-btn:hover { background: rgba(57,211,83,0.5); }
-
+#present-btn:hover { background: rgba(0,0,0,0.78); }
 #present-counter {
-  display: none; position: fixed; bottom: 1.4rem; left: 50%;
-  transform: translateX(-50%); z-index: 9997;
-  font-size: 0.65rem; letter-spacing: 0.14em; font-family: var(--font-mono);
-  color: var(--text-m); opacity: 0.5;
+    display: none; position: fixed; bottom: 1.4rem; left: 50%;
+    transform: translateX(-50%); z-index: 9997;
+    font-size: 0.65rem; letter-spacing: 0.14em; font-family: var(--font-mono);
+    color: var(--green); opacity: 0.5;
 }
-
 body.presenting { background: #111 !important; overflow: hidden !important; }
-body.presenting .slide {
-  position: fixed !important; inset: 0;
-  width: var(--pdw, 1440px) !important; height: var(--pdh, 900px) !important;
-  transform-origin: top left;
-  transform: translate(var(--pox, 0px), var(--poy, 0px)) scale(var(--ps, 1)) !important;
-  scroll-snap-align: none !important; display: none !important;
-}
+body.presenting .slide { position: fixed !important; inset: 0; width: 100vw !important; height: 100vh !important; transform-origin: center center; scroll-snap-align: none !important; display: none !important; }
 body.presenting .slide.p-on { display: flex !important; }
-body.presenting .nav-dots,
-body.presenting .keyboard-hint,
-body.presenting .slide-credit { display: none !important; }
 body.presenting #present-btn { display: none !important; }
 body.presenting #present-counter { display: block; }
-
-/* ═══════════════════════════════════════════════
-   PROGRESS BAR & NAV DOTS
-   ═══════════════════════════════════════════════ */
-.progress-bar {
-  position: fixed; top: 0; left: 0; height: 3px;
-  background: var(--green); width: 0%; z-index: 100;
-  transition: width 0.3s ease;
+body.presenting.presenting-black .slide { visibility: hidden !important; }
+body.presenting.presenting-black::after { content: ''; position: fixed; inset: 0; background: #000; z-index: 99999; }
+body.presenting .nav-dots,
+body.presenting .edit-hotzone,
+body.presenting .edit-toggle,
+body.presenting #notes-panel { display: none !important; }
+.slide-credit {
+    position: absolute; bottom: 8px; right: 14px;
+    font-size: 9px; color: var(--text-muted); opacity: 0.35;
+    pointer-events: none; z-index: 1; font-family: system-ui, sans-serif;
 }
+body.presenting .slide-credit { display: none !important; }
 
 /* ═══════════════════════════════════════════════
    EDIT MODE
    ═══════════════════════════════════════════════ */
-.edit-hotzone {
-  position: fixed; top: 0; left: 0; width: 48px; height: 48px;
-  z-index: 9990; cursor: pointer;
-}
+.edit-hotzone { position: fixed; top: 0; left: 0; width: 48px; height: 48px; z-index: 9990; cursor: pointer; }
 .edit-toggle {
-  position: fixed; top: 8px; left: 8px; z-index: 9991;
-  background: var(--bg-panel); border: 1px solid var(--border);
-  border-radius: 4px; padding: 3px 8px;
-  font-family: var(--font-mono); font-size: 0.65rem;
-  color: var(--text-m); cursor: pointer;
-  opacity: 0; transition: opacity 0.2s;
+    position: fixed; top: 8px; left: 8px; z-index: 9991;
+    background: var(--bg-panel); border: 1px solid var(--border);
+    border-radius: 4px; padding: 3px 8px;
+    font-family: var(--font-mono); font-size: 0.65rem;
+    color: var(--text-muted); cursor: pointer;
+    opacity: 0; transition: opacity 0.2s;
 }
-.edit-hotzone:hover ~ .edit-toggle,
-.edit-toggle.show { opacity: 0.6; }
+.edit-hotzone:hover ~ .edit-toggle { opacity: 0.6; }
 .edit-toggle:hover, .edit-toggle.active { opacity: 1 !important; color: var(--green); border-color: var(--green); }
-
+body.editing [contenteditable] { outline: 1px dashed var(--green-muted); }
 #notes-panel {
-  position: fixed; top: 0; right: 0; width: 320px; height: 100vh;
-  background: var(--bg-panel); border-left: 1px solid var(--border);
-  z-index: 9992; display: flex; flex-direction: column;
-  transform: translateX(100%); transition: transform 0.3s ease;
+    position: fixed; top: 0; right: 0; width: 320px; height: 100vh;
+    background: var(--bg-panel); border-left: 1px solid var(--border);
+    z-index: 9992; display: flex; flex-direction: column;
+    transform: translateX(100%); transition: transform 0.3s ease;
 }
-.edit-toggle.active ~ #notes-panel,
 #notes-panel.active { transform: translateX(0) !important; }
 #notes-panel.collapsed #notes-body { display: none; }
 #notes-panel-header {
-  padding: 8px 12px; border-bottom: 1px solid var(--border);
-  cursor: pointer; font-size: 0.65rem; color: var(--text-m);
-  text-transform: uppercase; letter-spacing: 0.1em;
-  display: flex; align-items: center; justify-content: space-between;
+    padding: 8px 12px; border-bottom: 1px solid var(--border);
+    cursor: pointer; font-size: 0.65rem; color: var(--text-muted);
+    text-transform: uppercase; letter-spacing: 0.1em;
+    display: flex; align-items: center; justify-content: space-between;
 }
 #notes-panel-header:hover { background: rgba(255,255,255,0.03); }
 #notes-panel-label { flex: 1; }
-#notes-collapse-btn {
-  font-size: 1rem; color: var(--text-m); background: none; border: none;
-  cursor: pointer; transition: transform 0.2s;
-}
-#notes-panel.collapsed #notes-collapse-btn { transform: rotate(180deg); }
+#notes-collapse-btn { font-size: 1rem; color: var(--text-muted); background: none; border: none; cursor: pointer; }
 #notes-body { padding: 0 12px 12px; }
 #notes-textarea {
-  width: 100%; height: 72px; min-height: 48px; max-height: 200px;
-  resize: vertical; background: transparent; border: none; outline: none;
-  color: var(--text); font-size: 0.75rem; line-height: 1.6;
-  font-family: var(--font-mono);
+    width: 100%; height: 72px; min-height: 48px; max-height: 200px;
+    resize: vertical; background: transparent; border: none; outline: none;
+    color: var(--text); font-size: 0.75rem; line-height: 1.6;
+    font-family: var(--font-mono);
 }
 
+/* Progress bar */
+.progress-bar { position: fixed; top: 0; left: 0; height: 2px; background: var(--green); width: 0%; z-index: 1000; transition: width 0.4s ease; box-shadow: 0 0 8px var(--green); }
+
+/* Nav dots */
+.nav-dots { position: fixed; right: 1.5rem; top: 50%; transform: translateY(-50%); display: flex; flex-direction: column; gap: 0.6rem; z-index: 100; }
+.nav-dots button {
+    font-family: var(--font-mono); font-size: 0.7rem;
+    color: rgba(57,211,83,0.3); cursor: pointer;
+    transition: all 0.2s; background: none; border: none; padding: 0; line-height: 1;
+}
+.nav-dots button.active { color: var(--green); text-shadow: 0 0 6px var(--green); }
 </style>
 </head>
 <body data-export-progress="true" data-preset="Terminal Green">
 
-<div class="terminal-scanlines"></div>
-
 <div class="progress-bar"></div>
-
 <nav class="nav-dots" aria-label="Slide navigation"></nav>
 
-<!-- ═══════════════════════ SLIDES ═══════════════════════ -->
-
-<section class="slide" data-notes="Welcome! This is kai-slide-creator, a zero-dependency HTML presentation generator that runs entirely in your browser.">
-  <div class="slide-content">
-    <div class="reveal t-label">kai-slide-creator v2.16.0</div>
-    <div class="reveal" style="margin-top: 12px;">
-      <div class="g t-cursor" style="border-color: var(--green); padding: clamp(16px, 3vw, 32px);">
-        <div class="t-title">kai-slide-creator</div>
-        <div class="t-subtitle" style="margin-top: 8px;">Zero-Dependency HTML Presentation Generator</div>
-      </div>
+<!-- SLIDE 01: Cover — Boot Sequence -->
+<section class="slide" data-notes="Welcome! Introduce slide-creator's vision: zero-dependency HTML presentations.">
+    <div class="slide-num reveal">[01/08] &gt; BOOT_SEQUENCE</div>
+    <div class="boot-lines">
+        <div class="boot-line">&gt; initializing slide-creator v2.17.0...</div>
+        <div class="boot-line">&gt; loading 21 design presets... <span class="ok">[OK]</span></div>
+        <div class="boot-line">&gt; zero dependencies confirmed... <span class="ok">[OK]</span></div>
+        <div class="boot-line">&gt; ready.<span class="cursor">|</span></div>
     </div>
-    <div style="margin-top: clamp(16px, 3vw, 32px); display: flex; gap: 8px; flex-wrap: wrap;">
-      <span class="pill">21 Presets</span>
-      <span class="pill info">0 Dependencies</span>
-      <span class="pill warn">100% Browser</span>
+    <div class="main-title">
+        <div class="label">&gt; SYSTEM_NAME</div>
+        <h1>slide-creator</h1>
+        <hr class="rule">
+        <p># Zero-dependency HTML presentations<br># For Claude Code &amp; OpenClaw</p>
+        <div class="stat-row">
+            <div class="stat"><span class="stat-val">21</span><span class="stat-label">&gt; PRESETS</span></div>
+            <div class="stat"><span class="stat-val">0</span><span class="stat-label">&gt; DEPENDENCIES</span></div>
+            <div class="stat"><span class="stat-val">∞</span><span class="stat-label">&gt; SLIDES</span></div>
+        </div>
     </div>
-    <div style="margin-top: clamp(12px, 2vw, 24px);">
-      <div class="t-comment" style="font-size: clamp(0.6rem, 1vw, 0.75rem); line-height: 1.8;">
-        [  OK  ] Loaded design presets module<br>
-        [  OK  ] Initialized playback engine<br>
-        [  OK  ] Mounted editor subsystem<br>
-        <span class="t-info">&gt; _</span>
-      </div>
-    </div>
-  </div>
 </section>
 
-<section class="slide" data-notes="Traditional presentation tools have real problems that we set out to solve.">
-  <div class="slide-content">
-    <div class="reveal chapter-num">01</div>
-    <div class="reveal" style="margin-top: -24px;">
-      <div class="t-h2 t-prompt">why_another_presentation_tool</div>
-      <div class="t-subtitle">The Limits of Traditional Tools</div>
+<!-- SLIDE 02: Problem -->
+<section class="slide" data-notes="The problem: existing presentation tools are broken.">
+    <div class="slide-num reveal">[02/08] &gt; PROBLEM_STATEMENT</div>
+    <div class="label reveal">&gt; KNOWN_ISSUES</div>
+    <h2 class="reveal">Presentations shouldn't <span class="accent">require</span><br>a build system</h2>
+    <hr class="rule reveal">
+    <ul class="pain-list">
+        <li class="reveal"><span>// Complex toolchains: npm install, webpack configs, 300MB node_modules just to publish slides</span></li>
+        <li class="reveal"><span>// Generic output: every AI presentation looks the same — Inter font, purple gradients, no personality</span></li>
+        <li class="reveal"><span>// No ownership: walled gardens, export restrictions, paying monthly for your own content</span></li>
+    </ul>
+    <div class="terminal-block reveal">
+        <span class="comment"># What you actually want</span><br>
+        <span class="prompt">$</span> <span class="cmd">/slide-creator</span>  <span class="comment"># Done.</span>
     </div>
-    <div class="reveal" style="margin-top: clamp(16px, 2vw, 24px);">
-      <div class="cols2">
-        <div class="g">
-          <div class="t-label" style="margin-bottom: 8px;"><span class="dot" style="background:var(--red)"></span>Traditional Problems</div>
-          <div class="t-body" style="font-size: clamp(0.65rem, 1.1vw, 0.8rem); line-height: 2;">
-            <span class="t-comment"># Template lock-in</span><br>
-            PPT templates all look identical<br>
-            <span class="t-comment"># AI generic aesthetic</span><br>
-            AI generates bland, generic slides<br>
-            <span class="t-comment"># Export breaks design</span><br>
-            Export loses visual consistency
-          </div>
-        </div>
-        <div class="g" style="border-color: var(--green);">
-          <div class="t-label" style="margin-bottom: 8px;"><span class="dot green"></span>Our Approach</div>
-          <div class="t-body" style="font-size: clamp(0.65rem, 1.1vw, 0.8rem); line-height: 2;">
-            <span class="t-info">From design presets</span><br>
-            21 signature visual languages<br>
-            <span class="t-info">Pure HTML output</span><br>
-            Every file runs in any browser<br>
-            <span class="t-info">In-browser editing</span><br>
-            Change content, save as HTML
-          </div>
-        </div>
-      </div>
-    </div>
-    <div class="reveal" style="margin-top: 12px;">
-      <div class="co">You own the content. AI owns the structure and visual presentation.</div>
-    </div>
-  </div>
 </section>
 
-<section class="slide" data-notes="We offer 21 design presets, each with a signature visual language that avoids generic AI aesthetic.">
-  <div class="slide-content">
-    <div class="reveal t-h2 t-prompt">ls presets/ | head -21</div>
-    <div class="reveal t-subtitle" style="margin-top: -4px;">21 Design Presets, Each with Signature Visual Language</div>
-    <div class="reveal" style="margin-top: clamp(12px, 2vw, 20px);">
-      <div class="bento">
-        <div class="g span2" style="border-left: 3px solid var(--green);">
-          <div class="t-label">Bold Signal</div>
-          <div class="t-body" style="font-size: clamp(0.65rem, 1vw, 0.75rem); margin-top: 4px;">Commercial pitch — high contrast, bold type</div>
-        </div>
-        <div class="g span2" style="border-left: 3px solid var(--blue);">
-          <div class="t-label">Blue Sky</div>
-          <div class="t-body" style="font-size: clamp(0.65rem, 1vw, 0.75rem); margin-top: 4px;">Fresh &amp; technical — sky gradient, glass cards</div>
-        </div>
-        <div class="g" style="border-left: 3px solid var(--green);">
-          <div class="t-label" style="color: var(--green);">Terminal Green</div>
-          <div class="t-body" style="font-size: clamp(0.65rem, 1vw, 0.75rem); margin-top: 4px;">Dev tools — monospace, scan lines</div>
-        </div>
-        <div class="g" style="border-left: 3px solid var(--text-m);">
-          <div class="t-label">Enterprise Dark</div>
-          <div class="t-body" style="font-size: clamp(0.65rem, 1vw, 0.75rem); margin-top: 4px;">Data dashboard — dark panels</div>
-        </div>
-        <div class="g span2" style="border-left: 3px solid var(--yellow);">
-          <div class="t-label">Modern Newspaper</div>
-          <div class="t-body" style="font-size: clamp(0.65rem, 1vw, 0.75rem); margin-top: 4px;">Research — editorial typography</div>
-        </div>
-        <div class="g span2">
-          <div class="t-label">Aurora Mesh</div>
-          <div class="t-body" style="font-size: clamp(0.65rem, 1vw, 0.75rem); margin-top: 4px;">Product launch — animated gradient</div>
-        </div>
-      </div>
+<!-- SLIDE 03: Discovery -->
+<section class="slide" data-notes="Style discovery workflow: pick by eye, not by description.">
+    <div class="slide-num reveal">[03/08] &gt; DISCOVERY_PROTOCOL</div>
+    <div class="label reveal">&gt; FEATURE</div>
+    <h2 class="reveal">Style discovery that <span class="accent">actually</span> works</h2>
+    <hr class="rule reveal">
+    <p class="reveal" style="margin-bottom: clamp(1rem,2vh,1.5rem);">You can't describe design preferences in words. slide-creator generates 3 visual previews — you react, not describe.</p>
+    <div class="steps">
+        <div class="step reveal"><span class="step-num">01&gt;</span><div class="step-text">Ask about the vibe → <span class="accent">system queries your intent</span></div></div>
+        <div class="step reveal"><span class="step-num">02&gt;</span><div class="step-text">Generate 3 mini-previews → <span class="accent">render, don't describe</span></div></div>
+        <div class="step reveal"><span class="step-num">03&gt;</span><div class="step-text">Pick the one that <span class="accent">feels right</span> → proceed</div></div>
     </div>
-  </div>
 </section>
 
-<section class="slide" data-notes="Three core modules power the entire presentation lifecycle from creation to delivery.">
-  <div class="slide-content">
-    <div class="reveal chapter-num">02</div>
-    <div class="reveal" style="margin-top: -24px;">
-      <div class="t-h2 t-prompt">cat core_features.sh</div>
-      <div class="t-subtitle">Three Core Modules, Full Lifecycle Support</div>
+<!-- SLIDE 04: 21 Presets -->
+<section class="slide" data-notes="Showcase all 21 design presets.">
+    <div class="slide-num reveal">[04/08] &gt; PRESET_REGISTRY</div>
+    <div class="label reveal">&gt; LOADED_MODULES</div>
+    <h2 class="reveal">19 curated styles.<br><span class="accent">No generic AI aesthetics.</span></h2>
+    <hr class="rule reveal">
+    <div class="preset-grid reveal">
+        <span class="preset-tag">Bold Signal</span>
+        <span class="preset-tag">Electric Studio</span>
+        <span class="preset-tag">Creative Voltage</span>
+        <span class="preset-tag">Dark Botanical</span>
+        <span class="preset-tag">Blue Sky</span>
+        <span class="preset-tag">Notebook Tabs</span>
+        <span class="preset-tag">Pastel Geometry</span>
+        <span class="preset-tag">Split Pastel</span>
+        <span class="preset-tag">Vintage Editorial</span>
+        <span class="preset-tag">Neon Cyber</span>
+        <span class="preset-tag" style="border-color: var(--green); color:var(--green); background: rgba(57,211,83,0.12);">Terminal Green ◀</span>
+        <span class="preset-tag">Swiss Modern</span>
+        <span class="preset-tag">Paper &amp; Ink</span>
+        <span class="preset-tag">Aurora Mesh</span>
+        <span class="preset-tag">Enterprise Dark</span>
+        <span class="preset-tag">Glassmorphism</span>
+        <span class="preset-tag">Neo-Brutalism</span>
+        <span class="preset-tag">Chinese Chan</span>
+        <span class="preset-tag">Data Story</span>
     </div>
-    <div class="reveal" style="margin-top: clamp(16px, 2vw, 24px);">
-      <div class="cols3">
-        <div class="g" style="text-align: center;">
-          <div class="stat">
-            <div class="num">F5</div>
-            <div class="label">Playback</div>
-          </div>
-          <div class="t-body" style="font-size: clamp(0.6rem, 1vw, 0.75rem); margin-top: 8px;">Full-screen, auto-scale, smart controls</div>
-        </div>
-        <div class="g" style="text-align: center;">
-          <div class="stat">
-            <div class="num" style="color: var(--blue);">P</div>
-            <div class="label">Presenter</div>
-          </div>
-          <div class="t-body" style="font-size: clamp(0.6rem, 1vw, 0.75rem); margin-top: 8px;">Notes, timer, page count — synced</div>
-        </div>
-        <div class="g" style="text-align: center;">
-          <div class="stat">
-            <div class="num" style="color: var(--yellow);">E</div>
-            <div class="label">Editor</div>
-          </div>
-          <div class="t-body" style="font-size: clamp(0.6rem, 1vw, 0.75rem); margin-top: 8px;">Click to edit, Ctrl+S to save</div>
-        </div>
-      </div>
-    </div>
-  </div>
+    <p class="reveal" style="margin-top: clamp(1rem,2vh,1.5rem);">
+        <span style="color:var(--green);">// 19 entries loaded.</span> Each delivered as a complete self-contained HTML file.
+    </p>
 </section>
 
-<section class="slide" data-notes="Press F5 for instant fullscreen playback. No installation needed — your browser is the projector.">
-  <div class="slide-content">
-    <div class="reveal t-h2 t-prompt">playback --mode fullscreen</div>
-    <div class="reveal t-subtitle" style="margin-top: -4px;">Press F5 — Instant Fullscreen Playback</div>
-    <div class="reveal" style="margin-top: clamp(12px, 2vw, 20px);">
-      <div class="layer"><div class="layer-num">01</div><div class="t-body"><kbd>F5</kbd> or click play to enter fullscreen<br><span class="t-comment">Control bar and counter auto-hide</span></div></div>
-      <div class="layer"><div class="layer-num">02</div><div class="t-body">Slides auto-scale to fit screen<br><span class="t-comment">Preserves design ratio, no distortion</span></div></div>
-      <div class="layer"><div class="layer-num">03</div><div class="t-body">Arrow keys / scroll / swipe to navigate<br><span class="t-comment">Spring physics transition animation</span></div></div>
-      <div class="layer"><div class="layer-num">04</div><div class="t-body">No player install required<br><span class="t-comment">Your browser IS the projector</span></div></div>
+<!-- SLIDE 05: How It Works -->
+<section class="slide" data-notes="Three-command workflow.">
+    <div class="slide-num reveal">[05/08] &gt; EXECUTION_FLOW</div>
+    <div class="label reveal">&gt; HOW_IT_WORKS</div>
+    <h2 class="reveal">Three commands.<br><span class="accent">One presentation.</span></h2>
+    <hr class="rule reveal">
+    <div class="how-steps">
+        <div class="how-step reveal"><span class="how-num">01</span><div class="how-content"><h3><span style="color:var(--green);">/slide-creator</span> — Answer 4 questions</h3><p>Topic, audience, vibe, duration. The system handles the rest.</p></div></div>
+        <div class="how-step reveal"><span class="how-num">02</span><div class="how-content"><h3>Pick your style — React to 3 visual previews</h3><p>No need to describe aesthetics in words. See → Choose → Done.</p></div></div>
+        <div class="how-step reveal"><span class="how-num">03</span><div class="how-content"><h3>Open your presentation — Arrow keys · Space · Swipe</h3><p>Pure HTML. Works offline. No server. No runtime.</p></div></div>
     </div>
-    <div class="reveal" style="margin-top: 12px;">
-      <div class="info-callout">Zero-dependency playback — opens on any device, any OS, no setup.</div>
-    </div>
-  </div>
 </section>
 
-<section class="slide" data-notes="Press P to open the presenter window. The audience sees clean fullscreen, you see notes and controls.">
-  <div class="slide-content">
-    <div class="reveal t-h2 t-prompt">presenter --open --sync</div>
-    <div class="reveal t-subtitle" style="margin-top: -4px;">Presenter Mode — P Key Opens Synced Window</div>
-    <div class="reveal" style="margin-top: clamp(12px, 2vw, 20px);">
-      <div class="cols2">
-        <div class="g">
-          <div class="t-label" style="margin-bottom: 8px;"><span class="dot green"></span>Audience Sees</div>
-          <div class="t-body" style="font-size: clamp(0.65rem, 1.1vw, 0.8rem); line-height: 2.2;">
-            Full-screen slides<br>
-            Clean, distraction-free<br>
-            Auto-scale to screen<br>
-            No UI elements
-          </div>
-        </div>
-        <div class="g">
-          <div class="t-label" style="margin-bottom: 8px;"><span class="dot yellow"></span>Presenter Sees</div>
-          <div class="t-body" style="font-size: clamp(0.65rem, 1.1vw, 0.8rem); line-height: 2.2;">
-            Speaker notes<br>
-            Countdown timer<br>
-            Current / total slides<br>
-            Navigation controls
-          </div>
-        </div>
-      </div>
+<!-- SLIDE 06: Key Features -->
+<section class="slide" data-notes="Core features: viewport fit, edit mode, PPT export, two-stage flow.">
+    <div class="slide-num reveal">[06/08] &gt; FEATURE_FLAGS</div>
+    <div class="label reveal">&gt; CAPABILITIES</div>
+    <h2 class="reveal">Built for <span class="accent">real use.</span></h2>
+    <hr class="rule reveal">
+    <div class="feature-grid">
+        <div class="feature-card reveal"><div class="feature-title">&gt; VIEWPORT_FIT</div><div class="feature-desc">Each slide fits exactly 100vh. Never scrolls. Every layout designed for the viewport.</div></div>
+        <div class="feature-card reveal"><div class="feature-title">&gt; INLINE_EDIT</div><div class="feature-desc">Press E, click any text, Ctrl+S to save. Edit mode built into every presentation.</div></div>
+        <div class="feature-card reveal"><div class="feature-title">&gt; PPTX_EXPORT</div><div class="feature-desc"><code>/slide-creator --export pptx</code> — Convert to PowerPoint when the board needs it.</div></div>
+        <div class="feature-card reveal"><div class="feature-title">&gt; TWO_STAGE</div><div class="feature-desc"><code>--plan</code> creates outline first. <code>--generate</code> produces final HTML. Review before committing.</div></div>
     </div>
-    <div class="reveal" style="margin-top: 12px;">
-      <div class="co">Press <kbd>P</kbd> to open — syncs page navigation via BroadcastChannel.</div>
-    </div>
-  </div>
 </section>
 
-<section class="slide" data-notes="Press E to enter edit mode. Click any text to modify. Ctrl+S saves back to the HTML file.">
-  <div class="slide-content">
-    <div class="reveal t-h2 t-prompt">edit --mode inline</div>
-    <div class="reveal t-subtitle" style="margin-top: -4px;">Browser Editor — Edit In-Place, Save as HTML</div>
-    <div class="reveal" style="margin-top: clamp(12px, 2vw, 20px);">
-      <div class="cols3">
-        <div class="g">
-          <div class="step" data-step="Step 1">
-            <div class="t-body" style="font-size: clamp(0.65rem, 1.1vw, 0.8rem); line-height: 1.8;">
-              Press <kbd>E</kbd> to enter edit mode<br>
-              <span class="t-comment">All text becomes editable</span>
-            </div>
-          </div>
-        </div>
-        <div class="g">
-          <div class="step" data-step="Step 2">
-            <div class="t-body" style="font-size: clamp(0.65rem, 1.1vw, 0.8rem); line-height: 1.8;">
-              Click any text to modify<br>
-              <span class="t-comment">Real-time preview</span>
-            </div>
-          </div>
-        </div>
-        <div class="g">
-          <div class="step" data-step="Step 3">
-            <div class="t-body" style="font-size: clamp(0.65rem, 1.1vw, 0.8rem); line-height: 1.8;">
-              <kbd>Ctrl</kbd>+<kbd>S</kbd> saves as HTML<br>
-              <span class="t-comment">Changes persist to file</span>
-            </div>
-          </div>
-        </div>
-      </div>
+<!-- SLIDE 07: Install -->
+<section class="slide" data-notes="Installation: Claude Code and OpenClaw.">
+    <div class="slide-num reveal">[07/08] &gt; INSTALL_SEQUENCE</div>
+    <div class="label reveal">&gt; SETUP</div>
+    <h2 class="reveal">Two lines.<br><span class="accent">Zero setup.</span></h2>
+    <hr class="rule reveal">
+    <div class="label reveal" style="margin-top: clamp(1rem,2vh,1.5rem);">&gt; CLAUDE_CODE</div>
+    <div class="terminal-block reveal">
+        <span class="prompt">$</span> <span class="cmd">git clone https://github.com/kaisersong/slide-creator \</span><br>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="cmd">~/.claude/skills/slide-creator</span><br>
+        <span class="comment"># That's it. Restart Claude Code.</span>
     </div>
-    <div class="reveal" style="margin-top: 12px;">
-      <div class="info-callout">Edit mode is always on. No extra config, no build step, no server.</div>
+    <div class="label reveal">&gt; OPENCLAW</div>
+    <div class="terminal-block reveal">
+        <span class="prompt">$</span> <span class="cmd">clawhub install html-slide-creator</span><br>
+        <span class="comment"># One command. Ready to use.</span>
     </div>
-  </div>
 </section>
 
-<section class="slide" data-notes="One command, three minutes to a draft. The entire workflow from planning to generation is automated.">
-  <div class="slide-content">
-    <div class="reveal chapter-num">03</div>
-    <div class="reveal" style="margin-top: -24px;">
-      <div class="t-h2 t-prompt">slide-creator --help</div>
-      <div class="t-subtitle">One Command, Three Minutes to Draft</div>
+<!-- SLIDE 08: CTA / Close -->
+<section class="slide" data-notes="Run it. Blinking cursor to end.">
+    <div class="slide-num reveal">[08/08] &gt; READY</div>
+    <div class="label reveal">&gt; EXECUTE</div>
+    <h2 class="reveal" style="color:var(--text);">Run it.<span class="cursor">|</span></h2>
+    <hr class="rule reveal">
+    <div class="cta-block reveal">
+        <div class="cta-cmd">/slide-creator</div>
+        <div class="cta-sub">Available on Claude Code and OpenClaw.</div>
     </div>
-    <div class="reveal" style="margin-top: clamp(16px, 2vw, 24px);">
-      <div class="cols3">
-        <div class="g">
-          <div class="t-label" style="margin-bottom: 6px;">--plan</div>
-          <div class="cmd" style="border: none; padding: 6px 0;">/slide-creator --plan</div>
-          <div class="t-body" style="font-size: clamp(0.6rem, 1vw, 0.7rem); margin-top: 6px;">Generates PLANNING.md outline.<br>Edit before generating.</div>
-        </div>
-        <div class="g">
-          <div class="t-label" style="margin-bottom: 6px;">--generate</div>
-          <div class="cmd" style="border: none; padding: 6px 0;">/slide-creator --generate</div>
-          <div class="t-body" style="font-size: clamp(0.6rem, 1vw, 0.7rem); margin-top: 6px;">Generates HTML from outline.<br>16 quality checks.</div>
-        </div>
-        <div class="g">
-          <div class="t-label" style="margin-bottom: 6px;">--review</div>
-          <div class="cmd" style="border: none; padding: 6px 0;">/slide-creator --review</div>
-          <div class="t-body" style="font-size: clamp(0.6rem, 1vw, 0.7rem); margin-top: 6px;">Checks existing HTML.<br>Auto-fixes common issues.</div>
-        </div>
-      </div>
-    </div>
-    <div class="reveal" style="margin-top: 12px;">
-      <div class="t-divider"></div>
-      <div class="co">Or just give content + style name directly — generate immediately.</div>
-    </div>
-  </div>
-</section>
-
-<section class="slide" data-notes="Different content types pair with different styles. Here's our recommendation matrix.">
-  <div class="slide-content">
-    <div class="reveal t-h2 t-prompt">cat style_recommendations.md</div>
-    <div class="reveal t-subtitle" style="margin-top: -4px;">Match Content to Style at a Glance</div>
-    <div class="reveal" style="margin-top: clamp(12px, 2vw, 20px);">
-      <table class="t-table">
-        <thead><tr><th>Content Type</th><th>Recommended Styles</th></tr></thead>
-        <tbody>
-          <tr><td><span class="pill">Data / KPI</span></td><td class="t-comment">Data Story, Enterprise Dark, Swiss Modern</td></tr>
-          <tr><td><span class="pill warn">Pitch / VC</span></td><td class="t-comment">Bold Signal, Aurora Mesh, Enterprise Dark</td></tr>
-          <tr><td><span class="pill info">Dev Tool / API</span></td><td class="t-comment">Terminal Green, Neon Cyber, Neo-Retro Dev</td></tr>
-          <tr><td><span class="pill">Research</span></td><td class="t-comment">Modern Newspaper, Paper &amp; Ink, Swiss Modern</td></tr>
-          <tr><td><span class="pill warn">Creative</span></td><td class="t-comment">Vintage Editorial, Split Pastel, Neo-Brutalism</td></tr>
-          <tr><td><span class="pill info">Product / SaaS</span></td><td class="t-comment">Aurora Mesh, Glassmorphism, Electric Studio</td></tr>
-        </tbody>
-      </table>
-    </div>
-  </div>
-</section>
-
-<section class="slide" data-notes="The tech specs are dead simple: zero npm dependencies, three core files, runs in any browser.">
-  <div class="slide-content">
-    <div class="reveal t-h2 t-prompt">npm ls --depth=0</div>
-    <div class="reveal t-subtitle" style="margin-top: -4px;">Zero Dependencies, Pure Browser Runtime</div>
-    <div class="reveal" style="margin-top: clamp(16px, 2vw, 24px);">
-      <div class="cols4">
-        <div class="g" style="text-align: center;">
-          <div class="stat"><div class="num">0</div><div class="label">npm packages</div></div>
-        </div>
-        <div class="g" style="text-align: center;">
-          <div class="stat"><div class="num" style="color: var(--blue);">3</div><div class="label">core files</div></div>
-          <div class="t-body" style="font-size: clamp(0.55rem, 0.9vw, 0.7rem); margin-top: 4px;">HTML / CSS / JS</div>
-        </div>
-        <div class="g" style="text-align: center;">
-          <div class="stat"><div class="num" style="color: var(--yellow);">\u221e</div><div class="label">extensible</div></div>
-          <div class="t-body" style="font-size: clamp(0.55rem, 0.9vw, 0.7rem); margin-top: 4px;">custom themes</div>
-        </div>
-        <div class="g" style="text-align: center;">
-          <div class="stat"><div class="num">1</div><div class="label">runtime</div></div>
-          <div class="t-body" style="font-size: clamp(0.55rem, 0.9vw, 0.7rem); margin-top: 4px;">browser only</div>
-        </div>
-      </div>
-    </div>
-    <div class="reveal" style="margin-top: 12px;">
-      <div class="info-callout">Every generated HTML file is self-contained. Double-click to open in any browser.</div>
-    </div>
-  </div>
-</section>
-
-<section class="slide" data-notes="We've been iterating consistently. v1.x established the foundation, v2.x added intelligent generation.">
-  <div class="slide-content">
-    <div class="reveal t-h2 t-prompt">git log --oneline --all</div>
-    <div class="reveal t-subtitle" style="margin-top: -4px;">Continuous Iteration, Getting Stronger Weekly</div>
-    <div class="reveal" style="margin-top: clamp(12px, 2vw, 20px);">
-      <div class="layer"><div class="layer-num">v1.x</div><div class="t-body"><span class="t-info">Foundation</span> — Playback, editor, first 7 presets</div></div>
-      <div class="layer"><div class="layer-num">v1.5</div><div class="t-body"><span class="t-info">Style expansion</span> — 21 presets, Cloud Bank Hero, Orbital Rings</div></div>
-      <div class="layer"><div class="layer-num">v2.x</div><div class="t-body"><span class="t-info">Smart generation</span> — AI planning, review system, PPT conversion</div></div>
-      <div class="layer"><div class="layer-num">v2.16</div><div class="t-body"><span class="t-info">Render engine upgrade</span> — Theme cards, component modifiers, 26 regression tests</div></div>
-    </div>
-    <div class="reveal" style="margin-top: 12px;">
-      <div class="co">Dual-channel release: GitHub + ClawHub</div>
-    </div>
-  </div>
-</section>
-
-<section class="slide" data-notes="That's kai-slide-creator. Start with a design preset and let your content speak for itself.">
-  <div class="slide-content" style="text-align: center; align-items: center;">
-    <div class="reveal">
-      <div class="g" style="padding: clamp(24px, 4vw, 48px); max-width: min(80vw, 700px); margin: 0 auto; border-color: var(--green);">
-        <span class="pill" style="margin-bottom: 12px;">Start Here</span>
-        <div style="font-size: clamp(1.2rem, 3vw, 2rem); font-weight: 700; color: var(--green); margin-top: 12px;">Start with a Design Preset</div>
-        <div class="t-subtitle" style="margin-top: 8px;">Let Your Content Speak for Itself</div>
-        <div class="t-divider"></div>
-        <div class="cmd" style="text-align: left; margin-top: 8px;">/slide-creator "your topic" --style "Terminal Green"</div>
-        <div class="t-comment" style="font-size: clamp(0.6rem, 1vw, 0.75rem); margin-top: 8px;">First draft in 3 minutes.</div>
-      </div>
-    </div>
-    <div class="reveal" style="margin-top: 16px;">
-      <div class="t-eof-sub">exit 0 <span class="t-cursor"></span></div>
-    </div>
-  </div>
+    <p class="reveal" style="margin-top: clamp(1.5rem,3vh,2rem);">
+        <span style="color:var(--green);"># 19 presets loaded. 0 dependencies. ∞ slides.</span><br>
+        <span style="color:var(--comment);"># Your presentation. Your file. No platform lock.</span>
+    </p>
 </section>
 
 <!-- Edit mode UI -->
 <div class="edit-hotzone"></div>
 <button class="edit-toggle" id="editToggle">Edit</button>
-
 <div id="notes-panel">
-  <div id="notes-panel-header">
-    <span id="notes-panel-label">SPEAKER NOTES</span>
-    <button id="notes-collapse-btn" aria-label="Collapse notes">&#x25B2;</button>
-  </div>
-  <div id="notes-body">
-    <textarea id="notes-textarea" placeholder="Speaker notes for this slide..."></textarea>
-  </div>
+    <div id="notes-panel-header">
+        <span id="notes-panel-label">SPEAKER NOTES</span>
+        <button id="notes-collapse-btn" aria-label="Collapse notes">&#x25B2;</button>
+    </div>
+    <div id="notes-body">
+        <textarea id="notes-textarea" placeholder="Speaker notes for this slide..."></textarea>
+    </div>
 </div>
 
-<!-- ═══════════════════════ JAVASCRIPT ═══════════════════════ -->
 <script>
 class SlidePresentation {
-  constructor() {
-    this.slides = document.querySelectorAll('.slide');
-    this.currentSlide = 0;
-    this.channel = new BroadcastChannel('slide-creator-presenter');
-
-    this.slides[0]?.classList.add('visible');
-    this.slides[0]?.querySelectorAll('.reveal').forEach(r => r.classList.add('visible'));
-
-    this.setupNavDots();
-    this.setupObserver();
-    this.setupKeyboard();
-    this.setupTouch();
-    this.setupWheel();
-    this.setupPresenter();
-    this.updateProgress();
-    this.setupEditor();
-  }
-
-  setupNavDots() {
-    const nav = document.querySelector('.nav-dots');
-    if (!nav) return;
-    this.slides.forEach((_, i) => {
-      const dot = document.createElement('button');
-      dot.setAttribute('aria-label', 'Go to slide ' + (i + 1));
-      dot.style.cssText = 'width:8px;height:8px;border-radius:50%;border:none;cursor:pointer;background:var(--border);transition:all 0.3s;';
-      dot.addEventListener('click', () => this.goTo(i));
-      nav.appendChild(dot);
-    });
-  }
-
-  setupObserver() {
-    const observer = new IntersectionObserver((entries) => {
-      entries.forEach(entry => {
-        if (entry.isIntersecting) {
-          entry.target.classList.add('visible');
-          this.currentSlide = Array.prototype.indexOf.call(this.slides, entry.target);
-          this.updateProgress();
-          this.updateDots();
-          this.broadcastState();
-          this.updateNotesPanel();
+    constructor() {
+        this.slides = document.querySelectorAll('.slide');
+        this.currentSlide = 0;
+        this.channel = new BroadcastChannel('slide-creator-presenter');
+        this.slides[0]?.classList.add('visible');
+        this.slides[0]?.querySelectorAll('.reveal').forEach(r => r.classList.add('visible'));
+        this.setupNavDots();
+        this.setupObserver();
+        this.setupKeyboard();
+        this.setupTouch();
+        this.setupWheel();
+        this.setupPresenter();
+        this.updateProgress();
+        this.initWatermark();
+        this.setupEditor();
+        this.setupNotesSync();
+    }
+    setupNavDots() {
+        const nav = document.querySelector('.nav-dots'); if (!nav) return;
+        this.slides.forEach((_, i) => {
+            const dot = document.createElement('button');
+            dot.setAttribute('aria-label', `Go to slide ${i + 1}`);
+            dot.addEventListener('click', () => this.goTo(i));
+            nav.appendChild(dot);
+        });
+    }
+    setupObserver() {
+        const observer = new IntersectionObserver(entries => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                    const idx = [...this.slides].indexOf(entry.target);
+                    if (idx !== -1) { this.currentSlide = idx; this.updateProgress(); this.updateDots(); this.broadcastState(); this.updateNotesPanel(); }
+                }
+            });
+        }, { threshold: 0.5 });
+        this.slides.forEach(s => observer.observe(s));
+    }
+    setupKeyboard() {
+        document.addEventListener('keydown', e => {
+            if (document.activeElement.isContentEditable) return;
+            if (e.key === 'ArrowDown' || e.key === 'ArrowRight' || e.key === ' ' || e.key === 'PageDown' || e.key === 'Enter') { e.preventDefault(); this.next(); }
+            if (e.key === 'ArrowUp' || e.key === 'ArrowLeft' || e.key === 'PageUp') { e.preventDefault(); this.prev(); }
+            if (e.key === 'Home') { e.preventDefault(); this.goTo(0); }
+            if (e.key === 'End') { e.preventDefault(); this.goTo(this.slides.length - 1); }
+            if (e.key === 'e' || e.key === 'E') this.setupEditor();
+            if (e.key === 'p' || e.key === 'P') this.togglePresenter();
+            if (e.key === 'F5') setTimeout(() => this.togglePresenter(), 300);
+        });
+    }
+    setupTouch() {
+        let start = null;
+        document.addEventListener('touchstart', e => { start = e.touches[0].clientY; }, { passive: true });
+        document.addEventListener('touchend', e => { if (start !== null) { const diff = start - e.changedTouches[0].clientY; if (Math.abs(diff) > 50) { diff > 0 ? this.next() : this.prev(); } start = null; } });
+    }
+    setupWheel() {
+        let ticking = false;
+        document.addEventListener('wheel', () => { if (!ticking) { requestAnimationFrame(() => { this.updateProgress(); this.updateDots(); this.broadcastState(); this.updateNotesPanel(); ticking = false; }); ticking = true; } }, { passive: true });
+    }
+    setupPresenter() {
+        this.channel.onmessage = e => { if (e.data.type === 'goTo') this.goTo(e.data.index); };
+    }
+    next() { if (this.currentSlide < this.slides.length - 1) this.goTo(this.currentSlide + 1); }
+    prev() { if (this.currentSlide > 0) this.goTo(this.currentSlide - 1); }
+    goTo(idx) { if (idx >= 0 && idx < this.slides.length) this.slides[idx].scrollIntoView({ behavior: 'smooth' }); }
+    updateProgress() { const bar = document.querySelector('.progress-bar'); if (bar) bar.style.width = ((this.currentSlide + 1) / this.slides.length * 100) + '%'; const counter = document.getElementById('present-counter'); if (counter) counter.textContent = `${this.currentSlide + 1} / ${this.slides.length}`; }
+    updateDots() { document.querySelectorAll('.nav-dots button').forEach((dot, i) => { dot.classList.toggle('active', i === this.currentSlide); }); }
+    broadcastState() { this.channel.postMessage({ type: 'goTo', index: this.currentSlide }); }
+    updateNotesPanel() { const notes = document.getElementById('notes-textarea'); if (notes) { const slide = this.slides[this.currentSlide]; notes.value = slide?.dataset.notes || ''; } }
+    setupNotesSync() {
+        const notes = document.getElementById('notes-textarea');
+        if (!notes) return;
+        notes.addEventListener('input', () => {
+            const slide = this.slides[this.currentSlide];
+            if (slide) slide.dataset.notes = notes.value;
+            this.channel.postMessage({ type: 'notes', index: this.currentSlide, text: notes.value });
+        });
+    }
+    setupEditor() {
+        const hotzone = document.querySelector('.edit-hotzone');
+        const toggle = document.querySelector('.edit-toggle');
+        const panel = document.getElementById('notes-panel');
+        if (!hotzone || !toggle) return;
+        let editing = false;
+        const toggleEdit = () => {
+            editing = !editing;
+            document.body.classList.toggle('editing', editing);
+            toggle.classList.toggle('active', editing);
+            this.slides.forEach(s => { s.querySelectorAll('h1,h2,h3,p,span,li,.feature-desc,.step-text,.cta-sub').forEach(el => { el.contentEditable = editing ? 'true' : 'false'; }); });
+            if (panel) panel.classList.toggle('active', editing);
+        };
+        hotzone.addEventListener('click', toggleEdit);
+        toggle.addEventListener('click', toggleEdit);
+        if (panel) {
+            const header = document.getElementById('notes-panel-header');
+            if (header) header.addEventListener('click', () => panel.classList.toggle('collapsed'));
         }
-      });
-    }, { threshold: 0.5 });
-    this.slides.forEach(s => observer.observe(s));
-  }
-
-  setupKeyboard() {
-    const self = this;
-    document.addEventListener('keydown', function(e) {
-      if (e.target.getAttribute('contenteditable')) return;
-      if (e.key === 'ArrowDown' || e.key === 'ArrowRight' || e.key === ' ' || e.key === 'PageDown' || e.key === 'Enter') {
-        e.preventDefault(); self.next();
-      } else if (e.key === 'ArrowUp' || e.key === 'ArrowLeft' || e.key === 'PageUp' || e.key === 'Backspace') {
-        e.preventDefault(); self.prev();
-      } else if (e.key === 'Home') { e.preventDefault(); self.goTo(0); }
-      else if (e.key === 'End') { e.preventDefault(); self.goTo(self.slides.length - 1); }
-      else if (e.key === 'p' || e.key === 'P') {
-        const url = location.href.split('?')[0] + '?presenter';
-        window.open(url, 'slide-presenter-' + Date.now(), 'width=1100,menubar=no,toolbar=no');
-      } else if (e.key === 'e' || e.key === 'E') {
-        if (!self.editor?.active) self.editor?.enter();
-        else self.editor?.exit();
-      }
-    });
-  }
-
-  setupTouch() {
-    const self = this;
-    let startY = 0;
-    document.addEventListener('touchstart', e => { startY = e.touches[0].clientY; }, { passive: true });
-    document.addEventListener('touchend', e => {
-      const delta = startY - e.changedTouches[0].clientY;
-      if (Math.abs(delta) > 50) delta > 0 ? self.next() : self.prev();
-    });
-  }
-
-  setupWheel() {
-    // scroll-snap-type: y mandatory handles wheel natively
-  }
-
-  setupPresenter() {
-    const self = this;
-    this.channel.addEventListener('message', function(e) {
-      if (e.data.type === 'nav-next') self.next();
-      else if (e.data.type === 'nav-prev') self.prev();
-      else if (e.data.type === 'request-state') self.broadcastState();
-    });
-  }
-
-  broadcastState() {
-    const slide = this.slides[this.currentSlide];
-    this.channel.postMessage({
-      type: 'state',
-      index: this.currentSlide,
-      total: this.slides.length,
-      notes: slide?.dataset.notes || ''
-    });
-  }
-
-  goTo(index) {
-    this.slides[index]?.scrollIntoView({ behavior: 'smooth' });
-  }
-  next() { this.goTo(Math.min(this.currentSlide + 1, this.slides.length - 1)); }
-  prev() { this.goTo(Math.max(this.currentSlide - 1, 0)); }
-
-  updateProgress() {
-    const pct = (this.currentSlide / (this.slides.length - 1)) * 100;
-    const bar = document.querySelector('.progress-bar');
-    if (bar) bar.style.width = pct + '%';
-  }
-
-  updateDots() {
-    document.querySelectorAll('.nav-dots button').forEach((dot, i) => {
-      dot.style.background = i === this.currentSlide ? 'var(--green)' : 'var(--border)';
-      dot.style.transform = i === this.currentSlide ? 'scale(1.4)' : 'scale(1)';
-    });
-  }
-
-  setupEditor() {
-    const self = this;
-    const panel = document.getElementById('notes-panel');
-    const label = document.getElementById('notes-panel-label');
-    const textarea = document.getElementById('notes-textarea');
-    const toggle = document.getElementById('editToggle');
-    const hotzone = document.querySelector('.edit-hotzone');
-    let hideTimeout = null;
-
-    hotzone.addEventListener('mouseenter', function() { clearTimeout(hideTimeout); toggle.classList.add('show'); });
-    hotzone.addEventListener('mouseleave', function() { hideTimeout = setTimeout(function() { if (!self.editor.active) toggle.classList.remove('show'); }, 400); });
-    toggle.addEventListener('mouseenter', function() { clearTimeout(hideTimeout); });
-    toggle.addEventListener('mouseleave', function() { hideTimeout = setTimeout(function() { if (!self.editor.active) toggle.classList.remove('show'); }, 400); });
-    hotzone.addEventListener('click', function() { self.editor.toggle(); });
-    toggle.addEventListener('click', function() { self.editor.toggle(); });
-
-    document.getElementById('notes-panel-header').addEventListener('click', function() {
-      panel.classList.toggle('collapsed');
-    });
-
-    textarea.addEventListener('input', function() {
-      const slide = self.slides[self.currentSlide];
-      if (slide) { slide.dataset.notes = textarea.value; self.broadcastState(); }
-    });
-
-    document.addEventListener('keydown', function(e) {
-      if ((e.ctrlKey || e.metaKey) && e.key === 's') {
-        e.preventDefault(); self.saveFile();
-      }
-    });
-
-    this.editor = {
-      active: false,
-      toggle: function() { self.editor.active ? self.editor.exit() : self.editor.enter(); },
-      enter: function() {
-        self.editor.active = true;
-        toggle.classList.add('active');
-        toggle.textContent = 'Done';
-        self.slides.forEach(function(s) {
-          s.querySelectorAll('h1,h2,h3,p,li,span,td,th').forEach(function(el) {
-            el.setAttribute('contenteditable', 'true');
-            el.style.outline = 'none';
-          });
+        document.addEventListener('keydown', e => {
+            if (e.key === 'e' || e.key === 'E') { if (document.activeElement.isContentEditable) return; toggleEdit(); }
+            if (editing && (e.key === 's' || e.key === 'S') && (e.ctrlKey || e.metaKey)) {
+                e.preventDefault();
+                const html = '<!DOCTYPE html>\n' + document.documentElement.outerHTML;
+                const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([html], { type: 'text/html' })); a.download = 'terminal-green-en.html'; a.click();
+            }
+            if (editing && e.key === 'Escape') { toggleEdit(); }
         });
-        panel.classList.add('active');
-        self.updateNotesPanel();
-      },
-      exit: function() {
-        self.editor.active = false;
-        toggle.classList.remove('active');
-        toggle.textContent = 'Edit';
-        self.slides.forEach(function(s) {
-          s.querySelectorAll('[contenteditable]').forEach(function(el) {
-            el.removeAttribute('contenteditable');
-            el.style.outline = '';
-          });
-        });
-        panel.classList.remove('active');
-      }
+    }
+    initWatermark() {
+        const lastSlide = this.slides[this.slides.length - 1];
+        if (!lastSlide) return;
+        const credit = document.createElement('div');
+        credit.className = 'slide-credit';
+        credit.textContent = 'By kai-slide-creator v2.17.0 · Terminal Green';
+        lastSlide.appendChild(credit);
+    }
+    togglePresenter() {
+        if (document.body.classList.contains('presenting')) {
+            this._exitPresent();
+        } else {
+            this._enterPresent();
+        }
+    }
+    _enterPresent() {
+        document.body.classList.add('presenting');
+        if (document.documentElement.requestFullscreen) document.documentElement.requestFullscreen().catch(() => {});
+        this._presentScale();
+        this._showPresentSlides();
+        const counter = document.getElementById('present-counter');
+        if (counter) counter.textContent = `${this.currentSlide + 1} / ${this.slides.length}`;
+        const self = this;
+        window.addEventListener('resize', this._presentResizeHandler = () => self._presentScale());
+    }
+    _exitPresent() {
+        document.body.classList.remove('presenting', 'presenting-black');
+        this._presentReset();
+        if (document.fullscreenElement) document.exitFullscreen?.();
+        if (this._presentResizeHandler) window.removeEventListener('resize', this._presentResizeHandler);
+        this.slides[this.currentSlide]?.scrollIntoView({ behavior: 'instant' });
+    }
+    _presentScale() {
+        const vw = window.innerWidth, vh = window.innerHeight;
+        const scale = Math.min(vw / 1440, vh / 900);
+        this.slides.forEach(slide => { slide.style.transform = 'scale(' + scale + ')'; });
+    }
+    _presentReset() {
+        this.slides.forEach(slide => { slide.style.transform = ''; slide.classList.remove('p-on'); });
+    }
+    _showPresentSlides() {
+        this.slides.forEach((s, i) => s.classList.toggle('p-on', i === this.currentSlide));
+    }
+}
+
+if (new URLSearchParams(window.location.search).has('presenter')) {
+    document.body.innerHTML = '<div style="padding:2rem;font-family:monospace;color:#39d353;background:#0d1117;height:100vh;"><h2>Presenter Mode</h2><div id="p-notes" style="margin:1rem 0;color:#c9d1d9;"></div><div id="p-timer" style="color:#8b949e;"></div><div id="p-slide" style="color:#58a6ff;margin-top:0.5rem;"></div></div>';
+    const ch = new BroadcastChannel('slide-creator-presenter');
+    let seconds = 0;
+    setInterval(() => { seconds++; const m = Math.floor(seconds / 60); const s = seconds % 60; const el = document.getElementById('p-timer'); if (el) el.textContent = `Timer: ${m}:${s.toString().padStart(2, '0')}`; }, 1000);
+    ch.onmessage = e => {
+        if (e.data.type === 'goTo') { const el = document.getElementById('p-slide'); if (el) el.textContent = `Slide: ${e.data.index + 1}`; }
+        if (e.data.type === 'notes') { const el = document.getElementById('p-notes'); if (el) { el.textContent = e.data.text || '(no notes)'; el.style.opacity = e.data.text ? '1' : '0.4'; } }
     };
-
-    this._notesLabel = label;
-    this._notesTextarea = textarea;
-  }
-
-  updateNotesPanel() {
-    if (!this.editor?.active) return;
-    const slide = this.slides[this.currentSlide];
-    this._notesLabel.textContent = 'SPEAKER NOTES — SLIDE ' + (this.currentSlide + 1) + ' / ' + this.slides.length;
-    this._notesTextarea.value = slide?.dataset.notes || '';
-  }
-
-  saveFile() {
-    const html = '<!DOCTYPE html>\n' + document.documentElement.outerHTML;
-    const blob = new Blob([html], { type: 'text/html' });
-    const a = document.createElement('a');
-    a.href = URL.createObjectURL(blob);
-    a.download = document.title + '.html';
-    a.click();
-  }
-}
-
-/* ═══════════════════════ PRESENTER MODE ═══════════════════════ */
-if (new URLSearchParams(location.search).has('presenter')) {
-  document.title = 'Presenter — ' + document.title;
-  document.body.innerHTML =
-    '<style>*{box-sizing:border-box;margin:0}body{background:#111;color:#fff;font-family:system-ui,sans-serif}#pv{display:grid;grid-template-columns:1fr 220px;gap:1rem;padding:1.25rem;align-items:start}.pv-panel{background:#1e1e1e;border-radius:12px;padding:1.25rem}#pv-label{font-size:.6rem;letter-spacing:.18em;text-transform:uppercase;color:#555;margin-bottom:.6rem}#pv-notes{font-size:1.05rem;line-height:1.85;color:#d0d0d0}#pv-right{display:flex;flex-direction:column;gap:1rem}#pv-nav{display:flex;align-items:center;justify-content:space-between;gap:.5rem}.pv-arrow{width:32px;height:32px;border-radius:6px;border:1px solid #333;background:#2a2a2a;color:#aaa;font-size:1rem;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:background .15s,color .15s;flex-shrink:0}.pv-arrow:hover{background:#383838;color:#fff}#pv-counter{text-align:center;flex:1}#pv-num{font-size:1.6rem;font-weight:700;font-variant-numeric:tabular-nums;line-height:1}#pv-of{color:#555;font-size:.75rem;margin-top:.2rem}#pv-timer-box{text-align:center}#pv-timer-label{font-size:.6rem;letter-spacing:.18em;text-transform:uppercase;color:#555;margin-bottom:.3rem}#pv-timer{font-size:1.5rem;font-weight:700;font-family:monospace;font-variant-numeric:tabular-nums}</style>' +
-    '<div id="pv"><div class="pv-panel"><div id="pv-label">Speaker Notes</div><div id="pv-notes">Waiting for main window\u2026</div></div><div id="pv-right"><div class="pv-panel"><div id="pv-nav"><button class="pv-arrow" id="pv-prev">\u2190</button><div id="pv-counter"><div id="pv-num">\u2014</div><div id="pv-of">/ \u2014</div></div><button class="pv-arrow" id="pv-next">\u2192</button></div></div><div class="pv-panel" id="pv-timer-box"><div id="pv-timer-label">Elapsed</div><div id="pv-timer">0:00</div></div></div></div>';
-
-  const ch = new BroadcastChannel('slide-creator-presenter');
-  let startTime = null;
-  ch.addEventListener('message', function(e) {
-    if (e.data.type !== 'state') return;
-    if (!startTime) startTime = Date.now();
-    document.getElementById('pv-notes').textContent = e.data.notes || '(no notes for this slide)';
-    document.getElementById('pv-num').textContent = e.data.index + 1;
-    document.getElementById('pv-of').textContent = '/ ' + e.data.total;
-  });
-  ch.postMessage({ type: 'request-state' });
-  setInterval(function() {
-    if (!startTime) return;
-    const s = Math.floor((Date.now() - startTime) / 1000);
-    document.getElementById('pv-timer').textContent = Math.floor(s / 60) + ':' + String(s % 60).padStart(2, '0');
-  }, 1000);
-  document.getElementById('pv-prev').addEventListener('click', function() { ch.postMessage({ type: 'nav-prev' }); });
-  document.getElementById('pv-next').addEventListener('click', function() { ch.postMessage({ type: 'nav-next' }); });
-  document.addEventListener('keydown', function(e) {
-    if (e.key === 'ArrowRight' || e.key === 'ArrowDown' || e.key === ' ' || e.key === 'PageDown' || e.key === 'Enter') ch.postMessage({ type: 'nav-next' });
-    else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp' || e.key === 'PageUp' || e.key === 'Backspace') ch.postMessage({ type: 'nav-prev' });
-  });
 } else {
-  /* ═══════════════════════ PRESENT MODE ═══════════════════════ */
-  class PresentMode {
-    constructor(ctrl) {
-      this.ctrl = ctrl;
-      this.DW = 1440; this.DH = 900;
-      this.active = false;
-      this._resize = () => this._scale();
-      const btn = document.createElement('button');
-      btn.id = 'present-btn'; btn.title = 'Present (F5)';
-      btn.setAttribute('aria-label', 'Present'); btn.textContent = '\u25B6';
-      document.body.appendChild(btn);
-      const counter = document.createElement('div');
-      counter.id = 'present-counter'; document.body.appendChild(counter);
-      btn.addEventListener('click', () => this.enter());
-      document.addEventListener('keydown', e => {
-        if (e.key === 'F5') { e.preventDefault(); this.enter(); }
-        if (e.key === 'Escape' && this.active) this.exit();
-        if ((e.key === 'b' || e.key === 'B') && this.active) document.body.classList.toggle('presenting-black');
-      });
-      document.addEventListener('fullscreenchange', () => {
-        if (!document.fullscreenElement && this.active) this.exit();
-      });
-    }
-    enter() {
-      if (this.active) return;
-      this.active = true;
-      document.body.classList.add('presenting');
-      document.documentElement.requestFullscreen?.().catch(() => {});
-      window.addEventListener('resize', this._resize);
-      this._scale();
-      this._show(this.ctrl.currentSlide);
-      this._origGoTo = this.ctrl.goTo.bind(this.ctrl);
-      this.ctrl.goTo = (i) => {
-        const idx = Math.max(0, Math.min(i, this.ctrl.slides.length - 1));
-        this.ctrl.currentSlide = idx;
-        this.ctrl.slides.forEach((s, j) => s.classList.toggle('visible', j === idx));
-        this._show(idx);
-        this.ctrl.updateProgress?.();
-        this.ctrl.updateDots?.();
-        this.ctrl.broadcastState?.();
-      };
-    }
-    exit() {
-      if (!this.active) return;
-      this.active = false;
-      document.body.classList.remove('presenting', 'presenting-black');
-      document.querySelectorAll('.slide').forEach(s => s.classList.remove('p-on'));
-      if (document.fullscreenElement) document.exitFullscreen?.();
-      window.removeEventListener('resize', this._resize);
-      if (this._origGoTo) { this.ctrl.goTo = this._origGoTo; this._origGoTo = null; }
-      this.ctrl.slides[this.ctrl.currentSlide]?.scrollIntoView({ behavior: 'instant' });
-    }
-    _scale() {
-      const s = Math.min(window.innerWidth / this.DW, window.innerHeight / this.DH);
-      const ox = (window.innerWidth - this.DW * s) / 2;
-      const oy = (window.innerHeight - this.DH * s) / 2;
-      const r = document.documentElement;
-      r.style.setProperty('--pdw', this.DW + 'px');
-      r.style.setProperty('--pdh', this.DH + 'px');
-      r.style.setProperty('--ps', s);
-      r.style.setProperty('--pox', ox + 'px');
-      r.style.setProperty('--poy', oy + 'px');
-    }
-    _show(i) {
-      document.querySelectorAll('.slide').forEach((s, idx) => s.classList.toggle('p-on', idx === i));
-      const c = document.getElementById('present-counter');
-      if (c) c.textContent = (i + 1) + ' / ' + this.ctrl.slides.length;
-    }
-  }
-
-  new PresentMode(new SlidePresentation());
+    new SlidePresentation();
 }
-
-/* Watermark */
-(function() {
-  var slides = document.querySelectorAll('.slide');
-  if (!slides.length) return;
-  var last = slides[slides.length - 1];
-  var credit = document.createElement('div');
-  credit.className = 'slide-credit';
-  credit.textContent = 'By kai-slide-creator v2.16.0 \u00B7 Terminal Green';
-  last.appendChild(credit);
-})();
 </script>
 </body>
 </html>

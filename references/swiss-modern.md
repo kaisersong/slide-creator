@@ -143,12 +143,42 @@ Numbered list, left-aligned. Each item: section number in `3rem Archivo Black` r
 
 ## Signature Elements
 
-- **Visible grid** — 12-column grid as `::before` pseudo on each `.slide`. Present, never overwhelming.
-- **Red accent** — `#ff3300` for exactly one element per slide: a rule, a number, an underline, or a single word. Never a large fill.
-- **Asymmetric anchoring** — Titles attach to left or bottom-left. Negative space is deliberately top-right.
-- **Hard horizontal rules** — `2px solid #0a0a0a` for section separations. No decorative curves, no dashes.
-- **Large structural numbers** — Section counts and stats in `6–9rem Archivo Black` as visual anchors.
-- No gradients. No shadows. No rounded corners. No illustrations.
+### CSS Overlays
+- `body::before`: 12-column grid overlay — faint grid lines at 3% opacity `linear-gradient(rgba(0,0,0,0.03) 1px, transparent 1px)` + `linear-gradient(90deg, rgba(0,0,0,0.03) 1px, transparent 1px)`, `background-size: 40px 40px`, `position: fixed; inset: 0; z-index: 0; pointer-events: none`
+
+### Animations
+- `@keyframes fadeIn`: 元素淡入 — `from { opacity: 0; } to { opacity: 1; }`，配合 `.slide.visible .reveal` 使用 staggered delays (0.05s, 0.1s, 0.15s, 0.2s...)
+
+### Required CSS Classes
+- `.bg-num`: 背景大序号 — `position: absolute; right: clamp(2rem, 5vw, 5rem); top: 0; font-weight: 900; font-size: 25vw; color: #f0f0f0; line-height: 0.85; pointer-events: none; z-index: 0`
+- `.content`: 内容层容器 — `position: relative; z-index: 1; flex: 1; display: flex; flex-direction: column`
+- `.eyebrow`: 小标签 — `font-weight: 600; font-size: clamp(0.65rem, 1vw, 0.75rem); letter-spacing: 0.2em; text-transform: uppercase`
+- `.swiss-stat`: 大数字 — `font-family: "Archivo Black", sans-serif; font-size: clamp(48px, 8vw, 96px); font-weight: 900; line-height: 1.0`
+- `.swiss-rule`: 硬分隔线 — `height: 2px; background: var(--text); border: none`；`.swiss-rule.red` 使用 `background: var(--red)`
+- `.swiss-rule-thin`: 细分隔线 — `height: 1px; background: var(--text-muted); opacity: 0.2`
+
+### Background Rule
+`.slide` 必须设置 `background: #ffffff`。body 为纯白，12 列网格通过 `body::before` 叠加。不使用渐变。
+
+### Style-Specific Rules
+- 每页最多一个红色 `#ff3300` 强调元素，不得用于大面积填充
+- 标题必须非对称锚定（左或左下），永远不居中
+- 无渐变、无阴影、无圆角、无插图
+- 使用 Archivo Black (900) + Nunito (400/600) 字体组合
+- 硬水平分隔线 `2px solid #0a0a0a`，无装饰曲线或虚线
+
+### Signature Checklist
+- [ ] body::before 12 列网格叠加（3% 不透明度）
+- [ ] @keyframes fadeIn（staggered delays）
+- [ ] .bg-num 背景大序号（25vw Archivo Black 900）
+- [ ] .content 内容层（z-index: 1）
+- [ ] .eyebrow 小标签（uppercase, 0.2em 字间距）
+- [ ] .swiss-stat 大数字（Archivo Black 900）
+- [ ] .swiss-rule 硬分隔线（2px solid #0a0a0a）
+- [ ] .swiss-rule.red 红色分隔线（#ff3300）
+- [ ] 每页最多一个红色强调元素
+- [ ] 标题非对称锚定（左或左下）
+- [ ] 无渐变、无阴影、无圆角
 
 ---
 

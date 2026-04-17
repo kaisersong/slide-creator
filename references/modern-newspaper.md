@@ -157,13 +157,47 @@ Full slide `var(--bg-dark)`. Yellow bar top-full-width. White headline bottom-le
 
 ## Signature Elements
 
-- **Yellow bar** — 8–14px solid `#FFCC00` horizontal or vertical rule; marks transitions, section openers, and emphasis anchors. Never used as a background fill for large areas.
-- **Column rules** — `1px solid #111111` vertical lines to divide grid areas, evoking newspaper columns.
-- **Issue stamp** — Top corner in `IBM Plex Mono` 10px: `VOL.01 · NO.03` or a date. Grounds the slide in journalistic convention.
-- **Extreme headline scale** — The headline IS the slide. `font-size: clamp(4rem, 12vw, 9rem)`, `font-weight: 900`, `text-transform: uppercase`. Body text follows at ≤ 1/10th the size.
-- **Negative space as editorial choice** — At least 30% of the slide should be empty. Do not fill it.
-- **Red sparingly** — `#FF3333` for one word, one number, or one callout per slide maximum. Never for large backgrounds.
-- No gradients. No shadows. No illustrations. No photos. Typography and geometry only.
+### CSS Overlays
+- `.np-ghost`: 幽灵数字（背景装饰）— `position: absolute; font-family: 'Oswald', sans-serif; font-weight: 900; font-size: clamp(12rem, 30vw, 28rem); color: rgba(0,0,0,0.05); line-height: 1; pointer-events: none`
+
+### Animations
+- 无 `@keyframes`，全部使用 CSS transitions
+- `.reveal`: 入场动画 — `opacity: 0; transform: translateY(24px); transition: opacity 0.7s cubic-bezier(0.16,1,0.3,1), transform 0.7s cubic-bezier(0.16,1,0.3,1)`
+- `.reveal-left`: 左向入场 — `opacity: 0; transform: translateX(-32px)`，相同 transition
+- Stagger delays: `.reveal:nth-child(1-6)` — `0.05s, 0.15s, 0.25s, 0.35s, 0.42s, 0.49s`
+
+### Required CSS Classes
+- `.np-headline` / `.np-headline-lg` / `.np-headline-sm`: 主标题 — `font-family: 'Oswald'; font-weight: 900; text-transform: uppercase; letter-spacing: -0.02em; line-height: 0.92`
+- `.np-subhead`: 副标题 — `font-family: 'Oswald'; font-weight: 700; text-transform: uppercase; letter-spacing: 0.04em`
+- `.np-body`: 正文 — `font-family: 'Source Serif 4', serif; max-width: 38ch; line-height: 1.7`
+- `.np-stamp`: 期刊印章 — `font-family: 'IBM Plex Mono'; font-size: 0.55-0.72rem; letter-spacing: 0.12em; text-transform: uppercase`
+- `.np-bar-h` / `.np-bar-v`: 黄色强调条 — `background: var(--yellow); height: 10px / width: 8px`
+- `.np-rule-h` / `.np-rule-v`: 列分隔线 — `background: var(--rule); height: 1px / width: 1px`
+- `.np-dark`: 深色变体 — `background: var(--bg-dark); color: #f7f5f0`（分隔线颜色自动反转）
+- `.np-red` / `.np-yellow-text`: 强调色文字工具类
+- `.big-num`: 描边大数字 — `color: transparent; -webkit-text-stroke: 3px var(--text)`
+
+### Background Rule
+`.slide` 不设置 background。body 使用 `#f7f5f0`（新闻纸白）。深色幻灯片（`.np-dark`）单独设置 `background: var(--bg-dark)`。
+
+### Style-Specific Rules
+- 黄色条 `#FFCC00` 高度 8-14px，仅作水平/垂直分隔或强调锚点，不用于大面积背景填充
+- 列规则 `1px solid #111111` 垂直线分隔网格区域，唤起报纸栏感
+- 期刊印章：顶角 `IBM Plex Mono` 文字，如 `VOL.01 · NO.03` 或日期，锚定新闻惯例
+- 极端标题比例：标题就是幻灯片。`font-size: clamp(4rem, 12vw, 9rem)`，正文不超过 1/10
+- 负空间作为编辑选择：每张幻灯片至少 30% 空白，不要填满
+- 红色 `#FF3333` 每页最多一个词/一个数字/一个强调，永远不用于大面积背景
+- `#FFCC00` 和 `#FF3333` 绝不出现同一页
+- 禁止：渐变、阴影、插图、照片、居中布局、markdown 符号、超过 2 种字号
+
+### Signature Checklist
+- [ ] 新闻纸白 `#f7f5f0` 背景
+- [ ] 极端标题/正文比例（最小 10:1）
+- [ ] 黄色条 `#FFCC00` 强调可见
+- [ ] Oswald 900 weight，UPPERCASE 标题
+- [ ] 每张幻灯片至少 30% 空白
+- [ ] 期刊印章（mono 文字，VOL.01 · NO.XX）
+- [ ] 无渐变、无阴影、无插图、无照片
 
 ## Prohibitions
 
