@@ -411,6 +411,10 @@ For PPTX/PNG export: `clawhub install kai-html-export` or `pip install playwrigh
 
 ## Version History
 
+**v2.18.0** — JS engine extraction (html-template.md 557→222 lines); style signature injection expanded to require all CSS classes from Typography/Components sections; neon-cyber glow effects clarified; style consistency audit tool (`tests/audit_style_consistency.py`).
+
+**v2.17.0** — Style reference system overhaul; contrast fix for light backgrounds; glassmorphism text theme mapping.
+
 **v2.12.0**
 
 **v2.11.0** — Hard rules embedded in SKILL.md; `--generate` flow restructured with explicit validation.
