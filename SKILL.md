@@ -126,7 +126,14 @@ slide-creator now supports **two user-facing planning depths**:
 8. **叙事弧线完整性（原 R23）：** 根据 deck_type 检测 8 页或 12 页结构完整性。标题不得全部使用通用标签。连续两页不得使用相同布局模式。每页必须使用风格参考文件中 2-3 种不同组件类型
 9. **风格签名元素注入（原 R24）：** 生成 HTML 时，读取选中风格文件的 `## Signature Elements` 章节，将其中的 CSS Overlays、Animations (@keyframes)、Required CSS Classes、Background Rule、Style-Specific Rules **全部复制插入到 `<style>` 标签中 `/* [PASTE ALL Signature Elements CSS HERE] */` 标记处**。**此外，Typography 和 Components 章节中定义的所有 CSS 类也必须包含在生成的 `<style>` 中** — 风格文件的所有章节都是生成源，不仅仅是 Signature Elements。不得遗漏 Signature Checklist 中的任何一项。缺失即生成错误。Blue Sky 例外：使用 blue-sky-starter.html 基底，不执行 .md 签名注入
 10. **字体加载无白屏（原 R25）：** Google Fonts URL 必须合并为单一链接（`&display=swap`），`<style>` 开头必须有 `body { background-color: ... }` 回退色
-11. **布局分类一致性（原 R26）：** 每页必须遵循 composition guide 的布局分类映射（Hero = 全屏宣告，Problem = 分栏证据，Solution = 大数字，CTA = 堆叠行动等）。Chinese Chan / Paper & Ink 允许布局重复
+11. **布局分类一致性（原 R26）：** 每页必须遵循以下 layout classification：
+
+    | Page # | Hero 封面 | Problem 问题 | Discovery 发现 | Solution 解决方案 | Features 功能 | Comparison 对比 | Edit 编辑 | Process 流程 | Review 检查点 | Recommendation 推荐 | Evidence 证明 | CTA |
+    |--------|---------|------------|---------------|------------------|--------------|---------------|-----------|-------------|---------------|--------------------|-------------|-----|
+    | 8 页版 | 1 | 2 | 3 | 4 (大数字/极简) | 5 | 6 | 7 | 8 | — | — | — | 9 |
+    | 12 页版 | 1 | 2 | 3 | 4 (大数字/极简) | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12 |
+
+    **Solution(P4) 特殊要求：** 1-3 个大数字/短语 + 标签 + 极简支持文字；content density 35-45%，禁止使用密集网格/列表填充；card height ≤ 120px if using grid cards。Chinese Chan / Paper & Ink 允许布局重复。
 12. **卡片内文字对比度（原 R27）：** 亮色背景容器内不得出现深色文字（`#1a1a1a`/`#333`），暗色背景容器内不得出现浅色文字。必须使用 `var(--text-on-card)` 或对应的 rgba 值
 13. **播放模式（引用 GC-1）：** 必须包含 `PresentMode` 类或 `enterPresent()` 函数，存在 `F5` 键监听器、`#present-btn` CSS、`body.presenting` CSS。缺失即生成错误
 14. **水印（引用 GC-3）：** 水印必须由 JS 注入到最后一页，CSS 必须是 `position: absolute`，禁止 `position: fixed`，禁止 `<div class="slide-credit">` 硬编码
