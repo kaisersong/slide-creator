@@ -18,7 +18,7 @@ Every generated HTML must include all of the following:
 6. **`setupEditor()` call** — edit hotzone + notes panel wired up
 7. **`data-notes` on every `<section class="slide">`** — 1-3 sentence speaker note per slide
 8. **Preset fidelity metadata** — `data-preset="Preset Name"` on `<body>` when a preset is selected
-9. **Watermark footer** — injected by JS into last slide as `<div class="slide-credit">By kai-slide-creator v[version] · [preset-name]</div>` with CSS: `position: fixed; bottom: 6px; right: 12px; font-size: 9px; color: var(--text-secondary, #999); opacity: 0.35; pointer-events: none; z-index: 1; font-family: system-ui, sans-serif;` and `body.presenting .slide-credit { display: none !important; }`
+9. **Watermark footer** — injected by JS into last slide as `<div class="slide-credit">By kai-slide-creator v[version] · [preset-name]</div>` with CSS: `position: absolute; bottom: 8px; right: 14px; font-size: 9px; color: var(--text-secondary, #999); opacity: 0.35; pointer-events: none; z-index: 1; font-family: system-ui, sans-serif;` and `body.presenting .slide-credit { display: none !important; }`
 
 ---
 
@@ -74,7 +74,7 @@ Every generated HTML must include all of the following:
         /* LAYOUT PANEL RULE: style-defined panels MUST be direct children of .slide, NOT nested in .slide-content. .slide-content is for text inside panels only. WRONG: .slide > .slide-content > .panel | RIGHT: .slide > .panel > .slide-content
            CRITICAL: No wrapper divs around panels. The .slide IS the flex container.
            Use #slide-N { flex-direction: row/column } in CSS to control layout.
-           WRONG: <section class="slide"><div style="display:flex"><div class="left-panel">...
+           WRONG: <section class="slide"><div class="wrapper-flex"><div class="left-panel">...
            RIGHT: <section class="slide" id="slide-1"><div class="left-panel">...
            Panel backgrounds, padding, flex ratios MUST be defined via #slide-N CSS selectors, NEVER inline style.
            Per-slide CSS in <style>: #slide-1 { flex-direction: row } / #slide-1 .left-panel { background: #fff } */
@@ -136,23 +136,38 @@ Every generated HTML must include all of the following:
         body.presenting.presenting-black .slide { visibility: hidden !important; }
         body.presenting.presenting-black::after { content: ''; position: fixed; inset: 0; background: #000; z-index: 99999; }
 
-        .slide-credit { position: fixed; bottom: 6px; right: 12px; font-size: 9px; color: var(--text-secondary, #999); opacity: 0.35; pointer-events: none; z-index: 1; font-family: system-ui, sans-serif; }
+        .slide-credit { position: absolute; bottom: 8px; right: 14px; font-size: 9px; color: var(--text-secondary, #999); opacity: 0.35; pointer-events: none; z-index: 1; font-family: system-ui, sans-serif; }
         body.presenting .slide-credit { display: none !important; }
     </style>
 </head>
 <body data-export-progress="true" data-preset="Enterprise Dark">
-    <div class="progress-bar" style="position:fixed;top:0;left:0;height:3px;background:var(--accent);width:0%;z-index:100;transition:width 0.3s ease;"></div>
+    <span id="brand-mark">slide-creator</span>
+    <div class="progress-bar"></div>
     <nav class="nav-dots" aria-label="Slide navigation"></nav>
+    <div class="edit-hotzone"></div>
+    <button class="edit-toggle" id="editToggle" title="Edit mode (E)">Edit</button>
+    <div id="notes-panel">
+        <div id="notes-panel-header">
+            <div id="notes-panel-label">SPEAKER NOTES — SLIDE 1 / 8</div>
+            <div id="notes-drag-hint"></div>
+            <button id="notes-collapse-btn" title="Collapse / expand">▾</button>
+        </div>
+        <div id="notes-body">
+            <textarea id="notes-textarea" placeholder="Add speaker notes…"></textarea>
+        </div>
+    </div>
 
-    <!-- Slides — always add data-notes to every slide -->
-    <section class="slide title-slide" data-notes="..." aria-label="Title slide">
+    <!-- Slides — every slide has id="slide-N", data-notes, aria-label, .slide-num-label -->
+    <!-- ZERO INLINE STYLES: layout/background/positioning via #slide-N CSS selectors only -->
+    <section class="slide" id="slide-1" data-notes="..." aria-label="Title slide">
         <div class="slide-content">
             <h1 class="reveal">Presentation Title</h1>
             <p class="reveal">Subtitle or author</p>
         </div>
+        <span class="slide-num-label">01 / 08</span>
     </section>
 
-    <section class="slide" data-notes="..." aria-label="Slide 2">
+    <section class="slide" id="slide-2" data-notes="..." aria-label="Slide 2">
         <div class="slide-content">
             <h2 class="reveal">Slide Title</h2>
             <ul class="reveal bullet-list">
@@ -160,6 +175,7 @@ Every generated HTML must include all of the following:
                 <li>Point two</li>
             </ul>
         </div>
+        <span class="slide-num-label">02 / 08</span>
     </section>
 
     <!-- JS Engine: read references/js-engine.md and insert verbatim -->
@@ -169,6 +185,84 @@ Every generated HTML must include all of the following:
 </body>
 </html>
 ```
+
+---
+
+## Zero Inline Style Guide
+
+The rule is `style=""` ≤ 5 per file. In practice, aim for 0. Every inline style is a missed CSS class. Here's how:
+
+### Per-Slide Positioning → `#slide-N` selectors
+
+```css
+/* ❌ WRONG: inline style on decorative element */
+<div class="deco-circle" style="width:600px;height:600px;top:-200px;right:-200px;">
+
+/* ✅ CORRECT: CSS class via #slide-N selector */
+#slide-1 .deco-circle { width:600px; height:600px; top:-200px; right:-200px; }
+#slide-1 .deco-circle:nth-of-type(2) { width:200px; height:200px; bottom:80px; left:60px; }
+```
+
+```html
+<!-- HTML has NO inline styles -->
+<div class="deco-circle"></div>
+<div class="deco-circle"></div>
+```
+
+### Per-Slide Layout Direction → `#slide-N` selectors
+
+```css
+/* ❌ WRONG: inline flex on wrapper div */
+<section class="slide"><div style="display:flex;flex-direction:row;">
+
+/* ✅ CORRECT: #slide-N CSS */
+#slide-1 { flex-direction: row; }
+#slide-1 .left-panel { flex: 1; background: var(--bg-secondary); }
+#slide-1 .right-panel { flex: 2; }
+```
+
+```html
+<section class="slide" id="slide-1">
+    <div class="left-panel">...</div>
+    <div class="right-panel">...</div>
+</section>
+```
+
+### Margin/Spacing → utility classes or `#slide-N`
+
+```css
+/* ❌ WRONG: inline margin */
+<p style="margin-top:16px;">text</p>
+
+/* ✅ CORRECT: utility class */
+.mt-s { margin-top: 8px; }
+.mt-m { margin-top: 16px; }
+.mt-l { margin-top: 24px; }
+```
+
+```html
+<p class="mt-m">text</p>
+```
+
+### Max-Width on Headlines → `#slide-N` or a class
+
+```css
+/* ❌ WRONG */
+<h2 style="max-width:500px;">Headline</h2>
+
+/* ✅ CORRECT */
+#slide-2 .headline { max-width: 500px; }
+/* or for repeated pattern: */
+.headline-narrow { max-width: 500px; }
+```
+
+### The Only Acceptable Inline Styles
+
+1. `style="display:none"` on JS-toggled elements (rare)
+2. CSS-in-JS dynamic values that can't be predicted (e.g., progress width %)
+3. Emergency override when CSS selector specificity fails
+
+If you find yourself adding `style=""` for positioning, sizing, colors, margins, or backgrounds — you need a CSS class instead.
 
 ---
 

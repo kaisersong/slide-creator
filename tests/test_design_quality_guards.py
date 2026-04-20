@@ -202,3 +202,59 @@ def test_title_quality_file_exists_in_both_repos():
     # SKILL repo check — only if the path exists (may not in all environments)
     if skill_file.parent.parent.exists():
         assert skill_file.exists(), "SKILL repo references/title-quality.md not found"
+
+
+def test_html_template_practices_what_it_preaches():
+    """html-template.md must not contain inline styles in its HTML examples, must have brand-mark and id=slide-N."""
+    template = read_text(HTML_TEMPLATE_MD)
+    # Find the HTML body section
+    body_start = template.find("<body")
+    if body_start == -1:
+        return  # No HTML example to test
+    body_end = template.find("</body>", body_start)
+    html_section = template[body_start:body_end]
+
+    # 1. No inline styles in HTML (except style tag itself)
+    inline_count = len(re.findall(r'style="', html_section))
+    assert inline_count == 0, (
+        f"html-template.md HTML body has {inline_count} inline style(s). "
+        f"The template must be a zero-inline-style example."
+    )
+
+    # 2. Must have brand-mark
+    assert 'id="brand-mark"' in html_section, (
+        "html-template.md HTML body must include <span id='brand-mark'>"
+    )
+
+    # 3. Must have id="slide-N" on sections
+    assert re.search(r'id="slide-\d+"', html_section), (
+        "html-template.md HTML body must have id='slide-N' on <section> elements"
+    )
+
+    # 4. Must have slide-num-label
+    assert "slide-num-label" in html_section, (
+        "html-template.md HTML body must include .slide-num-label in slides"
+    )
+
+
+def test_html_template_watermark_is_absolute_not_fixed():
+    """html-template.md watermark CSS must use position: absolute, not fixed."""
+    template = read_text(HTML_TEMPLATE_MD)
+    # Match only the primary .slide-credit rule (not body.presenting .slide-credit)
+    credit_rules = re.findall(r'^\s*\.slide-credit\s*\{([^}]+)\}', template, re.MULTILINE)
+    for rule in credit_rules:
+        assert "position: absolute" in rule, (
+            f".slide-credit must use position: absolute, found: {rule}"
+        )
+        assert "position: fixed" not in rule, (
+            f".slide-credit must NOT use position: fixed, found: {rule}"
+        )
+
+
+def test_html_template_has_zero_inline_style_guide():
+    """html-template.md must contain the Zero Inline Style Guide section."""
+    template = read_text(HTML_TEMPLATE_MD)
+    assert "Zero Inline Style Guide" in template, (
+        "html-template.md must have a '## Zero Inline Style Guide' section "
+        "teaching agents how to avoid inline styles."
+    )

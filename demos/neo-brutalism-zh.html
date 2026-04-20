@@ -3,68 +3,39 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>kai-slide-creator</title>
+    <title>slide-creator -- Neo-Brutalism</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700;900&family=Plus+Jakarta+Sans:wght@400;500;700;800&family=Noto+Sans+SC:wght@400;500;700;900&display=swap" rel="stylesheet">
-
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700;800;900&family=Noto+Sans+SC:wght@400;500;700;900&display=swap" rel="stylesheet">
     <style>
-        body { background-color: #FFEB3B; }
+        /* ===========================================
+           NEO-BRUTALISM STYLE
+           =========================================== */
         :root {
             --bg: #FFEB3B;
             --text: #000000;
             --btn-bg: #000000;
             --btn-text: #FFEB3B;
-            --font-display: 'Space Grotesk', 'Noto Sans SC', sans-serif;
-            --font-body: 'Plus Jakarta Sans', 'Noto Sans SC', sans-serif;
-            --title-size: clamp(2rem, 6vw, 5rem);
-            --subtitle-size: clamp(0.875rem, 2vw, 1.25rem);
+            --title-size: clamp(1.5rem, 5vw, 4rem);
+            --h2-size: clamp(1.25rem, 3.5vw, 2.5rem);
             --body-size: clamp(0.75rem, 1.5vw, 1.125rem);
-            --slide-padding: clamp(1.5rem, 4vw, 4rem);
-            --content-gap: clamp(1rem, 2vw, 2rem);
-            --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
-            --duration-normal: 0.6s;
-            --small-size: clamp(0.6rem, 0.8vw, 0.75rem);
+            --small-size: clamp(0.65rem, 1vw, 0.875rem);
+            --slide-padding: clamp(1rem, 4vw, 4rem);
+            --content-gap: clamp(0.5rem, 2vw, 2rem);
         }
-
-        /* Reset */
         *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
         html { scroll-snap-type: y mandatory; height: 100%; }
-
-        body { font-family: var(--font-body); background: var(--bg); color: var(--text); overflow-x: hidden; height: 100%; }
+        body {
+            font-family: "Space Grotesk", "Noto Sans SC", -apple-system, sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            overflow-x: hidden;
+            height: 100%;
+        }
         body[data-export-progress="false"] .progress-bar,
         body[data-export-progress="false"] .nav-dots { display: none !important; }
 
-        .slide {
-            width: 100vw; height: 100vh; height: 100dvh;
-            scroll-snap-align: start; display: flex; flex-direction: column; justify-content: center;
-            position: relative; overflow: hidden;
-            background: var(--bg);
-        }
-
-        .slide-content { flex: 1; display: flex; flex-direction: column; justify-content: center; max-height: 100%; overflow: hidden; padding: var(--slide-padding); }
-
-        /* Responsive */
-        @media (max-height: 700px) { :root { --slide-padding: clamp(0.75rem, 3vw, 2rem); --content-gap: clamp(0.4rem, 1.5vw, 1rem); --title-size: clamp(1.25rem, 4.5vw, 2.5rem); } }
-        @media (max-height: 600px) { :root { --slide-padding: clamp(0.5rem, 2.5vw, 1.5rem); --title-size: clamp(1.1rem, 4vw, 2rem); --body-size: clamp(0.7rem, 1.2vw, 0.95rem); } .nav-dots, .keyboard-hint, .decorative { display: none; } }
-        @media (max-height: 500px) { :root { --slide-padding: clamp(0.4rem, 2vw, 1rem); --title-size: clamp(1rem, 3.5vw, 1.5rem); } }
-        @media (max-width: 600px) { .grid { grid-template-columns: 1fr; } }
-        @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.2s !important; } html { scroll-behavior: auto; } }
-
-        .reveal { opacity: 0; transform: translateY(30px); transition: opacity var(--duration-normal) var(--ease-out-expo), transform var(--duration-normal) var(--ease-out-expo); }
-        .slide.visible .reveal { opacity: 1; transform: translateY(0); }
-        .reveal:nth-child(1) { transition-delay: 0.1s; }
-        .reveal:nth-child(2) { transition-delay: 0.2s; }
-        .reveal:nth-child(3) { transition-delay: 0.3s; }
-        .reveal:nth-child(4) { transition-delay: 0.4s; }
-
-        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 250px), 1fr)); gap: clamp(0.5rem, 1.5vw, 1rem); }
-
-        /* ═══════════════════════════════════════════════════════
-         * STYLE SIGNATURE INJECTION — MANDATORY
-         * ═══════════════════════════════════════════════════════ */
-
-        /* body::before — dot pattern overlay */
+        /* Dot pattern overlay */
         body::before {
             content: '';
             position: fixed;
@@ -75,30 +46,13 @@
             z-index: 0;
         }
 
-        /* .stripe — diagonal hatch decoration */
-        .stripe {
-            position: absolute;
-            pointer-events: none;
-            background: repeating-linear-gradient(-45deg, #000 0, #000 2px, transparent 2px, transparent 10px);
-            opacity: 0.12;
-        }
+        /* Viewport fitting */
+        .slide { width: 100vw; height: 100vh; height: 100dvh; overflow: hidden; scroll-snap-align: start; display: flex; flex-direction: column; position: relative; }
+        .slide-content { flex: 1; display: flex; flex-direction: column; justify-content: center; max-height: 100%; overflow: hidden; padding: var(--slide-padding); position: relative; z-index: 2; }
 
-        /* @keyframes fadeIn */
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
-        }
-
-        /* Brutalism reveal — instant, no easing */
-        .brute-reveal {
-            opacity: 0;
-            transition: opacity 0.2s linear;
-        }
-        .slide.visible .brute-reveal {
-            animation: fadeIn 0.25s ease forwards;
-        }
-
-        /* .brute-card — core card */
+        /* ===========================================
+           SIGNATURE ELEMENTS
+           =========================================== */
         .brute-card {
             background: #ffffff;
             border: 3px solid #000000;
@@ -107,12 +61,10 @@
             padding: clamp(1rem, 2vw, 1.5rem);
         }
         .brute-card:hover {
-            transform: translate(2px, 2px);
             box-shadow: 2px 2px 0 #000000;
+            transform: translate(2px, 2px);
             transition: none;
         }
-
-        /* .brute-btn — button */
         .brute-btn {
             display: inline-block;
             background: #000000;
@@ -121,24 +73,21 @@
             border-radius: 0;
             box-shadow: 3px 3px 0 #000000;
             padding: 10px 20px;
-            font-weight: 900;
+            font-weight: 800;
             font-size: clamp(0.8rem, 1.2vw, 1rem);
             letter-spacing: 0.02em;
             cursor: pointer;
             text-transform: uppercase;
-            font-family: var(--font-display);
         }
         .brute-btn:hover {
             transform: translate(2px, 2px);
             box-shadow: 1px 1px 0 #000000;
             transition: none;
         }
-
-        /* .brute-tag — label */
         .brute-tag {
             display: inline-block;
             background: #000000;
-            color: var(--bg, #FFEB3B);
+            color: var(--bg);
             border: 2px solid #000000;
             border-radius: 0;
             padding: 2px 8px;
@@ -147,85 +96,61 @@
             text-transform: uppercase;
             letter-spacing: 0.08em;
         }
-
-        /* .eyebrow — section identifier */
+        .stripe {
+            background: repeating-linear-gradient(-45deg, #000 0px, #000 2px, transparent 2px, transparent 10px);
+            opacity: 0.12;
+            position: absolute;
+            pointer-events: none;
+        }
         .eyebrow {
             font-weight: 800;
             letter-spacing: 0.2em;
             text-transform: uppercase;
             border-left: 4px solid #000;
             padding-left: 0.8rem;
-            font-family: var(--font-display);
         }
-
-        /* .heavy-rule — thick horizontal line */
-        .heavy-rule {
-            border: none;
-            border-top: 3px solid #000;
-        }
-
-        /* .rotated — slight rotation for handmade feel */
-        .rotated {
-            transform: rotate(-1.5deg);
-        }
-
-        /* .code-block — code block */
+        .heavy-rule { border-top: 3px solid #000; }
+        .rotated { transform: rotate(-1.5deg); }
         .code-block {
             background: #000;
             color: #FFEB3B;
             font-family: 'Courier New', monospace;
             border: 3px solid #000;
-            box-shadow: 4px 4px 0 rgba(0,0,0,0.3);
-            padding: clamp(0.8rem, 2vw, 1.2rem);
-            font-size: clamp(0.8rem, 1.2vw, 1rem);
-            line-height: 1.6;
+            box-shadow: 4px 4px 0 #000;
+            padding: clamp(0.75rem, 1.5vw, 1.25rem);
+            font-size: clamp(0.75rem, 1.2vw, 1rem);
+            font-weight: 700;
         }
-
-        /* .cta-cmd — call to action */
         .cta-cmd {
             font-weight: 900;
             background: #000;
             color: #FFEB3B;
             box-shadow: 6px 6px 0 rgba(0,0,0,0.3);
-            border: 3px solid #000;
-            border-radius: 0;
-            padding: clamp(0.8rem, 2vw, 1.5rem);
-            font-family: var(--font-display);
-            font-size: clamp(1rem, 2vw, 1.5rem);
-            text-transform: uppercase;
-            letter-spacing: 0.04em;
+            font-family: 'Courier New', monospace;
+            padding: clamp(0.75rem, 2vw, 1.5rem) clamp(1.25rem, 3vw, 3rem);
+            display: inline-block;
+            font-size: clamp(1.25rem, 3vw, 2.5rem);
         }
-
-        /* .preset-tag — preset tag */
         .preset-tag {
+            display: inline-block;
             border: 2px solid #000;
             background: #fff;
             box-shadow: 2px 2px 0 #000;
-            border-radius: 0;
-            padding: 2px 8px;
-            font-size: 0.75rem;
+            padding: 4px 10px;
+            font-size: clamp(0.65rem, 1vw, 0.8rem);
             font-weight: 700;
+            text-transform: uppercase;
         }
-        .preset-tag.active {
-            background: #000;
-            color: #FFEB3B;
-        }
-
-        /* .dot — navigation dot (square) */
+        .preset-tag.current { background: #000; color: #FFEB3B; }
         .dot {
-            width: 8px;
-            height: 8px;
+            width: 10px; height: 10px;
             background: #000;
             border-radius: 0;
-            transition: none;
+            display: inline-block;
         }
-        .dot.active {
-            height: 20px;
-        }
+        .dot.active { height: 20px; }
 
-        /* Typography */
         .brute-title {
-            font-family: var(--font-display);
             font-size: clamp(3rem, 10vw, 9rem);
             font-weight: 900;
             line-height: 0.95;
@@ -233,24 +158,27 @@
             text-transform: uppercase;
             color: #000000;
         }
-
         .brute-h2 {
-            font-family: var(--font-display);
             font-size: clamp(1.5rem, 4vw, 3.5rem);
             font-weight: 800;
             line-height: 1.05;
             color: #000000;
         }
-
         .brute-body {
-            font-family: var(--font-body);
             font-size: clamp(0.9rem, 1.5vw, 1.1rem);
             font-weight: 500;
             line-height: 1.5;
             color: #000000;
         }
-
-        /* .brute-list */
+        .brute-slide {
+            background: var(--bg);
+            padding: clamp(2rem, 4vw, 4rem);
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+            position: relative;
+            overflow: hidden;
+        }
         .brute-list { list-style: none; display: flex; flex-direction: column; gap: 0; }
         .brute-list li {
             border-top: 2px solid #000;
@@ -265,16 +193,39 @@
             font-size: 0.75rem;
             font-weight: 800;
             padding-top: 0.15em;
-            font-family: var(--font-display);
         }
 
-        /* PRESENTATION MODE */
-        #present-btn { position: fixed; bottom: 1.5rem; right: 1.5rem; z-index: 9997; width: 44px; height: 44px; border-radius: 0; background: #000; color: #FFEB3B; border: 3px solid #000; font-size: 1rem; cursor: pointer; display: flex; align-items: center; justify-content: center; opacity: 0; transition: none; pointer-events: none; font-weight: 900; }
+        /* ===========================================
+           ANIMATIONS
+           =========================================== */
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        .reveal { opacity: 0; transition: opacity 0.2s linear; }
+        .slide.visible .reveal { opacity: 1; }
+        .reveal:nth-child(1) { transition-delay: 0.0s; }
+        .reveal:nth-child(2) { transition-delay: 0.05s; }
+        .reveal:nth-child(3) { transition-delay: 0.10s; }
+        .reveal:nth-child(4) { transition-delay: 0.15s; }
+        .reveal:nth-child(5) { transition-delay: 0.20s; }
+        .reveal:nth-child(6) { transition-delay: 0.25s; }
+
+        /* ===========================================
+           UNIVERSAL UI
+           =========================================== */
+        #brand-mark { position: fixed; top: 20px; left: 28px; font-weight: 800; font-size: 15px; z-index: 1000; font-family: "Space Grotesk", "Noto Sans SC", sans-serif; color: #000000; }
+        .slide-num-label { position: absolute; bottom: 28px; right: 36px; font-size: 11px; font-weight: 500; font-family: "Space Grotesk", "Noto Sans SC", sans-serif; color: rgba(0,0,0,0.18); }
+        .slide-num-label.light { color: rgba(255,255,255,0.2); }
+        .nav-dots { position: fixed; right: 1.5rem; top: 50%; transform: translateY(-50%); display: flex; flex-direction: column; gap: 8px; z-index: 100; }
+        .progress-bar { position: fixed; top: 0; left: 0; height: 3px; background: #000; width: 0%; z-index: 100; transition: width 0.3s ease; }
+
+        /* ===========================================
+           PRESENT MODE
+           =========================================== */
+        #present-btn { position: fixed; bottom: 1.5rem; right: 1.5rem; z-index: 9997; width: 44px; height: 44px; border-radius: 0; background: #000; color: #FFEB3B; border: 3px solid #000; font-size: 1rem; cursor: pointer; display: flex; align-items: center; justify-content: center; opacity: 0; transition: opacity 0.2s; pointer-events: none; box-shadow: 3px 3px 0 rgba(0,0,0,0.2); }
         body:hover #present-btn { opacity: 1; pointer-events: auto; }
-        #present-btn:hover { background: #333; }
-
-        #present-counter { display: none; position: fixed; bottom: 1.4rem; left: 50%; transform: translateX(-50%); z-index: 9997; font-size: 0.65rem; letter-spacing: 0.14em; font-family: var(--font-display); color: rgba(0,0,0,0.4); }
-
+        #present-counter { display: none; position: fixed; bottom: 1.4rem; left: 50%; transform: translateX(-50%); z-index: 9997; font-size: 0.65rem; letter-spacing: 0.14em; font-family: "Space Grotesk", sans-serif; color: rgba(0,0,0,0.28); }
         body.presenting { background: #000 !important; overflow: hidden !important; }
         body.presenting .slide { position: fixed !important; inset: 0; width: 100vw !important; height: 100vh !important; transform-origin: center center; scroll-snap-align: none !important; display: none !important; }
         body.presenting .slide.p-on { display: flex !important; }
@@ -282,470 +233,634 @@
         body.presenting #present-counter { display: block; }
         body.presenting.presenting-black .slide { visibility: hidden !important; }
         body.presenting.presenting-black::after { content: ''; position: fixed; inset: 0; background: #000; z-index: 99999; }
-
-        .slide-credit { position: absolute; bottom: 8px; right: 14px; font-size: 9px; color: var(--text, #000); opacity: 0.35; pointer-events: none; z-index: 1; font-family: system-ui, sans-serif; }
+        .slide-credit { position: absolute; bottom: 8px; right: 14px; font-size: 9px; color: rgba(0,0,0,0.35); opacity: 0.35; pointer-events: none; z-index: 1; font-family: system-ui, sans-serif; }
         body.presenting .slide-credit { display: none !important; }
 
-        /* Edit hotzone + notes panel */
+        /* ===========================================
+           EDIT MODE
+           =========================================== */
         .edit-hotzone { position: fixed; top: 0; left: 0; width: 80px; height: 80px; z-index: 10000; cursor: pointer; }
-        .edit-toggle { position: fixed; top: 16px; left: 16px; opacity: 0; pointer-events: none; transition: none; z-index: 10001; background: #000; color: #FFEB3B; border: 2px solid #000; border-radius: 0; padding: 4px 12px; font-size: 0.75rem; font-weight: 700; text-transform: uppercase; font-family: var(--font-display); }
+        .edit-toggle { position: fixed; top: 16px; left: 16px; opacity: 0; pointer-events: none; transition: opacity 0.3s ease; z-index: 10001; background: #000; color: #FFEB3B; border: 2px solid #000; padding: 6px 14px; font-family: "Space Grotesk", "Noto Sans SC", sans-serif; font-size: 12px; font-weight: 800; text-transform: uppercase; cursor: pointer; }
         .edit-toggle.show { opacity: 1; pointer-events: auto; }
         .edit-toggle.active { opacity: 1; pointer-events: auto; }
-
-        #notes-panel { display: none; position: fixed; bottom: 0; left: 0; right: 0; z-index: 9998; background: rgba(0,0,0,0.95); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); border-top: 3px solid #000; }
+        #notes-panel { display: none; position: fixed; bottom: 0; left: 0; right: 0; z-index: 9998; background: rgba(0,0,0,0.95); border-top: 3px solid #FFEB3B; }
         #notes-panel.active { display: flex; flex-direction: column; }
         #notes-panel-header { display: flex; align-items: center; justify-content: space-between; padding: 0.45rem 1.4rem; cursor: pointer; user-select: none; }
-        #notes-panel-header:hover { background: rgba(255,255,255,0.03); }
-        #notes-panel-label { flex: 1; font-size: 0.58rem; letter-spacing: 0.16em; text-transform: uppercase; color: rgba(255,255,255,0.3); }
+        #notes-panel-header:hover { background: rgba(255,235,59,0.03); }
+        #notes-panel-label { flex: 1; font-size: 0.58rem; letter-spacing: 0.16em; text-transform: uppercase; color: rgba(255,235,59,0.5); font-family: "Space Grotesk", sans-serif; }
         #notes-drag-hint { flex: 1; display: flex; justify-content: center; }
-        #notes-drag-hint::after { content: ''; display: block; width: 36px; height: 3px; border-radius: 0; background: rgba(255,255,255,0.25); }
-        #notes-collapse-btn { flex: 1; text-align: right; font-size: 1rem; color: rgba(255,255,255,0.4); background: none; border: none; cursor: pointer; transition: none; }
-        #notes-collapse-btn:hover { color: rgba(255,255,255,0.85); }
+        #notes-drag-hint::after { content: ''; display: block; width: 36px; height: 3px; border-radius: 0; background: rgba(255,235,59,0.4); }
+        #notes-panel-header:hover #notes-drag-hint::after { background: rgba(255,235,59,0.7); }
+        #notes-collapse-btn { flex: 1; text-align: right; font-size: 1rem; color: rgba(255,235,59,0.4); background: none; border: none; cursor: pointer; }
+        #notes-collapse-btn:hover { color: rgba(255,235,59,0.85); }
         #notes-body { padding: 0 1.4rem 0.75rem; }
         #notes-panel.collapsed #notes-body { display: none; }
         #notes-panel.collapsed #notes-collapse-btn { transform: rotate(180deg); }
-        #notes-textarea { width: 100%; height: 72px; min-height: 48px; max-height: 200px; resize: vertical; background: transparent; border: none; outline: none; color: rgba(255,255,255,0.75); font-size: 0.88rem; line-height: 1.65; font-family: system-ui, sans-serif; }
-        #notes-textarea::placeholder { color: rgba(255,255,255,0.18); }
+        #notes-textarea { width: 100%; height: 72px; min-height: 48px; max-height: 200px; resize: vertical; background: transparent; border: none; outline: none; color: rgba(255,235,59,0.75); font-size: 0.88rem; line-height: 1.65; font-family: system-ui, sans-serif; }
+        #notes-textarea::placeholder { color: rgba(255,235,59,0.18); }
+
+        /* ===========================================
+           RESPONSIVE
+           =========================================== */
+        @media (max-height: 700px) { :root { --slide-padding: clamp(0.75rem, 3vw, 2rem); --content-gap: clamp(0.4rem, 1.5vw, 1rem); --title-size: clamp(1.25rem, 4.5vw, 2.5rem); } }
+        @media (max-height: 600px) { :root { --slide-padding: clamp(0.5rem, 2.5vw, 1.5rem); --title-size: clamp(1.1rem, 4vw, 2rem); --body-size: clamp(0.7rem, 1.2vw, 0.95rem); } .nav-dots, .keyboard-hint, .decorative { display: none; } }
+        @media (max-height: 500px) { :root { --slide-padding: clamp(0.4rem, 2vw, 1rem); --title-size: clamp(1rem, 3.5vw, 1.5rem); } }
+        @media (max-width: 600px) { #slide-2, #slide-5 { flex-direction: column; } #slide-3 .style-cards, #slide-6 .feature-grid { grid-template-columns: 1fr; } }
+        @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.2s !important; } html { scroll-behavior: auto; } }
+
+        /* ===========================================
+           PER-SLIDE LAYOUT
+           =========================================== */
+
+        /* Slide 1: Hero -- brute-hero, bottom-anchored */
+        #slide-1 { flex-direction: column; justify-content: flex-end; padding: clamp(2rem, 4vw, 4rem); }
+        #slide-1 .hero-badge { margin-bottom: auto; }
+        #slide-1 .hero-bottom { margin-bottom: clamp(1rem, 3vw, 3rem); }
+        #slide-1 .brute-title { margin-bottom: clamp(0.5rem, 1.5vw, 1rem); }
+        #slide-1 .hero-subtitle { font-size: clamp(0.875rem, 1.8vw, 1.5rem); font-weight: 500; line-height: 1.5; color: #000; margin-bottom: clamp(1rem, 2vw, 2rem); }
+        #slide-1 .hero-kpi { display: flex; gap: clamp(0.5rem, 1.5vw, 1.5rem); flex-wrap: wrap; }
+        #slide-1 .hero-kpi-item { background: #fff; border: 3px solid #000; box-shadow: 3px 3px 0 #000; padding: 6px 14px; font-weight: 900; font-size: clamp(0.7rem, 1.2vw, 1rem); }
+        #slide-1 .hero-kpi-item strong { font-size: clamp(1.5rem, 4vw, 3rem); display: block; line-height: 1; }
+
+        /* Slide 2: Problem -- brute-split */
+        #slide-2 { flex-direction: row; }
+        #slide-2 .left-panel { flex: 0 0 40%; display: flex; flex-direction: column; justify-content: center; padding: var(--slide-padding); position: relative; z-index: 2; }
+        #slide-2 .right-panel { flex: 1; display: flex; flex-direction: column; justify-content: center; padding: var(--slide-padding); position: relative; z-index: 2; }
+        #slide-2 .left-panel .brute-h2 { margin-top: clamp(0.5rem, 1.5vw, 1rem); }
+
+        /* Slide 3: Discovery -- brute-cards */
+        #slide-3 { justify-content: center; }
+        #slide-3 .style-cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 240px), 1fr)); gap: clamp(0.75rem, 2vw, 1.5rem); margin-top: clamp(1.5rem, 3vw, 3rem); }
+        #slide-3 .style-card { background: #fff; border: 3px solid #000; box-shadow: 4px 4px 0 #000; padding: clamp(1rem, 2vw, 1.5rem); }
+        #slide-3 .style-card.active { background: #000; color: #FFEB3B; }
+        #slide-3 .style-card.active .style-card-label { color: #FFEB3B; }
+        #slide-3 .style-card-preview { height: clamp(60px, 10vh, 120px); border: 2px solid #000; margin-bottom: clamp(0.5rem, 1vw, 1rem); }
+        #slide-3 .style-card-label { font-size: clamp(0.65rem, 1vw, 0.75rem); font-weight: 800; text-transform: uppercase; letter-spacing: 0.1em; color: #000; margin-top: 8px; }
+        #slide-3 .style-card-title { font-weight: 900; font-size: clamp(0.85rem, 1.3vw, 1.1rem); }
+
+        /* Slide 4: Solution -- brute-stat */
+        #slide-4 { justify-content: center; align-items: center; }
+        #slide-4 .stat-number { font-size: clamp(5rem, 18vw, 14rem); font-weight: 900; color: #000; line-height: 0.9; letter-spacing: -0.04em; }
+        #slide-4 .stat-label { font-size: clamp(1rem, 2vw, 1.5rem); font-weight: 700; margin-top: clamp(0.5rem, 1.5vw, 1rem); }
+
+        /* Slide 5: Workflow -- brute-split */
+        #slide-5 { flex-direction: row; }
+        #slide-5 .left-panel { flex: 0 0 38%; display: flex; flex-direction: column; justify-content: center; padding: var(--slide-padding); position: relative; z-index: 2; }
+        #slide-5 .right-panel { flex: 1; display: flex; flex-direction: column; justify-content: center; padding: var(--slide-padding); position: relative; z-index: 2; }
+        #slide-5 .step-block { margin-bottom: clamp(0.75rem, 1.5vw, 1.5rem); }
+        #slide-5 .step-num { font-weight: 900; font-size: clamp(1.5rem, 3vw, 2.5rem); color: #000; }
+        #slide-5 .step-desc { font-weight: 500; font-size: var(--body-size); margin-top: 4px; }
+        #slide-5 .step-code { margin-top: 6px; }
+
+        /* Slide 6: Features -- brute-cards 2x2 */
+        #slide-6 { justify-content: center; }
+        #slide-6 .feature-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: clamp(0.75rem, 1.5vw, 1.25rem); margin-top: clamp(1.5rem, 3vw, 2.5rem); }
+        #slide-6 .feature-card { background: #fff; border: 3px solid #000; box-shadow: 4px 4px 0 #000; padding: clamp(0.75rem, 1.5vw, 1.25rem); }
+        #slide-6 .feature-card:hover { box-shadow: 2px 2px 0 #000; transform: translate(2px, 2px); transition: none; }
+        #slide-6 .feature-icon { font-size: clamp(1.5rem, 3vw, 2.5rem); font-weight: 900; margin-bottom: 8px; }
+        #slide-6 .feature-card h3 { font-weight: 800; font-size: clamp(0.85rem, 1.3vw, 1.15rem); margin-bottom: 6px; }
+        #slide-6 .feature-card p { font-size: var(--small-size); font-weight: 500; line-height: 1.5; }
+
+        /* Slide 7: Install -- brute-list */
+        #slide-7 { justify-content: center; }
+        #slide-7 .install-section { max-width: min(90vw, 700px); }
+        #slide-7 .install-block { margin-top: clamp(1.5rem, 3vw, 2.5rem); }
+        #slide-7 .install-platform { font-weight: 800; font-size: clamp(0.75rem, 1.2vw, 1rem); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 8px; }
+        #slide-7 .install-cmd { margin-top: 6px; }
+
+        /* Slide 8: CTA -- dark brutalist */
+        #slide-8 { background: #000; }
+        #slide-8 .cta-content { max-width: min(90vw, 800px); margin: 0 auto; text-align: center; }
+        #slide-8 .cta-tag { background: #FFEB3B; color: #000; border: 2px solid #FFEB3B; display: inline-block; padding: 2px 10px; font-size: 0.7rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: clamp(1rem, 2vw, 2rem); }
+        #slide-8 .cta-headline { font-size: clamp(2rem, 7vw, 6rem); font-weight: 900; color: #FFEB3B; line-height: 1; letter-spacing: -0.02em; margin-bottom: clamp(0.5rem, 1.5vw, 1rem); }
+        #slide-8 .cta-sub { font-size: clamp(0.875rem, 1.5vw, 1.25rem); color: rgba(255,235,59,0.6); font-weight: 500; margin-bottom: clamp(1.5rem, 3vw, 3rem); }
+        #slide-8 .cta-rule { border-top: 3px solid #FFEB3B; opacity: 0.3; margin-bottom: clamp(1.5rem, 3vw, 3rem); }
+        #slide-8 .cta-cmd-light { background: #FFEB3B; color: #000; font-weight: 900; font-family: 'Courier New', monospace; padding: clamp(0.75rem, 2vw, 1.5rem) clamp(1.5rem, 4vw, 4rem); font-size: clamp(1rem, 2.5vw, 2rem); display: inline-block; box-shadow: 6px 6px 0 rgba(255,235,59,0.3); margin-bottom: clamp(0.5rem, 1.5vw, 1rem); }
+        #slide-8 .cta-note { font-size: var(--small-size); color: rgba(255,235,59,0.4); }
+
+        /* Stripe positioning per slide */
+        #slide-1 .stripe { width:100%; height:30%; top:0; left:0; }
+        #slide-2 .stripe { right:0; top:10%; width:45%; height:80%; }
+        #slide-3 .stripe { top:0; left:0; width:20%; height:20%; }
+        #slide-4 .stripe { top:50%; left:50%; transform:translate(-50%,-50%); width:70%; height:70%; }
+        #slide-5 .stripe { left:0; top:5%; width:15%; height:90%; }
+        #slide-8 .stripe { bottom:0; right:0; width:30%; height:40%; opacity:0.06; background:repeating-linear-gradient(-45deg,#FFEB3B 0px,#FFEB3B 2px,transparent 2px,transparent 10px); }
+
+        /* Slide 3 style card previews */
+        #slide-3 .style-card:nth-child(1) .style-card-preview { background:#FFEB3B; }
+        #slide-3 .style-card:nth-child(2) .style-card-preview { background:#1a1a2e; }
+        #slide-3 .style-card:nth-child(3) .style-card-preview { background:#fff; border:1px solid #e0e0e0; }
+
+        /* Slide 4 centering */
+        #slide-4 .slide-content { align-items:center; text-align:center; }
+
+        /* Slide 4 heavy rule */
+        #slide-4 .heavy-rule { width:60px; margin:1.5rem auto; }
+
+        /* Slide 4 preset tag row */
+        #slide-4 .preset-row { display:flex; gap:8px; flex-wrap:wrap; justify-content:center; }
+
+        /* Slide 8 content centering */
+        #slide-8 .slide-content { align-items:center; }
+
+        /* Slide 5 step tag spacing */
+        #slide-5 .step-block .brute-tag { margin-top:6px; }
     </style>
 </head>
 <body data-export-progress="true" data-preset="Neo-Brutalism">
-    <div class="progress-bar" style="position:fixed;top:0;left:0;height:3px;background:#000;width:0%;z-index:100;transition:none;"></div>
+    <span id="brand-mark">slide-creator</span>
+    <div class="progress-bar"></div>
     <nav class="nav-dots" aria-label="Slide navigation"></nav>
 
-    <!-- Slide 1: Hero 封面 — 全屏宣告 -->
-    <section class="slide" data-notes="kai-slide-creator 产品介绍封面，强调零依赖和 21 种预设" aria-label="Hero">
-        <div class="stripe" style="top: 0; right: 0; width: 300px; height: 300px;"></div>
-        <div class="slide-content" style="justify-content: flex-end;">
-            <span class="brute-tag reveal" style="margin-bottom: 1rem;">零依赖 HTML 演示文稿</span>
-            <h1 class="brute-title reveal" style="font-size: clamp(2.5rem, 8vw, 7rem);">kai-slide-creator</h1>
-            <p class="brute-body reveal" style="font-size: clamp(1rem, 2vw, 1.5rem); font-weight: 700; margin-top: 1rem;">三个命令，生成 21 种风格的幻灯片<br>无需模板、无需导出、无需平台</p>
-            <div class="reveal" style="display: flex; gap: 0.75rem; margin-top: 1.5rem; flex-wrap: wrap;">
-                <span class="brute-tag">0 依赖</span>
-                <span class="brute-tag">21 预设</span>
-                <span class="brute-tag">纯 HTML</span>
+    <!-- Slide 1: Hero -- brute-hero layout -->
+    <section class="slide" id="slide-1" data-notes="slide-creator：零依赖 HTML 演示文稿，21 种预设，三分钟出稿。所有工具都在浏览器里，没有 node_modules。" aria-label="Hero">
+        <div class="stripe"></div>
+        <div class="hero-badge reveal">
+            <span class="brute-tag">CLAUDE CODE 工具</span>
+        </div>
+        <div class="hero-bottom">
+            <h1 class="brute-title reveal">幻灯片<br>不该这么重</h1>
+            <p class="hero-subtitle reveal">零依赖 HTML 演示文稿。一个文件，一个浏览器，<br>搞定所有演示。选风格，出稿，发布。</p>
+            <div class="hero-kpi reveal">
+                <div class="hero-kpi-item"><strong>21</strong>种预设</div>
+                <div class="hero-kpi-item"><strong>0</strong>个依赖</div>
+                <div class="hero-kpi-item"><strong>3min</strong>出稿</div>
             </div>
         </div>
+        <span class="slide-num-label">01 / 08</span>
     </section>
 
-    <!-- Slide 2: 问题提出 — 分栏证据 -->
-    <section class="slide" data-notes="展示现有工具的三个主要痛点" aria-label="Problem">
-        <div class="stripe" style="bottom: 0; left: 0; width: 200px; height: 200px;"></div>
-        <div class="slide-content">
-            <div class="eyebrow reveal" style="margin-bottom: 1.5rem;">核心痛点</div>
-            <h2 class="brute-h2 reveal" style="margin-bottom: 2rem;">为什么现有的演示工具总是不够好？</h2>
+    <!-- Slide 2: Problem -- brute-split layout -->
+    <section class="slide" id="slide-2" data-notes="三个痛点：工具链复杂、AI 生成千篇一律、平台锁定用户。" aria-label="Problem">
+        <div class="stripe"></div>
+        <div class="left-panel">
+            <div class="eyebrow reveal">01</div>
+            <h2 class="brute-h2 reveal">做 PPT 不需要<br>装 300MB 依赖</h2>
+        </div>
+        <div class="right-panel">
             <ul class="brute-list reveal">
-                <li><span class="num">01</span><div><strong>工具链太复杂</strong> — 安装依赖、配置环境、维护版本，做一次 PPT 要折腾半天</div></li>
-                <li><span class="num">02</span><div><strong>通用 AI 美学泛滥</strong> — 所有幻灯片长得一样：渐变、圆角、紫色调，缺乏辨识度</div></li>
-                <li><span class="num">03</span><div><strong>平台锁定风险</strong> — 用了某个平台就离不开，文件导不出来，格式私有化</div></li>
+                <li>
+                    <span class="num">01</span>
+                    <span><strong>工具链太长</strong> -- npm install、Webpack 配置、node_modules 比 PPT 还大</span>
+                </li>
+                <li>
+                    <span class="num">02</span>
+                    <span><strong>AI 千篇一律</strong> -- 通用 AI 输出全是 Inter 字体 + 紫色渐变，没有辨识度</span>
+                </li>
+                <li>
+                    <span class="num">03</span>
+                    <span><strong>平台锁定</strong> -- 封闭格式、导出限制、月费订阅，你的内容不在你手里</span>
+                </li>
             </ul>
         </div>
+        <span class="slide-num-label">02 / 08</span>
     </section>
 
-    <!-- Slide 3: 风格发现 — 流程步骤 -->
-    <section class="slide" data-notes="展示看图选风格的核心理念" aria-label="Discovery">
-        <div class="stripe" style="top: 10%; right: 5%; width: 150px; height: 150px; transform: rotate(1deg);"></div>
+    <!-- Slide 3: Discovery -- brute-cards layout -->
+    <section class="slide" id="slide-3" data-notes="看图选风格：描述主题后生成三个预览，点击选中即刻出稿，不靠文字描述。" aria-label="Discovery">
+        <div class="stripe"></div>
         <div class="slide-content">
-            <div class="eyebrow reveal" style="margin-bottom: 1rem;">核心理念</div>
-            <h2 class="brute-h2 reveal" style="margin-bottom: 2rem;">看图选风格，而不是描述风格</h2>
-            <div class="reveal" style="display: grid; grid-template-columns: repeat(3, 1fr); gap: clamp(12px, 2vw, 20px);">
-                <div class="brute-card" style="text-align: center;">
-                    <div style="font-size: 2rem; font-weight: 900; font-family: var(--font-display);">3</div>
-                    <div class="brute-body">生成 3 个风格预览</div>
+            <div class="eyebrow reveal">02</div>
+            <h2 class="brute-h2 reveal">看图选风格，不靠描述</h2>
+            <div class="style-cards">
+                <div class="style-card active reveal">
+                    <div class="style-card-preview"></div>
+                    <div class="style-card-title">粗边框、硬阴影</div>
+                    <div class="style-card-label">Neo-Brutalism</div>
                 </div>
-                <div class="brute-card" style="text-align: center;">
-                    <div style="font-size: 2rem; font-weight: 900; font-family: var(--font-display);">→</div>
-                    <div class="brute-body">用眼睛选最满意的</div>
+                <div class="style-card reveal">
+                    <div class="style-card-preview"></div>
+                    <div class="style-card-title">深色、有机光斑</div>
+                    <div class="style-card-label">Dark Botanical</div>
                 </div>
-                <div class="brute-card" style="text-align: center;">
-                    <div style="font-size: 2rem; font-weight: 900; font-family: var(--font-display);">21</div>
-                    <div class="brute-body">种设计预设可选</div>
+                <div class="style-card reveal">
+                    <div class="style-card-preview"></div>
+                    <div class="style-card-title">大字号、红色分隔线</div>
+                    <div class="style-card-label">Swiss Modern</div>
                 </div>
             </div>
         </div>
+        <span class="slide-num-label">03 / 08</span>
     </section>
 
-    <!-- Slide 4: 解决方案 — 推荐网格 -->
-    <section class="slide" data-notes="展示 21 种预设中的精选" aria-label="Solution">
+    <!-- Slide 4: Solution -- brute-stat layout -->
+    <section class="slide" id="slide-4" data-notes="21 种预设覆盖商业路演、技术分享、创意展示，拒绝通用 AI 美学。" aria-label="Solution">
+        <div class="stripe"></div>
         <div class="slide-content">
-            <div class="eyebrow reveal" style="margin-bottom: 1.5rem;">设计预设</div>
-            <h2 class="brute-h2 reveal" style="margin-bottom: 2rem;">21 种风格，没有通用 AI 美学</h2>
-            <div class="reveal" style="display: flex; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 1.5rem;">
-                <span class="preset-tag active">Bold Signal</span>
+            <div class="eyebrow reveal">03</div>
+            <div class="stat-number reveal">21</div>
+            <div class="stat-label reveal">种设计预设，没有通用 AI 审美</div>
+            <hr class="heavy-rule reveal">
+            <div class="preset-row reveal">
+                <span class="preset-tag current">Neo-Brutalism</span>
                 <span class="preset-tag">Blue Sky</span>
-                <span class="preset-tag">Aurora Mesh</span>
-                <span class="preset-tag">Chinese Chan</span>
-                <span class="preset-tag">Creative Voltage</span>
                 <span class="preset-tag">Dark Botanical</span>
-                <span class="preset-tag">Data Story</span>
-                <span class="preset-tag active">Neo-Brutalism</span>
-                <span class="preset-tag">Electric Studio</span>
                 <span class="preset-tag">Terminal Green</span>
-                <span class="preset-tag">Enterprise Dark</span>
-                <span class="preset-tag">Glassmorphism</span>
-            </div>
-            <div class="reveal" style="display: flex; flex-wrap: wrap; gap: 0.5rem;">
-                <span class="preset-tag">Modern Newspaper</span>
-                <span class="preset-tag">Neo-Retro Dev</span>
+                <span class="preset-tag">Chinese Chan</span>
                 <span class="preset-tag">Neon Cyber</span>
-                <span class="preset-tag">Notebook Tabs</span>
-                <span class="preset-tag">Paper &amp; Ink</span>
-                <span class="preset-tag">Pastel Geometry</span>
-                <span class="preset-tag">Split Pastel</span>
-                <span class="preset-tag">Swiss Modern</span>
-                <span class="preset-tag">Vintage Editorial</span>
+                <span class="preset-tag">+15</span>
             </div>
         </div>
+        <span class="slide-num-label">04 / 08</span>
     </section>
 
-    <!-- Slide 5: 工作流程 — 流程步骤 -->
-    <section class="slide" data-notes="三个步骤完成演示文稿创建" aria-label="Workflow">
-        <div class="stripe" style="bottom: 5%; left: 10%; width: 250px; height: 100px;"></div>
-        <div class="slide-content">
-            <div class="eyebrow reveal" style="margin-bottom: 1.5rem;">工作流程</div>
-            <h2 class="brute-h2 reveal" style="margin-bottom: 2rem;">三个命令，从想法到演示</h2>
-            <ul class="brute-list reveal">
-                <li><span class="num">01</span><div><strong>/slide-creator</strong> — 告诉 AI 你想做什么，系统自动生成规划</div></li>
-                <li><span class="num">02</span><div><strong>选风格</strong> — 看图选一个最喜欢的预设，或描述你想要的感觉</div></li>
-                <li><span class="num">03</span><div><strong>打开演示</strong> — 生成纯 HTML 文件，浏览器直接打开，零安装</div></li>
-            </ul>
-            <div class="code-block reveal" style="margin-top: 1.5rem;">/slide-creator --plan "为 Acme v2 产品发布制作路演 deck"
-/slide-creator --generate</div>
+    <!-- Slide 5: Workflow -- brute-split layout -->
+    <section class="slide" id="slide-5" data-notes="三个命令完成全部流程：描述主题、选风格、打开浏览器。" aria-label="Workflow">
+        <div class="stripe"></div>
+        <div class="left-panel">
+            <div class="eyebrow reveal">04</div>
+            <h2 class="brute-h2 reveal">三个命令，<br>三步出稿</h2>
         </div>
+        <div class="right-panel">
+            <div class="step-block reveal">
+                <div class="step-num">01</div>
+                <div class="step-desc">描述你的演示主题</div>
+                <div class="code-block step-code">/slide-creator 你的主题</div>
+            </div>
+            <div class="step-block reveal">
+                <div class="step-num">02</div>
+                <div class="step-desc">从三个预览中选择风格</div>
+                <div class="brute-tag">点击选中</div>
+            </div>
+            <div class="step-block reveal">
+                <div class="step-num">03</div>
+                <div class="step-desc">在浏览器中打开演示</div>
+                <div class="code-block step-code">open presentation.html</div>
+            </div>
+        </div>
+        <span class="slide-num-label">05 / 08</span>
     </section>
 
-    <!-- Slide 6: 核心功能 — 网格检查点 -->
-    <section class="slide" data-notes="展示核心功能：播放模式、编辑模式、演讲者模式、PPTX 导出" aria-label="Features">
+    <!-- Slide 6: Features -- brute-cards 2x2 grid -->
+    <section class="slide" id="slide-6" data-notes="四项核心能力：视口自适应、浏览器内编辑、PPTX 导出、两阶段流程。" aria-label="Features">
         <div class="slide-content">
-            <div class="eyebrow reveal" style="margin-bottom: 1.5rem;">核心功能</div>
-            <h2 class="brute-h2 reveal" style="margin-bottom: 2rem;">四个关键能力，覆盖完整工作流</h2>
-            <div class="reveal" style="display: grid; grid-template-columns: repeat(2, 1fr); gap: clamp(12px, 2vw, 20px);">
-                <div class="brute-card">
-                    <div class="brute-tag" style="margin-bottom: 0.5rem;">播放</div>
-                    <strong>F5 / ▶ 全屏播放</strong>
-                    <p class="brute-body" style="margin-top: 0.5rem; font-size: 0.85rem;">自动缩放适配屏幕，控制栏自动隐藏</p>
+            <div class="eyebrow reveal">05</div>
+            <h2 class="brute-h2 reveal">能播、能改、能导出</h2>
+            <div class="feature-grid">
+                <div class="feature-card reveal">
+                    <div class="feature-icon">F5</div>
+                    <h3>全屏播放</h3>
+                    <p>1440x900 画布，视口自适应缩放，F5 进入全屏模式</p>
                 </div>
-                <div class="brute-card">
-                    <div class="brute-tag" style="margin-bottom: 0.5rem;">编辑</div>
-                    <strong>E 键进入编辑模式</strong>
-                    <p class="brute-body" style="margin-top: 0.5rem; font-size: 0.85rem;">contenteditable 实时修改，Ctrl+S 保存</p>
+                <div class="feature-card reveal">
+                    <div class="feature-icon">E</div>
+                    <h3>浏览器内编辑</h3>
+                    <p>左上热区触发 contenteditable，直接在浏览器里改文案</p>
                 </div>
-                <div class="brute-card">
-                    <div class="brute-tag" style="margin-bottom: 0.5rem;">备注</div>
-                    <strong>P 键打开演讲者模式</strong>
-                    <p class="brute-body" style="margin-top: 0.5rem; font-size: 0.85rem;">备注、计时器、页数、翻页同步</p>
+                <div class="feature-card reveal">
+                    <div class="feature-icon">P</div>
+                    <h3>演讲者模式</h3>
+                    <p>同步窗口显示备注、计时器、当前页数，演讲不慌</p>
                 </div>
-                <div class="brute-card">
-                    <div class="brute-tag" style="margin-bottom: 0.5rem;">导出</div>
-                    <strong>/kai-html-export 导出 PPTX</strong>
-                    <p class="brute-body" style="margin-top: 0.5rem; font-size: 0.85rem;">像素级 PNG 或原生可编辑模式</p>
+                <div class="feature-card reveal">
+                    <div class="feature-icon">EXP</div>
+                    <h3>PPTX 导出</h3>
+                    <p>像素级图片模式或 Native 可编辑模式，兼容 PowerPoint</p>
                 </div>
             </div>
         </div>
+        <span class="slide-num-label">06 / 08</span>
     </section>
 
-    <!-- Slide 7: 安装方式 — 证据列表 -->
-    <section class="slide" data-notes="展示安装方式：Claude Code 和 OpenClaw" aria-label="Install">
-        <div class="stripe" style="top: 0; left: 50%; width: 40%; height: 120px;"></div>
+    <!-- Slide 7: Install -- brute-list layout -->
+    <section class="slide" id="slide-7" data-notes="安装方式：Claude Code 对话中安装或 OpenClaw clawhub install 命令。" aria-label="Install">
         <div class="slide-content">
-            <div class="eyebrow reveal" style="margin-bottom: 1.5rem;">安装方式</div>
-            <h2 class="brute-h2 reveal" style="margin-bottom: 2rem;">一行命令，零依赖运行</h2>
-            <div class="code-block reveal" style="margin-bottom: 1rem;"># Claude Code
-告诉 Claude：安装 kai-slide-creator</div>
-            <div class="code-block reveal" style="margin-bottom: 1rem;"># OpenClaw
-clawhub install kai-slide-creator</div>
-            <p class="brute-body reveal" style="font-size: 0.85rem; opacity: 0.7;">只需要 Python 3，无 npm / node / 构建步骤</p>
-        </div>
-    </section>
-
-    <!-- Slide 8: CTA — 堆叠行动 -->
-    <section class="slide" data-notes="行动号召：立即开始创建幻灯片" aria-label="CTA">
-        <div class="slide-content" style="justify-content: center; align-items: center; text-align: center;">
-            <h2 class="brute-title reveal" style="font-size: clamp(2rem, 6vw, 5rem);">现在开始</h2>
-            <hr class="heavy-rule reveal" style="width: 60px; margin: 2rem auto;">
-            <div class="reveal" style="display: flex; flex-direction: column; gap: 1rem; align-items: center;">
-                <div class="cta-cmd">/slide-creator</div>
-                <span class="brute-tag">告诉 Claude 安装 kai-slide-creator</span>
+            <div class="install-section">
+                <div class="eyebrow reveal">安装</div>
+                <h2 class="brute-h2 reveal">一行命令，装好即用</h2>
+                <div class="install-block">
+                    <div class="install-platform reveal">Claude Code</div>
+                    <div class="code-block install-cmd reveal">告诉 Claude「安装 github.com/kaisersong/slide-creator」</div>
+                </div>
+                <div class="install-block">
+                    <div class="install-platform reveal">OpenClaw</div>
+                    <div class="code-block install-cmd reveal">clawhub install kai-slide-creator</div>
+                </div>
             </div>
         </div>
+        <span class="slide-num-label">07 / 08</span>
     </section>
 
-    <!-- Edit hotzone + notes panel -->
+    <!-- Slide 8: CTA -- dark brutalist, stacked blocks -->
+    <section class="slide" id="slide-8" data-notes="行动号召：立即使用 /slide-creator 开始创建你的演示文稿。" aria-label="CTA">
+        <div class="stripe"></div>
+        <div class="slide-content">
+            <div class="cta-content">
+                <div class="cta-tag reveal">slide-creator</div>
+                <h2 class="cta-headline reveal">现在就开始</h2>
+                <p class="cta-sub reveal">适用于 Claude Code 和 OpenClaw<br>完全在浏览器中运行，零依赖</p>
+                <hr class="cta-rule reveal">
+                <div class="reveal">
+                    <div class="cta-cmd-light">/slide-creator</div>
+                </div>
+                <div class="cta-note reveal">输入命令，描述你的演示，三分钟出稿</div>
+            </div>
+        </div>
+        <span class="slide-num-label light">08 / 08</span>
+    </section>
+
+    <!-- Edit UI -->
     <div class="edit-hotzone"></div>
-    <button class="edit-toggle" id="editToggle" title="Edit mode (E)">✏ Edit</button>
+    <button class="edit-toggle" id="editToggle" title="Edit mode (E)">Edit</button>
     <div id="notes-panel">
         <div id="notes-panel-header">
-            <div id="notes-panel-label">SPEAKER NOTES — SLIDE 1 / 8</div>
+            <div id="notes-panel-label">SPEAKER NOTES</div>
             <div id="notes-drag-hint"></div>
-            <button id="notes-collapse-btn" title="Collapse / expand">▾</button>
+            <button id="notes-collapse-btn" title="Collapse / expand">&#9662;</button>
         </div>
         <div id="notes-body">
-            <textarea id="notes-textarea" placeholder="Add speaker notes…"></textarea>
+            <textarea id="notes-textarea" placeholder="添加演讲者备注..."></textarea>
         </div>
     </div>
 
     <script>
-
-class PresentMode {
-  constructor(ctrl) {
-    this.ctrl = ctrl; this.DW = 1440; this.DH = 900; this.active = false;
-    this._resize = () => this._scale();
-    const btn = document.createElement('button');
-    btn.id = 'present-btn'; btn.title = 'Present (F5)';
-    btn.setAttribute('aria-label', 'Present'); btn.textContent = '▶';
-    document.body.appendChild(btn);
-    const counter = document.createElement('div');
-    counter.id = 'present-counter'; document.body.appendChild(counter);
-    btn.addEventListener('click', () => this.enter());
-    document.addEventListener('keydown', e => {
-      if (e.key === 'F5') { e.preventDefault(); this.enter(); }
-      if (e.key === 'Escape' && this.active) this.exit();
-      if ((e.key === 'b' || e.key === 'B') && this.active) document.body.classList.toggle('presenting-black');
-    });
-    document.addEventListener('fullscreenchange', () => { if (!document.fullscreenElement && this.active) this.exit(); });
-  }
-  enter() {
-    if (this.active) return; this.active = true;
-    document.body.classList.add('presenting');
-    document.documentElement.requestFullscreen?.().catch(() => {});
-    window.addEventListener('resize', this._resize); this._scale(); this._show(this.ctrl.currentSlide);
-    this._origGoTo = this.ctrl.goTo.bind(this.ctrl);
-    this.ctrl.goTo = (i) => {
-      const idx = Math.max(0, Math.min(i, this.ctrl.slides.length - 1));
-      this.ctrl.currentSlide = idx;
-      this.ctrl.slides.forEach((s, j) => s.classList.toggle('visible', j === idx));
-      this._show(idx); this.ctrl.updateProgress?.(); this.ctrl.updateDots?.(); this.ctrl.broadcastState?.();
-    };
-  }
-  exit() {
-    if (!this.active) return; this.active = false;
-    document.body.classList.remove('presenting', 'presenting-black');
-    document.querySelectorAll('.slide').forEach(s => s.classList.remove('p-on'));
-    if (document.fullscreenElement) document.exitFullscreen?.();
-    window.removeEventListener('resize', this._resize);
-    if (this._origGoTo) { this.ctrl.goTo = this._origGoTo; this._origGoTo = null; }
-    this.ctrl.slides[this.ctrl.currentSlide]?.scrollIntoView({ behavior: 'instant' });
-  }
-  _scale() {
-    const s = Math.min(window.innerWidth / this.DW, window.innerHeight / this.DH);
-    const ox = (window.innerWidth - this.DW * s) / 2;
-    const oy = (window.innerHeight - this.DH * s) / 2;
-    const r = document.documentElement;
-    r.style.setProperty('--pdw', this.DW + 'px'); r.style.setProperty('--pdh', this.DH + 'px');
-    r.style.setProperty('--ps', s); r.style.setProperty('--pox', ox + 'px'); r.style.setProperty('--poy', oy + 'px');
-  }
-  _show(i) {
-    document.querySelectorAll('.slide').forEach((s, idx) => s.classList.toggle('p-on', idx === i));
-    const c = document.getElementById('present-counter');
-    if (c) c.textContent = `${i + 1} / ${this.ctrl.slides.length}`;
-  }
-}
-
-
-class SlidePresentation {
-  constructor() {
-    this.slides = document.querySelectorAll('.slide');
-    this.currentSlide = 0;
-    this.channel = new BroadcastChannel('slide-creator-presenter');
-    // CRITICAL: Make first slide visible immediately
-    this.slides[0]?.classList.add('visible');
-    this.slides[0]?.querySelectorAll('.reveal').forEach(function(r) { r.classList.add('visible'); });
-    this.setupNavDots();
-    this.setupObserver();
-    this.setupKeyboard();
-    this.setupTouch();
-    this.setupWheel();
-    this.setupPresenter();
-    this.updateProgress();
-  }
-  setupNavDots() {
-    const nav = document.querySelector('.nav-dots');
-    if (!nav) return;
-    this.slides.forEach((_, i) => {
-      const dot = document.createElement('button');
-      dot.setAttribute('aria-label', `Go to slide ${i + 1}`);
-      dot.style.cssText = 'width:8px;height:8px;border-radius:50%;border:none;cursor:pointer;background:rgba(255,255,255,0.3);transition:all 0.3s;';
-      dot.addEventListener('click', () => this.goTo(i));
-      nav.appendChild(dot);
-    });
-    nav.style.cssText = 'position:fixed;right:1.5rem;top:50%;transform:translateY(-50%);display:flex;flex-direction:column;gap:8px;z-index:100;';
-  }
-  setupObserver() {
-    const observer = new IntersectionObserver((entries) => {
-      entries.forEach(entry => {
-        if (entry.isIntersecting) {
-          entry.target.classList.add('visible');
-          this.currentSlide = [...this.slides].indexOf(entry.target);
-          this.updateProgress();
-          this.updateDots();
-          this.broadcastState();
-          this.updateNotesPanel();
+    if (new URLSearchParams(location.search).has('presenter')) {
+        document.title = 'Presenter \u2014 ' + document.title;
+        document.body.innerHTML = `
+        <style>
+            * { box-sizing: border-box; margin: 0; }
+            body { background: #111; color: #fff; font-family: system-ui, sans-serif; }
+            #pv { display: grid; grid-template-columns: 1fr 220px; gap: 1rem; padding: 1.25rem; align-items: start; }
+            .pv-panel { background: #1e1e1e; border-radius: 12px; padding: 1.25rem; }
+            #pv-label { font-size: 0.6rem; letter-spacing: 0.18em; text-transform: uppercase; color: #555; margin-bottom: 0.6rem; }
+            #pv-notes { font-size: 1.05rem; line-height: 1.85; color: #d0d0d0; }
+            #pv-right { display: flex; flex-direction: column; gap: 1rem; }
+            #pv-nav { display: flex; align-items: center; justify-content: space-between; gap: 0.5rem; }
+            .pv-arrow { width: 32px; height: 32px; border-radius: 6px; border: 1px solid #333; background: #2a2a2a; color: #aaa; font-size: 1rem; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+            .pv-arrow:hover { background: #383838; color: #fff; }
+            #pv-counter { text-align: center; flex: 1; }
+            #pv-num { font-size: 1.6rem; font-weight: 700; font-variant-numeric: tabular-nums; line-height: 1; }
+            #pv-of { color: #555; font-size: 0.75rem; margin-top: 0.2rem; }
+            #pv-timer { font-size: 1.5rem; font-weight: 700; font-family: monospace; font-variant-numeric: tabular-nums; }
+            #pv-timer-label { font-size: 0.6rem; letter-spacing: 0.18em; text-transform: uppercase; color: #555; }
+        </style>
+        <div id="pv">
+            <div class="pv-panel"><div id="pv-label">Speaker Notes</div><div id="pv-notes">Waiting for main window...</div></div>
+            <div id="pv-right">
+                <div class="pv-panel"><div id="pv-nav">
+                    <button class="pv-arrow" id="pv-prev">\u2190</button>
+                    <div id="pv-counter"><div id="pv-num">\u2014</div><div id="pv-of">/ \u2014</div></div>
+                    <button class="pv-arrow" id="pv-next">\u2192</button>
+                </div></div>
+                <div class="pv-panel"><div id="pv-timer-label">Elapsed</div><div id="pv-timer">0:00</div></div>
+            </div>
+        </div>`;
+        const ch = new BroadcastChannel('slide-creator-presenter');
+        let startTime = null;
+        const pv = document.getElementById('pv');
+        let lastH = 0, roTimer = null;
+        new ResizeObserver(() => {
+            clearTimeout(roTimer);
+            roTimer = setTimeout(() => {
+                const h = Math.ceil(pv.getBoundingClientRect().height);
+                if (h === lastH) return;
+                lastH = h;
+                const chrome = window.outerHeight - window.innerHeight;
+                window.resizeTo(window.outerWidth, Math.max(260, h + chrome + 4));
+            }, 40);
+        }).observe(pv);
+        ch.addEventListener('message', e => {
+            if (e.data.type !== 'state') return;
+            if (!startTime) startTime = Date.now();
+            document.getElementById('pv-notes').textContent = e.data.notes || '(no notes for this slide)';
+            document.getElementById('pv-num').textContent = e.data.index + 1;
+            document.getElementById('pv-of').textContent = '/ ' + e.data.total;
+        });
+        ch.postMessage({ type: 'request-state' });
+        setInterval(() => {
+            if (!startTime) return;
+            const s = Math.floor((Date.now() - startTime) / 1000);
+            document.getElementById('pv-timer').textContent = Math.floor(s / 60) + ':' + String(s % 60).padStart(2, '0');
+        }, 1000);
+        document.getElementById('pv-prev').addEventListener('click', () => ch.postMessage({ type: 'nav-prev' }));
+        document.getElementById('pv-next').addEventListener('click', () => ch.postMessage({ type: 'nav-next' }));
+        document.addEventListener('keydown', e => {
+            if (e.key === 'ArrowRight' || e.key === 'ArrowDown' || e.key === ' ' || e.key === 'PageDown' || e.key === 'Enter') ch.postMessage({ type: 'nav-next' });
+            else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp' || e.key === 'PageUp' || e.key === 'Backspace') ch.postMessage({ type: 'nav-prev' });
+        });
+    } else {
+    class SlidePresentation {
+        constructor() {
+            this.slides = document.querySelectorAll('.slide');
+            this.currentSlide = 0;
+            this.channel = new BroadcastChannel('slide-creator-presenter');
+            this.slides[0]?.classList.add('visible');
+            this.slides[0]?.querySelectorAll('.reveal').forEach(function(r) { r.classList.add('visible'); });
+            this.setupNavDots(); this.setupObserver(); this.setupKeyboard();
+            this.setupTouch(); this.setupWheel(); this.setupPresenter(); this.setupEditor(); this.updateProgress();
         }
-      });
-    }, { threshold: 0.5 });
-    this.slides.forEach(s => observer.observe(s));
-  }
-  setupKeyboard() {
-    document.addEventListener('keydown', (e) => {
-      if (e.target.getAttribute('contenteditable')) return;
-      if (e.key === 'ArrowDown' || e.key === 'ArrowRight' || e.key === ' ' || e.key === 'PageDown' || e.key === 'Enter') {
-        e.preventDefault(); this.next();
-      } else if (e.key === 'ArrowUp' || e.key === 'ArrowLeft' || e.key === 'PageUp' || e.key === 'Backspace') {
-        e.preventDefault(); this.prev();
-      } else if (e.key === 'p' || e.key === 'P') {
-        const url = location.href.split('?')[0] + '?presenter';
-        window.open(url, 'slide-presenter-' + Date.now(), 'width=1100,menubar=no,toolbar=no,location=no');
-      }
-    });
-  }
-  setupTouch() {
-    let startY = 0;
-    document.addEventListener('touchstart', e => { startY = e.touches[0].clientY; }, { passive: true });
-    document.addEventListener('touchend', e => {
-      const delta = startY - e.changedTouches[0].clientY;
-      if (Math.abs(delta) > 50) delta > 0 ? this.next() : this.prev();
-    });
-  }
-  setupWheel() { /* scroll-snap handles natively */ }
-  setupPresenter() {
-    this.channel.addEventListener('message', e => {
-      if (e.data.type === 'nav-next') this.next();
-      else if (e.data.type === 'nav-prev') this.prev();
-      else if (e.data.type === 'request-state') this.broadcastState();
-    });
-  }
-  broadcastState() {
-    const slide = this.slides[this.currentSlide];
-    this.channel.postMessage({
-      type: 'state', index: this.currentSlide,
-      total: this.slides.length, notes: slide?.dataset.notes || ''
-    });
-  }
-  goTo(index) {
-    this.slides.forEach((slide, i) => {
-      slide.classList.toggle('visible', i === index);
-      var reveals = slide.querySelectorAll('.reveal');
-      reveals.forEach(function(r) { r.classList.toggle('visible', i === index); });
-    });
-    this.slides[index]?.scrollIntoView({ behavior: 'smooth' });
-  }
-  next() { this.goTo(Math.min(this.currentSlide + 1, this.slides.length - 1)); }
-  prev() { this.goTo(Math.max(this.currentSlide - 1, 0)); }
-  updateProgress() {
-    const pct = (this.currentSlide / (this.slides.length - 1)) * 100;
-    const bar = document.querySelector('.progress-bar');
-    if (bar) bar.style.width = pct + '%';
-  }
-  updateDots() {
-    document.querySelectorAll('.nav-dots button').forEach((dot, i) => {
-      dot.style.background = i === this.currentSlide ? 'var(--accent)' : 'rgba(255,255,255,0.3)';
-      dot.style.transform = i === this.currentSlide ? 'scale(1.3)' : 'scale(1)';
-    });
-  }
-  updateNotesPanel() {
-    const label = document.getElementById('notes-panel-label');
-    const textarea = document.getElementById('notes-textarea');
-    if (label) label.textContent = `SPEAKER NOTES — SLIDE ${this.currentSlide + 1} / ${this.slides.length}`;
-    if (textarea) textarea.value = this.slides[this.currentSlide]?.dataset.notes || '';
-  }
-  setupEditor() {
-    const panel = document.getElementById('notes-panel');
-    const textarea = document.getElementById('notes-textarea');
-    const toggle = document.getElementById('editToggle');
-    const hotzone = document.querySelector('.edit-hotzone');
-    const header = document.getElementById('notes-panel-header');
-    const collapseBtn = document.getElementById('notes-collapse-btn');
-    let hideTimeout = null;
-    this.editor = { active: false };
-    hotzone.addEventListener('mouseenter', () => { clearTimeout(hideTimeout); toggle.classList.add('show'); });
-    hotzone.addEventListener('mouseleave', () => { hideTimeout = setTimeout(() => { if (!this.editor.active) toggle.classList.remove('show'); }, 400); });
-    toggle.addEventListener('mouseenter', () => clearTimeout(hideTimeout));
-    toggle.addEventListener('mouseleave', () => { hideTimeout = setTimeout(() => { if (!this.editor.active) toggle.classList.remove('show'); }, 400); });
-    toggle.addEventListener('click', (e) => {
-      e.stopPropagation();
-      this.editor.active = !this.editor.active;
-      document.body.classList.toggle('editing', this.editor.active);
-      toggle.classList.toggle('active', this.editor.active);
-      toggle.textContent = this.editor.active ? '✓ Done' : '✏ Edit';
-      if (this.editor.active) {
-        panel.classList.add('active');
-        textarea.value = this.slides[this.currentSlide]?.dataset.notes || '';
-        textarea.focus();
-      } else {
-        panel.classList.remove('active');
-      }
-    });
-    header.addEventListener('click', (e) => {
-      if (e.target === collapseBtn) { panel.classList.toggle('collapsed'); return; }
-    });
-    textarea.addEventListener('input', () => {
-      const slide = this.slides[this.currentSlide];
-      if (slide) slide.dataset.notes = textarea.value;
-      this.channel.postMessage({ type: 'state', index: this.currentSlide, total: this.slides.length, notes: textarea.value });
-    });
-  }
-}
-
-/* Presenter Mode */
-
-if (new URLSearchParams(location.search).has('presenter')) {
-  document.title = 'Presenter — ' + document.title;
-  document.body.innerHTML = `
-  <style>
-    * { box-sizing: border-box; margin: 0; }
-    body { background: #111; color: #fff; font-family: system-ui, sans-serif; }
-    #pv { display: grid; grid-template-columns: 1fr 220px; gap: 1rem; padding: 1.25rem; align-items: start; }
-    .pv-panel { background: #1e1e1e; border-radius: 12px; padding: 1.25rem; }
-    #pv-label { font-size: 0.6rem; letter-spacing: 0.18em; text-transform: uppercase; color: #555; margin-bottom: 0.6rem; }
-    #pv-notes { font-size: 1.05rem; line-height: 1.85; color: #d0d0d0; }
-    #pv-right { display: flex; flex-direction: column; gap: 1rem; }
-    #pv-nav { display: flex; align-items: center; justify-content: space-between; gap: 0.5rem; }
-    .pv-arrow { width: 32px; height: 32px; border-radius: 6px; border: 1px solid #333; background: #2a2a2a; color: #aaa; font-size: 1rem; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: background 0.15s, color 0.15s; flex-shrink: 0; }
-    .pv-arrow:hover { background: #383838; color: #fff; }
-    #pv-counter { text-align: center; flex: 1; }
-    #pv-num { font-size: 1.6rem; font-weight: 700; font-variant-numeric: tabular-nums; line-height: 1; }
-    #pv-of { color: #555; font-size: 0.75rem; margin-top: 0.2rem; }
-    #pv-timer-box { text-align: center; }
-    #pv-timer-label { font-size: 0.6rem; letter-spacing: 0.18em; text-transform: uppercase; color: #555; margin-bottom: 0.3rem; }
-    #pv-timer { font-size: 1.5rem; font-weight: 700; font-family: monospace; font-variant-numeric: tabular-nums; }
-  </style>
-  <div id="pv">
-    <div class="pv-panel"><div id="pv-label">Speaker Notes</div><div id="pv-notes">Waiting for main window...</div></div>
-    <div id="pv-right">
-      <div class="pv-panel"><div id="pv-nav"><button class="pv-arrow" id="pv-prev">←</button><div id="pv-counter"><div id="pv-num">—</div><div id="pv-of">/ —</div></div><button class="pv-arrow" id="pv-next">→</button></div></div>
-      <div class="pv-panel" id="pv-timer-box"><div id="pv-timer-label">Elapsed</div><div id="pv-timer">0:00</div></div>
-    </div>
-  </div>`;
-  const ch = new BroadcastChannel('slide-creator-presenter');
-  let startTime = null;
-  const pv = document.getElementById('pv');
-  let lastH = 0, roTimer = null;
-  new ResizeObserver(() => { clearTimeout(roTimer); roTimer = setTimeout(() => { const h = Math.ceil(pv.getBoundingClientRect().height); if (h === lastH) return; lastH = h; const chrome = window.outerHeight - window.innerHeight; window.resizeTo(window.outerWidth, Math.max(260, h + chrome + 4)); }, 40); }).observe(pv);
-  ch.addEventListener('message', e => { if (e.data.type !== 'state') return; if (!startTime) startTime = Date.now(); document.getElementById('pv-notes').textContent = e.data.notes || '(no notes for this slide)'; document.getElementById('pv-num').textContent = e.data.index + 1; document.getElementById('pv-of').textContent = `/ ${e.data.total}`; });
-  ch.postMessage({ type: 'request-state' });
-  setInterval(() => { if (!startTime) return; const s = Math.floor((Date.now() - startTime) / 1000); document.getElementById('pv-timer').textContent = `${Math.floor(s / 60)}:${String(s % 60).padStart(2, '0')}`; }, 1000);
-  document.getElementById('pv-prev').addEventListener('click', () => ch.postMessage({ type: 'nav-prev' }));
-  document.getElementById('pv-next').addEventListener('click', () => ch.postMessage({ type: 'nav-next' }));
-  document.addEventListener('keydown', e => {
-    if (e.key === 'ArrowRight' || e.key === 'ArrowDown' || e.key === ' ' || e.key === 'PageDown' || e.key === 'Enter') ch.postMessage({ type: 'nav-next' });
-    else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp' || e.key === 'PageUp' || e.key === 'Backspace') ch.postMessage({ type: 'nav-prev' });
-  });
-} else {
-  new PresentMode(new SlidePresentation());
-}
-
-</script>
-<script>
-
-(function() {
-  var slides = document.querySelectorAll('.slide');
-  if (!slides.length) return;
-  var last = slides[slides.length - 1];
-  var credit = document.createElement('div');
-  credit.className = 'slide-credit';
-  credit.textContent = 'By kai-slide-creator v2.15.0 · Neo-Brutalism';
-  last.appendChild(credit);
-})();
-
-</script>
+        setupNavDots() {
+            const nav = document.querySelector('.nav-dots');
+            if (!nav) return;
+            this.slides.forEach((_, i) => {
+                const dot = document.createElement('button');
+                dot.setAttribute('aria-label', 'Go to slide ' + (i + 1));
+                dot.style.cssText = 'width:8px;height:8px;border-radius:0;border:none;cursor:pointer;background:#000;transition:all 0.3s;';
+                dot.addEventListener('click', () => this.goTo(i)); nav.appendChild(dot);
+            });
+            nav.style.cssText = 'position:fixed;right:1.5rem;top:50%;transform:translateY(-50%);display:flex;flex-direction:column;gap:8px;z-index:100;';
+        }
+        setupObserver() {
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('visible');
+                        this.currentSlide = [...this.slides].indexOf(entry.target);
+                        this.updateProgress(); this.updateDots(); this.broadcastState();
+                        this.updateNotesPanel();
+                    }
+                });
+            }, { threshold: 0.5 });
+            this.slides.forEach(s => observer.observe(s));
+        }
+        setupKeyboard() {
+            document.addEventListener('keydown', (e) => {
+                if (e.target.getAttribute('contenteditable') || e.target.tagName === 'TEXTAREA') return;
+                if (['ArrowDown','ArrowRight',' ','PageDown','Enter'].includes(e.key)) { e.preventDefault(); this.next(); }
+                else if (['ArrowUp','ArrowLeft','PageUp','Backspace'].includes(e.key)) { e.preventDefault(); this.prev(); }
+                else if (e.key === 'p' || e.key === 'P') { window.open(location.href.split('?')[0] + '?presenter', 'slide-presenter-' + Date.now(), 'width=1100,menubar=no,toolbar=no,location=no'); }
+                else if (e.key === 'e' || e.key === 'E') { if (this.editor && !this.editor.active) this.editor.enter(); else if (this.editor && this.editor.active) this.editor.exit(); }
+            });
+        }
+        setupTouch() {
+            let startY = 0;
+            document.addEventListener('touchstart', e => { startY = e.touches[0].clientY; }, { passive: true });
+            document.addEventListener('touchend', e => { const d = startY - e.changedTouches[0].clientY; if (Math.abs(d) > 50) d > 0 ? this.next() : this.prev(); });
+        }
+        setupWheel() {}
+        setupPresenter() {
+            this.channel.addEventListener('message', e => {
+                if (e.data.type === 'nav-next') this.next();
+                else if (e.data.type === 'nav-prev') this.prev();
+                else if (e.data.type === 'request-state') this.broadcastState();
+            });
+        }
+        broadcastState() {
+            const slide = this.slides[this.currentSlide];
+            this.channel.postMessage({ type: 'state', index: this.currentSlide, total: this.slides.length, notes: slide?.dataset.notes || '' });
+        }
+        goTo(index) {
+            this.slides.forEach((slide, i) => {
+                slide.classList.toggle('visible', i === index);
+                slide.querySelectorAll('.reveal').forEach(function(r) { r.classList.toggle('visible', i === index); });
+            });
+            this.slides[index]?.scrollIntoView({ behavior: 'smooth' });
+        }
+        next() { this.goTo(Math.min(this.currentSlide + 1, this.slides.length - 1)); }
+        prev() { this.goTo(Math.max(this.currentSlide - 1, 0)); }
+        updateProgress() {
+            const pct = (this.currentSlide / (this.slides.length - 1)) * 100;
+            const bar = document.querySelector('.progress-bar');
+            if (bar) bar.style.width = pct + '%';
+        }
+        updateDots() {
+            document.querySelectorAll('.nav-dots button').forEach((dot, i) => {
+                dot.style.background = i === this.currentSlide ? '#FFEB3B' : '#000';
+                dot.style.transform = i === this.currentSlide ? 'scale(1.3)' : 'scale(1)';
+            });
+        }
+        setupEditor() {
+            const panel = document.getElementById('notes-panel');
+            const label = document.getElementById('notes-panel-label');
+            const textarea = document.getElementById('notes-textarea');
+            const toggle = document.getElementById('editToggle');
+            const hotzone = document.querySelector('.edit-hotzone');
+            let hideTimeout = null;
+            hotzone.addEventListener('mouseenter', () => { clearTimeout(hideTimeout); toggle.classList.add('show'); });
+            hotzone.addEventListener('mouseleave', () => { hideTimeout = setTimeout(() => { if (this.editor.active) return; toggle.classList.remove('show'); }, 400); });
+            toggle.addEventListener('mouseenter', () => clearTimeout(hideTimeout));
+            toggle.addEventListener('mouseleave', () => { hideTimeout = setTimeout(() => { if (this.editor.active) return; toggle.classList.remove('show'); }, 400); });
+            hotzone.addEventListener('click', () => this.editor.toggle());
+            toggle.addEventListener('click', () => this.editor.toggle());
+            document.getElementById('notes-panel-header').addEventListener('click', () => panel.classList.toggle('collapsed'));
+            textarea.addEventListener('input', () => {
+                const slide = this.slides[this.currentSlide];
+                if (slide) { slide.dataset.notes = textarea.value; this.broadcastState(); }
+            });
+            document.addEventListener('keydown', (e) => {
+                if ((e.ctrlKey || e.metaKey) && e.key === 's') { e.preventDefault(); this.saveFile(); }
+            });
+            this.editor = {
+                active: false,
+                toggle: () => this.editor.active ? this.editor.exit() : this.editor.enter(),
+                enter: () => {
+                    this.editor.active = true;
+                    toggle.classList.add('active'); toggle.textContent = 'Done';
+                    this.slides.forEach(s => s.querySelectorAll('h1,h2,h3,p,li,span,td,th').forEach(el => {
+                        el.setAttribute('contenteditable', 'true'); el.style.outline = 'none';
+                    }));
+                    panel.classList.add('active'); this.updateNotesPanel();
+                },
+                exit: () => {
+                    this.editor.active = false;
+                    toggle.classList.remove('active'); toggle.textContent = 'Edit';
+                    this.slides.forEach(s => s.querySelectorAll('[contenteditable]').forEach(el => {
+                        el.removeAttribute('contenteditable'); el.style.outline = '';
+                    }));
+                    panel.classList.remove('active');
+                }
+            };
+            this._notesLabel = label; this._notesTextarea = textarea;
+        }
+        updateNotesPanel() {
+            if (!this.editor?.active) return;
+            const slide = this.slides[this.currentSlide];
+            this._notesLabel.textContent = 'SPEAKER NOTES \u2014 SLIDE ' + (this.currentSlide + 1) + ' / ' + this.slides.length;
+            this._notesTextarea.value = slide?.dataset.notes || '';
+        }
+        saveFile() {
+            const html = '<!DOCTYPE html>\n' + document.documentElement.outerHTML;
+            const bytes = new TextEncoder().encode(html);
+            fetch(location.pathname, { method: 'PUT', body: bytes, headers: { 'Content-Type': 'text/html' } })
+                .catch(() => {
+                    const a = Object.assign(document.createElement('a'), {
+                        href: URL.createObjectURL(new Blob([html], { type: 'text/html' })),
+                        download: location.pathname.split('/').pop() || 'presentation.html'
+                    }); a.click(); URL.revokeObjectURL(a.href);
+                });
+        }
+    }
+    class PresentMode {
+        constructor(ctrl) {
+            this.ctrl = ctrl;
+            this.baseW = 1440; this.baseH = 900;
+            this.active = false;
+            const btn = document.createElement('button');
+            btn.id = 'present-btn'; btn.title = 'Present (F5)'; btn.setAttribute('aria-label', 'Present'); btn.textContent = '\u25B6';
+            document.body.appendChild(btn);
+            const counter = document.createElement('div');
+            counter.id = 'present-counter'; document.body.appendChild(counter);
+            btn.addEventListener('click', () => this.enter());
+            document.addEventListener('keydown', e => {
+                if (e.key === 'F5') { e.preventDefault(); this.enter(); }
+                if (e.key === 'Escape' && this.active) this.exit();
+                if ((e.key === 'b' || e.key === 'B') && this.active) document.body.classList.toggle('presenting-black');
+            });
+            document.addEventListener('fullscreenchange', () => { if (this.active) { setTimeout(() => this._scale(), 100); } if (!document.fullscreenElement && this.active) this.exit(); });
+            window.addEventListener('resize', () => { if (this.active) this._scale(); });
+        }
+        enter() {
+            if (this.active) return;
+            this.active = true;
+            document.body.classList.add('presenting');
+            if (document.documentElement.requestFullscreen) document.documentElement.requestFullscreen().catch(() => {});
+            this._scale();
+            this._show(this.ctrl.currentSlide);
+            this._updateCounter();
+            this._origGoTo = this.ctrl.goTo.bind(this.ctrl);
+            this.ctrl.goTo = (i) => {
+                const idx = Math.max(0, Math.min(i, this.ctrl.slides.length - 1));
+                this.ctrl.currentSlide = idx;
+                this.ctrl.slides.forEach((s, j) => s.classList.toggle('visible', j === idx));
+                this._show(idx);
+                this.ctrl.updateProgress?.();
+                this.ctrl.updateDots?.();
+                this.ctrl.broadcastState?.();
+            };
+        }
+        exit() {
+            if (!this.active) return;
+            this.active = false;
+            document.body.classList.remove('presenting', 'presenting-black');
+            this._reset();
+            if (document.fullscreenElement) document.exitFullscreen?.();
+            if (this._origGoTo) { this.ctrl.goTo = this._origGoTo; this._origGoTo = null; }
+            this.ctrl.slides[this.ctrl.currentSlide]?.scrollIntoView({ behavior: 'instant' });
+        }
+        _scale() {
+            const vw = window.innerWidth;
+            const vh = window.innerHeight;
+            const s = Math.min(vw / this.baseW, vh / this.baseH);
+            const ox = (vw - this.baseW * s) / 2;
+            const oy = (vh - this.baseH * s) / 2;
+            this.ctrl.slides.forEach(slide => {
+                slide.style.transform = 'translate(' + ox + 'px, ' + oy + 'px) scale(' + s + ')';
+            });
+        }
+        _reset() {
+            this.ctrl.slides.forEach(slide => { slide.style.transform = ''; slide.classList.remove('p-on'); });
+        }
+        _show(i) {
+            this.ctrl.slides.forEach((s, idx) => s.classList.toggle('p-on', idx === i));
+        }
+        _updateCounter() {
+            const c = document.getElementById('present-counter');
+            if (c) c.textContent = (this.ctrl.currentSlide + 1) + ' / ' + this.ctrl.slides.length;
+        }
+    }
+    new PresentMode(new SlidePresentation());
+    }
+    </script>
+    <script>
+    (function() {
+        var slides = document.querySelectorAll('.slide');
+        if (!slides.length) return;
+        var last = slides[slides.length - 1];
+        var credit = document.createElement('div');
+        credit.className = 'slide-credit';
+        credit.textContent = 'By kai-slide-creator v2.18.0 \u00B7 Neo-Brutalism';
+        last.appendChild(credit);
+    })();
+    </script>
 </body>
 </html>
