@@ -39,7 +39,7 @@ def test_doc_sync_checker_passes_for_valid_fixture():
     repo = write_fixture_repo(
         make_case_dir("valid"),
         skill=(
-            "Edit Mode (default-on, optional)\n"
+            "默认开启\n"
             "Two-stage workflow: --plan then --generate\n"
             "Custom theme: themes/<name>/reference.md\n"
         ),
@@ -80,7 +80,7 @@ def test_doc_sync_checker_dry_run_does_not_modify_files():
     repo = write_fixture_repo(
         make_case_dir("dry-run"),
         skill=(
-            "Edit Mode (default-on, optional)\n"
+            "默认开启\n"
             "Two-stage workflow: --plan then --generate\n"
             "Custom theme: themes/<name>/reference.md\n"
         ),

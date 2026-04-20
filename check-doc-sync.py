@@ -58,7 +58,7 @@ def evaluate(root: Path) -> list[RuleResult]:
     ok, detail = contains_all(
         skill,
         [
-            "Edit Mode (default-on, optional)",
+            "默认开启",
             "--plan",
             "--generate",
             "themes/<name>/reference.md",
@@ -74,7 +74,7 @@ def evaluate(root: Path) -> list[RuleResult]:
             "Two-stage workflow",
             "--plan",
             "--generate",
-            "Default-on, optional",
+            "Default-on",
             "themes/your-theme/",
             "reference.md",
         ],
@@ -111,8 +111,8 @@ def evaluate(root: Path) -> list[RuleResult]:
     )
 
     edit_mode_ok = (
-        "Edit Mode (default-on, optional)" in skill
-        and "Default-on, optional" in readme
+        "默认开启" in skill
+        and "Default-on" in readme
         and "Every generated HTML file MUST include both of these" not in skill
     )
     results.append(

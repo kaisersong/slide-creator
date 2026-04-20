@@ -134,6 +134,9 @@ class TestBackgroundPatterns:
                 stripped = line.strip()
                 if stripped.startswith("/*") or stripped.startswith("*"):
                     continue
+                # Skip present mode overlays — #000 is intentional there
+                if "body.presenting" in stripped or "presenting-black" in stripped:
+                    continue
                 if re.search(r"background(?:-color)?\s*:\s*#[0]{3}(?:\s|;|})", stripped) or \
                    re.search(r"background(?:-color)?\s*:\s*#[0]{6}(?:\s|;|})", stripped):
                     pytest.fail(

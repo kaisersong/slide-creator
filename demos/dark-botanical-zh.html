@@ -1,712 +1,638 @@
 <!DOCTYPE html>
-<html lang="zh-CN">
+<html lang="zh">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Dark Botanical — slide-creator</title>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant:ital,wght@0,400;0,600;1,400;1,600&family=IBM+Plex+Sans:wght@300;400&family=Noto+Sans+SC:wght@400;700&display=swap">
-<style>
-*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-body { background-color: #0f0f0f; }
-html { scroll-snap-type: y mandatory; height: 100%; }
-body {
-  height: 100%; overflow-x: hidden;
-  background: #0f0f0f; color: #e8e4df;
-  font-family: 'IBM Plex Sans', 'Noto Sans SC', sans-serif;
-}
-
-#progress-bar {
-  position: fixed; top: 0; left: 0; height: 1px;
-  background: linear-gradient(90deg, #c9b896, #e8b4b8);
-  z-index: 100; transition: width 0.6s ease; width: 0%;
-}
-
-#nav-dots {
-  position: fixed; right: 28px; top: 50%; transform: translateY(-50%);
-  z-index: 100; display: flex; flex-direction: column; gap: 12px;
-}
-.dot {
-  width: 6px; height: 6px; border-radius: 50%;
-  background: #3a3530; border: 1px solid #5a5550;
-  cursor: pointer; transition: all 0.4s ease;
-}
-.dot.active { background: #c9b896; border-color: #c9b896; box-shadow: 0 0 8px rgba(201,184,150,0.5); }
-
-.slide {
-  width: 100vw; height: 100vh; height: 100dvh;
-  scroll-snap-align: start; overflow: hidden;
-  position: relative; display: flex; flex-direction: column;
-  align-items: center; justify-content: center;
-}
-
-/* Botanical orbs */
-.orb {
-  position: absolute; border-radius: 50%;
-  filter: blur(80px); pointer-events: none; opacity: 0;
-  transition: opacity 1.2s ease;
-}
-.slide.visible .orb { opacity: 1; }
-.orb-pink  { background: radial-gradient(circle, rgba(232,180,184,0.18), transparent 70%); }
-.orb-gold  { background: radial-gradient(circle, rgba(201,184,150,0.15), transparent 70%); }
-.orb-terra { background: radial-gradient(circle, rgba(212,165,116,0.12), transparent 70%); }
-
-/* Vertical accent line */
-.accent-line {
-  position: absolute; left: clamp(32px, 6vw, 72px);
-  top: 20%; height: 60%; width: 1px;
-  background: linear-gradient(to bottom, transparent, #c9b896 30%, #e8b4b8 70%, transparent);
-  opacity: 0; transform: scaleY(0); transform-origin: top;
-  transition: opacity 0.8s ease 0.3s, transform 0.8s ease 0.3s;
-}
-.slide.visible .accent-line { opacity: 0.4; transform: scaleY(1); }
-
-.slide-inner {
-  position: relative; z-index: 10; text-align: center;
-  padding: clamp(40px, 6vw, 80px) clamp(40px, 10vw, 140px);
-  max-width: 860px;
-}
-
-/* Reveal */
-.reveal { opacity: 0; transform: translateY(20px); transition: opacity 0.8s ease, transform 0.8s ease; }
-.slide.visible .reveal { opacity: 1; transform: translateY(0); }
-.reveal-1 { transition-delay: 0.1s; }
-.reveal-2 { transition-delay: 0.25s; }
-.reveal-3 { transition-delay: 0.4s; }
-.reveal-4 { transition-delay: 0.55s; }
-.reveal-5 { transition-delay: 0.7s; }
-
-/* Typography */
-.slide-label {
-  font-family: 'Cormorant', serif; font-style: italic; font-weight: 400;
-  font-size: clamp(11px, 1.2vw, 14px);
-  letter-spacing: 0.25em; text-transform: uppercase;
-  color: #c9b896; margin-bottom: clamp(16px, 2.5vw, 28px);
-}
-h1 {
-  font-family: 'Cormorant', serif; font-weight: 600;
-  font-size: clamp(52px, 8vw, 100px);
-  line-height: 1.0; letter-spacing: -0.02em; color: #e8e4df;
-}
-h2 {
-  font-family: 'Cormorant', serif; font-weight: 600;
-  font-size: clamp(32px, 4.5vw, 56px);
-  line-height: 1.15; letter-spacing: -0.01em; color: #e8e4df;
-}
-.subtitle {
-  font-family: 'Cormorant', serif; font-style: italic; font-weight: 400;
-  font-size: clamp(16px, 2vw, 22px);
-  color: #9a9590; margin-top: clamp(12px, 2vw, 20px); line-height: 1.5;
-}
-.body-text {
-  font-family: 'IBM Plex Sans', 'Noto Sans SC', sans-serif; font-weight: 300;
-  font-size: clamp(14px, 1.5vw, 17px);
-  line-height: 1.8; color: #b5b0aa;
-  margin-top: clamp(16px, 2.5vw, 28px);
-  max-width: 580px; margin-left: auto; margin-right: auto;
-}
-.divider {
-  width: 48px; height: 1px;
-  background: linear-gradient(90deg, #c9b896, #e8b4b8);
-  margin: clamp(20px, 3vw, 36px) auto;
-}
-
-/* Stat badges */
-.badges {
-  display: flex; gap: clamp(16px, 3vw, 36px);
-  justify-content: center; flex-wrap: wrap;
-  margin-top: clamp(24px, 4vw, 48px);
-}
-.badge {
-  font-family: 'IBM Plex Sans', sans-serif; font-weight: 300;
-  font-size: clamp(12px, 1.3vw, 15px);
-  letter-spacing: 0.08em; color: #9a9590;
-  padding: 8px 20px; border: 1px solid #2a2520; border-radius: 2px;
-}
-.badge strong {
-  display: block; font-family: 'Cormorant', serif; font-weight: 600;
-  font-size: clamp(22px, 2.5vw, 30px); letter-spacing: 0;
-  color: #c9b896; margin-bottom: 2px;
-}
-
-/* Pain points */
-.pain-list {
-  list-style: none; text-align: left;
-  margin-top: clamp(24px, 3.5vw, 40px);
-  display: flex; flex-direction: column; gap: clamp(16px, 2.5vw, 24px);
-}
-.pain-list li {
-  display: flex; align-items: flex-start; gap: 16px;
-  font-family: 'IBM Plex Sans', 'Noto Sans SC', sans-serif; font-weight: 300;
-  font-size: clamp(13px, 1.4vw, 16px); line-height: 1.6; color: #b5b0aa;
-}
-.pain-list li::before {
-  content: '\2014'; color: #e8b4b8; flex-shrink: 0;
-  font-family: 'Cormorant', serif; font-size: 1.2em; margin-top: 1px;
-}
-.pain-list li strong { color: #e8e4df; font-weight: 400; }
-
-/* Steps */
-.steps {
-  display: flex; flex-direction: column; gap: clamp(12px, 2vw, 20px);
-  margin-top: clamp(20px, 3vw, 36px); text-align: left;
-}
-.step {
-  display: flex; align-items: flex-start; gap: clamp(12px, 2vw, 20px);
-  font-family: 'IBM Plex Sans', 'Noto Sans SC', sans-serif; font-weight: 300;
-  font-size: clamp(13px, 1.4vw, 16px); color: #b5b0aa; line-height: 1.6;
-}
-.step-num {
-  font-family: 'Cormorant', serif; font-style: italic; font-weight: 400;
-  font-size: clamp(24px, 2.5vw, 32px); color: #c9b896;
-  line-height: 1; flex-shrink: 0; width: 36px; text-align: right;
-}
-.step strong { color: #e8e4df; font-weight: 400; }
-
-/* Preset grid */
-.preset-grid {
-  display: flex; flex-wrap: wrap; gap: 10px;
-  justify-content: center; margin-top: clamp(24px, 3.5vw, 40px);
-}
-.preset-tag {
-  font-family: 'IBM Plex Sans', sans-serif; font-weight: 300;
-  font-size: clamp(11px, 1.1vw, 13px);
-  letter-spacing: 0.06em; color: #9a9590;
-  padding: 6px 14px; border: 1px solid #2a2520; border-radius: 1px;
-  transition: all 0.3s ease; cursor: default;
-}
-.preset-tag:hover { color: #c9b896; border-color: #3a3530; }
-.preset-tag.current { color: #c9b896; border-color: #c9b896; background: rgba(201,184,150,0.05); }
-
-/* Feature grid */
-.feature-grid {
-  display: grid; grid-template-columns: 1fr 1fr;
-  gap: clamp(16px, 2.5vw, 28px);
-  margin-top: clamp(24px, 3.5vw, 40px); text-align: left;
-}
-.feature {
-  padding: clamp(16px, 2vw, 24px); border: 1px solid #1e1e1e;
-  border-left: 1px solid #c9b896; background: rgba(255,255,255,0.015);
-}
-.feature-title {
-  font-family: 'Cormorant', serif; font-weight: 600;
-  font-size: clamp(14px, 1.5vw, 18px); color: #e8e4df; margin-bottom: 6px;
-}
-.feature p {
-  font-family: 'IBM Plex Sans', 'Noto Sans SC', sans-serif; font-weight: 300;
-  font-size: clamp(11px, 1.1vw, 13px); color: #6a6560; line-height: 1.6;
-}
-
-/* Code block */
-.code-block {
-  background: #0a0a0a; border: 1px solid #1e1e1e; border-left: 2px solid #c9b896;
-  padding: clamp(14px, 2vw, 22px) clamp(16px, 2.5vw, 28px);
-  margin-top: clamp(12px, 2vw, 20px); text-align: left;
-  font-family: 'IBM Plex Mono', 'Fira Code', monospace;
-  font-size: clamp(11px, 1.2vw, 14px); color: #c9b896; line-height: 1.8;
-}
-.code-comment { color: #4a4540; }
-.code-label {
-  font-family: 'IBM Plex Sans', sans-serif; font-weight: 300;
-  font-size: clamp(11px, 1.1vw, 13px); color: #5a5550;
-  letter-spacing: 0.1em; text-transform: uppercase;
-  margin-top: clamp(16px, 2.5vw, 24px); margin-bottom: 8px; text-align: left;
-}
-
-/* CTA */
-.cta-command {
-  font-family: 'Cormorant', serif; font-weight: 600;
-  font-size: clamp(42px, 6vw, 72px);
-  color: #c9b896; margin-top: clamp(20px, 3vw, 36px); letter-spacing: -0.01em;
-}
-.cta-sub {
-  font-family: 'IBM Plex Sans', 'Noto Sans SC', sans-serif; font-weight: 300;
-  font-size: clamp(12px, 1.3vw, 15px);
-  color: #5a5550; margin-top: clamp(12px, 2vw, 20px); letter-spacing: 0.05em;
-}
-
-/* EDIT MODE */
-.edit-hotzone { position: fixed; top: 0; left: 0; width: 80px; height: 80px; z-index: 10000; cursor: pointer; }
-.edit-toggle {
-  position: fixed; top: 16px; left: 16px; opacity: 0; pointer-events: none;
-  transition: opacity 0.3s ease; z-index: 10001;
-  background: rgba(201,184,150,0.15); border: 1px solid #c9b896;
-  color: #c9b896; padding: 6px 14px; font-size: 0.8rem; cursor: pointer;
-  border-radius: 2px; font-family: 'IBM Plex Sans', sans-serif;
-}
-.edit-toggle.show { opacity: 1; pointer-events: auto; }
-.edit-toggle.active { background: #c9b896; color: #0f0f0f; border-color: #c9b896; }
-body.editing [contenteditable="true"] { outline: 1px solid rgba(201,184,150,0.3); outline-offset: 4px; }
-
-#notes-panel {
-  display: none; position: fixed; bottom: 0; left: 0; right: 0; z-index: 9998;
-  background: rgba(15,15,15,0.97); backdrop-filter: blur(16px);
-  border-top: 1px solid rgba(201,184,150,0.15);
-}
-#notes-panel.active { display: flex; flex-direction: column; }
-#notes-panel-header {
-  display: flex; align-items: center; justify-content: space-between;
-  padding: 0.45rem 1.4rem; cursor: pointer; user-select: none;
-}
-#notes-panel-header:hover { background: rgba(255,255,255,0.03); }
-#notes-panel-label { flex: 1; font-size: 0.58rem; letter-spacing: 0.16em; text-transform: uppercase; color: #5a5550; }
-#notes-drag-hint::after { content: ''; display: block; width: 36px; height: 3px; border-radius: 2px; background: rgba(201,184,150,0.25); }
-#notes-collapse-btn { flex: 1; text-align: right; font-size: 1rem; color: #5a5550; background: none; border: none; cursor: pointer; }
-#notes-body { padding: 0 1.4rem 0.75rem; }
-#notes-panel.collapsed #notes-body { display: none; }
-#notes-textarea {
-  width: 100%; height: 72px; min-height: 48px; background: transparent; border: none; outline: none;
-  color: #b5b0aa; font-size: 0.88rem; line-height: 1.65; font-family: 'IBM Plex Sans', sans-serif;
-}
-#notes-textarea::placeholder { color: #3a3530; }
-
-/* WATERMARK */
-.slide-credit {
-  position: absolute; bottom: 8px; right: 14px;
-  font-size: 9px; color: #3a3530; opacity: 0.35; pointer-events: none; z-index: 1;
-  font-family: system-ui, sans-serif;
-}
-
-/* PRESENT MODE */
-#present-btn {
-  position: fixed; bottom: 1.5rem; right: 1.5rem; z-index: 9997;
-  width: 44px; height: 44px; border-radius: 50%;
-  background: rgba(0,0,0,0.5); color: rgba(255,255,255,0.8);
-  border: 1.5px solid rgba(255,255,255,0.2);
-  font-size: 1rem; cursor: pointer;
-  backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
-  display: flex; align-items: center; justify-content: center;
-  opacity: 0; transition: opacity 0.2s; pointer-events: none;
-}
-body:hover #present-btn { opacity: 1; pointer-events: auto; }
-#present-btn:hover { background: rgba(0,0,0,0.78); }
-#present-counter {
-  display: none; position: fixed; bottom: 1.4rem; left: 50%;
-  transform: translateX(-50%); z-index: 9997;
-  font-size: 0.65rem; letter-spacing: 0.14em; font-family: system-ui, sans-serif;
-  color: rgba(255,255,255,0.28);
-}
-body.presenting { background: #000 !important; overflow: hidden !important; }
-body.presenting .slide {
-  position: fixed !important; inset: 0;
-  width: var(--pdw, 1440px) !important; height: var(--pdh, 900px) !important;
-  transform-origin: top left;
-  transform: translate(var(--pox, 0px), var(--poy, 0px)) scale(var(--ps, 1)) !important;
-  scroll-snap-align: none !important; display: none !important;
-}
-body.presenting .slide.p-on { display: flex !important; }
-body.presenting #present-btn { display: none !important; }
-body.presenting #present-counter { display: block; }
-body.presenting #nav-dots { display: none !important; }
-body.presenting.presenting-black .slide { visibility: hidden !important; }
-body.presenting.presenting-black::after { content: ''; position: fixed; inset: 0; background: #000; z-index: 99999; }
-body.presenting .slide-credit { display: none !important; }
-
-@media (max-height: 600px) {
-  #nav-dots { display: none; }
-}
-@media (prefers-reduced-motion: reduce) {
-  *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.2s !important; }
-}
-</style>
-</head>
-<body data-preset="Dark Botanical">
-
-<div id="progress-bar"></div>
-<div id="nav-dots"></div>
-<div class="edit-hotzone"></div>
-<button class="edit-toggle" id="editToggle" title="编辑模式 (E)">Edit</button>
-<div id="notes-panel">
-  <div id="notes-panel-header">
-    <div id="notes-panel-label">SPEAKER NOTES — 第 1 页 / 8 页</div>
-    <div id="notes-drag-hint"></div>
-    <button id="notes-collapse-btn" title="折叠">&#9660;</button>
-  </div>
-  <div id="notes-body">
-    <textarea id="notes-textarea" placeholder="添加备注..."></textarea>
-  </div>
-</div>
-
-<!-- SLIDE 1: COVER -->
-<section class="slide" data-notes="欢迎观众，介绍 slide-creator 工具。">
-  <div class="orb orb-pink" style="width:600px;height:600px;top:-150px;right:-100px;"></div>
-  <div class="orb orb-gold" style="width:500px;height:500px;bottom:-100px;left:-80px;"></div>
-  <div class="accent-line"></div>
-  <div class="slide-inner">
-    <p class="slide-label reveal reveal-1">演示工具</p>
-    <h1 class="reveal reveal-2">slide-creator</h1>
-    <p class="subtitle reveal reveal-3">为 Claude Code 和 OpenClaw<br>打造的零依赖 HTML 演示工具</p>
-    <div class="divider reveal reveal-4"></div>
-    <div class="badges reveal reveal-5">
-      <div class="badge"><strong>21</strong> 个预设</div>
-      <div class="badge"><strong>0</strong> 个依赖</div>
-      <div class="badge"><strong>&infin;</strong> 页幻灯片</div>
-    </div>
-  </div>
-</section>
-
-<!-- SLIDE 2: THE PROBLEM -->
-<section class="slide" data-notes="阐述当前痛点：工具链复杂、输出通用化、没有所有权。">
-  <div class="orb orb-terra" style="width:500px;height:500px;top:-80px;left:-100px;"></div>
-  <div class="orb orb-pink" style="width:400px;height:400px;bottom:-80px;right:-60px;"></div>
-  <div class="accent-line"></div>
-  <div class="slide-inner">
-    <p class="slide-label reveal reveal-1">问题所在</p>
-    <h2 class="reveal reveal-2">演示工具不应该<br>依赖复杂的构建系统</h2>
-    <ul class="pain-list">
-      <li class="reveal reveal-3"><span><strong>复杂的工具链：</strong>npm install、webpack 配置、300MB 的 node_modules — 这一切只是为了开始第一页幻灯片。</span></li>
-      <li class="reveal reveal-4"><span><strong>千篇一律的输出：</strong>每个 AI 生成的演示看起来都一样 — Inter 字体、紫色渐变、可预测的平凡设计。</span></li>
-      <li class="reveal reveal-5"><span><strong>缺乏所有权：</strong>平台锁定、导出限制、为本应属于你的工作支付月费。</span></li>
-    </ul>
-  </div>
-</section>
-
-<!-- SLIDE 3: CORE INSIGHT -->
-<section class="slide" data-notes="核心洞察：风格发现应该看图选择，不是描述。">
-  <div class="orb orb-gold" style="width:550px;height:550px;top:-120px;right:-80px;"></div>
-  <div class="orb orb-terra" style="width:400px;height:400px;bottom:-60px;left:-60px;"></div>
-  <div class="accent-line"></div>
-  <div class="slide-inner">
-    <p class="slide-label reveal reveal-1">发现过程</p>
-    <h2 class="reveal reveal-2">真正有效的<br>风格发现方式</h2>
-    <p class="body-text reveal reveal-3">你无法用语言描述设计偏好。slide-creator 生成三个视觉预览 — 你凭直觉反应，而非用词描述。在你写下任何内容之前，"惊艳时刻"已经到来。</p>
-    <div class="divider reveal reveal-4"></div>
-    <div class="steps reveal reveal-5">
-      <div class="step"><span class="step-num">I</span><span><strong>描述气质</strong> — 回答关于基调和用途的几个简单问题</span></div>
-      <div class="step"><span class="step-num">II</span><span><strong>生成 3 个迷你预览</strong> — 三个截然不同的视觉方向，即时呈现</span></div>
-      <div class="step"><span class="step-num">III</span><span><strong>选择感觉恰到好处的那个</strong> — 凭直觉而非词汇</span></div>
-    </div>
-  </div>
-</section>
-
-<!-- SLIDE 4: PRESETS -->
-<section class="slide" data-notes="展示 21 款预设样式库，各有特色。">
-  <div class="orb orb-pink" style="width:500px;height:500px;top:-100px;left:-60px;"></div>
-  <div class="orb orb-gold" style="width:450px;height:450px;bottom:-80px;right:-80px;"></div>
-  <div class="accent-line"></div>
-  <div class="slide-inner" style="max-width:820px;">
-    <p class="slide-label reveal reveal-1">设计预设</p>
-    <h2 class="reveal reveal-2">21 种精心策划的风格。<br>不是通用的 AI 美学。</h2>
-    <div class="preset-grid reveal reveal-3">
-      <span class="preset-tag">Bold Signal</span><span class="preset-tag">Electric Studio</span>
-      <span class="preset-tag">Creative Voltage</span><span class="preset-tag current">Dark Botanical</span>
-      <span class="preset-tag">Blue Sky</span><span class="preset-tag">Notebook Tabs</span>
-      <span class="preset-tag">Pastel Geometry</span><span class="preset-tag">Split Pastel</span>
-      <span class="preset-tag">Vintage Editorial</span><span class="preset-tag">Neon Cyber</span>
-      <span class="preset-tag">Terminal Green</span><span class="preset-tag">Swiss Modern</span>
-      <span class="preset-tag">Paper &amp; Ink</span><span class="preset-tag">Aurora Mesh</span>
-      <span class="preset-tag">Enterprise Dark</span><span class="preset-tag">Glassmorphism</span>
-      <span class="preset-tag">Neo-Brutalism</span><span class="preset-tag">Chinese Chan</span>
-      <span class="preset-tag">Data Story</span><span class="preset-tag">Modern Newspaper</span>
-      <span class="preset-tag">Neo-Retro Dev</span>
-    </div>
-  </div>
-</section>
-
-<!-- SLIDE 5: HOW IT WORKS -->
-<section class="slide" data-notes="三步工作流程：表达、预览、选择。">
-  <div class="orb orb-terra" style="width:480px;height:480px;top:-80px;right:-60px;"></div>
-  <div class="orb orb-pink" style="width:420px;height:420px;bottom:-80px;left:-60px;"></div>
-  <div class="accent-line"></div>
-  <div class="slide-inner">
-    <p class="slide-label reveal reveal-1">工作流程</p>
-    <h2 class="reveal reveal-2">从想法到演示<br>只需三个从容的步骤</h2>
-    <div class="steps reveal reveal-3">
-      <div class="step"><span class="step-num">1</span><span><strong>/slide-creator</strong> — 回答四个问题：用途、长度、内容、图片</span></div>
-      <div class="step"><span class="step-num">2</span><span><strong>选择你的风格</strong> — 对三个视觉预览做出反应，选择最符合心意的那个</span></div>
-      <div class="step"><span class="step-num">3</span><span><strong>打开你的演示</strong> — 箭头键、空格键、滑动、点击圆点 — 所有导航功能已包含</span></div>
-    </div>
-  </div>
-</section>
-
-<!-- SLIDE 6: FEATURES -->
-<section class="slide" data-notes="核心功能：视口自适应、行内编辑、PPTX 导出、两阶段工作流。">
-  <div class="orb orb-gold" style="width:520px;height:520px;top:-100px;right:-80px;"></div>
-  <div class="orb orb-terra" style="width:380px;height:380px;bottom:-60px;left:-50px;"></div>
-  <div class="accent-line"></div>
-  <div class="slide-inner" style="max-width:800px;">
-    <p class="slide-label reveal reveal-1">功能特性</p>
-    <h2 class="reveal reveal-2">精心打造，旨在打动<br>整个会议室</h2>
-    <div class="feature-grid reveal reveal-3">
-      <div class="feature"><div class="feature-title">视口自适应</div><p>每一张幻灯片都精确适配 100vh。没有滚动、没有裁剪、没有妥协。</p></div>
-      <div class="feature"><div class="feature-title">内联编辑</div><p>按 E，点击任何文本，Ctrl+S 保存。无需代码编辑器。</p></div>
-      <div class="feature"><div class="feature-title">PPTX 导出</div><p>/slide-creator --export pptx，通过 Playwright 和你自己的 Chrome 实例。</p></div>
-      <div class="feature"><div class="feature-title">两阶段工作流</div><p>--plan 先创建大纲。--generate 生成最终 HTML。</p></div>
-    </div>
-  </div>
-</section>
-
-<!-- SLIDE 7: INSTALL -->
-<section class="slide" data-notes="两种安装方式：Claude Code 和 OpenClaw。">
-  <div class="orb orb-pink" style="width:480px;height:480px;top:-90px;left:-70px;"></div>
-  <div class="orb orb-gold" style="width:440px;height:440px;bottom:-70px;right:-70px;"></div>
-  <div class="accent-line"></div>
-  <div class="slide-inner" style="max-width:760px;">
-    <p class="slide-label reveal reveal-1">安装</p>
-    <h2 class="reveal reveal-2">三十秒快速启动</h2>
-    <div class="reveal reveal-3">
-      <p class="code-label">Claude Code</p>
-      <div class="code-block"><span class="code-comment"># 克隆到你的技能目录</span><br>git clone https://github.com/kaisersong/slide-creator \<br>&nbsp;&nbsp;~/.claude/skills/slide-creator<br><br><span class="code-comment"># 重启 Claude Code，然后使用：</span><br>/slide-creator</div>
-    </div>
-    <div class="reveal reveal-4">
-      <p class="code-label">OpenClaw</p>
-      <div class="code-block">clawhub install kai-slide-creator<br><span class="code-comment"># 自动安装所有依赖</span></div>
-    </div>
-  </div>
-</section>
-
-<!-- SLIDE 8: GET STARTED -->
-<section class="slide" data-notes="行动号召：开始使用 slide-creator。">
-  <div class="orb orb-gold" style="width:600px;height:600px;top:-150px;right:-100px;"></div>
-  <div class="orb orb-pink" style="width:500px;height:500px;bottom:-100px;left:-80px;"></div>
-  <div class="orb orb-terra" style="width:350px;height:350px;top:50%;left:50%;transform:translate(-50%,-50%);"></div>
-  <div class="accent-line"></div>
-  <div class="slide-inner">
-    <p class="slide-label reveal reveal-1">开始</p>
-    <h2 class="reveal reveal-2">你的下一个演示<br>从这里开始</h2>
-    <p class="cta-command reveal reveal-3">/slide-creator</p>
-    <p class="cta-sub reveal reveal-4">与 Claude Code 和 OpenClaw 兼容。<br>完全在你的浏览器中运行。</p>
-  </div>
-</section>
-
-<script>
-class PresentMode {
-  constructor(ctrl) {
-    this.ctrl = ctrl; this.DW = 1440; this.DH = 900; this.active = false;
-    this._resize = () => this._scale();
-    var btn = document.createElement('button');
-    btn.id = 'present-btn'; btn.title = 'Present (F5)';
-    btn.setAttribute('aria-label', 'Present'); btn.textContent = '\u25B6';
-    document.body.appendChild(btn);
-    var counter = document.createElement('div');
-    counter.id = 'present-counter'; document.body.appendChild(counter);
-    btn.addEventListener('click', () => this.enter());
-    document.addEventListener('keydown', e => {
-      if (e.key === 'F5') { e.preventDefault(); this.enter(); }
-      if (e.key === 'Escape' && this.active) this.exit();
-      if ((e.key === 'b' || e.key === 'B') && this.active) document.body.classList.toggle('presenting-black');
-    });
-    document.addEventListener('fullscreenchange', () => { if (!document.fullscreenElement && this.active) this.exit(); });
-  }
-  enter() {
-    if (this.active) return; this.active = true;
-    document.body.classList.add('presenting');
-    document.documentElement.requestFullscreen?.().catch(() => {});
-    window.addEventListener('resize', this._resize); this._scale(); this._show(this.ctrl.currentSlide);
-    this._origGoTo = this.ctrl.goTo.bind(this.ctrl);
-    this.ctrl.goTo = (i) => {
-      var idx = Math.max(0, Math.min(i, this.ctrl.slides.length - 1));
-      this.ctrl.currentSlide = idx;
-      this.ctrl.slides.forEach((s, j) => s.classList.toggle('visible', j === idx));
-      this._show(idx); this.ctrl.updateProgress?.(); this.ctrl.updateDots?.(); this.ctrl.broadcastState?.();
-    };
-  }
-  exit() {
-    if (!this.active) return; this.active = false;
-    document.body.classList.remove('presenting', 'presenting-black');
-    document.querySelectorAll('.slide').forEach(s => s.classList.remove('p-on'));
-    if (document.fullscreenElement) document.exitFullscreen?.();
-    window.removeEventListener('resize', this._resize);
-    if (this._origGoTo) { this.ctrl.goTo = this._origGoTo; this._origGoTo = null; }
-    this.ctrl.slides[this.ctrl.currentSlide]?.scrollIntoView({ behavior: 'instant' });
-  }
-  _scale() {
-    var s = Math.min(window.innerWidth / this.DW, window.innerHeight / this.DH);
-    var ox = (window.innerWidth - this.DW * s) / 2;
-    var oy = (window.innerHeight - this.DH * s) / 2;
-    var r = document.documentElement;
-    r.style.setProperty('--pdw', this.DW + 'px'); r.style.setProperty('--pdh', this.DH + 'px');
-    r.style.setProperty('--ps', s); r.style.setProperty('--pox', ox + 'px'); r.style.setProperty('--poy', oy + 'px');
-  }
-  _show(i) {
-    document.querySelectorAll('.slide').forEach((s, idx) => s.classList.toggle('p-on', idx === i));
-    var c = document.getElementById('present-counter');
-    if (c) c.textContent = (i + 1) + ' / ' + this.ctrl.slides.length;
-  }
-}
-
-class SlidePresentation {
-  constructor() {
-    this.slides = document.querySelectorAll('.slide');
-    this.currentSlide = 0;
-    this.channel = new BroadcastChannel('slide-creator-presenter');
-    this.slides[0]?.classList.add('visible');
-    this.setupNavDots();
-    this.setupObserver();
-    this.setupKeyboard();
-    this.setupTouch();
-    this.setupPresenter();
-    this.setupEditor();
-    this.updateProgress();
-  }
-  setupNavDots() {
-    var nav = document.getElementById('nav-dots');
-    if (!nav) return;
-    this.slides.forEach((_, i) => {
-      var dot = document.createElement('div');
-      dot.className = 'dot' + (i === 0 ? ' active' : '');
-      dot.dataset.index = i;
-      dot.addEventListener('click', () => this.goTo(i));
-      nav.appendChild(dot);
-    });
-  }
-  setupObserver() {
-    var self = this;
-    var observer = new IntersectionObserver(function(entries) {
-      entries.forEach(function(entry) {
-        if (entry.isIntersecting) {
-          entry.target.classList.add('visible');
-          self.currentSlide = Array.from(self.slides).indexOf(entry.target);
-          self.updateProgress();
-          self.updateDots();
-          self.broadcastState();
-          self.updateNotesPanel();
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>slide-creator — Dark Botanical</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant:wght@400;600&family=IBM+Plex+Sans:wght@300;400&family=Noto+Sans+SC:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        body { background-color: #0f0f0f; }
+        :root {
+            --bg-primary: #0f0f0f;
+            --text-primary: #e8e4df;
+            --text-secondary: #9a9590;
+            --accent-warm: #d4a574;
+            --accent-pink: #e8b4b8;
+            --accent-gold: #c9b896;
+            --font-display: 'Cormorant', 'Noto Sans SC', serif;
+            --font-body: 'IBM Plex Sans', 'Noto Sans SC', sans-serif;
+            --title-size: clamp(2rem, 5vw, 4rem);
+            --h2-size: clamp(1.5rem, 3.5vw, 2.5rem);
+            --body-size: clamp(0.8125rem, 1.4vw, 1rem);
+            --small-size: clamp(0.625rem, 1.1vw, 0.75rem);
+            --slide-padding: clamp(1.5rem, 4vw, 4rem);
+            --content-gap: clamp(0.75rem, 1.8vw, 1.5rem);
         }
-      });
-    }, { threshold: 0.5 });
-    this.slides.forEach(s => observer.observe(s));
-  }
-  setupKeyboard() {
-    var self = this;
-    document.addEventListener('keydown', function(e) {
-      if (e.target.getAttribute('contenteditable')) return;
-      if (e.ctrlKey && e.key === 's') { e.preventDefault(); self.saveFile(); return; }
-      if (e.key === 'ArrowDown' || e.key === 'ArrowRight' || e.key === ' ' || e.key === 'PageDown' || e.key === 'Enter') {
-        e.preventDefault(); self.next();
-      } else if (e.key === 'ArrowUp' || e.key === 'ArrowLeft' || e.key === 'PageUp' || e.key === 'Backspace') {
-        e.preventDefault(); self.prev();
-      } else if (e.key === 'e' || e.key === 'E') {
-        if (self.editor && !self.editor.active) { self.editor.active = true; document.body.classList.add('editing'); document.getElementById('editToggle').classList.add('active'); document.getElementById('editToggle').textContent = 'Done'; document.getElementById('notes-panel').classList.add('active'); }
-        else if (self.editor && self.editor.active) { self.editor.active = false; document.body.classList.remove('editing'); document.getElementById('editToggle').classList.remove('active'); document.getElementById('editToggle').textContent = 'Edit'; document.getElementById('notes-panel').classList.remove('active'); }
-      } else if (e.key === 'p' || e.key === 'P') {
-        var url = location.href.split('?')[0] + '?presenter';
-        window.open(url, 'slide-presenter-' + Date.now(), 'width=1100,menubar=no,toolbar=no,location=no');
-      }
-    });
-  }
-  setupTouch() {
-    var startY = 0;
-    document.addEventListener('touchstart', function(e) { startY = e.touches[0].clientY; }, { passive: true });
-    document.addEventListener('touchend', function(e) {
-      var delta = startY - e.changedTouches[0].clientY;
-      if (Math.abs(delta) > 50) delta > 0 ? this.next() : this.prev();
-    }.bind(this));
-  }
-  setupPresenter() {
-    var self = this;
-    this.channel.addEventListener('message', function(e) {
-      if (e.data.type === 'nav-next') self.next();
-      else if (e.data.type === 'nav-prev') self.prev();
-      else if (e.data.type === 'request-state') self.broadcastState();
-    });
-  }
-  broadcastState() {
-    var slide = this.slides[this.currentSlide];
-    this.channel.postMessage({ type: 'state', index: this.currentSlide, total: this.slides.length, notes: slide?.dataset.notes || '' });
-  }
-  goTo(index) {
-    var clamped = Math.max(0, Math.min(this.slides.length - 1, index));
-    this.slides[clamped].scrollIntoView({ behavior: 'smooth' });
-  }
-  next() { this.goTo(this.currentSlide + 1); }
-  prev() { this.goTo(this.currentSlide - 1); }
-  updateProgress() {
-    var pct = (this.currentSlide / (this.slides.length - 1)) * 100;
-    var bar = document.getElementById('progress-bar');
-    if (bar) bar.style.width = pct + '%';
-  }
-  updateDots() {
-    document.querySelectorAll('.dot').forEach(function(dot, i) {
-      dot.classList.toggle('active', i === this.currentSlide);
-    }.bind(this));
-  }
-  updateNotesPanel() {
-    var label = document.getElementById('notes-panel-label');
-    var textarea = document.getElementById('notes-textarea');
-    if (label) label.textContent = 'SPEAKER NOTES \u2014 \u7B2C ' + (this.currentSlide + 1) + ' \u9875 / ' + this.slides.length + ' \u9875';
-    if (textarea) textarea.value = this.slides[this.currentSlide]?.dataset.notes || '';
-  }
-  setupEditor() {
-    var self = this;
-    var panel = document.getElementById('notes-panel');
-    var textarea = document.getElementById('notes-textarea');
-    var toggle = document.getElementById('editToggle');
-    var hotzone = document.querySelector('.edit-hotzone');
-    var header = document.getElementById('notes-panel-header');
-    var collapseBtn = document.getElementById('notes-collapse-btn');
-    var hideTimeout = null;
-    this.editor = { active: false };
-    hotzone.addEventListener('mouseenter', function() { clearTimeout(hideTimeout); toggle.classList.add('show'); });
-    hotzone.addEventListener('mouseleave', function() { hideTimeout = setTimeout(function() { if (!self.editor.active) toggle.classList.remove('show'); }, 400); });
-    toggle.addEventListener('mouseenter', function() { clearTimeout(hideTimeout); });
-    toggle.addEventListener('mouseleave', function() { hideTimeout = setTimeout(function() { if (!self.editor.active) toggle.classList.remove('show'); }, 400); });
-    toggle.addEventListener('click', function(e) {
-      e.stopPropagation();
-      self.editor.active = !self.editor.active;
-      document.body.classList.toggle('editing', self.editor.active);
-      toggle.classList.toggle('active', self.editor.active);
-      toggle.textContent = self.editor.active ? 'Done' : 'Edit';
-      if (self.editor.active) {
-        panel.classList.add('active');
-        textarea.value = self.slides[self.currentSlide]?.dataset.notes || '';
-        textarea.focus();
-        document.querySelectorAll('h1, h2, p, li, .badge, .preset-tag, .feature-title, .code-block').forEach(function(el) { el.setAttribute('contenteditable', 'true'); });
-      } else {
-        panel.classList.remove('active');
-        document.querySelectorAll('[contenteditable]').forEach(function(el) { el.removeAttribute('contenteditable'); });
-      }
-    });
-    header.addEventListener('click', function(e) {
-      if (e.target === collapseBtn) { panel.classList.toggle('collapsed'); return; }
-    });
-    textarea.addEventListener('input', function() {
-      var slide = self.slides[self.currentSlide];
-      if (slide) slide.dataset.notes = textarea.value;
-      self.channel.postMessage({ type: 'state', index: self.currentSlide, total: self.slides.length, notes: textarea.value });
-    });
-  }
-  saveFile() {
-    var html = '<!DOCTYPE html>\n' + document.documentElement.outerHTML;
-    var a = document.createElement('a');
-    a.href = URL.createObjectURL(new Blob([html], { type: 'text/html' }));
-    a.download = 'dark-botanical-zh.html'; a.click();
-  }
-}
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+        html { scroll-snap-type: y mandatory; height: 100%; }
+        body { font-family: var(--font-body); background: var(--bg-primary); color: var(--text-primary); overflow-x: hidden; height: 100%; }
+        body[data-export-progress="false"] .progress-bar,
+        body[data-export-progress="false"] .nav-dots { display: none !important; }
 
-/* Watermark */
-(function() {
-  var slides = document.querySelectorAll('.slide');
-  if (!slides.length) return;
-  var last = slides[slides.length - 1];
-  var credit = document.createElement('div');
-  credit.className = 'slide-credit';
-  credit.textContent = 'By kai-slide-creator v2.17.0 \u00B7 Dark Botanical';
-  last.appendChild(credit);
-})();
+        .slide { width: 100vw; height: 100vh; height: 100dvh; overflow: hidden; scroll-snap-align: start; display: flex; flex-direction: column; position: relative; }
+        .slide-content { flex: 1; display: flex; flex-direction: column; justify-content: center; max-height: 100%; overflow: hidden; padding: var(--slide-padding); position: relative; z-index: 2; }
 
-/* Presenter Mode */
-if (new URLSearchParams(location.search).has('presenter')) {
-  document.title = 'Presenter \u2014 ' + document.title;
-  document.body.innerHTML = '<style>* { box-sizing: border-box; margin: 0; } body { background: #111; color: #fff; font-family: system-ui, sans-serif; } #pv { display: grid; grid-template-columns: 1fr 220px; gap: 1rem; padding: 1.25rem; align-items: start; } .pv-panel { background: #1e1e1e; border-radius: 12px; padding: 1.25rem; } #pv-label { font-size: 0.6rem; letter-spacing: 0.18em; text-transform: uppercase; color: #555; margin-bottom: 0.6rem; } #pv-notes { font-size: 1.05rem; line-height: 1.85; color: #d0d0d0; } #pv-right { display: flex; flex-direction: column; gap: 1rem; } #pv-nav { display: flex; align-items: center; justify-content: space-between; gap: 0.5rem; } .pv-arrow { width: 32px; height: 32px; border-radius: 6px; border: 1px solid #333; background: #2a2a2a; color: #aaa; font-size: 1rem; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: background 0.15s, color 0.15s; flex-shrink: 0; } .pv-arrow:hover { background: #383838; color: #fff; } #pv-counter { text-align: center; flex: 1; } #pv-num { font-size: 1.6rem; font-weight: 700; font-variant-numeric: tabular-nums; line-height: 1; } #pv-of { color: #555; font-size: 0.75rem; margin-top: 0.2rem; } #pv-timer-box { text-align: center; } #pv-timer-label { font-size: 0.6rem; letter-spacing: 0.18em; text-transform: uppercase; color: #555; margin-bottom: 0.3rem; } #pv-timer { font-size: 1.5rem; font-weight: 700; font-family: monospace; font-variant-numeric: tabular-nums; }</style><div id="pv"><div class="pv-panel"><div id="pv-label">Speaker Notes</div><div id="pv-notes">Waiting for main window...</div></div><div id="pv-right"><div class="pv-panel"><div id="pv-nav"><button class="pv-arrow" id="pv-prev">\u2190</button><div id="pv-counter"><div id="pv-num">\u2014</div><div id="pv-of">/ \u2014</div></div><button class="pv-arrow" id="pv-next">\u2192</button></div></div><div class="pv-panel" id="pv-timer-box"><div id="pv-timer-label">Elapsed</div><div id="pv-timer">0:00</div></div></div></div>';
-  var ch = new BroadcastChannel('slide-creator-presenter');
-  var startTime = null;
-  ch.addEventListener('message', function(e) {
-    if (e.data.type !== 'state') return;
-    if (!startTime) startTime = Date.now();
-    document.getElementById('pv-notes').textContent = e.data.notes || '(no notes for this slide)';
-    document.getElementById('pv-num').textContent = e.data.index + 1;
-    document.getElementById('pv-of').textContent = '/ ' + e.data.total;
-  });
-  ch.postMessage({ type: 'request-state' });
-  setInterval(function() { if (!startTime) return; var s = Math.floor((Date.now() - startTime) / 1000); document.getElementById('pv-timer').textContent = Math.floor(s / 60) + ':' + String(s % 60).padStart(2, '0'); }, 1000);
-  document.getElementById('pv-prev').addEventListener('click', function() { ch.postMessage({ type: 'nav-prev' }); });
-  document.getElementById('pv-next').addEventListener('click', function() { ch.postMessage({ type: 'nav-next' }); });
-  document.addEventListener('keydown', function(e) {
-    if (e.key === 'ArrowRight' || e.key === 'ArrowDown' || e.key === ' ' || e.key === 'PageDown' || e.key === 'Enter') ch.postMessage({ type: 'nav-next' });
-    else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp' || e.key === 'PageUp' || e.key === 'Backspace') ch.postMessage({ type: 'nav-prev' });
-  });
-} else {
-  new PresentMode(new SlidePresentation());
-}
-</script>
+        /* ── Signature Elements: Dark Botanical ── */
+        .orb { position: absolute; border-radius: 50%; filter: blur(80px); pointer-events: none; opacity: 0; transition: opacity 1.2s ease; }
+        .slide.visible .orb { opacity: 1; }
+        .orb-pink { background: radial-gradient(circle, rgba(232,180,184,0.18), transparent 70%); }
+        .orb-gold { background: radial-gradient(circle, rgba(201,184,150,0.15), transparent 70%); }
+        .orb-terra { background: radial-gradient(circle, rgba(212,165,116,0.12), transparent 70%); }
+        .accent-line { position: absolute; left: clamp(32px, 6vw, 72px); top: 20%; height: 60%; width: 1px; background: linear-gradient(to bottom, transparent, #c9b896 30%, #e8b4b8 70%, transparent); opacity: 0; transform: scaleY(0); transform-origin: top; transition: opacity 0.8s ease 0.3s, transform 0.8s ease 0.3s; }
+        .slide.visible .accent-line { opacity: 0.4; transform: scaleY(1); }
+        .slide-label { font-family: 'Cormorant', 'Noto Sans SC', serif; font-style: italic; font-size: clamp(11px, 1.2vw, 14px); letter-spacing: 0.25em; text-transform: uppercase; color: #c9b896; }
+        .divider { width: 48px; height: 1px; background: linear-gradient(90deg, #c9b896, #e8b4b8); margin: auto; }
+        .badge { padding: 8px 20px; border: 1px solid #2a2520; border-radius: 2px; font-family: 'Cormorant', serif; font-size: clamp(11px, 1.2vw, 13px); color: #9a9590; }
+        .badge strong { font-weight: 600; color: #c9b896; font-size: clamp(13px, 1.4vw, 16px); }
+        .pain-list { list-style: none; }
+        .pain-list li::before { content: '—'; color: #e8b4b8; font-family: 'Cormorant', serif; margin-right: 12px; }
+        .steps { list-style: none; counter-reset: step; }
+        .step-num { counter-increment: step; font-family: 'Cormorant', 'Noto Sans SC', serif; font-style: italic; font-size: clamp(1.25rem, 2.5vw, 2rem); color: #c9b896; }
+        .step-num::before { content: counter(step); }
+        .feature-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 260px), 1fr)); gap: clamp(12px, 1.5vw, 20px); }
+        .feature { border: 1px solid #1e1e1e; border-left: 1px solid #c9b896; background: rgba(255,255,255,0.015); padding: clamp(16px, 2vw, 24px); border-radius: 2px; }
+        .code-block { background: #0a0a0a; border: 1px solid #1e1e1e; border-left: 2px solid #c9b896; padding: 12px 18px; border-radius: 2px; font-family: 'IBM Plex Mono', monospace; font-size: clamp(11px, 1.1vw, 13px); color: #9a9590; }
+        .preset-tag { display: inline-block; padding: 6px 14px; border: 1px solid #2a2520; border-radius: 2px; font-size: clamp(10px, 1vw, 12px); color: #9a9590; transition: all 0.3s; }
+        .preset-tag:hover, .preset-tag.current { border-color: #c9b896; color: #c9b896; }
+        .preset-tag.current { background: rgba(201,184,150,0.1); }
+        .reveal { opacity: 0; transform: translateY(20px); transition: opacity 0.8s ease, transform 0.8s ease; }
+        .slide.visible .reveal { opacity: 1; transform: translateY(0); }
+        .reveal-1 { transition-delay: 0.1s; }
+        .reveal-2 { transition-delay: 0.25s; }
+        .reveal-3 { transition-delay: 0.4s; }
+        .reveal-4 { transition-delay: 0.55s; }
+        .reveal-5 { transition-delay: 0.7s; }
+
+        /* ── Per-slide CSS ── */
+        #slide-1 { justify-content: center; align-items: center; text-align: center; }
+        #slide-1 .hero-title { font-family: 'Cormorant', serif; font-style: italic; font-size: clamp(3rem, 7vw, 6rem); font-weight: 400; line-height: 1.1; color: #e8e4df; margin-bottom: 24px; }
+        #slide-1 .hero-sub { font-family: 'IBM Plex Sans', sans-serif; font-size: clamp(13px, 1.4vw, 16px); font-weight: 300; color: #9a9590; max-width: 480px; line-height: 1.7; margin-bottom: 32px; }
+        #slide-1 .hero-badges { display: flex; gap: 12px; flex-wrap: wrap; justify-content: center; }
+
+        #slide-2 { flex-direction: row; }
+        #slide-2 .left-col { flex: 0 0 42%; display: flex; flex-direction: column; justify-content: center; padding: var(--slide-padding); position: relative; }
+        #slide-2 .right-col { flex: 1; display: flex; flex-direction: column; justify-content: center; padding: var(--slide-padding); }
+        #slide-2 h2 { font-family: 'Cormorant', 'Noto Sans SC', serif; font-style: italic; font-size: var(--h2-size); color: #e8e4df; line-height: 1.2; margin-top: 12px; }
+
+        #slide-3, #slide-4, #slide-5, #slide-6, #slide-7 { justify-content: center; }
+        #slide-3 h2, #slide-4 h2, #slide-5 h2, #slide-6 h2, #slide-7 h2 { font-family: 'Cormorant', 'Noto Sans SC', serif; font-style: italic; font-size: var(--h2-size); color: #e8e4df; line-height: 1.2; }
+        #slide-3 .steps-row, #slide-5 .steps-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: clamp(16px, 2vw, 28px); margin-top: clamp(24px, 3vw, 40px); }
+        #slide-3 .step-item, #slide-5 .step-item { text-align: center; }
+        #slide-3 .step-item p, #slide-5 .step-item p { font-size: var(--body-size); color: #9a9590; margin-top: 8px; }
+        #slide-5 .step-item .code-block { margin-top: 12px; }
+
+        #slide-4 .preset-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 140px), 1fr)); gap: 10px; margin-top: clamp(20px, 2.5vw, 32px); }
+
+        #slide-6 .feature-grid { margin-top: clamp(20px, 2.5vw, 32px); }
+        #slide-6 .feature h3 { font-family: 'Cormorant', 'Noto Sans SC', serif; font-style: italic; font-size: clamp(1rem, 1.5vw, 1.25rem); color: #c9b896; margin-bottom: 8px; }
+        #slide-6 .feature p { font-size: var(--body-size); color: #9a9590; line-height: 1.6; }
+
+        #slide-7 .install-col { max-width: 680px; margin: 0 auto; }
+        #slide-7 .install-block { margin-bottom: clamp(16px, 2vw, 28px); }
+        #slide-7 .install-label { font-family: 'Cormorant', serif; font-style: italic; font-size: clamp(11px, 1.2vw, 14px); color: #c9b896; letter-spacing: 0.15em; text-transform: uppercase; margin-bottom: 8px; }
+        #slide-7 .code-block { text-align: left; }
+
+        #slide-8 { justify-content: center; align-items: center; text-align: center; }
+        #slide-8 .cta-cmd { font-family: 'IBM Plex Mono', monospace; font-size: clamp(1.25rem, 2.5vw, 2rem); color: #c9b896; font-weight: 400; margin-bottom: 16px; }
+        #slide-8 .cta-sub { font-family: 'Cormorant', serif; font-style: italic; font-size: clamp(0.875rem, 1.5vw, 1.125rem); color: #9a9590; }
+
+        .pain-list li { font-size: var(--body-size); color: #9a9590; line-height: 1.7; margin-bottom: 12px; }
+
+        /* ── Universal UI ── */
+        #brand-mark { position: fixed; top: 20px; left: 28px; font-weight: 600; font-size: 15px; z-index: 1000; font-family: 'Cormorant', serif; font-style: italic; color: rgba(232,228,223,0.4); }
+        .slide-num-label { position: absolute; bottom: 28px; right: 36px; font-size: 11px; font-weight: 400; font-family: 'IBM Plex Sans', sans-serif; color: rgba(232,228,223,0.2); }
+        .nav-dots { position: fixed; right: 1.5rem; top: 50%; transform: translateY(-50%); display: flex; flex-direction: column; gap: 8px; z-index: 100; }
+        .progress-bar { position: fixed; top: 0; left: 0; height: 3px; background: #c9b896; width: 0%; z-index: 100; transition: width 0.35s ease; }
+
+        /* ── Present Mode ── */
+        #present-btn { position: fixed; bottom: 1.5rem; right: 1.5rem; z-index: 9997; width: 44px; height: 44px; border-radius: 50%; background: rgba(15,15,15,0.8); color: rgba(232,228,223,0.7); border: 1px solid rgba(232,228,223,0.15); font-size: 1rem; cursor: pointer; backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); display: flex; align-items: center; justify-content: center; opacity: 0; transition: opacity 0.2s; pointer-events: none; }
+        body:hover #present-btn { opacity: 1; pointer-events: auto; }
+        #present-btn:hover { background: rgba(30,30,30,0.9); }
+        #present-counter { display: none; position: fixed; bottom: 1.4rem; left: 50%; transform: translateX(-50%); z-index: 9997; font-size: 0.65rem; letter-spacing: 0.14em; font-family: system-ui, sans-serif; color: rgba(232,228,223,0.28); }
+        body.presenting { background: #000 !important; overflow: hidden !important; }
+        body.presenting .slide { position: fixed !important; inset: 0; width: 100vw !important; height: 100vh !important; transform-origin: center center; scroll-snap-align: none !important; display: none !important; }
+        body.presenting .slide.p-on { display: flex !important; }
+        body.presenting #present-btn { display: none !important; }
+        body.presenting #present-counter { display: block; }
+        body.presenting.presenting-black .slide { visibility: hidden !important; }
+        body.presenting.presenting-black::after { content: ''; position: fixed; inset: 0; background: #000; z-index: 99999; }
+        .slide-credit { position: absolute; bottom: 8px; right: 14px; font-size: 9px; color: rgba(232,228,223,0.35); opacity: 0.35; pointer-events: none; z-index: 1; font-family: system-ui, sans-serif; }
+        body.presenting .slide-credit { display: none !important; }
+
+        /* ── Edit Mode ── */
+        .edit-hotzone { position: fixed; top: 0; left: 0; width: 80px; height: 80px; z-index: 10000; cursor: pointer; }
+        .edit-toggle { position: fixed; top: 16px; left: 16px; opacity: 0; pointer-events: none; transition: opacity 0.3s ease; z-index: 10001; background: #c9b896; color: #0f0f0f; border: none; padding: 6px 14px; border-radius: 2px; font-family: 'Cormorant', serif; font-style: italic; font-size: 12px; font-weight: 600; cursor: pointer; }
+        .edit-toggle.show { opacity: 1; pointer-events: auto; }
+        .edit-toggle.active { opacity: 1; pointer-events: auto; background: #c9b896; color: #0f0f0f; }
+        #notes-panel { display: none; position: fixed; bottom: 0; left: 0; right: 0; z-index: 9998; background: rgba(8,8,18,0.94); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); border-top: 1px solid rgba(232,228,223,0.08); }
+        #notes-panel.active { display: flex; flex-direction: column; }
+        #notes-panel-header { display: flex; align-items: center; justify-content: space-between; padding: 0.45rem 1.4rem; cursor: pointer; user-select: none; }
+        #notes-panel-header:hover { background: rgba(255,255,255,0.03); }
+        #notes-panel-label { flex: 1; font-size: 0.58rem; letter-spacing: 0.16em; text-transform: uppercase; color: rgba(255,255,255,0.3); }
+        #notes-drag-hint { flex: 1; display: flex; justify-content: center; }
+        #notes-drag-hint::after { content: ''; display: block; width: 36px; height: 3px; border-radius: 2px; background: rgba(255,255,255,0.25); }
+        #notes-panel-header:hover #notes-drag-hint::after { background: rgba(255,255,255,0.45); }
+        #notes-collapse-btn { flex: 1; text-align: right; font-size: 1rem; color: rgba(255,255,255,0.4); background: none; border: none; cursor: pointer; transition: color 0.15s, transform 0.2s; }
+        #notes-collapse-btn:hover { color: rgba(255,255,255,0.85); }
+        #notes-body { padding: 0 1.4rem 0.75rem; }
+        #notes-panel.collapsed #notes-body { display: none; }
+        #notes-panel.collapsed #notes-collapse-btn { transform: rotate(180deg); }
+        #notes-textarea { width: 100%; height: 72px; min-height: 48px; max-height: 200px; resize: vertical; background: transparent; border: none; outline: none; color: rgba(255,255,255,0.75); font-size: 0.88rem; line-height: 1.65; font-family: system-ui, sans-serif; }
+        #notes-textarea::placeholder { color: rgba(255,255,255,0.18); }
+
+        /* ── Responsive ── */
+        @media (max-height: 700px) { :root { --slide-padding: clamp(0.75rem, 3vw, 2rem); --content-gap: clamp(0.4rem, 1.5vw, 1rem); --title-size: clamp(1.25rem, 4.5vw, 2.5rem); } }
+        @media (max-height: 600px) { :root { --slide-padding: clamp(0.5rem, 2.5vw, 1.5rem); --title-size: clamp(1.1rem, 4vw, 2rem); --body-size: clamp(0.7rem, 1.2vw, 0.95rem); } .nav-dots, .keyboard-hint, .decorative { display: none; } }
+        @media (max-height: 500px) { :root { --slide-padding: clamp(0.4rem, 2vw, 1rem); --title-size: clamp(1rem, 3.5vw, 1.5rem); } }
+        @media (max-width: 600px) { #slide-2 { flex-direction: column; } #slide-3 .steps-row, #slide-5 .steps-row, #slide-6 .feature-grid { grid-template-columns: 1fr; } }
+        @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.2s !important; } html { scroll-behavior: auto; } }
+    </style>
+</head>
+<body data-export-progress="true" data-preset="Dark Botanical">
+    <span id="brand-mark">slide-creator</span>
+    <div class="progress-bar"></div>
+    <nav class="nav-dots" aria-label="Slide navigation"></nav>
+
+    <!-- Slide 1: Hero -->
+    <section class="slide" id="slide-1" data-notes="slide-creator: 零依赖 HTML 演示文稿, 21 种预设, 三分钟出稿" aria-label="Hero">
+        <div class="orb orb-terra" style="top:-8%;right:-5%;width:clamp(200px,35vw,450px);height:clamp(200px,35vw,450px);"></div>
+        <div class="orb orb-pink" style="bottom:5%;left:-3%;width:clamp(180px,28vw,380px);height:clamp(180px,28vw,380px);"></div>
+        <div class="accent-line"></div>
+        <div class="slide-content">
+            <div class="slide-label reveal reveal-1">slide-creator</div>
+            <h1 class="hero-title reveal reveal-2">零依赖,<br>无需构建</h1>
+            <p class="hero-sub reveal reveal-3">HTML 演示文稿生成工具, 为 Claude Code 和 OpenClaw 设计。<br>选风格, 出稿, 发布。</p>
+            <div class="hero-badges reveal reveal-4">
+                <span class="badge"><strong>21</strong> 种预设</span>
+                <span class="badge"><strong>0</strong> 个依赖</span>
+                <span class="badge"><strong>3min</strong> 出稿</span>
+            </div>
+        </div>
+        <span class="slide-num-label">01 / 08</span>
+    </section>
+
+    <!-- Slide 2: Problem -->
+    <section class="slide" id="slide-2" data-notes="当前演示文稿工具链冗长、AI 生成风格不稳定、平台锁定" aria-label="Problem">
+        <div class="orb orb-gold" style="top:10%;right:-5%;width:clamp(150px,25vw,320px);height:clamp(150px,25vw,320px);"></div>
+        <div class="left-col">
+            <div class="slide-label reveal reveal-1">问题</div>
+            <h2 class="reveal reveal-2">演示文稿<br>不应该需要<br>构建系统</h2>
+        </div>
+        <div class="right-col">
+            <ul class="pain-list reveal reveal-3">
+                <li>复杂的工具链 — npm install、Webpack 配置、300MB node_modules</li>
+                <li>通用输出 — 每个 AI 演示都是 Inter 字体 + 紫色渐变</li>
+                <li>平台锁定 — 封闭平台、导出限制、月费订阅</li>
+            </ul>
+        </div>
+        <span class="slide-num-label">02 / 08</span>
+    </section>
+
+    <!-- Slide 3: Discovery -->
+    <section class="slide" id="slide-3" data-notes="风格探索: 描述主题, 生成三个预览, 点击选中" aria-label="Discovery">
+        <div class="orb orb-pink" style="bottom:-8%;right:5%;width:clamp(180px,30vw,400px);height:clamp(180px,30vw,400px);"></div>
+        <div class="slide-content">
+            <div class="slide-label reveal reveal-1">Discovery</div>
+            <h2 class="reveal reveal-2">三个预览锁定视觉风格</h2>
+            <div class="steps-row">
+                <div class="step-item reveal reveal-3">
+                    <div class="step-num"></div>
+                    <p>描述演示主题</p>
+                </div>
+                <div class="step-item reveal reveal-4">
+                    <div class="step-num"></div>
+                    <p>生成 3 个风格预览</p>
+                </div>
+                <div class="step-item reveal reveal-5">
+                    <div class="step-num"></div>
+                    <p>点击选中出稿</p>
+                </div>
+            </div>
+        </div>
+        <span class="slide-num-label">03 / 08</span>
+    </section>
+
+    <!-- Slide 4: Solution -->
+    <section class="slide" id="slide-4" data-notes="21 种设计预设, 覆盖商业路演、技术分享、创意展示" aria-label="Solution">
+        <div class="orb orb-terra" style="top:-5%;left:-5%;width:clamp(200px,32vw,420px);height:clamp(200px,32vw,420px);"></div>
+        <div class="slide-content">
+            <div class="slide-label reveal reveal-1">Presets</div>
+            <h2 class="reveal reveal-2">21 种预设, 拒绝通用 AI 审美</h2>
+            <div class="preset-grid reveal reveal-3">
+                <span class="preset-tag current">Bold Signal</span>
+                <span class="preset-tag">Blue Sky</span>
+                <span class="preset-tag">Aurora Mesh</span>
+                <span class="preset-tag">Chinese Chan</span>
+                <span class="preset-tag">Creative Voltage</span>
+                <span class="preset-tag current">Dark Botanical</span>
+                <span class="preset-tag">Data Story</span>
+                <span class="preset-tag">Electric Studio</span>
+                <span class="preset-tag">Enterprise Dark</span>
+                <span class="preset-tag">Glassmorphism</span>
+                <span class="preset-tag">Modern Newspaper</span>
+                <span class="preset-tag">Neo-Brutalism</span>
+                <span class="preset-tag">Neo-Retro Dev</span>
+                <span class="preset-tag">Neon Cyber</span>
+                <span class="preset-tag">Notebook Tabs</span>
+                <span class="preset-tag">Paper &amp; Ink</span>
+                <span class="preset-tag">Pastel Geometry</span>
+                <span class="preset-tag">Split Pastel</span>
+                <span class="preset-tag">Swiss Modern</span>
+                <span class="preset-tag">Terminal Green</span>
+                <span class="preset-tag">Vintage Editorial</span>
+            </div>
+        </div>
+        <span class="slide-num-label">04 / 08</span>
+    </section>
+
+    <!-- Slide 5: Workflow -->
+    <section class="slide" id="slide-5" data-notes="三步出稿: 描述、选风格、打开浏览器" aria-label="Workflow">
+        <div class="orb orb-gold" style="bottom:10%;left:5%;width:clamp(160px,26vw,350px);height:clamp(160px,26vw,350px);"></div>
+        <div class="slide-content">
+            <div class="slide-label reveal reveal-1">Workflow</div>
+            <h2 class="reveal reveal-2">三步出稿</h2>
+            <div class="steps-row">
+                <div class="step-item reveal reveal-3">
+                    <div class="step-num"></div>
+                    <div class="code-block">/slide-creator [描述主题]</div>
+                </div>
+                <div class="step-item reveal reveal-4">
+                    <div class="step-num"></div>
+                    <div class="code-block">选择风格预览</div>
+                </div>
+                <div class="step-item reveal reveal-5">
+                    <div class="step-num"></div>
+                    <div class="code-block">open presentation.html</div>
+                </div>
+            </div>
+        </div>
+        <span class="slide-num-label">05 / 08</span>
+    </section>
+
+    <!-- Slide 6: Features -->
+    <section class="slide" id="slide-6" data-notes="核心功能: F5 播放、E 键编辑、P 键演讲者模式、PPTX 导出" aria-label="Features">
+        <div class="orb orb-pink" style="top:-5%;right:-5%;width:clamp(180px,28vw,380px);height:clamp(180px,28vw,380px);"></div>
+        <div class="slide-content">
+            <div class="slide-label reveal reveal-1">Features</div>
+            <h2 class="reveal reveal-2">播放、编辑、演讲者、导出</h2>
+            <div class="feature-grid">
+                <div class="feature reveal reveal-3">
+                    <h3>F5 全屏播放</h3>
+                    <p>视口自适应缩放, 1440x900 画布适配任意屏幕</p>
+                </div>
+                <div class="feature reveal reveal-4">
+                    <h3>E 键浏览器编辑</h3>
+                    <p>左上角热区触发编辑模式, contenteditable 直接修改</p>
+                </div>
+                <div class="feature reveal reveal-3">
+                    <h3>P 键演讲者模式</h3>
+                    <p>同步窗口显示备注、计时器、页数</p>
+                </div>
+                <div class="feature reveal reveal-4">
+                    <h3>PPTX 导出</h3>
+                    <p>像素级图片模式或 Native 可编辑模式</p>
+                </div>
+            </div>
+        </div>
+        <span class="slide-num-label">06 / 08</span>
+    </section>
+
+    <!-- Slide 7: Install -->
+    <section class="slide" id="slide-7" data-notes="安装方式: Claude Code 或 OpenClaw 一行命令" aria-label="Install">
+        <div class="orb orb-terra" style="bottom:5%;right:10%;width:clamp(150px,24vw,320px);height:clamp(150px,24vw,320px);"></div>
+        <div class="slide-content">
+            <div class="install-col">
+                <div class="slide-label reveal reveal-1">Install</div>
+                <h2 class="reveal reveal-2">一行命令安装</h2>
+                <div class="install-block reveal reveal-3">
+                    <div class="install-label">Claude Code</div>
+                    <div class="code-block">告诉 Claude「安装 github.com/kaisersong/slide-creator」</div>
+                </div>
+                <div class="install-block reveal reveal-4">
+                    <div class="install-label">OpenClaw</div>
+                    <div class="code-block">clawhub install kai-slide-creator</div>
+                </div>
+            </div>
+        </div>
+        <span class="slide-num-label">07 / 08</span>
+    </section>
+
+    <!-- Slide 8: CTA -->
+    <section class="slide" id="slide-8" data-notes="立即开始使用 /slide-creator" aria-label="CTA">
+        <div class="orb orb-gold" style="top:10%;left:10%;width:clamp(160px,26vw,340px);height:clamp(160px,26vw,340px);"></div>
+        <div class="orb orb-pink" style="bottom:-8%;right:-3%;width:clamp(140px,22vw,300px);height:clamp(140px,22vw,300px);"></div>
+        <div class="slide-content">
+            <div class="cta-cmd reveal reveal-1">/slide-creator</div>
+            <p class="cta-sub reveal reveal-2">适用于 Claude Code 和 OpenClaw<br>完全在浏览器中运行</p>
+        </div>
+        <span class="slide-num-label">08 / 08</span>
+    </section>
+
+    <!-- Edit UI -->
+    <div class="edit-hotzone"></div>
+    <button class="edit-toggle" id="editToggle" title="Edit mode (E)">Edit</button>
+    <div id="notes-panel">
+        <div id="notes-panel-header">
+            <div id="notes-panel-label">SPEAKER NOTES</div>
+            <div id="notes-drag-hint"></div>
+            <button id="notes-collapse-btn" title="Collapse / expand">&#9662;</button>
+        </div>
+        <div id="notes-body">
+            <textarea id="notes-textarea" placeholder="Add speaker notes..."></textarea>
+        </div>
+    </div>
+
+    <script>
+    if (new URLSearchParams(location.search).has('presenter')) {
+        document.title = 'Presenter \u2014 ' + document.title;
+        document.body.innerHTML = `
+        <style>
+            * { box-sizing: border-box; margin: 0; }
+            body { background: #111; color: #fff; font-family: system-ui, sans-serif; }
+            #pv { display: grid; grid-template-columns: 1fr 220px; gap: 1rem; padding: 1.25rem; align-items: start; }
+            .pv-panel { background: #1e1e1e; border-radius: 12px; padding: 1.25rem; }
+            #pv-label { font-size: 0.6rem; letter-spacing: 0.18em; text-transform: uppercase; color: #555; margin-bottom: 0.6rem; }
+            #pv-notes { font-size: 1.05rem; line-height: 1.85; color: #d0d0d0; }
+            #pv-right { display: flex; flex-direction: column; gap: 1rem; }
+            #pv-nav { display: flex; align-items: center; justify-content: space-between; gap: 0.5rem; }
+            .pv-arrow { width: 32px; height: 32px; border-radius: 6px; border: 1px solid #333; background: #2a2a2a; color: #aaa; font-size: 1rem; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+            .pv-arrow:hover { background: #383838; color: #fff; }
+            #pv-counter { text-align: center; flex: 1; }
+            #pv-num { font-size: 1.6rem; font-weight: 700; font-variant-numeric: tabular-nums; line-height: 1; }
+            #pv-of { color: #555; font-size: 0.75rem; margin-top: 0.2rem; }
+            #pv-timer { font-size: 1.5rem; font-weight: 700; font-family: monospace; font-variant-numeric: tabular-nums; }
+            #pv-timer-label { font-size: 0.6rem; letter-spacing: 0.18em; text-transform: uppercase; color: #555; }
+        </style>
+        <div id="pv">
+            <div class="pv-panel"><div id="pv-label">Speaker Notes</div><div id="pv-notes">Waiting for main window...</div></div>
+            <div id="pv-right">
+                <div class="pv-panel"><div id="pv-nav">
+                    <button class="pv-arrow" id="pv-prev">\u2190</button>
+                    <div id="pv-counter"><div id="pv-num">\u2014</div><div id="pv-of">/ \u2014</div></div>
+                    <button class="pv-arrow" id="pv-next">\u2192</button>
+                </div></div>
+                <div class="pv-panel"><div id="pv-timer-label">Elapsed</div><div id="pv-timer">0:00</div></div>
+            </div>
+        </div>`;
+        const ch = new BroadcastChannel('slide-creator-presenter');
+        let startTime = null;
+        const pv = document.getElementById('pv');
+        let lastH = 0, roTimer = null;
+        new ResizeObserver(() => {
+            clearTimeout(roTimer);
+            roTimer = setTimeout(() => {
+                const h = Math.ceil(pv.getBoundingClientRect().height);
+                if (h === lastH) return;
+                lastH = h;
+                const chrome = window.outerHeight - window.innerHeight;
+                window.resizeTo(window.outerWidth, Math.max(260, h + chrome + 4));
+            }, 40);
+        }).observe(pv);
+        ch.addEventListener('message', e => {
+            if (e.data.type !== 'state') return;
+            if (!startTime) startTime = Date.now();
+            document.getElementById('pv-notes').textContent = e.data.notes || '(no notes for this slide)';
+            document.getElementById('pv-num').textContent = e.data.index + 1;
+            document.getElementById('pv-of').textContent = '/ ' + e.data.total;
+        });
+        ch.postMessage({ type: 'request-state' });
+        setInterval(() => {
+            if (!startTime) return;
+            const s = Math.floor((Date.now() - startTime) / 1000);
+            document.getElementById('pv-timer').textContent = Math.floor(s / 60) + ':' + String(s % 60).padStart(2, '0');
+        }, 1000);
+        document.getElementById('pv-prev').addEventListener('click', () => ch.postMessage({ type: 'nav-prev' }));
+        document.getElementById('pv-next').addEventListener('click', () => ch.postMessage({ type: 'nav-next' }));
+        document.addEventListener('keydown', e => {
+            if (e.key === 'ArrowRight' || e.key === 'ArrowDown' || e.key === ' ' || e.key === 'PageDown' || e.key === 'Enter') ch.postMessage({ type: 'nav-next' });
+            else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp' || e.key === 'PageUp' || e.key === 'Backspace') ch.postMessage({ type: 'nav-prev' });
+        });
+    } else {
+    class SlidePresentation {
+        constructor() {
+            this.slides = document.querySelectorAll('.slide');
+            this.currentSlide = 0;
+            this.channel = new BroadcastChannel('slide-creator-presenter');
+            this.slides[0]?.classList.add('visible');
+            this.slides[0]?.querySelectorAll('.reveal').forEach(function(r) { r.classList.add('visible'); });
+            this.setupNavDots(); this.setupObserver(); this.setupKeyboard();
+            this.setupTouch(); this.setupWheel(); this.setupPresenter(); this.setupEditor(); this.updateProgress();
+        }
+        setupNavDots() {
+            const nav = document.querySelector('.nav-dots');
+            if (!nav) return;
+            this.slides.forEach((_, i) => {
+                const dot = document.createElement('button');
+                dot.setAttribute('aria-label', 'Go to slide ' + (i + 1));
+                dot.style.cssText = 'width:8px;height:8px;border-radius:50%;border:none;cursor:pointer;background:#3a3530;border:1px solid #5a5550;transition:all 0.3s;';
+                dot.addEventListener('click', () => this.goTo(i)); nav.appendChild(dot);
+            });
+            nav.style.cssText = 'position:fixed;right:1.5rem;top:50%;transform:translateY(-50%);display:flex;flex-direction:column;gap:8px;z-index:100;';
+        }
+        setupObserver() {
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('visible');
+                        this.currentSlide = [...this.slides].indexOf(entry.target);
+                        this.updateProgress(); this.updateDots(); this.broadcastState();
+                        this.updateNotesPanel();
+                    }
+                });
+            }, { threshold: 0.5 });
+            this.slides.forEach(s => observer.observe(s));
+        }
+        setupKeyboard() {
+            document.addEventListener('keydown', (e) => {
+                if (e.target.getAttribute('contenteditable') || e.target.tagName === 'TEXTAREA') return;
+                if (['ArrowDown','ArrowRight',' ','PageDown','Enter'].includes(e.key)) { e.preventDefault(); this.next(); }
+                else if (['ArrowUp','ArrowLeft','PageUp','Backspace'].includes(e.key)) { e.preventDefault(); this.prev(); }
+                else if (e.key === 'p' || e.key === 'P') { window.open(location.href.split('?')[0] + '?presenter', 'slide-presenter-' + Date.now(), 'width=1100,menubar=no,toolbar=no,location=no'); }
+                else if (e.key === 'e' || e.key === 'E') { if (this.editor && !this.editor.active) this.editor.enter(); else if (this.editor && this.editor.active) this.editor.exit(); }
+            });
+        }
+        setupTouch() {
+            let startY = 0;
+            document.addEventListener('touchstart', e => { startY = e.touches[0].clientY; }, { passive: true });
+            document.addEventListener('touchend', e => { const d = startY - e.changedTouches[0].clientY; if (Math.abs(d) > 50) d > 0 ? this.next() : this.prev(); });
+        }
+        setupWheel() {}
+        setupPresenter() {
+            this.channel.addEventListener('message', e => {
+                if (e.data.type === 'nav-next') this.next();
+                else if (e.data.type === 'nav-prev') this.prev();
+                else if (e.data.type === 'request-state') this.broadcastState();
+            });
+        }
+        broadcastState() {
+            const slide = this.slides[this.currentSlide];
+            this.channel.postMessage({ type: 'state', index: this.currentSlide, total: this.slides.length, notes: slide?.dataset.notes || '' });
+        }
+        goTo(index) {
+            this.slides.forEach((slide, i) => {
+                slide.classList.toggle('visible', i === index);
+                slide.querySelectorAll('.reveal').forEach(function(r) { r.classList.toggle('visible', i === index); });
+            });
+            this.slides[index]?.scrollIntoView({ behavior: 'smooth' });
+        }
+        next() { this.goTo(Math.min(this.currentSlide + 1, this.slides.length - 1)); }
+        prev() { this.goTo(Math.max(this.currentSlide - 1, 0)); }
+        updateProgress() {
+            const pct = (this.currentSlide / (this.slides.length - 1)) * 100;
+            const bar = document.querySelector('.progress-bar');
+            if (bar) bar.style.width = pct + '%';
+        }
+        updateDots() {
+            document.querySelectorAll('.nav-dots button').forEach((dot, i) => {
+                dot.style.background = i === this.currentSlide ? '#c9b896' : '#3a3530';
+                dot.style.borderColor = i === this.currentSlide ? '#c9b896' : '#5a5550';
+                dot.style.boxShadow = i === this.currentSlide ? '0 0 8px rgba(201,184,150,0.5)' : 'none';
+            });
+        }
+        setupEditor() {
+            const panel = document.getElementById('notes-panel');
+            const label = document.getElementById('notes-panel-label');
+            const textarea = document.getElementById('notes-textarea');
+            const toggle = document.getElementById('editToggle');
+            const hotzone = document.querySelector('.edit-hotzone');
+            let hideTimeout = null;
+            hotzone.addEventListener('mouseenter', () => { clearTimeout(hideTimeout); toggle.classList.add('show'); });
+            hotzone.addEventListener('mouseleave', () => { hideTimeout = setTimeout(() => { if (this.editor.active) return; toggle.classList.remove('show'); }, 400); });
+            toggle.addEventListener('mouseenter', () => clearTimeout(hideTimeout));
+            toggle.addEventListener('mouseleave', () => { hideTimeout = setTimeout(() => { if (this.editor.active) return; toggle.classList.remove('show'); }, 400); });
+            hotzone.addEventListener('click', () => this.editor.toggle());
+            toggle.addEventListener('click', () => this.editor.toggle());
+            document.getElementById('notes-panel-header').addEventListener('click', () => panel.classList.toggle('collapsed'));
+            textarea.addEventListener('input', () => {
+                const slide = this.slides[this.currentSlide];
+                if (slide) { slide.dataset.notes = textarea.value; this.broadcastState(); }
+            });
+            document.addEventListener('keydown', (e) => {
+                if ((e.ctrlKey || e.metaKey) && e.key === 's') { e.preventDefault(); this.saveFile(); }
+            });
+            this.editor = {
+                active: false,
+                toggle: () => this.editor.active ? this.editor.exit() : this.editor.enter(),
+                enter: () => {
+                    this.editor.active = true;
+                    toggle.classList.add('active'); toggle.textContent = 'Done';
+                    this.slides.forEach(s => s.querySelectorAll('h1,h2,h3,p,li,span,td,th').forEach(el => {
+                        el.setAttribute('contenteditable', 'true'); el.style.outline = 'none';
+                    }));
+                    panel.classList.add('active'); this.updateNotesPanel();
+                },
+                exit: () => {
+                    this.editor.active = false;
+                    toggle.classList.remove('active'); toggle.textContent = 'Edit';
+                    this.slides.forEach(s => s.querySelectorAll('[contenteditable]').forEach(el => {
+                        el.removeAttribute('contenteditable'); el.style.outline = '';
+                    }));
+                    panel.classList.remove('active');
+                }
+            };
+            this._notesLabel = label; this._notesTextarea = textarea;
+        }
+        updateNotesPanel() {
+            if (!this.editor?.active) return;
+            const slide = this.slides[this.currentSlide];
+            this._notesLabel.textContent = 'SPEAKER NOTES \u2014 SLIDE ' + (this.currentSlide + 1) + ' / ' + this.slides.length;
+            this._notesTextarea.value = slide?.dataset.notes || '';
+        }
+        saveFile() {
+            const html = '<!DOCTYPE html>\n' + document.documentElement.outerHTML;
+            const bytes = new TextEncoder().encode(html);
+            fetch(location.pathname, { method: 'PUT', body: bytes, headers: { 'Content-Type': 'text/html' } })
+                .catch(() => {
+                    const a = Object.assign(document.createElement('a'), {
+                        href: URL.createObjectURL(new Blob([html], { type: 'text/html' })),
+                        download: location.pathname.split('/').pop() || 'presentation.html'
+                    }); a.click(); URL.revokeObjectURL(a.href);
+                });
+        }
+    }
+    class PresentMode {
+        constructor(ctrl) {
+            this.ctrl = ctrl;
+            this.baseW = 1440; this.baseH = 900;
+            this.active = false;
+            const btn = document.createElement('button');
+            btn.id = 'present-btn'; btn.title = 'Present (F5)'; btn.setAttribute('aria-label', 'Present'); btn.textContent = '\u25B6';
+            document.body.appendChild(btn);
+            const counter = document.createElement('div');
+            counter.id = 'present-counter'; document.body.appendChild(counter);
+            btn.addEventListener('click', () => this.enter());
+            document.addEventListener('keydown', e => {
+                if (e.key === 'F5') { e.preventDefault(); this.enter(); }
+                if (e.key === 'Escape' && this.active) this.exit();
+                if ((e.key === 'b' || e.key === 'B') && this.active) document.body.classList.toggle('presenting-black');
+            });
+            document.addEventListener('fullscreenchange', () => { if (this.active) { setTimeout(() => this._scale(), 100); } if (!document.fullscreenElement && this.active) this.exit(); });
+            window.addEventListener('resize', () => { if (this.active) this._scale(); });
+        }
+        enter() {
+            if (this.active) return;
+            this.active = true;
+            document.body.classList.add('presenting');
+            if (document.documentElement.requestFullscreen) document.documentElement.requestFullscreen().catch(() => {});
+            this._scale();
+            this._show(this.ctrl.currentSlide);
+            this._updateCounter();
+            this._origGoTo = this.ctrl.goTo.bind(this.ctrl);
+            this.ctrl.goTo = (i) => {
+                const idx = Math.max(0, Math.min(i, this.ctrl.slides.length - 1));
+                this.ctrl.currentSlide = idx;
+                this.ctrl.slides.forEach((s, j) => s.classList.toggle('visible', j === idx));
+                this._show(idx);
+                this.ctrl.updateProgress?.();
+                this.ctrl.updateDots?.();
+                this.ctrl.broadcastState?.();
+            };
+        }
+        exit() {
+            if (!this.active) return;
+            this.active = false;
+            document.body.classList.remove('presenting', 'presenting-black');
+            this._reset();
+            if (document.fullscreenElement) document.exitFullscreen?.();
+            if (this._origGoTo) { this.ctrl.goTo = this._origGoTo; this._origGoTo = null; }
+            this.ctrl.slides[this.ctrl.currentSlide]?.scrollIntoView({ behavior: 'instant' });
+        }
+        _scale() {
+            const vw = window.innerWidth;
+            const vh = window.innerHeight;
+            const s = Math.min(vw / this.baseW, vh / this.baseH);
+            const ox = (vw - this.baseW * s) / 2;
+            const oy = (vh - this.baseH * s) / 2;
+            this.ctrl.slides.forEach(slide => {
+                slide.style.transform = 'translate(' + ox + 'px, ' + oy + 'px) scale(' + s + ')';
+            });
+        }
+        _reset() {
+            this.ctrl.slides.forEach(slide => { slide.style.transform = ''; slide.classList.remove('p-on'); });
+        }
+        _show(i) {
+            this.ctrl.slides.forEach((s, idx) => s.classList.toggle('p-on', idx === i));
+        }
+        _updateCounter() {
+            const c = document.getElementById('present-counter');
+            if (c) c.textContent = (this.ctrl.currentSlide + 1) + ' / ' + this.ctrl.slides.length;
+        }
+    }
+    new PresentMode(new SlidePresentation());
+    }
+    </script>
+    <script>
+    (function() {
+        var slides = document.querySelectorAll('.slide');
+        if (!slides.length) return;
+        var last = slides[slides.length - 1];
+        var credit = document.createElement('div');
+        credit.className = 'slide-credit';
+        credit.textContent = 'By kai-slide-creator v2.18.0 \u00B7 Dark Botanical';
+        last.appendChild(credit);
+    })();
+    </script>
 </body>
 </html>

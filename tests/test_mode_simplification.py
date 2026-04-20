@@ -18,11 +18,10 @@ def test_skill_exposes_only_two_user_facing_planning_depths():
     skill = read_text(SKILL_MD)
     assert "`自动`" in skill
     assert "`精修`" in skill
-    assert "`Auto`" in skill
-    assert "`Polish`" in skill
-    assert "two user-facing planning depths" in skill
-    assert "Do not add a third top-level mode." in skill
-    assert "reference-driven" in skill
+    assert "(Auto)" in skill
+    assert "(Polish)" in skill
+    assert "快速出稿" in skill
+    assert "深度规划" in skill
 
 
 def test_workflow_routes_to_polish_and_hides_reference_as_top_level_mode():
