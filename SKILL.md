@@ -118,7 +118,7 @@ metadata: {"openclaw":{"emoji":"🎞","os":["darwin","linux","windows"],"homepag
 8. **字体（R25+R28）：** Google Fonts URL 合并为单一链接（`&display=swap`），`<style>` 开头必须有 `body { background-color: ... }` 回退色。CJK 页面（`lang="zh"`/`ja"`/`ko"`）必须追加对应 CJK 字体（中文→`Noto Sans SC`，日文→`Noto Sans JP`，韩文→`Noto Sans KR`），fallback 链必须包含该字体
 9. **布局分类（R26）：** 每页遵循 layout classification — P1 Hero / P2 Problem / P3 Discovery / P4 Solution(大数字/极简, density 35-45%) / P5+ 按叙事角色分配。Chinese Chan / Paper & Ink 允许布局重复
 10. **功能完整性（GC-1+GC-3）：** 必须包含 `PresentMode` 类 + `F5` 监听 + `body.presenting` CSS（缺失即生成错误）。水印由 JS 注入到最后一页，CSS `position: absolute`，禁止 `position: fixed` 和硬编码
-11. **CSS 工程（R29+R30）：** 每页 `id="slide-N"`，布局/背景/间距通过 `#slide-N` CSS 选择器定义，inline `style=""` ≤ 5 处。5 项通用 UI 强制存在：① `#brand-mark` ② `.slide-num-label`/`.light` ③ `.nav-dots` ④ `.progress-bar` ⑤ `id="slide-N"`。CSS 和 HTML 见 `references/base-css.md`
+11. **CSS 工程（R29+R30）：** 每页 `id="slide-N"`，布局/背景/间距通过 `#slide-N` CSS 选择器定义，inline `style=""` ≤ 5 处（目标 0）。5 项通用 UI 强制存在：① `#brand-mark` ② `.slide-num-label`/`.light` ③ `.nav-dots` ④ `.progress-bar` ⑤ `id="slide-N"`。CSS 和 HTML 见 `references/base-css.md`。零 inline style 方法见 `references/html-template.md` 的 Zero Inline Style Guide 章节
 
 > 完整反模式映射表见 `references/impeccable-anti-patterns.md`。更多视觉/组件规则在 `--review` 模式下执行。
 
