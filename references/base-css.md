@@ -16,12 +16,9 @@ Every slide must equal exactly one viewport height. No scrolling within slides, 
    VIEWPORT FITTING: MANDATORY
    =========================================== */
 
-html, body {
+html {
     height: 100%;
     overflow-x: hidden;
-}
-
-html {
     scroll-snap-type: y mandatory;
     /* scroll-behavior intentionally omitted — JS scrollIntoView({behavior:'smooth'}) handles animation;
        CSS scroll-behavior + JS smooth scroll = double animation = jitter */

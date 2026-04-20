@@ -54,7 +54,7 @@ Every generated HTML must include all of the following:
         *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
         html { scroll-snap-type: y mandatory; height: 100%; }
 
-        body { font-family: var(--font-body); background: var(--bg-primary); color: var(--text-primary); overflow-x: hidden; height: 100%; }
+        body { font-family: var(--font-body); background: var(--bg-primary); color: var(--text-primary); height: 100%; }
         body[data-export-progress="false"] .progress-bar,
         body[data-export-progress="false"] .nav-dots { display: none !important; }
 
