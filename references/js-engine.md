@@ -76,10 +76,6 @@ class SlidePresentation {
     }
 
     goTo(index) {
-        this.slides.forEach((slide, i) => {
-            slide.classList.toggle('visible', i === index);
-            slide.querySelectorAll('.reveal').forEach(function(r) { r.classList.toggle('visible', i === index); });
-        });
         this.slides[index]?.scrollIntoView({ behavior: 'smooth' });
     }
     next() { this.goTo(Math.min(this.currentSlide + 1, this.slides.length - 1)); }
