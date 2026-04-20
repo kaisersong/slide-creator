@@ -36,7 +36,7 @@
        =========================================== */
     *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
     html, body { height: 100%; overflow-x: hidden; }
-    html { scroll-snap-type: y mandatory; }
+    html { scroll-snap-type: y mandatory; height: 100%; }
 
     body {
         background-color: var(--bg);
@@ -992,11 +992,9 @@
             this.channel.postMessage({ type: 'state', index: this.currentSlide, total: this.slides.length, notes: slide?.dataset.notes || '' });
         }
         goTo(index) {
-            this.slides.forEach((slide, i) => {
-                slide.classList.toggle('visible', i === index);
-                slide.querySelectorAll('.reveal').forEach(function(r) { r.classList.toggle('visible', i === index); });
-            });
-            this.slides[index]?.scrollIntoView({ behavior: 'smooth' });
+
+            this.slides[index]?.scrollIntoView({ behavior: "smooth" });
+
         }
         next() { this.goTo(Math.min(this.currentSlide + 1, this.slides.length - 1)); }
         prev() { this.goTo(Math.max(this.currentSlide - 1, 0)); }
