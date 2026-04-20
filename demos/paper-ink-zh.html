@@ -3,40 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>slide-creator -- Paper &amp; Ink</title>
+    <title>Paper &amp; Ink · slide-creator</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,700;0,900;1,400;1,700&family=Source+Serif+4:ital,wght@0,400;0,600;1,400&family=Noto+Sans+SC:wght@400;700;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Source+Serif+4:wght@400;600&family=Noto+Sans+SC:wght@400;500;700&display=swap" rel="stylesheet">
     <style>
         /* ===========================================
-           PAPER & INK -- Style
+           VIEWPORT FITTING: MANDATORY
            =========================================== */
-        :root {
-            --bg: #faf9f7;
-            --bg-dark: #1a1a18;
-            --text: #1a1a1a;
-            --text-muted: #666666;
-            --crimson: #c41e3a;
-            --rule: #c4b8a4;
-            --accent: #c41e3a;
-            --font-display: "Cormorant Garamond", "Noto Sans SC", Georgia, serif;
-            --font-body: "Source Serif 4", "Noto Sans SC", Georgia, serif;
-            --title-size: clamp(1.5rem, 5vw, 4rem);
-            --h2-size: clamp(1.25rem, 3.5vw, 2.5rem);
-            --body-size: clamp(0.75rem, 1.5vw, 1.125rem);
-            --small-size: clamp(0.65rem, 1vw, 0.875rem);
-            --slide-padding: clamp(1rem, 4vw, 4rem);
-            --content-gap: clamp(0.5rem, 2vw, 2rem);
-        }
         *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
         html { scroll-snap-type: y mandatory; height: 100%; overflow-x: hidden; }
-        body {
-            font-family: var(--font-body);
-            background: var(--bg);
-            color: var(--text);
-            height: 100%;
-            line-height: 1.78;
-        }
+        body { height: 100%; }
         body[data-export-progress="false"] .progress-bar,
         body[data-export-progress="false"] .nav-dots { display: none !important; }
 
@@ -44,162 +21,265 @@
             width: 100vw; height: 100vh; height: 100dvh;
             overflow: hidden; scroll-snap-align: start;
             display: flex; flex-direction: column; position: relative;
-            background: var(--bg);
         }
         .slide-content {
             flex: 1; display: flex; flex-direction: column; justify-content: center;
             max-height: 100%; overflow: hidden; padding: var(--slide-padding);
-            position: relative; z-index: 2;
         }
 
-        /* Paper & Ink typography */
-        .paper-title {
+        /* ===========================================
+           PAPER & INK — Style Tokens
+           =========================================== */
+        :root {
+            --bg: #faf9f7;
+            --bg-dark: #1a1a18;
+            --text: #1a1a1a;
+            --text-muted: #4a4a4a;
+            --crimson: #c41e3a;
+            --accent: #c41e3a;
+            --font-display: "Cormorant Garamond", Georgia, serif;
+            --font-body: "Source Serif 4", "Noto Sans SC", Georgia, serif;
+            --title-size: clamp(2rem, 6vw, 4rem);
+            --h2-size: clamp(1.5rem, 4vw, 2.5rem);
+            --body-size: clamp(0.8125rem, 1.5vw, 1.125rem);
+            --small-size: clamp(0.6875rem, 1.1vw, 0.875rem);
+            --slide-padding: clamp(1.5rem, 4vw, 4rem);
+            --content-gap: clamp(0.75rem, 2vw, 2rem);
+        }
+
+        body {
+            font-family: var(--font-body);
+            background: var(--bg);
+            color: var(--text);
+        }
+
+        /* ── Typography ── */
+        h1 {
             font-family: var(--font-display);
-            font-size: clamp(28px, 5vw, 52px);
-            font-weight: 900;
+            font-weight: 700;
+            font-size: clamp(3.5rem, 9vw, 7rem);
+            color: var(--text);
+            line-height: 0.95;
+            letter-spacing: -0.02em;
+        }
+        h1 .crimson { color: var(--crimson); }
+
+        h2 {
+            font-family: var(--font-display);
+            font-weight: 700;
+            font-size: clamp(2rem, 5vw, 3.8rem);
             color: var(--text);
             line-height: 1.05;
+            letter-spacing: -0.01em;
         }
-        .paper-body {
+        h2 .crimson { color: var(--crimson); }
+
+        /* ── Ornamental rule with crimson diamonds ── */
+        .rule {
+            display: flex; align-items: center; gap: 0.8rem;
+            margin: clamp(1.2rem, 2.5vh, 2rem) 0;
+        }
+        .rule::before, .rule::after {
+            content: "\25C6"; color: var(--crimson);
+            font-size: 0.4rem; flex-shrink: 0;
+        }
+        .rule-line { flex: 1; height: 1px; background: var(--crimson); }
+
+        /* ── Eyebrow — small-caps section label ── */
+        .eyebrow {
+            font-family: var(--font-display);
+            font-variant: small-caps;
+            letter-spacing: 0.2em;
+            font-size: clamp(0.65rem, 1vw, 0.8rem);
+            color: var(--text-muted);
+            margin-bottom: clamp(0.5rem, 1vh, 0.8rem);
+        }
+
+        /* ── Body text ── */
+        .body-text {
             font-family: var(--font-body);
-            font-size: clamp(14px, 1.5vw, 18px);
-            font-weight: 400;
+            font-size: clamp(0.9rem, 1.5vw, 1.05rem);
+            line-height: 1.8;
             color: var(--text);
-            line-height: 1.78;
+            max-width: 58ch;
         }
-        .paper-quote {
+        .body-text.drop-cap::first-letter {
             font-family: var(--font-display);
-            font-size: clamp(20px, 3vw, 36px);
-            font-weight: 400;
-            font-style: italic;
-            color: var(--text);
-            line-height: 1.4;
-        }
-        .paper-roman {
-            font-family: var(--font-display);
-            font-size: clamp(14px, 1.8vw, 20px);
-            font-weight: 400;
-            font-variant: small-caps;
-            color: var(--text-muted);
-        }
-        .paper-stat {
-            font-family: var(--font-display);
-            font-size: clamp(36px, 6vw, 60px);
-            font-weight: 900;
+            font-weight: 700;
+            font-size: 4em;
+            float: left;
+            line-height: 0.8;
+            margin-right: 0.1em;
+            margin-top: 0.05em;
             color: var(--crimson);
-            line-height: 1.0;
         }
 
-        /* Signature components */
-        .paper-rule {
-            height: 1px;
-            background: var(--rule);
-            border: none;
-            margin: clamp(24px, 4vw, 40px) 0;
-        }
-        .paper-pullquote {
-            font-family: var(--font-display);
-            font-style: italic;
-            font-size: clamp(20px, 3vw, 32px);
-            line-height: 1.4;
-            padding-left: clamp(16px, 2.5vw, 24px);
-            border-top: 1px solid var(--rule);
-            border-bottom: 1px solid var(--rule);
-            margin: clamp(20px, 3vw, 32px) 0;
-            color: var(--text);
-        }
-        .paper-roman-marker {
-            font-family: var(--font-display);
-            font-size: clamp(12px, 1.3vw, 16px);
-            font-variant: small-caps;
-            color: var(--text-muted);
-            margin-bottom: 8px;
-        }
-
-        /* Ornamental rule with crimson diamonds */
-        .rule { display: flex; align-items: center; gap: 0.8rem; }
-        .rule::before, .rule::after { content: '\25C6'; color: #c41e3a; font-size: 0.4rem; }
-        .rule-line { flex: 1; height: 1px; background: #c41e3a; }
-
-        /* Pull quote centered */
+        /* ── Pull quote ── */
         .pull-quote {
             font-family: var(--font-display);
             font-style: italic;
+            font-size: clamp(1.5rem, 4vw, 3rem);
+            font-weight: 400;
             color: var(--crimson);
-            max-width: 30ch;
             text-align: center;
-            font-size: clamp(20px, 3vw, 32px);
-            line-height: 1.4;
+            line-height: 1.25;
+            max-width: 30ch;
+            margin: 0 auto;
         }
 
-        /* Eyebrow label */
-        .eyebrow {
-            font-variant: small-caps;
-            letter-spacing: 0.2em;
-            color: var(--text-muted);
-            font-size: var(--small-size);
-            font-family: var(--font-display);
+        /* ── Stats ── */
+        .stat-row {
+            display: flex; gap: clamp(2rem, 5vw, 4rem);
+            margin-top: clamp(1.5rem, 3vh, 2.5rem);
         }
-
-        /* Pain marker */
-        .pain-marker {
+        .stat-val {
             font-family: var(--font-display);
-            font-style: italic;
-            color: var(--crimson);
             font-weight: 700;
-            margin-right: 0.5em;
+            font-size: clamp(2rem, 4vw, 3rem);
+            color: var(--crimson);
+            display: block; line-height: 1;
         }
-
-        /* Install block */
-        .install-block {
-            background: var(--bg-dark);
-            border-left: 3px solid var(--crimson);
-            padding: 16px 20px;
-            border-radius: 2px;
-            font-family: "Source Serif 4", "Noto Sans SC", monospace;
-            font-size: var(--body-size);
-            color: #e8e4df;
-        }
-        .install-block .install-label {
+        .stat-label {
+            font-family: var(--font-body);
+            font-size: 0.7rem;
             font-variant: small-caps;
             letter-spacing: 0.15em;
-            color: var(--crimson);
-            font-size: var(--small-size);
-            margin-bottom: 8px;
-        }
-
-        /* Preset items */
-        .preset-item {
-            display: inline-block;
-            padding: 4px 12px;
-            font-family: var(--font-body);
-            font-size: clamp(11px, 1vw, 13px);
             color: var(--text-muted);
-            border-bottom: 1px solid var(--rule);
-        }
-        .preset-item.active {
-            font-style: italic;
-            color: var(--crimson);
-            border-bottom-color: var(--crimson);
+            margin-top: 0.3rem;
+            display: block;
         }
 
-        /* Feature names in small-caps */
-        .feature-name {
-            font-variant: small-caps;
-            color: var(--crimson);
-            letter-spacing: 0.1em;
+        /* ── Pain list ── */
+        .pain-list { list-style: none; }
+        .pain-item {
+            display: flex; gap: 1rem; align-items: baseline;
+            padding: clamp(0.7rem, 1.2vh, 1rem) 0;
+            border-bottom: 1px solid rgba(196,30,58,0.25);
+            font-family: var(--font-body);
+            font-size: clamp(0.85rem, 1.4vw, 1rem);
+            line-height: 1.6;
+        }
+        .pain-item:first-child { border-top: 1px solid rgba(196,30,58,0.25); }
+        .pain-marker { color: var(--crimson); flex-shrink: 0; font-style: italic; }
+
+        /* ── Steps ── */
+        .step {
+            display: grid; grid-template-columns: 2.5rem 1fr;
+            gap: 1rem; padding: clamp(0.8rem, 1.5vh, 1.2rem) 0;
+            border-bottom: 1px solid rgba(26,26,26,0.12);
+        }
+        .step:first-child { border-top: 1px solid rgba(26,26,26,0.12); }
+        .step-num {
+            font-family: var(--font-display);
             font-weight: 700;
+            font-size: clamp(1.2rem, 2.5vw, 1.8rem);
+            color: var(--crimson);
+            line-height: 1;
+        }
+        .step-text {
+            font-family: var(--font-body);
+            font-size: clamp(0.85rem, 1.4vw, 1rem);
+            line-height: 1.6;
+        }
+        .step-text strong { font-weight: 600; color: var(--text); }
+
+        /* ── Preset grid (two-column) ── */
+        .preset-wrap {
+            columns: 2; column-gap: 3rem;
+            margin-top: clamp(1.5rem, 3vh, 2rem);
+        }
+        @media (max-width: 600px) { .preset-wrap { columns: 1; } }
+        .preset-item {
+            font-family: var(--font-body);
+            font-size: clamp(0.82rem, 1.3vw, 0.95rem);
+            padding: 0.4rem 0;
+            border-bottom: 1px solid rgba(26,26,26,0.1);
+            color: var(--text);
+            break-inside: avoid;
+        }
+        .preset-item.active { color: var(--crimson); font-style: italic; }
+        .preset-item::before { content: "—\00a0"; color: var(--crimson); }
+
+        /* ── Feature list ── */
+        .feature-list { margin-top: clamp(1.5rem, 3vh, 2rem); }
+        .feature-item {
+            padding: clamp(0.8rem, 1.5vh, 1.2rem) 0;
+            border-bottom: 1px solid rgba(26,26,26,0.12);
+        }
+        .feature-item:first-child { border-top: 1px solid rgba(26,26,26,0.12); }
+        .feature-name {
+            font-family: var(--font-display);
+            font-weight: 700;
+            font-size: clamp(0.9rem, 1.5vw, 1.1rem);
+            font-variant: small-caps;
+            letter-spacing: 0.1em;
+            color: var(--crimson);
+            margin-bottom: 0.25rem;
+        }
+        .feature-desc {
+            font-family: var(--font-body);
+            font-size: clamp(0.8rem, 1.3vw, 0.95rem);
+            color: var(--text-muted);
+            line-height: 1.6;
         }
 
-        /* Narrow content column */
-        .paper-content {
-            max-width: 680px;
-            margin: 0 auto;
-            padding: 0 clamp(24px, 8vw, 80px);
+        /* ── Install block ── */
+        .install-block {
+            background: var(--bg-dark);
+            color: var(--bg);
+            font-family: "Courier New", monospace;
+            font-size: clamp(0.7rem, 1.1vw, 0.85rem);
+            padding: clamp(1rem, 2vw, 1.5rem) clamp(1.2rem, 2.5vw, 2rem);
+            line-height: 1.7;
+            border-left: 3px solid var(--crimson);
+            margin: clamp(0.8rem, 1.5vh, 1.2rem) 0;
         }
-        .body-text { max-width: 58ch; }
+        .install-block .comment { color: #888; font-style: italic; }
 
-        /* Cross-fade reveal animation (no transforms) */
+        /* ── CTA command ── */
+        .cta-cmd {
+            font-family: var(--font-display);
+            font-weight: 700;
+            font-size: clamp(3rem, 8vw, 6rem);
+            color: var(--text);
+            letter-spacing: -0.02em;
+            line-height: 1;
+            margin: clamp(1rem, 2vh, 1.5rem) 0;
+        }
+        .cta-cmd .crimson { color: var(--crimson); font-style: italic; }
+
+        /* ── How-it-work items ── */
+        .how-items { margin-top: clamp(1.5rem, 3vh, 2rem); }
+        .how-item {
+            display: grid; grid-template-columns: 3rem 1fr;
+            gap: 1.2rem; align-items: start;
+            padding: clamp(0.8rem, 1.5vh, 1.2rem) 0;
+            border-bottom: 1px solid rgba(26,26,26,0.12);
+        }
+        .how-item:first-child { border-top: 1px solid rgba(26,26,26,0.12); }
+        .how-num {
+            font-family: var(--font-display);
+            font-weight: 700;
+            font-size: clamp(1.2rem, 2.5vw, 1.8rem);
+            color: var(--crimson);
+            line-height: 1;
+        }
+        .how-body h3 {
+            font-family: var(--font-display);
+            font-weight: 700;
+            font-size: clamp(1rem, 1.7vw, 1.2rem);
+            margin-bottom: 0.2rem;
+        }
+        .how-body p {
+            font-family: var(--font-body);
+            font-size: clamp(0.78rem, 1.2vw, 0.9rem);
+            color: var(--text-muted);
+            line-height: 1.6;
+        }
+
+        /* ═══════════════════════════════════════════════
+           Cross-fade reveal (no transforms — editorial feel)
+           ═══════════════════════════════════════════════ */
         @keyframes crossFade { from { opacity: 0; } to { opacity: 1; } }
         .reveal { opacity: 0; }
         .slide.visible .reveal { animation: crossFade 0.8s ease forwards; }
@@ -212,245 +292,9 @@
         .slide.visible .reveal:nth-child(7) { animation-delay: 0.95s; }
         .slide.visible .reveal:nth-child(8) { animation-delay: 1.1s; }
 
-        /* ── Per-slide CSS ── */
-
-        /* Slide 1: Hero -- Chapter Opening + Statistic */
-        #slide-1 { justify-content: center; align-items: flex-start; }
-        #slide-1 .slide-content {
-            align-items: flex-start; text-align: left;
-            padding-top: clamp(2rem, 6vw, 5rem);
-        }
-        #slide-1 .hero-roman { margin-bottom: 12px; }
-        #slide-1 .hero-title { margin-bottom: 16px; }
-        #slide-1 .hero-title em { color: var(--crimson); font-style: normal; }
-        #slide-1 .hero-sub {
-            font-family: var(--font-body); font-size: clamp(14px, 1.5vw, 18px);
-            color: var(--text-muted); line-height: 1.7; max-width: 520px;
-        }
-        #slide-1 .hero-rule { margin: clamp(20px, 3vw, 36px) 0; width: 100%; max-width: 580px; }
-        #slide-1 .hero-stats { display: flex; gap: clamp(24px, 4vw, 48px); }
-        #slide-1 .hero-stat-num {
-            font-family: var(--font-display);
-            font-size: clamp(28px, 4vw, 44px);
-            font-weight: 900; color: var(--crimson); line-height: 1;
-        }
-        #slide-1 .hero-stat-label {
-            font-size: var(--small-size); color: var(--text-muted);
-            font-variant: small-caps; margin-top: 4px;
-        }
-
-        /* Slide 2: Problem -- Annotated layout */
-        #slide-2 { flex-direction: row; }
-        #slide-2 .problem-main {
-            flex: 0 0 60%; display: flex; flex-direction: column;
-            justify-content: center; padding: var(--slide-padding);
-            padding-left: clamp(24px, 6vw, 80px);
-        }
-        #slide-2 .problem-annotation {
-            flex: 1; display: flex; flex-direction: column;
-            justify-content: center; padding: var(--slide-padding);
-            padding-right: clamp(24px, 6vw, 80px);
-            border-left: 1px solid var(--rule);
-        }
-        #slide-2 .problem-main h2 {
-            font-family: var(--font-display); font-size: var(--h2-size);
-            font-weight: 900; line-height: 1.15; margin-bottom: 16px;
-        }
-        #slide-2 .problem-main h2 em { color: var(--crimson); font-style: normal; }
-        #slide-2 .pain-item {
-            font-size: var(--body-size); color: var(--text);
-            line-height: 1.7; margin-bottom: 14px;
-        }
-        #slide-2 .annotation-text {
-            font-size: clamp(12px, 1.2vw, 14px); color: var(--text-muted);
-            line-height: 1.7; margin-bottom: 16px; font-style: italic;
-        }
-        #slide-2 .annotation-num {
-            font-family: var(--font-display); color: var(--crimson);
-            font-weight: 900; margin-right: 4px; font-size: 0.9em;
-        }
-
-        /* Slide 3: Discovery -- Pull Quote + Steps */
-        #slide-3 { justify-content: center; }
-        #slide-3 .slide-content { text-align: left; }
-        #slide-3 .discovery-quote { margin-bottom: clamp(24px, 3vw, 40px); }
-        #slide-3 .steps-grid {
-            display: grid; grid-template-columns: repeat(3, 1fr);
-            gap: clamp(16px, 2.5vw, 32px); margin-top: clamp(20px, 3vw, 36px);
-        }
-        #slide-3 .step { text-align: center; }
-        #slide-3 .step-num {
-            font-family: var(--font-display);
-            font-size: clamp(28px, 3.5vw, 40px);
-            font-weight: 900; color: var(--crimson); line-height: 1;
-            margin-bottom: 8px;
-        }
-        #slide-3 .step-label {
-            font-variant: small-caps; letter-spacing: 0.1em;
-            color: var(--text-muted); font-size: var(--small-size);
-            margin-bottom: 6px;
-        }
-        #slide-3 .step-desc {
-            font-size: var(--body-size); color: var(--text);
-            line-height: 1.6;
-        }
-
-        /* Slide 4: Solution -- Index Page */
-        #slide-4 { justify-content: center; }
-        #slide-4 .slide-content { text-align: left; }
-        #slide-4 .section-heading {
-            font-family: var(--font-display); font-size: clamp(20px, 3vw, 32px);
-            font-weight: 700; margin-bottom: 4px;
-        }
-        #slide-4 .section-sub {
-            font-size: var(--body-size); color: var(--text-muted); line-height: 1.7;
-        }
-        #slide-4 .index-list {
-            list-style: none; margin-top: clamp(16px, 2.5vw, 32px);
-            max-width: 680px;
-        }
-        #slide-4 .index-entry {
-            display: flex; align-items: baseline; padding: 6px 0;
-            font-size: var(--body-size);
-        }
-        #slide-4 .index-topic {
-            flex: 1; font-family: var(--font-body); color: var(--text);
-        }
-        #slide-4 .index-dots {
-            flex: 0 0 auto; color: var(--rule); letter-spacing: 0.15em;
-            font-size: 0.8em; overflow: hidden; white-space: nowrap;
-        }
-        #slide-4 .index-page {
-            font-family: var(--font-display); font-variant-numeric: tabular-nums;
-            color: var(--text-muted); margin-left: 8px;
-            font-size: clamp(12px, 1.2vw, 15px);
-        }
-        #slide-4 .index-entry.active .index-topic {
-            font-style: italic; color: var(--crimson);
-        }
-        #slide-4 .index-entry.active .index-page { color: var(--crimson); }
-
-        /* Slide 5: Workflow -- Process Steps */
-        #slide-5 { justify-content: center; }
-        #slide-5 .slide-content { text-align: left; }
-        #slide-5 .section-heading {
-            font-family: var(--font-display); font-size: clamp(20px, 3vw, 32px);
-            font-weight: 700; margin-bottom: 4px;
-        }
-        #slide-5 .rule-inline { margin: 16px 0; }
-        #slide-5 .workflow-steps {
-            display: flex; flex-direction: column;
-            gap: clamp(16px, 2vw, 28px); margin-top: clamp(20px, 3vw, 36px);
-            max-width: 680px;
-        }
-        #slide-5 .wf-step {
-            display: flex; gap: 16px; align-items: flex-start;
-        }
-        #slide-5 .wf-num {
-            font-family: var(--font-display);
-            font-size: clamp(20px, 2.5vw, 28px);
-            font-weight: 900; color: var(--crimson);
-            line-height: 1; flex-shrink: 0; width: 36px;
-        }
-        #slide-5 .wf-body h3 {
-            font-family: var(--font-display);
-            font-size: clamp(16px, 2vw, 22px);
-            font-weight: 700; margin-bottom: 4px;
-        }
-        #slide-5 .wf-body p {
-            font-size: var(--body-size); color: var(--text-muted);
-            line-height: 1.6;
-        }
-        #slide-5 .wf-cmd {
-            font-family: "Source Serif 4", monospace;
-            background: var(--bg-dark); color: #e8e4df;
-            padding: 3px 10px; border-radius: 2px; font-size: 0.9em;
-        }
-
-        /* Slide 6: Features -- Grid */
-        #slide-6 { justify-content: center; }
-        #slide-6 .slide-content { text-align: left; }
-        #slide-6 .section-heading {
-            font-family: var(--font-display); font-size: clamp(20px, 3vw, 32px);
-            font-weight: 700; margin-bottom: 4px;
-        }
-        #slide-6 .rule-inline { margin: 16px 0; }
-        #slide-6 .feature-grid {
-            display: grid; grid-template-columns: repeat(2, 1fr);
-            gap: clamp(16px, 2vw, 28px); margin-top: clamp(20px, 3vw, 36px);
-        }
-        #slide-6 .feature-card {
-            padding: clamp(16px, 2vw, 24px);
-            border-top: 1px solid var(--rule);
-        }
-        #slide-6 .feature-card h3 {
-            font-family: var(--font-display);
-            font-size: clamp(15px, 1.5vw, 19px);
-            font-weight: 700; margin-bottom: 8px;
-        }
-        #slide-6 .feature-card p {
-            font-size: var(--body-size); color: var(--text-muted);
-            line-height: 1.6;
-        }
-        #slide-6 .feature-card .feature-key {
-            font-variant: small-caps; font-size: var(--small-size);
-            color: var(--crimson); letter-spacing: 0.08em;
-            margin-bottom: 6px; display: block;
-        }
-
-        /* Slide 7: Install -- Evidence List */
-        #slide-7 { justify-content: center; }
-        #slide-7 .slide-content { text-align: left; }
-        #slide-7 .section-heading {
-            font-family: var(--font-display); font-size: clamp(20px, 3vw, 32px);
-            font-weight: 700; margin-bottom: 4px;
-        }
-        #slide-7 .rule-inline { margin: 16px 0; }
-        #slide-7 .install-note {
-            margin-top: clamp(16px, 2vw, 24px); font-size: var(--body-size);
-            color: var(--text-muted); line-height: 1.7;
-        }
-        #slide-7 .install-list {
-            display: flex; flex-direction: column;
-            gap: clamp(16px, 2vw, 28px); margin-top: clamp(20px, 3vw, 36px);
-            max-width: 680px; width: 100%;
-        }
-        #slide-7 .install-block { width: 100%; }
-        #slide-7 .install-block code {
-            display: block; margin-top: 8px;
-            font-size: clamp(13px, 1.4vw, 16px);
-            color: #f0ece6; line-height: 1.6;
-        }
-
-        /* Slide 8: CTA -- Colophon */
-        #slide-8 { justify-content: center; align-items: center; }
-        #slide-8 .slide-content {
-            text-align: center; align-items: center;
-        }
-        #slide-8 .cta-cmd {
-            font-family: var(--font-display);
-            font-size: clamp(28px, 4.5vw, 48px);
-            font-weight: 900; color: var(--text); margin-bottom: 8px;
-        }
-        #slide-8 .cta-cmd em { color: var(--crimson); font-style: normal; }
-        #slide-8 .cta-sub {
-            font-family: var(--font-body); font-size: var(--body-size);
-            color: var(--text-muted); line-height: 1.7; max-width: 420px;
-        }
-        #slide-8 .cta-rule {
-            margin: clamp(16px, 2.5vw, 28px) auto;
-            width: 100%; max-width: 320px;
-        }
-        #slide-8 .cta-footer {
-            font-family: var(--font-display); font-style: italic;
-            font-size: clamp(13px, 1.3vw, 16px); color: var(--text-muted);
-            margin-top: 12px;
-        }
-        #slide-8 .cta-paper-rule {
-            width: 60px; margin: 24px auto 0;
-        }
-
-        /* ── Universal UI ── */
+        /* ═══════════════════════════════════════════════
+           Universal UI (Mandatory)
+           ═══════════════════════════════════════════════ */
         #brand-mark {
             position: fixed; top: 20px; left: 28px;
             font-weight: 800; font-size: 15px; z-index: 1000;
@@ -459,15 +303,15 @@
         }
         .slide-num-label {
             position: absolute; bottom: 28px; right: 36px;
-            font-size: 11px; font-weight: 500;
+            font-size: clamp(0.7rem, 1.1vw, 0.85rem);
             font-family: var(--font-display);
             font-variant: small-caps;
+            letter-spacing: 0.2em;
             color: rgba(26,26,26,0.18);
         }
         .nav-dots {
-            position: fixed; right: 1.5rem; top: 50%;
-            transform: translateY(-50%); display: flex;
-            flex-direction: column; gap: 8px; z-index: 100;
+            position: fixed; right: 1.5rem; top: 50%; transform: translateY(-50%);
+            display: flex; flex-direction: column; gap: 8px; z-index: 100;
         }
         .progress-bar {
             position: fixed; top: 0; left: 0; height: 2px;
@@ -475,7 +319,111 @@
             transition: width 0.3s ease;
         }
 
-        /* ── Present Mode ── */
+        /* ═══════════════════════════════════════════════
+           Per-slide CSS
+           ═══════════════════════════════════════════════ */
+
+        /* Slide 1: Hero Cover */
+        #slide-1 {
+            justify-content: flex-start;
+            padding: clamp(3rem, 6vw, 5rem) clamp(3rem, 10vw, 9rem);
+        }
+        #slide-1 .slide-content {
+            align-items: flex-start; text-align: left;
+            padding-top: clamp(2rem, 5vh, 4rem);
+        }
+        #slide-1 h1 { margin-bottom: clamp(1rem, 2vh, 1.5rem); }
+        #slide-1 .hero-body { margin-bottom: clamp(1rem, 2vh, 1.5rem); }
+
+        /* Slide 5: Manifesto — dark block */
+        #slide-5 {
+            background: var(--bg-dark) !important;
+            justify-content: center; align-items: center;
+        }
+        #slide-5 .manifesto-inner { max-width: 680px; text-align: center; }
+        #slide-5 .manifesto-headline {
+            font-family: var(--font-display); font-weight: 700;
+            font-size: clamp(2rem, 5vw, 3.5rem);
+            color: #fff; line-height: 1.2;
+            margin-bottom: clamp(1.5rem, 3vh, 2.5rem);
+        }
+        #slide-5 .manifesto-headline .crimson { color: var(--crimson); }
+        #slide-5 .manifesto-points { list-style: none; text-align: left; }
+        #slide-5 .manifesto-points li {
+            padding: clamp(0.7rem, 1.2vh, 1rem) 0;
+            font-size: var(--body-size);
+            color: rgba(255,255,255,0.55);
+            line-height: 1.65;
+            border-bottom: 1px solid rgba(255,255,255,0.06);
+        }
+        #slide-5 .manifesto-points li:first-child {
+            border-top: 1px solid rgba(255,255,255,0.06);
+        }
+        #slide-5 .slide-num-label { color: rgba(255,255,255,0.15); }
+
+        /* Slide 7: Install */
+        #slide-7 .install-label {
+            font-family: var(--font-display);
+            font-variant: small-caps;
+            letter-spacing: 0.2em;
+            font-size: var(--small-size);
+            color: var(--text-muted);
+            margin-bottom: 0.4rem;
+        }
+
+        /* Slide 8: CTA — centered */
+        #slide-8 {
+            justify-content: center; align-items: center;
+            text-align: center;
+        }
+        #slide-8 .cta-inner { max-width: 680px; }
+        #slide-8 .cta-body {
+            font-family: var(--font-body);
+            font-size: clamp(0.82rem, 1.3vw, 0.95rem);
+            color: var(--text-muted);
+            margin-top: clamp(1rem, 2vh, 1.5rem);
+            max-width: 40ch;
+            margin-left: auto; margin-right: auto;
+        }
+
+        /* ═══════════════════════════════════════════════
+           Responsive
+           ═══════════════════════════════════════════════ */
+        @media (max-height: 700px) {
+            :root {
+                --slide-padding: clamp(0.75rem, 3vw, 2rem);
+                --content-gap: clamp(0.4rem, 1.5vw, 1rem);
+                --title-size: clamp(1.25rem, 4.5vw, 2.5rem);
+            }
+            h1 { font-size: clamp(2.5rem, 7vw, 5rem); }
+            h2 { font-size: clamp(1.5rem, 4vw, 2.8rem); }
+        }
+        @media (max-height: 600px) {
+            :root {
+                --slide-padding: clamp(0.5rem, 2.5vw, 1.5rem);
+                --title-size: clamp(1.1rem, 4vw, 2rem);
+                --body-size: clamp(0.7rem, 1.2vw, 0.95rem);
+            }
+            .nav-dots { display: none; }
+        }
+        @media (max-height: 500px) {
+            :root {
+                --slide-padding: clamp(0.4rem, 2vw, 1rem);
+                --title-size: clamp(1rem, 3.5vw, 1.5rem);
+            }
+        }
+        @media (max-width: 600px) {
+            .preset-wrap { columns: 1; }
+            .step { grid-template-columns: 2rem 1fr; }
+        }
+        @media (prefers-reduced-motion: reduce) {
+            *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.2s !important; }
+            html { scroll-behavior: auto; }
+        }
+
+        /* ═══════════════════════════════════════════════
+           Present Mode (Standard)
+           ═══════════════════════════════════════════════ */
         #present-btn {
             position: fixed; bottom: 1.5rem; right: 1.5rem; z-index: 9997;
             width: 44px; height: 44px; border-radius: 50%;
@@ -491,8 +439,7 @@
             display: none; position: fixed; bottom: 1.4rem; left: 50%;
             transform: translateX(-50%); z-index: 9997;
             font-size: 0.65rem; letter-spacing: 0.14em;
-            font-family: var(--font-display); font-variant: small-caps;
-            color: rgba(26,26,26,0.28);
+            font-family: system-ui, sans-serif; color: rgba(255,255,255,0.28);
         }
         body.presenting { background: #000 !important; overflow: hidden !important; }
         body.presenting .slide {
@@ -505,35 +452,33 @@
         body.presenting #present-btn { display: none !important; }
         body.presenting #present-counter { display: block; color: rgba(255,255,255,0.28) !important; }
         body.presenting.presenting-black .slide { visibility: hidden !important; }
-        body.presenting.presenting-black::after {
-            content: ''; position: fixed; inset: 0; background: #000; z-index: 99999;
-        }
+        body.presenting.presenting-black::after { content: ''; position: fixed; inset: 0; background: #000; z-index: 99999; }
         .slide-credit {
             position: absolute; bottom: 8px; right: 14px; font-size: 9px;
-            color: rgba(26,26,26,0.35); opacity: 0.35; pointer-events: none; z-index: 1;
-            font-family: var(--font-display); font-variant: small-caps;
+            color: var(--text-muted); opacity: 0.35; pointer-events: none; z-index: 1;
+            font-family: system-ui, sans-serif;
         }
         body.presenting .slide-credit { display: none !important; }
 
-        /* ── Edit Mode ── */
+        /* ═══════════════════════════════════════════════
+           Edit Mode (Standard)
+           ═══════════════════════════════════════════════ */
         .edit-hotzone {
-            position: fixed; top: 0; left: 0;
-            width: 80px; height: 80px; z-index: 10000; cursor: pointer;
+            position: fixed; top: 0; left: 0; width: 80px; height: 80px;
+            z-index: 10000; cursor: pointer;
         }
         .edit-toggle {
             position: fixed; top: 16px; left: 16px;
             opacity: 0; pointer-events: none; transition: opacity 0.3s ease;
-            z-index: 10001;
-            background: var(--crimson); color: #faf9f7; border: none;
-            padding: 6px 14px; border-radius: 2px;
+            z-index: 10001; background: var(--crimson); color: #faf9f7;
+            border: none; padding: 6px 14px; border-radius: 2px;
             font-family: var(--font-display); font-style: italic;
             font-size: 12px; font-weight: 700; cursor: pointer;
         }
         .edit-toggle.show { opacity: 1; pointer-events: auto; }
         .edit-toggle.active { opacity: 1; pointer-events: auto; }
         #notes-panel {
-            display: none; position: fixed; bottom: 0; left: 0; right: 0;
-            z-index: 9998;
+            display: none; position: fixed; bottom: 0; left: 0; right: 0; z-index: 9998;
             background: rgba(26,26,24,0.94);
             backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
             border-top: 1px solid rgba(196,184,164,0.15);
@@ -554,13 +499,11 @@
             content: ''; display: block; width: 36px; height: 3px;
             border-radius: 2px; background: rgba(255,255,255,0.25);
         }
-        #notes-panel-header:hover #notes-drag-hint::after {
-            background: rgba(255,255,255,0.45);
-        }
+        #notes-panel-header:hover #notes-drag-hint::after { background: rgba(255,255,255,0.45); }
         #notes-collapse-btn {
             flex: 1; text-align: right; font-size: 1rem;
-            color: rgba(255,255,255,0.4); background: none; border: none;
-            cursor: pointer; transition: color 0.15s, transform 0.2s;
+            color: rgba(255,255,255,0.4); background: none; border: none; cursor: pointer;
+            transition: color 0.15s, transform 0.2s;
         }
         #notes-collapse-btn:hover { color: rgba(255,255,255,0.85); }
         #notes-body { padding: 0 1.4rem 0.75rem; }
@@ -573,275 +516,210 @@
             line-height: 1.65; font-family: system-ui, sans-serif;
         }
         #notes-textarea::placeholder { color: rgba(255,255,255,0.18); }
-
-        /* ── Responsive ── */
-        @media (max-height: 700px) {
-            :root {
-                --slide-padding: clamp(0.75rem, 3vw, 2rem);
-                --content-gap: clamp(0.4rem, 1.5vw, 1rem);
-                --title-size: clamp(1.25rem, 4.5vw, 2.5rem);
-            }
-        }
-        @media (max-height: 600px) {
-            :root {
-                --slide-padding: clamp(0.5rem, 2.5vw, 1.5rem);
-                --title-size: clamp(1.1rem, 4vw, 2rem);
-                --body-size: clamp(0.7rem, 1.2vw, 0.95rem);
-            }
-            .nav-dots, .keyboard-hint, .decorative { display: none; }
-        }
-        @media (max-height: 500px) {
-            :root {
-                --slide-padding: clamp(0.4rem, 2vw, 1rem);
-                --title-size: clamp(1rem, 3.5vw, 1.5rem);
-            }
-        }
-        @media (max-width: 600px) {
-            #slide-2 { flex-direction: column; }
-            #slide-2 .problem-main,
-            #slide-2 .problem-annotation {
-                border-left: none; border-top: 1px solid var(--rule);
-            }
-            #slide-3 .steps-grid, #slide-6 .feature-grid {
-                grid-template-columns: 1fr;
-            }
-        }
-        @media (prefers-reduced-motion: reduce) {
-            *, *::before, *::after {
-                animation-duration: 0.01ms !important;
-                transition-duration: 0.2s !important;
-            }
-            html { scroll-behavior: auto; }
-        }
     </style>
 </head>
 <body data-export-progress="true" data-preset="Paper & Ink">
     <span id="brand-mark">slide-creator</span>
     <div class="progress-bar"></div>
     <nav class="nav-dots" aria-label="Slide navigation"></nav>
-
-    <!-- Slide 1: Hero -- Chapter Opening -->
-    <section class="slide" id="slide-1" data-notes="slide-creator：零依赖 HTML 演示文稿，21 种预设，三分钟出稿" aria-label="Hero">
-        <div class="slide-content paper-content">
-            <div class="paper-roman-marker hero-roman reveal">slide-creator</div>
-            <h1 class="paper-title hero-title reveal">好演示，<br>不<em>需要</em>构建</h1>
-            <p class="hero-sub reveal">HTML 演示文稿生成工具，为 Claude Code 和 OpenClaw 设计。<br>选风格，出稿，发布。</p>
-            <div class="rule hero-rule reveal"></div>
-            <div class="hero-stats reveal">
-                <div>
-                    <div class="hero-stat-num">21</div>
-                    <div class="hero-stat-label">种预设风格</div>
-                </div>
-                <div>
-                    <div class="hero-stat-num">0</div>
-                    <div class="hero-stat-label">运行依赖</div>
-                </div>
-                <div>
-                    <div class="hero-stat-num">3</div>
-                    <div class="hero-stat-label">分钟出稿</div>
-                </div>
-            </div>
-        </div>
-        <span class="slide-num-label">01 / 08</span>
-    </section>
-
-    <!-- Slide 2: Problem -- Annotated Layout -->
-    <section class="slide" id="slide-2" data-notes="当前工具链冗长、AI 生成风格不稳定、平台锁定" aria-label="Problem">
-        <div class="problem-main">
-            <div class="eyebrow reveal">问题</div>
-            <h2 class="reveal">演示文稿<em>不该如此</em>沉重</h2>
-            <div class="paper-rule reveal"></div>
-            <div class="pain-item reveal">
-                <span class="pain-marker">i.</span>
-                复杂的工具链 -- npm install、Webpack 配置、300MB node_modules
-            </div>
-            <div class="pain-item reveal">
-                <span class="pain-marker">ii.</span>
-                通用 AI 美学 -- 每个 AI 演示都是 Inter 字体配紫色渐变
-            </div>
-            <div class="pain-item reveal">
-                <span class="pain-marker">iii.</span>
-                平台锁定 -- 封闭格式、导出限制、月费订阅
-            </div>
-        </div>
-        <div class="problem-annotation">
-            <div class="annotation-text reveal">
-                <span class="annotation-num">1</span>
-                一份典型的 AI 生成 PPTX，平均需要 6 次以上手动调整才能达到可演示水平。
-            </div>
-            <div class="annotation-text reveal">
-                <span class="annotation-num">2</span>
-                当所有人用同一个模型，输出的幻灯片长得就像同一个模板。
-            </div>
-            <div class="annotation-text reveal">
-                <span class="annotation-num">3</span>
-                你的演示文稿，应该属于你，不属于某个平台的服务器。
-            </div>
-        </div>
-        <span class="slide-num-label">02 / 08</span>
-    </section>
-
-    <!-- Slide 3: Discovery -- Pull Quote + Steps -->
-    <section class="slide" id="slide-3" data-notes="看图选风格：描述主题，生成 3 个预览，点击选中" aria-label="Discovery">
-        <div class="slide-content paper-content">
-            <div class="paper-roman-marker reveal">风格探索</div>
-            <div class="paper-pullquote discovery-quote reveal">
-                "不要描述你要的风格，<br>让你看见它。"
-            </div>
-            <div class="steps-grid">
-                <div class="step reveal">
-                    <div class="step-num">1</div>
-                    <div class="step-label">描述</div>
-                    <div class="step-desc">告诉 AI 你的演示主题</div>
-                </div>
-                <div class="step reveal">
-                    <div class="step-num">2</div>
-                    <div class="step-label">预览</div>
-                    <div class="step-desc">生成 3 种风格对比</div>
-                </div>
-                <div class="step reveal">
-                    <div class="step-num">3</div>
-                    <div class="step-label">选中</div>
-                    <div class="step-desc">点击锁定视觉方向</div>
-                </div>
-            </div>
-        </div>
-        <span class="slide-num-label">03 / 08</span>
-    </section>
-
-    <!-- Slide 4: Solution -- Index Page -->
-    <section class="slide" id="slide-4" data-notes="21 种预设，覆盖商业路演、技术分享、创意展示" aria-label="Solution">
-        <div class="slide-content paper-content">
-            <div class="paper-roman-marker reveal">预设目录</div>
-            <h2 class="paper-title section-heading reveal">二十一题，无一相似</h2>
-            <p class="section-sub reveal">没有通用 AI 美学。每种预设独立设计语言。</p>
-            <ul class="index-list">
-                <li class="index-entry reveal"><span class="index-topic">Bold Signal</span><span class="index-dots">· · · · · · · · · · · · · · · ·</span><span class="index-page">i</span></li>
-                <li class="index-entry reveal"><span class="index-topic">Blue Sky</span><span class="index-dots">· · · · · · · · · · · · · · · · · ·</span><span class="index-page">ii</span></li>
-                <li class="index-entry reveal"><span class="index-topic">Chinese Chan</span><span class="index-dots">· · · · · · · · · · · · · ·</span><span class="index-page">iii</span></li>
-                <li class="index-entry reveal"><span class="index-topic">Creative Voltage</span><span class="index-dots">· · · · · · · · · ·</span><span class="index-page">iv</span></li>
-                <li class="index-entry active reveal"><span class="index-topic">Paper &amp; Ink</span><span class="index-dots">· · · · · · · · · · · · · ·</span><span class="index-page">xvi</span></li>
-                <li class="index-entry reveal"><span class="index-topic">Swiss Modern</span><span class="index-dots">· · · · · · · · · · · ·</span><span class="index-page">xix</span></li>
-                <li class="index-entry reveal"><span class="index-topic">Terminal Green</span><span class="index-dots">· · · · · · · · · ·</span><span class="index-page">xx</span></li>
-            </ul>
-        </div>
-        <span class="slide-num-label">04 / 08</span>
-    </section>
-
-    <!-- Slide 5: Workflow -- Process Steps -->
-    <section class="slide" id="slide-5" data-notes="三步出稿：描述、选风格、打开浏览器" aria-label="Workflow">
-        <div class="slide-content paper-content">
-            <div class="paper-roman-marker reveal">工作流程</div>
-            <h2 class="paper-title section-heading reveal">三个命令，一篇演示</h2>
-            <div class="rule rule-inline reveal"></div>
-            <div class="workflow-steps">
-                <div class="wf-step reveal">
-                    <div class="wf-num">1</div>
-                    <div class="wf-body">
-                        <h3>发起</h3>
-                        <p>在 Claude Code 中运行 <span class="wf-cmd">/slide-creator [主题描述]</span></p>
-                    </div>
-                </div>
-                <div class="wf-step reveal">
-                    <div class="wf-num">2</div>
-                    <div class="wf-body">
-                        <h3>选风格</h3>
-                        <p>从 21 种预设中挑选，或让 AI 推荐最适合的一种</p>
-                    </div>
-                </div>
-                <div class="wf-step reveal">
-                    <div class="wf-num">3</div>
-                    <div class="wf-body">
-                        <h3>打开演示</h3>
-                        <p>浏览器中打开生成的 HTML，按 <span class="wf-cmd">F5</span> 播放</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <span class="slide-num-label">05 / 08</span>
-    </section>
-
-    <!-- Slide 6: Features -- Grid Checkpoint -->
-    <section class="slide" id="slide-6" data-notes="核心功能：视口适配、编辑模式、演讲者模式、PPTX 导出" aria-label="Features">
-        <div class="slide-content paper-content">
-            <div class="paper-roman-marker reveal">四项能力</div>
-            <h2 class="paper-title section-heading reveal">一个文件，全部就绪</h2>
-            <div class="rule rule-inline reveal"></div>
-            <div class="feature-grid">
-                <div class="feature-card reveal">
-                    <span class="feature-key">F5</span>
-                    <h3>视口适配播放</h3>
-                    <p>1440x900 画布，任意屏幕等比缩放，无滚动条</p>
-                </div>
-                <div class="feature-card reveal">
-                    <span class="feature-key">E</span>
-                    <h3>浏览器内编辑</h3>
-                    <p>左上角热区触发，contenteditable 直接修改文案</p>
-                </div>
-                <div class="feature-card reveal">
-                    <span class="feature-key">P</span>
-                    <h3>演讲者模式</h3>
-                    <p>独立窗口显示备注、计时器、当前页数</p>
-                </div>
-                <div class="feature-card reveal">
-                    <span class="feature-key">导出</span>
-                    <h3>PPTX 导出</h3>
-                    <p>像素级截图或 Native 可编辑格式两种模式</p>
-                </div>
-            </div>
-        </div>
-        <span class="slide-num-label">06 / 08</span>
-    </section>
-
-    <!-- Slide 7: Install -- Evidence List -->
-    <section class="slide" id="slide-7" data-notes="安装方式：Claude Code 或 OpenClaw 各一行命令" aria-label="Install">
-        <div class="slide-content paper-content">
-            <div class="paper-roman-marker reveal">安装</div>
-            <h2 class="paper-title section-heading reveal">一行命令，即刻可用</h2>
-            <div class="rule rule-inline reveal"></div>
-            <div class="install-list">
-                <div class="install-block reveal">
-                    <div class="install-label">Claude Code</div>
-                    <code>告诉 Claude「安装 github.com/kaisersong/slide-creator」</code>
-                </div>
-                <div class="install-block reveal">
-                    <div class="install-label">OpenClaw</div>
-                    <code>clawhub install kai-slide-creator</code>
-                </div>
-            </div>
-            <p class="install-note reveal">
-                零依赖安装，无需 npm，无需构建，无需服务器。
-            </p>
-        </div>
-        <span class="slide-num-label">07 / 08</span>
-    </section>
-
-    <!-- Slide 8: CTA -- Colophon -->
-    <section class="slide" id="slide-8" data-notes="立即开始：/slide-creator" aria-label="CTA">
-        <div class="slide-content paper-content">
-            <div class="paper-roman-marker reveal">开始</div>
-            <div class="cta-cmd reveal">/<em>slide-creator</em></div>
-            <div class="rule cta-rule reveal"></div>
-            <p class="cta-sub reveal">适用于 Claude Code 和 OpenClaw<br>完全在浏览器中运行，零依赖</p>
-            <div class="paper-rule cta-paper-rule reveal"></div>
-            <p class="cta-footer reveal">为值得被认真对待的演示而做</p>
-        </div>
-        <span class="slide-num-label">08 / 08</span>
-    </section>
-
-    <!-- Edit UI -->
     <div class="edit-hotzone"></div>
     <button class="edit-toggle" id="editToggle" title="Edit mode (E)">Edit</button>
     <div id="notes-panel">
         <div id="notes-panel-header">
-            <div id="notes-panel-label">SPEAKER NOTES</div>
+            <div id="notes-panel-label">SPEAKER NOTES — SLIDE 1 / 8</div>
             <div id="notes-drag-hint"></div>
             <button id="notes-collapse-btn" title="Collapse / expand">&#9662;</button>
         </div>
         <div id="notes-body">
-            <textarea id="notes-textarea" placeholder="Add speaker notes..."></textarea>
+            <textarea id="notes-textarea" placeholder="Add speaker notes…"></textarea>
         </div>
     </div>
+
+    <!-- ═══════════ SLIDE 1 — Hero 封面 ═══════════ -->
+    <section class="slide" id="slide-1" data-notes="slide-creator：零依赖 HTML 演示文稿，为 Claude Code 和 OpenClaw 设计。19 种预设，零运行依赖。" aria-label="Hero">
+        <div class="slide-content">
+            <div class="eyebrow reveal">为 Claude Code 和 OpenClaw 打造的演示工具</div>
+            <h1 class="reveal">slide-<span class="crimson">creator</span></h1>
+            <div class="rule reveal"><div class="rule-line"></div></div>
+            <p class="body-text hero-body reveal">
+                零依赖 HTML 演示文稿，为那些认为演示本不应需要构建系统的人而生。
+            </p>
+            <div class="stat-row reveal">
+                <div><span class="stat-val">19</span><span class="stat-label">预设样式</span></div>
+                <div><span class="stat-val">0</span><span class="stat-label">依赖项</span></div>
+                <div><span class="stat-val">&#8734;</span><span class="stat-label">幻灯片</span></div>
+            </div>
+        </div>
+        <span class="slide-num-label">— 01 —</span>
+    </section>
+
+    <!-- ═══════════ SLIDE 2 — 问题所在 ═══════════ -->
+    <section class="slide" id="slide-2" data-notes="演示工具不应该需要构建系统：复杂工具链、千篇一律、供应商锁定。" aria-label="Problem">
+        <div class="slide-content">
+            <div class="eyebrow reveal">问题所在</div>
+            <h2 class="reveal">演示文稿不应该需要<br><span class="crimson">构建系统。</span></h2>
+            <div class="rule reveal"><div class="rule-line"></div></div>
+            <ul class="pain-list">
+                <li class="pain-item reveal">
+                    <span class="pain-marker">i.</span>
+                    <span>复杂的工具链——npm install、webpack 配置、三百兆字节的 node_modules——仅仅为了分发一组幻灯片；这是业界不声不响的荒诞之处。</span>
+                </li>
+                <li class="pain-item reveal">
+                    <span class="pain-marker">ii.</span>
+                    <span>千篇一律的输出：每份由 AI 生成的演示都采用相同的 Inter 字体和紫色渐变，失去了所有的个性和特色。</span>
+                </li>
+                <li class="pain-item reveal">
+                    <span class="pain-marker">iii.</span>
+                    <span>失去所有权；只有封闭平台、导出限制，以及为了访问自己内容而每月支付的费用。</span>
+                </li>
+            </ul>
+        </div>
+        <span class="slide-num-label">— 02 —</span>
+    </section>
+
+    <!-- ═══════════ SLIDE 3 — 风格探索 ═══════════ -->
+    <section class="slide" id="slide-3" data-notes="风格探索真正有效：你无法用文字描述设计偏好，语言对这项任务无能为力。" aria-label="Style Discovery">
+        <div class="slide-content">
+            <div class="eyebrow reveal">发现</div>
+            <h2 class="reveal">风格探索<br><span class="crimson">真正有效。</span></h2>
+            <div class="rule reveal"><div class="rule-line"></div></div>
+            <p class="body-text drop-cap reveal">
+                你无法用文字描述设计偏好；语言对这项任务无能为力。slide-creator 生成三个视觉预览——你对它们做出反应，而不是试图用文字表述你的美学意图。
+            </p>
+            <div class="steps reveal">
+                <div class="step">
+                    <span class="step-num">I</span>
+                    <span class="step-text"><strong>询问情绪。</strong> 四个问题：主题、受众、能量、时长。</span>
+                </div>
+                <div class="step">
+                    <span class="step-num">II</span>
+                    <span class="step-text"><strong>生成三个预览。</strong> 视觉呈现。反应，而非描述。</span>
+                </div>
+                <div class="step">
+                    <span class="step-num">III</span>
+                    <span class="step-text"><strong>选择最合适的。</strong> 完整的演示文稿随之生成。</span>
+                </div>
+            </div>
+        </div>
+        <span class="slide-num-label">— 03 —</span>
+    </section>
+
+    <!-- ═══════════ SLIDE 4 — 19 种预设 ═══════════ -->
+    <section class="slide" id="slide-4" data-notes="十九种精心设计的设计系统，没有平庸的 AI 美学。" aria-label="Preset Gallery">
+        <div class="slide-content">
+            <div class="eyebrow reveal">设计系统</div>
+            <h2 class="reveal">十九种精心设计的风格；<br>没有<span class="crimson">平庸的 AI 美学。</span></h2>
+            <div class="rule reveal"><div class="rule-line"></div></div>
+            <div class="preset-wrap reveal">
+                <div class="preset-item">Bold Signal</div>
+                <div class="preset-item">Electric Studio</div>
+                <div class="preset-item">Creative Voltage</div>
+                <div class="preset-item">Dark Botanical</div>
+                <div class="preset-item">Blue Sky</div>
+                <div class="preset-item">Notebook Tabs</div>
+                <div class="preset-item">Pastel Geometry</div>
+                <div class="preset-item">Split Pastel</div>
+                <div class="preset-item">Vintage Editorial</div>
+                <div class="preset-item">Neon Cyber</div>
+                <div class="preset-item">Terminal Green</div>
+                <div class="preset-item">Swiss Modern</div>
+                <div class="preset-item active">Paper &amp; Ink</div>
+                <div class="preset-item">Aurora Mesh</div>
+                <div class="preset-item">Enterprise Dark</div>
+                <div class="preset-item">Glassmorphism</div>
+                <div class="preset-item">Neo-Brutalism</div>
+                <div class="preset-item">Chinese Chan</div>
+                <div class="preset-item">Data Story</div>
+            </div>
+        </div>
+        <span class="slide-num-label">— 04 —</span>
+    </section>
+
+    <!-- ═══════════ SLIDE 5 — 流程 ═══════════ -->
+    <section class="slide" id="slide-5" data-notes="三个明确的步骤，一份完成的演示文稿。回答 4 个问题，选择风格，打开演示。" aria-label="Workflow">
+        <div class="slide-content">
+            <div class="manifesto-inner">
+                <div class="eyebrow reveal" style="color:rgba(255,255,255,0.35);">流程</div>
+                <div class="manifesto-headline reveal">
+                    三个明确的步骤；<br><span class="crimson">一份完成的演示文稿。</span>
+                </div>
+                <div class="manifesto-points reveal">
+                    <li>/slide-creator —— 回答 4 个问题：主题、受众、情绪、时长</li>
+                    <li>选择你的风格 —— 对 3 个视觉预览做出反应，看、选、继续</li>
+                    <li>打开你的演示 —— 箭头键、空格、滑动。纯 HTML，无需服务器</li>
+                    <li>零依赖、零安装、零配置。你的文件，你的规则</li>
+                </div>
+            </div>
+        </div>
+        <span class="slide-num-label light" style="color:rgba(255,255,255,0.15);">— 05 —</span>
+    </section>
+
+    <!-- ═══════════ SLIDE 6 — 功能特性 ═══════════ -->
+    <section class="slide" id="slide-6" data-notes="为真实使用而设计：视口自适应、内联编辑、PPTX 导出、两阶段工作流。" aria-label="Features">
+        <div class="slide-content">
+            <div class="eyebrow reveal">功能特性</div>
+            <h2 class="reveal">为<br><span class="crimson">真实使用而设计。</span></h2>
+            <div class="rule reveal"><div class="rule-line"></div></div>
+            <div class="feature-list">
+                <div class="feature-item reveal">
+                    <div class="feature-name">视口自适应</div>
+                    <div class="feature-desc">每张幻灯片精确适配 100vh。永不滚动。每种布局都为其所处的视口而设计。</div>
+                </div>
+                <div class="feature-item reveal">
+                    <div class="feature-name">内联编辑</div>
+                    <div class="feature-desc">按 E，点击任何文本，Ctrl+S 保存。编辑模式存在于每份演示中，静静地等待。</div>
+                </div>
+                <div class="feature-item reveal">
+                    <div class="feature-name">PPTX 导出</div>
+                    <div class="feature-desc">命令行转换为 PowerPoint，以应对会议室坚持使用的情况。</div>
+                </div>
+                <div class="feature-item reveal">
+                    <div class="feature-name">两阶段工作流</div>
+                    <div class="feature-desc">--plan 生成大纲；--generate 生成 HTML。在将意图提交为形式之前检查。</div>
+                </div>
+            </div>
+        </div>
+        <span class="slide-num-label">— 06 —</span>
+    </section>
+
+    <!-- ═══════════ SLIDE 7 — 安装 ═══════════ -->
+    <section class="slide" id="slide-7" data-notes="两条命令，零仪式。Claude Code 用 git clone，OpenClaw 用 clawhub install。" aria-label="Install">
+        <div class="slide-content">
+            <div class="eyebrow reveal">安装</div>
+            <h2 class="reveal">两条命令；<br><span class="crimson">零仪式。</span></h2>
+            <div class="rule reveal"><div class="rule-line"></div></div>
+            <div class="install-label reveal">Claude Code</div>
+            <div class="install-block reveal">
+                git clone https://github.com/kaisersong/slide-creator \<br>
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;~/.claude/skills/slide-creator<br>
+                <span class="comment"># 重启 Claude Code —— 立即可用</span>
+            </div>
+            <div class="install-label reveal" style="margin-top: clamp(1rem,2vh,1.5rem);">OpenClaw</div>
+            <div class="install-block reveal">
+                clawhub install kai-slide-creator<br>
+                <span class="comment"># 一条命令，瞬间完成</span>
+            </div>
+        </div>
+        <span class="slide-num-label">— 07 —</span>
+    </section>
+
+    <!-- ═══════════ SLIDE 8 — CTA ═══════════ -->
+    <section class="slide" id="slide-8" data-notes="你所需的演示文稿只需一条命令。兼容 Claude Code 和 OpenClaw，十九种预设，零依赖。" aria-label="CTA">
+        <div class="slide-content">
+            <div class="cta-inner">
+                <div class="eyebrow reveal">开始</div>
+                <div class="pull-quote reveal">
+                    "你所需的演示文稿<br>只需一条命令。"
+                </div>
+                <div class="rule reveal" style="max-width:400px;margin:1rem auto;"><div class="rule-line"></div></div>
+                <div class="cta-cmd reveal">/<span class="crimson">slide-creator</span></div>
+                <p class="cta-body reveal">
+                    兼容 Claude Code 和 OpenClaw。<br>十九种预设。零依赖。你的文件，你的规则。
+                </p>
+            </div>
+        </div>
+        <span class="slide-num-label">— 08 —</span>
+    </section>
 
     <!-- JS Engine -->
     <script>
@@ -926,7 +804,7 @@
             this.slides.forEach((_, i) => {
                 const dot = document.createElement('button');
                 dot.setAttribute('aria-label', 'Go to slide ' + (i + 1));
-                dot.style.cssText = 'width:8px;height:8px;border-radius:50%;border:none;cursor:pointer;background:#c4b8a4;transition:all 0.3s;';
+                dot.style.cssText = 'width:8px;height:8px;border-radius:50%;border:none;cursor:pointer;background:rgba(255,255,255,0.3);transition:all 0.3s;';
                 dot.addEventListener('click', () => this.goTo(i)); nav.appendChild(dot);
             });
             nav.style.cssText = 'position:fixed;right:1.5rem;top:50%;transform:translateY(-50%);display:flex;flex-direction:column;gap:8px;z-index:100;';
@@ -971,9 +849,7 @@
             this.channel.postMessage({ type: 'state', index: this.currentSlide, total: this.slides.length, notes: slide?.dataset.notes || '' });
         }
         goTo(index) {
-
-            this.slides[index]?.scrollIntoView({ behavior: "smooth" });
-
+            this.slides[index]?.scrollIntoView({ behavior: 'smooth' });
         }
         next() { this.goTo(Math.min(this.currentSlide + 1, this.slides.length - 1)); }
         prev() { this.goTo(Math.max(this.currentSlide - 1, 0)); }
@@ -984,7 +860,7 @@
         }
         updateDots() {
             document.querySelectorAll('.nav-dots button').forEach((dot, i) => {
-                dot.style.background = i === this.currentSlide ? '#c41e3a' : '#c4b8a4';
+                dot.style.background = i === this.currentSlide ? 'var(--crimson)' : 'rgba(0,0,0,0.15)';
                 dot.style.transform = i === this.currentSlide ? 'scale(1.3)' : 'scale(1)';
             });
         }
@@ -1049,6 +925,7 @@
                 });
         }
     }
+
     class PresentMode {
         constructor(ctrl) {
             this.ctrl = ctrl;
@@ -1120,6 +997,8 @@
     new PresentMode(new SlidePresentation());
     }
     </script>
+
+    <!-- Watermark -->
     <script>
     (function() {
         var slides = document.querySelectorAll('.slide');
@@ -1127,7 +1006,7 @@
         var last = slides[slides.length - 1];
         var credit = document.createElement('div');
         credit.className = 'slide-credit';
-        credit.textContent = 'By kai-slide-creator v2.18.0 \u00B7 Paper & Ink';
+        credit.textContent = 'By kai-slide-creator v2.18.0 \u00b7 Paper & Ink';
         last.appendChild(credit);
     })();
     </script>

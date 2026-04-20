@@ -411,6 +411,8 @@ For PPTX/PNG export: `clawhub install kai-html-export` or `pip install playwrigh
 
 ## Version History
 
+**v2.18.1** — Paper & Ink style fix: restored correct editorial style reference (Cormorant Garamond headlines, Source Serif 4 body, crimson ornamental rules, drop caps); added `.slide-content` wrapper to slide HTML structure for proper vertical centering; Chinese text font fallback now uses system serif (宋体) instead of Noto Sans SC.
+
 **v2.18.0** — JS engine extraction (html-template.md 557→222 lines); style signature injection expanded to require all CSS classes from Typography/Components sections; neon-cyber glow effects clarified; style consistency audit tool (`tests/audit_style_consistency.py`).
 
 **v2.17.0** — Style reference system overhaul; contrast fix for light backgrounds; glassmorphism text theme mapping.
