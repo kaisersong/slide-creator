@@ -129,7 +129,7 @@ Full-width table. Header row: `Archivo Black` 11px uppercase, `background: #0a0a
 
 ### 5. Geometric Diagram
 
-SVG diagram of boxes + connector lines, `stroke: #0a0a0a`, `stroke-width: 1.5`. No fills except primary node: `fill: #ff3300`. Labels in `Nunito` 12px. Grid visible behind. No shadows.
+Discovery / process layout: `.disc-header` with `padding-top: clamp(48px, 8vh, 80px)` to clear fixed `#brand-mark` at `top: 20px`. Eyebrow + h2 gap ≥ 12px. h2 `line-height: 1.2` for CJK readability (never 1.05 with Chinese text). SVG diagram of boxes + connector lines, `stroke: #0a0a0a`, `stroke-width: 1.5`. No fills except primary node: `fill: #ff3300`. Labels in `Nunito` 12px. Grid visible behind. No shadows.
 
 ### 6. Pull Quote
 
