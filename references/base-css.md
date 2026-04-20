@@ -174,3 +174,92 @@ CSS does not allow a leading `-` before `clamp()`, `min()`, `max()`. The browser
 - [ ] Breakpoints at 700px, 600px, 500px heights
 - [ ] Images have `max-height` constraints
 - [ ] Content respects density limits
+
+---
+
+## Universal UI Elements (Mandatory for ALL Styles)
+
+These elements MUST appear in every generated HTML, regardless of whether the style file explicitly defines them. Style files may override colors/positions but cannot omit them.
+
+### Brand Mark
+
+Fixed identifier in top-left corner. Always visible (z-index: 1000).
+
+```css
+#brand-mark {
+    position: fixed;
+    top: 20px;
+    left: 28px;
+    font-weight: 800;
+    font-size: 15px;
+    z-index: 1000;
+    /* color and font-family from style file's accent color and display font */
+}
+```
+
+```html
+<span id="brand-mark">slide-creator</span>
+```
+
+### Slide Number Label
+
+Page indicator, bottom-right of each slide. Two variants for light/dark backgrounds.
+
+```css
+.slide-num-label {
+    position: absolute;
+    bottom: 28px;
+    right: 36px;
+    font-size: 11px;
+    font-weight: 500;
+    color: rgba(0,0,0,0.18);
+}
+.slide-num-label.light { color: rgba(255,255,255,0.2); }
+```
+
+### Navigation Dots
+
+Right-side dot navigation. Active dot scaled up.
+
+```css
+.nav-dots {
+    position: fixed; right: 1.5rem; top: 50%; transform: translateY(-50%);
+    display: flex; flex-direction: column; gap: 8px; z-index: 100;
+}
+.nav-dots button {
+    width: 8px; height: 8px; border-radius: 50%; border: none; cursor: pointer;
+    transition: all 0.3s;
+}
+```
+
+### Progress Bar
+
+Top-edge progress indicator. Color from style accent.
+
+```css
+.progress-bar {
+    position: fixed; top: 0; left: 0; height: 3px;
+    background: var(--accent); width: 0%; z-index: 100; transition: width 0.3s ease;
+}
+```
+
+### Per-Slide CSS Pattern
+
+Each slide MUST have `id="slide-N"` (1-indexed). Layout direction, panel backgrounds, and slide-specific overrides go in `<style>` via `#slide-N` selectors — never inline.
+
+```css
+/* Per-slide layout */
+#slide-1 { flex-direction: row; }
+#slide-1 .left-panel { background: #fff; }
+#slide-1 .slide-num-label { color: rgba(255,255,255,0.12); }
+
+#slide-2 { flex-direction: column; }
+#slide-2 .top-panel { background: #fff; }
+```
+
+```html
+<section class="slide" id="slide-1" data-notes="...">
+    <div class="left-panel">...</div>
+    <div class="right-panel">...</div>
+</section>
+```

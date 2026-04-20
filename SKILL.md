@@ -59,24 +59,16 @@ metadata: {"openclaw":{"emoji":"🎞","os":["darwin","linux","windows"],"homepag
 
 ## 命令路由
 
-slide-creator now supports **two user-facing planning depths**:
-
-- `自动` / `Auto` — default path for fast drafts, light interaction, and direct generation momentum
-- `精修` / `Polish` — deeper planning for decks that need stronger structure, visual locking, and page-aware image decisions
-
-`参考驱动` remains supported, but only as an internal reference-driven branch inside `精修`.
----
-
-## 命令路由
+`自动` (Auto) — 快速出稿 | `精修` (Polish) — 深度规划，自动执行 Review
 
 | 命令 | 加载内容 | 行为 |
 |------|----------|------|
-| `--plan [prompt]` | `references/planning-template.md` | 检测规划深度，创建 PLANNING.md，不生成 HTML |
-| `--generate` | SKILL.md HARD RULES + `references/html-template.md` + `references/js-engine.md` + composition 源（见 deck_type 路由）+ 风格文件 + `base-css.md` | 从 PLANNING.md 生成 HTML，执行 14 项生成前校验 |
-| `--review [file.html]` | `references/review-checklist.md` + 目标 HTML | 执行 16 项检查点 → 确认窗口 → 修复/报告 |
+| `--plan [prompt]` | `references/planning-template.md` | 创建 PLANNING.md，不生成 HTML |
+| `--generate` | SKILL.md + `references/html-template.md` + `references/js-engine.md` + composition 源 + 风格文件 + `base-css.md` + `impeccable-anti-patterns.md` + `title-quality.md` | 生成 HTML，执行 11 项生成前校验 |
+| `--review [file.html]` | `references/review-checklist.md` + 目标 HTML | 执行 17 项检查点 → 确认窗口 → 修复/报告 |
 | 风格一致性审计 | `tests/audit_style_consistency.py` | 检查所有风格文件的 CSS 类定义是否完整列入 Signature Required CSS Classes |
-| 无 flag (交互式) | `references/workflow.md` + 其他按需 | 遵循 Phase 0-5（Phase 3 Step 7 必须执行 14 项校验） |
-| 直接给内容 + 风格 | SKILL.md HARD RULES + `references/html-template.md` + `references/js-engine.md` + composition 源（见 deck_type 路由）+ 风格文件 + `base-css.md` | 立即生成，执行 14 项生成前校验 |
+| 无 flag (交互式) | `references/workflow.md` + 其他按需 | 遵循 Phase 0-5 |
+| 直接给内容 + 风格 | 同 `--generate` | 立即生成，执行 11 项生成前校验 |
 
 **渐进式披露：** 每个命令只加载所需文件。`--plan` 不接触 CSS。
 
@@ -114,49 +106,25 @@ slide-creator now supports **two user-facing planning depths**:
 
 这些规则在组装完整 HTML 后、写入文件前**自动执行**。逐条搜索违规项并修复。
 
-**14 条核心规则：**
+**11 条核心规则：**
 
-1. **标题禁止通用标签（原 R4）：** 不得使用概览、Overview、Introduction、Summary、结论、Key Insights、Next Steps 等通用标签作为幻灯片标题。必须使用断言式标题（陈述结论或主张）
-2. **禁止连续 3 页同布局（原 R5）：** 检测连续幻灯片是否使用相同布局模式（如连续 grid 3 列、连续 split panel）。超过 2 页即违规
-3. **标题质量（原 R8）：** 标题必须是断言式、具体、有信息量。不得使用占位符或通用描述
-4. **U+FE0F 零容忍（原 R9）：** HTML 中不得出现 U+FE0F 变体选择符（emoji 使用基础形式）
-5. **亮色文字对比度（原 R15）：** 浅色文字（`#888`/`#999`/`#cbd5e1`/`var(--text-secondary)`）在浅色背景（亮度 >60%）上 → 加深文字为深色
-6. **组件丰富度（原 R16）：** 整个 deck 中至少一半的幻灯片必须使用 2-3 种不同组件类型（step/callout/stat/kbd/table/quote 等），不得仅用 `.g` + `.bl` 或 `div` + `ul` 堆砌
-7. **架构隔离（原 R20）：** `#stage`、`#track`、`calc(100vw * var(--slide-count))`、`translateX` 导航仅 Blue Sky 风格可用。其他 20 个风格必须使用 `scroll-snap-type: y mandatory` + `SlidePresentation` 类架构
-8. **叙事弧线完整性（原 R23）：** 根据 deck_type 检测 8 页或 12 页结构完整性。标题不得全部使用通用标签。连续两页不得使用相同布局模式。每页必须使用风格参考文件中 2-3 种不同组件类型
-9. **风格签名元素注入（原 R24）：** 生成 HTML 时，读取选中风格文件的 `## Signature Elements` 章节，将其中的 CSS Overlays、Animations (@keyframes)、Required CSS Classes、Background Rule、Style-Specific Rules **全部复制插入到 `<style>` 标签中 `/* [PASTE ALL Signature Elements CSS HERE] */` 标记处**。**此外，Typography 和 Components 章节中定义的所有 CSS 类也必须包含在生成的 `<style>` 中** — 风格文件的所有章节都是生成源，不仅仅是 Signature Elements。不得遗漏 Signature Checklist 中的任何一项。缺失即生成错误。Blue Sky 例外：使用 blue-sky-starter.html 基底，不执行 .md 签名注入
-10. **字体加载无白屏（原 R25）：** Google Fonts URL 必须合并为单一链接（`&display=swap`），`<style>` 开头必须有 `body { background-color: ... }` 回退色
-11. **布局分类一致性（原 R26）：** 每页必须遵循以下 layout classification：
-
-    | Page # | Hero 封面 | Problem 问题 | Discovery 发现 | Solution 解决方案 | Features 功能 | Comparison 对比 | Edit 编辑 | Process 流程 | Review 检查点 | Recommendation 推荐 | Evidence 证明 | CTA |
-    |--------|---------|------------|---------------|------------------|--------------|---------------|-----------|-------------|---------------|--------------------|-------------|-----|
-    | 8 页版 | 1 | 2 | 3 | 4 (大数字/极简) | 5 | 6 | 7 | 8 | — | — | — | 9 |
-    | 12 页版 | 1 | 2 | 3 | 4 (大数字/极简) | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12 |
-
-    **Solution(P4) 特殊要求：** 1-3 个大数字/短语 + 标签 + 极简支持文字；content density 35-45%，禁止使用密集网格/列表填充；card height ≤ 120px if using grid cards。Chinese Chan / Paper & Ink 允许布局重复。
-12. **卡片内文字对比度（原 R27）：** 亮色背景容器内不得出现深色文字（`#1a1a1a`/`#333`），暗色背景容器内不得出现浅色文字。必须使用 `var(--text-on-card)` 或对应的 rgba 值
-13. **播放模式（引用 GC-1）：** 必须包含 `PresentMode` 类或 `enterPresent()` 函数，存在 `F5` 键监听器、`#present-btn` CSS、`body.presenting` CSS。缺失即生成错误
-14. **水印（引用 GC-3）：** 水印必须由 JS 注入到最后一页，CSS 必须是 `position: absolute`，禁止 `position: fixed`，禁止 `<div class="slide-credit">` 硬编码
+1. **标题质量（R4+R8）：** 标题必须是断言式、具体、有信息量。禁止通用标签（概览/Overview/Introduction/Summary/结论等）。示例和模板见 `references/title-quality.md`
+2. **布局多样性（R5+R23）：** 禁止连续 3 页相同布局模式。每页必须使用 2-3 种不同组件类型（step/callout/stat/kbd/table/quote 等），不得仅用 `.g` + `.bl` 堆砌
+3. **U+FE0F 零容忍（R9）：** HTML 中不得出现 U+FE0F 变体选择符
+4. **文字对比度（R15+R27）：** 浅色文字不得出现在浅色背景上，深色文字不得出现在深色背景上。必须使用 `var(--text-on-card)` 或风格文件定义的对比色
+5. **架构隔离（R20）：** `#stage`/`#track`/`translateX` 导航仅 Blue Sky 可用。其他风格必须使用 `scroll-snap-type: y mandatory` + `SlidePresentation` 类
+6. **叙事弧线（R23）：** 根据 deck_type 检测页数完整性。连续两页不得使用相同布局模式。每页必须使用 2-3 种不同组件类型
+7. **风格签名注入（R24）：** 风格文件的 Signature Elements（overlays/keyframes/required classes/background/rules）+ Typography + Components 章节的 CSS **全部**插入 `<style>` 中。不得遗漏 Signature Checklist 任何一项。缺失即生成错误。Blue Sky 例外：使用 blue-sky-starter.html 基底
+8. **字体（R25+R28）：** Google Fonts URL 合并为单一链接（`&display=swap`），`<style>` 开头必须有 `body { background-color: ... }` 回退色。CJK 页面（`lang="zh"`/`ja"`/`ko"`）必须追加对应 CJK 字体（中文→`Noto Sans SC`，日文→`Noto Sans JP`，韩文→`Noto Sans KR`），fallback 链必须包含该字体
+9. **布局分类（R26）：** 每页遵循 layout classification — P1 Hero / P2 Problem / P3 Discovery / P4 Solution(大数字/极简, density 35-45%) / P5+ 按叙事角色分配。Chinese Chan / Paper & Ink 允许布局重复
+10. **功能完整性（GC-1+GC-3）：** 必须包含 `PresentMode` 类 + `F5` 监听 + `body.presenting` CSS（缺失即生成错误）。水印由 JS 注入到最后一页，CSS `position: absolute`，禁止 `position: fixed` 和硬编码
+11. **CSS 工程（R29+R30）：** 每页 `id="slide-N"`，布局/背景/间距通过 `#slide-N` CSS 选择器定义，inline `style=""` ≤ 5 处。5 项通用 UI 强制存在：① `#brand-mark` ② `.slide-num-label`/`.light` ③ `.nav-dots` ④ `.progress-bar` ⑤ `id="slide-N"`。CSS 和 HTML 见 `references/base-css.md`
 
 > 完整反模式映射表见 `references/impeccable-anti-patterns.md`。更多视觉/组件规则在 `--review` 模式下执行。
 
 ### 标题质量规则
 
-**Do NOT 使用这些通用标签作为幻灯片标题：**
-概览、Overview、架构介绍、Introduction、Summary、总结、结论、Key Insights、Next Steps、方法论、背景、问题分析、关键发现、展望、简介、说明、系统介绍、方案说明。
-
-**Instead，使用断言式标题（陈述结论或主张）：**
-- ❌ `XX 架构概览` → ✅ `XX 架构可确保流量峰值期零遗漏`
-- ❌ `Overview` → ✅ `How XX ensures zero downtime during traffic spikes`
-- ❌ `系统介绍` → ✅ `三个核心模块，支撑日活百万级业务`
-- ❌ `关键发现` → ✅ `80% 的用户流失来自首次加载超时`
-
-**幻灯片标题模板（选一种匹配）：**
-- "[Subject] 可确保/证明/支撑 [具体收益/结果]" — 技术/架构页
-- "N 个 [核心概念]，解决 [关键痛点]" — 能力/特性页
-- "[数据/事实] — [洞察/含义]" — 数据/发现页
-- "[行动/决策] 的 N 个步骤/原则" — 方法/流程页
-- 最短有力断言（≤12 字中文 / ≤6 英文词）— 强调/宣言页
+标题必须是断言式，禁止通用标签。完整示例和模板见 `references/title-quality.md`。
 
 **快速路由：**
 
@@ -197,13 +165,7 @@ slide-creator now supports **two user-facing planning depths**:
 | Vintage Editorial | `references/vintage-editorial.md` |
 | 自定义主题 | `themes/<name>/reference.md` |
 
-**风格选择器 / 心情映射** → `references/style-index.md`
-
-**视口 CSS / 密度限制** → `references/base-css.md`
-
-**设计质量规则** → `references/design-quality.md`
-
-**Impeccable 反模式（视觉硬规则）** → `references/impeccable-anti-patterns.md`
+**风格选择器** → `style-index.md` | **视口** → `base-css.md` | **质量** → `design-quality.md` | **反模式** → `impeccable-anti-patterns.md`
 
 ---
 

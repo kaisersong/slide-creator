@@ -129,6 +129,21 @@
 - **修复：** 添加 `color: var(--accent)` 作为不支持渐变浏览器的后备
 - **slide-creator 已有：** 无直接对应
 
+### 18. U+FE0F 变体选择符（Variant Selector in Emoji）— CLI
+- **检测：** `\uFE0F` 或 UTF-8 编码 `\xEF\xB8\x8F` 出现在 HTML 中
+- **修复：** 移除所有 U+FE0F 变体选择符，使用基础 emoji 形式（如 `🎞` 而非 `🎞️`）
+- **来源：** SKILL.md Pre-Write Pipeline Rule 9
+
+### 19. 组件单调（Component Monotony）— LLM
+- **检测：** 整个 deck 中 >50% 幻灯片仅使用同一种组件模式（如全是 `.g` + `.bl`）
+- **修复：** 至少一半的幻灯片使用 2-3 种不同组件类型（step/callout/stat/kbd/table/quote/callout）
+- **来源：** SKILL.md Pre-Write Pipeline Rule 16
+
+### 20. SVG 箭头连线不可见（SVG Arrow Lines Too Short）— CLI
+- **检测：** `<line>` 元素起点与终点距离 <30px；箭头指向圆内部而非圆边缘
+- **修复：** 调整 rect 位置与圆保持 ≥30px 间距，箭头从外框指向圆边缘
+- **来源：** SKILL.md Pre-Write Pipeline Rule 17
+
 ---
 
 ## 排除项（不适用于幻灯片）
@@ -162,4 +177,6 @@
 | 20 | inconsistent align | 同一 `<section class="slide">` 内同时出现 left + center 的 text-align；或标题无 `text-align`（默认 left）但子容器使用 `margin.*auto` 或 `justify-content:\s*center`（视觉居中） | 统一对齐：标题加 `text-align:center` 或子容器去掉居中 |
 | 21 | gradient no fallback | `-webkit-background-clip:\s*text` 前无 `color:` 声明 | 添加 color 降级 |
 | 22 | SVG 箭头连线不可见 | `<line>` 起点与终点距离 <30px；箭头指向圆内部而非圆边缘 | 调整 rect 位置与圆保持 ≥30px 间距，箭头从外框指向圆边缘 |
+| 23 | U+FE0F 变体选择符 | `\uFE0F` 或 `\xEF\xB8\x8F` 出现在 HTML 中 | 移除所有变体选择符，使用基础 emoji |
+| 24 | 组件单调 | >50% 幻灯片使用同一种组件模式 | 至少一半使用 2-3 种不同组件类型 |
 | 27 | 深色文字在亮色卡片上 | `background: var(--card-bg)` 容器内子元素 `color:.*#1a1a1a` / `rgba\(26,26,26` / `#333` | 替换为 `var(--text-on-card)` 或 `rgba(255,255,255,*)` |

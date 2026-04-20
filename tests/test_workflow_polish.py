@@ -15,7 +15,8 @@ def read_text(path: Path) -> str:
 
 def test_skill_contract_says_edit_mode_is_default_not_mandatory():
     skill = read_text(SKILL_MD)
-    assert "Edit Mode (default-on, optional)" in skill
+    assert "默认开启" in skill
+    assert "可省略编辑模式" in skill
     assert "Every generated HTML file MUST include both of these" not in skill
 
 

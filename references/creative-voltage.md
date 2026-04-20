@@ -129,16 +129,21 @@ body {
 
 ### 1. Voltage Hero (全屏宣告)
 
-Dark `#1a1a2e` background with halftone texture. Electric blue `#0066ff` accent block (40-50% width) containing headline in Syne 800, `clamp(32px, 6vw, 64px)`. Neon yellow badge `#d4ff00`. Diamond decoration `.voltage-diamond` at 15% opacity in corner.
+Full electric blue `#0066ff` background with halftone texture. Oversized split title in Syne 800: first part white `#fff`, accent part neon yellow `#d4ff00`, size `clamp(72px, 12vw, 142px)`, line-height 0.87, letter-spacing -0.03em. Subtitle in Space Mono 13px, muted white. Pill badges row below. Decorative `∞` via `.deco-num` in bottom-right corner at 4% opacity.
 
 ```html
-<section class="slide">
-    <div class="voltage-halftone"></div>
-    <div class="voltage-blue-panel" style="position:absolute;left:0;top:0;bottom:0;width:50%;">
-        <h1 class="voltage-title">Big Statement</h1>
-        <span class="voltage-neon-badge">Tagline</span>
+<section class="slide halftone">
+    <div class="deco-num">∞</div>
+    <div class="cover-inner">
+        <div class="eyebrow">eyebrow text</div>
+        <div class="main-title">slide-</div>
+        <div class="title-accent">creator</div>
+        <p class="cover-sub">subtitle text</p>
+        <div class="badges">
+            <span class="pill">Badge 1</span>
+            <span class="pill outline">Badge 2</span>
+        </div>
     </div>
-    <div class="voltage-diamond" style="position:absolute;right:10%;top:15%;"></div>
 </section>
 ```
 
@@ -181,6 +186,22 @@ Dark background. Large neon yellow number `#d4ff00` in Space Mono, `clamp(48px, 
 ### 5. Voltage Callout (功能亮点)
 
 Neon callout box `.voltage-callout` with `border: 2px solid #d4ff00`, `background: rgba(212,255,0,0.05)`. Mono label + body description. Diamond decoration `.voltage-diamond` floats in corner at 15% opacity.
+
+### 6. Voltage CTA (堆叠行动)
+
+Full electric blue `#0066ff` background with halftone. Large headline in Syne 800, `clamp(44px, 8vw, 102px)`, line-height 0.88, accent line in neon yellow. Command `/slide-creator` in Space Mono bold, neon yellow background pill `#d4ff00`, dark text `#0a0a14`. Subtitle in Space Mono 12px muted. Right-side `.deco-bg` with rotated Syne 800 decorative text.
+
+```html
+<section class="slide halftone">
+    <div class="deco-bg">GO</div>
+    <div class="cta-inner">
+        <span class="pill">开始使用</span>
+        <h2>Headline <span class="h2-accent">Accent line</span></h2>
+        <div class="cta-command">/command</div>
+        <p class="cta-sub">subtitle text</p>
+    </div>
+</section>
+```
 
 ---
 
