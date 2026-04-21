@@ -1,0 +1,184 @@
+{
+  "schema_version": 1,
+  "brief_id": "slide-creator-self-intro-20260421",
+  "mode": "polish",
+  "language": "zh-CN",
+  "title": "slide-creator — AI 原生 HTML 演示文稿生成器",
+  "audience": "Claude Code 用户，需要快速生成高质量演示文稿的产品经理和开发者",
+  "desired_action": "安装并试用 slide-creator 生成第一套 deck",
+  "deck": {
+    "deck_type": "product-demo",
+    "page_count": 8,
+    "output_format": "html-slides"
+  },
+  "style": {
+    "preset": "Blue Sky",
+    "tone": "清爽、自信、企业级 SaaS",
+    "visual_density": "medium"
+  },
+  "content": {
+    "source_policy": "self-reference",
+    "must_include": [
+      "21 种设计预设",
+      "播放/编辑/演讲者三种模式",
+      "自动/精修两种规划深度",
+      "安装和使用方式",
+      "设计理念"
+    ],
+    "must_avoid": [
+      "泛泛开场",
+      "连续重复布局",
+      "与 slide-creator 无关的背景信息"
+    ]
+  },
+  "narrative": {
+    "thesis": "slide-creator 把内容提炼、风格锁定和 HTML 交付压缩成一个可重复的轻量工作流——一个命令，零依赖，浏览器原生运行。",
+    "page_roles": [
+      "cover",
+      "problem",
+      "solution",
+      "workflow",
+      "style-discovery",
+      "output-contract",
+      "best-fit",
+      "closing"
+    ],
+    "slides": [
+      {
+        "slide_number": 1,
+        "role": "cover",
+        "title": "slide-creator",
+        "subtitle": "AI 原生的 HTML 演示文稿生成器",
+        "key_point": "一个命令。一个文件。零依赖。",
+        "visual": "hero statement + 3 stat blocks",
+        "stats": [
+          { "num": "21", "label": "种设计预设" },
+          { "num": "0", "label": "外部依赖" },
+          { "num": "3", "label": "分钟出稿" }
+        ]
+      },
+      {
+        "slide_number": 2,
+        "role": "problem",
+        "title": "好内容经常被糟糕的演示稿拖累",
+        "key_point": "模板老旧、排版不稳、改一版成本高",
+        "visual": "Before/After 分栏对比",
+        "before_items": [
+          "花 1 小时找模板，最后选个平庸的",
+          "调字体调字号，越改越乱",
+          "导出 PDF 后排版全错"
+        ],
+        "after_items": [
+          "一个命令，3 分钟出 8-12 页",
+          "21 种专业设计预设，拒绝通用 AI 审美",
+          "零依赖 HTML，纯浏览器运行"
+        ]
+      },
+      {
+        "slide_number": 3,
+        "role": "solution",
+        "title": "21 种设计预设，零依赖 HTML",
+        "key_point": "从 prompt 到可演示 deck，一条命令搞定",
+        "visual": "3 张特性卡片（核心亮点）",
+        "features": [
+          { "title": "21 种设计预设", "desc": "Blue Sky、Terminal Green、Paper & Ink… 覆盖数据报告、商业路演、技术文档、创意品牌", "icon": "🎨" },
+          { "title": "内联编辑 + 播放模式", "desc": "E 键进入编辑模式，F5 全屏播放，P 键打开演讲者窗口", "icon": "▶" },
+          { "title": "内容 Review 系统", "desc": "14 个检查点，自动检测标题质量、布局多样性、反模式", "icon": "✓" }
+        ]
+      },
+      {
+        "slide_number": 4,
+        "role": "workflow",
+        "title": "默认路径足够短",
+        "key_point": "--plan 提炼 BRIEF，--generate 出 HTML，--review 自动优化",
+        "visual": "命令时间线 / 分层架构图",
+        "commands": [
+          { "cmd": "/slide-creator --plan [prompt]", "desc": "生成 BRIEF.json（IR），1-2 分钟" },
+          { "cmd": "/slide-creator --generate", "desc": "从 BRIEF.json 生成 HTML，执行 11 项生成前校验，1-3 分钟" },
+          { "cmd": "/slide-creator --review [file.html]", "desc": "14 项检查点自动优化，<1 分钟" },
+          { "cmd": "/slide-creator", "desc": "交互式创建，风格探索模式，3-6 分钟" }
+        ]
+      },
+      {
+        "slide_number": 5,
+        "role": "style-discovery",
+        "title": "看图选风格，不是描述风格",
+        "key_point": "21 种预设覆盖 6 类内容场景",
+        "visual": "风格分类矩阵",
+        "style_categories": [
+          { "type": "数据报告 / KPI 看板", "styles": "Data Story、Enterprise Dark、Swiss Modern" },
+          { "type": "商业路演 / VC Deck", "styles": "Bold Signal、Aurora Mesh、Enterprise Dark" },
+          { "type": "开发工具 / API 文档", "styles": "Terminal Green、Neon Cyber、Neo-Retro Dev" },
+          { "type": "研究 / 思想领导力", "styles": "Modern Newspaper、Paper & Ink、Swiss Modern" },
+          { "type": "创意 / 个人品牌", "styles": "Vintage Editorial、Split Pastel、Neo-Brutalism" },
+          { "type": "产品发布 / SaaS", "styles": "Aurora Mesh、Glassmorphism、Electric Studio" }
+        ]
+      },
+      {
+        "slide_number": 6,
+        "role": "output-contract",
+        "title": "输出不是一次性截图",
+        "key_point": "浏览器原生运行、可播放、默认可编辑",
+        "visual": "能力徽章 / 功能面板",
+        "capabilities": [
+          { "name": "播放模式", "shortcut": "F5 / ▶", "desc": "全屏缩放适配，控制栏自动隐藏" },
+          { "name": "演讲者模式", "shortcut": "P 键", "desc": "同步窗口：备注、计时器、页数、翻页" },
+          { "name": "编辑模式", "shortcut": "E 键", "desc": "contenteditable，备注面板，Ctrl+S 保存" }
+        ]
+      },
+      {
+        "slide_number": 7,
+        "role": "best-fit",
+        "title": "适合需要高质量 deck 的日常场景",
+        "key_point": "产品发布、内部汇报、技术分享都能复用",
+        "visual": "使用场景卡片 / 指标面板",
+        "use_cases": [
+          { "scenario": "产品发布 / SaaS 路演", "time": "~8 分钟", "preset": "Bold Signal / Aurora Mesh" },
+          { "scenario": "内部汇报 / KPI 看板", "time": "~5 分钟", "preset": "Data Story / Enterprise Dark" },
+          { "scenario": "技术分享 / API 文档", "time": "~6 分钟", "preset": "Terminal Green / Neon Cyber" },
+          { "scenario": "研究报告 / 白皮书", "time": "~10 分钟", "preset": "Modern Newspaper / Paper & Ink" }
+        ]
+      },
+      {
+        "slide_number": 8,
+        "role": "closing",
+        "title": "先出一版，再精修",
+        "key_point": "默认快（自动 3-6 分钟），关键 deck 再锁质量（精修 8-15 分钟）",
+        "visual": "CTA 行动块",
+        "cta_commands": [
+          "告诉 Claude「安装 https://github.com/kaisersong/slide-creator」",
+          "/slide-creator --plan 为 [你的主题] 制作路演 deck",
+          "/slide-creator --generate"
+        ]
+      }
+    ]
+  },
+  "runtime": {
+    "editing_mode": true,
+    "presenter_mode": true,
+    "watermark_mode": "injected-last-slide",
+    "export_intent": "none"
+  },
+  "plan_view": {
+    "emit_planning_view": false,
+    "planning_view_path": "PLANNING.md"
+  },
+  "timing": {
+    "estimate": {
+      "plan": "1-2 min",
+      "generate": "3-6 min",
+      "validate": "<1 min",
+      "polish": "2-4 min",
+      "total": "8-15 min"
+    },
+    "actual": {
+      "plan_start": "2026-04-21T00:25:00Z",
+      "plan": "0m 45s",
+      "generate": "2m 15s",
+      "validate": "0m 10s",
+      "polish": "0m 30s",
+      "total": "4m 10s"
+    }
+  },
+  "notes": ""
+}
