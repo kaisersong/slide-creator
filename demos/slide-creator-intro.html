@@ -1,0 +1,1188 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>slide-creator — AI 原生的 HTML 演示文稿生成器</title>
+<style>
+
+:root { --slide-count: 8; }
+
+/* ═══════════════════════════════════════════════
+   BLUE SKY DESIGN TOKENS
+   ═══════════════════════════════════════════════ */
+:root {
+  --bg-from:        #f0f9ff;
+  --bg-to:          #e0f2fe;
+  --card-bg:        rgba(255, 255, 255, 0.70);
+  --card-border:    rgba(255, 255, 255, 0.90);
+  --text-primary:   #0f172a;
+  --text-secondary: #334155;
+  --text-muted:     #64748b;
+  --accent-blue:    #2563eb;
+  --accent-sky:     #0ea5e9;
+  --accent-indigo:  #4f46e5;
+  --gradient-text:  linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%);
+  --grid-color:     rgba(14, 165, 233, 0.06);
+  --orb1-color: rgba(96,  165, 250, 0.35);
+  --orb2-color: rgba(99,  102, 241, 0.25);
+  --orb3-color: rgba(14,  165, 233, 0.30);
+  --amber:     #f59e0b;  --amber-bg: rgba(251,191,36,0.12);
+  --red:       #ef4444;  --red-bg:   rgba(239,68,68,0.10);
+  --green:     #10b981;  --green-bg: rgba(16,185,129,0.10);
+}
+
+::selection { background: #bfdbfe; color: #1e3a8a; }
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html, body {
+  width: 100%; height: 100%; overflow: hidden;
+  font-family: 'DM Sans', 'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  background: linear-gradient(160deg, var(--bg-from), var(--bg-to));
+}
+
+/* Noise */
+body::before {
+  content: ''; position: fixed; inset: 0; pointer-events: none; z-index: 0;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
+}
+
+/* Grid */
+body::after {
+  content: ''; position: fixed; inset: 0; pointer-events: none; z-index: 0;
+  background-image:
+    linear-gradient(var(--grid-color) 1px, transparent 1px),
+    linear-gradient(90deg, var(--grid-color) 1px, transparent 1px);
+  background-size: 40px 40px;
+  -webkit-mask-image: radial-gradient(ellipse 70% 70% at 50% 50%, black 40%, transparent 100%);
+  mask-image:         radial-gradient(ellipse 70% 70% at 50% 50%, black 40%, transparent 100%);
+}
+
+/* Orbs */
+.orb {
+  position: fixed; border-radius: 50%; pointer-events: none; z-index: 0;
+  filter: blur(80px);
+  transition: top 1.2s cubic-bezier(0.22,1,0.36,1), left 1.2s cubic-bezier(0.22,1,0.36,1),
+              width 1.2s cubic-bezier(0.22,1,0.36,1), height 1.2s cubic-bezier(0.22,1,0.36,1);
+}
+#orb1 { background: var(--orb1-color); }
+#orb2 { background: var(--orb2-color); }
+#orb3 { background: var(--orb3-color); }
+
+/* Track */
+#stage { position: fixed; inset: 0; overflow: hidden; z-index: 1; clip-path: inset(0); }
+#track {
+  display: flex;
+  width: calc(100vw * var(--slide-count));
+  height: 100%;
+  transition: transform 0.7s cubic-bezier(0.22, 1, 0.36, 1);
+  will-change: transform;
+}
+.slide {
+  width: 100vw; flex-shrink: 0; height: 100vh;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  padding: clamp(28px, 4vw, 56px) clamp(32px, 5vw, 80px);
+  position: relative; overflow: hidden;
+  background: linear-gradient(160deg, var(--bg-from), var(--bg-to));
+}
+
+/* Glassmorphism */
+.g {
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: 20px;
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  box-shadow: 0 10px 40px -10px rgba(37,99,235,0.12), 0 1px 3px rgba(0,0,0,0.04),
+              0 1px 0 rgba(255,255,255,0.8) inset;
+}
+
+/* Gradient text */
+.gt {
+  background: var(--gradient-text);
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Cloud ambient */
+.cloud {
+  position: absolute; border-radius: 50%; pointer-events: none;
+  filter: blur(60px);
+  animation: cloud-drift 8s ease-in-out infinite;
+}
+@keyframes cloud-drift {
+  0%, 100% { transform: translateY(0) scale(1); }
+  50%       { transform: translateY(-20px) scale(1.05); }
+}
+
+/* Cloud bank (cover) */
+.cloud-layer {
+  position: absolute; bottom: 0; left: 0; width: 100%; height: 75%;
+  pointer-events: none; overflow: hidden; z-index: 2;
+}
+.cloud-strip {
+  position: absolute; bottom: 0; left: 0; display: flex; height: 100%;
+  animation: cloud-scroll 30s linear infinite;
+}
+.cloud-strip.fast { animation-duration: 18s; }
+@keyframes cloud-scroll {
+  from { transform: translateX(0); } to { transform: translateX(-1920px); }
+}
+.cloud-group { position: absolute; bottom: 0; }
+.cloud-puff  { position: absolute; background: white; border-radius: 50%; }
+
+/* Pagination */
+#nav-dots {
+  position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%);
+  display: flex; gap: 8px; align-items: center; z-index: 10;
+}
+.dot {
+  height: 6px; border-radius: 999px; cursor: pointer; border: none;
+  background: rgba(147,197,253,0.5);
+  transition: background 0.4s, width 0.4s; width: 6px;
+}
+.dot.active { background: #2563eb; width: 28px; }
+
+/* Counter */
+#slide-counter {
+  position: fixed; top: 24px; left: 36px; z-index: 10;
+  font-size: 12px; font-weight: 700; letter-spacing: 0.1em;
+  color: var(--text-muted);
+  font-family: 'SF Mono', 'Fira Code', monospace;
+}
+
+/* Typography */
+h1 { font-size: clamp(2.2rem, 5.5vw, 4.5rem); font-weight: 800; line-height: 1.1; letter-spacing: -0.02em; }
+h2 { font-size: clamp(1.6rem, 3.5vw, 2.6rem);  font-weight: 700; line-height: 1.2; letter-spacing: -0.01em; }
+h3 { font-size: clamp(1.0rem, 2.0vw, 1.5rem);  font-weight: 700; line-height: 1.3; }
+h4 { font-size: clamp(0.9rem, 1.6vw, 1.2rem);  font-weight: 600; }
+p, li { font-size: clamp(0.82rem, 1.4vw, 1.05rem); line-height: 1.6; color: var(--text-secondary); }
+
+/* Layout */
+.cols2 { display: grid; grid-template-columns: 1fr 1fr;        gap: 16px; width: 100%; }
+.cols3 { display: grid; grid-template-columns: 1fr 1fr 1fr;    gap: 14px; width: 100%; }
+.cols4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; width: 100%; }
+.bento { display: grid; grid-template-columns: repeat(4, 1fr); grid-auto-rows: 160px; gap: 12px; width: 100%; }
+.bento .g { padding: 16px 18px; overflow: hidden; }
+.bento .span2 { grid-column: span 2; }
+.bento .span3 { grid-column: span 3; }
+.bento .row2  { grid-row: span 2; }
+
+.divider {
+  width: 56px; height: 3px; border-radius: 2px;
+  background: linear-gradient(90deg, #2563eb, #0ea5e9);
+  margin: 8px 0 14px;
+}
+
+/* Components */
+.pill {
+  display: inline-flex; align-items: center;
+  padding: 4px 14px; border-radius: 999px;
+  font-size: 12px; font-weight: 600; letter-spacing: 0.05em;
+  background: rgba(37,99,235,0.10); color: var(--accent-blue);
+  border: 1px solid rgba(37,99,235,0.20);
+}
+.pill.green { background: rgba(16,185,129,0.12); color: #065f46; border-color: rgba(16,185,129,0.25); }
+
+.stat {
+  font-size: clamp(2.8rem, 7vw, 5.5rem); font-weight: 900; line-height: 1;
+  background: var(--gradient-text);
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  background-clip: text; letter-spacing: -0.02em;
+}
+
+ul.bl { list-style: none; padding: 0; display: flex; flex-direction: column; gap: 7px; }
+ul.bl li { display: flex; align-items: flex-start; gap: 8px; color: var(--text-secondary); }
+ul.bl li::before { content: '▸'; color: var(--accent-sky); flex-shrink: 0; margin-top: 2px; }
+
+.step {
+  width: 34px; height: 34px; border-radius: 50%; flex-shrink: 0;
+  background: linear-gradient(135deg, #2563eb, #0ea5e9);
+  display: flex; align-items: center; justify-content: center;
+  color: #fff; font-weight: 800; font-size: 0.88rem;
+}
+
+.layer {
+  display: flex; align-items: flex-start; gap: 14px;
+  padding: 14px 18px; border-radius: 14px;
+  background: rgba(255,255,255,0.60);
+  border: 1px solid rgba(255,255,255,0.90);
+  border-left: 4px solid var(--accent-sky);
+}
+
+.ctable { width: 100%; border-collapse: collapse; font-size: 0.86rem; }
+.ctable th { background: rgba(37,99,235,0.10); color: var(--accent-blue); font-weight: 700; padding: 10px 14px; text-align: left; }
+.ctable td { padding: 9px 14px; border-bottom: 1px solid rgba(14,165,233,0.12); vertical-align: top; }
+.ctable tr:last-child td { border-bottom: none; }
+.ctable .yes { color: #10b981; font-weight: 600; }
+.ctable .no  { color: #94a3b8; }
+
+.info {
+  background: rgba(37,99,235,0.07); border: 1px solid rgba(37,99,235,0.20);
+  border-left: 4px solid var(--accent-blue);
+  border-radius: 12px; padding: 12px 16px;
+  font-size: 0.84rem; color: var(--text-secondary); line-height: 1.6;
+}
+.co {
+  background: var(--amber-bg); border: 1px solid rgba(245,158,11,0.28);
+  border-left: 4px solid var(--amber);
+  border-radius: 12px; padding: 12px 16px;
+  font-size: 0.84rem; color: var(--text-secondary); line-height: 1.6;
+}
+.co strong { color: #92400e; }
+
+/* Keyboard key badge */
+kbd {
+  display: inline-flex; align-items: center; justify-content: center;
+  padding: 2px 8px; border-radius: 6px; font-size: 0.78rem; font-weight: 700;
+  font-family: 'SF Mono', 'Fira Code', monospace;
+  background: rgba(255,255,255,0.85); color: var(--text-primary);
+  border: 1px solid rgba(37,99,235,0.20);
+  box-shadow: 0 2px 0 rgba(37,99,235,0.15);
+  letter-spacing: 0.02em;
+}
+
+/* Inline code */
+code {
+  font-family: 'SF Mono', 'Fira Code', monospace;
+  background: rgba(37,99,235,0.08); color: #1e3a8a;
+  padding: 1px 6px; border-radius: 5px; font-size: 0.88em;
+}
+
+/* Command block */
+.cmd {
+  background: rgba(15,23,42,0.06); border: 1px solid rgba(37,99,235,0.15);
+  border-radius: 10px; padding: 10px 16px;
+  font-family: 'SF Mono', 'Fira Code', monospace;
+  font-size: 0.85rem; color: #1e3a8a;
+  letter-spacing: 0.01em;
+}
+
+/* Entrance animations */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(22px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.slide.active > * { animation: fadeUp 0.5s cubic-bezier(0.22,1,0.36,1) both; }
+.slide.active > *:nth-child(2) { animation-delay: 0.06s; }
+.slide.active > *:nth-child(3) { animation-delay: 0.12s; }
+.slide.active > *:nth-child(4) { animation-delay: 0.18s; }
+.slide.active > *:nth-child(5) { animation-delay: 0.24s; }
+.slide.active > *:nth-child(6) { animation-delay: 0.30s; }
+
+@media (prefers-reduced-motion: reduce) {
+  #track, .orb, .cloud { transition: none !important; animation: none !important; }
+}
+
+/* ═══════════════════════════════════════════════════════
+   PRESENT BUTTON
+   ═══════════════════════════════════════════════════════ */
+#present-btn {
+  position: fixed; bottom: 1.5rem; right: 1.5rem; z-index: 9997;
+  width: 44px; height: 44px; border-radius: 50%;
+  background: rgba(255,255,255,0.78); color: rgba(15,23,42,0.65);
+  border: 1.5px solid rgba(37,99,235,0.22);
+  font-size: 1rem; cursor: pointer;
+  backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+  display: flex; align-items: center; justify-content: center;
+  opacity: 0; transition: opacity 0.2s; pointer-events: none;
+}
+body:hover #present-btn { opacity: 1; pointer-events: auto; }
+#present-btn:hover { background: rgba(255,255,255,0.96); }
+
+#present-counter {
+  display: none; position: fixed; bottom: 1.4rem; left: 50%;
+  transform: translateX(-50%); z-index: 9997;
+  font-size: 0.65rem; letter-spacing: 0.14em; font-family: system-ui, sans-serif;
+  color: rgba(255,255,255,0.55);
+}
+
+/* ═══════════════════════════════════════════════════════
+   PRESENTATION MODE
+   ═══════════════════════════════════════════════════════ */
+body.presenting { background: #000 !important; overflow: hidden !important; }
+body.presenting .slide {
+  position: fixed !important; inset: 0;
+  width: var(--pdw, 1440px) !important; height: var(--pdh, 900px) !important;
+  transform-origin: top left;
+  transform: translate(var(--pox, 0px), var(--poy, 0px)) scale(var(--ps, 1)) !important;
+  display: none !important;
+}
+body.presenting .slide.p-on { display: flex !important; }
+body.presenting #present-btn { display: none !important; }
+body.presenting #present-counter { display: block; }
+body.presenting #nav-dots,
+body.presenting #slide-counter,
+body.presenting .orb,
+body.presenting #notes-panel { display: none !important; }
+
+/* ═══════════════════════════════════════════════════════
+   EDIT MODE
+   ═══════════════════════════════════════════════════════ */
+.edit-hotzone {
+  position: fixed; top: 0; left: 0;
+  width: 80px; height: 80px; z-index: 10000; cursor: pointer;
+}
+.edit-toggle {
+  position: fixed; top: 16px; left: 16px;
+  padding: 6px 16px; border-radius: 999px; border: 1px solid rgba(37,99,235,0.20);
+  font-size: 12px; font-weight: 600; letter-spacing: 0.04em; font-family: inherit;
+  background: rgba(255,255,255,0.88); color: var(--text-muted); cursor: pointer;
+  backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+  box-shadow: 0 2px 12px rgba(37,99,235,0.08);
+  opacity: 0; pointer-events: none; transition: opacity 0.3s ease; z-index: 10001;
+}
+.edit-toggle.show { opacity: 1; pointer-events: auto; }
+.edit-toggle.active { opacity: 1; pointer-events: auto; background: var(--accent-blue); color: #fff; border-color: var(--accent-blue); }
+
+[contenteditable] { border-radius: 4px; cursor: text; outline: none; }
+[contenteditable]:hover { outline: 1px dashed rgba(37,99,235,0.35); background: rgba(219,234,254,0.20); }
+[contenteditable]:focus { outline: 2px solid rgba(37,99,235,0.55); background: rgba(219,234,254,0.30); }
+
+#notes-panel {
+  display: none; position: fixed; bottom: 0; left: 0; right: 0; z-index: 9998;
+  background: rgba(8,8,18,0.94);
+  backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
+  border-top: 1px solid rgba(255,255,255,0.08);
+}
+#notes-panel.active { display: flex; flex-direction: column; }
+#notes-panel-header {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0.45rem 1.4rem; cursor: pointer; user-select: none;
+}
+#notes-panel-header:hover { background: rgba(255,255,255,0.03); }
+#notes-panel-label {
+  flex: 1; font-size: 0.58rem; letter-spacing: 0.16em;
+  text-transform: uppercase; color: rgba(255,255,255,0.3);
+}
+#notes-drag-hint { flex: 1; display: flex; justify-content: center; }
+#notes-drag-hint::after {
+  content: ''; display: block; width: 36px; height: 3px;
+  border-radius: 2px; background: rgba(255,255,255,0.25);
+}
+#notes-panel-header:hover #notes-drag-hint::after { background: rgba(255,255,255,0.45); }
+#notes-collapse-btn {
+  flex: 1; text-align: right; font-size: 1rem; color: rgba(255,255,255,0.4);
+  background: none; border: none; cursor: pointer; transition: color 0.15s, transform 0.2s;
+}
+#notes-collapse-btn:hover { color: rgba(255,255,255,0.85); }
+#notes-panel.collapsed #notes-collapse-btn { transform: rotate(180deg); }
+#notes-body { padding: 0 1.4rem 0.75rem; }
+#notes-panel.collapsed #notes-body { display: none; }
+#notes-textarea {
+  width: 100%; height: 72px; min-height: 48px; max-height: 200px;
+  resize: vertical; background: transparent; border: none; outline: none;
+  color: rgba(255,255,255,0.75); font-size: 0.88rem; line-height: 1.65;
+  font-family: system-ui, sans-serif; caret-color: var(--accent-blue);
+}
+#notes-textarea::placeholder { color: rgba(255,255,255,0.18); }
+
+</style>
+</head>
+<body>
+
+<div class="orb" id="orb1"></div>
+<div class="orb" id="orb2"></div>
+<div class="orb" id="orb3"></div>
+<div id="slide-counter">01 / 08</div>
+<div id="nav-dots"></div>
+
+<div class="edit-hotzone"></div>
+<button class="edit-toggle" id="editToggle" title="Edit mode (E)">✏ Edit</button>
+
+<div id="notes-panel">
+  <div id="notes-panel-header">
+    <div id="notes-panel-label">SPEAKER NOTES — SLIDE 1 / 08</div>
+    <div id="notes-drag-hint"></div>
+    <button id="notes-collapse-btn" title="Collapse / expand">▾</button>
+  </div>
+  <div id="notes-body">
+    <textarea id="notes-textarea" placeholder="Add speaker notes for this slide…"></textarea>
+  </div>
+</div>
+
+<div id="stage">
+<div id="track">
+
+  <!-- ══════════════════════════════════════════
+       01 — COVER
+       ══════════════════════════════════════════ -->
+  <section class="slide cover" style="overflow:hidden;" data-notes="slide-creator 把内容提炼、风格锁定和 HTML 交付压缩成一个可重复的轻量工作流。一个命令，零依赖，浏览器原生运行。">
+
+    <svg width="0" height="0" style="position:absolute;pointer-events:none;">
+      <defs>
+        <filter id="cloud-filter">
+          <feTurbulence type="fractalNoise" baseFrequency="0.012" numOctaves="4" seed="5" result="noise"/>
+          <feDisplacementMap in="SourceGraphic" in2="noise" scale="60" xChannelSelector="R" yChannelSelector="G"/>
+        </filter>
+      </defs>
+    </svg>
+
+    <div style="position:absolute;width:50%;height:60%;top:5%;left:-10%;border-radius:50%;background:rgba(96,165,250,0.28);filter:blur(90px);pointer-events:none;z-index:1;"></div>
+    <div style="position:absolute;width:55%;height:65%;top:8%;right:-12%;border-radius:50%;background:rgba(14,165,233,0.22);filter:blur(100px);pointer-events:none;z-index:1;"></div>
+    <div style="position:absolute;width:35%;height:40%;bottom:32%;left:30%;border-radius:50%;background:rgba(99,102,241,0.18);filter:blur(80px);pointer-events:none;z-index:1;"></div>
+
+    <div class="cloud-layer" style="filter:url(#cloud-filter);">
+      <div class="cloud-strip">
+        <div style="position:relative;width:1920px;height:100%;flex-shrink:0;">
+          <div class="cloud-group" style="left:192px;bottom:-54px;width:576px;height:216px;opacity:0.65;">
+            <div class="cloud-puff" style="bottom:0;left:10%;width:288px;height:288px;filter:blur(18px);"></div>
+            <div class="cloud-puff" style="bottom:22px;left:30%;width:384px;height:384px;filter:blur(22px);"></div>
+            <div class="cloud-puff" style="bottom:-22px;left:60%;width:346px;height:346px;filter:blur(18px);"></div>
+          </div>
+          <div class="cloud-group" style="left:1100px;bottom:-86px;width:480px;height:194px;opacity:0.5;">
+            <div class="cloud-puff" style="bottom:0;left:0%;width:230px;height:230px;filter:blur(14px);"></div>
+            <div class="cloud-puff" style="bottom:32px;left:40%;width:346px;height:346px;filter:blur(20px);"></div>
+            <div class="cloud-puff" style="bottom:11px;left:70%;width:288px;height:288px;filter:blur(16px);"></div>
+          </div>
+        </div>
+        <div style="position:relative;width:1920px;height:100%;flex-shrink:0;">
+          <div class="cloud-group" style="left:192px;bottom:-54px;width:576px;height:216px;opacity:0.65;">
+            <div class="cloud-puff" style="bottom:0;left:10%;width:288px;height:288px;filter:blur(18px);"></div>
+            <div class="cloud-puff" style="bottom:22px;left:30%;width:384px;height:384px;filter:blur(22px);"></div>
+            <div class="cloud-puff" style="bottom:-22px;left:60%;width:346px;height:346px;filter:blur(18px);"></div>
+          </div>
+          <div class="cloud-group" style="left:1100px;bottom:-86px;width:480px;height:194px;opacity:0.5;">
+            <div class="cloud-puff" style="bottom:0;left:0%;width:230px;height:230px;filter:blur(14px);"></div>
+            <div class="cloud-puff" style="bottom:32px;left:40%;width:346px;height:346px;filter:blur(20px);"></div>
+            <div class="cloud-puff" style="bottom:11px;left:70%;width:288px;height:288px;filter:blur(16px);"></div>
+          </div>
+        </div>
+      </div>
+      <div class="cloud-strip fast" style="z-index:2;">
+        <div style="position:relative;width:1920px;height:100%;flex-shrink:0;">
+          <div class="cloud-group" style="left:580px;bottom:-70px;width:420px;height:170px;opacity:0.42;">
+            <div class="cloud-puff" style="bottom:0;left:5%;width:200px;height:200px;filter:blur(12px);"></div>
+            <div class="cloud-puff" style="bottom:20px;left:35%;width:300px;height:300px;filter:blur(16px);"></div>
+            <div class="cloud-puff" style="bottom:-15px;left:65%;width:250px;height:250px;filter:blur(13px);"></div>
+          </div>
+        </div>
+        <div style="position:relative;width:1920px;height:100%;flex-shrink:0;">
+          <div class="cloud-group" style="left:580px;bottom:-70px;width:420px;height:170px;opacity:0.42;">
+            <div class="cloud-puff" style="bottom:0;left:5%;width:200px;height:200px;filter:blur(12px);"></div>
+            <div class="cloud-puff" style="bottom:20px;left:35%;width:300px;height:300px;filter:blur(16px);"></div>
+            <div class="cloud-puff" style="bottom:-15px;left:65%;width:250px;height:250px;filter:blur(13px);"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div style="text-align:center;position:relative;z-index:10;max-width:720px;">
+      <span class="pill" style="margin-bottom:18px;display:inline-block;">AI 原生 · 零依赖 · 浏览器运行</span>
+      <h1 class="gt" style="margin-bottom:10px;">slide-creator</h1>
+      <p style="font-size:clamp(1rem,2.2vw,1.4rem);color:var(--text-muted);margin-bottom:24px;">AI 原生的 HTML 演示文稿生成器</p>
+      <div class="divider" style="margin:0 auto 24px;"></div>
+      <p style="font-size:0.95rem;color:var(--text-secondary);margin-bottom:28px;">一个命令。一个文件。零依赖。</p>
+      <div class="cols3" style="max-width:520px;margin:0 auto;">
+        <div class="g" style="padding:16px 28px;text-align:center;">
+          <div class="stat" style="font-size:2.8rem;">21</div>
+          <p style="font-size:0.78rem;margin-top:2px;">种设计预设</p>
+        </div>
+        <div class="g" style="padding:16px 28px;text-align:center;">
+          <div class="stat" style="font-size:2.8rem;">0</div>
+          <p style="font-size:0.78rem;margin-top:2px;">外部依赖</p>
+        </div>
+        <div class="g" style="padding:16px 28px;text-align:center;">
+          <div class="stat" style="font-size:2.8rem;">3</div>
+          <p style="font-size:0.78rem;margin-top:2px;">分钟出稿</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════════
+       02 — PROBLEM
+       ══════════════════════════════════════════ -->
+  <section class="slide" data-notes="好内容经常被糟糕的演示稿拖累。模板老旧、排版不稳、改一版成本高。slide-creator 解决这些问题。">
+    <div style="max-width:860px;width:100%;">
+      <span class="pill" style="margin-bottom:14px;display:inline-block;">痛点</span>
+      <h2 class="gt">好内容经常被糟糕的演示稿拖累</h2>
+      <div class="divider"></div>
+      <div class="cols2">
+        <div class="g" style="padding:22px 24px;border-left:4px solid #ef4444;">
+          <h4 style="color:#b91c1c;margin-bottom:10px;">Before — 传统方法</h4>
+          <ul class="bl">
+            <li>花 1 小时找模板，最后选个平庸的</li>
+            <li>调字体调字号，越改越乱</li>
+            <li>导出 PDF 后排版全错</li>
+          </ul>
+        </div>
+        <div class="g" style="padding:22px 24px;border-left:4px solid #10b981;">
+          <h4 style="color:#065f46;margin-bottom:10px;">After — slide-creator</h4>
+          <ul class="bl">
+            <li>一个命令，3 分钟出 8-12 页</li>
+            <li>21 种专业设计预设，拒绝通用 AI 审美</li>
+            <li>零依赖 HTML，纯浏览器运行</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════════
+       03 — SOLUTION / CORE FEATURES
+       ══════════════════════════════════════════ -->
+  <section class="slide" data-notes="从 prompt 到可演示 deck，一条命令搞定。21 种设计预设、内联编辑、播放模式、内容 Review 系统。">
+    <div style="max-width:820px;width:100%;">
+      <span class="pill" style="margin-bottom:14px;display:inline-block;">核心亮点</span>
+      <h2 class="gt">21 种设计预设，零依赖 HTML</h2>
+      <div class="divider"></div>
+      <div class="cols3">
+        <div class="g" style="padding:24px;position:relative;border-top:3px solid var(--accent-blue);">
+          <div style="position:absolute;top:14px;right:16px;font-size:1.6rem;">🎨</div>
+          <h4 style="margin-bottom:8px;margin-top:4px;">21 种设计预设</h4>
+          <p style="font-size:0.84rem;">Blue Sky、Terminal Green、Paper & Ink... 覆盖数据报告、商业路演、技术文档、创意品牌</p>
+        </div>
+        <div class="g" style="padding:24px;position:relative;border-top:3px solid var(--accent-sky);">
+          <div style="position:absolute;top:14px;right:16px;font-size:1.6rem;">▶</div>
+          <h4 style="margin-bottom:8px;margin-top:4px;">内联编辑 + 播放模式</h4>
+          <p style="font-size:0.84rem;">E 键进入编辑模式，F5 全屏播放，P 键打开演讲者窗口</p>
+        </div>
+        <div class="g" style="padding:24px;position:relative;border-top:3px solid var(--accent-indigo);">
+          <div style="position:absolute;top:14px;right:16px;font-size:1.6rem;">✓</div>
+          <h4 style="margin-bottom:8px;margin-top:4px;">内容 Review 系统</h4>
+          <p style="font-size:0.84rem;">14 个检查点，自动检测标题质量、布局多样性、反模式</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════════
+       04 — WORKFLOW
+       ══════════════════════════════════════════ -->
+  <section class="slide" data-notes="默认路径足够短：--plan 提炼 BRIEF，--generate 出 HTML，--review 自动优化。每个步骤都自动执行校验。">
+    <div style="max-width:820px;width:100%;">
+      <span class="pill" style="margin-bottom:14px;display:inline-block;">工作流</span>
+      <h2 class="gt">默认路径足够短</h2>
+      <div class="divider"></div>
+      <div style="display:flex;flex-direction:column;gap:11px;">
+        <div class="layer">
+          <div class="step">1</div>
+          <div>
+            <h4 style="margin-bottom:4px;"><code>/slide-creator --plan [prompt]</code></h4>
+            <p>生成 BRIEF.json（IR），1-2 分钟</p>
+          </div>
+        </div>
+        <div class="layer">
+          <div class="step">2</div>
+          <div>
+            <h4 style="margin-bottom:4px;"><code>/slide-creator --generate</code></h4>
+            <p>从 BRIEF.json 生成 HTML，执行 11 项生成前校验，1-3 分钟</p>
+          </div>
+        </div>
+        <div class="layer">
+          <div class="step">3</div>
+          <div>
+            <h4 style="margin-bottom:4px;"><code>/slide-creator --review [file.html]</code></h4>
+            <p>14 项检查点自动优化，&lt;1 分钟</p>
+          </div>
+        </div>
+        <div class="layer">
+          <div class="step">4</div>
+          <div>
+            <h4 style="margin-bottom:4px;"><code>/slide-creator</code></h4>
+            <p>交互式创建，风格探索模式，3-6 分钟</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════════
+       05 — STYLE DISCOVERY
+       ══════════════════════════════════════════ -->
+  <section class="slide" data-notes="看图选风格，不是描述风格。21 种预设覆盖 6 类内容场景。">
+    <div style="max-width:900px;width:100%;">
+      <span class="pill" style="margin-bottom:14px;display:inline-block;">风格探索</span>
+      <h2 class="gt">看图选风格，不是描述风格</h2>
+      <div class="divider"></div>
+      <div class="cols3" style="gap:10px;">
+        <div class="g" style="padding:16px 18px;">
+          <h4 style="font-size:0.85rem;margin-bottom:8px;">数据报告 / KPI 看板</h4>
+          <div style="display:flex;flex-direction:column;gap:5px;">
+            <span style="font-size:0.77rem;padding:3px 10px;background:rgba(15,23,42,0.08);border-radius:6px;">Data Story</span>
+            <span style="font-size:0.77rem;padding:3px 10px;background:rgba(15,23,42,0.08);border-radius:6px;">Enterprise Dark</span>
+            <span style="font-size:0.77rem;padding:3px 10px;background:rgba(15,23,42,0.08);border-radius:6px;">Swiss Modern</span>
+          </div>
+        </div>
+        <div class="g" style="padding:16px 18px;">
+          <h4 style="font-size:0.85rem;margin-bottom:8px;">商业路演 / VC Deck</h4>
+          <div style="display:flex;flex-direction:column;gap:5px;">
+            <span style="font-size:0.77rem;padding:3px 10px;background:rgba(37,99,235,0.08);border-radius:6px;">Bold Signal</span>
+            <span style="font-size:0.77rem;padding:3px 10px;background:rgba(37,99,235,0.08);border-radius:6px;">Aurora Mesh</span>
+            <span style="font-size:0.77rem;padding:3px 10px;background:rgba(37,99,235,0.08);border-radius:6px;">Enterprise Dark</span>
+          </div>
+        </div>
+        <div class="g" style="padding:16px 18px;">
+          <h4 style="font-size:0.85rem;margin-bottom:8px;">开发工具 / API</h4>
+          <div style="display:flex;flex-direction:column;gap:5px;">
+            <span style="font-size:0.77rem;padding:3px 10px;background:rgba(16,185,129,0.08);border-radius:6px;">Terminal Green</span>
+            <span style="font-size:0.77rem;padding:3px 10px;background:rgba(16,185,129,0.08);border-radius:6px;">Neon Cyber</span>
+            <span style="font-size:0.77rem;padding:3px 10px;background:rgba(16,185,129,0.08);border-radius:6px;">Neo-Retro Dev</span>
+          </div>
+        </div>
+        <div class="g" style="padding:16px 18px;">
+          <h4 style="font-size:0.85rem;margin-bottom:8px;">研究 / 思想领导力</h4>
+          <div style="display:flex;flex-direction:column;gap:5px;">
+            <span style="font-size:0.77rem;padding:3px 10px;background:rgba(139,92,246,0.08);border-radius:6px;">Modern Newspaper</span>
+            <span style="font-size:0.77rem;padding:3px 10px;background:rgba(139,92,246,0.08);border-radius:6px;">Paper & Ink</span>
+            <span style="font-size:0.77rem;padding:3px 10px;background:rgba(139,92,246,0.08);border-radius:6px;">Swiss Modern</span>
+          </div>
+        </div>
+        <div class="g" style="padding:16px 18px;">
+          <h4 style="font-size:0.85rem;margin-bottom:8px;">创意 / 个人品牌</h4>
+          <div style="display:flex;flex-direction:column;gap:5px;">
+            <span style="font-size:0.77rem;padding:3px 10px;background:rgba(245,158,11,0.08);border-radius:6px;">Vintage Editorial</span>
+            <span style="font-size:0.77rem;padding:3px 10px;background:rgba(245,158,11,0.08);border-radius:6px;">Split Pastel</span>
+            <span style="font-size:0.77rem;padding:3px 10px;background:rgba(245,158,11,0.08);border-radius:6px;">Neo-Brutalism</span>
+          </div>
+        </div>
+        <div class="g" style="padding:16px 18px;">
+          <h4 style="font-size:0.85rem;margin-bottom:8px;">产品发布 / SaaS</h4>
+          <div style="display:flex;flex-direction:column;gap:5px;">
+            <span style="font-size:0.77rem;padding:3px 10px;background:rgba(236,72,153,0.08);border-radius:6px;">Aurora Mesh</span>
+            <span style="font-size:0.77rem;padding:3px 10px;background:rgba(236,72,153,0.08);border-radius:6px;">Glassmorphism</span>
+            <span style="font-size:0.77rem;padding:3px 10px;background:rgba(236,72,153,0.08);border-radius:6px;">Electric Studio</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════════
+       06 — OUTPUT CONTRACT
+       ══════════════════════════════════════════ -->
+  <section class="slide" data-notes="输出不是一次性截图。浏览器原生运行、可播放、默认可编辑。">
+    <div style="max-width:840px;width:100%;">
+      <span class="pill" style="margin-bottom:14px;display:inline-block;">输出能力</span>
+      <h2 class="gt">输出不是一次性截图</h2>
+      <div class="divider"></div>
+      <div class="cols2">
+        <div style="display:flex;flex-direction:column;gap:10px;">
+          <div class="layer">
+            <div style="font-size:1.5rem;flex-shrink:0;">▶</div>
+            <div>
+              <h4 style="margin-bottom:4px;">播放模式 <kbd>F5</kbd> / <kbd>▶</kbd></h4>
+              <p style="font-size:0.84rem;">全屏缩放适配，控制栏自动隐藏</p>
+            </div>
+          </div>
+          <div class="layer">
+            <div style="font-size:1.5rem;flex-shrink:0;">P</div>
+            <div>
+              <h4 style="margin-bottom:4px;">演讲者模式 <kbd>P</kbd> 键</h4>
+              <p style="font-size:0.84rem;">同步窗口：备注、计时器、页数、翻页</p>
+            </div>
+          </div>
+          <div class="layer">
+            <div style="font-size:1.5rem;flex-shrink:0;">✏</div>
+            <div>
+              <h4 style="margin-bottom:4px;">编辑模式 <kbd>E</kbd> 键</h4>
+              <p style="font-size:0.84rem;">contenteditable，备注面板，Ctrl+S 保存</p>
+            </div>
+          </div>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:10px;">
+          <div class="g" style="padding:20px;border:1.5px dashed rgba(37,99,235,0.35);position:relative;">
+            <div style="position:absolute;top:-10px;left:16px;background:rgba(37,99,235,0.12);color:var(--accent-blue);font-size:10px;font-weight:700;padding:2px 8px;border-radius:4px;letter-spacing:0.08em;">编辑模式激活</div>
+            <h4 style="margin-bottom:8px;outline:1px dashed rgba(37,99,235,0.35);border-radius:3px;padding:2px 4px;display:inline-block;">此标题可编辑 ↗</h4>
+            <p style="font-size:0.82rem;outline:1px dashed rgba(37,99,235,0.35);border-radius:3px;padding:3px 6px;">所有文本内容都支持实时编辑，无需开发者工具。</p>
+          </div>
+          <div class="info">
+            输出为单个 HTML 文件，无外部依赖，在任何浏览器中打开即可演示。
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════════
+       07 — BEST FIT / USE CASES
+       ══════════════════════════════════════════ -->
+  <section class="slide" data-notes="适合需要高质量 deck 的日常场景。产品发布、内部汇报、技术分享都能复用。">
+    <div style="max-width:860px;width:100%;">
+      <span class="pill" style="margin-bottom:14px;display:inline-block;">适用场景</span>
+      <h2 class="gt">适合需要高质量 deck 的日常场景</h2>
+      <div class="divider"></div>
+      <div class="bento" style="grid-template-columns:repeat(2,1fr);grid-auto-rows:140px;">
+        <div class="g" style="padding:22px;display:flex;flex-direction:column;gap:6px;">
+          <h4 style="font-size:0.95rem;">产品发布 / SaaS 路演</h4>
+          <p style="font-size:0.8rem;">约 8 分钟 · Bold Signal / Aurora Mesh</p>
+        </div>
+        <div class="g" style="padding:22px;display:flex;flex-direction:column;gap:6px;">
+          <h4 style="font-size:0.95rem;">内部汇报 / KPI 看板</h4>
+          <p style="font-size:0.8rem;">约 5 分钟 · Data Story / Enterprise Dark</p>
+        </div>
+        <div class="g" style="padding:22px;display:flex;flex-direction:column;gap:6px;">
+          <h4 style="font-size:0.95rem;">技术分享 / API 文档</h4>
+          <p style="font-size:0.8rem;">约 6 分钟 · Terminal Green / Neon Cyber</p>
+        </div>
+        <div class="g" style="padding:22px;display:flex;flex-direction:column;gap:6px;">
+          <h4 style="font-size:0.95rem;">研究报告 / 白皮书</h4>
+          <p style="font-size:0.8rem;">约 10 分钟 · Modern Newspaper / Paper & Ink</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════════
+       08 — CLOSING / CTA
+       ══════════════════════════════════════════ -->
+  <section class="slide cover" style="overflow:hidden;" data-notes="先出一版，再精修。告诉 Claude 安装 slide-creator，用你的主题生成 deck。">
+    <div class="cloud" style="width:440px;height:440px;background:rgba(147,197,253,0.30);top:-160px;right:-90px;animation-duration:11s;"></div>
+    <div class="cloud" style="width:320px;height:320px;background:rgba(196,233,251,0.35);bottom:-100px;left:-60px;animation-duration:9s;animation-delay:-2s;"></div>
+
+    <div style="text-align:center;position:relative;z-index:10;max-width:680px;">
+      <span class="pill" style="margin-bottom:20px;display:inline-block;">开始使用</span>
+      <h2 class="gt" style="margin-bottom:10px;">先出一版，再精修</h2>
+      <p style="font-size:0.95rem;color:var(--text-secondary);margin-bottom:24px;">默认快（自动 3-6 分钟），关键 deck 再锁质量（精修 8-15 分钟）</p>
+      <div class="g" style="padding:24px 32px;text-align:left;">
+        <div class="cmd" style="margin-bottom:10px;">告诉 Claude「安装 https://github.com/kaisersong/slide-creator」</div>
+        <div class="cmd" style="margin-bottom:10px;">/slide-creator --plan 为 [你的主题] 制作路演 deck</div>
+        <div class="cmd" style="margin-bottom:16px;">/slide-creator --generate</div>
+        <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap;">
+          <div style="text-align:center;">
+            <kbd>E</kbd>
+            <p style="font-size:0.72rem;margin-top:4px;color:var(--text-muted);">编辑模式</p>
+          </div>
+          <div style="text-align:center;">
+            <kbd>F</kbd>
+            <p style="font-size:0.72rem;margin-top:4px;color:var(--text-muted);">全屏</p>
+          </div>
+          <div style="text-align:center;">
+            <kbd>P</kbd>
+            <p style="font-size:0.72rem;margin-top:4px;color:var(--text-muted);">演讲者</p>
+          </div>
+          <div style="text-align:center;">
+            <kbd>→</kbd>
+            <p style="font-size:0.72rem;margin-top:4px;color:var(--text-muted);">下一页</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</div><!-- /#track -->
+</div><!-- /#stage -->
+
+<script>
+/* ═══════════════════════════════════════════════════════
+   ORB POSITIONS
+   ═══════════════════════════════════════════════════════ */
+const orbPositions = [
+  /* 01 Cover    */ [-15,-20,500,  80,-10,400,  50, 65,350],
+  /* 02 Problem  */ [-10, 30,460,  72,-10,380,  40, 70,280],
+  /* 03 Features */ [-20, 40,460,  78,-15,400,  50, 72,300],
+  /* 04 Workflow */ [-15, 35,500,  76,  0,420,  55, 65,290],
+  /* 05 Styles   */ [ 60,-10,440, -10, 50,380,  40, 75,300],
+  /* 06 Output   */ [ 65, 15,440, -15, 60,380,  40, 80,300],
+  /* 07 UseCases */ [-10, 25,480,  80,-10,400,  50, 70,310],
+  /* 08 Closing  */ [-15,-20,500,  80,-10,400,  50, 60,350],
+];
+
+/* ═══════════════════════════════════════════════════════
+   PRESENTER WINDOW
+   ═══════════════════════════════════════════════════════ */
+if (new URLSearchParams(location.search).has('presenter')) {
+  document.title = 'Presenter — ' + document.title;
+  document.body.innerHTML = `
+  <style>
+    * { box-sizing: border-box; margin: 0; }
+    body { background: #111; color: #fff; font-family: system-ui, sans-serif; }
+    #pv { display: grid; grid-template-columns: 1fr 220px; gap: 1rem; padding: 1.25rem; align-items: start; }
+    .pv-panel { background: #1e1e1e; border-radius: 12px; padding: 1.25rem; }
+    #pv-label { font-size: 0.6rem; letter-spacing: 0.18em; text-transform: uppercase; color: #555; margin-bottom: 0.6rem; }
+    #pv-notes { font-size: 1.05rem; line-height: 1.85; color: #d0d0d0; }
+    #pv-right { display: flex; flex-direction: column; gap: 1rem; }
+    #pv-nav { display: flex; align-items: center; justify-content: space-between; gap: 0.5rem; }
+    .pv-arrow { width: 32px; height: 32px; border-radius: 6px; border: 1px solid #333; background: #2a2a2a; color: #aaa; font-size: 1rem; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: background 0.15s, color 0.15s; flex-shrink: 0; }
+    .pv-arrow:hover { background: #383838; color: #fff; }
+    #pv-counter { text-align: center; flex: 1; }
+    #pv-num { font-size: 1.6rem; font-weight: 700; font-variant-numeric: tabular-nums; line-height: 1; }
+    #pv-of { color: #555; font-size: 0.75rem; margin-top: 0.2rem; }
+    #pv-timer-box { text-align: center; }
+    #pv-timer-label { font-size: 0.6rem; letter-spacing: 0.18em; text-transform: uppercase; color: #555; margin-bottom: 0.3rem; }
+    #pv-timer { font-size: 1.5rem; font-weight: 700; font-family: monospace; font-variant-numeric: tabular-nums; }
+  </style>
+  <div id="pv">
+    <div class="pv-panel">
+      <div id="pv-label">Speaker Notes</div>
+      <div id="pv-notes">Waiting for main window…</div>
+    </div>
+    <div id="pv-right">
+      <div class="pv-panel">
+        <div id="pv-nav">
+          <button class="pv-arrow" id="pv-prev">←</button>
+          <div id="pv-counter">
+            <div id="pv-num">—</div>
+            <div id="pv-of">/ —</div>
+          </div>
+          <button class="pv-arrow" id="pv-next">→</button>
+        </div>
+      </div>
+      <div class="pv-panel" id="pv-timer-box">
+        <div id="pv-timer-label">Elapsed</div>
+        <div id="pv-timer">0:00</div>
+      </div>
+    </div>
+  </div>`;
+
+  const ch = new BroadcastChannel('slide-creator-presenter');
+  let startTime = null;
+
+  const pv = document.getElementById('pv');
+  let lastH = 0, roTimer = null;
+  new ResizeObserver(() => {
+    clearTimeout(roTimer);
+    roTimer = setTimeout(() => {
+      const h = Math.ceil(pv.getBoundingClientRect().height);
+      if (h === lastH) return;
+      lastH = h;
+      const chrome = window.outerHeight - window.innerHeight;
+      window.resizeTo(window.outerWidth, Math.max(260, h + chrome + 4));
+    }, 40);
+  }).observe(pv);
+
+  ch.addEventListener('message', e => {
+    if (e.data.type !== 'state') return;
+    if (!startTime) startTime = Date.now();
+    document.getElementById('pv-notes').textContent = e.data.notes || '(no notes for this slide)';
+    document.getElementById('pv-num').textContent = e.data.index + 1;
+    document.getElementById('pv-of').textContent = `/ ${e.data.total}`;
+  });
+  ch.postMessage({ type: 'request-state' });
+
+  setInterval(() => {
+    if (!startTime) return;
+    const s = Math.floor((Date.now() - startTime) / 1000);
+    document.getElementById('pv-timer').textContent =
+      `${Math.floor(s / 60)}:${String(s % 60).padStart(2, '0')}`;
+  }, 1000);
+
+  document.getElementById('pv-prev').addEventListener('click', () => ch.postMessage({ type: 'nav-prev' }));
+  document.getElementById('pv-next').addEventListener('click', () => ch.postMessage({ type: 'nav-next' }));
+  document.addEventListener('keydown', e => {
+    if (e.key === 'ArrowRight' || e.key === ' ') ch.postMessage({ type: 'nav-next' });
+    else if (e.key === 'ArrowLeft') ch.postMessage({ type: 'nav-prev' });
+  });
+
+} else {
+
+/* ═══════════════════════════════════════════════════════
+   MAIN NAVIGATION
+   ═══════════════════════════════════════════════════════ */
+const slides = Array.from(document.querySelectorAll('#track .slide'));
+const TOTAL  = slides.length;
+const track  = document.getElementById('track');
+const dotsEl = document.getElementById('nav-dots');
+const ctrEl  = document.getElementById('slide-counter');
+const o1 = document.getElementById('orb1');
+const o2 = document.getElementById('orb2');
+const o3 = document.getElementById('orb3');
+let cur = 0;
+
+const channel = new BroadcastChannel('slide-creator-presenter');
+let _onSlideChange = null;
+
+document.documentElement.style.setProperty('--slide-count', TOTAL);
+
+/* Build dots */
+for (let i = 0; i < TOTAL; i++) {
+  const d = document.createElement('button');
+  d.className = 'dot' + (i === 0 ? ' active' : '');
+  d.setAttribute('aria-label', 'Slide ' + (i + 1));
+  d.addEventListener('click', () => go(i));
+  dotsEl.appendChild(d);
+}
+
+function setOrbs(i) {
+  const p = orbPositions[i] || orbPositions[0];
+  const set = (el, l, t, s) => {
+    el.style.left = l + '%'; el.style.top = t + '%';
+    el.style.width = el.style.height = s + 'px';
+  };
+  set(o1, p[0], p[1], p[2]);
+  set(o2, p[3], p[4], p[5]);
+  set(o3, p[6], p[7], p[8]);
+}
+
+function updateDots() {
+  document.querySelectorAll('.dot').forEach((d, i) => d.classList.toggle('active', i === cur));
+}
+
+function broadcastState() {
+  channel.postMessage({ type: 'state', index: cur, total: TOTAL, notes: slides[cur]?.dataset.notes || '' });
+}
+
+function go(n) {
+  if (n < 0 || n >= TOTAL) return false;
+  slides[cur].classList.remove('active');
+  cur = n;
+  slides[cur].classList.add('active');
+  track.style.transform = `translateX(-${cur * 100}vw)`;
+  updateDots();
+  ctrEl.textContent = String(cur + 1).padStart(2, '0') + ' / ' + String(TOTAL).padStart(2, '0');
+  setOrbs(cur);
+  broadcastState();
+  _onSlideChange?.();
+  return true;
+}
+
+const ctrl = {
+  slides,
+  get currentSlide() { return cur; },
+  set currentSlide(v) { cur = v; },
+  goTo: go,
+  updateDots,
+  broadcastState,
+};
+
+go(0);
+
+/* Keyboard */
+document.addEventListener('keydown', e => {
+  if (e.target.getAttribute('contenteditable') || e.target.tagName === 'TEXTAREA') return;
+  if (e.key === 'ArrowRight' || e.key === ' ' || e.key === 'ArrowDown') { e.preventDefault(); ctrl.goTo(cur + 1); }
+  if (e.key === 'ArrowLeft'  || e.key === 'ArrowUp')                    { e.preventDefault(); ctrl.goTo(cur - 1); }
+  if (e.key === 'Home') ctrl.goTo(0);
+  if (e.key === 'End')  ctrl.goTo(TOTAL - 1);
+  if (e.key === 'p' || e.key === 'P') {
+    const url = location.href.split('?')[0] + '?presenter';
+    window.open(url, 'slide-presenter-' + Date.now(), 'width=1100,menubar=no,toolbar=no,location=no');
+  }
+});
+
+/* Listen for commands from presenter window */
+channel.addEventListener('message', e => {
+  if (e.data.type === 'nav-next') ctrl.goTo(cur + 1);
+  else if (e.data.type === 'nav-prev') ctrl.goTo(cur - 1);
+  else if (e.data.type === 'request-state') broadcastState();
+});
+
+/* Wheel — gap-based momentum detection, horizontal + vertical */
+let wState = 'idle';
+let wLastTime = 0, wFallback = null;
+track.addEventListener('transitionend', e => {
+  if (e.propertyName !== 'transform') return;
+  wState = 'draining'; wLastTime = Date.now();
+  clearTimeout(wFallback);
+  wFallback = setTimeout(() => { wState = 'idle'; }, 1500);
+});
+document.addEventListener('wheel', e => {
+  /* Don't hijack wheel from scrollable/editable regions */
+  if (e.target.tagName === 'TEXTAREA' || e.target.tagName === 'INPUT'
+    || e.target.getAttribute('contenteditable')) return;
+  /* Normalize deltaMode: DOM_DELTA_LINE (Firefox/Windows mouse wheel) uses line units (~20px) */
+  let dx = e.deltaX, dy = e.deltaY;
+  if (e.deltaMode === WheelEvent.DOM_DELTA_LINE)   { dx *= 20; dy *= 20; }
+  if (e.deltaMode === WheelEvent.DOM_DELTA_PAGE)    { dx *= 300; dy *= 300; }
+  const delta = Math.abs(dx) > Math.abs(dy) ? dx : dy;
+  if (Math.abs(delta) < 5) { wState = 'idle'; clearTimeout(wFallback); return; }
+  e.preventDefault();
+  if (wState === 'animating') return;
+  const now = Date.now();
+  if (wState === 'draining') {
+    const gap = now - wLastTime;
+    wLastTime = now;
+    if (gap <= 80) return;
+    wState = 'idle'; clearTimeout(wFallback);
+  }
+  wState = 'animating';
+  const moved = delta > 0 ? ctrl.goTo(cur + 1) : ctrl.goTo(cur - 1);
+  if (!moved) { wState = 'idle'; } /* boundary no-op — don't lock */
+}, { passive: false });
+
+/* Touch swipe — horizontal dominant, with axis ratio check */
+let touchStartX = 0, touchStartY = 0;
+document.addEventListener('touchstart', e => {
+  touchStartX = e.touches[0].clientX;
+  touchStartY = e.touches[0].clientY;
+}, { passive: true });
+document.addEventListener('touchend', e => {
+  const dx = e.changedTouches[0].clientX - touchStartX;
+  const dy = e.changedTouches[0].clientY - touchStartY;
+  if (Math.abs(dx) > 50 && Math.abs(dx) > Math.abs(dy) * 1.2) {
+    dx < 0 ? ctrl.goTo(cur + 1) : ctrl.goTo(cur - 1);
+  }
+});
+
+/* ═══════════════════════════════════════════════════════
+   PRESENTATION MODE
+   ═══════════════════════════════════════════════════════ */
+class PresentMode {
+  constructor(ctrl) {
+    this.ctrl = ctrl;
+    this.DW = 1440; this.DH = 900;
+    this.active = false;
+    this._resize = () => this._scale();
+
+    const btn = document.createElement('button');
+    btn.id = 'present-btn';
+    btn.title = 'Present (F5)';
+    btn.setAttribute('aria-label', 'Present');
+    btn.textContent = '▶';
+    document.body.appendChild(btn);
+
+    const counter = document.createElement('div');
+    counter.id = 'present-counter';
+    document.body.appendChild(counter);
+
+    btn.addEventListener('click', () => this.enter());
+    document.addEventListener('keydown', e => {
+      if (e.key === 'F5')                   { e.preventDefault(); this.enter(); }
+      if (e.key === 'Escape' && this.active) this.exit();
+    });
+    document.addEventListener('fullscreenchange', () => {
+      if (!document.fullscreenElement && this.active) this.exit();
+    });
+  }
+
+  enter() {
+    if (this.active) return;
+    this.active = true;
+    track.style.transform = 'none';
+    track.style.willChange = 'auto';
+    document.body.classList.add('presenting');
+    document.documentElement.requestFullscreen?.().catch(() => {});
+    window.addEventListener('resize', this._resize);
+    this._scale();
+    this._show(this.ctrl.currentSlide);
+
+    this._origGoTo = this.ctrl.goTo;
+    this.ctrl.goTo = (i) => {
+      const idx = Math.max(0, Math.min(i, this.ctrl.slides.length - 1));
+      this.ctrl.currentSlide = idx;
+      this._show(idx);
+      this.ctrl.updateDots?.();
+      this.ctrl.broadcastState?.();
+      _onSlideChange?.();
+    };
+  }
+
+  exit() {
+    if (!this.active) return;
+    this.active = false;
+    document.body.classList.remove('presenting');
+    document.querySelectorAll('.slide').forEach(s => s.classList.remove('p-on'));
+    if (document.fullscreenElement) document.exitFullscreen?.();
+    window.removeEventListener('resize', this._resize);
+    if (this._origGoTo) { this.ctrl.goTo = this._origGoTo; this._origGoTo = null; }
+    track.style.willChange = 'transform';
+    track.style.transform = `translateX(-${cur * 100}vw)`;
+  }
+
+  _scale() {
+    const s  = Math.min(window.innerWidth / this.DW, window.innerHeight / this.DH);
+    const ox = (window.innerWidth  - this.DW * s) / 2;
+    const oy = (window.innerHeight - this.DH * s) / 2;
+    const r  = document.documentElement;
+    r.style.setProperty('--pdw', this.DW + 'px');
+    r.style.setProperty('--pdh', this.DH + 'px');
+    r.style.setProperty('--ps',  s);
+    r.style.setProperty('--pox', ox + 'px');
+    r.style.setProperty('--poy', oy + 'px');
+  }
+
+  _show(i) {
+    document.querySelectorAll('.slide').forEach((s, idx) => {
+      s.classList.toggle('p-on', idx === i);
+      s.classList.toggle('active', idx === i);
+    });
+    const c = document.getElementById('present-counter');
+    if (c) c.textContent = `${i + 1} / ${this.ctrl.slides.length}`;
+  }
+}
+
+/* ═══════════════════════════════════════════════════════
+   EDIT MODE
+   ═══════════════════════════════════════════════════════ */
+function setupEditor() {
+  const panel    = document.getElementById('notes-panel');
+  const label    = document.getElementById('notes-panel-label');
+  const textarea = document.getElementById('notes-textarea');
+  const toggle   = document.getElementById('editToggle');
+  const hotzone  = document.querySelector('.edit-hotzone');
+  let hideTimeout = null;
+
+  const editor = {
+    active: false,
+    toggle: () => editor.active ? editor.exit() : editor.enter(),
+    enter: () => {
+      editor.active = true;
+      toggle.classList.add('active');
+      toggle.textContent = '✓ Done';
+      slides.forEach(s => {
+        s.querySelectorAll('h1,h2,h3,h4,p,li,.stat').forEach(el => {
+          el.setAttribute('contenteditable', 'true');
+          el.style.outline = 'none';
+        });
+      });
+      panel.classList.add('active');
+      updateNotesPanel();
+    },
+    exit: () => {
+      editor.active = false;
+      toggle.classList.remove('active');
+      toggle.textContent = '✏ Edit';
+      slides.forEach(s => {
+        s.querySelectorAll('[contenteditable]').forEach(el => {
+          el.removeAttribute('contenteditable');
+          el.style.outline = '';
+        });
+      });
+      panel.classList.remove('active');
+      document.activeElement?.blur();
+    }
+  };
+
+  hotzone.addEventListener('mouseenter', () => { clearTimeout(hideTimeout); toggle.classList.add('show'); });
+  hotzone.addEventListener('mouseleave', () => { hideTimeout = setTimeout(() => { if (!editor.active) toggle.classList.remove('show'); }, 400); });
+  toggle.addEventListener('mouseenter', () => clearTimeout(hideTimeout));
+  toggle.addEventListener('mouseleave', () => { hideTimeout = setTimeout(() => { if (!editor.active) toggle.classList.remove('show'); }, 400); });
+  hotzone.addEventListener('click', () => editor.toggle());
+  toggle.addEventListener('click', () => editor.toggle());
+
+  document.getElementById('notes-panel-header').addEventListener('click', () => {
+    panel.classList.toggle('collapsed');
+  });
+
+  textarea.addEventListener('input', () => {
+    if (slides[cur]) { slides[cur].dataset.notes = textarea.value; broadcastState(); }
+  });
+
+  document.addEventListener('keydown', e => {
+    if (e.target.getAttribute('contenteditable') || e.target.tagName === 'TEXTAREA') return;
+    if (e.key === 'e' || e.key === 'E') editor.toggle();
+    if ((e.ctrlKey || e.metaKey) && e.key === 's') { e.preventDefault(); saveFile(); }
+  });
+
+  function updateNotesPanel() {
+    if (!editor.active) return;
+    label.textContent = `SPEAKER NOTES — SLIDE ${cur + 1} / ${TOTAL}`;
+    textarea.value = slides[cur]?.dataset.notes || '';
+  }
+
+  _onSlideChange = updateNotesPanel;
+}
+
+function saveFile() {
+  const html = '<!DOCTYPE html>\n' + document.documentElement.outerHTML;
+  fetch(location.pathname, {
+    method: 'PUT', body: new TextEncoder().encode(html),
+    headers: { 'Content-Type': 'text/html' }
+  }).catch(() => {
+    const a = Object.assign(document.createElement('a'), {
+      href: URL.createObjectURL(new Blob([html], { type: 'text/html' })),
+      download: location.pathname.split('/').pop() || 'presentation.html'
+    });
+    a.click(); URL.revokeObjectURL(a.href);
+  });
+}
+
+new PresentMode(ctrl);
+setupEditor();
+
+} /* end else (main window) */
+</script>
+</body>
+</html>
