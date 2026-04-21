@@ -1,0 +1,157 @@
+{
+  "schema_version": 1,
+  "brief_id": "slide-creator-intro-creative-voltage-2026-04-21",
+  "mode": "polish",
+  "language": "zh-CN",
+  "title": "slide-creator 简介",
+  "audience": "想快速理解 slide-creator 核心价值和风格能力的技术型用户",
+  "desired_action": "感受到 slide-creator 的速度感、风格能力和真实交付面，并愿意立刻试跑",
+  "deck": {
+    "deck_type": "product-demo",
+    "page_count": 8,
+    "output_format": "html-slides"
+  },
+  "style": {
+    "preset": "Creative Voltage",
+    "tone": "高能、明确、偏工具感展示",
+    "visual_density": "medium"
+  },
+  "content": {
+    "source_policy": "distill-only",
+    "must_include": [
+      "slide-creator 是什么",
+      "长上下文爆炸问题",
+      "show-dont-tell 风格预览",
+      "BRIEF.json 压缩路径",
+      "21 个预设",
+      "Auto / Polish / Review",
+      "浏览器原生交付"
+    ],
+    "must_avoid": [
+      "空泛 marketing 文案",
+      "重复版式",
+      "只强调视觉而忽略工作流",
+      "把结果验证放到最后才提"
+    ]
+  },
+  "narrative": {
+    "thesis": "slide-creator 的强项是把高上下文压力下的内容生成，转换成先压缩后渲染的稳定流程，并用鲜明 preset 让输出既快又有辨识度。",
+    "page_roles": [
+      "hero",
+      "problem",
+      "brief-compression",
+      "preset-grid",
+      "workflow",
+      "runtime-features",
+      "install-and-fit",
+      "closing"
+    ],
+    "slides": [
+      {
+        "slide_number": 1,
+        "role": "hero",
+        "title": "slide-creator",
+        "key_point": "把长上下文压成 BRIEF，再出浏览器原生 deck",
+        "visual": "full electric hero"
+      },
+      {
+        "slide_number": 2,
+        "role": "problem",
+        "title": "上下文越长，最后生成 slide 越容易漂",
+        "key_point": "模型会漏步骤、丢风格、丢硬约束",
+        "visual": "split-panel evidence"
+      },
+      {
+        "slide_number": 3,
+        "role": "brief-compression",
+        "title": "三个预览锁定视觉风格",
+        "key_point": "先看图，再把选中的 preset 和 page roles 写进 BRIEF.json",
+        "visual": "three-step style discovery"
+      },
+      {
+        "slide_number": 4,
+        "role": "preset-grid",
+        "title": "21 种预设，让风格先被看见",
+        "key_point": "Blue Sky 讲清晰，Creative Voltage 讲速度和张力",
+        "visual": "voltage grid"
+      },
+      {
+        "slide_number": 5,
+        "role": "workflow",
+        "title": "Auto 快出稿，Polish 锁质量，Review 查漏补缺",
+        "key_point": "公开路径只有两条，但内部仍遵循 prompt -> preview -> BRIEF -> HTML -> Review",
+        "visual": "mode flow"
+      },
+      {
+        "slide_number": 6,
+        "role": "runtime-features",
+        "title": "播放、编辑、演讲者、导出都是交付面",
+        "key_point": "HTML 本身就能演示，而不是导出前的中间垃圾稿",
+        "visual": "feature grid"
+      },
+      {
+        "slide_number": 7,
+        "role": "install-and-fit",
+        "title": "一行命令安装，产品介绍 / 技术分享 / 创意 demo 都能直接试跑",
+        "key_point": "保留双路径安装和具体入口，缩短第一次试跑距离",
+        "visual": "install blocks"
+      },
+      {
+        "slide_number": 8,
+        "role": "closing",
+        "title": "先跑第一版，再用 eval 把它收紧",
+        "key_point": "真实工作流不从空白模板开始，而从 prompt 和 BRIEF 开始",
+        "visual": "cta stack"
+      }
+    ]
+  },
+  "runtime": {
+    "editing_mode": true,
+    "presenter_mode": true,
+    "watermark_mode": "injected-last-slide",
+    "export_intent": "none"
+  },
+  "polish_controls": {
+    "style_constraints": [
+      "Use Creative Voltage as the fixed preset with strong tool-energy and sharp contrast",
+      "Keep the deck focused on long-context compression, BRIEF-first generation, and runtime delivery",
+      "Avoid generic marketing claims; every slide should point back to the real workflow"
+    ],
+    "image_plan": [
+      {
+        "slide_number": 1,
+        "intent": "electric hero with punchy command-led framing"
+      },
+      {
+        "slide_number": 4,
+        "intent": "preset grid showing style discovery before generation"
+      },
+      {
+        "slide_number": 8,
+        "intent": "cta stack tied to prompt-to-eval workflow"
+      }
+    ],
+    "reference_branch": "参考驱动"
+  },
+  "plan_view": {
+    "emit_planning_view": false,
+    "planning_view_path": "PLANNING.md"
+  },
+  "timing": {
+    "estimate": {
+      "plan": "1-2 min",
+      "generate": "2-4 min",
+      "validate": "<1 min",
+      "polish": "1-3 min",
+      "total": "4-8 min"
+    },
+    "actual": {
+      "plan": "0m 00s",
+      "generate": "0m 00s",
+      "validate": "0m 00s",
+      "polish": "0m 00s",
+      "total": "0m 00s"
+    }
+  },
+  "notes": "This BRIEF is the source of truth for the Creative Voltage intro deck."
+}

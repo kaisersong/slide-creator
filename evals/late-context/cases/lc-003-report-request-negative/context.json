@@ -1,0 +1,13 @@
+{
+  "case_id": "lc-003-report-request-negative",
+  "messages": [
+    {
+      "role": "user",
+      "content": "前面已经整理了一堆市场分析和数据，请把它做成一个可滚动的研究报告页面。"
+    },
+    {
+      "role": "user",
+      "content": "最后如果合适再考虑导出，不需要 slides。"
+    }
+  ]
+}

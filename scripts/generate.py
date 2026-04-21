@@ -1,8 +1,10 @@
 #!/usr/bin/env python3
 """
-slide-creator --generate (Blue Sky preset)
+slide-creator Blue Sky demo helper.
 
-Reads PLANNING.md + blue-sky-starter.html -> generates a complete HTML presentation.
+The main skill contract is now IR-first (`BRIEF.json` as the source of truth).
+This helper remains a legacy Blue Sky renderer that consumes an optional
+human-readable `PLANNING.md` view derived from that IR.
 
 The starter template contains all CSS, JS, components, and infrastructure.
 This script only replaces slide content inside #track.

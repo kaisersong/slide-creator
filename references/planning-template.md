@@ -1,6 +1,6 @@
-# PLANNING.md Template
+# PLANNING.md View Template
 
-Use this structure when generating `PLANNING.md` during `--plan` mode.
+Use this structure only when the user explicitly asks for a human-readable planning view derived from `BRIEF.json`.
 
 ---
 

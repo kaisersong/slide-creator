@@ -1,0 +1,130 @@
+{
+  "schema_version": 1,
+  "brief_id": "slide-creator-demo-auto",
+  "mode": "auto",
+  "language": "zh-CN",
+  "title": "Slide Creator",
+  "audience": "正在评估 slide-creator 的产品经理和开发者",
+  "desired_action": "用真实内容试跑第一套 deck",
+  "deck": {
+    "deck_type": "user-content",
+    "page_count": 8,
+    "output_format": "html-slides"
+  },
+  "style": {
+    "preset": "Blue Sky",
+    "tone": "清爽、可信、偏产品介绍",
+    "visual_density": "medium"
+  },
+  "content": {
+    "source_policy": "distill-only",
+    "must_include": [
+      "slide-creator 是什么",
+      "从 prompt 到 deck 的轻量工作流",
+      "浏览器原生输出与可编辑性"
+    ],
+    "must_avoid": [
+      "泛泛开场",
+      "连续重复布局",
+      "与 thesis 无关的背景信息"
+    ]
+  },
+  "narrative": {
+    "thesis": "slide-creator 把内容提炼、风格锁定和 HTML 交付压缩成一个可重复的轻量工作流。",
+    "page_roles": [
+      "cover",
+      "problem",
+      "solution",
+      "workflow",
+      "style-discovery",
+      "output-contract",
+      "best-fit",
+      "closing"
+    ],
+    "slides": [
+      {
+        "slide_number": 1,
+        "role": "cover",
+        "title": "Slide Creator",
+        "key_point": "从 prompt 到可演示 HTML deck",
+        "visual": "hero statement"
+      },
+      {
+        "slide_number": 2,
+        "role": "problem",
+        "title": "好内容经常被糟糕的演示稿拖累",
+        "key_point": "模板老旧、排版不稳、改一版成本高",
+        "visual": "comparison cards"
+      },
+      {
+        "slide_number": 3,
+        "role": "solution",
+        "title": "slide-creator 让 deck 生成更稳定",
+        "key_point": "把规划、风格和交付压到一个工作流里",
+        "visual": "three-step flow"
+      },
+      {
+        "slide_number": 4,
+        "role": "workflow",
+        "title": "默认路径足够短",
+        "key_point": "先提炼 BRIEF，再生成 HTML",
+        "visual": "command timeline"
+      },
+      {
+        "slide_number": 5,
+        "role": "style-discovery",
+        "title": "风格选择是 wow moment",
+        "key_point": "先看 3 个预览，再锁定 preset",
+        "visual": "preview trio"
+      },
+      {
+        "slide_number": 6,
+        "role": "output-contract",
+        "title": "输出不是一次性截图",
+        "key_point": "浏览器原生运行、可播放、默认可编辑",
+        "visual": "capability badges"
+      },
+      {
+        "slide_number": 7,
+        "role": "best-fit",
+        "title": "适合需要高质量 deck 的日常场景",
+        "key_point": "产品发布、内部汇报、技术分享都能复用",
+        "visual": "use case cards"
+      },
+      {
+        "slide_number": 8,
+        "role": "closing",
+        "title": "先出一版，再精修",
+        "key_point": "默认快，关键 deck 再锁质量",
+        "visual": "closing CTA"
+      }
+    ]
+  },
+  "runtime": {
+    "editing_mode": true,
+    "presenter_mode": true,
+    "watermark_mode": "injected-last-slide",
+    "export_intent": "none"
+  },
+  "plan_view": {
+    "emit_planning_view": false,
+    "planning_view_path": "PLANNING.md"
+  },
+  "timing": {
+    "estimate": {
+      "plan": "1-2 min",
+      "generate": "1-3 min",
+      "validate": "<1 min",
+      "polish": "0-2 min",
+      "total": "3-6 min"
+    },
+    "actual": {
+      "plan": "0m 00s",
+      "generate": "0m 00s",
+      "validate": "0m 00s",
+      "polish": "0m 00s",
+      "total": "0m 00s"
+    }
+  },
+  "notes": ""
+}

@@ -1,0 +1,17 @@
+{
+  "case_id": "lc-002-style-switch-near-end",
+  "messages": [
+    {
+      "role": "user",
+      "content": "我有一份路演内容，前面已经把论点、结构和关键数据都写好了，默认按 Enterprise Dark 来想。"
+    },
+    {
+      "role": "user",
+      "content": "其实最后更想要偏编辑感但别太花。"
+    },
+    {
+      "role": "user",
+      "content": "那就生成 slide 吧，改成 Paper & Ink，英文，Auto。"
+    }
+  ]
+}

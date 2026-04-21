@@ -1,0 +1,14 @@
+{
+  "mode": "polish",
+  "language": "zh-CN",
+  "deck": {
+    "deck_type": "user-content",
+    "page_count": 12
+  },
+  "style": {
+    "preset": "Swiss Modern"
+  },
+  "narrative": {
+    "thesis": "AI coding agent 需要可见控制感，而不是隐藏自动化。"
+  }
+}

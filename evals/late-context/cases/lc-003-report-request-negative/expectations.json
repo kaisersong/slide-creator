@@ -1,0 +1,5 @@
+{
+  "should_trigger": false,
+  "expected_skill": "kai-report-creator",
+  "forbidden_skill": "slide-creator"
+}

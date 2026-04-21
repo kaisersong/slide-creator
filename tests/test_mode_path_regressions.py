@@ -1,3 +1,4 @@
+import json
 from pathlib import Path
 import re
 
@@ -12,14 +13,16 @@ def read(path: Path) -> str:
     return path.read_text(encoding="utf-8")
 
 
+def read_json(path: Path) -> dict:
+    return json.loads(read(path))
+
+
 def soup(path: Path) -> BeautifulSoup:
     return BeautifulSoup(read(path), "html.parser")
 
 
 def extract_preset(path: Path) -> str:
-    match = re.search(r"^\*\*Preset\*\*:\s*(.+)$", read(path), re.MULTILINE)
-    assert match, f"Missing preset in {path.name}"
-    return match.group(1).strip()
+    return read_json(path)["style"]["preset"]
 
 
 def extract_root_var(path: Path, name: str) -> str:
@@ -29,15 +32,11 @@ def extract_root_var(path: Path, name: str) -> str:
 
 
 def extract_actual_timing_fields(path: Path) -> list[str]:
-    content = read(path)
-    match = re.search(r"\*\*Actual\*\*:(.*?)(?:\n## |\Z)", content, re.DOTALL)
-    assert match, f"Missing actual timing block in {path.name}"
-    block = match.group(1)
-    return re.findall(r"`(plan|generate|validate|polish|total)`", block)
+    return list(read_json(path)["timing"]["actual"].keys())
 
 
-AUTO_PLAN = MODE_PATHS / "intent-broker-auto-PLANNING.md"
-POLISH_PLAN = MODE_PATHS / "intent-broker-polish-PLANNING.md"
+AUTO_PLAN = MODE_PATHS / "intent-broker-auto-BRIEF.json"
+POLISH_PLAN = MODE_PATHS / "intent-broker-polish-BRIEF.json"
 AUTO_HTML = MODE_PATHS / "intent-broker-auto.html"
 POLISH_HTML = MODE_PATHS / "intent-broker-polish.html"
 

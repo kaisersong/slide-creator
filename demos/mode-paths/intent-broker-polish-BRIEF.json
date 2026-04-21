@@ -1,0 +1,164 @@
+{
+  "schema_version": 1,
+  "brief_id": "intent-broker-polish",
+  "mode": "polish",
+  "language": "zh-CN",
+  "title": "Intent Broker",
+  "audience": "对协议设计、可靠性和多 agent 协作基础设施有判断权的技术负责人、产品负责人、潜在协作者",
+  "desired_action": "把 Intent Broker 讲成为什么现在值得做的基础设施故事",
+  "deck": {
+    "deck_type": "user-content",
+    "page_count": 10,
+    "output_format": "html-slides"
+  },
+  "style": {
+    "preset": "Enterprise Dark",
+    "tone": "深色、高密度、克制但有节奏、偏产品化架构叙事",
+    "visual_density": "high"
+  },
+  "content": {
+    "source_policy": "distill-only",
+    "must_include": [
+      "本地优先、协议优先、可靠优先",
+      "核心对象关系",
+      "事件流与测试策略"
+    ],
+    "must_avoid": [
+      "模块清单式平铺",
+      "与 thesis 无关的工程细节",
+      "连续三页纯列表"
+    ]
+  },
+  "narrative": {
+    "thesis": "Intent Broker 的价值不在多一个聊天通道，而在把多 agent 协作从临时对话升级成可重放、可审计、可恢复的本地协议基础设施。",
+    "page_roles": [
+      "hook",
+      "problem",
+      "boundary",
+      "principles",
+      "concept-map",
+      "lifecycle",
+      "reliability",
+      "architecture",
+      "api-and-tests",
+      "closing"
+    ],
+    "slides": [
+      {
+        "slide_number": 1,
+        "role": "hook",
+        "title": "Intent Broker",
+        "key_point": "把多 agent 协作从聊天提升为协议",
+        "visual": "hero metrics"
+      },
+      {
+        "slide_number": 2,
+        "role": "problem",
+        "title": "现在的多窗口协作没有可靠任务语义",
+        "key_point": "协作通道不统一、状态推进不可审计、断线易丢上下文",
+        "visual": "problem cards"
+      },
+      {
+        "slide_number": 3,
+        "role": "boundary",
+        "title": "Broker 只负责协作协议、事件日志和投递",
+        "key_point": "不做推理、不做工具执行、不建模各家内部会话协议",
+        "visual": "do-not-do"
+      },
+      {
+        "slide_number": 4,
+        "role": "principles",
+        "title": "v1 的设计由三类原则驱动",
+        "key_point": "本地优先、协议优先、可靠优先",
+        "visual": "principle matrix"
+      },
+      {
+        "slide_number": 5,
+        "role": "concept-map",
+        "title": "五个核心对象组成协作骨架",
+        "key_point": "少量稳定结构加自然语言 body 已足够支撑闭环",
+        "visual": "concept graph"
+      },
+      {
+        "slide_number": 6,
+        "role": "lifecycle",
+        "title": "状态来自 intent 聚合，而不是客户端直接写库",
+        "key_point": "task 和 approval 都是受控状态机",
+        "visual": "dual state machine"
+      },
+      {
+        "slide_number": 7,
+        "role": "reliability",
+        "title": "先落事件，再投递 inbox",
+        "key_point": "SQLite event log 与 cursor 构成至少一次投递承诺",
+        "visual": "event sequence"
+      },
+      {
+        "slide_number": 8,
+        "role": "architecture",
+        "title": "六个组件围绕 event store 分工",
+        "key_point": "单进程本地 broker 已足够小而完整",
+        "visual": "architecture diagram"
+      },
+      {
+        "slide_number": 9,
+        "role": "api-and-tests",
+        "title": "接口和测试面已足够支撑 v1 闭环",
+        "key_point": "register、intents、inbox、tasks、approvals、replay 形成最小 API",
+        "visual": "api plus test matrix"
+      },
+      {
+        "slide_number": 10,
+        "role": "closing",
+        "title": "先实现 v1 闭环，再向远程化和 UI 演进",
+        "key_point": "Intent Broker 是本地协作基础设施，不是聊天系统",
+        "visual": "closing CTA"
+      }
+    ]
+  },
+  "runtime": {
+    "editing_mode": true,
+    "presenter_mode": true,
+    "watermark_mode": "injected-last-slide",
+    "export_intent": "none"
+  },
+  "plan_view": {
+    "emit_planning_view": false,
+    "planning_view_path": "PLANNING.md"
+  },
+  "timing": {
+    "estimate": {
+      "plan": "2-4 min",
+      "generate": "2-4 min",
+      "validate": "<1 min",
+      "polish": "2-6 min",
+      "total": "8-15 min"
+    },
+    "actual": {
+      "plan": "0m 00s",
+      "generate": "0m 13s",
+      "validate": "0m 14s",
+      "polish": "0m 00s",
+      "total": "0m 27s"
+    }
+  },
+  "polish_controls": {
+    "style_constraints": [
+      "每一页必须回答一个完整判断",
+      "图示页优先于 bullet 页",
+      "状态推进和数据流都要用方向性图示"
+    ],
+    "image_plan": [
+      {
+        "slide_number": 5,
+        "intent": "用关系图承担核心对象组织方式的解释任务"
+      },
+      {
+        "slide_number": 7,
+        "intent": "用事件流图承担可靠性证明任务"
+      }
+    ],
+    "reference_branch": "参考驱动"
+  },
+  "notes": ""
+}

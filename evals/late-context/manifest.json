@@ -1,0 +1,8 @@
+{
+  "version": 1,
+  "cases": [
+    "lc-001-basic-late-trigger",
+    "lc-002-style-switch-near-end",
+    "lc-003-report-request-negative"
+  ]
+}

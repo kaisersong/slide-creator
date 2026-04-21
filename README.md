@@ -59,60 +59,113 @@ Click any screenshot below to open the live demo (same content, different styles
 
 ---
 
-## Design Philosophy: Skills as Domain Harness Engineering
+## Design Philosophy: Build for the Real Last Mile
 
-This section explains the principles behind slide-creator — both as a user tool and as a Claude Code skill. These principles are reusable for anyone building skills.
+slide-creator is built around one observation: people usually spend a long time generating or discussing content first, then ask for slides at the very end. That is the worst possible moment to depend on raw conversation context. The model is already overloaded, style signals are diluted, and hard constraints get dropped.
 
-### 1. Progressive Disclosure
+The design philosophy of slide-creator is to protect that last mile.
 
-A skill file loads entirely into the AI's context on every invocation. Size directly affects focus.
+### 1. IR-first workflow, planning is optional
 
-slide-creator solves this with a **command routing table**: SKILL.md is a thin router (~150 lines) dispatching each command to the smallest reference set.
+The main workflow is now explicitly **IR-first workflow**:
 
 ```
---plan        → references/planning-template.md only
+user prompt → BRIEF.json → HTML → validate → eval
+```
+
+`--plan` exists to distill a durable `BRIEF.json`, not to force a human review step every time. `PLANNING.md` is optional, a human-readable view when someone explicitly wants to inspect structure before rendering.
+
+This matters because the generator should not carry the full chat history into the render step. `--generate` should execute against a small, hard truth source, not against a messy, late-stage conversation.
+
+### 2. Public modes stay simple, internal pipeline stays strict
+
+Users should not need to think in six internal phases. The public mental model is deliberately small:
+
+- **Auto** for fast first draft
+- **Polish** for the quality-locked path
+
+Internally, the pipeline is stricter than the UI suggests. The real path is style discovery, BRIEF distillation, rendering, validation, and review. Simpler UX outside, stronger contract inside.
+
+This is why the README and the skill keep talking about Auto / Polish, while the repo still maintains explicit routing, review logic, and eval infrastructure.
+
+### 3. Progressive disclosure for model context
+
+A skill file loads into model context on every invocation. That means context is a product surface, not an implementation detail.
+
+slide-creator keeps `SKILL.md` as a thin router and pushes detail into references so each path loads only what it needs:
+
+```
+--plan        → references/brief-template.json only
 --generate    → references/html-template.md + one style file + base-css.md
-interactive   → references/workflow.md (full Phase 1–5)
-style picker  → references/style-index.md (21 presets + mood mapping)
+interactive   → references/workflow.md
+style picker  → references/style-index.md
 ```
 
-**Result:** `--plan` never touches CSS. `--generate` never loads the other 20 styles. Export lives in a separate skill (`kai-html-export`).
+The goal is not elegance for its own sake. It is to reduce context pressure so the model does not forget the important parts right before it renders.
 
-This is progressive disclosure applied to AI context: **reveal information at the moment it's needed, not before.** Good UX principles make good skill design.
+### 4. Show, don't tell, for visual choices
 
-### 2. Show, Don't Tell: Visual Style Discovery
+Most users cannot reliably describe a visual direction in abstract language. They can react to concrete options immediately.
 
-Most people cannot articulate design preferences in words until they see examples. Asking "minimalist or bold?" gets vague answers. Showing three 50-line HTML previews and asking "which of these?" gets an instant reaction.
+That is why slide-creator treats style selection as a preview problem, not a questionnaire problem. Show three strong directions. Let the user point. Then write the decision into `BRIEF.json`.
 
-Phase 2 is built around this insight. The "wow moment" — seeing your own content title in three completely different aesthetic directions — turns an abstract choice into a visceral one. Preview files are deliberately tiny (~50 lines, self-contained) so they generate in seconds.
+This is also why style choice belongs before rendering. If style remains a vague instruction until the HTML step, it is too late.
 
-Features don't create engagement. The experience of choosing creates engagement.
+### 5. Zero-dependency runtime is part of the product
 
-### 3. Viewport Fitting as a Hard Constraint
+The output is not a screenshot, and not a build artifact that still needs another toolchain. The output is a browser-native deck with:
 
-A slide that scrolls mid-viewing is broken. Obvious but easy to violate when generating HTML — overflow just happens.
+- viewport-fitted slides
+- presenter mode
+- **Default-on** inline editing
+- keyboard navigation
+- self-contained runtime
 
-slide-creator treats viewport fitting as **non-negotiable**:
+The zero-dependency requirement forces discipline. If a deck only works after a bundler, remote font fetch, or extra runtime glue, the product has already missed its point.
 
-- Every `.slide` must have `height: 100vh; overflow: hidden;`
-- Content density limits per slide type (max 6 bullets, max 6 grid cards)
-- When content would overflow: **split the slide, don't squish**
+### 6. Validate before trust
 
-Base CSS uses `clamp()` for all sizes, scaling from landscape phones to 4K. CSS gotchas exist because `calc(-1 * clamp(...))` vs `-clamp(...)` is a silent failure — no console error, just invisible layout breakage.
+The system should catch failure before the user opens a broken deck.
 
-### 4. Custom Theme System: Composable Design Language
+That is why slide-creator is moving quality checks earlier:
 
-The `themes/` directory lets anyone extend slide-creator with their brand style. Drop a `reference.md` describing the visual system, and it appears as "Custom: folder-name" in the style picker.
+- `--plan` creates a structured `BRIEF.json`
+- `--generate` renders from the IR instead of from the whole conversation
+- `validate-brief.py` checks the brief contract
+- `tests/validate.py --strict` checks the runtime contract
+- evals score route / compression / render / efficiency
 
-Two-file convention (`reference.md` + optional `starter.html`) mirrors Blue Sky:
-- `reference.md` describes the design language (colors, typography, components)
-- `starter.html` is pre-built boilerplate for complex visual systems (animated backgrounds, custom JS, non-trivial layouts)
+The important design idea here is not "more tests". It is **better failure localization**. If a result is bad, we want to know whether the mistake happened in routing, compression, rendering, or polish. That feedback then improves the skill itself.
 
-Simple themes need one file. Complex ones ship a complete working template.
+### 7. Against slide slop, visual and semantic
 
-### 5. Content-Type Routing as Intelligent Defaults
+Most AI slide failures are not dramatic. They are mediocre. Sparse pages, repeated layouts, weak titles, and generic structure. That is what makes decks feel machine-made.
 
-21 presets is expressive but curated. Rather than browsing all options, slide-creator maps content types to recommendations:
+slide-creator treats this as a design problem and a content problem:
+
+- visual density must be intentional
+- layout rhythm must change
+- titles should carry judgments when the content type calls for it
+- numbers should surface early when the material has them
+- jargon should be translated for the audience
+
+The point is not to make every deck look busy. It is to avoid accidental emptiness and accidental vagueness.
+
+### 8. Extensible themes, but with a contract
+
+Custom themes are supported, but they are not prompt soup. The contract is explicit:
+
+- create `themes/your-theme/`
+- add `reference.md` for the design language
+- optionally add `starter.html` for complex systems
+
+This makes themes composable and reviewable. A theme is not just "use our brand colors". It is a reusable rendering contract.
+
+### 9. Content-type routing is a quality feature
+
+21 presets are useful only if the system helps users start in the right neighborhood.
+
+That is why slide-creator routes by content type:
 
 ```
 Data report / KPI dashboard → Data Story, Enterprise Dark, Swiss Modern
@@ -120,79 +173,7 @@ Business pitch / VC deck    → Bold Signal, Aurora Mesh, Enterprise Dark
 Developer tool / API docs   → Terminal Green, Neon Cyber, Neo-Retro Dev Deck
 ```
 
-This routing table serves two audiences: human users wanting a sensible starting point, and AI agents calling programmatically (knowing content type but not which style).
-
-### 6. Design Quality Baseline: Against Slide Slop
-
-The most common AI-slide failure is not broken CSS — it's **accidental emptiness**. Two bullets centered in full-height, or one column with four items and another with one. Looks unfinished regardless of design system polish.
-
-`references/design-quality.md` (loaded during `--generate`) forces layout decisions based on content density:
-
-**Minimum fill rule.** Every slide must use ≥65% of area. Sparse content triggers layout switch, not centering:
-
-```
-2 bullets  → quote/big-stat layout, or expand to 2-line statements
-1 insight  → large quote / single stat / manifesto with visual treatment
-3 bullets  → expand each with detail, or switch to 3-card grid
-```
-
-*Intentional* whitespace (breathing-room slide, oversized type) is a design choice. *Accidental* whitespace (content floating mid-page) is a generation failure.
-
-**Multi-column balance.** No column <60% of tallest column's height. Unequal content requires one of three paths: expand shorter column, redesign as explicit asymmetric layout (`2fr 1fr`), or merge to single column.
-
-**90/8/2 color law.** 90% neutral, 8% structural accent (≤3 element types), 2% bullet accent (1–2 precise hits). Prevents accent color on every heading, icon, border, button — which produces noise, not hierarchy.
-
-**No 3 consecutive bullet slides.** After two bullet-list slides, next must be a visual anchor: large stat, pull quote, diagram, or layout-break. Cognitive pacing, not aesthetic preference.
-
-**Content-tone color calibration.** Planning template suggests tone-matched accent colors:
-
-```
-Contemplative / Research → #7C6853 warm brown (grounded, editorial)
-Technical / Engineering  → #3D5A80 navy (precise, authoritative)
-Business / Data          → #0F7B6C deep teal (confident, forward)
-Narrative / Annual       → #B45309 amber (warm, momentum)
-```
-
-**Pre-output self-check.** Before final HTML, 6-gate check: viewport overflow, minimum fill, column balance, color law, 3-consecutive-bullet rule, and the anti-slop question: *"If you told someone 'an AI made this' — would they believe it?"* If yes, revise first.
-
-### 7. Content Review System: Beyond Visual Slop
-
-Design Quality Baseline addresses visual slop. But AI slides have deeper **content slop** — noun-phrase titles instead of claims, no quantified benefits in first three slides, jargon without translation.
-
-Content Review System introduces 16 checkpoints:
-
-**Auto-detectable (6):**
-- Perspective flip (first-person → audience-centered)
-- Conclusion-first titles (noun phrase → judgment statement)
-- 3-concept rule (max 3 new concepts per slide)
-- Layout rotation (no 3 consecutive same-layout slides)
-- Font size floor
-- Visual hierarchy (squint test)
-
-**AI-advised (10):**
-- Pain point first (slides 1–2 show real user pain)
-- Quantified benefits (slides 1–3 have numbers/%)
-- MECE principle (no overlapping step definitions)
-- Occam's razor (remove tangential content)
-- Attention reset (break every 8–10 dense slides)
-- Tension contrast (before/after, manual/auto)
-- Breathing room slides
-- Jargon translation (first appearance needs analogy)
-- Image/chart noise reduction
-
-**Three rule types:**
-
-| Type | Trigger | Example |
-|---|---|---|
-| **Hard** | Always | Layout rotation, font size |
-| **Context-aware** | Based on content type | Judgment-title for proposals, noun-phrase for intros |
-| **Advisory** | Suggest only | "Consider adding a case study here" |
-
-**Why context-aware matters:** "slide-creator intro" should keep noun phrase. "XX Architecture Overview" (proposal) should become "XX Architecture ensures zero missed traffic peaks." Same rule, different behavior by content type.
-
-**Quantified benefits:** If content has numbers ("~40% efficiency gain"), extract to slides 1–3. If none, suggest in review — don't fabricate.
-
-**Generation-time embedding:** Rules embed during Phase 3 generation (Polish mode), not post-hoc. Quality assurance shifts left — fix before creation.
+Good defaults reduce rework. In practice, that means fewer bad first drafts, fewer style resets, and less wasted context.
 
 ---
 
@@ -228,8 +209,8 @@ git clone https://github.com/kaisersong/slide-creator ~/.openclaw/skills/slide-c
 ### Commands
 
 ```
-/slide-creator --plan       # Analyze content + resources/, create PLANNING.md
-/slide-creator --generate   # Generate HTML from PLANNING.md
+/slide-creator --plan       # Analyze content + resources/, create BRIEF.json
+/slide-creator --generate   # Generate HTML from BRIEF.json
 /slide-creator --review     # Diagnose and fix content quality issues
 /slide-creator              # Start from scratch (interactive style discovery)
 /kai-html-export            # Export to PPTX or PNG (separate skill)
@@ -249,10 +230,11 @@ Same content switching between Auto/Polish should keep the same preset unless us
 2. See 3 style previews, pick one
 3. Generate full deck, open in browser
 
-**Two-stage workflow (complex content):**
+**IR-first workflow (complex content):**
 1. Put assets in `resources/` folder
 2. Run `/slide-creator --plan "My AI startup pitch deck"`
-3. Review `PLANNING.md`, then `/slide-creator --generate`
+3. Inspect `BRIEF.json`; only ask for `PLANNING.md` if a human review view is needed
+4. Run `/slide-creator --generate`
 
 **PPT conversion:**
 1. Put `.pptx` file in current directory
@@ -289,7 +271,7 @@ Tracked segments: `plan`, `generate`, `validate`, `polish`, `total`
 
 ### Core
 
-- **Two-stage workflow** — `--plan` to outline, `--generate` to produce
+- **IR-first workflow** — `--plan` distills `BRIEF.json`, `--generate` renders from the IR
 - **Two planning depths** — Auto for speed, Polish for narrative and visual locking
 - **Content Review System** — 16 checkpoints: `--review` for on-demand diagnosis; Polish auto-runs review; three rule types (hard/context-aware/advisory)
 - **21 design presets** — each with named layout variations
@@ -410,6 +392,8 @@ For PPTX/PNG export: `clawhub install kai-html-export` or `pip install playwrigh
 ---
 
 ## Version History
+
+**v2.19.0** — IR-first release: `BRIEF.json` becomes the primary truth source, `PLANNING.md` is optional human view, late-context eval fixtures added under `evals/generated-decks/`, README design philosophy rewritten around prompt → BRIEF → HTML → validate → eval, and stronger regression coverage added for the new contract.
 
 **v2.18.1** — Paper & Ink style fix: restored correct editorial style reference (Cormorant Garamond headlines, Source Serif 4 body, crimson ornamental rules, drop caps); added `.slide-content` wrapper to slide HTML structure for proper vertical centering; Chinese text font fallback now uses system serif (宋体) instead of Noto Sans SC.
 

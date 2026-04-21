@@ -1,0 +1,96 @@
+{
+  "run_id": "slide-creator-intro-2026-04-21",
+  "generated_at": "2026-04-21",
+  "prompt_path": "evals/generated-decks/2026-04-21-slide-creator-intro/user-prompt.md",
+  "comparison_path": "evals/generated-decks/2026-04-21-slide-creator-intro/comparison.md",
+  "workflow": [
+    "user prompt",
+    "BRIEF.json",
+    "HTML",
+    "validate",
+    "eval"
+  ],
+  "weights": {
+    "route": 0.2,
+    "compression": 0.3,
+    "render": 0.4,
+    "efficiency": 0.1
+  },
+  "cases": [
+    {
+      "case_id": "slide-creator-intro-blue-sky",
+      "preset": "Blue Sky",
+      "brief_path": "evals/generated-decks/2026-04-21-slide-creator-intro/slide-creator-intro-blue-sky-BRIEF.json",
+      "output_path": "evals/generated-decks/2026-04-21-slide-creator-intro/slide-creator-intro-blue-sky-zh.html",
+      "pass": true,
+      "hard_failures": [],
+      "validations": {
+        "brief": {
+          "passed": true,
+          "command": "python scripts/validate-brief.py evals/generated-decks/2026-04-21-slide-creator-intro/slide-creator-intro-blue-sky-BRIEF.json",
+          "result": "VALID: slide-creator-intro-blue-sky-BRIEF.json"
+        },
+        "html_strict": {
+          "passed": true,
+          "command": "python tests/validate.py evals/generated-decks/2026-04-21-slide-creator-intro/slide-creator-intro-blue-sky-zh.html --strict",
+          "result": "All strict checks passed"
+        }
+      },
+      "evidence": [
+        "HTML explicitly references BRIEF.json as the source of truth and keeps Auto / Polish as the exposed user paths",
+        "Blue Sky now restores chapter rhythm, style-routing, eval-proof, and a concrete zero-dependency plus install CTA",
+        "Edit mode, presenter mode, keyboard navigation, and self-contained runtime all passed strict validation",
+        "Headless cover screenshot with virtual-time-budget confirms the new cover renders correctly and stays within the Blue Sky visual family"
+      ],
+      "scores": {
+        "route": 1.0,
+        "compression": 1.0,
+        "render": 0.99,
+        "efficiency": 0.97
+      },
+      "overall": 0.993,
+      "notes": "Compared with the original Blue Sky demo, this version keeps the airy preset signature while adding a clearer IR-first product story, stronger quality framing, and an explicit zero-dependency trial path. Visual spot check used Chrome headless screenshots with virtual-time-budget to allow entrance animations to complete."
+    },
+    {
+      "case_id": "slide-creator-intro-creative-voltage",
+      "preset": "Creative Voltage",
+      "brief_path": "evals/generated-decks/2026-04-21-slide-creator-intro/slide-creator-intro-creative-voltage-BRIEF.json",
+      "output_path": "evals/generated-decks/2026-04-21-slide-creator-intro/slide-creator-intro-creative-voltage-zh.html",
+      "pass": true,
+      "hard_failures": [],
+      "validations": {
+        "brief": {
+          "passed": true,
+          "command": "python scripts/validate-brief.py evals/generated-decks/2026-04-21-slide-creator-intro/slide-creator-intro-creative-voltage-BRIEF.json",
+          "result": "VALID: slide-creator-intro-creative-voltage-BRIEF.json"
+        },
+        "html_strict": {
+          "passed": true,
+          "command": "python tests/validate.py evals/generated-decks/2026-04-21-slide-creator-intro/slide-creator-intro-creative-voltage-zh.html --strict",
+          "result": "All strict checks passed"
+        }
+      },
+      "evidence": [
+        "HTML explicitly references BRIEF.json and the long-context compression step",
+        "Creative Voltage preserves the original cover energy, restores the show-dont-tell preview moment, and keeps a concrete ClawHub install CTA",
+        "Auto / Polish / Review are present in the rendered deck and the runtime remains self-contained, editable, and presenter-ready",
+        "Headless cover screenshot confirms the updated deck keeps the original preset identity while explaining the new IR-first workflow more clearly"
+      ],
+      "scores": {
+        "route": 1.0,
+        "compression": 1.0,
+        "render": 0.995,
+        "efficiency": 0.97
+      },
+      "overall": 0.995,
+      "notes": "Compared with the original Creative Voltage demo, this version preserves the preset's speed and punch while adding a better explanation of long-context failure, BRIEF-first generation, and result-eval tightening. It remains close to the original visually, but stronger as a product-intro deck."
+    }
+  ],
+  "summary": {
+    "pass_count": 2,
+    "fail_count": 0,
+    "best_case": "slide-creator-intro-creative-voltage",
+    "best_overall": 0.995,
+    "takeaway": "Both decks now follow the real prompt-to-BRIEF-to-HTML path, pass strict validation, and outperform their original demo counterparts for the specific job of introducing slide-creator as an IR-first product."
+  }
+}
