@@ -35,7 +35,7 @@
 ### Slide 2 — 系统架构
 
 用分层堆叠图展示工作流程：
-- **第 1 层（INPUT）** — "你的内容"：笔记、文档、PLANNING.md、图片、PPTX，accent 色半透明背景
+- **第 1 层（INPUT）** — "你的内容"：笔记、文档、BRIEF.json、图片、PPTX，accent 色半透明背景
 - **↓ 箭头** — `arch-arrow` 连接
 - **第 2 层（PROCESS）** — "/SLIDE-CREATOR"：样式发现 → 布局生成 → 代码质量检查
 - **↓ 箭头** — `arch-arrow` 连接
@@ -105,3 +105,4 @@
 | 6 (Commands) | 55-65% |
 | 7 (Metrics) | 60-70% |
 | 8 (CTA) | 45-55% |
+

@@ -1,6 +1,6 @@
 # Design System Reference
 
-Default visual system for generated presentations. Users may override in their prompt or PLANNING.md.
+Default visual system for generated presentations. Users may override in their prompt or BRIEF.json.
 
 ## Style Preset Quick Reference
 
@@ -111,3 +111,4 @@ li::before {
   vertical-align: middle;
 }
 ```
+

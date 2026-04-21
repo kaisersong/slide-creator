@@ -1,0 +1,175 @@
+{
+  "schema_version": 1,
+  "brief_id": "slide-creator-intro-blue-sky-2026-04-21",
+  "mode": "polish",
+  "language": "zh-CN",
+  "title": "slide-creator 简介",
+  "audience": "第一次了解 slide-creator 的产品经理、开发者和内容创作者",
+  "desired_action": "理解 slide-creator 的核心工作流，并愿意用真实内容试跑第一套 deck",
+  "deck": {
+    "deck_type": "product-demo",
+    "page_count": 10,
+    "output_format": "html-slides"
+  },
+  "style": {
+    "preset": "Blue Sky",
+    "tone": "清晰、可信、轻产品介绍",
+    "visual_density": "medium"
+  },
+  "content": {
+    "source_policy": "distill-only",
+    "must_include": [
+      "slide-creator 是什么",
+      "IR-first 工作流",
+      "BRIEF.json 的角色",
+      "21 个风格预设",
+      "什么内容配什么风格",
+      "零依赖 HTML 运行与安装入口",
+      "浏览器原生播放与编辑",
+      "质量护栏与 eval",
+      "持续迭代带来的可信度"
+    ],
+    "must_avoid": [
+      "泛泛开场",
+      "连续重复布局",
+      "只讲视觉不讲交付",
+      "把 planning 当默认真相源"
+    ]
+  },
+  "narrative": {
+    "thesis": "slide-creator 的价值不只是更快出稿，而是先把长上下文压成 BRIEF，再稳定生成可播放、可编辑、可验证的浏览器原生演示稿。",
+    "page_roles": [
+      "cover",
+      "chapter-problem",
+      "problem",
+      "preset-overview",
+      "chapter-ir-first",
+      "workflow-quality",
+      "runtime-editing",
+      "style-routing",
+      "eval-proof",
+      "closing"
+    ],
+    "slides": [
+      {
+        "slide_number": 1,
+        "role": "cover",
+        "title": "slide-creator 简介",
+        "key_point": "先压缩上下文，再生成浏览器原生 deck",
+        "visual": "hero stats"
+      },
+      {
+        "slide_number": 2,
+        "role": "chapter-problem",
+        "title": "为什么最后一步最容易失真",
+        "key_point": "长上下文堆到最后，最容易在真正生成 slide 时丢掉关键约束",
+        "visual": "chapter break"
+      },
+      {
+        "slide_number": 3,
+        "role": "problem",
+        "title": "问题不是做 slide 很慢，而是最后一步经常失真",
+        "key_point": "长上下文、风格不稳和平台绑定会一起拉低结果质量",
+        "visual": "comparison cards"
+      },
+      {
+        "slide_number": 4,
+        "role": "preset-overview",
+        "title": "21 种设计预设，每种都有签名视觉语言",
+        "key_point": "先看预设与内容匹配，再决定最终视觉语气",
+        "visual": "preset matrix"
+      },
+      {
+        "slide_number": 5,
+        "role": "chapter-ir-first",
+        "title": "先压缩，再生成",
+        "key_point": "BRIEF 让生成阶段只处理真正需要的上下文",
+        "visual": "chapter break"
+      },
+      {
+        "slide_number": 6,
+        "role": "workflow-quality",
+        "title": "真实路径是 user prompt -> BRIEF.json -> HTML",
+        "key_point": "schema、strict validate 和四层评分共同约束结果",
+        "visual": "workflow plus quality rails"
+      },
+      {
+        "slide_number": 7,
+        "role": "runtime-editing",
+        "title": "播放、演讲者、浏览器内编辑，一体化交付",
+        "key_point": "HTML 不是截图，而是可播放、可备注、可编辑的成品",
+        "visual": "runtime and editing split"
+      },
+      {
+        "slide_number": 8,
+        "role": "style-routing",
+        "title": "什么内容配什么风格，一眼匹配",
+        "key_point": "不同内容类型通过 preset 路由得到更合适的表达",
+        "visual": "style routing grid"
+      },
+      {
+        "slide_number": 9,
+        "role": "eval-proof",
+        "title": "结果可验证，也能持续迭代",
+        "key_point": "brief 校验、HTML validate、四层评分和持续迭代共同建立可信度",
+        "visual": "evaluation and trust stack"
+      },
+      {
+        "slide_number": 10,
+        "role": "closing",
+        "title": "先出一版，再精修",
+        "key_point": "从真实内容开始，零依赖 HTML 交付后可直接安装并试跑",
+        "visual": "closing CTA"
+      }
+    ]
+  },
+  "runtime": {
+    "editing_mode": true,
+    "presenter_mode": true,
+    "watermark_mode": "injected-last-slide",
+    "export_intent": "none"
+  },
+  "polish_controls": {
+    "style_constraints": [
+      "Use Blue Sky as the fixed preset with clear product-intro tone",
+      "Keep the narrative IR-first and avoid drifting back to planning-first wording",
+      "Preserve browser-native runtime cues such as edit mode and presenter mode"
+    ],
+    "image_plan": [
+      {
+        "slide_number": 1,
+        "intent": "hero stats and cloud-bank atmosphere"
+      },
+      {
+        "slide_number": 4,
+        "intent": "preset matrix emphasizing Blue Sky and Creative Voltage"
+      },
+      {
+        "slide_number": 9,
+        "intent": "brief-plus-eval proof stack"
+      }
+    ],
+    "reference_branch": "参考驱动"
+  },
+  "plan_view": {
+    "emit_planning_view": false,
+    "planning_view_path": "PLANNING.md"
+  },
+  "timing": {
+    "estimate": {
+      "plan": "1-2 min",
+      "generate": "2-4 min",
+      "validate": "<1 min",
+      "polish": "1-3 min",
+      "total": "4-8 min"
+    },
+    "actual": {
+      "plan": "0m 00s",
+      "generate": "0m 00s",
+      "validate": "0m 00s",
+      "polish": "0m 00s",
+      "total": "0m 00s"
+    }
+  },
+  "notes": "This BRIEF is the source of truth for the Blue Sky intro deck."
+}

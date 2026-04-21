@@ -1,0 +1,351 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/kaisersong/slide-creator/schemas/generation-brief.schema.json",
+  "title": "slide-creator Generation Brief",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "brief_id",
+    "mode",
+    "language",
+    "title",
+    "audience",
+    "desired_action",
+    "deck",
+    "style",
+    "content",
+    "narrative",
+    "runtime",
+    "plan_view",
+    "timing"
+  ],
+  "properties": {
+    "schema_version": {
+      "type": "integer",
+      "const": 1
+    },
+    "brief_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "mode": {
+      "type": "string",
+      "enum": [
+        "auto",
+        "polish"
+      ]
+    },
+    "language": {
+      "type": "string",
+      "minLength": 2
+    },
+    "title": {
+      "type": "string",
+      "minLength": 1
+    },
+    "audience": {
+      "type": "string",
+      "minLength": 1
+    },
+    "desired_action": {
+      "type": "string",
+      "minLength": 1
+    },
+    "deck": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "deck_type",
+        "page_count",
+        "output_format"
+      ],
+      "properties": {
+        "deck_type": {
+          "type": "string",
+          "enum": [
+            "product-demo",
+            "user-content"
+          ]
+        },
+        "page_count": {
+          "type": "integer",
+          "minimum": 5,
+          "maximum": 20
+        },
+        "output_format": {
+          "type": "string",
+          "const": "html-slides"
+        }
+      }
+    },
+    "style": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "preset",
+        "tone",
+        "visual_density"
+      ],
+      "properties": {
+        "preset": {
+          "type": "string",
+          "minLength": 1
+        },
+        "tone": {
+          "type": "string",
+          "minLength": 1
+        },
+        "visual_density": {
+          "type": "string",
+          "enum": [
+            "low",
+            "medium",
+            "high"
+          ]
+        }
+      }
+    },
+    "content": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "source_policy",
+        "must_include",
+        "must_avoid"
+      ],
+      "properties": {
+        "source_policy": {
+          "type": "string",
+          "const": "distill-only"
+        },
+        "must_include": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "must_avoid": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      }
+    },
+    "narrative": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "thesis",
+        "page_roles",
+        "slides"
+      ],
+      "properties": {
+        "thesis": {
+          "type": "string",
+          "minLength": 1
+        },
+        "page_roles": {
+          "type": "array",
+          "minItems": 5,
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "slides": {
+          "type": "array",
+          "minItems": 5,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "slide_number",
+              "role",
+              "title",
+              "key_point",
+              "visual"
+            ],
+            "properties": {
+              "slide_number": {
+                "type": "integer",
+                "minimum": 1
+              },
+              "role": {
+                "type": "string",
+                "minLength": 1
+              },
+              "title": {
+                "type": "string",
+                "minLength": 1
+              },
+              "key_point": {
+                "type": "string",
+                "minLength": 1
+              },
+              "visual": {
+                "type": "string",
+                "minLength": 1
+              }
+            }
+          }
+        }
+      }
+    },
+    "runtime": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "editing_mode",
+        "presenter_mode",
+        "watermark_mode",
+        "export_intent"
+      ],
+      "properties": {
+        "editing_mode": {
+          "type": "boolean"
+        },
+        "presenter_mode": {
+          "type": "boolean"
+        },
+        "watermark_mode": {
+          "type": "string",
+          "const": "injected-last-slide"
+        },
+        "export_intent": {
+          "type": "string",
+          "enum": [
+            "none",
+            "pptx",
+            "png"
+          ]
+        }
+      }
+    },
+    "plan_view": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "emit_planning_view",
+        "planning_view_path"
+      ],
+      "properties": {
+        "emit_planning_view": {
+          "type": "boolean"
+        },
+        "planning_view_path": {
+          "type": "string",
+          "const": "PLANNING.md"
+        }
+      }
+    },
+    "timing": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "estimate",
+        "actual"
+      ],
+      "properties": {
+        "estimate": {
+          "$ref": "#/$defs/timingBlock"
+        },
+        "actual": {
+          "$ref": "#/$defs/timingBlock"
+        }
+      }
+    },
+    "polish_controls": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "style_constraints",
+        "image_plan",
+        "reference_branch"
+      ],
+      "properties": {
+        "style_constraints": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "image_plan": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "slide_number",
+              "intent"
+            ],
+            "properties": {
+              "slide_number": {
+                "type": "integer",
+                "minimum": 1
+              },
+              "intent": {
+                "type": "string",
+                "minLength": 1
+              },
+              "reference_direction": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "reference_branch": {
+          "type": "string",
+          "const": "参考驱动"
+        }
+      }
+    },
+    "notes": {
+      "type": "string",
+      "maxLength": 400
+    }
+  },
+  "$defs": {
+    "timingBlock": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "plan",
+        "generate",
+        "validate",
+        "polish",
+        "total"
+      ],
+      "properties": {
+        "plan": {
+          "type": "string",
+          "minLength": 1
+        },
+        "generate": {
+          "type": "string",
+          "minLength": 1
+        },
+        "validate": {
+          "type": "string",
+          "minLength": 1
+        },
+        "polish": {
+          "type": "string",
+          "minLength": 1
+        },
+        "total": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "mode": "auto",
+  "language": "en",
+  "style": {
+    "preset": "Paper & Ink"
+  },
+  "plan_view": {
+    "emit_planning_view": false
+  }
+}

@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import json
 import re
 from pathlib import Path
 
@@ -9,7 +10,7 @@ SKILL_MD = ROOT / "SKILL.md"
 README_MD = ROOT / "README.md"
 README_ZH_MD = ROOT / "README.zh-CN.md"
 WORKFLOW_MD = ROOT / "references" / "workflow.md"
-PLANNING_TEMPLATE_MD = ROOT / "references" / "planning-template.md"
+BRIEF_TEMPLATE_JSON = ROOT / "references" / "brief-template.json"
 HTML_TEMPLATE_MD = ROOT / "references" / "html-template.md"
 BASE_CSS_MD = ROOT / "references" / "base-css.md"
 ANTI_PATTERNS_MD = ROOT / "references" / "impeccable-anti-patterns.md"
@@ -18,6 +19,10 @@ DESIGN_QUALITY_MD = ROOT / "references" / "design-quality.md"
 
 def read_text(path: Path) -> str:
     return path.read_text(encoding="utf-8")
+
+
+def read_json(path: Path) -> dict:
+    return json.loads(read_text(path))
 
 
 def test_skill_and_workflow_lock_preset_across_modes():
@@ -31,11 +36,11 @@ def test_skill_and_workflow_lock_preset_across_modes():
     assert "record segmented timing for:" in workflow
 
 
-def test_planning_template_treats_preset_as_locked():
-    template = read_text(PLANNING_TEMPLATE_MD)
-    assert "Treat preset as locked once chosen" in template
-    assert "`plan`" in template
-    assert "`total`" in template
+def test_brief_template_treats_human_plan_as_optional_view():
+    template = read_json(BRIEF_TEMPLATE_JSON)
+    assert template["plan_view"]["emit_planning_view"] is False
+    assert template["plan_view"]["planning_view_path"] == "PLANNING.md"
+    assert list(template["timing"]["estimate"].keys()) == ["plan", "generate", "validate", "polish", "total"]
 
 
 def test_html_template_requires_preset_metadata_and_title_fit_guard():
@@ -64,6 +69,8 @@ def test_readmes_publish_mode_aliases_and_timing_guidance():
 
     assert "自动" in readme_zh
     assert "精修" in readme_zh
+    assert "BRIEF.json" in readme
+    assert "BRIEF.json" in readme_zh
 
 
 def test_slide_container_has_no_visual_properties():

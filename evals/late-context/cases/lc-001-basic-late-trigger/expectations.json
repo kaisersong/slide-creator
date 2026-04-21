@@ -1,0 +1,17 @@
+{
+  "should_trigger": true,
+  "expected_skill": "slide-creator",
+  "expected_mode": "polish",
+  "required_brief_fields": [
+    "audience",
+    "style.preset",
+    "narrative.thesis",
+    "narrative.page_roles"
+  ],
+  "required_html_checks": [
+    "present-mode",
+    "edit-mode",
+    "watermark-injected",
+    "style-signature"
+  ]
+}

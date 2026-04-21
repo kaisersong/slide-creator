@@ -1,7 +1,7 @@
 ---
 name: kai-slide-creator
 description: 生成零依赖 HTML 演示文稿 — 21 种设计预设，视觉风格探索，播放/演讲者模式。适用于路演、产品发布、技术分享等场景。
-version: 2.18.1
+version: 2.19.0
 metadata: {"openclaw":{"emoji":"🎞","os":["darwin","linux","windows"],"homepage":"https://github.com/kaisersong/slide-creator","requires":{"bins":["python3"]},"install":[]}}
 ---
 
@@ -34,8 +34,8 @@ metadata: {"openclaw":{"emoji":"🎞","os":["darwin","linux","windows"],"homepag
 ## 使用方式
 
 ```bash
-/slide-creator --plan [prompt]       # 生成 PLANNING.md 大纲
-/slide-creator --generate            # 从 PLANNING.md 生成 HTML
+/slide-creator --plan [prompt]       # 生成 BRIEF.json（IR）
+/slide-creator --generate            # 从 BRIEF.json 生成 HTML
 /slide-creator --review [file.html]  # 14 项检查点自动优化
 /slide-creator                       # 交互式创建（风格探索）
 ```
@@ -63,14 +63,14 @@ metadata: {"openclaw":{"emoji":"🎞","os":["darwin","linux","windows"],"homepag
 
 | 命令 | 加载内容 | 行为 |
 |------|----------|------|
-| `--plan [prompt]` | `references/planning-template.md` | 创建 PLANNING.md，不生成 HTML |
+| `--plan [prompt]` | `references/brief-template.json` | 创建 `BRIEF.json`；仅在用户明确要求时额外派生 `PLANNING.md` 视图 |
 | `--generate` | SKILL.md + `references/html-template.md` + `references/js-engine.md` + composition 源 + 风格文件 + `base-css.md` + `impeccable-anti-patterns.md` + `title-quality.md` | 生成 HTML，执行 11 项生成前校验 |
 | `--review [file.html]` | `references/review-checklist.md` + 目标 HTML | 执行 17 项检查点 → 确认窗口 → 修复/报告 |
 | 风格一致性审计 | `tests/audit_style_consistency.py` | 检查所有风格文件的 CSS 类定义是否完整列入 Signature Required CSS Classes |
 | 无 flag (交互式) | `references/workflow.md` + 其他按需 | 遵循 Phase 0-5 |
 | 直接给内容 + 风格 | 同 `--generate` | 立即生成，执行 11 项生成前校验 |
 
-**渐进式披露：** 每个命令只加载所需文件。`--plan` 不接触 CSS。
+**渐进式披露：** 每个命令只加载所需文件。`--plan` 只提炼 IR，不接触 CSS。
 
 ### deck_type 路由
 
@@ -80,9 +80,9 @@ metadata: {"openclaw":{"emoji":"🎞","os":["darwin","linux","windows"],"homepag
 | `user-content` | 12 | `references/composition-guide.md` | 用户自定义内容（路演/产品发布/报告） |
 
 **决策逻辑：**
-- `--plan` 命令：在 PLANNING.md 中写入 `deck_type` 和 `page_count` 字段
+- `--plan` 命令：在 `BRIEF.json` 中写入 `deck_type`、`page_count`、`page_roles` 和运行约束
 - 用户直接给内容 + 风格：介绍 slide-creator → `product-demo`，否则 → `user-content`
-- `--generate`：读取 PLANNING.md 中的 `deck_type` 决定使用哪个 composition 源
+- `--generate`：读取 `BRIEF.json` 中的 `deck_type` 决定使用哪个 composition 源
 
 ---
 
@@ -128,7 +128,7 @@ metadata: {"openclaw":{"emoji":"🎞","os":["darwin","linux","windows"],"homepag
 
 **快速路由：**
 
-- **PLANNING.md 已存在** → 读取并作为真相源，跳至 Phase 3
+- **BRIEF.json 已存在** → 读取并作为真相源，跳至 Phase 3
 - **用户直接给内容 + 风格** → 跳过 Phase 1/2，立即生成
 - **用户有 `.ppt/.pptx` 文件** → Phase 4（PPT 转换）
 - **用户要增强现有 HTML** → 读取后遵循 Enhancement Mode 守则
@@ -177,12 +177,12 @@ metadata: {"openclaw":{"emoji":"🎞","os":["darwin","linux","windows"],"homepag
 # 从主题或备注生成
 /slide-creator 为 [主题] 制作路演 deck
 
-# 从计划文件生成（跳过交互式 Phase）
-/slide-creator --generate  # 自动读取 PLANNING.md
+# 从 IR 生成（跳过交互式 Phase）
+/slide-creator --generate  # 自动读取 BRIEF.json
 
-# 两阶段（生成前审查大纲）
+# 两段式（默认 IR-first）
 /slide-creator --plan "Acme v2 产品发布"
-# （如需要，编辑 PLANNING.md）
+# （如需给人审阅，再派生 PLANNING.md 视图）
 /slide-creator --generate
 
 # 生成后导出 PPTX

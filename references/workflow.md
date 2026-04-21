@@ -39,13 +39,14 @@ Mode label display rule:
 
 1. Scan `resources/` — read text/markdown files, note images. Tell the user what was found (or "Planning from prompt only" if empty).
 2. Extract: topic, audience, tone, language, slide count, goals, and the correct planning depth from the prompt.
-3. Draft the plan following [planning-template.md](planning-template.md).
-4. In `自动` / `Auto`, keep the plan lightweight: outline, style direction, images as resources, and deliverables only.
-5. In `精修` / `Polish`, add deck thesis, narrative arc, page roles, style constraints, and image intent for only the slides that truly need imagery. If the visual lock benefits from references, run `参考驱动` as an internal sub-step here instead of exposing it as a user-facing mode.
-6. Save as `PLANNING.md` in the working directory.
+3. Draft the IR following [brief-template.json](brief-template.json).
+4. In `自动` / `Auto`, keep the IR lightweight: thesis, page roles, style direction, and deliverables only.
+5. In `精修` / `Polish`, add stronger deck thesis, narrative arc, style constraints, and image intent only for the slides that truly need imagery. If the visual lock benefits from references, run `参考驱动` as an internal sub-step here instead of exposing it as a user-facing mode.
+6. Save as `BRIEF.json` in the working directory.
 7. Add a `Timing` section with estimated `plan`, `generate`, `validate`, `polish`, and `total` ranges.
-8. Present slide count, structure, planning depth, timing estimate, and key decisions. Ask for approval.
-9. **Stop. Do NOT generate HTML.**
+8. Only create `PLANNING.md` if the user explicitly asks to review a human-readable plan.
+9. Present slide count, structure, planning depth, timing estimate, and key decisions. Ask for approval.
+10. **Stop. Do NOT generate HTML.**
 
 ---
 
@@ -107,7 +108,7 @@ Most people can't articulate design preferences in words. Generate 3 mini visual
 
 If the deck is in `精修` / `Polish`, add a short design-lock step before generating previews: define deck thesis, narrative arc, page roles, and style constraints so the previews support the presentation's rhetorical structure rather than acting as disconnected skins.
 
-If the user already approved a preset or PLANNING.md already names one, skip fresh preset routing and keep that preset. Do not reinterpret the same deck into a different theme just because the planning depth changed.
+If the user already approved a preset or `BRIEF.json` already names one, skip fresh preset routing and keep that preset. Do not reinterpret the same deck into a different theme just because the planning depth changed.
 
 ### Style Path
 
@@ -134,7 +135,7 @@ Present the 3 files with a one-sentence description each, then ask via AskUserQu
 
 ## Phase 3: Generate Presentation
 
-Generate the presentation based on content from Phase 1 and style from Phase 2. If PLANNING.md exists, it's the source of truth — skip Phases 1 and 2.
+Generate the presentation based on content from Phase 1 and style from Phase 2. If `BRIEF.json` exists, it's the source of truth — skip Phases 1 and 2.
 
 Before writing HTML, tell the user the expected end-to-end time window based on planning depth:
 
@@ -397,7 +398,7 @@ Read [pptx-extraction.md](pptx-extraction.md) for the Python extraction script.
 
 1. **Clean up:** delete `.claude-design/slide-previews/` if it exists.
 2. **Embed speaker notes** — every `.slide` section must have a `data-notes="..."` attribute with 2-4 sentences (what to say, key emphasis, transition cue). These power the built-in Presenter Mode.
-3. **Generate `PRESENTATION_SCRIPT.md`** if deck has 8+ slides or was created from PLANNING.md.
+3. **Generate `PRESENTATION_SCRIPT.md`** if deck has 8+ slides or was created from `BRIEF.json`.
 4. **Open:** `open [filename].html`
 5. **Summarize:**
 

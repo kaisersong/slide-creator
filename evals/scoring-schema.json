@@ -1,0 +1,86 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "slide-creator eval scorecard",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "case_id",
+    "pass",
+    "hard_failures",
+    "scores",
+    "overall"
+  ],
+  "properties": {
+    "case_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "pass": {
+      "type": "boolean"
+    },
+    "hard_failures": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "scores": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "route",
+        "compression",
+        "render",
+        "efficiency"
+      ],
+      "properties": {
+        "route": {
+          "$ref": "#/$defs/scoredLayer"
+        },
+        "compression": {
+          "$ref": "#/$defs/scoredLayer"
+        },
+        "render": {
+          "$ref": "#/$defs/scoredLayer"
+        },
+        "efficiency": {
+          "$ref": "#/$defs/scoredLayer"
+        }
+      }
+    },
+    "overall": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 1
+    }
+  },
+  "$defs": {
+    "scoredLayer": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "weight",
+        "score"
+      ],
+      "properties": {
+        "weight": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "score": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "notes": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    }
+  }
+}

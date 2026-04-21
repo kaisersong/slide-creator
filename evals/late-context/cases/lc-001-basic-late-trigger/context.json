@@ -1,0 +1,17 @@
+{
+  "case_id": "lc-001-basic-late-trigger",
+  "messages": [
+    {
+      "role": "user",
+      "content": "这是一个给企业产品负责人看的 AI coding agent 产品发布讨论，前面我们已经整理了痛点、工作流和试点路径。"
+    },
+    {
+      "role": "user",
+      "content": "要强调：用户在意控制感、成本感知和团队协作，而不是全自动神话。"
+    },
+    {
+      "role": "user",
+      "content": "好，现在把它做成 slide，用 Swiss Modern，12 页，中文，走精修。"
+    }
+  ]
+}

@@ -1,0 +1,130 @@
+{
+  "schema_version": 1,
+  "brief_id": "intent-broker-auto",
+  "mode": "auto",
+  "language": "zh-CN",
+  "title": "Intent Broker",
+  "audience": "正在评估是否立项或接入 Intent Broker 的工程负责人、架构师、Agent 工具开发者",
+  "desired_action": "让听众在一轮演示内理解协议边界、核心模型和系统结构",
+  "deck": {
+    "deck_type": "user-content",
+    "page_count": 8,
+    "output_format": "html-slides"
+  },
+  "style": {
+    "preset": "Enterprise Dark",
+    "tone": "清晰、可信、技术架构感、偏咨询式表达",
+    "visual_density": "medium"
+  },
+  "content": {
+    "source_policy": "distill-only",
+    "must_include": [
+      "协议边界",
+      "核心对象模型",
+      "系统结构"
+    ],
+    "must_avoid": [
+      "泛功能罗列",
+      "无关背景扩写",
+      "多余图片"
+    ]
+  },
+  "narrative": {
+    "thesis": "Intent Broker 通过本地优先的协议中间层，把多 agent 协作变成可审计、可恢复、可扩展的任务语义系统。",
+    "page_roles": [
+      "cover",
+      "problem",
+      "definition",
+      "core-concepts",
+      "state-machines",
+      "reliability",
+      "architecture",
+      "verification"
+    ],
+    "slides": [
+      {
+        "slide_number": 1,
+        "role": "cover",
+        "title": "Intent Broker",
+        "key_point": "本地优先、多 agent 协作协议中间层",
+        "visual": "hero metrics"
+      },
+      {
+        "slide_number": 2,
+        "role": "problem",
+        "title": "现有协作方式缺少稳定任务语义",
+        "key_point": "任务流不可审计、上下文易断、接入成本高",
+        "visual": "pain list"
+      },
+      {
+        "slide_number": 3,
+        "role": "definition",
+        "title": "Broker 只负责协议与可靠投递",
+        "key_point": "不做推理、不做工具执行",
+        "visual": "scope boundary"
+      },
+      {
+        "slide_number": 4,
+        "role": "core-concepts",
+        "title": "系统围绕五个对象组织",
+        "key_point": "Participant、Intent、Task、Thread、Approval 形成骨架",
+        "visual": "concept graph"
+      },
+      {
+        "slide_number": 5,
+        "role": "state-machines",
+        "title": "状态由 intent 事件推进",
+        "key_point": "Task 和 Approval 都是聚合结果，不允许客户端随意写状态",
+        "visual": "dual state machine"
+      },
+      {
+        "slide_number": 6,
+        "role": "reliability",
+        "title": "先写事件，再投递 inbox",
+        "key_point": "WebSocket 只是增强，不是真相源",
+        "visual": "event flow"
+      },
+      {
+        "slide_number": 7,
+        "role": "architecture",
+        "title": "六个核心组件围绕 event store 工作",
+        "key_point": "本地单进程 broker 已足够构成 v1",
+        "visual": "architecture diagram"
+      },
+      {
+        "slide_number": 8,
+        "role": "verification",
+        "title": "先验证闭环，再考虑远程化和 UI",
+        "key_point": "协议、路由、可靠性、集成四层测试收束到可落地路径",
+        "visual": "test matrix"
+      }
+    ]
+  },
+  "runtime": {
+    "editing_mode": true,
+    "presenter_mode": true,
+    "watermark_mode": "injected-last-slide",
+    "export_intent": "none"
+  },
+  "plan_view": {
+    "emit_planning_view": false,
+    "planning_view_path": "PLANNING.md"
+  },
+  "timing": {
+    "estimate": {
+      "plan": "1-2 min",
+      "generate": "1-3 min",
+      "validate": "<1 min",
+      "polish": "0-2 min",
+      "total": "3-6 min"
+    },
+    "actual": {
+      "plan": "0m 00s",
+      "generate": "0m 22s",
+      "validate": "0m 13s",
+      "polish": "0m 00s",
+      "total": "0m 35s"
+    }
+  },
+  "notes": ""
+}

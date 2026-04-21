@@ -61,6 +61,7 @@ def evaluate(root: Path) -> list[RuleResult]:
             "默认开启",
             "--plan",
             "--generate",
+            "BRIEF.json",
             "themes/<name>/reference.md",
         ],
     )
@@ -71,7 +72,8 @@ def evaluate(root: Path) -> list[RuleResult]:
     ok, detail = contains_all(
         readme,
         [
-            "Two-stage workflow",
+            "IR-first workflow",
+            "BRIEF.json",
             "--plan",
             "--generate",
             "Default-on",
@@ -87,6 +89,7 @@ def evaluate(root: Path) -> list[RuleResult]:
         workflow,
         [
             "Enhancement Mode (existing HTML)",
+            "If `BRIEF.json` exists, it's the source of truth",
             "single AskUserQuestion call with all 5 questions at once",
             "1280x720",
         ],

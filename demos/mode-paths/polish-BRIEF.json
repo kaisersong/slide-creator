@@ -1,0 +1,166 @@
+{
+  "schema_version": 1,
+  "brief_id": "slide-creator-polish-demo",
+  "mode": "polish",
+  "language": "zh-CN",
+  "title": "Slide Creator",
+  "audience": "希望把现有内容升级成高质量演示稿的产品负责人、设计负责人、技术负责人",
+  "desired_action": "用真实内容试跑精修路径",
+  "deck": {
+    "deck_type": "user-content",
+    "page_count": 10,
+    "output_format": "html-slides"
+  },
+  "style": {
+    "preset": "Aurora Mesh",
+    "tone": "稳定、克制、叙事驱动、偏高端产品营销",
+    "visual_density": "medium"
+  },
+  "content": {
+    "source_policy": "distill-only",
+    "must_include": [
+      "两档深度的产品 framing",
+      "叙事和视觉锁定",
+      "页面级图片表达"
+    ],
+    "must_avoid": [
+      "第三个用户可见模式",
+      "连续 bullet wall",
+      "纯功能罗列"
+    ]
+  },
+  "narrative": {
+    "thesis": "slide-creator 的真正优势不只是生成速度，而是能在需要时把 deck 的叙事、视觉系统和图片表达一起锁住。",
+    "page_roles": [
+      "hook",
+      "problem",
+      "two-depths",
+      "thesis-and-arc",
+      "style-constraints",
+      "image-intent",
+      "reference-branch",
+      "workflow",
+      "output-contract",
+      "closing"
+    ],
+    "slides": [
+      {
+        "slide_number": 1,
+        "role": "hook",
+        "title": "Slide Creator",
+        "key_point": "默认快，必要时深",
+        "visual": "mesh hero"
+      },
+      {
+        "slide_number": 2,
+        "role": "problem",
+        "title": "快速生成常常牺牲叙事和视觉一致性",
+        "key_point": "结构松散、节奏重复、图片只是塞进去",
+        "visual": "tension diagram"
+      },
+      {
+        "slide_number": 3,
+        "role": "two-depths",
+        "title": "用户只需要理解自动和精修",
+        "key_point": "速度与质量用两档覆盖，不再暴露第三模式",
+        "visual": "two-column contrast"
+      },
+      {
+        "slide_number": 4,
+        "role": "thesis-and-arc",
+        "title": "先锁叙事，再写页面",
+        "key_point": "thesis、arc、page roles 先于 HTML",
+        "visual": "story arc"
+      },
+      {
+        "slide_number": 5,
+        "role": "style-constraints",
+        "title": "精修不是挑个主题就结束",
+        "key_point": "视觉边界更明确，页面节奏更稳定",
+        "visual": "constraint cards"
+      },
+      {
+        "slide_number": 6,
+        "role": "image-intent",
+        "title": "图片只在承担沟通任务时出现",
+        "key_point": "决定要不要图、图为何存在、图往哪找",
+        "visual": "image-role matrix"
+      },
+      {
+        "slide_number": 7,
+        "role": "reference-branch",
+        "title": "参考驱动留在精修内部",
+        "key_point": "保留高保真视觉锁定，不增加用户认知负担",
+        "visual": "nested flow"
+      },
+      {
+        "slide_number": 8,
+        "role": "workflow",
+        "title": "精修路径多的是更强 planning，不是更多文件工厂",
+        "key_point": "BRIEF 仍是执行真相源，PLANNING 只是可选视图",
+        "visual": "workflow proof"
+      },
+      {
+        "slide_number": 9,
+        "role": "output-contract",
+        "title": "精修输出仍是单文件 HTML",
+        "key_point": "可播放、可编辑、可导出，交付能力不变",
+        "visual": "capability strip"
+      },
+      {
+        "slide_number": 10,
+        "role": "closing",
+        "title": "用两档深度覆盖大多数 deck 需求",
+        "key_point": "先跑自动，再在关键 deck 上用精修锁质量",
+        "visual": "closing CTA"
+      }
+    ]
+  },
+  "runtime": {
+    "editing_mode": true,
+    "presenter_mode": true,
+    "watermark_mode": "injected-last-slide",
+    "export_intent": "none"
+  },
+  "plan_view": {
+    "emit_planning_view": false,
+    "planning_view_path": "PLANNING.md"
+  },
+  "timing": {
+    "estimate": {
+      "plan": "2-4 min",
+      "generate": "2-4 min",
+      "validate": "<1 min",
+      "polish": "2-6 min",
+      "total": "8-15 min"
+    },
+    "actual": {
+      "plan": "0m 00s",
+      "generate": "0m 00s",
+      "validate": "0m 00s",
+      "polish": "0m 00s",
+      "total": "0m 00s"
+    }
+  },
+  "polish_controls": {
+    "style_constraints": [
+      "所有标题左对齐",
+      "每 3 页至少有 1 页明显节奏变化",
+      "强证据页必须使用图像、图表或大数字其中之一"
+    ],
+    "image_plan": [
+      {
+        "slide_number": 1,
+        "intent": "抽象 hero image 表达质量提升",
+        "reference_direction": "premium editorial abstract light beam"
+      },
+      {
+        "slide_number": 6,
+        "intent": "单张 UI 或 deck 预览图承担页面级视觉证据",
+        "reference_direction": "polished browser presentation UI"
+      }
+    ],
+    "reference_branch": "参考驱动"
+  },
+  "notes": ""
+}
