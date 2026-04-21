@@ -116,7 +116,8 @@ body::after {
   50%       { transform: translateY(-20px) scale(1.05); }
 }
 
-/* Cloud bank (cover) */
+/* ── REQUIRED BLOCK: Cloud bank (cover slides) — DO NOT OMIT ── */
+/* Missing these breaks cover layout: .cloud-layer must be position:absolute */
 .cloud-layer {
   position: absolute; bottom: 0; left: 0; width: 100%; height: 75%;
   pointer-events: none; overflow: hidden; z-index: 2;
@@ -131,6 +132,7 @@ body::after {
 }
 .cloud-group { position: absolute; bottom: 0; }
 .cloud-puff  { position: absolute; background: white; border-radius: 50%; }
+/* ── END REQUIRED BLOCK ── */
 
 /* Pagination */
 #nav-dots {
@@ -1094,7 +1096,7 @@ function broadcastState() {
 }
 
 function go(n) {
-  if (n < 0 || n >= TOTAL) return;
+  if (n < 0 || n >= TOTAL) return false;
   slides[cur].classList.remove('active');
   cur = n;
   slides[cur].classList.add('active');
@@ -1104,6 +1106,7 @@ function go(n) {
   setOrbs(cur);
   broadcastState();
   _onSlideChange?.();
+  return true;
 }
 
 /* ctrl interface for PresentMode and editor */
@@ -1138,10 +1141,10 @@ channel.addEventListener('message', e => {
   else if (e.data.type === 'request-state') broadcastState();
 });
 
-/* Wheel — gap-based momentum detection:
+/* Wheel — gap-based momentum detection, horizontal + vertical:
    macOS sends momentum events continuously at ~16ms intervals.
    A new intentional swipe arrives after lifting the finger (gap > 80ms).
-   No deltaY thresholds — pure timing.
+   Uses dominant axis: deltaX for horizontal trackpad, deltaY for vertical.
    Phase 1 (ANIMATING): first event navigates; all subsequent ignored.
    Phase 2 (DRAINING): after transitionend, skip events arriving within
    80ms of each other (continuous = momentum); navigate on first event
@@ -1156,6 +1159,15 @@ track.addEventListener('transitionend', e => {
   wFallback = setTimeout(() => { wState = 'idle'; }, 1500);
 });
 document.addEventListener('wheel', e => {
+  /* Don't hijack wheel from scrollable/editable regions */
+  if (e.target.tagName === 'TEXTAREA' || e.target.tagName === 'INPUT'
+    || e.target.getAttribute('contenteditable')) return;
+  /* Normalize deltaMode: DOM_DELTA_LINE (Firefox/Windows mouse wheel) uses line units (~20px) */
+  let dx = e.deltaX, dy = e.deltaY;
+  if (e.deltaMode === WheelEvent.DOM_DELTA_LINE)   { dx *= 20; dy *= 20; }
+  if (e.deltaMode === WheelEvent.DOM_DELTA_PAGE)    { dx *= 300; dy *= 300; }
+  const delta = Math.abs(dx) > Math.abs(dy) ? dx : dy;
+  if (Math.abs(delta) < 5) { wState = 'idle'; clearTimeout(wFallback); return; }
   e.preventDefault();
   if (wState === 'animating') return;
   const now = Date.now();
@@ -1166,15 +1178,22 @@ document.addEventListener('wheel', e => {
     wState = 'idle'; clearTimeout(wFallback); // gap = finger lifted
   }
   wState = 'animating';
-  e.deltaY > 0 ? ctrl.goTo(cur + 1) : ctrl.goTo(cur - 1);
+  const moved = delta > 0 ? ctrl.goTo(cur + 1) : ctrl.goTo(cur - 1);
+  if (!moved) { wState = 'idle'; } /* boundary no-op — don't lock */
 }, { passive: false });
 
-/* Touch swipe */
-let touchStartX = 0;
-document.addEventListener('touchstart', e => { touchStartX = e.touches[0].clientX; }, { passive: true });
+/* Touch swipe — horizontal dominant, with axis ratio check */
+let touchStartX = 0, touchStartY = 0;
+document.addEventListener('touchstart', e => {
+  touchStartX = e.touches[0].clientX;
+  touchStartY = e.touches[0].clientY;
+}, { passive: true });
 document.addEventListener('touchend', e => {
   const dx = e.changedTouches[0].clientX - touchStartX;
-  if (Math.abs(dx) > 50) dx < 0 ? ctrl.goTo(cur + 1) : ctrl.goTo(cur - 1);
+  const dy = e.changedTouches[0].clientY - touchStartY;
+  if (Math.abs(dx) > 50 && Math.abs(dx) > Math.abs(dy) * 1.2) {
+    dx < 0 ? ctrl.goTo(cur + 1) : ctrl.goTo(cur - 1);
+  }
 });
 
 /* ═══════════════════════════════════════════════════════

@@ -6,8 +6,8 @@ Load this file during Phase 3.5 (Polish mode) or when `--review` is called.
 
 ## Overview
 
-17 checkpoints divided into two categories:
-- **Category 1: Auto-Detectable (7)**: Can be detected programmatically; only 1.1 and 1.6 can be fully auto-fixed
+19 checkpoints divided into two categories:
+- **Category 1: Auto-Detectable (9)**: Can be detected programmatically; only 1.1 and 1.6 can be fully auto-fixed
 - **Category 2: AI-Advised (10)**: AI provides judgment suggestions for user consideration
 
 ---
@@ -92,6 +92,34 @@ Technical term indicators:
 **Suggestion**: "Slide X has light text (#cbd5e1) on a light background (#f0f4f8). Text is nearly invisible — deepen text to #334155."
 
 **Auto-fix capability**: ✅ Yes — can auto-insert color overrides on the container
+
+### 1.7 CSS Class 完整性 (CSS Integrity)
+
+**Detection**:
+1. 从 HTML 中提取所有 `class="..."` 属性中的 class 名（空格分隔）
+2. 在 `<style>` 块中搜索每个 class 的定义（`.classname` 或 `#idname`）
+3. 标记所有未定义的 class
+
+**排除**：以下 class 不要求 CSS 定义（语义标记）：`slide`、`cover`、`p-on`、`active`、`show`、`collapsed`、`g`、`span2`、`span3`、`row2`、`green`、`yes`、`no`、`bad`、`good`、`fast`
+
+**Auto-fix**: ⚠️ Partial — AI 可从风格/模板文件中提取缺失的 CSS 块并补充
+
+**Suggestion template**: "Slide X 使用了未定义的 CSS class: `.classname`。该 class 在 [风格文件] 中有定义，需补充到 <style> 中。"
+
+**Auto-fix capability**: ⚠️ Partial — 需从风格文件补充
+
+### 1.8 @keyframes 完整性 (Animation Integrity)
+
+**Detection**:
+1. 从 HTML/CSS 中提取所有 `animation:` 和 `animation-name:` 引用的 keyframes 名称
+2. 在 `<style>` 块中搜索对应的 `@keyframes name` 定义
+3. 标记所有引用了但未定义的 keyframes
+
+**Auto-fix**: ⚠️ Partial — AI 可从模板中提取缺失的 `@keyframes` 并补充
+
+**Suggestion template**: "使用了未定义的 @keyframes: `name`。该动画在 [风格文件] 中有定义，需补充到 <style> 中。"
+
+**Auto-fix capability**: ⚠️ Partial — 需从模板/风格文件补充
 
 ---
 
@@ -273,6 +301,8 @@ Review 规则分为三类，执行策略不同：
 | 1.4 布局轮换 | 检测连续 3 页同布局 → 提示插入缓冲 |
 | 1.5 字号底线 | 检测字号过低 → 提示调整 |
 | 1.6 眯眼测试 | 检测视觉焦点不明确 → 提示重新分配权重 |
+| 1.7 CSS 完整性 | HTML 中 class 在 <style> 无定义 → 提示从风格文件补充 |
+| 1.8 Animation 完整性 | 引用 @keyframes 无定义 → 提示从模板补充 |
 
 ### 情境规则 (Context-Aware Rules)
 
@@ -314,6 +344,8 @@ Review 时提示，不强制执行。
 | 规则 | 行为 |
 |---|---|
 | 1.6 文字对比 | 浅色背景+浅色文字 → 自动加深文字颜色 |
+| 1.7 CSS 完整性 | 未定义 class → 从风格/模板文件提取并补充 |
+| 1.8 Animation 完整性 | 未定义 @keyframes → 从模板提取并补充 |
 | 2.1 痛点前置 | 前2页无痛点场景 → 提示补充案例 |
 | 2.5 注意力重置点 | 连续 8-10 页干货 → 提示插入案例/提问 |
 | 2.7 留白缓冲页 | 每 5-6 页 → 提示插入呼吸页 |
@@ -332,5 +364,7 @@ Review 时提示，不强制执行。
 | 1.4 布局轮换 | Generate | 自动轮换布局类型 |
 | 1.5 字号底线 | Generate | 使用 clamp() 响应式字号 |
 | 1.2 结论先行 | Plan/Generate | 根据内容类型决定标题风格 |
+| 1.7 CSS 完整性 | Generate | Blue Sky 模板 REQUIRED BLOCK 标记必须搬运 |
+| 1.8 Animation 完整性 | Generate | 所有 @keyframes 引用必须有对应定义 |
 | 2.2 量化收益 | Plan | 检测并提取内容中的量化数据 |
 | 2.8 术语类比 | Generate | 技术术语首次出现时附带类比 |
