@@ -1,7 +1,7 @@
 ---
 name: kai-slide-creator
 description: 生成零依赖 HTML 演示文稿 — 21 种设计预设，视觉风格探索，播放/演讲者模式。适用于路演、产品发布、技术分享等场景。
-version: 2.19.0
+version: 2.20.0
 metadata: {"openclaw":{"emoji":"🎞","os":["darwin","linux","windows"],"homepage":"https://github.com/kaisersong/slide-creator","requires":{"bins":["python3"]},"install":[]}}
 ---
 
@@ -119,6 +119,7 @@ metadata: {"openclaw":{"emoji":"🎞","os":["darwin","linux","windows"],"homepag
 9. **布局分类（R26）：** 每页遵循 layout classification — P1 Hero / P2 Problem / P3 Discovery / P4 Solution(大数字/极简, density 35-45%) / P5+ 按叙事角色分配。Chinese Chan / Paper & Ink 允许布局重复
 10. **功能完整性（GC-1+GC-3）：** 必须包含 `PresentMode` 类 + `F5` 监听 + `body.presenting` CSS（缺失即生成错误）。水印由 JS 注入到最后一页，CSS `position: absolute`，禁止 `position: fixed` 和硬编码
 11. **CSS 工程（R29+R30）：** 每页 `id="slide-N"`，布局/背景/间距通过 `#slide-N` CSS 选择器定义，inline `style=""` ≤ 5 处（目标 0）。5 项通用 UI 强制存在：① `#brand-mark` ② `.slide-num-label`/`.light` ③ `.nav-dots` ④ `.progress-bar` ⑤ `id="slide-N"`。CSS 和 HTML 见 `references/base-css.md`。零 inline style 方法见 `references/html-template.md` 的 Zero Inline Style Guide 章节
+12. **模板元素搬运（Blue Sky 专属）：** 当风格参考为 `.html` 完整模板时，生成后必须验证：① 所有 `REQUIRED BLOCK` 注释标记的 CSS 块已完整搬运 ② HTML 中引用的 class 在 `<style>` 中有对应定义 ③ 所有 `@keyframes` 已搬运 ④ `go()` 函数返回 boolean（用于 wheel 边界检测） ⑤ wheel/touch handler 包含主导轴判断和 editable 区域过滤
 
 > 完整反模式映射表见 `references/impeccable-anti-patterns.md`。更多视觉/组件规则在 `--review` 模式下执行。
 

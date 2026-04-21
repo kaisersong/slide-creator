@@ -55,9 +55,13 @@ class SlidePresentation {
     }
 
     setupTouch() {
-        let startY = 0;
-        document.addEventListener('touchstart', e => { startY = e.touches[0].clientY; }, { passive: true });
-        document.addEventListener('touchend', e => { const d = startY - e.changedTouches[0].clientY; if (Math.abs(d) > 50) d > 0 ? this.next() : this.prev(); });
+        let startY = 0, startX = 0;
+        document.addEventListener('touchstart', e => { startY = e.touches[0].clientY; startX = e.touches[0].clientX; }, { passive: true });
+        document.addEventListener('touchend', e => {
+            const dy = startY - e.changedTouches[0].clientY;
+            const dx = Math.abs(startX - e.changedTouches[0].clientX);
+            if (Math.abs(dy) > 50 && Math.abs(dy) > dx * 1.2) dy > 0 ? this.next() : this.prev();
+        });
     }
 
     setupWheel() {}
