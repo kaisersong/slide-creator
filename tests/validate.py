@@ -32,6 +32,8 @@ Checks (--strict enables all):
     - present mode: F5 listener + body.presenting CSS + PresentMode class
     - unicode: no U+FE0F variant selectors
     - watermark: JS-injected (heuristic check)
+    - hero rhythm: no ≥3 consecutive hero pages
+    - emoji: no emoji Unicode (recommend Lucide/SVG icons)
 
 Requires: pip install beautifulsoup4
 """
@@ -220,6 +222,66 @@ def check_visual_variety(soup, content, warnings) -> tuple[bool, str]:
     return True, f"Visual variety OK (max run: {max_run})"
 
 
+def check_hero_rhythm(soup, content, warnings) -> tuple[bool, str]:
+    """Check theme rhythm rules — detect consecutive hero pages."""
+    slides = soup.find_all(class_="slide")
+    if len(slides) < 3:
+        return True, "Too few slides to check hero rhythm"
+
+    hero_runs = []
+    current_run = 0
+
+    for slide in slides:
+        classes = slide.get("class", [])
+        is_hero = any("hero" in c for c in classes)
+
+        if is_hero:
+            current_run += 1
+        else:
+            if current_run >= 3:
+                hero_runs.append(current_run)
+            current_run = 0
+
+    # Check last run
+    if current_run >= 3:
+        hero_runs.append(current_run)
+
+    if hero_runs:
+        warnings.append(f"Consecutive hero pages: {max(hero_runs)} (recommend ≤2)")
+        return True, f"Hero rhythm warning: {max(hero_runs)} consecutive hero pages"
+
+    return True, "Hero rhythm OK (no ≥3 consecutive hero pages)"
+
+
+def check_emoji_usage(soup, content, warnings) -> tuple[bool, str]:
+    """Check for pictorial emoji icons in raw HTML content (excluding decorative chars)."""
+    import re
+
+    # Emoji pictographs only (excluding box drawing / decorative characters / dingbats)
+    # Focus on actual emoji icons that should use Lucide/SVG instead
+    emoji_pattern = re.compile(
+        "["
+        "\U0001F600-\U0001F64F"  # emoticons (😀-🙏)
+        "\U0001F300-\U0001F5FF"  # symbols & pictographs (🌀-🗿)
+        "\U0001F680-\U0001F6FF"  # transport & map (🚀-🛿)
+        "\U0001F1E0-\U0001F1FF"  # flags (🇦-🇿)
+        "\U0001F900-\U0001F9FF"  # supplemental symbols (🤀-🧿)
+        "\U0001FA70-\U0001FAFF"  # symbols extended-A (🥰-🧿)
+        # Exclude: misc symbols (2600-26FF includes ☀☃⚠⚡), dingbats (2700-27BF includes ✏✎),
+        # chess symbols (FA00-FA6F), box drawing (2500-257F), arrows (2190-21FF)
+        "]+",
+        flags=re.UNICODE
+    )
+
+    matches = emoji_pattern.findall(content)
+    if matches:
+        # Show first few emoji for debugging
+        sample = matches[:3] if len(matches) <= 3 else matches[:3] + [f"({len(matches)-3} more)"]
+        return False, f"Pictorial emoji detected: {sample} (recommend Lucide/SVG icons)"
+
+    return True, "No pictorial emoji detected"
+
+
 def check_present_mode(soup, content, warnings) -> tuple[bool, str]:
     """Check for present mode functionality (F5 + body.presenting CSS + PresentMode class)."""
     style = " ".join(s.string or "" for s in soup.find_all("style"))
@@ -320,6 +382,8 @@ STRICT_CHECKS = [
     check_present_mode,
     check_unicode_fe0f,
     check_watermark_injection,
+    check_hero_rhythm,
+    check_emoji_usage,
 ]
 
 GREEN = "\033[32m"
