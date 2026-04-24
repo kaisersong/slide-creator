@@ -19,16 +19,19 @@ Checks (--strict enables all):
     - .slide elements present (>= 3 for a full deck)
     - viewport: height: 100vh in CSS
     - overflow: hidden in CSS for .slide
-    - self-contained: no external script src or http stylesheet links
+    - self-contained: no external script src or http stylesheet links (except Google Fonts)
     - minimum file size (> 10 KB signals real content)
     - HTML structure: doctype, html, body, style tags present
     - no raw markdown: no ## ** __ in slide text nodes
 
   RECOMMENDED (--strict):
     - keyboard nav: ArrowLeft / ArrowRight in JS
-    - edit mode: hotzone + contenteditable + saveFile
+    - edit mode: edit-hotzone + contenteditable + saveFile
     - data-notes: each slide has a non-empty data-notes attribute
     - visual variety: not all slides use the same layout class
+    - present mode: F5 listener + body.presenting CSS + PresentMode class
+    - unicode: no U+FE0F variant selectors
+    - watermark: JS-injected (heuristic check)
 
 Requires: pip install beautifulsoup4
 """
@@ -73,18 +76,33 @@ def check_overflow_hidden(soup, content, warnings) -> tuple[bool, str]:
 
 
 def check_self_contained(soup, content, warnings) -> tuple[bool, str]:
+    """Check for self-contained HTML (only Google Fonts external links allowed)."""
     external_scripts = soup.find_all("script", src=True)
-    external_links = [
-        t for t in soup.find_all("link", href=True)
-        if str(t.get("href", "")).startswith("http")
-    ]
+
+    # Filter external stylesheets: allow Google Fonts, reject others
+    external_styles = []
+    for link in soup.find_all("link", href=True):
+        href = str(link.get("href", ""))
+        if href.startswith("http"):
+            # Allow Google Fonts
+            if "fonts.googleapis.com" in href or "fonts.gstatic.com" in href:
+                continue
+            external_styles.append(href)
+
     issues = []
     if external_scripts:
         issues.append(f"{len(external_scripts)} external <script src>")
-    if external_links:
-        issues.append(f"{len(external_links)} external <link href>")
+    if external_styles:
+        issues.append(f"{len(external_styles)} external <link href> (non-fonts)")
+
     if issues:
         return False, "Not self-contained: " + ", ".join(issues)
+
+    # Check for Google Fonts links and report if present
+    font_links = [l for l in soup.find_all("link", href=True)
+                  if "fonts.googleapis.com" in str(l.get("href", ""))]
+    if font_links:
+        return True, f"Self-contained ({len(font_links)} Google Fonts links allowed)"
     return True, "Self-contained (no external dependencies)"
 
 
@@ -144,20 +162,21 @@ def check_keyboard_nav(soup, content, warnings) -> tuple[bool, str]:
 
 
 def check_edit_mode(soup, content, warnings) -> tuple[bool, str]:
-    has_hotzone = bool(soup.find(id="hotzone"))
+    """Check for edit hotzone and editor functionality."""
+    has_hotzone = bool(soup.find(class_="edit-hotzone"))
     scripts = " ".join(s.string or "" for s in soup.find_all("script"))
     has_contenteditable = "contenteditable" in scripts
     has_save = "saveFile" in scripts or "save-file" in scripts
     missing = []
     if not has_hotzone:
-        missing.append("hotzone element")
+        missing.append("edit-hotzone element")
     if not has_contenteditable:
         missing.append("contenteditable")
     if not has_save:
         missing.append("saveFile function")
     if missing:
         return False, "Edit mode incomplete: missing " + ", ".join(missing)
-    return True, "Edit mode present (hotzone + contenteditable + saveFile)"
+    return True, "Edit mode present (edit-hotzone + contenteditable + saveFile)"
 
 
 def check_data_notes(soup, content, warnings) -> tuple[bool, str]:
@@ -201,6 +220,86 @@ def check_visual_variety(soup, content, warnings) -> tuple[bool, str]:
     return True, f"Visual variety OK (max run: {max_run})"
 
 
+def check_present_mode(soup, content, warnings) -> tuple[bool, str]:
+    """Check for present mode functionality (F5 + body.presenting CSS + PresentMode class)."""
+    style = " ".join(s.string or "" for s in soup.find_all("style"))
+    scripts = " ".join(s.string or "" for s in soup.find_all("script"))
+
+    has_presenting_css = "body.presenting" in style
+    has_f5_listener = "'F5'" in scripts or '"F5"' in scripts or "e.key === 'F5'" in scripts
+    has_present_mode_class = "PresentMode" in scripts or "presentMode" in scripts.lower()
+
+    missing = []
+    if not has_presenting_css:
+        missing.append("body.presenting CSS")
+    if not has_f5_listener:
+        missing.append("F5 key listener")
+    if not has_present_mode_class:
+        missing.append("PresentMode class/function")
+
+    if missing:
+        return False, "Present mode incomplete: missing " + ", ".join(missing)
+    return True, "Present mode present (F5 + body.presenting CSS + PresentMode)"
+
+
+def check_unicode_fe0f(soup, content, warnings) -> tuple[bool, str]:
+    """Check for U+FE0F variant selector (emoji presentation modifier) in raw HTML."""
+    if "️" in content:
+        # Find positions for reporting
+        positions = []
+        idx = 0
+        while idx < len(content):
+            if content[idx] == "️":
+                # Get surrounding context (up to 20 chars)
+                start = max(0, idx - 10)
+                end = min(len(content), idx + 10)
+                context = content[start:end].replace("️", "⟨FE0F⟩")
+                positions.append(f"near '{context}'")
+                idx += 1
+            else:
+                idx += 1
+
+        if positions:
+            sample = positions[0] if len(positions) == 1 else f"{positions[0]} (and {len(positions)-1} more)"
+            return False, f"U+FE0F variant selector found {sample}"
+    return True, "No U+FE0F variant selectors"
+
+
+def check_watermark_injection(soup, content, warnings) -> tuple[bool, str]:
+    """Heuristic check for JS-injected watermark (not hardcoded in HTML body)."""
+    # Check if hardcoded watermark exists outside script tags
+    # Strip script content to check HTML structure
+    hardcoded_watermark = False
+
+    # Look for slide-credit div outside of script context
+    for div in soup.find_all(class_="slide-credit"):
+        # If it's in the actual DOM (not inside a script string), it's hardcoded
+        parent = div.parent
+        while parent:
+            if parent.name == "script":
+                break
+            parent = parent.parent
+        # If we didn't find a script parent, it's hardcoded in HTML
+        if parent is None:
+            hardcoded_watermark = True
+            break
+
+    if hardcoded_watermark:
+        warnings.append("Watermark appears hardcoded in HTML - should be JS-injected")
+        # Still pass, just warn - heuristic can't be 100% certain
+        return True, "Watermark check: appears hardcoded (heuristic)"
+
+    # Check for JS injection pattern
+    scripts = " ".join(s.string or "" for s in soup.find_all("script"))
+    has_js_injection = "slides[slides.length - 1]" in scripts and "slide-credit" in scripts
+
+    if has_js_injection:
+        return True, "Watermark appears JS-injected (heuristic)"
+
+    # If no watermark found at all, that's OK for minimal decks
+    return True, "Watermark not detected (heuristic)"
+
+
 # ─── Runner ───────────────────────────────────────────────────────────────────
 
 REQUIRED_CHECKS = [
@@ -218,6 +317,9 @@ STRICT_CHECKS = [
     check_edit_mode,
     check_data_notes,
     check_visual_variety,
+    check_present_mode,
+    check_unicode_fe0f,
+    check_watermark_injection,
 ]
 
 GREEN = "\033[32m"

@@ -1182,6 +1182,15 @@ function saveFile() {
 new PresentMode(ctrl);
 setupEditor();
 
+// Watermark injection
+var allSlides = document.querySelectorAll('.slide');
+if (allSlides.length) {
+  var credit = document.createElement('div');
+  credit.className = 'slide-credit';
+  credit.textContent = 'By kai-slide-creator v2.20.0 · Blue Sky';
+  allSlides[allSlides.length - 1].appendChild(credit);
+}
+
 } /* end else (main window) */
 </script>
 </body>

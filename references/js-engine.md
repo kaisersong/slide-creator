@@ -80,7 +80,9 @@ class SlidePresentation {
     }
 
     goTo(index) {
-        this.slides[index]?.scrollIntoView({ behavior: 'smooth' });
+        const idx = Math.max(0, Math.min(index, this.slides.length - 1));
+        this.slides.forEach((s, i) => s.classList.toggle('visible', i === idx));
+        this.slides[idx]?.scrollIntoView({ behavior: 'smooth' });
     }
     next() { this.goTo(Math.min(this.currentSlide + 1, this.slides.length - 1)); }
     prev() { this.goTo(Math.max(this.currentSlide - 1, 0)); }

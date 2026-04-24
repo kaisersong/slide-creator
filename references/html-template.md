@@ -181,7 +181,40 @@ Every generated HTML must include all of the following:
     <!-- JS Engine: read references/js-engine.md and insert verbatim -->
     <script>
     /* [INSERT JS ENGINE FROM references/js-engine.md — SlidePresentation class, ?presenter branch, PresentMode class, watermark] */
-    </script>
+
+    /* Example goTo implementation (full version in js-engine.md):
+goTo(index) {
+    const idx = Math.max(0, Math.min(index, this.slides.length - 1));
+    this.slides.forEach((s, i) => s.classList.toggle('visible', i === idx));
+    this.slides[idx]?.scrollIntoView({ behavior: 'smooth' });
+}
+
+Example constructor (first slide visible fix):
+constructor() {
+    this.slides = document.querySelectorAll('.slide');
+    this.currentSlide = 0;
+    this.slides[0]?.classList.add('visible');
+    this.slides[0]?.querySelectorAll('.reveal').forEach(r => r.classList.add('visible'));
+    // ... rest of constructor ...
+}
+
+Example PresentMode class (full version in js-engine.md):
+class PresentMode {
+    constructor(ctrl) {
+        this.ctrl = ctrl;
+        this.active = false;
+        const btn = document.createElement('button');
+        btn.id = 'present-btn';
+        btn.addEventListener('click', () => this.enter());
+        document.addEventListener('keydown', e => {
+            if (e.key === 'F5') { e.preventDefault(); this.enter(); }
+            if (e.key === 'Escape' && this.active) this.exit();
+        });
+        // ... rest of PresentMode ...
+    }
+}
+*/
+</script>
 </body>
 </html>
 ```
