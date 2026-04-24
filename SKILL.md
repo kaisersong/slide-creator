@@ -1,7 +1,7 @@
 ---
 name: kai-slide-creator
 description: 生成零依赖 HTML 演示文稿 — 21 种设计预设，视觉风格探索，播放/演讲者模式。适用于路演、产品发布、技术分享等场景。
-version: 2.21.0
+version: 2.22.0
 metadata: {"openclaw":{"emoji":"🎞","os":["darwin","linux","windows"],"homepage":"https://github.com/kaisersong/slide-creator","requires":{"bins":["python3"]},"install":[]}}
 ---
 
@@ -93,7 +93,7 @@ metadata: {"openclaw":{"emoji":"🎞","os":["darwin","linux","windows"],"homepag
 1. **播放模式** — F5 / ▶ 按钮，全屏缩放，`PresentMode` 类
 2. **编辑模式** — 左上角热区，`✏ Edit` 开关，`contenteditable`，备注面板
 3. **水印** — 由 JS 注入到**最后一页幻灯片**（`slides[slides.length - 1].appendChild`），CSS 使用 `position: absolute`，禁止 `position: fixed`。播放模式下隐藏，HTML 源码中不得出现 `<div class="slide-credit">` 硬编码在 `</body>` 前
-4. **风格强制** — 所有 CSS 主题值（颜色、字体、图表色等）**必须且只能**来自选中的风格参考文件。模板 `html-template.md` 中的占位符（`[from style file]`）和注释示例值仅为结构示意，**禁止直接使用**。生成后对照风格文件的 checklist 验证。**签名元素注入是风格强制的一部分**：风格文件的 `## Signature Elements` 章节中定义的 CSS（overlays、keyframes、required classes）必须完整插入到 `<style>` 标签中。
+4. **风格强制** — 所有 CSS 主题值（颜色、字体、图表色等）**必须且只能**来自选中的风格参考文件。模板 `html-template.md` 中的占位符（`[from style file]`）和注释示例值仅为结构示意，**禁止直接使用**。生成后对照风格文件的 checklist 验证。**签名元素注入是风格强制的一部分**：风格文件的 `## Signature Elements` 章节中定义的 CSS（overlays、keyframes、required classes）必须完整插入到 `<style>` 标签中。Swiss Modern 额外要求 canonical export path：面板必须是 `.slide` 的 direct child，token 必须保持 `--bg/--text/--red` 命名，使用 canonical 类（`.left-panel/.right-panel/.stat-row/.cta-block`），并为每页写入 `data-export-role`；不得生成 `.left-col/.right-col` 或 `--bg-primary/--accent` 这类兼容别名。
 5. **叙事弧线** — 根据 `deck_type` 选择 8 页（product-demo，引用 `references/composition-8.md`）或 12 页（user-content，引用 `references/composition-guide.md`）结构。每页必须有独特的布局模式，禁止连续两页使用相同布局。每页必须使用风格参考文件中 2-3 种不同的组件类型。
 
 详见 `references/html-template.md`。**生成任何 HTML 前必读此文件**。
@@ -104,9 +104,9 @@ metadata: {"openclaw":{"emoji":"🎞","os":["darwin","linux","windows"],"homepag
 
 ### Pre-Write Validation Pipeline（生成前校验流水线）
 
-这些规则在组装完整 HTML 后、写入文件前**自动执行**。逐条搜索违规项并修复。
+这些规则在组装完整 HTML 后、写入文件前**自动执行**。先把 HTML 写到临时文件（例如 `"$TMP_HTML"`），运行 `python3 tests/validate.py "$TMP_HTML" --strict`；任一失败都算生成失败，必须修复或重生直到通过后才能写入最终输出。
 
-**11 条核心规则：**
+**12 条核心规则：**
 
 1. **标题质量（R4+R8）：** 标题必须是断言式、具体、有信息量。禁止通用标签（概览/Overview/Introduction/Summary/结论等）。示例和模板见 `references/title-quality.md`
 2. **布局多样性（R5+R23）：** 禁止连续 3 页相同布局模式。每页必须使用 2-3 种不同组件类型（step/callout/stat/kbd/table/quote 等），不得仅用 `.g` + `.bl` 堆砌

@@ -404,6 +404,10 @@ Per-slide CSS for closing slide:
 - `.steps` / `.step` / `.step-num`: Grid layout with crimson numerals
 - `.how-items` / `.how-item` / `.how-num`: Alternative step layout with h3 + p
 
+### Allowed Components
+- Audit coverage: .comment .crimson .feature-desc .hero-body .manifesto-headline .manifesto-inner .manifesto-points .preset-item
+- Audit coverage cont.: .slide-num-label .step-text
+
 ### Background Rule
 `body` sets `background: var(--bg)` (warm cream). No gradient, no pattern, no overlay. Pure typographic canvas. Per-slide backgrounds (e.g., manifesto) use `#slide-N { background: var(--bg-dark) }`.
 

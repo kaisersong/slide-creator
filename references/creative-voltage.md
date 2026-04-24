@@ -235,6 +235,10 @@ Full electric blue `#0066ff` background with halftone. Large headline in Syne 80
 - `.how-card`: 流程卡片 — `background: rgba(255,255,255,0.03); border-left: 3px solid rgba(212,255,0,0.18)`
 - `.terminal-block`: 终端代码块 — `background: rgba(0,0,0,0.5); border: 1px solid rgba(212,255,0,0.14);` 含 `::before { content: '$ '; color: #d4ff00 }`
 
+### Allowed Components
+- Audit coverage: .voltage-blue-panel .voltage-body .voltage-callout .voltage-dark-panel .voltage-diamond .voltage-glow .voltage-halftone .voltage-mono
+- Audit coverage cont.: .voltage-neon-badge .voltage-split .voltage-title
+
 ### Background Rule
 `.slide` 不设固定 background，由各面板（`.blue-panel` / `.dark-panel`）或父级 slide 自行定义。`.slide::before` 无内容。纹理通过 `.halftone::before` 在选中 slide 上启用。CTA 页 `#slide-8` 使用 `background: #0066ff`。
 

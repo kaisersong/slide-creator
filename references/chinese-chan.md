@@ -286,6 +286,36 @@ Vertical writing mode for title slides. `writing-mode: vertical-rl`. Title runs 
 
 ---
 
+## User-Content 12-Page Route
+
+Chinese Chan is the minimalist exception: the deck may repeat the narrow-column skeleton, but the content treatment must still change.
+
+- P1 Hero -> `zen_center` or `zen_vertical`
+- P2 Problem -> `zen_split`
+- P3 Discovery -> `zen_split`
+- P4 Solution -> `zen_center`
+- P5 Evidence -> `zen_split`
+- P6 Translation -> `zen_split`
+- P7 Drivers -> `zen_stat`
+- P8 Checkpoints -> `zen_split`
+- P9 Reflection -> `zen_center`
+- P10 Noise filter -> `zen_split`
+- P11 Summary -> `zen_split`
+- P12 CTA -> `zen_vertical` or restrained `zen_center`
+
+## Canonical Export Contract
+
+Chinese Chan depends on restraint. The export contract is mostly about not breaking the empty-space logic.
+
+- Use canonical layout roles: `zen_center`, `zen_split`, `zen_vertical`, `zen_stat`
+- Keep canonical tokens: `--bg`, `--text`, `--text-muted`, `--accent`, `--accent-alt`, `--rule`
+- Add `data-export-role` on every `<section class="slide">`
+- `.zen-ghost-kanji` stays as a direct child of `.slide`, never nested inside `.slide-content`
+- Canonical emitted classes are `.zen-*`; shorthand aliases are input-only and must not be emitted by `--generate`: `.ghost-kanji`, `.flanked-rule`, `.vline`, `.col`, `.eyebrow`, `.accent`
+- Layout repetition is allowed, but ornament repetition is not: vary between ghost kanji, rule, vline, seal, or pure whitespace
+
+---
+
 ## Signature Elements
 
 ### CSS Overlays
@@ -295,12 +325,30 @@ Vertical writing mode for title slides. `writing-mode: vertical-rl`. Title runs 
 - `@keyframes zenFadeIn`: 淡入 — `from { opacity: 0; } to { opacity: 1; }`，配合 `.slide.visible .reveal` 使用长间隔 staggered delays (0.1s, 0.3s, 0.5s, 0.7s, 0.9s, 1.1s, 1.3s)，仅透明度变化，无位移
 
 ### Required CSS Classes
-- `.ghost-kanji`: 幽灵汉字底纹 — `position: absolute; font-family: 'Noto Serif SC', serif; font-weight: 900; font-size: clamp(120px, 25vw, 200px); opacity: 0.05; color: #1a1a18; pointer-events: none; user-select: none; line-height: 1`；必须放在 `.slide` 直接子元素位置
-- `.flanked-rule`: 带点分隔线 — `display: flex; align-items: center; gap: 12px`；`.flanked-rule::before` / `.flanked-rule::after` 为 5px 圆点 `rgba(26,26,24,0.2)`；内部 `hr` 为 `1px solid rgba(26,26,24,0.12)`
-- `.vline`: 垂直线 — `width: 1px; height: 60px; background: rgba(26,26,24,0.15)`
+- `.ghost-kanji`: 幽灵汉字底纹（别名，实际为 `.zen-ghost-kanji`）— `position: absolute; font-family: 'Noto Serif SC', serif; font-weight: 900; font-size: clamp(120px, 25vw, 200px); opacity: 0.05; color: #1a1a18; pointer-events: none; user-select: none; line-height: 1`；必须放在 `.slide` 直接子元素位置
+- `.flanked-rule`: 带点分隔线（别名，实际为 `.zen-rule`）— `display: flex; align-items: center; gap: 12px`；`.flanked-rule::before` / `.flanked-rule::after` 为 5px 圆点 `rgba(26,26,24,0.2)`；内部 `hr` 为 `1px solid rgba(26,26,24,0.12)`
+- `.vline`: 垂直线（别名，实际为 `.zen-vline`）— `width: 1px; height: 60px; background: rgba(26,26,24,0.15)`
 - `.col`: 内容列 — `max-width: min(90vw, 580px); padding: 0 clamp(24px, 6vw, 60px)`
 - `.eyebrow`: 小标签 — `font-size: 11px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--text-muted)`
 - `.accent`: 强调色 — `color: var(--accent)`（朱红 `#C41E3A`）
+
+### Allowed Components
+- `.zen-ghost-kanji`: 幽灵汉字底纹（真实类名）
+- `.zen-rule`: 带点分隔线（真实类名）
+- `.zen-rule-line`: 分隔线变体
+- `.zen-vline`: 垂直线（真实类名）
+- `.zen-accent`: 强调色
+- `.zen-body`: 正文
+- `.zen-caption`: 说明文字
+- `.zen-cn`: 中文文字
+- `.zen-content`: 内容容器
+- `.zen-dark`: 深色文字
+- `.zen-en`: 英文文字
+- `.zen-heading`: 标题
+- `.zen-kanji`: 汉字装饰
+- `.zen-slide`: 幻灯片容器（风格专用）
+- `.zen-title`: 主标题
+- `.zen-vertical-title`: 垂直标题
 
 ### Background Rule
 `.slide` 必须设置 `background: #FAFAF8`。body 为暖白纸色，可选 `body::before` 水墨纹理叠加。不使用渐变。

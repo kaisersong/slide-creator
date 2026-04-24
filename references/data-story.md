@@ -325,6 +325,34 @@ body {
 
 ---
 
+## User-Content 12-Page Route
+
+- P1 Hero -> `hero_number`
+- P2 Problem -> `kpi_chart`
+- P3 Discovery -> `chart_insight`
+- P4 Solution -> `kpi_grid`
+- P5 Evidence -> `chart_insight`
+- P6 Translation -> `kpi_chart`
+- P7 Drivers -> `comparison_matrix`
+- P8 Checkpoints -> `workflow_chart`
+- P9 Metrics -> `kpi_grid`
+- P10 Noise filter -> `comparison_matrix`
+- P11 Summary -> `chart_insight`
+- P12 CTA -> `cta_close`, stat-led close, not a generic quote page
+
+## Canonical Export Contract
+
+Data Story only exports cleanly when the deck stays on its chart-first path.
+
+- Use canonical layout roles: `hero_number`, `kpi_chart`, `chart_insight`, `comparison_matrix`, `kpi_grid`, `workflow_chart`, `cta_close`
+- Keep canonical tokens: `--bg`, `--bg-card`, `--border`, `--text`, `--text-muted`, `--positive`, `--negative`, `--neutral`, `--chart-primary`, `--chart-secondary`, `--chart-tertiary`, `--grid-line`, `--axis-line`
+- Add `data-export-role` on every `<section class="slide">`
+- Put the grid overlay on `.slide::before`, not `body::before`
+- Charts must stay pure SVG/CSS; do not emit Chart.js, ECharts, Highcharts, D3, or canvas chart wrappers
+- Canonical emitted classes are `.ds-*`; legacy generic wrappers are input-only and must not be emitted by `--generate`: `.kpi-number`, `.kpi-label`, `.kpi-trend`, `.kpi-grid`, `.kpi-card`, `.chart-layout`, `.eyebrow`, `.divider`. SVG helper classes like `.chart-axis`, `.chart-grid`, `.chart-label`, `.chart-val` are allowed.
+
+---
+
 ## Signature Elements
 
 ### CSS Overlays
@@ -351,6 +379,12 @@ body {
 - `.eyebrow`: 小标签 — `font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.12em; color: #64748b`
 - `.divider`: 分隔线 — `border: none; border-top: 1px solid var(--border)`
 - `.ds-insight`: 洞察卡片 — `border-left: 3px solid var(--chart-primary); padding: 0.75rem 1rem; background: rgba(59,130,246,0.08); border-radius: 0 6px 6px 0`
+
+### Allowed Components
+- Audit coverage: .ds-annotation .ds-area .ds-axis .ds-axis-label .ds-bar .ds-chart-layout .ds-chart-svg .ds-dot
+- Audit coverage cont.: .ds-grid .ds-hero-slide .ds-kpi .ds-kpi-card .ds-kpi-grid .ds-kpi-label .ds-light .ds-line
+- Audit coverage cont.: .ds-matrix .ds-matrix-cell .ds-split-layout .ds-trend .ds-trend-down .ds-trend-up .negative .neutral
+- Audit coverage cont.: .positive
 
 ### Background Rule
 `.slide` 必须设置 `background: #0f1117`（深色）或 `var(--bg)`（浅色变体）。网格通过 `.slide::before` 叠加在幻灯片自身上，不使用 `body::before`。

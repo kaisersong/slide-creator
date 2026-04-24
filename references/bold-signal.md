@@ -174,6 +174,9 @@ Left 42%: section number in 3rem + headline in 2rem + 1-line sub. `1px` vertical
 - `.deco-text`: CTA 页装饰文字 — `position: absolute; right: -40px; bottom: -60px; font-family: 'Archivo Black'; font-size: 36vw; color: rgba(255,255,255,0.06); pointer-events: none`
 - `.dot` / `.dot.active`: 导航圆点 — 默认 `rgba(255,87,34,0.3)` + `1px solid rgba(255,87,34,0.5)`；激活 `background: #FF5722; transform: scale(1.4)`
 
+### Allowed Components
+- Audit coverage: .bold-body .bold-bullet .bold-ghost-number .bold-hero-card .bold-label .bold-section-num .bold-step .bold-title
+
 ### Background Rule
 `.slide` 必须设置 `background: #1a1a1a`（纯色，非渐变）。body 设置 `background: #1a1a1a`。网格叠加通过 `.slide::after` 伪元素实现。CTA 页（`#slide-8`）使用 `background: #FF5722` 并禁用 `::after`。
 

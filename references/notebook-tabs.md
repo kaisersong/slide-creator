@@ -171,6 +171,10 @@ Single column inside `.notebook-page`. Numbered steps as list items. `.notebook-
 - `.hole`: 12px circle, `background: #2d2d2d` (matches outer), `box-shadow: inset 0 1px 3px rgba(0,0,0,0.5)`
 - `.paper-content`: Content area with `padding-left: 56px` (offset for binder holes), `z-index: 2`
 
+### Allowed Components
+- Audit coverage: .notebook-body .notebook-hole .notebook-label .notebook-page .notebook-tab .notebook-title .tab-1 .tab-2
+- Audit coverage cont.: .tab-3 .tab-4 .tab-5
+
 ### Background Rule
 `body` sets `background: #2d2d2d` (dark outer). `.paper` card has cream background that fully covers the slide center. No gradient bleed-through.
 

@@ -177,6 +177,9 @@ Full slide `var(--bg-dark)`. Yellow bar top-full-width. White headline bottom-le
 - `.np-red` / `.np-yellow-text`: 强调色文字工具类
 - `.big-num`: 描边大数字 — `color: transparent; -webkit-text-stroke: 3px var(--text)`
 
+### Allowed Components
+- Audit coverage: .np-grid .np-rule
+
 ### Background Rule
 `.slide` 不设置 background。body 使用 `#f7f5f0`（新闻纸白）。深色幻灯片（`.np-dark`）单独设置 `background: var(--bg-dark)`。
 

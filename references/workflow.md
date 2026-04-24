@@ -196,6 +196,10 @@ For each of the 12 slides:
 
 **Architecture note:** Signature elements ARE layout constraints, not a separate injection step. The `.bold-ghost` positioned at the bottom-right, the `.slide-num` at the top-left — these define the spatial composition that all other content responds to.
 
+**Swiss Modern native-export guard:** Swiss Modern must stay on the canonical path used by the reference demo. Panels are direct children of `.slide`; `.bg-num` and `.slide-num-label` stay as direct children of `.slide`; tokens stay on `--bg/--bg-dark/--text/--red`; and each slide should emit `data-export-role` matching the chosen named layout (`title_grid`, `column_content`, `stat_block`, `pull_quote`, `geometric_diagram`, `data_table`, `contents_index`). Compatible aliases like `.left-col`, `.right-col`, `.stat-block`, `.content-block`, `.quote-block`, `--bg-primary`, or `--accent` are legacy inputs only and must not be emitted by `--generate`.
+
+**High-risk preset guards:** Enterprise Dark, Data Story, Glassmorphism, and Chinese Chan also have canonical export paths now. Honor each reference file's `## Canonical Export Contract`: emit `data-export-role`, keep canonical token names, and do not emit shorthand alias classes when the reference marks them as input-only. Data Story keeps chart rendering pure SVG/CSS, Glassmorphism keeps orb layers behind blurred cards, and Chinese Chan keeps decorative elements outside `.slide-content`.
+
 **CRITICAL: Use the style's full component palette.** Every style provides multiple component patterns. Do NOT put every piece of content inside a generic card with bullets. Each slide should use 2-3 distinct component types. If every slide looks like "card + bullet list," redesign at least half before writing HTML.
 
 **Exception for minimalist styles:** Chinese Chan, Paper & Ink, and similar minimalist styles may repeat the core narrow-column layout. For these styles, diversity comes from content treatment (different decorative elements, typography scale) rather than layout structure.
@@ -268,7 +272,9 @@ Alternate between text-heavy and visual-heavy slides. Three or more consecutive 
 
 ### Step 7: Pre-write validation (ALL modes — Auto, Polish, --generate)
 
-Before writing the final HTML, scan the assembled output for these violations and fix each one found:
+Before writing the final HTML, save the assembled HTML to a temporary file (for example `"$TMP_HTML"`) and run `python3 tests/validate.py "$TMP_HTML" --strict`.
+Treat strict failures as generation failures: fix or regenerate, then rerun strict validate until it passes. Only then write the final deliverable.
+After the strict gate passes, scan the assembled output for these violations and fix each one found:
 
 **Core 8 checks:**
 1. **Search `:::` in HTML** → convert any unconverted directive blocks

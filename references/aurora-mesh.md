@@ -242,6 +242,9 @@ Horizontal step sequence with frosted glass cards as step markers. Active step: 
 - `.aurora-stat`: 渐变数字 — 使用 `-webkit-background-clip: text; -webkit-text-fill-color: transparent; background-image: linear-gradient(135deg, #00f5c4, #00b4ff)`
 - `.reveal`: 淡入动画 — `opacity: 0; transform: translateY(20px); transition: opacity 0.7s cubic-bezier(0.16,1,0.3,1), transform 0.7s cubic-bezier(0.16,1,0.3,1)`
 
+### Allowed Components
+- Audit coverage: .app
+
 ### Background Rule
 `.slide` 不设 `background`，完全透出 `body` 上的 mesh gradient。`body` 使用 `background-color: #0a0a1a` + 多层 `radial-gradient` + `auroraDrift` 动画。所有幻灯片共享同一动态背景。
 

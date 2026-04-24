@@ -153,6 +153,10 @@ Large number in Plus Jakarta Sans 800, `clamp(3rem, 8vw, 6rem)`, `letter-spacing
 - `.card-content`: Content area with `padding-right: clamp(56px, 6vw, 80px)` (offset for pills), `z-index: 10`
 - `.divider`: 40px wide, 4px tall colored accent bar (`border-radius: 2px`)
 
+### Allowed Components
+- Audit coverage: .lavender .medium .mint .pastel-body .pastel-card .pastel-label .pastel-pill .pastel-title
+- Audit coverage cont.: .pink .sage .short .tall .violet
+
 ### Background Rule
 `body` sets `background: #c8d9e6` (pastel blue). Card has solid white background that covers the center. No gradient bleed-through.
 

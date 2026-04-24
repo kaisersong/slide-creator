@@ -36,6 +36,18 @@ def test_skill_and_workflow_lock_preset_across_modes():
     assert "record segmented timing for:" in workflow
 
 
+def test_swiss_modern_docs_define_canonical_export_path():
+    skill = read_text(SKILL_MD)
+    workflow = read_text(WORKFLOW_MD)
+    template = read_text(HTML_TEMPLATE_MD)
+
+    assert "Swiss Modern 额外要求 canonical export path" in skill
+    assert "Swiss Modern native-export guard" in workflow
+    assert "data-export-role" in workflow
+    assert ".left-col/.right-col" in template
+    assert ".bg-num" in template and ".slide-num-label" in template
+
+
 def test_brief_template_treats_human_plan_as_optional_view():
     template = read_json(BRIEF_TEMPLATE_JSON)
     assert template["plan_view"]["emit_planning_view"] is False
@@ -71,6 +83,22 @@ def test_readmes_publish_mode_aliases_and_timing_guidance():
     assert "精修" in readme_zh
     assert "BRIEF.json" in readme
     assert "BRIEF.json" in readme_zh
+
+
+def test_validate_is_documented_as_pre_write_gate():
+    skill = read_text(SKILL_MD)
+    workflow = read_text(WORKFLOW_MD)
+    readme = read_text(README_MD)
+    readme_zh = read_text(README_ZH_MD)
+
+    strict_cmd = 'python3 tests/validate.py "$TMP_HTML" --strict'
+
+    assert strict_cmd in skill
+    assert strict_cmd in workflow
+    assert "pre-write gate" in readme
+    assert "post-generation diagnostic" not in readme
+    assert "写入前门禁" in readme_zh
+    assert "生成后诊断" not in readme_zh
 
 
 def test_slide_container_has_no_visual_properties():
