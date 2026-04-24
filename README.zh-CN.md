@@ -135,7 +135,25 @@ slide-creator 把 `SKILL.md` 保持成一个薄路由层，把细节下沉到 re
 - `tests/validate.py --strict` 校验运行时契约
 - eval 按 route / compression / render / efficiency 四层打分
 
-这里最重要的设计思想不是“多写一点测试”，而是**更准确地定位失败发生在哪一层**。这样坏结果才能反过来推动 skill 本身变好。
+这里最重要的设计思想不是”多写一点测试”，而是**更准确地定位失败发生在哪一层**。这样坏结果才能反过来推动 skill 本身变好。
+
+**验证的定位：生成后诊断，不增加生成压力**
+
+validate.py 是生成完成后才运行的质量诊断工具，不在生成流程中执行。这确保了：
+- 不增加生成步骤数量 → 不增加 LLM 认知负担
+- 不增加 prose 规则 → 不稀释 SKILL.md 的核心约束
+- 不增加引用文件读取 → 不消耗额外的上下文预算
+
+每次新增检查前，都要先验证：这个检查会不会增加生成压力？如果需要读取 style file、需要 LLM 解析输出、需要在生成中运行，就违反了”保护最后一步”的设计前提。
+
+**契约对齐：验证脚本必须与生成契约一致**
+
+validate.py 的检查项必须与 SKILL.md / html-template.md / js-engine.md 的实际契约保持一致。例如：
+- 检查 hotzone → 必须用 `.edit-hotzone`（class）而不是 `id=”hotzone”`
+- 检查外部链接 → 必须允许 Google Fonts（html-template.md 明确要求）
+- 检查水印 → 必须验证 JS 注入逻辑（而不是硬编码位置）
+
+契约对齐不是靠文档同步，而是靠脚本实测：每次改动 validate.py，都要跑一遍 demo，确保检查项真的匹配生成输出。
 
 ### 七、反对 slide slop，既反对视觉烂稿，也反对内容烂稿
 

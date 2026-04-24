@@ -137,6 +137,24 @@ That is why slide-creator is moving quality checks earlier:
 
 The important design idea here is not "more tests". It is **better failure localization**. If a result is bad, we want to know whether the mistake happened in routing, compression, rendering, or polish. That feedback then improves the skill itself.
 
+**Validation positioning: post-generation diagnostic, not generation pressure**
+
+validate.py runs after generation completes, not during the generation workflow. This ensures:
+- No extra generation steps → no extra LLM cognitive load
+- No extra prose rules → no dilution of SKILL.md's core constraints
+- No extra reference file reads → no extra context budget consumption
+
+Before adding any new check, verify: does this check increase generation pressure? If it requires reading style files, parsing LLM output, or running during generation, it violates the "protect the last mile" design premise.
+
+**Contract alignment: validators must match generation contracts**
+
+validate.py checks must align with actual contracts in SKILL.md / html-template.md / js-engine.md. For example:
+- Check hotzone → must use `.edit-hotzone` (class) not `id="hotzone"`
+- Check external links → must allow Google Fonts (explicitly required by html-template.md)
+- Check watermark → must verify JS injection logic (not hardcoded position)
+
+Contract alignment isn't about doc syncing; it's about script validation: every validate.py change should run against demos to ensure checks match actual generation output.
+
 ### 7. Against slide slop, visual and semantic
 
 Most AI slide failures are not dramatic. They are mediocre. Sparse pages, repeated layouts, weak titles, and generic structure. That is what makes decks feel machine-made.
