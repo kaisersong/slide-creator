@@ -172,6 +172,10 @@ Dark background. Large white number in Manrope 800, `clamp(48px, 8vw, 96px)`. Bl
 - `.dot` / `.dot.active`: 导航圆点 — 默认 `rgba(67,97,238,0.25) + 1px solid rgba(67,97,238,0.4)`；激活 `#4361ee + scale(1.5)`
 - `.pt-cell` / `.pt-cell.featured`: 预设网格单元 — featured 为 `background: #4361ee`
 
+### Allowed Components
+- Audit coverage: .elec-accent-bar .elec-body .elec-label .elec-panel-dark .elec-panel-white .elec-quote .elec-quote-block .elec-split
+- Audit coverage cont.: .elec-title
+
 ### Background Rule
 `.slide` 不设固定 background。各面板自行定义背景色：`.left-panel` / `.right-panel` / `.top-panel` / `.bottom-panel` 通过内联 style 设置为 `#ffffff`、`#0a0a0a`、`#f8f9ff`、`#f2f4ff` 等。无 body 渐变或伪元素覆盖。
 

@@ -49,7 +49,6 @@
             --text-muted: #666666;
             --red: #ff3300;
             --grid-line: rgba(0, 0, 0, 0.05);
-            --accent: var(--red);
         }
 
         body {
@@ -65,7 +64,7 @@
             background-image:
                 linear-gradient(rgba(0,0,0,0.03) 1px, transparent 1px),
                 linear-gradient(90deg, rgba(0,0,0,0.03) 1px, transparent 1px);
-            background-size: 40px 40px;
+            background-size: calc(100vw / 12) 100vh;
             pointer-events: none; z-index: 0;
         }
 
@@ -891,7 +890,7 @@
     <nav class="nav-dots" aria-label="Slide navigation"></nav>
 
     <!-- Slide 1: Hero -- Title Grid -->
-    <section class="slide" id="slide-1" data-notes="slide-creator: 零依赖 HTML 演示文稿, 21 种设计预设, 为 Claude Code 和 OpenClaw 而生" aria-label="Hero">
+    <section class="slide" id="slide-1" data-export-role="title_grid" data-notes="slide-creator: 零依赖 HTML 演示文稿, 21 种设计预设, 为 Claude Code 和 OpenClaw 而生" aria-label="Hero">
         <div class="bg-num">01</div>
         <div class="hero-inner">
             <div class="hero-rule reveal"></div>
@@ -919,7 +918,7 @@
     </section>
 
     <!-- Slide 2: Problem -- Column Content -->
-    <section class="slide" id="slide-2" data-notes="现有工具三大痛点: 工具链冗长、通用 AI 美学缺乏品牌一致性、平台锁定导致离线不可用" aria-label="Problem">
+    <section class="slide" id="slide-2" data-export-role="column_content" data-notes="现有工具三大痛点: 工具链冗长、通用 AI 美学缺乏品牌一致性、平台锁定导致离线不可用" aria-label="Problem">
         <div class="bg-num">02</div>
         <div class="left-panel">
             <div class="red-bar"></div>
@@ -948,7 +947,7 @@
     </section>
 
     <!-- Slide 3: Discovery -- Geometric Diagram -->
-    <section class="slide" id="slide-3" data-notes="风格发现流程: 描述主题后生成三个风格预览, 用眼睛选择而非用语言描述" aria-label="Discovery">
+    <section class="slide" id="slide-3" data-export-role="geometric_diagram" data-notes="风格发现流程: 描述主题后生成三个风格预览, 用眼睛选择而非用语言描述" aria-label="Discovery">
         <div class="disc-header">
             <span class="reveal eyebrow">Discovery</span>
             <h2 class="reveal">看图选风格,<br>不用描述</h2>
@@ -996,7 +995,7 @@
     </section>
 
     <!-- Slide 4: Solution -- Contents Index -->
-    <section class="slide" id="slide-4" data-notes="21 种设计预设覆盖商业路演、技术分享、创意展示等场景, 每种都有独特视觉语言" aria-label="Solution">
+    <section class="slide" id="slide-4" data-export-role="contents_index" data-notes="21 种设计预设覆盖商业路演、技术分享、创意展示等场景, 每种都有独特视觉语言" aria-label="Solution">
         <div class="bg-num">04</div>
         <div class="sol-inner">
             <span class="reveal eyebrow">Presets</span>
@@ -1029,7 +1028,7 @@
     </section>
 
     <!-- Slide 5: Workflow -- Data Table -->
-    <section class="slide" id="slide-5" data-notes="三步出稿: 调用 skill, 选择风格, 打开浏览器查看完整演示文稿" aria-label="Workflow">
+    <section class="slide" id="slide-5" data-export-role="data_table" data-notes="三步出稿: 调用 skill, 选择风格, 打开浏览器查看完整演示文稿" aria-label="Workflow">
         <div class="flow-inner">
             <span class="reveal eyebrow">Workflow</span>
             <h2 class="reveal">三步出稿, 一气呵成</h2>
@@ -1069,7 +1068,7 @@
     </section>
 
     <!-- Slide 6: Features -- Grid Checkpoint -->
-    <section class="slide" id="slide-6" data-notes="四个核心功能: F5 全屏播放、E 键编辑、P 键演讲者模式、PPTX 导出" aria-label="Features">
+    <section class="slide" id="slide-6" data-export-role="stat_block" data-notes="四个核心功能: F5 全屏播放、E 键编辑、P 键演讲者模式、PPTX 导出" aria-label="Features">
         <div class="feat-inner">
             <span class="reveal eyebrow">Features</span>
             <h2 class="reveal">四项能力, 开箱即用</h2>
@@ -1101,7 +1100,7 @@
     </section>
 
     <!-- Slide 7: Install -- Evidence List -->
-    <section class="slide" id="slide-7" data-notes="支持 Claude Code 和 OpenClaw 两种安装方式, 一行命令即可使用" aria-label="Install">
+    <section class="slide" id="slide-7" data-export-role="column_content" data-notes="支持 Claude Code 和 OpenClaw 两种安装方式, 一行命令即可使用" aria-label="Install">
         <div class="bg-num">07</div>
         <div class="inst-inner">
             <span class="reveal eyebrow">Install</span>
@@ -1126,7 +1125,7 @@
     </section>
 
     <!-- Slide 8: CTA -- Stacked Action -->
-    <section class="slide" id="slide-8" data-notes="立即开始: 调用 /slide-creator 命令, 描述你的演示主题" aria-label="CTA">
+    <section class="slide" id="slide-8" data-export-role="title_grid" data-notes="立即开始: 调用 /slide-creator 命令, 描述你的演示主题" aria-label="CTA">
         <div class="bg-num">08</div>
         <div class="cta-inner">
             <span class="reveal eyebrow">开始使用</span>

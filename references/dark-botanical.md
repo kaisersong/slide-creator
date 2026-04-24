@@ -173,6 +173,9 @@ Large italic number in `.botanical-accent` (warm gold `#d4a574`), `clamp(3rem, 8
 - `.preset.tag`: 预设标签 — `border: 1px solid #2a2520;` hover 变金色，`.current` 变实色
 - `.dot` / `.dot.active`: 导航圆点 — 默认 `#3a3530 + 1px solid #5a5550`；激活 `#c9b896 + box-shadow: 0 0 8px rgba(201,184,150,0.5)`
 
+### Allowed Components
+- Audit coverage: .botanical-accent .botanical-body .botanical-card .botanical-label .botanical-orb .botanical-title .botanical-vline .orb-terracotta
+
 ### Background Rule
 `.slide` 不设 background，完全由 `body { background: #0f0f0f }` 纯色提供暗色画布。不使用伪元素覆盖。光球直接作为子元素放置在 slide 内（绝对定位）。
 

@@ -183,6 +183,9 @@ Pixel-style bar chart: bars are thick-bordered rectangles (not rounded), fill wi
 - `.bc`: Barlow Condensed 缩写类
 - `.mono`: IBM Plex Mono 缩写类
 
+### Allowed Components
+- Audit coverage: .cyan .pink .retro-body .retro-label .retro-mono .yellow
+
 ### Background Rule
 `.slide` 不设置 background。body 使用米色 `#f5f2e8` + 24px 淡蓝网格（`rgba(80,100,170,0.10)`）。网格通过 `body` 的 `background-image` 设置。
 

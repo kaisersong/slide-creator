@@ -76,6 +76,7 @@ Every generated HTML must include all of the following:
            Use #slide-N { flex-direction: row/column } in CSS to control layout.
            WRONG: <section class="slide"><div class="wrapper-flex"><div class="left-panel">...
            RIGHT: <section class="slide" id="slide-1"><div class="left-panel">...
+           Swiss Modern native-export guard: keep `.bg-num` / `.slide-num-label` as direct children of `.slide`, and never emit `.slide > .slide-content > .left-col/.right-col`.
            Panel backgrounds, padding, flex ratios MUST be defined via #slide-N CSS selectors, NEVER inline style.
            Per-slide CSS in <style>: #slide-1 { flex-direction: row } / #slide-1 .left-panel { background: #fff } */
 
@@ -218,6 +219,9 @@ class PresentMode {
 </body>
 </html>
 ```
+
+### Allowed Components
+- Audit coverage: .decorative .keyboard-hint .left-panel .logo .screenshot
 
 ---
 

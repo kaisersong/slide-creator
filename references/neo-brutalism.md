@@ -310,6 +310,10 @@ Stacked `.editorial-cta-box` style blocks but brutalist: black border `3px solid
 - `.preset-tag`: 预设标签 — `border: 2px solid #000; background: #fff; box-shadow: 2px 2px 0 #000`；当前项反转 `background: #000; color: #FFEB3B`
 - `.dot`: 导航点 — 黑色方块（`border-radius: 0`），激活时高度变 20px
 
+### Allowed Components
+- Audit coverage: .brute-arrow .brute-body .brute-h2 .brute-list .brute-rotated .brute-rotated-right .brute-slide .brute-stripe
+- Audit coverage cont.: .brute-title .num
+
 ### Background Rule
 `.slide` 设置背景为 `#FFEB3B`（黄色，最经典）。也可选 `#FF5733`（橙红）、`#E8F5E9`（薄荷）、`#FAFAFA`（纯白）。不使用渐变，纯色块。
 

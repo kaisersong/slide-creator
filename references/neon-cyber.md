@@ -186,6 +186,9 @@ Centered headline in cyan glow. Below: 3 CTA/contact panels in a row (bordered, 
 - `.corner-br` / `.corner-tl`: Bottom-right and top-left bracket decorations (1px cyan borders)
 - `.particle`: Floating dots (JS-generated, 18 particles, 3 color variants)
 
+### Allowed Components
+- Audit coverage: .neon-body .neon-divider .neon-glow .neon-grid .neon-label .neon-mono .neon-panel
+
 ### Background Rule
 `.slide` sets `background: #0a0f1c` with `z-index: 2`, preventing body gradient from showing through. Body overlays (`::before`/`::after`) are fixed-position and visible behind slides.
 

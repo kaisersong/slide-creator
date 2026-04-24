@@ -194,6 +194,9 @@ Stacked `.editorial-cta-box` blocks. Each: `border: 2px solid #1a1a1a`, `border-
 - `.feature-badge`: 功能标签 — `font-size: 11px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; background: #e8d4c0; color: #5a2a1a; padding: 3px 10px`
 - `.slide-footer`: 页脚 — `padding: 12px clamp(32px, 6vw, 100px); display: flex; justify-content: space-between; border-top: 1px solid rgba(26,26,26,0.1)`
 
+### Allowed Components
+- Audit coverage: .editorial-body .editorial-circle .editorial-cta-box .editorial-dot .editorial-line .editorial-quote .editorial-title
+
 ### Background Rule
 `.slide` 必须设置 `background: #f5f3ee`。body 为纯米色，不使用渐变或纹理。装饰性几何图形通过 `.deco-circle`/`.deco-line`/`.deco-dot` 作为绝对定位元素叠加。
 

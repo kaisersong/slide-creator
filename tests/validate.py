@@ -51,6 +51,61 @@ except ImportError:
 
 # ─── Individual check functions ───────────────────────────────────────────────
 
+
+def _collect_css_text(soup) -> str:
+    css_sources = [s.string or "" for s in soup.find_all("style")]
+    css_sources.extend(tag.get("style", "") for tag in soup.find_all(style=True))
+    return "\n".join(css_sources)
+
+
+def _class_tokens(value) -> list[str]:
+    if not value:
+        return []
+    if isinstance(value, (list, tuple, set)):
+        return [str(token) for token in value]
+    return str(value).split()
+
+
+def _has_exact_class(node, cls: str) -> bool:
+    return bool(node.find(class_=lambda value, cls=cls: cls in _class_tokens(value)))
+
+
+def _direct_child_classes(node) -> set[str]:
+    classes = set()
+    for child in node.children:
+        if getattr(child, "name", None):
+            classes.update(_class_tokens(child.get("class", [])))
+    return classes
+
+
+def _defined_css_vars(css_text: str) -> set[str]:
+    return {
+        match.group(1)
+        for match in re.finditer(r"(?<![a-zA-Z0-9_-])(--[a-zA-Z0-9_-]+)\s*:", css_text)
+    }
+
+
+def _missing_required_vars(css_text: str, required: list[str]) -> list[str]:
+    defined = _defined_css_vars(css_text)
+    return [token for token in required if token not in defined]
+
+
+def _collect_role_issues(slides, valid_roles: set[str], warnings, preset: str) -> list[str]:
+    issues = []
+    missing = []
+    for index, slide in enumerate(slides, start=1):
+        role = slide.get("data-export-role", "").strip()
+        if not role:
+            missing.append(index)
+            continue
+        if role not in valid_roles:
+            issues.append(f"slide {index}: invalid data-export-role '{role}'")
+    if missing:
+        warnings.append(
+            f"{preset}: {len(missing)}/{len(slides)} slides missing data-export-role"
+        )
+    return issues
+
 def check_slide_count(soup, content, warnings) -> tuple[bool, str]:
     slides = soup.find_all(class_="slide")
     n = len(slides)
@@ -75,6 +130,35 @@ def check_overflow_hidden(soup, content, warnings) -> tuple[bool, str]:
     if not has_overflow:
         return False, "CSS missing overflow: hidden"
     return True, "overflow: hidden present"
+
+
+def check_css_vars_defined(soup, content, warnings) -> tuple[bool, str]:
+    """Fail when CSS uses custom properties that are never defined and have no fallback.
+
+    This catches a common preset-fidelity failure mode where signature CSS is pasted
+    into the deck, but the matching preset tokens were renamed or omitted.
+    """
+    css_text = _collect_css_text(soup)
+
+    if "var(--" not in css_text:
+        return True, "No CSS custom properties used"
+
+    defined = _defined_css_vars(css_text)
+
+    missing = set()
+    for match in re.finditer(r"var\(\s*(--[a-zA-Z0-9_-]+)\s*(?:,([^)]*))?\)", css_text):
+        var_name = match.group(1)
+        fallback = match.group(2)
+        if var_name not in defined and not (fallback and fallback.strip()):
+            missing.add(var_name)
+
+    if missing:
+        sample = ", ".join(sorted(missing)[:6])
+        if len(missing) > 6:
+            sample += f" (+{len(missing) - 6} more)"
+        return False, f"Undefined CSS variables used without fallback: {sample}"
+
+    return True, f"All CSS variables resolved ({len(defined)} defined)"
 
 
 def check_self_contained(soup, content, warnings) -> tuple[bool, str]:
@@ -194,18 +278,306 @@ def check_data_notes(soup, content, warnings) -> tuple[bool, str]:
     return True, f"data-notes present on {len(with_notes)}/{len(slides)} slides"
 
 
+def check_swiss_modern_contract(soup, content, warnings) -> tuple[bool, str]:
+    body = soup.find("body")
+    if not body or body.get("data-preset", "").strip() != "Swiss Modern":
+        return True, "Swiss Modern contract not applicable"
+
+    css_text = _collect_css_text(soup)
+
+    issues = []
+
+    alias_tokens = [
+        "--bg-primary",
+        "--bg-secondary",
+        "--text-primary",
+        "--text-secondary",
+        "--accent",
+    ]
+    found_alias_tokens = [token for token in alias_tokens if token in css_text]
+    if found_alias_tokens:
+        issues.append("legacy token aliases " + ", ".join(found_alias_tokens[:5]))
+
+    compatible_alias_classes = [
+        "left-col",
+        "right-col",
+        "stat-block",
+        "content-block",
+        "quote-block",
+    ]
+    found_alias_classes = [
+        cls for cls in compatible_alias_classes
+        if _has_exact_class(soup, cls)
+    ]
+    if found_alias_classes:
+        issues.append("compatible aliases " + ", ".join(found_alias_classes))
+
+    for index, slide in enumerate(soup.find_all(class_="slide"), start=1):
+        direct_child_classes = _direct_child_classes(slide)
+
+        for cls in ("left-panel", "right-panel", "bg-num", "slide-num-label"):
+            if _has_exact_class(slide, cls) and cls not in direct_child_classes:
+                issues.append(f"slide {index}: .{cls} must be a direct child of .slide")
+                break
+
+        if not slide.get("data-export-role", "").strip():
+            warnings.append(f"slide {index}: Swiss Modern slide missing data-export-role")
+
+    if issues:
+        sample = "; ".join(issues[:3])
+        if len(issues) > 3:
+            sample += f" (+{len(issues) - 3} more)"
+        return False, f"Swiss Modern contract violations: {sample}"
+
+    return True, "Swiss Modern contract OK"
+
+
+def check_enterprise_dark_contract(soup, content, warnings) -> tuple[bool, str]:
+    body = soup.find("body")
+    if not body or body.get("data-preset", "").strip() != "Enterprise Dark":
+        return True, "Enterprise Dark contract not applicable"
+
+    css_text = _collect_css_text(soup)
+    issues = []
+
+    missing_tokens = _missing_required_vars(css_text, [
+        "--bg-primary", "--bg-secondary", "--bg-header", "--border",
+        "--text-primary", "--text-body", "--text-muted",
+        "--accent-blue", "--accent-green", "--accent-red", "--accent-amber",
+    ])
+    if missing_tokens:
+        issues.append("missing canonical tokens " + ", ".join(missing_tokens[:6]))
+
+    alias_classes = [
+        "label-tag", "kpi", "kpi-value", "kpi-label", "card", "badge",
+        "status-dot", "sep", "code", "accent-blue", "accent-green",
+        "accent-red", "accent-orange",
+    ]
+    found_alias_classes = [cls for cls in alias_classes if _has_exact_class(soup, cls)]
+    if found_alias_classes:
+        issues.append("generic alias classes " + ", ".join(found_alias_classes[:6]))
+
+    slides = soup.find_all(class_="slide")
+    issues.extend(_collect_role_issues(
+        slides,
+        {
+            "kpi_dashboard", "consulting_split", "data_table",
+            "architecture_map", "comparison_matrix", "insight_pull", "timeline", "cta_close",
+        },
+        warnings,
+        "Enterprise Dark",
+    ))
+
+    for index, slide in enumerate(slides, start=1):
+        direct_child_classes = _direct_child_classes(slide)
+        if _has_exact_class(slide, "ent-split") and "ent-split" not in direct_child_classes:
+            issues.append(f"slide {index}: .ent-split must be a direct child of .slide")
+            break
+        if _has_exact_class(slide, "slide-num-label") and "slide-num-label" not in direct_child_classes:
+            issues.append(f"slide {index}: .slide-num-label must be a direct child of .slide")
+            break
+
+    if issues:
+        sample = "; ".join(issues[:3])
+        if len(issues) > 3:
+            sample += f" (+{len(issues) - 3} more)"
+        return False, f"Enterprise Dark contract violations: {sample}"
+
+    return True, "Enterprise Dark contract OK"
+
+
+def check_data_story_contract(soup, content, warnings) -> tuple[bool, str]:
+    body = soup.find("body")
+    if not body or body.get("data-preset", "").strip() != "Data Story":
+        return True, "Data Story contract not applicable"
+
+    css_text = _collect_css_text(soup)
+    issues = []
+
+    missing_tokens = _missing_required_vars(css_text, [
+        "--bg", "--bg-card", "--border", "--text", "--text-muted",
+        "--positive", "--negative", "--neutral",
+        "--chart-primary", "--chart-secondary", "--chart-tertiary",
+        "--grid-line", "--axis-line",
+    ])
+    if missing_tokens:
+        issues.append("missing canonical tokens " + ", ".join(missing_tokens[:6]))
+
+    alias_classes = [
+        "kpi-number", "kpi-label", "kpi-trend", "kpi-grid", "kpi-card",
+        "chart-layout", "eyebrow", "divider",
+    ]
+    found_alias_classes = [cls for cls in alias_classes if _has_exact_class(soup, cls)]
+    if found_alias_classes:
+        issues.append("generic alias classes " + ", ".join(found_alias_classes[:6]))
+
+    chart_lib_markers = ["chart.js", "echarts", "highcharts", "apexcharts", "plotly", "d3."]
+    found_markers = [marker for marker in chart_lib_markers if marker in content.lower()]
+    if found_markers:
+        issues.append("external chart libs " + ", ".join(found_markers))
+
+    if ".slide::before" not in css_text and ".slide:before" not in css_text:
+        issues.append("grid overlay must live on .slide::before")
+
+    if "font-variant-numeric: tabular-nums" not in css_text and 'font-feature-settings: "tnum"' not in css_text:
+        issues.append("tabular number styling missing")
+
+    slides = soup.find_all(class_="slide")
+    issues.extend(_collect_role_issues(
+        slides,
+        {"hero_number", "kpi_chart", "chart_insight", "comparison_matrix", "kpi_grid", "workflow_chart", "cta_close"},
+        warnings,
+        "Data Story",
+    ))
+
+    if issues:
+        sample = "; ".join(issues[:3])
+        if len(issues) > 3:
+            sample += f" (+{len(issues) - 3} more)"
+        return False, f"Data Story contract violations: {sample}"
+
+    return True, "Data Story contract OK"
+
+
+def check_glassmorphism_contract(soup, content, warnings) -> tuple[bool, str]:
+    body = soup.find("body")
+    if not body or body.get("data-preset", "").strip() != "Glassmorphism":
+        return True, "Glassmorphism contract not applicable"
+
+    css_text = _collect_css_text(soup)
+    issues = []
+
+    missing_tokens = _missing_required_vars(css_text, [
+        "--bg-gradient-1", "--bg-gradient-2", "--bg-gradient-3",
+        "--glass-bg", "--glass-border", "--glass-text-dark", "--glass-text-light",
+        "--orb-purple", "--orb-pink", "--orb-mint",
+    ])
+    if missing_tokens:
+        issues.append("missing canonical tokens " + ", ".join(missing_tokens[:6]))
+
+    alias_classes = ["bg-cool", "bg-warm", "bg-mint", "dark-text", "light-text", "glass-grid", "glass-slide-center"]
+    found_alias_classes = [cls for cls in alias_classes if _has_exact_class(soup, cls)]
+    if found_alias_classes:
+        issues.append("input-only helpers emitted " + ", ".join(found_alias_classes[:6]))
+
+    if "backdrop-filter" not in css_text and "-webkit-backdrop-filter" not in css_text:
+        issues.append("backdrop-filter glass cards missing")
+
+    has_slide_backgrounds = bool(re.search(r"\.slide-\d+\s*\{[^}]*background\s*:", css_text, re.DOTALL))
+    has_bg_modes = all(token in css_text for token in (".bg-cool", ".bg-warm", ".bg-mint"))
+    if not has_slide_backgrounds and not has_bg_modes:
+        issues.append("slide-owned gradient backgrounds missing")
+
+    has_orb_element = any(_has_exact_class(soup, cls) for cls in ("orb", "orb1", "orb2", "orb3", "orb-1", "orb-2", "orb-3", "glass-orb"))
+    if not has_orb_element:
+        issues.append("blurred orb layers missing")
+
+    slides = soup.find_all(class_="slide")
+    issues.extend(_collect_role_issues(
+        slides,
+        {"glass_hero", "glass_card", "glass_split", "glass_trio", "glass_stat"},
+        warnings,
+        "Glassmorphism",
+    ))
+
+    if issues:
+        sample = "; ".join(issues[:3])
+        if len(issues) > 3:
+            sample += f" (+{len(issues) - 3} more)"
+        return False, f"Glassmorphism contract violations: {sample}"
+
+    return True, "Glassmorphism contract OK"
+
+
+def check_chinese_chan_contract(soup, content, warnings) -> tuple[bool, str]:
+    body = soup.find("body")
+    if not body or body.get("data-preset", "").strip() != "Chinese Chan":
+        return True, "Chinese Chan contract not applicable"
+
+    css_text = _collect_css_text(soup)
+    issues = []
+
+    missing_tokens = _missing_required_vars(css_text, [
+        "--bg", "--text", "--text-muted", "--accent", "--accent-alt", "--rule",
+    ])
+    if missing_tokens:
+        issues.append("missing canonical tokens " + ", ".join(missing_tokens[:6]))
+
+    alias_classes = ["ghost-kanji", "flanked-rule", "vline", "col", "eyebrow", "accent"]
+    found_alias_classes = [cls for cls in alias_classes if _has_exact_class(soup, cls)]
+    if found_alias_classes:
+        issues.append("input-only aliases emitted " + ", ".join(found_alias_classes[:6]))
+
+    slides = soup.find_all(class_="slide")
+    issues.extend(_collect_role_issues(
+        slides,
+        {"zen_center", "zen_split", "zen_vertical", "zen_stat"},
+        warnings,
+        "Chinese Chan",
+    ))
+
+    for index, slide in enumerate(slides, start=1):
+        direct_child_classes = _direct_child_classes(slide)
+        if _has_exact_class(slide, "zen-ghost-kanji") and "zen-ghost-kanji" not in direct_child_classes:
+            issues.append(f"slide {index}: .zen-ghost-kanji must be a direct child of .slide")
+            break
+
+        for elem in slide.find_all(class_=lambda value: "zen-ghost-kanji" in _class_tokens(value)):
+            style = elem.get("style", "")
+            centered_markers = ["left: 50%", "right: 50%", "top: 50%", "bottom: 50%", "translateX(-50%)", "translateY(-50%)"]
+            if any(marker in style for marker in centered_markers):
+                issues.append(f"slide {index}: .zen-ghost-kanji must stay off-center")
+                break
+
+    if issues:
+        sample = "; ".join(issues[:3])
+        if len(issues) > 3:
+            sample += f" (+{len(issues) - 3} more)"
+        return False, f"Chinese Chan contract violations: {sample}"
+
+    return True, "Chinese Chan contract OK"
+
+
 def check_visual_variety(soup, content, warnings) -> tuple[bool, str]:
-    """Flag if too many consecutive slides share the same layout class."""
+    """Flag if too many consecutive slides share the same layout signature."""
     slides = soup.find_all(class_="slide")
     if len(slides) < 4:
         return True, "Too few slides to check visual variety"
 
-    # Extract the first non-'slide' class as the layout indicator
-    def layout(slide):
-        classes = [c for c in slide.get("class", []) if c != "slide"]
-        return classes[0] if classes else "default"
+    generic = {
+        "slide", "slide-content", "content", "reveal", "visible", "bg-num",
+        "slide-num-label", "light", "eyebrow", "swiss-rule", "swiss-rule-thin",
+        "swiss-title", "swiss-body", "swiss-label", "swiss-stat",
+    }
 
-    layouts = [layout(s) for s in slides]
+    slide_descendant_classes = []
+    class_frequency = {}
+    for slide in slides:
+        classes = set()
+        for node in slide.find_all(class_=True):
+            for cls in node.get("class", []):
+                if cls not in generic:
+                    classes.add(cls)
+        slide_descendant_classes.append(classes)
+        for cls in classes:
+            class_frequency[cls] = class_frequency.get(cls, 0) + 1
+
+    shared_threshold = max(2, len(slides) // 2)
+
+    def layout_signature(index, slide):
+        section_classes = tuple(c for c in slide.get("class", []) if c != "slide")
+        distinctive = sorted(
+            cls for cls in slide_descendant_classes[index]
+            if class_frequency.get(cls, 0) < shared_threshold
+        )
+        if distinctive:
+            return tuple(distinctive[:8])
+        if section_classes:
+            return section_classes
+        fallback = sorted(slide_descendant_classes[index])
+        return tuple(fallback[:8]) if fallback else ("default",)
+
+    layouts = [layout_signature(i, slide) for i, slide in enumerate(slides)]
     max_run = 1
     run = 1
     for i in range(1, len(layouts)):
@@ -215,10 +587,10 @@ def check_visual_variety(soup, content, warnings) -> tuple[bool, str]:
         else:
             run = 1
 
-    if max_run >= 4:
-        return False, f"Low visual variety: {max_run} consecutive slides with same layout"
     if max_run >= 3:
-        warnings.append(f"{max_run} consecutive slides with same layout class")
+        return False, f"Low visual variety: {max_run} consecutive slides with same layout"
+    if max_run >= 2:
+        warnings.append(f"{max_run} consecutive slides with same layout signature")
     return True, f"Visual variety OK (max run: {max_run})"
 
 
@@ -378,7 +750,13 @@ STRICT_CHECKS = [
     check_keyboard_nav,
     check_edit_mode,
     check_data_notes,
+    check_swiss_modern_contract,
+    check_enterprise_dark_contract,
+    check_data_story_contract,
+    check_glassmorphism_contract,
+    check_chinese_chan_contract,
     check_visual_variety,
+    check_css_vars_defined,
     check_present_mode,
     check_unicode_fe0f,
     check_watermark_injection,

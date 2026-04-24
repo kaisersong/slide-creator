@@ -146,6 +146,12 @@ body::before {
 .ent-trend.up   { color: var(--accent-green); }
 .ent-trend.down { color: var(--accent-red); }
 
+.ent-sep {
+    height: 1px;
+    background: var(--border);
+    margin: clamp(14px, 2vw, 22px) 0;
+}
+
 .ent-table {
     width: 100%;
     border-collapse: collapse;
@@ -348,7 +354,7 @@ body.editing .edit-toggle { opacity: 1; pointer-events: auto; background: var(--
 </div>
 
 <!-- ═══════════ SLIDE 1: Hero 封面 ═══════════ -->
-<section class="slide" id="slide-1" data-notes="开场。展示产品名、核心数据和价值主张。让观众感受到规模和零依赖的力量。" aria-label="Hero">
+<section class="slide" id="slide-1" data-export-role="kpi_dashboard" data-notes="开场。展示产品名、核心数据和价值主张。让观众感受到规模和零依赖的力量。" aria-label="Hero">
 <div style="text-align:center; max-width:min(90vw,800px);">
     <div class="reveal">
         <span class="ent-pill">开源 · Claude Code · OpenClaw</span>
@@ -389,7 +395,7 @@ body.editing .edit-toggle { opacity: 1; pointer-events: auto; background: var(--
 </section>
 
 <!-- ═══════════ SLIDE 2: 问题提出 ═══════════ -->
-<section class="slide" id="slide-2" data-notes="提出问题：现有演示工具都是破碎的。用进度条可视化痛点程度。">
+<section class="slide" id="slide-2" data-export-role="consulting_split" data-notes="提出问题：现有演示工具都是破碎的。用进度条可视化痛点程度。">
 <div class="ent-split">
     <div class="ent-split-label">
         <div class="reveal">
@@ -431,7 +437,7 @@ body.editing .edit-toggle { opacity: 1; pointer-events: auto; background: var(--
 </section>
 
 <!-- ═══════════ SLIDE 3: 风格发现 ═══════════ -->
-<section class="slide" id="slide-3" data-notes="解释风格发现的工作流：看图选风格，三步搞定。">
+<section class="slide" id="slide-3" data-export-role="consulting_split" data-notes="解释风格发现的工作流：看图选风格，三步搞定。">
 <div class="ent-split">
     <div class="ent-split-label">
         <div class="reveal">
@@ -461,7 +467,7 @@ body.editing .edit-toggle { opacity: 1; pointer-events: auto; background: var(--
 </section>
 
 <!-- ═══════════ SLIDE 4: 解决方案 — 21 种预设 ═══════════ -->
-<section class="slide" id="slide-4" data-notes="展示全部 21 个预设。高亮 Enterprise Dark。" aria-label="Solution">
+<section class="slide" id="slide-4" data-export-role="kpi_dashboard" data-notes="展示全部 21 个预设。高亮 Enterprise Dark。" aria-label="Solution">
 <div style="text-align:center;">
     <div class="reveal">
         <span class="ent-pill">21 个预设</span>
@@ -469,7 +475,7 @@ body.editing .edit-toggle { opacity: 1; pointer-events: auto; background: var(--
     <div class="reveal" style="transition-delay:0.1s">
         <h2 style="margin-top:clamp(12px,2vw,20px);">所有演示文稿风格<br><span style="color:var(--accent-blue)">已内置</span></h2>
     </div>
-    <div class="sep reveal" style="transition-delay:0.15s; height:1px; background:var(--border); margin:clamp(12px,2vw,20px) auto; width:60px;"></div>
+    <div class="ent-sep reveal" style="transition-delay:0.15s; margin:clamp(12px,2vw,20px) auto; width:60px;"></div>
     <div class="reveal" style="transition-delay:0.2s; display:flex; flex-wrap:wrap; gap:8px; justify-content:center;">
         <span style="display:inline-block; padding:4px 12px; border-radius:999px; background:rgba(56,139,253,0.12); border:1px solid var(--border); color:var(--text-body); font-size:clamp(10px,1.2vw,13px); font-weight:500;">Aurora Mesh</span>
         <span style="display:inline-block; padding:4px 12px; border-radius:999px; background:rgba(56,139,253,0.12); border:1px solid var(--border); color:var(--text-body); font-size:clamp(10px,1.2vw,13px); font-weight:500;">Bold Signal</span>
@@ -498,7 +504,7 @@ body.editing .edit-toggle { opacity: 1; pointer-events: auto; background: var(--
 </section>
 
 <!-- ═══════════ SLIDE 5: 工作流程（表格） ═══════════ -->
-<section class="slide" id="slide-5" data-notes="三条命令的工作流程，用企业级表格呈现。">
+<section class="slide" id="slide-5" data-export-role="data_table" data-notes="三条命令的工作流程，用企业级表格呈现。">
 <div class="ent-split">
     <div class="ent-split-label">
         <div class="reveal">
@@ -548,7 +554,7 @@ body.editing .edit-toggle { opacity: 1; pointer-events: auto; background: var(--
 </section>
 
 <!-- ═══════════ SLIDE 6: 核心功能 ═══════════ -->
-<section class="slide" id="slide-6" data-notes="介绍播放模式、编辑模式、导出功能。">
+<section class="slide" id="slide-6" data-export-role="consulting_split" data-notes="介绍播放模式、编辑模式、导出功能。">
 <div class="ent-split">
     <div class="ent-split-label">
         <div class="reveal">
@@ -587,7 +593,7 @@ body.editing .edit-toggle { opacity: 1; pointer-events: auto; background: var(--
 </section>
 
 <!-- ═══════════ SLIDE 7: 安装方式 ═══════════ -->
-<section class="slide" id="slide-7" data-notes="如何安装 slide-creator。两行命令搞定。">
+<section class="slide" id="slide-7" data-export-role="kpi_dashboard" data-notes="如何安装 slide-creator。两行命令搞定。">
 <div style="text-align:center; max-width:min(90vw,700px);">
     <div class="reveal">
         <div class="ent-label" style="margin-bottom:16px;">INSTALLATION</div>
@@ -610,7 +616,7 @@ body.editing .edit-toggle { opacity: 1; pointer-events: auto; background: var(--
 </section>
 
 <!-- ═══════════ SLIDE 8: CTA ═══════════ -->
-<section class="slide" id="slide-8" data-notes="最终行动号召。让观众立刻尝试。" aria-label="CTA">
+<section class="slide" id="slide-8" data-export-role="cta_close" data-notes="最终行动号召。让观众立刻尝试。" aria-label="CTA">
 <div class="cta-group">
     <div class="reveal">
         <span class="ent-pill">Ready?</span>
@@ -623,7 +629,7 @@ body.editing .edit-toggle { opacity: 1; pointer-events: auto; background: var(--
             纯浏览器运行 · 零依赖 · 21 种风格任你选择
         </p>
     </div>
-    <div class="sep reveal" style="transition-delay:0.25s; height:1px; background:var(--border); margin:clamp(16px,3vw,28px) auto; width:60px;"></div>
+    <div class="ent-sep reveal" style="transition-delay:0.25s; margin:clamp(16px,3vw,28px) auto; width:60px;"></div>
     <div class="reveal" style="transition-delay:0.3s">
         <div class="cta-pill">/slide-creator</div>
     </div>
@@ -898,4 +904,3 @@ if (new URLSearchParams(location.search).has('presenter')) {
 </script>
 </body>
 </html>
-

@@ -203,6 +203,10 @@ Minimal closing. Centered. `exit 0` or `^D` in 4rem mono, `--green`. Below: `# t
 - `.rule`: 分隔线 — `border: none; border-top: 1px solid rgba(57,211,83,0.2);`
 - `.how-steps`: 纵向流程图 — `display: flex; flex-direction: column; gap: 1-1.5rem;` 绿色序号 + 标题 + 灰色描述
 
+### Allowed Components
+- Audit coverage: .term-bar .term-body .term-comment .term-error .term-highlight .term-info .term-label .term-panel
+- Audit coverage cont.: .term-prompt .term-title .term-warning .terminal-cursor .terminal-scanlines
+
 ### Background Rule（R21 迁移）
 `.slide` 必须设置 `background: var(--bg)`。body 无渐变，纯色背景。CRT 叠加层通过 body::before/::after 实现。
 

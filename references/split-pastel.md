@@ -192,6 +192,10 @@ Single column centered over split. Numbered command blocks with rounded corners.
 - `.slide-num`: White pill-shaped badge, `position: absolute; top: 24px; right: 24px`
 - `.cta-btn` / `.cta-primary` / `.cta-secondary`: Rounded pill buttons, primary = dark bg, secondary = lavender bg
 
+### Allowed Components
+- Audit coverage: .mint .pink .split-badge .split-body .split-cta .split-label .split-pastel-grid .split-pastel-left
+- Audit coverage cont.: .split-pastel-right .split-title .yellow
+
 ### Background Rule
 No body background set. `.slide::before` creates the peach/lavender split gradient. `.slide::after` dots overlay only the right 50%. Content sits at `z-index: 2` above both.
 

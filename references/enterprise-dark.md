@@ -238,6 +238,34 @@ Thin `1px --border` horizontal track across slide center. Milestone circles `8px
 
 ---
 
+## User-Content 12-Page Route
+
+- P1 Hero -> `kpi_dashboard` with headline + 2-3 KPI cards
+- P2 Problem -> `consulting_split` with pain metrics or progress bars
+- P3 Discovery -> `architecture_map` or `consulting_split`
+- P4 Solution -> `insight_pull` or compact `kpi_dashboard`
+- P5 Evidence -> `data_table`
+- P6 Translation -> `consulting_split`
+- P7 Drivers -> `comparison_matrix` or feature rows
+- P8 Checkpoints -> `timeline`
+- P9 Metrics -> `kpi_dashboard`
+- P10 Noise filter -> `insight_pull`
+- P11 Valuation range -> `data_table` + KPI proof row
+- P12 CTA -> `cta_close`, authoritative close with `.cta-group`, never centered stats-only filler
+
+## Canonical Export Contract
+
+Enterprise Dark native export stays stable only when generated HTML follows the same canonical structure as the reference demo.
+
+- Use canonical layout roles: `kpi_dashboard`, `consulting_split`, `data_table`, `architecture_map`, `comparison_matrix`, `insight_pull`, `timeline`, `cta_close`
+- Keep canonical tokens: `--bg-primary`, `--bg-secondary`, `--bg-header`, `--border`, `--text-primary`, `--text-body`, `--text-muted`, `--accent-blue`, `--accent-green`, `--accent-red`, `--accent-amber`
+- Add `data-export-role` on every `<section class="slide">` matching the chosen layout slug
+- When a slide uses consulting split, keep `.ent-split` as a direct child of `.slide`
+- Keep `.slide-num-label` as a direct child of `.slide`
+- Canonical emitted classes are `.ent-*`; shorthand aliases are input-only and must not be emitted by `--generate`: `.label-tag`, `.kpi`, `.kpi-value`, `.kpi-label`, `.card`, `.badge`, `.status-dot`, `.sep`, `.code`, `.accent-blue`, `.accent-green`, `.accent-red`, `.accent-orange`
+
+---
+
 ## Components
 
 ```css
@@ -518,6 +546,13 @@ Every Enterprise Dark presentation should use these patterns per slide type:
 - `.sep`: 水平分隔线 — `height: 1px; background: var(--border)`
 - `.code`: 代码块 — `font-family: 'SF Mono', monospace; background: var(--bg); border: 1px solid var(--border); border-radius: 6px; color: var(--accent-blue)`
 - `.accent-blue` / `.accent-green` / `.accent-red` / `.accent-orange`: 强调色工具类
+
+### Allowed Components
+- Audit coverage: .down .ent-accent-amber .ent-accent-blue .ent-accent-green .ent-accent-red .ent-badge .ent-badge-blue .ent-badge-green
+- Audit coverage cont.: .ent-code .ent-content .ent-dot-blue .ent-dot-green .ent-dot-red .ent-feature-icon .ent-feature-row .ent-grid-2
+- Audit coverage cont.: .ent-install .ent-install-cmd .ent-install-label .ent-kpi-grid .ent-kpi-row .ent-label .ent-prog-bar .ent-prog-fill
+- Audit coverage cont.: .ent-progress-fill .ent-progress-track .ent-sep .ent-split .ent-split-label .ent-split-labels .ent-status-dot .ent-table
+- Audit coverage cont.: .ent-title .ent-trend .green .muted .negative .neutral .positive
 
 ### Background Rule
 `.slide` 不设置 background。body 使用 `#0d1117` 深色背景 + 24px 网格叠加。所有卡片使用 `--bg-secondary (#161b22)` 形成层次感。

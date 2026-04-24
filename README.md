@@ -137,14 +137,17 @@ That is why slide-creator is moving quality checks earlier:
 
 The important design idea here is not "more tests". It is **better failure localization**. If a result is bad, we want to know whether the mistake happened in routing, compression, rendering, or polish. That feedback then improves the skill itself.
 
-**Validation positioning: post-generation diagnostic, not generation pressure**
+**Validation positioning: pre-write gate, not optional review**
 
-validate.py runs after generation completes, not during the generation workflow. This ensures:
-- No extra generation steps → no extra LLM cognitive load
-- No extra prose rules → no dilution of SKILL.md's core constraints
-- No extra reference file reads → no extra context budget consumption
+validate.py should run inside `--generate`, but after rendering and before the final file is accepted. The right sequence is: assemble HTML → write temp file → run `python3 tests/validate.py "$TMP_HTML" --strict` → fix/regenerate until pass → write final output.
 
-Before adding any new check, verify: does this check increase generation pressure? If it requires reading style files, parsing LLM output, or running during generation, it violates the "protect the last mile" design premise.
+This keeps validation out of planning and composition, but inside delivery:
+- No extra planning step → no extra LLM cognitive load during ideation
+- No extra style-file reads beyond the existing generation inputs
+- Hard failures stop bad output before handoff
+- Warnings can still feed polish / retry policy without pretending the deck is already valid
+
+Before adding any new check, verify: does this check belong in the deterministic runtime gate? If it requires subjective taste judgment rather than contract validation, it should stay in review/eval instead of strict validate.
 
 **Contract alignment: validators must match generation contracts**
 
@@ -410,6 +413,8 @@ For PPTX/PNG export: `clawhub install kai-html-export` or `pip install playwrigh
 ---
 
 ## Version History
+
+**v2.22.0** — Style reference rollout and strict quality gate hardening: all presets now pass style-reference audit, Swiss Modern plus Enterprise Dark / Data Story / Glassmorphism / Chinese Chan gain explicit canonical export contracts and user-content routing, `tests/validate.py --strict` is documented and tested as the `--generate` pre-write gate, and new regression coverage locks CSS variable resolution, layout variety, and priority preset contract checks.
 
 **v2.19.0** — IR-first release: `BRIEF.json` becomes the primary truth source, `PLANNING.md` is optional human view, late-context eval fixtures added under `evals/generated-decks/`, README design philosophy rewritten around prompt → BRIEF → HTML → validate → eval, and stronger regression coverage added for the new contract.
 

@@ -267,6 +267,35 @@ Large gradient text number centered. Label below in `.glass-body`. 1-2 orbs posi
 
 ---
 
+## User-Content 12-Page Route
+
+- P1 Hero -> `glass_hero`
+- P2 Problem -> `glass_split`
+- P3 Discovery -> `glass_trio`
+- P4 Solution -> `glass_stat`
+- P5 Evidence -> `glass_card`
+- P6 Translation -> `glass_split`
+- P7 Drivers -> `glass_trio`
+- P8 Checkpoints -> `glass_card`
+- P9 Proof -> `glass_stat`
+- P10 Options -> `glass_trio`
+- P11 Evidence stack -> `glass_card`
+- P12 CTA -> `glass_hero` or `glass_card`, still orb-backed and atmospheric
+
+## Canonical Export Contract
+
+Glassmorphism fails fast when cards lose the layered background they depend on. Keep generation on the reference path.
+
+- Use canonical layout roles: `glass_hero`, `glass_card`, `glass_split`, `glass_trio`, `glass_stat`
+- Keep canonical tokens: `--bg-gradient-1`, `--bg-gradient-2`, `--bg-gradient-3`, `--glass-bg`, `--glass-border`, `--glass-text-dark`, `--glass-text-light`, `--orb-purple`, `--orb-pink`, `--orb-mint`
+- Add `data-export-role` on every `<section class="slide">`
+- Each slide owns its own gradient background via `.slide-N` or slide-level gradient classes; do not rely on a single body background
+- Orb layers stay as direct children of `.slide`, behind `.slide-content`
+- `backdrop-filter` glass cards are required; a plain translucent card without blur is not canonical glassmorphism
+- Input-only helpers that must not be emitted by `--generate`: `.bg-cool`, `.bg-warm`, `.bg-mint`, `.dark-text`, `.light-text`, `.glass-grid`, `.glass-slide-center`
+
+---
+
 ## Signature Elements
 
 ### CSS Overlays
@@ -287,6 +316,11 @@ Large gradient text number centered. Label below in `.glass-body`. 1-2 orbs posi
 - `.text-dark` / `.text-light-theme`: 幻灯片文字主题切换
 - `.sep` / `.sep-dark`: 分隔线
 - `.slide-0` 到 `.slide-7`: 每张幻灯片的渐变背景（3 种渐变模式循环）
+
+### Allowed Components
+- Audit coverage: .bg-cool .bg-mint .bg-warm .dark-text .glass-body .glass-card-secondary .glass-card-sm .glass-grid
+- Audit coverage cont.: .glass-icon .glass-icon-wrap .glass-orb .glass-slide-center .glass-title .light-text .orb-1 .orb-2
+- Audit coverage cont.: .orb-3
 
 ### Background Rule
 `.slide` 必须设置背景。每张幻灯片使用独立的 3 色渐变（`linear-gradient(135deg, ...)`）。三种渐变模式，文字主题必须匹配：
