@@ -1068,7 +1068,8 @@ const o1 = document.getElementById('orb1');
 const o2 = document.getElementById('orb2');
 const o3 = document.getElementById('orb3');
 let idx  = 0;
-let active = true;
+let wState = 'idle';
+let wLastTime = 0;
 
 // Build dots
 for (let i = 0; i < TOTAL; i++) {
@@ -1080,9 +1081,14 @@ for (let i = 0; i < TOTAL; i++) {
 }
 
 function goTo(i) {
-  if (!active) return;
   idx = Math.max(0, Math.min(i, TOTAL - 1));
+  wState = 'animating';
   track.style.transform = `translateX(${-idx * 100}vw)`;
+  track.addEventListener('transitionend', function handler() {
+    track.removeEventListener('transitionend', handler);
+    wState = 'draining';
+    wLastTime = 0;
+  }, { once: true });
   updateDots();
   updateCounter();
   updateNotes();
@@ -1132,12 +1138,17 @@ document.addEventListener('touchend', e => {
   if (Math.abs(d) > 50) goTo(idx + (d > 0 ? 1 : -1));
 });
 
-// Wheel (debounced)
-let wheelTimer = null;
+// Wheel (gap-based momentum detection)
 document.addEventListener('wheel', e => {
-  if (!active) return;
-  if (wheelTimer) return;
-  wheelTimer = setTimeout(() => { wheelTimer = null; }, 800);
+  const now = Date.now();
+  if (wState === 'animating') return;
+  if (wState === 'draining') {
+    const gap = now - wLastTime;
+    wLastTime = now;
+    if (gap < 80) return; // momentum tail — ignore
+    wState = 'idle'; // new intentional swipe
+  }
+  // wState === 'idle'
   goTo(idx + (e.deltaY > 0 ? 1 : -1));
 }, { passive: true });
 
@@ -1160,6 +1171,7 @@ moveOrbs();
 updateDots();
 updateCounter();
 slides[0]?.classList.add('active');
+slides[0]?.querySelectorAll('.reveal').forEach(r => r.classList.add('visible'));
 
 // ═══════════════════════════════════════════════════════
 // EDIT MODE
@@ -1293,10 +1305,17 @@ goTo = function(i) {
   if (pm.presenting) pm.syncSlides();
 };
 
+// Watermark injection
+var lastSlide = slides[slides.length - 1];
+if (lastSlide) {
+  var credit = document.createElement('div');
+  credit.className = 'slide-credit';
+  credit.textContent = 'By kai-slide-creator v2.16.0 · Blue Sky';
+  lastSlide.appendChild(credit);
+}
+
 }
 </script>
-
-<div class="slide-credit">By kai-slide-creator v2.16.0 &middot; Blue Sky</div>
 
 </body>
 </html>
