@@ -22,7 +22,9 @@ from low_context import (  # noqa: E402
     extract_brief_from_context,
     extract_brief_from_source_text,
     load_brief,
+    render_from_brief,
 )
+from quality_eval import analyze_html_quality  # noqa: E402
 
 
 VALIDATE_BRIEF = SCRIPTS / "validate-brief.py"
@@ -326,3 +328,105 @@ def test_render_cli_context_without_valid_brief_fails_closed(tmp_path: Path):
     assert result.returncode == 1
     assert "BRIEF ERROR" in result.stdout
     assert not output_path.exists()
+
+
+def test_enterprise_dark_render_hides_editing_chrome_by_default():
+    brief = read_json(POLISH_DEMO)
+    brief["style"]["preset"] = "Enterprise Dark"
+    brief["style"]["tone"] = "Strategic"
+    brief["title"] = "AI Native Operating System"
+    brief["language"] = "zh-CN"
+    brief["audience"] = "内部管理与产研团队"
+    brief["desired_action"] = "对齐 AI 原生产研转型路径"
+    brief["narrative"]["thesis"] = "AI 原生组织要先重写工作系统，而不是只给每个人多一个工具。"
+
+    html_text, _packet, _style_contract = render_from_brief(brief)
+    report = analyze_html_quality(html_text, brief=brief, preset="Enterprise Dark")
+
+    assert "#notes-panel {" in html_text
+    assert "display: none;" in html_text.split("#notes-panel {", 1)[1].split("}", 1)[0]
+    assert "#notes-panel.active { display: block; }" in html_text
+    assert "setActiveSlide(index)" in html_text
+    assert "querySelectorAll('.reveal').forEach(function(r) { r.classList.toggle('visible', active); });" in html_text
+    assert report["diagnostics"]["chrome_leak"] is False
+    assert report["quality_gates"]["chrome-hidden-by-default"] is True
+
+
+def test_enterprise_dark_narrative_cover_uses_story_cards_instead_of_fake_kpi_trends():
+    brief = read_json(POLISH_DEMO)
+    brief["style"]["preset"] = "Enterprise Dark"
+    brief["style"]["tone"] = "Strategic"
+    brief["title"] = "AI Native Operating System"
+    brief["language"] = "zh-CN"
+    brief["audience"] = "内部管理与产研团队"
+    brief["desired_action"] = "对齐 AI 原生产研转型路径"
+    brief["narrative"]["thesis"] = "AI 原生组织要先重写工作系统，而不是只给每个人多一个工具。"
+
+    brief["narrative"]["slides"][0]["title"] = "AI 原生组织不是工具升级，而是工作系统重写"
+    brief["narrative"]["slides"][0]["key_point"] = "把需求、设计、研发、测试和发布改成人与智能体协作默认流"
+    brief["narrative"]["slides"][0]["visual"] = "operating model overview"
+
+    brief["narrative"]["slides"][1]["title"] = "深度使用决定组织差距"
+    brief["narrative"]["slides"][1]["key_point"] = "试点心态会把团队锁在效率下游"
+    brief["narrative"]["slides"][1]["visual"] = "gap framing"
+
+    brief["narrative"]["slides"][2]["title"] = "集团方向必须翻译成产研动作"
+    brief["narrative"]["slides"][2]["key_point"] = "战略要求只有落到日常流程才会变成真实能力"
+    brief["narrative"]["slides"][2]["visual"] = "strategy map"
+
+    brief["narrative"]["slides"][3]["title"] = "工作流要先重写再谈提效"
+    brief["narrative"]["slides"][3]["key_point"] = "先探索、再规划、后执行、最后验证才能形成闭环"
+    brief["narrative"]["slides"][3]["visual"] = "workflow loop"
+
+    html_text, _packet, _style_contract = render_from_brief(brief)
+    first_slide = html_text.split('<section class="slide enterprise-dashboard', 1)[1].split("</section>", 1)[0]
+
+    assert "ent-dashboard-story" in html_text
+    assert "ent-kpi-card-story" in first_slide
+    assert "深度使用决定组织差距" in first_slide
+    assert "集团方向必须翻译成产研动作" in first_slide
+    assert "工作流要先重写再谈提效" in first_slide
+    assert "▲" not in first_slide
+    assert "▼" not in first_slide
+
+
+def test_enterprise_dark_runtime_replaces_watermark_placeholders_and_hides_brand_mark():
+    brief = read_json(POLISH_DEMO)
+    brief["style"]["preset"] = "Enterprise Dark"
+    brief["title"] = "AI原生组织转型指南"
+    brief["language"] = "zh-CN"
+
+    html_text, _packet, _style_contract = render_from_brief(brief)
+
+    assert "By kai-slide-creator v2.23.1 · Enterprise Dark" in html_text
+    assert "[version]" not in html_text
+    assert "[preset-name]" not in html_text
+    assert "#brand-mark {" in html_text
+    assert "display: none;" in html_text.split("#brand-mark {")[-1].split("}", 1)[0]
+    assert "scroll-snap-stop: always;" in html_text
+    assert "overscroll-behavior-y: contain;" in html_text
+    assert "addEventListener('wheel'" in html_text
+    assert "addEventListener('scroll'" in html_text
+    assert "wState = 'animating'" in html_text
+    assert "wLastTime" in html_text
+
+
+def test_enterprise_dark_split_structure_and_layout_rhythm_match_preset_better():
+    brief = read_json(ROOT / "plans" / "ai-native-org-transformation-guide-brief.json")
+
+    html_text, _packet, _style_contract = render_from_brief(brief)
+
+    assert 'class="ent-split-labels slide-content"' not in html_text
+    assert 'class="ent-split-panel"' in html_text
+    assert 'grid-template-columns: clamp(380px, 38%, 470px) minmax(0, 1fr);' in html_text
+    assert 'font-size: clamp(19px, 2.1vw, 28px);' in html_text
+    assert 'body[data-preset="Enterprise Dark"]::before {' in html_text
+    assert 'opacity: 0.09;' in html_text
+    assert 'opacity: 0.05;' in html_text
+    assert 'enterprise-feature-grid-slide' in html_text
+    assert 'class="ent-feature-grid"' in html_text
+    assert 'id="slide-11"' in html_text
+    slide_10 = html_text.split('<section class="slide enterprise-timeline" id="slide-10"', 1)[1].split("</section>", 1)[0]
+    slide_11 = html_text.split('<section class="slide enterprise-table" id="slide-11"', 1)[1].split("</section>", 1)[0]
+    assert 'data-export-role="timeline"' in slide_10
+    assert 'data-export-role="data_table"' in slide_11

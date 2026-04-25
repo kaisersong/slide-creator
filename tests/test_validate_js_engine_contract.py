@@ -46,12 +46,22 @@ VALID_RUNTIME = """
 class SlidePresentation {
   constructor() {
     this.slides = document.querySelectorAll('.slide');
+    this.currentSlide = 0;
     this.channel = new BroadcastChannel('slide-creator-presenter');
     this.slides[0]?.classList.add('visible');
     this.slides[0]?.querySelectorAll('.reveal').forEach(r => r.classList.add('visible'));
+    this.setActiveSlide(0);
     this.setupObserver();
+    this.setupWheel();
     this.setupPresenter();
     this.setupEditor();
+  }
+  setActiveSlide(index) {
+    this.slides.forEach((slide, i) => {
+      const active = i === index;
+      slide.classList.toggle('visible', active);
+      slide.querySelectorAll('.reveal').forEach(r => r.classList.toggle('visible', active));
+    });
   }
   setupObserver() {
     return new IntersectionObserver(() => {}, { threshold: 0.5 });
@@ -61,6 +71,42 @@ class SlidePresentation {
   }
   setupEditor() {
     return document.querySelector('.edit-hotzone');
+  }
+  setupWheel() {
+    this.wState = 'idle';
+    this.wLastTime = 0;
+    this.wFallback = null;
+    this.scrollSettleTimer = null;
+    const enterDraining = () => {
+      if (this.wState !== 'animating') return;
+      this.wState = 'draining';
+      this.wLastTime = Date.now();
+      clearTimeout(this.wFallback);
+      this.wFallback = setTimeout(() => { this.wState = 'idle'; }, 1500);
+    };
+    window.addEventListener('scroll', () => {
+      if (this.wState !== 'animating') return;
+      clearTimeout(this.scrollSettleTimer);
+      this.scrollSettleTimer = setTimeout(enterDraining, 120);
+    }, { passive: true });
+    document.addEventListener('wheel', (e) => {
+      const gap = Date.now() - this.wLastTime;
+      this.wLastTime = Date.now();
+      e.preventDefault();
+      if (this.wState === 'animating') return;
+      if (this.wState === 'draining' && gap <= 80) return;
+      this.wState = 'animating';
+      const moved = e.deltaY > 0 ? this.next() : this.prev();
+      if (!moved) this.wState = 'idle';
+    }, { passive: false });
+  }
+  goTo(index) {
+    const idx = Math.max(0, Math.min(index, this.slides.length - 1));
+    const moved = idx !== this.currentSlide;
+    this.currentSlide = idx;
+    this.setActiveSlide(idx);
+    this.slides[idx]?.scrollIntoView({ behavior: moved ? 'smooth' : 'auto' });
+    return moved;
   }
 }
 
@@ -130,6 +176,81 @@ def test_shared_js_engine_contract_flags_missing_first_slide_visible_fix():
 
     assert not ok
     assert "first-slide visible fix" in message
+
+
+def test_shared_js_engine_contract_flags_missing_reveal_toggle_runtime():
+    validate = load_validate_module()
+    html = build_html(
+        VALID_RUNTIME.replace(
+            "slide.querySelectorAll('.reveal').forEach(r => r.classList.toggle('visible', active));",
+            "slide.querySelectorAll('.reveal').forEach(r => r.classList.add('visible'));",
+        )
+    )
+    soup = BeautifulSoup(html, "html.parser")
+
+    ok, message = validate.check_shared_js_engine_contract(soup, html, [])
+
+    assert not ok
+    assert "reveal toggle runtime" in message
+
+
+def test_shared_js_engine_contract_flags_missing_wheel_bootstrap():
+    validate = load_validate_module()
+    html = build_html(
+        VALID_RUNTIME.replace(
+            "    this.setupObserver();\n    this.setupWheel();\n    this.setupPresenter();\n",
+            "    this.setupObserver();\n    this.setupPresenter();\n",
+        )
+    )
+    soup = BeautifulSoup(html, "html.parser")
+
+    ok, message = validate.check_shared_js_engine_contract(soup, html, [])
+
+    assert not ok
+    assert "wheel bootstrap" in message
+
+
+def test_shared_js_engine_contract_flags_missing_wheel_runtime():
+    validate = load_validate_module()
+    html = build_html(
+        VALID_RUNTIME.replace(
+            "  setupWheel() {\n"
+            "    this.wState = 'idle';\n"
+            "    this.wLastTime = 0;\n"
+            "    this.wFallback = null;\n"
+            "    this.scrollSettleTimer = null;\n"
+            "    const enterDraining = () => {\n"
+            "      if (this.wState !== 'animating') return;\n"
+            "      this.wState = 'draining';\n"
+            "      this.wLastTime = Date.now();\n"
+            "      clearTimeout(this.wFallback);\n"
+            "      this.wFallback = setTimeout(() => { this.wState = 'idle'; }, 1500);\n"
+            "    };\n"
+            "    window.addEventListener('scroll', () => {\n"
+            "      if (this.wState !== 'animating') return;\n"
+            "      clearTimeout(this.scrollSettleTimer);\n"
+            "      this.scrollSettleTimer = setTimeout(enterDraining, 120);\n"
+            "    }, { passive: true });\n"
+            "    document.addEventListener('wheel', (e) => {\n"
+            "      const gap = Date.now() - this.wLastTime;\n"
+            "      this.wLastTime = Date.now();\n"
+            "      e.preventDefault();\n"
+            "      if (this.wState === 'animating') return;\n"
+            "      if (this.wState === 'draining' && gap <= 80) return;\n"
+            "      this.wState = 'animating';\n"
+            "      const moved = e.deltaY > 0 ? this.next() : this.prev();\n"
+            "      if (!moved) this.wState = 'idle';\n"
+            "    }, { passive: false });\n"
+            "  }\n",
+            "  setupWheel() {}\n",
+        )
+    )
+    soup = BeautifulSoup(html, "html.parser")
+
+    ok, message = validate.check_shared_js_engine_contract(soup, html, [])
+
+    assert not ok
+    assert "wheel pagination runtime" in message
 
 
 def test_shared_js_engine_contract_rejects_comment_spoof():

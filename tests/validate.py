@@ -88,6 +88,28 @@ def _normalize_ws(value: str) -> str:
     return re.sub(r"\s+", "", value)
 
 
+def _extract_rule_blocks(css_text: str, selector: str) -> list[str]:
+    pattern = re.compile(rf"{re.escape(selector)}\s*\{{(.*?)\}}", re.DOTALL)
+    return [match.group(1) for match in pattern.finditer(css_text)]
+
+
+def _selector_hidden_by_default(css_text: str, selector: str) -> bool:
+    blocks = _extract_rule_blocks(css_text, selector)
+    if not blocks:
+        return False
+    combined = " ".join(blocks).replace(" ", "").lower()
+    hide_markers = (
+        "display:none",
+        "visibility:hidden",
+        "opacity:0",
+        "transform:translatex(110%)",
+        "transform:translatex(100%)",
+        "transform:translatey(110%)",
+        "transform:translatey(100%)",
+    )
+    return any(marker in combined for marker in hide_markers)
+
+
 def _body_preset(soup) -> str:
     body = soup.find("body")
     if not body:
@@ -504,6 +526,19 @@ def check_edit_mode(soup, content, warnings) -> tuple[bool, str]:
     return True, "Edit mode present (edit-hotzone + contenteditable + saveFile)"
 
 
+def check_default_hidden_chrome(soup, content, warnings) -> tuple[bool, str]:
+    css_text = _collect_css_text(soup)
+    visible = []
+    if soup.select_one("#notes-panel") and not _selector_hidden_by_default(css_text, "#notes-panel"):
+        visible.append("notes-panel")
+    if soup.select_one("#editToggle") and not _selector_hidden_by_default(css_text, ".edit-toggle"):
+        visible.append("edit-toggle")
+
+    if visible:
+        return False, "Default-visible editing chrome: " + ", ".join(visible)
+    return True, "Editing chrome hidden by default"
+
+
 def check_preset_metadata(soup, content, warnings) -> tuple[bool, str]:
     body = soup.find("body")
     if not body:
@@ -549,6 +584,21 @@ def check_shared_js_engine_contract(soup, content, warnings) -> tuple[bool, str]
         "slides[0",
         flags=re.DOTALL,
     )
+    reveal_toggle_patterns = (
+        r"querySelectorAll\s*\(\s*['\"]\.reveal['\"]\s*\)\s*"
+        r"\.\s*forEach\s*\(\s*function\s*\([^)]*\)\s*\{[^}]*"
+        r"classList\.toggle\s*\(\s*['\"]visible['\"]",
+        r"querySelectorAll\s*\(\s*['\"]\.reveal['\"]\s*\)\s*"
+        r"\.\s*forEach\s*\(\s*[A-Za-z_$][\w$]*\s*=>\s*[A-Za-z_$][\w$]*"
+        r"\.classList\.toggle\s*\(\s*['\"]visible['\"]",
+        r"querySelectorAll\s*\(\s*['\"]\.reveal['\"]\s*\)\s*"
+        r"\.\s*forEach\s*\(\s*\([^)]*\)\s*=>\s*\{[^}]*"
+        r"classList\.toggle\s*\(\s*['\"]visible['\"]",
+    )
+    has_reveal_toggle_runtime = any(
+        _has_active_raw_match(scripts, masked, pattern, "querySelectorAll(", flags=re.DOTALL)
+        for pattern in reveal_toggle_patterns
+    )
     has_broadcast_channel_sync = _has_active_raw_match(
         scripts,
         masked,
@@ -558,6 +608,19 @@ def check_shared_js_engine_contract(soup, content, warnings) -> tuple[bool, str]
     has_observer_runtime = bool(re.search(r"\bsetupObserver\s*\(\s*\)\s*\{", masked)) and "IntersectionObserver" in masked
     has_presenter_runtime = bool(re.search(r"\bsetupPresenter\s*\(\s*\)\s*\{", masked))
     has_editor_runtime = bool(re.search(r"\bsetupEditor\s*\(\s*\)\s*\{", masked))
+    has_wheel_bootstrap = _has_active_raw_match(
+        scripts,
+        masked,
+        r"\bthis\.setupWheel\s*\(\s*\)",
+        "this.setupWheel(",
+    )
+    has_wheel_runtime = bool(re.search(r"\bsetupWheel\s*\(\s*\)\s*\{", masked)) and (
+        ("addEventListener('wheel'" in scripts or 'addEventListener("wheel"' in scripts)
+        and "wState" in scripts
+        and "wLastTime" in scripts
+        and ("addEventListener('scroll'" in scripts or 'addEventListener("scroll"' in scripts or "scrollend" in scripts)
+        and "wheelLocked" not in scripts
+    )
     has_presenter_branch = _has_active_raw_match(
         scripts,
         masked,
@@ -587,7 +650,10 @@ def check_shared_js_engine_contract(soup, content, warnings) -> tuple[bool, str]
         ("IntersectionObserver runtime", has_observer_runtime),
         ("setupPresenter runtime", has_presenter_runtime),
         ("setupEditor runtime", has_editor_runtime),
+        ("wheel bootstrap", has_wheel_bootstrap),
+        ("wheel pagination runtime", has_wheel_runtime),
         ("first-slide visible fix", has_first_slide_visible and has_first_reveal_visible),
+        ("reveal toggle runtime", has_reveal_toggle_runtime),
         ("?presenter branch", has_presenter_branch),
         ("PresentMode class", has_present_mode_class),
         ("PresentMode bootstrap", has_present_mode_bootstrap),
@@ -1121,6 +1187,10 @@ def check_watermark_injection(soup, content, warnings) -> tuple[bool, str]:
     # Check for JS injection pattern
     scripts = " ".join(s.string or "" for s in soup.find_all("script"))
     has_js_injection = "slides[slides.length - 1]" in scripts and "slide-credit" in scripts
+    unresolved_placeholders = "[version]" in scripts or "[preset-name]" in scripts
+
+    if unresolved_placeholders:
+        return False, "Watermark placeholder unresolved: version or preset name not substituted"
 
     if has_js_injection:
         return True, "Watermark appears JS-injected (heuristic)"
@@ -1144,6 +1214,7 @@ REQUIRED_CHECKS = [
 STRICT_CHECKS = [
     check_keyboard_nav,
     check_edit_mode,
+    check_default_hidden_chrome,
     check_preset_metadata,
     check_shared_js_engine_contract,
     check_data_notes,

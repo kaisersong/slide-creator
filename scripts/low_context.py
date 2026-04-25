@@ -101,7 +101,7 @@ ENTERPRISE_ROLE_LAYOUTS = {
     "metrics": "kpi_dashboard",
     "timeline": "timeline",
     "comparison": "comparison_matrix",
-    "checkpoint": "timeline",
+    "checkpoint": "data_table",
     "best-fit": "comparison_matrix",
     "closing": "cta_close",
     "cta": "cta_close",
@@ -1051,6 +1051,25 @@ def _normalize_text_for_story(value: str) -> str:
     return re.sub(r"\s+", "", value or "")
 
 
+def _skill_version() -> str:
+    skill_text = _read_text(ROOT / "SKILL.md")
+    match = re.search(r"^version:\s*([^\s]+)\s*$", skill_text, re.MULTILINE)
+    return match.group(1) if match else "unknown"
+
+
+def _brand_mark_text(title: str, preset: str) -> str:
+    normalized_title = re.sub(r"\s+", " ", title or "").strip()
+    if not normalized_title:
+        return preset
+    compact = re.sub(r"\s+", "", normalized_title)
+    limit = 18 if re.search(r"[\u3400-\u9fff]", compact) else 28
+    if len(compact) <= limit:
+        return normalized_title
+    if re.search(r"[\u3400-\u9fff]", compact):
+        return compact[:limit] + "…"
+    return normalized_title[:limit].rstrip() + "…"
+
+
 def _build_enterprise_story_items(
     specs: list[dict[str, Any]],
     index: int,
@@ -1173,14 +1192,19 @@ def build_slide_spec(brief: dict[str, Any], packet: dict[str, Any] | None = None
     return specs
 
 
-def _extract_js_engine_blocks() -> str:
+def _extract_js_engine_blocks(*, preset: str, version: str) -> str:
     content = _read_text(REFERENCES_DIR / "js-engine.md")
     blocks = [
         block
         for language, block in _extract_fenced_blocks(content)
         if language == "javascript"
     ]
-    return "\n\n".join(blocks)
+    script = "\n\n".join(blocks)
+    return (
+        script
+        .replace("[version]", version)
+        .replace("[preset-name]", preset)
+    )
 
 
 def _escape(value: Any) -> str:
@@ -1396,8 +1420,16 @@ def _title_tag(
     return f"<{tag} {attrs}>{markup}</{tag}>"
 
 
-def _assemble_shell_html(title: str, language: str, preset: str, css: str, slides_html: str, total: int) -> str:
-    js_engine = _extract_js_engine_blocks()
+def _assemble_shell_html(
+    title: str,
+    language: str,
+    preset: str,
+    css: str,
+    slides_html: str,
+    total: int,
+) -> str:
+    js_engine = _extract_js_engine_blocks(preset=preset, version=_skill_version())
+    brand_mark = _brand_mark_text(title, preset)
     return f"""<!DOCTYPE html>
 <html lang="{_escape(language)}">
 <head>
@@ -1409,7 +1441,7 @@ def _assemble_shell_html(title: str, language: str, preset: str, css: str, slide
 </style>
 </head>
 <body data-export-progress="true" data-preset="{_escape(preset)}">
-<span id="brand-mark">slide-creator</span>
+<span id="brand-mark">{_escape(brand_mark)}</span>
 <div class="progress-bar"></div>
 <nav class="nav-dots" aria-label="Slide navigation"></nav>
 <div class="edit-hotzone"></div>
@@ -1435,6 +1467,7 @@ def _assemble_shell_html(title: str, language: str, preset: str, css: str, slide
 
 def _build_non_swiss_shell_css(style_contract: dict[str, Any], preset: str) -> str:
     contract_css = "\n\n".join(style_contract["css_blocks"])
+    slide_background = "transparent" if preset == "Enterprise Dark" else "var(--bg-primary, var(--bg, #0f1117))"
     if preset == "Data Story":
         slide_overlay = """
 .slide::before {
@@ -1450,6 +1483,21 @@ def _build_non_swiss_shell_css(style_contract: dict[str, Any], preset: str) -> s
     z-index: 0;
 }
 """
+    elif preset == "Enterprise Dark":
+        slide_overlay = """
+.slide::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image:
+        linear-gradient(rgba(48,54,61,0.5) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(48,54,61,0.5) 1px, transparent 1px);
+    background-size: 24px 24px;
+    opacity: 0.03;
+    pointer-events: none;
+    z-index: 0;
+}
+"""
     else:
         slide_overlay = ""
 
@@ -1459,13 +1507,17 @@ def _build_non_swiss_shell_css(style_contract: dict[str, Any], preset: str) -> s
 html {{
     height: 100%;
     overflow-x: hidden;
+    overflow-y: auto;
     scroll-snap-type: y mandatory;
+    overscroll-behavior-y: contain;
 }}
 
 body {{
     margin: 0;
     min-height: 100%;
     overflow-x: hidden;
+    overflow-y: auto;
+    overscroll-behavior-y: contain;
     color: var(--text-primary, var(--text, #f3f4f6));
     background: var(--bg-primary, var(--bg, #0f1117));
 }}
@@ -1478,10 +1530,11 @@ body {{
     height: 100dvh;
     overflow: hidden;
     scroll-snap-align: start;
+    scroll-snap-stop: always;
     display: flex;
     flex-direction: column;
     position: relative;
-    background: var(--bg-primary, var(--bg, #0f1117));
+    background: {slide_background};
 }}
 
 {slide_overlay}
@@ -2250,8 +2303,9 @@ def render_swiss_modern_html(
     total = len(specs)
     slides_html = "\n\n".join(_render_swiss_slide(spec, total) for spec in specs)
     css = _build_swiss_shell_css(style_contract)
-    js_engine = _extract_js_engine_blocks()
+    js_engine = _extract_js_engine_blocks(preset="Swiss Modern", version=_skill_version())
     language = brief["language"]
+    brand_mark = _brand_mark_text(brief["title"], "Swiss Modern")
 
     return f"""<!DOCTYPE html>
 <html lang="{_escape(language)}">
@@ -2264,7 +2318,7 @@ def render_swiss_modern_html(
 </style>
 </head>
 <body data-export-progress="true" data-preset="Swiss Modern">
-<span id="brand-mark">slide-creator</span>
+<span id="brand-mark">{_escape(brand_mark)}</span>
 <div class="progress-bar"></div>
 <nav class="nav-dots" aria-label="Slide navigation"></nav>
 <div class="edit-hotzone"></div>
@@ -2290,6 +2344,10 @@ def render_swiss_modern_html(
 
 def _enterprise_extra_css() -> str:
     return """
+#brand-mark {
+    display: none;
+}
+
 .ent-shell {
     width: 100%;
     max-width: 1120px;
@@ -2379,6 +2437,54 @@ def _enterprise_extra_css() -> str:
     font-weight: 650;
 }
 
+.enterprise-split .ent-split {
+    flex: 1;
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: clamp(32px, 5.4vh, 58px) clamp(34px, 3.8vw, 48px) clamp(26px, 3.8vh, 36px);
+    grid-template-columns: clamp(380px, 38%, 470px) minmax(0, 1fr);
+    gap: clamp(20px, 2.2vw, 30px);
+    align-items: center;
+}
+
+.enterprise-split .ent-title {
+    font-size: clamp(19px, 2.1vw, 28px);
+    line-height: 1.14;
+    max-width: 13ch;
+}
+
+.ent-split-labels {
+    display: flex;
+    flex-direction: column;
+    gap: clamp(10px, 1.5vw, 14px);
+    min-width: 0;
+    justify-content: center;
+}
+
+.ent-split-panel {
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+body[data-preset="Enterprise Dark"]::before {
+    background-image:
+        linear-gradient(rgba(71,85,105,0.58) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(71,85,105,0.58) 1px, transparent 1px);
+    opacity: 0.09;
+    background-size: 30px 30px;
+}
+
+body[data-preset="Enterprise Dark"] .slide::before {
+    background-image:
+        linear-gradient(rgba(56,139,253,0.18) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(56,139,253,0.10) 1px, transparent 1px);
+    background-size: 30px 30px;
+    opacity: 0.05;
+}
+
 .ent-arch-grid {
     display: grid;
     grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -2444,6 +2550,46 @@ def _enterprise_extra_css() -> str:
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 16px;
+}
+
+.ent-feature-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 16px;
+}
+
+.ent-feature-card {
+    background: var(--bg-secondary);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 18px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.ent-feature-card-head {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 12px;
+}
+
+.ent-feature-card-copy {
+    margin: 0;
+    font-size: 14px;
+    line-height: 1.55;
+    color: var(--text-body);
+}
+
+@media (max-width: 900px) {
+    .enterprise-split .ent-split,
+    .ent-feature-grid,
+    .ent-matrix,
+    .ent-arch-grid,
+    .ent-timeline {
+        grid-template-columns: 1fr;
+    }
 }
 """.strip()
 
@@ -2554,13 +2700,13 @@ def _render_enterprise_consulting_split(spec: dict[str, Any], total: int) -> str
     return f"""
     <section class="slide enterprise-split" id="slide-{slide_number}" data-notes="{_escape(spec['speaker_note'])}" aria-label="{_escape(spec['role'])}" data-export-role="consulting_split">
         <div class="ent-split">
-            <div class="ent-split-labels slide-content">
+            <div class="ent-split-labels">
                 <span class="ent-label-tag reveal">section</span>
                 {title_tag}
                 <div class="ent-sep reveal"></div>
                 {labels}
             </div>
-            <div class="slide-content">
+            <div class="ent-split-panel">
                 <div class="ent-kpi-card">
                     {rows}
                 </div>
@@ -2575,20 +2721,36 @@ def _render_enterprise_data_table(spec: dict[str, Any], total: int) -> str:
     slide_number = spec["slide_number"]
     title_tag = _title_tag("h2", "ent-title", spec["title"], preset="Enterprise Dark", layout_id=spec["layout_id"])
     rows = []
-    for index, item in enumerate((spec["evidence_items"] or spec["supporting_items"])[:3]):
-        dot = "ent-dot-green" if index == 0 else ("ent-dot-blue" if index == 1 else "ent-dot-red")
-        rows.append(
-            f"<tr><td><span class=\"ent-status-dot {dot}\"></span>{_escape(item)}</td><td>{_escape(spec['key_point'])}</td><td><span class=\"ent-badge {'ent-badge-green' if index == 0 else 'ent-badge-blue'}\">{_escape(spec['role'])}</span></td></tr>"
-        )
+    if spec["role"] == "checkpoint":
+        row_items = spec["supporting_items"][:4] or [spec["key_point"]]
+        while len(row_items) < 4:
+            row_items.append(spec["visual"])
+        for index, item in enumerate(row_items[:4]):
+            badge = "weekly" if index < 2 else "monthly"
+            dot = "ent-dot-blue" if index < 2 else "ent-dot-green"
+            meaning = "把 AI 使用率、模板复用率、评测通过率和场景 ROI 纳入固定治理节奏"
+            rows.append(
+                f"<tr><td><span class=\"ent-status-dot {dot}\"></span>{_escape(item)}</td><td>{_escape(meaning)}</td><td><span class=\"ent-badge {'ent-badge-green' if index >= 2 else 'ent-badge-blue'}\">{badge}</span></td></tr>"
+            )
+        headers = "<thead><tr><th>Ritual</th><th>Decision focus</th><th>Cadence</th></tr></thead>"
+        label = "governance"
+    else:
+        for index, item in enumerate((spec["evidence_items"] or spec["supporting_items"])[:3]):
+            dot = "ent-dot-green" if index == 0 else ("ent-dot-blue" if index == 1 else "ent-dot-red")
+            rows.append(
+                f"<tr><td><span class=\"ent-status-dot {dot}\"></span>{_escape(item)}</td><td>{_escape(spec['key_point'])}</td><td><span class=\"ent-badge {'ent-badge-green' if index == 0 else 'ent-badge-blue'}\">{_escape(spec['role'])}</span></td></tr>"
+            )
+        headers = "<thead><tr><th>Signal</th><th>Meaning</th><th>State</th></tr></thead>"
+        label = "evidence"
     return f"""
     <section class="slide enterprise-table" id="slide-{slide_number}" data-notes="{_escape(spec['speaker_note'])}" aria-label="{_escape(spec['role'])}" data-export-role="data_table">
         <div class="slide-content">
             <div class="ent-shell">
-                <span class="ent-label-tag reveal">evidence</span>
+                <span class="ent-label-tag reveal">{label}</span>
                 {title_tag}
                 <div class="ent-sep reveal"></div>
                 <table class="ent-table reveal">
-                    <thead><tr><th>Signal</th><th>Meaning</th><th>State</th></tr></thead>
+                    {headers}
                     <tbody>{''.join(rows)}</tbody>
                 </table>
             </div>
@@ -2613,6 +2775,42 @@ def _render_enterprise_architecture_map(spec: dict[str, Any], total: int) -> str
                 {title_tag}
                 <div class="ent-sep reveal"></div>
                 <div class="ent-arch-grid">{cards}</div>
+            </div>
+        </div>
+        <span class="slide-num-label">{slide_number:02d} / {total:02d}</span>
+    </section>
+    """.strip()
+
+
+def _render_enterprise_feature_grid(spec: dict[str, Any], total: int) -> str:
+    slide_number = spec["slide_number"]
+    title_tag = _title_tag("h2", "ent-title", spec["title"], preset="Enterprise Dark", layout_id=spec["layout_id"])
+    card_titles = spec["supporting_items"][:4] or spec["evidence_items"][:4] or [spec["visual"]]
+    cards = []
+    for index, item in enumerate(card_titles[:4]):
+        cards.append(
+            f"""
+            <div class="ent-feature-card reveal">
+                <div class="ent-feature-card-head">
+                    <div>
+                        <div class="ent-label">{_escape(item)}</div>
+                        <h3 style="margin:8px 0 0;color:var(--text-primary);">{_escape(item)}</h3>
+                    </div>
+                    <span class="ent-badge ent-badge-blue">AI default</span>
+                </div>
+                <p class="ent-feature-card-copy">{_escape(spec['visual'])}</p>
+                <div class="ent-prog-bar"><div class="ent-prog-fill" style="width:{78 - index * 14}%"></div></div>
+            </div>
+            """
+        )
+    return f"""
+    <section class="slide enterprise-feature-grid-slide" id="slide-{slide_number}" data-notes="{_escape(spec['speaker_note'])}" aria-label="{_escape(spec['role'])}" data-export-role="comparison_matrix">
+        <div class="slide-content">
+            <div class="ent-shell">
+                <span class="ent-label-tag reveal">translation</span>
+                {title_tag}
+                <div class="ent-sep reveal"></div>
+                <div class="ent-feature-grid">{''.join(cards)}</div>
             </div>
         </div>
         <span class="slide-num-label">{slide_number:02d} / {total:02d}</span>
@@ -2742,6 +2940,8 @@ def _render_enterprise_slide(spec: dict[str, Any], total: int) -> str:
     if spec["layout_id"] == "architecture_map":
         return _render_enterprise_architecture_map(spec, total)
     if spec["layout_id"] == "comparison_matrix":
+        if spec["role"] == "feature":
+            return _render_enterprise_feature_grid(spec, total)
         return _render_enterprise_comparison_matrix(spec, total)
     if spec["layout_id"] == "timeline":
         return _render_enterprise_timeline(spec, total)
