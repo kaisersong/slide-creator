@@ -18,7 +18,7 @@ Every generated HTML must include all of the following:
 6. **`setupEditor()` call** — edit hotzone + notes panel wired up
 7. **`data-notes` on every `<section class="slide">`** — 1-3 sentence speaker note per slide
 8. **Preset fidelity metadata** — `data-preset="Preset Name"` on `<body>` when a preset is selected
-9. **Watermark footer** — injected by JS into last slide as `<div class="slide-credit">By kai-slide-creator v[version] · [preset-name]</div>` with CSS: `position: absolute; bottom: 8px; right: 14px; font-size: 9px; color: var(--text-secondary, #999); opacity: 0.35; pointer-events: none; z-index: 1; font-family: system-ui, sans-serif;` and `body.presenting .slide-credit { display: none !important; }`
+9. **Watermark footer** — injected by JS into last slide as `<div class="slide-credit">By kai-slide-creator v{actual-version} · {actual-preset}</div>` with CSS: `position: absolute; bottom: 8px; right: 14px; font-size: 9px; color: var(--text-secondary, #999); opacity: 0.35; pointer-events: none; z-index: 1; font-family: system-ui, sans-serif;` and `body.presenting .slide-credit { display: none !important; }`. Placeholders in `references/js-engine.md` are documentation tokens only; generated HTML must never emit `[version]` or `[preset-name]`.
 
 **Runtime note:** For every non-Blue-Sky preset, `references/js-engine.md` is a hard dependency, not optional inspiration. Insert both code blocks verbatim, including the first-slide `.visible` fix and the `?presenter` branch.
 
@@ -144,7 +144,7 @@ Every generated HTML must include all of the following:
     </style>
 </head>
 <body data-export-progress="true" data-preset="Enterprise Dark">
-    <span id="brand-mark">slide-creator</span>
+    <span id="brand-mark">[deck title or contextual brand mark]</span>
     <div class="progress-bar"></div>
     <nav class="nav-dots" aria-label="Slide navigation"></nav>
     <div class="edit-hotzone"></div>
@@ -185,11 +185,22 @@ Every generated HTML must include all of the following:
     <script>
     /* [INSERT JS ENGINE FROM references/js-engine.md — SlidePresentation class, ?presenter branch, PresentMode class, watermark] */
 
-    /* Example goTo implementation (full version in js-engine.md):
+    /* Example active-slide wiring (full version in js-engine.md):
+setActiveSlide(index) {
+    this.slides.forEach((slide, i) => {
+        const active = i === index;
+        slide.classList.toggle('visible', active);
+        slide.querySelectorAll('.reveal').forEach(r => r.classList.toggle('visible', active));
+    });
+}
+
+Example goTo implementation (full version in js-engine.md):
 goTo(index) {
     const idx = Math.max(0, Math.min(index, this.slides.length - 1));
-    this.slides.forEach((s, i) => s.classList.toggle('visible', i === idx));
+    this.currentSlide = idx;
+    this.setActiveSlide(idx);
     this.slides[idx]?.scrollIntoView({ behavior: 'smooth' });
+    this.updateProgress(); this.updateDots(); this.broadcastState();
 }
 
 Example constructor (first slide visible fix):
@@ -198,6 +209,7 @@ constructor() {
     this.currentSlide = 0;
     this.slides[0]?.classList.add('visible');
     this.slides[0]?.querySelectorAll('.reveal').forEach(r => r.classList.add('visible'));
+    this.setActiveSlide(0);
     // ... rest of constructor ...
 }
 

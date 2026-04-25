@@ -244,23 +244,32 @@ class TestWheelBehavior:
     def transform_demo(self, request):
         return load(request.param)
 
-    def test_scroll_snap_no_js_wheel_handler(self, snap_demo):
-        """scroll-snap demos must NOT have a JS wheel event listener that calls
-        goTo() / scrollIntoView. scroll-snap handles trackpad natively.
+    def test_scroll_snap_wheel_handler_is_stateful_if_present(self, snap_demo):
+        """scroll-snap demos may omit JS wheel handling, or use a stateful handler.
 
-        Regression: JS wheel handler + scroll-snap = double animation or
-        multi-page scroll (momentum tail unlocks throttle, fires goTo() again).
+        Regression: naive wheel handlers on scroll-snap decks turn one long gesture
+        into multiple page turns. If a wheel handler exists, it must use an
+        animating/draining state machine plus scroll-settle detection.
         """
         _, content = snap_demo
         import re
-        # Detect a wheel listener that actually navigates (calls goTo, next, prev, scrollIntoView)
+        if "addEventListener('wheel'" not in content:
+            return
         nav_in_wheel = re.search(
             r"addEventListener\('wheel'.*?(?:goTo|\.next\(\)|\.prev\(\)|scrollIntoView)",
             content, re.DOTALL
         )
-        assert not nav_in_wheel, (
-            "scroll-snap demo has a JS wheel handler that calls navigation — "
-            "remove it and let scroll-snap-type: y mandatory handle trackpad."
+        assert nav_in_wheel, (
+            "scroll-snap demo wheel handler exists but is not wired to slide navigation."
+        )
+        assert "wState" in content and "wLastTime" in content, (
+            "scroll-snap demo wheel handler must track animating/draining state."
+        )
+        assert "addEventListener('scroll'" in content or 'addEventListener("scroll"' in content or "scrollend" in content, (
+            "scroll-snap demo wheel handler must wait for scroll settle before re-arming."
+        )
+        assert "wheelLocked" not in content, (
+            "scroll-snap demo uses wheelLocked throttle — replace it with stateful settle detection."
         )
 
     def test_scroll_snap_no_scroll_behavior_on_html(self, snap_demo):
@@ -384,8 +393,33 @@ class TestTemplate:
             content,
             re.DOTALL
         )
-        assert has_toggle, \
-            "html-template.md goTo() must toggle .visible class (arrow-key rendering fix)"
+        has_helper_call = re.search(
+            r'goTo\([^)]*\)\s*\{[^}]*setActiveSlide\s*\(',
+            content,
+            re.DOTALL,
+        )
+        assert has_toggle or has_helper_call, \
+            "html-template.md goTo() must toggle active-slide visibility (arrow-key rendering fix)"
+
+    def test_template_navigation_reveals_current_slide_children(self):
+        """HTML template must wire current-slide .reveal elements during navigation.
+
+        Regression test for the "slide 2+ looks empty" bug: toggling only the
+        slide container is not enough when most content uses `.reveal { opacity: 0; }`.
+        The shared runtime must also toggle `.reveal.visible` for the active slide.
+        """
+        template_path = Path(__file__).parent.parent / "references" / "html-template.md"
+        assert template_path.exists(), "html-template.md not found"
+        content = template_path.read_text(encoding="utf-8")
+
+        import re
+        has_reveal_toggle = re.search(
+            r"querySelectorAll\([^)]*['\"]\.reveal['\"][^)]*\).*?classList\.toggle\s*\(\s*['\"]visible['\"]",
+            content,
+            re.DOTALL,
+        )
+        assert has_reveal_toggle, \
+            "html-template.md must toggle .reveal.visible for the active slide (slide 2+ blank bug)"
 
     def test_template_first_slide_visible_on_load(self):
         """HTML template constructor must make the first slide visible immediately.

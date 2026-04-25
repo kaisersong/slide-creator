@@ -415,6 +415,8 @@ For PPTX/PNG export: `clawhub install kai-html-export` or `pip install playwrigh
 
 ## Version History
 
+**v2.23.1** — Enterprise Dark runtime stability patch: fixed shared js-engine active-slide reveal toggling, hid editing chrome by default, replaced unresolved watermark tokens with real version/preset metadata, stabilized one-gesture-per-page wheel pagination for scroll-snap decks, and corrected Enterprise Dark narrative cover routing, split-title clipping, governance/table rhythm, and subtle grid overlay balance.
+
 **v2.23.0** — Title composition and low-context quality release: added a preset-aware title profile registry plus browser-level title QA, expanded low-context diagnostics/eval buckets for quality uplift checks, hardened strict gates around shared runtime and `body[data-preset]`, and reordered `SKILL.md` so style enforcement, narrative arc, and title quality take priority over degradable playback/edit/watermark features.
 
 **v2.22.0** — Style reference rollout and strict quality gate hardening: all presets now pass style-reference audit, Swiss Modern plus Enterprise Dark / Data Story / Glassmorphism / Chinese Chan gain explicit canonical export contracts and user-content routing, `tests/validate.py --strict` is documented and tested as the `--generate` pre-write gate, and new regression coverage locks CSS variable resolution, layout variety, and priority preset contract checks.
