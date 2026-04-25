@@ -1,0 +1,8 @@
+{
+  "messages": [
+    {
+      "role": "user",
+      "content": "Generate a Data Story deck from a source document that already contains real quarterly delivery and revenue numbers. Do not invent chart values."
+    }
+  ]
+}

@@ -105,6 +105,17 @@ Do **not** solve this by globally forcing tiny heading boxes such as `max-width:
 
 **Hard rule:** if a heading wraps beyond 3 lines on desktop, regenerate the title or layout before shipping.
 
+### Multi-Line Balance Rule
+
+When a horizontal title needs 2-3 lines, those lines should feel intentionally composed, not accidentally wrapped.
+
+- No single-character orphan lines
+- No single short token orphan lines
+- No obviously collapsed middle line that is much shorter than the lines above and below it
+- If a title must stack, use explicit line control or widen the measure; do not squeeze the box until the browser creates an awkward stack
+
+**Exception profile:** vertical-writing titles, split-lockup titles, glitch/data-text titles, and terminal-style command titles follow their preset-specific composition rules instead of this horizontal line-balance rule.
+
 ---
 
 ## 5. Content-Tone Color Calibration
@@ -200,6 +211,7 @@ Run this before writing the final HTML:
 □ Are there 3+ consecutive bullet-list slides without a layout break?
 □ Does any title/heading sound like a template ("Overview", "Summary", "Conclusion")?
 □ Does any title wrap to 4+ lines on desktop? If yes, shorten it or widen the measure.
+□ Does any 2-3 line horizontal title have an orphan line or an obviously collapsed middle line?
 □ Did you pack a 5-step state chain or long API list inside a half-width card?
 □ If you told someone "an AI made this" — would they immediately believe it?
   If yes — find the most generic slide and redesign it before writing.

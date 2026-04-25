@@ -1,0 +1,17 @@
+{
+  "case_id": "lc-004-core-runtime-guard",
+  "messages": [
+    {
+      "role": "user",
+      "content": "前面已经围绕一个 AI coding workspace 产品写了很长的讨论：目标用户、协作审批、部署方式、组织采用、试点节奏、上线风险，期间还来回改过几次结构。"
+    },
+    {
+      "role": "user",
+      "content": "最后定稿时要强调：这不是自动驾驶，而是带可见控制的团队级 agent 协作。需要演讲者模式、编辑模式、可播放的运行时。"
+    },
+    {
+      "role": "user",
+      "content": "现在做成 slide，Enterprise Dark，英文，12 页，Auto。"
+    }
+  ]
+}

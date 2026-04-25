@@ -53,9 +53,181 @@
       "type": "number",
       "minimum": 0,
       "maximum": 1
+    },
+    "diagnostics": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "low_context": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "quality_tier",
+            "strict_pass_first_try",
+            "repair_rounds",
+            "route_drift"
+          ],
+          "properties": {
+            "brief_hash": {
+              "type": "string",
+              "minLength": 1
+            },
+            "render_packet_hash": {
+              "type": "string",
+              "minLength": 1
+            },
+            "quality_tier": {
+              "type": "string",
+              "enum": [
+                "tier0",
+                "tier1",
+                "tier2",
+                "tier3"
+              ]
+            },
+            "strict_pass_first_try": {
+              "type": "boolean"
+            },
+            "repair_rounds": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "repair_category": {
+              "type": "string",
+              "minLength": 1
+            },
+            "layout_variety": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 1
+            },
+            "avg_component_kinds_per_slide": {
+              "type": "number",
+              "minimum": 0
+            },
+            "style_signature_coverage": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 1
+            },
+            "chrome_leak": {
+              "type": "boolean"
+            },
+            "default_visible_chrome": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "content_occlusion_risk": {
+              "type": "boolean"
+            },
+            "numeric_faithfulness": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 1
+            },
+            "hallucinated_numeric_tokens": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "source_fact_coverage": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 1
+            },
+            "narrative_role_coverage": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 1
+            },
+            "role_sequence_match": {
+              "type": "boolean"
+            },
+            "minimal_slide_ratio": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 1
+            },
+            "max_minimal_slide_run": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "browser_title_target_count": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "title_hard_fail_rate": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 1
+            },
+            "orphan_line_rate": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 1
+            },
+            "collapsed_middle_line_rate": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 1
+            },
+            "profile_mismatch_rate": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 1
+            },
+            "structural_preset_break_rate": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 1
+            },
+            "title_clipping_rate": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 1
+            },
+            "title_occlusion_rate": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 1
+            },
+            "route_drift": {
+              "type": "boolean"
+            },
+            "latency_ms": {
+              "$ref": "#/$defs/latencyBlock"
+            }
+          }
+        }
+      }
     }
   },
   "$defs": {
+    "latencyBlock": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "packet": {
+          "type": "number",
+          "minimum": 0
+        },
+        "render": {
+          "type": "number",
+          "minimum": 0
+        },
+        "assemble": {
+          "type": "number",
+          "minimum": 0
+        },
+        "validate": {
+          "type": "number",
+          "minimum": 0
+        }
+      }
+    },
     "scoredLayer": {
       "type": "object",
       "additionalProperties": false,

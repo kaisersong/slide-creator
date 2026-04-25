@@ -1,0 +1,14 @@
+{
+  "mode": "auto",
+  "language": "zh-CN",
+  "deck": {
+    "deck_type": "user-content",
+    "page_count": 12
+  },
+  "style": {
+    "preset": "Aurora Mesh"
+  },
+  "narrative": {
+    "thesis": "团队级 agent 协作需要可靠交付，而不是更大的自动化叙事。"
+  }
+}

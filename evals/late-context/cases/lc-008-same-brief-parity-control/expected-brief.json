@@ -1,0 +1,14 @@
+{
+  "mode": "polish",
+  "language": "en",
+  "deck": {
+    "deck_type": "user-content",
+    "page_count": 12
+  },
+  "style": {
+    "preset": "Swiss Modern"
+  },
+  "narrative": {
+    "thesis": "Visible control makes team-grade agent collaboration trustworthy."
+  }
+}

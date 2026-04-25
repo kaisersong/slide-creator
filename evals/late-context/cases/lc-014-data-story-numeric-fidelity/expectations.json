@@ -1,0 +1,20 @@
+{
+  "should_trigger": true,
+  "expected_skill": "slide-creator",
+  "expected_mode": "polish",
+  "required_html_checks": [
+    "preset-metadata",
+    "shared-runtime",
+    "style-signature",
+    "present-mode",
+    "edit-mode"
+  ],
+  "required_quality_gates": [
+    "numeric-faithfulness",
+    "source-fact-coverage"
+  ],
+  "quality_thresholds": {
+    "numeric_faithfulness_min": 0.95,
+    "source_fact_coverage_min": 0.75
+  }
+}

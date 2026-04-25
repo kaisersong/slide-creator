@@ -1,0 +1,14 @@
+{
+  "should_trigger": true,
+  "expected_skill": "slide-creator",
+  "expected_mode": "polish",
+  "eval_bucket": "negative-fixtures",
+  "required_title_gates": [
+    "browser-title-composition"
+  ],
+  "quality_thresholds": {
+    "title_hard_fail_rate_max": 0.0,
+    "orphan_line_rate_max": 0.0,
+    "title_clipping_rate_max": 0.0
+  }
+}

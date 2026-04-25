@@ -1,0 +1,13 @@
+{
+  "case_id": "lc-010-sparse-brief-fallback",
+  "messages": [
+    {
+      "role": "user",
+      "content": "做一个 12 页的产品发布 slide，重点讲团队协作 agent，但材料很粗。"
+    },
+    {
+      "role": "user",
+      "content": "用 Aurora Mesh，中文，Auto。"
+    }
+  ]
+}

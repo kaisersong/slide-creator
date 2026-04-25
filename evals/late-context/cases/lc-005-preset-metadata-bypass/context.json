@@ -1,0 +1,17 @@
+{
+  "case_id": "lc-005-preset-metadata-bypass",
+  "messages": [
+    {
+      "role": "user",
+      "content": "这是一份给设计和产品团队的内部分享，前面上下文已经堆了大量背景说明、素材选择、术语表和 speaker notes 方向。"
+    },
+    {
+      "role": "user",
+      "content": "重点不是写更多内容，而是确保最终输出保持 Aurora Mesh 的氛围，并且别因为长上下文丢掉结构 metadata。"
+    },
+    {
+      "role": "user",
+      "content": "最后帮我生成成 slide，Aurora Mesh，中文，12 页，精修。"
+    }
+  ]
+}

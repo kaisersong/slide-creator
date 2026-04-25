@@ -1,0 +1,14 @@
+{
+  "mode": "auto",
+  "language": "en",
+  "deck": {
+    "deck_type": "product-demo",
+    "page_count": 8
+  },
+  "style": {
+    "preset": "Blue Sky"
+  },
+  "narrative": {
+    "thesis": "slide-creator stabilizes the last mile of presentation generation."
+  }
+}

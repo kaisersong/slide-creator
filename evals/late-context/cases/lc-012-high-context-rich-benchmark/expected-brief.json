@@ -1,0 +1,14 @@
+{
+  "mode": "polish",
+  "language": "en",
+  "deck": {
+    "deck_type": "user-content",
+    "page_count": 12
+  },
+  "style": {
+    "preset": "Glassmorphism"
+  },
+  "narrative": {
+    "thesis": "Agent workspaces earn trust by making control, state, and collaboration visible."
+  }
+}

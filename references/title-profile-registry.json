@@ -1,0 +1,208 @@
+{
+  "version": 1,
+  "profiles": {
+    "horizontal_balanced_left_anchor": {
+      "node_type": "ordinary_heading",
+      "measure_policy": "left_anchor_balance",
+      "max_lines": 3,
+      "explicit_line_control_allowed": true,
+      "auto_fix_policy": "safe_line_balance"
+    },
+    "horizontal_balanced_centered": {
+      "node_type": "ordinary_heading",
+      "measure_policy": "centered_balance",
+      "max_lines": 3,
+      "explicit_line_control_allowed": true,
+      "auto_fix_policy": "safe_line_balance"
+    },
+    "vertical_title": {
+      "node_type": "vertical_writing_object",
+      "measure_policy": "vertical_column",
+      "max_lines": 1,
+      "explicit_line_control_allowed": false,
+      "auto_fix_policy": "none"
+    },
+    "split_lockup": {
+      "node_type": "lockup_object",
+      "measure_policy": "paired_lockup",
+      "max_lines": 2,
+      "explicit_line_control_allowed": false,
+      "auto_fix_policy": "preset_specific_only"
+    },
+    "glitch_lockup": {
+      "node_type": "effect_dom_heading",
+      "measure_policy": "effect_dom_lockup",
+      "max_lines": 2,
+      "explicit_line_control_allowed": false,
+      "auto_fix_policy": "preset_specific_only"
+    },
+    "terminal_object": {
+      "node_type": "terminal_object",
+      "measure_policy": "terminal_session_object",
+      "max_lines": 3,
+      "explicit_line_control_allowed": false,
+      "auto_fix_policy": "none"
+    },
+    "single_statement_display": {
+      "node_type": "ordinary_heading",
+      "measure_policy": "statement_display",
+      "max_lines": 3,
+      "explicit_line_control_allowed": true,
+      "auto_fix_policy": "safe_line_balance"
+    }
+  },
+  "presets": {
+    "Aurora Mesh": {
+      "default_profile": "horizontal_balanced_centered"
+    },
+    "Blue Sky": {
+      "default_profile": "horizontal_balanced_centered"
+    },
+    "Bold Signal": {
+      "default_profile": "horizontal_balanced_left_anchor"
+    },
+    "Chinese Chan": {
+      "default_profile": "horizontal_balanced_centered",
+      "layout_overrides": {
+        "zen_vertical": {
+          "profile": "vertical_title"
+        }
+      },
+      "matchers": [
+        {
+          "browser_selector": ".zen-vertical-title",
+          "node_classes_any": [
+            "zen-vertical-title"
+          ],
+          "profile": "vertical_title"
+        }
+      ]
+    },
+    "Creative Voltage": {
+      "default_profile": "horizontal_balanced_left_anchor",
+      "matchers": [
+        {
+          "browser_selector": ".cover-inner .main-title",
+          "node_classes_any": [
+            "main-title"
+          ],
+          "ancestor_classes_any": [
+            "cover-inner"
+          ],
+          "profile": "split_lockup",
+          "required_companion_selectors": [
+            ".title-accent"
+          ]
+        },
+        {
+          "browser_selector": ".cta-inner h2",
+          "node_names_any": [
+            "h1",
+            "h2"
+          ],
+          "ancestor_classes_any": [
+            "cta-inner"
+          ],
+          "descendant_classes_any": [
+            "h2-accent"
+          ],
+          "profile": "split_lockup",
+          "required_companion_selectors": [
+            ".h2-accent"
+          ]
+        }
+      ]
+    },
+    "Dark Botanical": {
+      "default_profile": "horizontal_balanced_centered"
+    },
+    "Data Story": {
+      "default_profile": "horizontal_balanced_left_anchor",
+      "layout_overrides": {
+        "cta_close": {
+          "profile": "single_statement_display"
+        }
+      }
+    },
+    "Electric Studio": {
+      "default_profile": "horizontal_balanced_left_anchor"
+    },
+    "Enterprise Dark": {
+      "default_profile": "horizontal_balanced_left_anchor",
+      "layout_overrides": {
+        "cta_close": {
+          "profile": "single_statement_display"
+        }
+      }
+    },
+    "Glassmorphism": {
+      "default_profile": "horizontal_balanced_centered"
+    },
+    "Modern Newspaper": {
+      "default_profile": "horizontal_balanced_left_anchor"
+    },
+    "Neo-Brutalism": {
+      "default_profile": "horizontal_balanced_left_anchor"
+    },
+    "Neo-Retro Dev Deck": {
+      "default_profile": "horizontal_balanced_left_anchor"
+    },
+    "Neon Cyber": {
+      "default_profile": "horizontal_balanced_left_anchor",
+      "matchers": [
+        {
+          "browser_selector": ".cyber-title",
+          "node_classes_any": [
+            "cyber-title"
+          ],
+          "node_attrs_all": [
+            "data-text"
+          ],
+          "profile": "glitch_lockup",
+          "required_attributes": [
+            "data-text"
+          ]
+        }
+      ]
+    },
+    "Notebook Tabs": {
+      "default_profile": "horizontal_balanced_left_anchor"
+    },
+    "Paper & Ink": {
+      "default_profile": "horizontal_balanced_centered"
+    },
+    "Pastel Geometry": {
+      "default_profile": "horizontal_balanced_centered"
+    },
+    "Split Pastel": {
+      "default_profile": "horizontal_balanced_centered"
+    },
+    "Swiss Modern": {
+      "default_profile": "horizontal_balanced_left_anchor",
+      "layout_overrides": {
+        "pull_quote": {
+          "profile": "single_statement_display"
+        }
+      }
+    },
+    "Terminal Green": {
+      "default_profile": "horizontal_balanced_left_anchor",
+      "matchers": [
+        {
+          "browser_selector": ".term-title, .feature-title, .cta-cmd, .terminal-block .cmd, .term-prompt",
+          "node_classes_any": [
+            "term-title",
+            "feature-title",
+            "cta-cmd",
+            "cmd",
+            "term-prompt"
+          ],
+          "profile": "terminal_object"
+        }
+      ]
+    },
+    "Vintage Editorial": {
+      "default_profile": "horizontal_balanced_centered"
+    }
+  }
+}

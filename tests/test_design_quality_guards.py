@@ -15,6 +15,8 @@ HTML_TEMPLATE_MD = ROOT / "references" / "html-template.md"
 BASE_CSS_MD = ROOT / "references" / "base-css.md"
 ANTI_PATTERNS_MD = ROOT / "references" / "impeccable-anti-patterns.md"
 DESIGN_QUALITY_MD = ROOT / "references" / "design-quality.md"
+TITLE_QUALITY_MD = ROOT / "references" / "title-quality.md"
+TITLE_PROFILE_REGISTRY = ROOT / "references" / "title-profile-registry.json"
 
 
 def read_text(path: Path) -> str:
@@ -66,8 +68,31 @@ def test_html_template_requires_preset_metadata_and_title_fit_guard():
 def test_design_quality_baseline_catches_title_wrap_and_half_width_state_grids():
     baseline = read_text(DESIGN_QUALITY_MD)
     assert "A slide title wrapping to 4+ lines is a layout failure" in baseline
+    assert "No single-character orphan lines" in baseline
+    assert "collapsed middle line" in baseline
     assert "Never put a 5-step state chain or API matrix inside a 50/50 column" in baseline
     assert "Does any title wrap to 4+ lines on desktop?" in baseline
+    assert "Does any 2-3 line horizontal title have an orphan line" in baseline
+
+
+def test_title_quality_docs_cover_multiline_balance_and_exceptions():
+    title_quality = read_text(TITLE_QUALITY_MD)
+    assert "多行标题平衡规则" in title_quality
+    assert "显式控制断行" in title_quality
+    assert "单字孤儿行" in title_quality
+    assert "明显失衡的多行标题" in title_quality
+    assert "风格特例" in title_quality
+    assert "Chinese Chan" in title_quality
+    assert "Neon Cyber" in title_quality
+    assert "title-profile-registry.json" in title_quality
+
+
+def test_title_profile_registry_file_exists_and_is_machine_readable():
+    registry = json.loads(read_text(TITLE_PROFILE_REGISTRY))
+    assert registry["version"] == 1
+    assert "profiles" in registry and "presets" in registry
+    assert "Swiss Modern" in registry["presets"]
+    assert "Chinese Chan" in registry["presets"]
 
 
 def test_readmes_publish_mode_aliases_and_timing_guidance():
@@ -99,6 +124,22 @@ def test_validate_is_documented_as_pre_write_gate():
     assert "post-generation diagnostic" not in readme
     assert "写入前门禁" in readme_zh
     assert "生成后诊断" not in readme_zh
+
+
+def test_readmes_list_js_engine_as_generate_input():
+    readme = read_text(README_MD)
+    readme_zh = read_text(README_ZH_MD)
+
+    assert "references/html-template.md + references/js-engine.md + one style file + base-css.md" in readme
+    assert "references/html-template.md + references/js-engine.md + 单个风格文件 + base-css.md" in readme_zh
+
+
+def test_readmes_document_preset_metadata_as_runtime_contract():
+    readme = read_text(README_MD)
+    readme_zh = read_text(README_ZH_MD)
+
+    assert "body[data-preset]" in readme
+    assert "body[data-preset]" in readme_zh
 
 
 def test_slide_container_has_no_visual_properties():

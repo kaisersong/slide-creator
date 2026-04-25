@@ -13,6 +13,24 @@ TODO.md
 *-test.html
 scripts/
 docs/
+!scripts/
+scripts/*
+!scripts/generate.py
+!scripts/low_context.py
+!scripts/eval-quality.py
+!scripts/quality_eval.py
+!scripts/render-from-brief.py
+!scripts/title_browser_qa.py
+!scripts/title_profiles.py
+!scripts/validate-brief.py
+!docs/
+docs/*
+!docs/design/
+docs/design/*
+!docs/design/README.md
+!docs/design/2026-04-24-slide-creator-test-matrix.md
+!docs/design/2026-04-25-slide-creator-core-md-guard-design.md
+!docs/design/2026-04-25-slide-creator-low-context-safe-generate-design.md
 
 # macOS
 .DS_Store

@@ -1,0 +1,17 @@
+{
+  "case_id": "lc-012-high-context-rich-benchmark",
+  "messages": [
+    {
+      "role": "user",
+      "content": "我们已经完整梳理了一场高质量产品发布演讲：目标受众是技术负责人和设计负责人，主题是 agent 工作区如何把审批、协作、可视化状态和可编辑交付收成一个系统。"
+    },
+    {
+      "role": "user",
+      "content": "内容不缺，反而很丰富：有产品 thesis、组织采用阻力、工作流阶段、关键界面、定量指标、落地节奏、上线风险和竞争差异。不要把它压成安全模板。"
+    },
+    {
+      "role": "user",
+      "content": "请用 Glassmorphism，英文，12 页，Polish，保留强风格、强节奏和多样布局。"
+    }
+  ]
+}

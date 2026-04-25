@@ -62,9 +62,9 @@
 - **修复：** 正文使用无衬线字体；等宽字体仅保留给实际代码块
 - **slide-creator 已有：** 无直接对应
 
-### 9. 标题换行 ≥4 行（Title Wrapping Excessively）— CLI
-- **检测：** 幻灯片 `<h2>` / `.slide-title` 换行 ≥4 行
-- **修复：** 缩短标题 → 调整布局 → 加大字号
+### 9. 标题换行失控（Title Wrapping Excessively / Unbalanced）— CLI
+- **检测：** 幻灯片 `<h2>` / `.slide-title` 换行 ≥4 行；或 2-3 行标题出现单字孤儿行、单短 token 孤儿行、明显塌陷的中间行
+- **修复：** 缩短标题 → 放宽标题 measure → 显式控行 → 调整布局
 - **slide-creator 已有：** HARD RULES Rule 3 已覆盖
 
 ---

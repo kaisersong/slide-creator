@@ -1,0 +1,20 @@
+{
+  "should_trigger": true,
+  "expected_skill": "slide-creator",
+  "expected_mode": "polish",
+  "required_brief_fields": [
+    "style.preset",
+    "narrative.thesis",
+    "runtime.editing_mode"
+  ],
+  "required_html_checks": [
+    "preset-metadata",
+    "shared-runtime",
+    "style-signature",
+    "watermark-injected"
+  ],
+  "forbidden_html_states": [
+    "missing-data-preset",
+    "template-preset-placeholder"
+  ]
+}

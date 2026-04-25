@@ -1,0 +1,17 @@
+{
+  "case_id": "lc-006-blue-sky-runtime-control",
+  "messages": [
+    {
+      "role": "user",
+      "content": "前面已经用很多轮对话整理了一个 slide-creator 自我介绍 deck，包括问题、工作流、风格系统和导出方式。"
+    },
+    {
+      "role": "user",
+      "content": "最终版本保持 Blue Sky，不要误套 non-Blue-Sky 共享运行时，但也不能丢掉播放模式、编辑模式和 preset metadata。"
+    },
+    {
+      "role": "user",
+      "content": "现在直接出 8 页英文 deck，Blue Sky，Auto。"
+    }
+  ]
+}

@@ -48,6 +48,33 @@
         "render": 0.99,
         "efficiency": 0.97
       },
+      "diagnostics": {
+        "low_context": {
+          "quality_tier": "tier0",
+          "strict_pass_first_try": true,
+          "repair_rounds": 0,
+          "layout_variety": 0.92,
+          "avg_component_kinds_per_slide": 2.4,
+          "style_signature_coverage": 1.0,
+          "chrome_leak": false,
+          "default_visible_chrome": [],
+          "content_occlusion_risk": false,
+          "numeric_faithfulness": 1.0,
+          "hallucinated_numeric_tokens": [],
+          "source_fact_coverage": 1.0,
+          "narrative_role_coverage": 1.0,
+          "role_sequence_match": true,
+          "minimal_slide_ratio": 0.25,
+          "max_minimal_slide_run": 1,
+          "route_drift": false,
+          "latency_ms": {
+            "packet": 12,
+            "render": 2140,
+            "assemble": 36,
+            "validate": 171
+          }
+        }
+      },
       "overall": 0.993,
       "notes": "Compared with the original Blue Sky demo, this version keeps the airy preset signature while adding a clearer IR-first product story, stronger quality framing, and an explicit zero-dependency trial path. Visual spot check used Chrome headless screenshots with virtual-time-budget to allow entrance animations to complete."
     },
@@ -81,6 +108,33 @@
         "compression": 1.0,
         "render": 0.995,
         "efficiency": 0.97
+      },
+      "diagnostics": {
+        "low_context": {
+          "quality_tier": "tier0",
+          "strict_pass_first_try": true,
+          "repair_rounds": 0,
+          "layout_variety": 0.94,
+          "avg_component_kinds_per_slide": 2.6,
+          "style_signature_coverage": 1.0,
+          "chrome_leak": false,
+          "default_visible_chrome": [],
+          "content_occlusion_risk": false,
+          "numeric_faithfulness": 1.0,
+          "hallucinated_numeric_tokens": [],
+          "source_fact_coverage": 1.0,
+          "narrative_role_coverage": 1.0,
+          "role_sequence_match": true,
+          "minimal_slide_ratio": 0.22,
+          "max_minimal_slide_run": 1,
+          "route_drift": false,
+          "latency_ms": {
+            "packet": 13,
+            "render": 2260,
+            "assemble": 39,
+            "validate": 177
+          }
+        }
       },
       "overall": 0.995,
       "notes": "Compared with the original Creative Voltage demo, this version preserves the preset's speed and punch while adding a better explanation of long-context failure, BRIEF-first generation, and result-eval tightening. It remains close to the original visually, but stronger as a product-intro deck."

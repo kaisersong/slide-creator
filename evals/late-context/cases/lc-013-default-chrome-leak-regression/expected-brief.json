@@ -1,0 +1,13 @@
+{
+  "style": {
+    "preset": "Swiss Modern"
+  },
+  "deck": {
+    "deck_type": "user-content",
+    "page_count": 12
+  },
+  "runtime": {
+    "editing_mode": true,
+    "presenter_mode": true
+  }
+}

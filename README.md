@@ -96,7 +96,7 @@ slide-creator keeps `SKILL.md` as a thin router and pushes detail into reference
 
 ```
 --plan        → references/brief-template.json only
---generate    → references/html-template.md + one style file + base-css.md
+--generate    → references/html-template.md + references/js-engine.md + one style file + base-css.md
 interactive   → references/workflow.md
 style picker  → references/style-index.md
 ```
@@ -153,6 +153,7 @@ Before adding any new check, verify: does this check belong in the deterministic
 
 validate.py checks must align with actual contracts in SKILL.md / html-template.md / js-engine.md. For example:
 - Check hotzone → must use `.edit-hotzone` (class) not `id="hotzone"`
+- Check preset metadata → generated decks must emit a real `body[data-preset]`, not omit it or leave the template placeholder
 - Check external links → must allow Google Fonts (explicitly required by html-template.md)
 - Check watermark → must verify JS injection logic (not hardcoded position)
 
@@ -413,6 +414,8 @@ For PPTX/PNG export: `clawhub install kai-html-export` or `pip install playwrigh
 ---
 
 ## Version History
+
+**v2.23.0** — Title composition and low-context quality release: added a preset-aware title profile registry plus browser-level title QA, expanded low-context diagnostics/eval buckets for quality uplift checks, hardened strict gates around shared runtime and `body[data-preset]`, and reordered `SKILL.md` so style enforcement, narrative arc, and title quality take priority over degradable playback/edit/watermark features.
 
 **v2.22.0** — Style reference rollout and strict quality gate hardening: all presets now pass style-reference audit, Swiss Modern plus Enterprise Dark / Data Story / Glassmorphism / Chinese Chan gain explicit canonical export contracts and user-content routing, `tests/validate.py --strict` is documented and tested as the `--generate` pre-write gate, and new regression coverage locks CSS variable resolution, layout variety, and priority preset contract checks.
 

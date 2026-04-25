@@ -1,0 +1,14 @@
+{
+  "mode": "polish",
+  "language": "zh-CN",
+  "deck": {
+    "deck_type": "user-content",
+    "page_count": 12
+  },
+  "style": {
+    "preset": "Aurora Mesh"
+  },
+  "narrative": {
+    "thesis": "长上下文下的稳定输出，依赖结构化契约而不是补更多提示词。"
+  }
+}

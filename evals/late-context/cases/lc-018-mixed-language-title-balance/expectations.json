@@ -1,0 +1,15 @@
+{
+  "should_trigger": true,
+  "expected_skill": "slide-creator",
+  "expected_mode": "auto",
+  "eval_bucket": "same-preset-different-language",
+  "required_title_gates": [
+    "browser-title-composition"
+  ],
+  "quality_thresholds": {
+    "title_hard_fail_rate_max": 0.0,
+    "orphan_line_rate_max": 0.0,
+    "collapsed_middle_line_rate_max": 0.0,
+    "profile_mismatch_rate_max": 0.0
+  }
+}

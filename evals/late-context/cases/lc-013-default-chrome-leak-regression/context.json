@@ -1,0 +1,8 @@
+{
+  "messages": [
+    {
+      "role": "user",
+      "content": "Generate a Swiss Modern deck from a polished BRIEF and keep presenter/edit chrome hidden until invoked."
+    }
+  ]
+}

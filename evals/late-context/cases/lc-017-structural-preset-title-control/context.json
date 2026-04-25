@@ -1,0 +1,8 @@
+{
+  "messages": [
+    {
+      "role": "user",
+      "content": "Generate a Creative Voltage deck and keep the split title lockup. Do not normalize it into generic title-line spans."
+    }
+  ]
+}

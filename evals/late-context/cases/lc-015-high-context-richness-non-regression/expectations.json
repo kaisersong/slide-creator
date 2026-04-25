@@ -1,0 +1,29 @@
+{
+  "should_trigger": true,
+  "expected_skill": "slide-creator",
+  "expected_mode": "polish",
+  "rich_context_benchmark": true,
+  "required_html_checks": [
+    "preset-metadata",
+    "shared-runtime",
+    "style-signature",
+    "background-signature",
+    "present-mode",
+    "edit-mode"
+  ],
+  "required_quality_gates": [
+    "narrative-role-coverage",
+    "minimal-slide-run"
+  ],
+  "non_regression_metrics": [
+    "layout-variety",
+    "component-diversity",
+    "style-signature-coverage",
+    "minimal-slide-ratio"
+  ],
+  "quality_thresholds": {
+    "narrative_role_coverage": 1.0,
+    "max_minimal_slide_run": 2,
+    "minimal_slide_ratio_max_delta": 0.1
+  }
+}

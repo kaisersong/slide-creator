@@ -1,0 +1,13 @@
+{
+  "case_id": "lc-008-same-brief-parity-control",
+  "messages": [
+    {
+      "role": "user",
+      "content": "做一个给产品和工程负责人看的 agent 协作演示，核心观点是可见控制优于黑箱自动化。"
+    },
+    {
+      "role": "user",
+      "content": "请用 Swiss Modern，英文，12 页，Polish。"
+    }
+  ]
+}
