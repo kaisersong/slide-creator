@@ -196,7 +196,7 @@ For each of the 12 slides:
 
 **Architecture note:** Signature elements ARE layout constraints, not a separate injection step. The `.bold-ghost` positioned at the bottom-right, the `.slide-num` at the top-left — these define the spatial composition that all other content responds to.
 
-**Swiss Modern native-export guard:** Swiss Modern must stay on the canonical path used by the reference demo. Panels are direct children of `.slide`; `.bg-num` and `.slide-num-label` stay as direct children of `.slide`; tokens stay on `--bg/--bg-dark/--text/--red`; and each slide should emit `data-export-role` matching the chosen named layout (`title_grid`, `column_content`, `stat_block`, `pull_quote`, `geometric_diagram`, `data_table`, `contents_index`). Compatible aliases like `.left-col`, `.right-col`, `.stat-block`, `.content-block`, `.quote-block`, `--bg-primary`, or `--accent` are legacy inputs only and must not be emitted by `--generate`.
+**Swiss Modern native-export guard:** Swiss Modern must stay on the canonical path used by the reference demo. Panels are direct children of `.slide`; `.bg-num` and `.slide-num-label` stay as direct children of `.slide`; tokens stay on `--bg/--bg-dark/--text/--red`; and each slide should emit `data-export-role` matching the chosen named layout (`title_grid`, `column_content`, `stat_block`, `pull_quote`, `geometric_diagram`, `data_table`, `contents_index`). Compatible aliases like `.left-col`, `.right-col`, `.stat-block`, `.content-block`, `.quote-block`, `--bg-primary`, or `--accent` are legacy inputs only and must not be emitted by `--generate`. Swiss Modern title handling still follows the global title-balance rule, but keeps Swiss-specific asymmetric anchoring (left / bottom-left, never centered).
 
 **High-risk preset guards:** Enterprise Dark, Data Story, Glassmorphism, and Chinese Chan also have canonical export paths now. Honor each reference file's `## Canonical Export Contract`: emit `data-export-role`, keep canonical token names, and do not emit shorthand alias classes when the reference marks them as input-only. Data Story keeps chart rendering pure SVG/CSS, Glassmorphism keeps orb layers behind blurred cards, and Chinese Chan keeps decorative elements outside `.slide-content`.
 
@@ -279,7 +279,7 @@ After the strict gate passes, scan the assembled output for these violations and
 **Core 8 checks:**
 1. **Search `:::` in HTML** → convert any unconverted directive blocks
 2. **Search generic slide titles** from forbidden list (概览, Overview, 架构介绍, Key Insights, 总结, 结论, Next Steps, 简介, 说明, 关键发现) → rewrite as assertion-style titles
-3. **Search slide title line wraps** → flag any title wrapping ≥4 lines; shorten or restructure
+3. **Search slide title wraps + balance** → flag any title wrapping ≥4 lines, any single-character orphan line, or any obviously collapsed middle line; shorten, widen, or explicitly control line breaks
 4. **Search content density** → any slide filling <50% of its area → switch to emphasis layout (large stat, quote, single statement)
 5. **Search column balance** → in two/three-column slides, verify no column <60% of tallest; fix imbalance
 6. **Search consecutive same-layout slides** → 3+ consecutive identical layouts → insert visual break (quote, diagram, big stat)
@@ -295,7 +295,7 @@ After the strict gate passes, scan the assembled output for these violations and
 14. **Search cramped padding** → `padding: 0.[1-5]rem` on cards → increase to ≥0.75rem
 15. **Search gray on colored bg** → `color: #[89]99` or `var(--text-secondary)` on non-white background → darken text
 16. **Search component monotony** → if >50% of slides use the same component pattern (e.g., only `.g` + `.bl`) → redesign at least half to use 2-3 distinct component types (step/callout/stat/kbd/table/quote)
-17. **Search present mode JS** → must contain `PresentMode` class or `enterPresent()` function, `'F5'` key listener, `#present-btn` CSS, and `body.presenting` CSS → missing = generation error, must fix
+17. **Search shared runtime JS** → non-Blue-Sky decks must contain `class SlidePresentation`, the first-slide `.visible` fix, the `?presenter` branch, `PresentMode`, `'F5'` key listener, `#present-btn` CSS, and `body.presenting` CSS → missing = generation error, must fix
 18. **Search watermark placement** → must be JS-injected into last slide (`slides[slides.length - 1].appendChild`), CSS must be `position: absolute` → if hardcoded `<div class="slide-credit">` before `</body>`, move to JS injection
 19. **Search architecture contamination (non-Blue-Sky only)** → if style is NOT Blue Sky, search for `#stage`, `#track`, `calc(100vw * var(--slide-count))`, or `translateX` slide navigation → these are Blue Sky-exclusive patterns. Replace with `html-template.md`'s `scroll-snap-type: y mandatory` + `SlidePresentation` class architecture
 20. **Search `.slide` background overriding body gradient** → if the style reference file defines `radial-gradient`, `linear-gradient`, `background-image` patterns, or `animation` on `body`, search for `.slide` elements with `background` / `background-color` → these block the body gradient. Remove `background` from `.slide` rules. The template does NOT set `.slide` background (template neutrality). Style files may set `.slide` background for styles that need per-slide control

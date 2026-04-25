@@ -1,0 +1,14 @@
+{
+  "mode": "polish",
+  "language": "en",
+  "deck": {
+    "deck_type": "user-content",
+    "page_count": 12
+  },
+  "style": {
+    "preset": "Glassmorphism"
+  },
+  "narrative": {
+    "thesis": "Style fidelity must survive long-context rendering, not collapse into a generic template."
+  }
+}

@@ -1,0 +1,14 @@
+{
+  "mode": "auto",
+  "language": "en",
+  "deck": {
+    "deck_type": "user-content",
+    "page_count": 12
+  },
+  "style": {
+    "preset": "Enterprise Dark"
+  },
+  "narrative": {
+    "thesis": "Team-grade AI work needs visible control, not invisible automation."
+  }
+}

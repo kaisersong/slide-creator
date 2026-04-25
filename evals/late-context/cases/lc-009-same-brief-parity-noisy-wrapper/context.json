@@ -1,0 +1,17 @@
+{
+  "case_id": "lc-009-same-brief-parity-noisy-wrapper",
+  "messages": [
+    {
+      "role": "user",
+      "content": "前面我们已经聊了很多杂项：团队试点节奏、部署审批、成本分摊、历史失败案例、组织担忧、是否要加 review bot、甚至还争论过品牌语气。"
+    },
+    {
+      "role": "user",
+      "content": "但真正要做的 deck 没变：给产品和工程负责人看，核心观点是可见控制优于黑箱自动化。"
+    },
+    {
+      "role": "user",
+      "content": "最后请用 Swiss Modern，英文，12 页，Polish。"
+    }
+  ]
+}

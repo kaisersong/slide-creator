@@ -1,0 +1,11 @@
+{
+  "should_trigger": true,
+  "expected_skill": "slide-creator",
+  "artifact_status": "invalid",
+  "should_fail_closed": true,
+  "expected_error_layer": "compression",
+  "forbidden_fallbacks": [
+    "freeform-long-context-render",
+    "guess-preset-from-noise"
+  ]
+}

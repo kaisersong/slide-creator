@@ -431,6 +431,13 @@ body {
     display: inline-block;
     letter-spacing: 0.02em;
 }
+.cta-title {
+    max-width: 13ch;
+}
+.cta-line {
+    display: block;
+    white-space: nowrap;
+}
 .cta-echo {
     display: flex;
     gap: clamp(16px, 3vw, 40px);
@@ -498,7 +505,7 @@ When the deck type is the 12-page `user-content` arc from `composition-guide.md`
 - P9 Checkpoint grid → 2×2 `.feat-grid` with short labels + evidence
 - P10 Recommendation grid → `.feat-grid` or `.index-item` stack; not a repeated quote / callout slide
 - P11 Evidence list → `.inst-blocks`, `.data-table`, or mixed proof stack
-- P12 CTA → left-anchored close with `.cta-block`; title stays left or bottom-left, never centered
+- P12 CTA → left-anchored close with `.cta-block`; title stays left or bottom-left, never centered. Long CTA titles follow the global title-balance rule from `title-quality.md`: no browser-only auto-wrap, no orphan line, no obviously collapsed middle line. `.cta-line` is the preferred Swiss line-control wrapper when explicit stacking is needed
 
 ### 9. Canonical Export Contract
 
@@ -539,7 +546,7 @@ Swiss Modern native PPT export only stays high-fidelity when the generated HTML 
 - Process / diagram: `.disc-header` `.disc-body` `.disc-steps` `.disc-step` `.disc-step-num` `.disc-step-title` `.disc-step-desc` `.disc-diagram` `.diagram-svg`
 - Table / code: `.data-table` `.highlight` `.terminal-line`
 - Index / grid: `.index-item` `.index-num` `.index-title` `.index-desc` `.feat-grid` `.feat-card` `.feat-key` `.feat-name` `.feat-desc`
-- Evidence / CTA: `.inst-blocks` `.inst-block` `.inst-label` `.inst-link` `.cta-block` `.cta-echo` `.cta-echo-num` `.cta-echo-label`
+- Evidence / CTA: `.inst-blocks` `.inst-block` `.inst-label` `.inst-link` `.cta-block` `.cta-title` `.cta-line` `.cta-echo` `.cta-echo-num` `.cta-echo-label`
 
 ### Background Rule
 `.slide` 必须设置 `background: #ffffff`。body 为纯白，12 列网格通过 `body::before` 叠加。不使用渐变。
@@ -553,11 +560,13 @@ Swiss Modern native PPT export only stays high-fidelity when the generated HTML 
 - Token 名称必须保持为 `--bg` `--bg-dark` `--text` `--text-light` `--text-muted` `--red` `--grid-line`；不要改写成 `--bg-primary` `--text-primary` `--accent`
 - `user-content` 12 页 deck 的 P8-P10 必须是步骤 / 网格 / 证据页，不能退化成 3 页连续的单卡 callout 或 pull quote
 - CTA 页允许一个局部深色 `.cta-block`，但标题锚点仍然保持左或左下；禁止居中收尾
+- CTA 页长标题不得依赖浏览器自然换行；必须符合全局 title-balance 规则，必要时使用 `.cta-line` 显式控行
 
 ### Signature Checklist
 - [ ] body::before 12 列网格叠加（3% 不透明度）
 - [ ] @keyframes fadeIn（staggered delays）
 - [ ] .bg-num 背景大序号（25vw Archivo Black 900）
+- [ ] CTA 长标题符合全局 title-balance 规则；必要时使用 `.cta-line` 显式控行
 - [ ] .content 内容层（z-index: 1）
 - [ ] .eyebrow 小标签（uppercase, 0.2em 字间距）
 - [ ] .swiss-stat 大数字（Archivo Black 900）

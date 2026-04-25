@@ -1,0 +1,9 @@
+{
+  "mode": "polish",
+  "style": {
+    "preset": "Swiss Modern"
+  },
+  "content": {
+    "source_kind": "existing-html"
+  }
+}

@@ -1,0 +1,17 @@
+{
+  "case_id": "lc-011-invalid-brief-fail-closed",
+  "messages": [
+    {
+      "role": "user",
+      "content": "下面两个 BRIEF 片段互相冲突，你不要猜，应该 fail closed。"
+    },
+    {
+      "role": "user",
+      "content": "{\"mode\":\"auto\",\"language\":\"zh-CN\",\"style\":{\"preset\":\"Swiss Modern\"},\"deck\":{\"deck_type\":\"user-content\",\"page_count\":12}}"
+    },
+    {
+      "role": "user",
+      "content": "{\"mode\":\"polish\",\"language\":\"en\",\"style\":{\"preset\":\"Glassmorphism\"},\"deck\":{\"deck_type\":\"product-demo\",\"page_count\":8}}"
+    }
+  ]
+}

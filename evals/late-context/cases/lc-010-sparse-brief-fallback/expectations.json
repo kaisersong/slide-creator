@@ -1,0 +1,21 @@
+{
+  "should_trigger": true,
+  "expected_skill": "slide-creator",
+  "expected_mode": "auto",
+  "required_brief_fields": [
+    "style.preset",
+    "deck.page_count",
+    "narrative.thesis"
+  ],
+  "required_html_checks": [
+    "preset-metadata",
+    "shared-runtime",
+    "present-mode",
+    "edit-mode",
+    "watermark-injected"
+  ],
+  "allowed_quality_tiers": [
+    "tier1",
+    "tier2"
+  ]
+}

@@ -1,0 +1,16 @@
+{
+  "should_trigger": true,
+  "expected_skill": "slide-creator",
+  "expected_mode": "auto",
+  "eval_bucket": "structural-preset-control",
+  "required_title_gates": [
+    "browser-title-composition"
+  ],
+  "expected_title_profiles": [
+    "split_lockup"
+  ],
+  "quality_thresholds": {
+    "profile_mismatch_rate_max": 0.0,
+    "structural_preset_break_rate_max": 0.0
+  }
+}

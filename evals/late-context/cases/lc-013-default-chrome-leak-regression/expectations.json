@@ -1,0 +1,19 @@
+{
+  "should_trigger": true,
+  "expected_skill": "slide-creator",
+  "expected_mode": "polish",
+  "required_html_checks": [
+    "preset-metadata",
+    "shared-runtime",
+    "present-mode",
+    "edit-mode"
+  ],
+  "required_quality_gates": [
+    "chrome-hidden-by-default",
+    "no-content-occlusion-risk"
+  ],
+  "quality_thresholds": {
+    "chrome_leak": false,
+    "content_occlusion_risk": false
+  }
+}

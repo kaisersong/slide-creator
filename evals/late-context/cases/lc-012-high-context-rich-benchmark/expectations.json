@@ -1,0 +1,26 @@
+{
+  "should_trigger": true,
+  "expected_skill": "slide-creator",
+  "expected_mode": "polish",
+  "required_brief_fields": [
+    "style.preset",
+    "deck.page_count",
+    "narrative.thesis",
+    "narrative.page_roles"
+  ],
+  "required_html_checks": [
+    "preset-metadata",
+    "shared-runtime",
+    "style-signature",
+    "background-signature",
+    "present-mode",
+    "edit-mode"
+  ],
+  "expected_quality_tier": "tier0",
+  "rich_context_benchmark": true,
+  "non_regression_metrics": [
+    "layout-variety",
+    "component-diversity",
+    "style-signature-coverage"
+  ]
+}

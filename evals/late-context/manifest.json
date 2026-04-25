@@ -3,6 +3,21 @@
   "cases": [
     "lc-001-basic-late-trigger",
     "lc-002-style-switch-near-end",
-    "lc-003-report-request-negative"
+    "lc-003-report-request-negative",
+    "lc-004-core-runtime-guard",
+    "lc-005-preset-metadata-bypass",
+    "lc-006-blue-sky-runtime-control",
+    "lc-007-style-signature-near-limit",
+    "lc-008-same-brief-parity-control",
+    "lc-009-same-brief-parity-noisy-wrapper",
+    "lc-010-sparse-brief-fallback",
+    "lc-011-invalid-brief-fail-closed",
+    "lc-012-high-context-rich-benchmark",
+    "lc-013-default-chrome-leak-regression",
+    "lc-014-data-story-numeric-fidelity",
+    "lc-015-high-context-richness-non-regression",
+    "lc-016-title-balance-negative-fixture",
+    "lc-017-structural-preset-title-control",
+    "lc-018-mixed-language-title-balance"
   ]
 }

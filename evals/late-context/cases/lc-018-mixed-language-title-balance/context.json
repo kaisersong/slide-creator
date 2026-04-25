@@ -1,0 +1,8 @@
+{
+  "messages": [
+    {
+      "role": "user",
+      "content": "Generate a Swiss Modern deck. The title uses Chinese, English product names, 2026, and 90% growth; avoid mixed-language orphan lines."
+    }
+  ]
+}

@@ -1,0 +1,19 @@
+{
+  "should_trigger": true,
+  "expected_skill": "slide-creator",
+  "expected_mode": "auto",
+  "required_brief_fields": [
+    "style.preset",
+    "deck.deck_type",
+    "runtime.editing_mode"
+  ],
+  "required_html_checks": [
+    "preset-metadata",
+    "blue-sky-architecture",
+    "present-mode",
+    "edit-mode"
+  ],
+  "forbidden_html_checks": [
+    "shared-runtime-required"
+  ]
+}

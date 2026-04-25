@@ -1,0 +1,15 @@
+{
+  "style": {
+    "preset": "Data Story"
+  },
+  "deck": {
+    "deck_type": "user-content",
+    "page_count": 12
+  },
+  "content": {
+    "must_include": [
+      "76% 汽车、14% 能源、10% 服务",
+      "44.4 / 46.3 / 49.6 / 33.7 万辆"
+    ]
+  }
+}

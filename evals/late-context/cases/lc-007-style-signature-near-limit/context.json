@@ -1,0 +1,17 @@
+{
+  "case_id": "lc-007-style-signature-near-limit",
+  "messages": [
+    {
+      "role": "user",
+      "content": "我们前面已经花了很长上下文讨论一份偏品牌叙事的发布演讲，来回改了语气、页面顺序、图像方向和数据取舍。"
+    },
+    {
+      "role": "user",
+      "content": "最后要的是 Glassmorphism：背景层、orb、毛玻璃卡片和轻浮动感都不能丢，否则输出会像普通模板。"
+    },
+    {
+      "role": "user",
+      "content": "请用 Glassmorphism，英文，12 页，精修，做成最终 slide。"
+    }
+  ]
+}

@@ -1,0 +1,23 @@
+{
+  "should_trigger": true,
+  "expected_skill": "slide-creator",
+  "expected_mode": "polish",
+  "parity_group": "same-brief-swiss-modern-001",
+  "parity_role": "noisy-wrapper",
+  "compare_brief_fields": [
+    "style.preset",
+    "deck.deck_type",
+    "deck.page_count",
+    "runtime.editing_mode",
+    "runtime.presenter_mode",
+    "narrative.thesis"
+  ],
+  "compare_html_checks": [
+    "preset-metadata",
+    "shared-runtime",
+    "style-signature",
+    "present-mode",
+    "edit-mode"
+  ],
+  "expected_quality_tier": "tier0"
+}

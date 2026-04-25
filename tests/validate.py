@@ -27,6 +27,8 @@ Checks (--strict enables all):
   RECOMMENDED (--strict):
     - keyboard nav: ArrowLeft / ArrowRight in JS
     - edit mode: edit-hotzone + contenteditable + saveFile
+    - preset metadata: non-empty body[data-preset]
+    - shared js-engine runtime: SlidePresentation + first-slide visible fix + presenter branch (non-Blue-Sky)
     - data-notes: each slide has a non-empty data-notes attribute
     - visual variety: not all slides use the same layout class
     - present mode: F5 listener + body.presenting CSS + PresentMode class
@@ -47,6 +49,18 @@ try:
 except ImportError:
     print("Missing dependency. Install with:  pip install beautifulsoup4")
     sys.exit(2)
+
+ROOT = Path(__file__).resolve().parent.parent
+SCRIPTS_DIR = ROOT / "scripts"
+if str(SCRIPTS_DIR) not in sys.path:
+    sys.path.insert(0, str(SCRIPTS_DIR))
+
+from title_profiles import (  # noqa: E402
+    collect_title_candidate_nodes,
+    detect_slide_layout_id,
+    is_horizontal_title_profile,
+    resolve_title_profile,
+)
 
 
 # ─── Individual check functions ───────────────────────────────────────────────
@@ -70,6 +84,99 @@ def _has_exact_class(node, cls: str) -> bool:
     return bool(node.find(class_=lambda value, cls=cls: cls in _class_tokens(value)))
 
 
+def _normalize_ws(value: str) -> str:
+    return re.sub(r"\s+", "", value)
+
+
+def _body_preset(soup) -> str:
+    body = soup.find("body")
+    if not body:
+        return ""
+    return str(body.get("data-preset", "")).strip()
+
+
+def _mask_js_comments_and_strings(source: str) -> str:
+    """Mask JS comments and string contents so structural regexes ignore spoof text."""
+    result: list[str] = []
+    i = 0
+    state = "code"
+    quote = ""
+
+    while i < len(source):
+        ch = source[i]
+        nxt = source[i + 1] if i + 1 < len(source) else ""
+
+        if state == "code":
+            if ch == "/" and nxt == "/":
+                result.extend([" ", " "])
+                i += 2
+                state = "line_comment"
+                continue
+            if ch == "/" and nxt == "*":
+                result.extend([" ", " "])
+                i += 2
+                state = "block_comment"
+                continue
+            if ch in ("'", '"', "`"):
+                result.append(" ")
+                i += 1
+                state = "string"
+                quote = ch
+                continue
+            result.append(ch)
+            i += 1
+            continue
+
+        if state == "line_comment":
+            if ch == "\n":
+                result.append("\n")
+                i += 1
+                state = "code"
+            else:
+                result.append(" ")
+                i += 1
+            continue
+
+        if state == "block_comment":
+            if ch == "*" and nxt == "/":
+                result.extend([" ", " "])
+                i += 2
+                state = "code"
+            else:
+                result.append("\n" if ch == "\n" else " ")
+                i += 1
+            continue
+
+        # string
+        if ch == "\\":
+            result.append(" ")
+            i += 1
+            if i < len(source):
+                result.append("\n" if source[i] == "\n" else " ")
+                i += 1
+            continue
+        if ch == quote:
+            result.append(" ")
+            i += 1
+            state = "code"
+            quote = ""
+            continue
+        result.append("\n" if ch == "\n" else " ")
+        i += 1
+
+    return "".join(result)
+
+
+def _has_active_raw_match(source: str, masked: str, pattern: str, code_prefix: str, flags: int = 0) -> bool:
+    """Return True only when a raw regex match starts in actual code, not comments/strings."""
+    expected = _normalize_ws(code_prefix)
+    for match in re.finditer(pattern, source, flags):
+        snippet = masked[match.start():match.start() + len(code_prefix)]
+        if _normalize_ws(snippet) == expected:
+            return True
+    return False
+
+
 def _direct_child_classes(node) -> set[str]:
     classes = set()
     for child in node.children:
@@ -88,6 +195,138 @@ def _defined_css_vars(css_text: str) -> set[str]:
 def _missing_required_vars(css_text: str, required: list[str]) -> list[str]:
     defined = _defined_css_vars(css_text)
     return [token for token in required if token not in defined]
+
+
+def _normalize_inline_text(value: str) -> str:
+    return re.sub(r"\s+", " ", value or "").strip()
+
+
+def _title_visual_units(text: str) -> float:
+    units = 0.0
+    tokens = re.findall(r"[A-Za-z0-9][A-Za-z0-9%&+/#._:-]*|[\u3400-\u9fff]|[^\w\s]", text)
+    for token in tokens:
+        if re.fullmatch(r"[\u3400-\u9fff]", token):
+            units += 1.0
+        elif re.fullmatch(r"[A-Za-z0-9][A-Za-z0-9%&+/#._:-]*", token):
+            units += min(max(len(token) * 0.56, 1.0), 4.2)
+        else:
+            units += 0.25
+    return round(units, 2)
+
+
+def _is_title_line_class(token: str) -> bool:
+    token = token.strip().lower()
+    return token in {
+        "title-line",
+        "headline-line",
+        "heading-line",
+        "cta-line",
+        "balance-line",
+        "quote-line",
+        "pull-line",
+    }
+
+
+def _extract_title_lines(node) -> list[str]:
+    explicit_children = []
+    for child in node.find_all(recursive=False):
+        if not getattr(child, "name", None):
+            continue
+        classes = _class_tokens(child.get("class", []))
+        if any(_is_title_line_class(token) for token in classes):
+            explicit_children.append(child)
+
+    if explicit_children:
+        return [
+            _normalize_inline_text(child.get_text(" ", strip=True))
+            for child in explicit_children
+            if _normalize_inline_text(child.get_text(" ", strip=True))
+        ]
+
+    if "<br" in str(node).lower():
+        return [
+            _normalize_inline_text(part)
+            for part in re.split(r"\n+", node.get_text("\n", strip=True))
+            if _normalize_inline_text(part)
+        ]
+
+    text = _normalize_inline_text(node.get_text(" ", strip=True))
+    return [text] if text else []
+
+
+def _is_orphan_title_line(text: str) -> bool:
+    compact = re.sub(r"\s+", "", text)
+    if not compact:
+        return True
+    if re.fullmatch(r"[\u3400-\u9fff]", compact):
+        return True
+    if re.fullmatch(r"[A-Za-z0-9%&+/#._:-]{1,3}", compact):
+        return True
+    return _title_visual_units(text) < 1.25 and len(compact) <= 3
+
+
+def _has_collapsed_middle_line(units: list[float]) -> bool:
+    if len(units) < 3:
+        return False
+    for index in range(1, len(units) - 1):
+        longest_adjacent = max(units[index - 1], units[index + 1])
+        shortest_adjacent = min(units[index - 1], units[index + 1])
+        if units[index] <= longest_adjacent * 0.58 and units[index] + 1.8 <= shortest_adjacent:
+            return True
+    return False
+
+
+def _is_globally_unbalanced_title(units: list[float]) -> bool:
+    if len(units) < 2:
+        return False
+    longest = max(units)
+    shortest = min(units)
+    if longest <= 0:
+        return False
+    if len(units) == 2:
+        return shortest <= longest * 0.48 and (longest - shortest) >= 3.0
+    return shortest <= longest * 0.42 and (longest - shortest) >= 3.2
+
+
+def _is_title_balance_exempt(node) -> bool:
+    classes = set(_class_tokens(node.get("class", [])))
+    if "zen-vertical-title" in classes:
+        return True
+    if "cyber-title" in classes or node.get("data-text"):
+        return True
+    return False
+
+
+def _looks_like_risky_auto_wrap(node, slide, title_text: str) -> bool:
+    units = _title_visual_units(title_text)
+    if units < 14:
+        return False
+
+    style_tokens = []
+    for current in (node, node.parent, getattr(node.parent, "parent", None)):
+        if current and getattr(current, "name", None):
+            style_tokens.append(str(current.get("style", "")))
+    style_blob = " ".join(style_tokens).lower()
+    has_width_constraint = "max-width" in style_blob or re.search(r"\b(?:10|11|12|13|14|15|16|17|18)ch\b", style_blob)
+
+    slide_context = " ".join(_class_tokens(slide.get("class", []))).lower()
+    display_context = any(
+        hint in slide_context
+        for hint in (
+            "hero",
+            "cover",
+            "masthead",
+            "pull",
+            "quote",
+            "cta",
+            "close",
+            "closing",
+            "title_grid",
+            "title-grid",
+        )
+    )
+
+    return has_width_constraint or (display_context and units >= 22)
 
 
 def _collect_role_issues(slides, valid_roles: set[str], warnings, preset: str) -> list[str]:
@@ -263,6 +502,106 @@ def check_edit_mode(soup, content, warnings) -> tuple[bool, str]:
     if missing:
         return False, "Edit mode incomplete: missing " + ", ".join(missing)
     return True, "Edit mode present (edit-hotzone + contenteditable + saveFile)"
+
+
+def check_preset_metadata(soup, content, warnings) -> tuple[bool, str]:
+    body = soup.find("body")
+    if not body:
+        return False, "Preset metadata missing: <body> not found"
+
+    preset = str(body.get("data-preset", "")).strip()
+    if not preset:
+        return False, "Preset metadata missing: body[data-preset] is required"
+    if preset == "Preset Name":
+        return False, "Preset metadata unresolved: body[data-preset] still uses template placeholder"
+    return True, f"Preset metadata present ({preset})"
+
+
+def check_shared_js_engine_contract(soup, content, warnings) -> tuple[bool, str]:
+    """Enforce the non-Blue-Sky shared runtime from references/js-engine.md."""
+    preset = _body_preset(soup)
+    if not preset:
+        return True, "Shared js-engine contract not applicable (missing data-preset)"
+    if preset.lower() == "blue sky":
+        return True, "Shared js-engine contract not applicable (Blue Sky)"
+
+    scripts = "\n".join(s.string or "" for s in soup.find_all("script"))
+    if not scripts.strip():
+        return False, "Shared js-engine contract missing: no inline runtime script found"
+    masked = _mask_js_comments_and_strings(scripts)
+
+    has_slide_presentation_class = bool(re.search(r"\bclass\s+SlidePresentation\b", masked))
+    has_slide_collection = bool(re.search(
+        r"\bthis\.slides\s*=\s*document\.querySelectorAll\s*\(",
+        masked,
+    ))
+    has_first_slide_visible = _has_active_raw_match(
+        scripts,
+        masked,
+        r"slides\s*\[\s*0\s*]\s*(?:\?\.)?\s*classList\.add\s*\(\s*['\"]visible['\"]\s*\)",
+        "slides[0",
+    )
+    has_first_reveal_visible = _has_active_raw_match(
+        scripts,
+        masked,
+        r"slides\s*\[\s*0\s*]\s*(?:\?\.)?\s*querySelectorAll\s*\(\s*['\"]\.reveal['\"]\s*\)"
+        r".*?classList\.add\s*\(\s*['\"]visible['\"]\s*\)",
+        "slides[0",
+        flags=re.DOTALL,
+    )
+    has_broadcast_channel_sync = _has_active_raw_match(
+        scripts,
+        masked,
+        r"new\s+BroadcastChannel\s*\(\s*['\"]slide-creator-presenter['\"]\s*\)",
+        "new BroadcastChannel(",
+    )
+    has_observer_runtime = bool(re.search(r"\bsetupObserver\s*\(\s*\)\s*\{", masked)) and "IntersectionObserver" in masked
+    has_presenter_runtime = bool(re.search(r"\bsetupPresenter\s*\(\s*\)\s*\{", masked))
+    has_editor_runtime = bool(re.search(r"\bsetupEditor\s*\(\s*\)\s*\{", masked))
+    has_presenter_branch = _has_active_raw_match(
+        scripts,
+        masked,
+        r"new\s+URLSearchParams\s*\(\s*location\.search\s*\)\.has\s*\(\s*['\"]presenter['\"]\s*\)",
+        "new URLSearchParams(",
+    )
+    has_present_mode_class = bool(re.search(r"\bclass\s+PresentMode\b", masked))
+    has_present_mode_bootstrap = bool(re.search(
+        r"new\s+PresentMode\s*\(\s*new\s+SlidePresentation\s*\(\s*\)\s*\)",
+        masked,
+    ))
+    has_watermark_target = bool(re.search(
+        r"slides\s*\[\s*slides\.length\s*-\s*1\s*]",
+        masked,
+    )) and "appendChild" in masked
+    has_watermark_class = _has_active_raw_match(
+        scripts,
+        masked,
+        r"\.className\s*=\s*['\"]slide-credit['\"]",
+        ".className",
+    )
+
+    checks = [
+        ("SlidePresentation class", has_slide_presentation_class),
+        ("slide collection init", has_slide_collection),
+        ("BroadcastChannel sync", has_broadcast_channel_sync),
+        ("IntersectionObserver runtime", has_observer_runtime),
+        ("setupPresenter runtime", has_presenter_runtime),
+        ("setupEditor runtime", has_editor_runtime),
+        ("first-slide visible fix", has_first_slide_visible and has_first_reveal_visible),
+        ("?presenter branch", has_presenter_branch),
+        ("PresentMode class", has_present_mode_class),
+        ("PresentMode bootstrap", has_present_mode_bootstrap),
+        ("watermark injection", has_watermark_target and has_watermark_class),
+    ]
+
+    missing = [label for label, ok in checks if not ok]
+    if missing:
+        sample = ", ".join(missing[:4])
+        if len(missing) > 4:
+            sample += f" (+{len(missing) - 4} more)"
+        return False, f"Shared js-engine contract incomplete: missing {sample}"
+
+    return True, "Shared js-engine runtime present"
 
 
 def check_data_notes(soup, content, warnings) -> tuple[bool, str]:
@@ -594,6 +933,62 @@ def check_visual_variety(soup, content, warnings) -> tuple[bool, str]:
     return True, f"Visual variety OK (max run: {max_run})"
 
 
+def check_title_balance(soup, content, warnings) -> tuple[bool, str]:
+    """Detect uncontrolled or visibly unbalanced multi-line slide titles."""
+    slides = soup.find_all(class_="slide")
+    if not slides:
+        return True, "No slides found for title balance check"
+
+    preset = _body_preset(soup)
+    issues = []
+    balanced_multiline_titles = 0
+
+    for slide_index, slide in enumerate(slides, start=1):
+        layout_id = detect_slide_layout_id(slide)
+        title_nodes = collect_title_candidate_nodes(slide, preset)
+
+        for title_index, node in enumerate(title_nodes, start=1):
+            profile = resolve_title_profile(preset, layout_id=layout_id, node=node, slide=slide)
+            if not is_horizontal_title_profile(profile["profile"]):
+                continue
+
+            lines = _extract_title_lines(node)
+            if not lines:
+                continue
+
+            label = f"slide {slide_index} title {title_index}"
+            if len(lines) >= 4:
+                issues.append(f"{label}: wraps to {len(lines)} lines")
+                continue
+
+            if len(lines) == 1:
+                if _looks_like_risky_auto_wrap(node, slide, lines[0]):
+                    issues.append(f"{label}: long display title relies on auto-wrap")
+                continue
+
+            units = [_title_visual_units(line) for line in lines]
+            orphan_line = next((line for line in lines if _is_orphan_title_line(line)), None)
+            if orphan_line:
+                issues.append(f"{label}: orphan line '{orphan_line}'")
+                continue
+            if _has_collapsed_middle_line(units):
+                issues.append(f"{label}: collapsed middle line ({lines})")
+                continue
+            if _is_globally_unbalanced_title(units):
+                issues.append(f"{label}: unbalanced title lines ({lines})")
+                continue
+
+            balanced_multiline_titles += 1
+
+    if issues:
+        sample = "; ".join(issues[:3])
+        if len(issues) > 3:
+            sample += f" (+{len(issues) - 3} more)"
+        return False, f"Title balance violations: {sample}"
+
+    return True, f"Title balance OK ({balanced_multiline_titles} controlled multi-line titles)"
+
+
 def check_hero_rhythm(soup, content, warnings) -> tuple[bool, str]:
     """Check theme rhythm rules — detect consecutive hero pages."""
     slides = soup.find_all(class_="slide")
@@ -749,12 +1144,15 @@ REQUIRED_CHECKS = [
 STRICT_CHECKS = [
     check_keyboard_nav,
     check_edit_mode,
+    check_preset_metadata,
+    check_shared_js_engine_contract,
     check_data_notes,
     check_swiss_modern_contract,
     check_enterprise_dark_contract,
     check_data_story_contract,
     check_glassmorphism_contract,
     check_chinese_chan_contract,
+    check_title_balance,
     check_visual_variety,
     check_css_vars_defined,
     check_present_mode,

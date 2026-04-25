@@ -94,6 +94,10 @@ class TestCommonElements:
         _, content = demo
         assert "<style>" in content.lower(), "Missing <style> tag"
 
+    def test_has_preset_metadata(self, demo):
+        path, content = demo
+        assert 'data-preset="' in content, f"{path.name}: Missing body data-preset attribute"
+
     def test_self_contained(self, demo):
         _, content = demo
         assert 'src="http' not in content and "src='http" not in content, \
