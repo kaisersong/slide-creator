@@ -238,6 +238,19 @@ git clone https://github.com/kaisersong/slide-creator ~/.openclaw/skills/slide-c
 /kai-html-export            # Export to PPTX or PNG (separate skill)
 ```
 
+### Bare Sandbox Fallback
+
+`/slide-creator ...` is a Claude/OpenClaw slash-skill call, not a raw bash or python command.
+
+If you are in a bare sandbox or external agent runner:
+
+```bash
+python3 main.py --validate-brief --brief BRIEF.json
+python3 main.py --generate --brief BRIEF.json --output presentation.html
+```
+
+Built-in presets still load from `references/` / `references/style-index.md`; `themes/<name>/reference.md` is only for custom themes.
+
 ### Planning Depths
 
 - **Auto** — fast draft; skips Phase 3.5 Review
@@ -414,6 +427,8 @@ For PPTX/PNG export: `clawhub install kai-html-export` or `pip install playwrigh
 ---
 
 ## Version History
+
+**v2.23.2** — Sandbox entrypoint and skill-surface patch: added root `main.py` plus `slide-creator` wrapper for bare-sandbox BRIEF validation/rendering, made `--plan` fail with a clear slash-skill boundary instead of a misleading runtime error, restored `SKILL.md`'s user-facing style recommendation surface, and clarified that built-in presets live under `references/` while `themes/<name>/reference.md` is only for custom themes.
 
 **v2.23.1** — Enterprise Dark runtime stability patch: fixed shared js-engine active-slide reveal toggling, hid editing chrome by default, replaced unresolved watermark tokens with real version/preset metadata, stabilized one-gesture-per-page wheel pagination for scroll-snap decks, and corrected Enterprise Dark narrative cover routing, split-title clipping, governance/table rhythm, and subtle grid overlay balance.
 
