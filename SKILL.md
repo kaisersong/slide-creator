@@ -1,7 +1,7 @@
 ---
 name: kai-slide-creator
 description: 生成HTML演示文稿/幻灯片 — 21 种风格模版，播放/演讲者模式。适用于路演、产品发布、技术分享、方案宣讲等场景。
-version: 2.23.1
+version: 2.23.2
 metadata: {"openclaw":{"emoji":"🎞","os":["darwin","linux","windows"],"homepage":"https://github.com/kaisersong/slide-creator","requires":{"bins":["python3"]},"install":[]}}
 ---
 
@@ -23,9 +23,24 @@ metadata: {"openclaw":{"emoji":"🎞","os":["darwin","linux","windows"],"homepag
 /slide-creator                       # 交互式创建（先看风格预览）
 ```
 
+`/slide-creator ...` 是 Claude/OpenClaw 的 slash 技能调用，不是 bash/python 命令。原始沙箱里请改用 `python3 main.py --validate-brief ...` / `python3 main.py --generate ...`。
+
 **规划深度：**
 - `自动` (Auto) — 快速出稿，约 3-6 分钟
 - `精修` (Polish) — 深度规划，约 8-15 分钟，自动执行 Review
+
+**内容类型 → 风格推荐：**
+
+| 内容类型 | 推荐风格 |
+|---|---|
+| 数据报告 / KPI 看板 | Data Story、Enterprise Dark、Swiss Modern |
+| 商业路演 / VC Deck | Bold Signal、Aurora Mesh、Enterprise Dark |
+| 产品发布 / SaaS | Blud Sky、Aurora Mesh、Glassmorphism、Electric Studio |
+| 开发工具 / API 文档 | Terminal Green、Neon Cyber、Neo-Retro Dev Deck |
+| 研究 / 思想领导力 | Modern Newspaper、Paper & Ink、Swiss Modern |
+| 创意 / 个人品牌 | Vintage Editorial、Split Pastel、Neo-Brutalism |
+| 哲学 / 思想 | Chinese chan|
+
 
 ## 命令路由
 
@@ -34,24 +49,12 @@ metadata: {"openclaw":{"emoji":"🎞","os":["darwin","linux","windows"],"homepag
 | 命令 | 加载内容 | 行为 |
 |------|----------|------|
 | `--plan [prompt]` | `references/brief-template.json` | 创建 `BRIEF.json`；仅在用户明确要求时额外派生 `PLANNING.md` |
-| `--generate` | SKILL.md + 风格文件 + composition 源 + `references/title-quality.md` + `references/html-template.md` + `references/js-engine.md` + `references/base-css.md` + `references/impeccable-anti-patterns.md` | 从 `BRIEF.json` 生成 HTML，并执行写入前门禁 |
+| `--generate` | SKILL.md + 已选风格文件（内置 `references/*.md` / `blue-sky-starter.html`；自定义 `themes/<name>/reference.md`）+ composition 源 + `references/title-quality.md` + `references/html-template.md` + `references/js-engine.md` + `references/base-css.md` + `references/impeccable-anti-patterns.md` | 从 `BRIEF.json` 生成 HTML，并执行写入前门禁 |
 | `--review [file.html]` | `references/review-checklist.md` + 目标 HTML | 执行 17 项检查点 → 确认窗口 → 修复/报告 |
 | 无 flag (交互式) | `references/workflow.md` + 其他按需 | 遵循 Phase 0-5 |
 | 直接给内容 + 风格 | 同 `--generate` | 立即生成，执行同一套写入前门禁 |
 
 **渐进式披露：** 每个命令只加载所需文件。`--plan` 只提炼 IR，不接触 CSS。
-
-### deck_type 路由
-
-| deck_type | page_count | composition 源 | 使用场景 |
-|-----------|-----------|---------------|---------|
-| `product-demo` | 8 | `references/composition-8.md` | slide-creator 自身介绍 demo |
-| `user-content` | 12 | `references/composition-guide.md` | 用户内容（路演/发布/报告） |
-
-**决策逻辑：**
-- `--plan` 在 `BRIEF.json` 中写入 `deck_type`、`page_count`、`page_roles`
-- 直接给内容 + 风格：介绍 slide-creator → `product-demo`；其他 → `user-content`
-- `--generate` 读取 `BRIEF.json` 中的 `deck_type`
 
 ## 核心规则（按优先级）
 
@@ -60,7 +63,7 @@ metadata: {"openclaw":{"emoji":"🎞","os":["darwin","linux","windows"],"homepag
    **Swiss Modern 额外要求 canonical export path**：面板保持 `.slide` direct child，token 保持 `--bg/--text/--red`，使用 canonical 类（`.left-panel/.right-panel/.stat-row/.cta-block`），并写入 `data-export-role`；不得生成 `.left-col/.right-col` 或 `--bg-primary/--accent` 这类兼容别名。
 
 2. **叙事弧线**
-   先锁 `deck_type`，再锁 composition route。`product-demo` 必须走 8 页结构，`user-content` 必须走 12 页结构。每页都要有明确 page role、不同布局意图和足够的信息推进，不能先拼播放/编辑壳子，再回头补叙事。
+   先锁内容结构，再锁 composition route。每页都要有明确 page role、不同布局意图和足够的信息推进；不要先拼播放/编辑壳子，再回头补故事。内部 route 名称属于实现细节，不要挤占用户入口层。
 
 3. **标题质量**
    标题必须是断言式，禁止 Overview / Introduction / Summary / 结论 / 概览 这类通用标签。多行标题必须平衡，不能出现孤儿行、塌陷中间行或靠过窄 measure 硬挤换行。规则和示例只看 `references/title-quality.md`。
@@ -92,7 +95,7 @@ python3 tests/validate.py "$TMP_HTML" --strict
    选中风格的 Signature Elements、Typography、Components、Background 必须完整注入；不得遗漏 checklist 项。Blue Sky 例外：使用 `blue-sky-starter.html` 基底。
 
 2. **叙事弧线 / composition route**
-   `deck_type`、页数、page roles 必须完整；连续两页不得使用相同布局；每页至少使用 2-3 种组件类型，不得只用 `.g` + `.bl` 堆砌。
+   页数、page roles、composition route 必须完整；连续两页不得使用相同布局；每页至少使用 2-3 种组件类型，不得只用 `.g` + `.bl` 堆砌。
 
 3. **标题质量**
    标题必须断言式；禁止通用标签；多行标题不得有孤儿行、塌陷中间行或浏览器自然换行失衡。规则只认 `references/title-quality.md`。
@@ -119,8 +122,11 @@ python3 tests/validate.py "$TMP_HTML" --strict
 
 ## 风格参考
 
-只读取已选风格的文件；完整 preset 列表见 `references/style-index.md`。  
-自定义主题路径：`themes/<name>/reference.md`
+只读取已选风格的文件：
+
+- **内置预设**：完整列表、风格说明和选择建议都在 `references/style-index.md`
+- **内置风格文件位置**：统一在 `references/` 下；Blue Sky 例外，使用 `references/blue-sky-starter.html`
+- **自定义主题**：`themes/<name>/reference.md`
 
 - 风格选择器：`references/style-index.md`
 - 视口与共享 CSS：`references/base-css.md`
