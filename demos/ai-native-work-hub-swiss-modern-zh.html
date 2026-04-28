@@ -1,0 +1,1422 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>AI 原生工作中枢设计推演 - Swiss Modern</title>
+<style>
+:root {
+    --bg: #ffffff;
+    --bg-dark: #0a0a0a;
+    --text: #0a0a0a;
+    --text-light: #ffffff;
+    --text-muted: #666666;
+    --red: #ff3300;       /* single accent — one element per slide maximum */
+    --grid-line: rgba(0, 0, 0, 0.05);
+}
+
+body {
+    background: var(--bg);
+    font-family: "Archivo Black", "Nunito", -apple-system, sans-serif;
+}
+
+/* Visible 12-column grid — faintly visible */
+.swiss-grid {
+    position: fixed;
+    inset: 0;
+    background-image:
+        linear-gradient(var(--grid-line) 1px, transparent 1px),
+        linear-gradient(90deg, var(--grid-line) 1px, transparent 1px);
+    background-size: calc(100vw / 12) 100vh;
+    pointer-events: none;
+    z-index: 0;
+}
+
+@import url('https://fonts.googleapis.com/css2?family=Archivo+Black:wght@900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;600&display=swap');
+
+.swiss-title {
+    font-family: "Archivo Black", sans-serif;
+    font-size: clamp(32px, 7vw, 72px);
+    font-weight: 900;
+    color: var(--text);
+    line-height: 1.0;
+    letter-spacing: -0.02em;
+    text-transform: uppercase;
+}
+
+.swiss-body {
+    font-family: "Nunito", sans-serif;
+    font-size: clamp(12px, 1.4vw, 15px);
+    font-weight: 400;
+    color: var(--text);
+    line-height: 1.55;
+    max-width: 55ch;
+}
+
+.swiss-label {
+    font-family: "Archivo", sans-serif;
+    font-size: clamp(10px, 1.1vw, 12px);
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--text-muted);
+}
+
+.swiss-stat {
+    font-family: "Archivo Black", sans-serif;
+    font-size: clamp(48px, 8vw, 96px);
+    font-weight: 900;
+    color: var(--text);
+    line-height: 1.0;
+}
+
+/* Hard horizontal rule — no decorative curves, no dashes */
+.swiss-rule {
+    height: 2px;
+    background: var(--text);
+    border: none;
+}
+.swiss-rule.red {
+    background: var(--red);
+}
+.swiss-rule-thin {
+    height: 1px;
+    background: var(--text-muted);
+    opacity: 0.2;
+}
+
+/* Accent word or local numeric hit — never a full-page fill */
+.accent {
+    color: var(--red);
+}
+
+/* Hero helpers */
+.hero-rule {
+    width: clamp(40px, 8vw, 100px);
+    height: 4px;
+    background: var(--red);
+}
+.hero-sub {
+    font-family: "Nunito", sans-serif;
+    font-size: clamp(12px, 1.4vw, 16px);
+    color: var(--text-muted);
+    line-height: 1.6;
+    max-width: 32rem;
+}
+.hero-stats {
+    display: flex;
+    flex-wrap: wrap;
+    gap: clamp(20px, 3vw, 48px);
+}
+.hero-stat-num {
+    font-family: "Archivo Black", sans-serif;
+    font-size: clamp(28px, 4vw, 48px);
+    font-weight: 900;
+    color: var(--red);
+    line-height: 1;
+}
+.hero-stat-label {
+    font-family: "Nunito", sans-serif;
+    font-size: clamp(9px, 0.85vw, 11px);
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+}
+
+/* 40/60 split evidence layout */
+.left-panel {
+    width: 38%;
+    background: var(--bg-dark);
+    color: var(--text-light);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: clamp(28px, 5vw, 56px);
+    position: relative;
+}
+.right-panel {
+    width: 62%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: clamp(28px, 5vw, 56px);
+    gap: clamp(16px, 2vw, 28px);
+}
+.red-bar {
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 8px;
+    background: var(--red);
+}
+.left-rule {
+    width: 40px;
+    height: 3px;
+    background: var(--red);
+}
+.pain-item {
+    padding-left: clamp(12px, 2vw, 20px);
+    border-left: 2px solid var(--grid-line);
+}
+.accent-border {
+    border-left-color: var(--red);
+}
+.pain-num {
+    font-family: "Archivo Black", sans-serif;
+    font-size: clamp(16px, 2vw, 24px);
+    font-weight: 900;
+    color: var(--red);
+    line-height: 1;
+}
+.pain-title {
+    font-family: "Archivo Black", sans-serif;
+    font-size: clamp(13px, 1.5vw, 18px);
+    font-weight: 900;
+    text-transform: uppercase;
+}
+.pain-desc {
+    font-family: "Nunito", sans-serif;
+    font-size: clamp(12px, 1.4vw, 16px);
+    color: var(--text-muted);
+    line-height: 1.5;
+}
+
+/* Big-stat row */
+.stat-row {
+    display: flex;
+    align-items: center;
+    gap: clamp(20px, 3vw, 36px);
+}
+.stat-divider {
+    width: 2px;
+    align-self: stretch;
+    background: var(--text);
+}
+.stat-copy {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+.stat-label {
+    font-family: "Archivo Black", sans-serif;
+    font-size: clamp(12px, 1.3vw, 16px);
+    font-weight: 900;
+    color: var(--text);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+}
+.stat-value {
+    font-family: "Nunito", sans-serif;
+    font-size: clamp(12px, 1.4vw, 16px);
+    color: var(--text-muted);
+    line-height: 1.5;
+}
+
+/* Discovery / process */
+.disc-header {
+    padding-top: clamp(48px, 8vh, 80px);
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+.disc-body {
+    display: flex;
+    gap: clamp(20px, 4vw, 60px);
+    align-items: center;
+}
+.disc-steps {
+    display: flex;
+    flex-direction: column;
+    gap: clamp(12px, 1.5vw, 20px);
+    flex: 1;
+}
+.disc-step {
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+}
+.disc-step-num {
+    font-family: "Archivo Black", sans-serif;
+    font-size: clamp(18px, 2.5vw, 32px);
+    font-weight: 900;
+    color: var(--red);
+    line-height: 1;
+    min-width: 36px;
+}
+.disc-step-title {
+    font-family: "Archivo Black", sans-serif;
+    font-size: clamp(13px, 1.4vw, 18px);
+    font-weight: 900;
+    color: var(--text);
+    text-transform: uppercase;
+    line-height: 1.2;
+}
+.disc-step-desc {
+    font-family: "Nunito", sans-serif;
+    font-size: clamp(12px, 1.4vw, 16px);
+    color: var(--text-muted);
+    line-height: 1.45;
+}
+.disc-diagram {
+    flex: 0 0 auto;
+}
+.diagram-svg {
+    width: 100%;
+    max-width: 500px;
+    height: auto;
+}
+
+/* Table / code */
+.data-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+.data-table thead th {
+    font-family: "Archivo Black", sans-serif;
+    font-size: 11px;
+    font-weight: 900;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    background: var(--bg-dark);
+    color: var(--text-light);
+    padding: 8px 14px;
+    text-align: left;
+}
+.data-table tbody td {
+    padding: 8px 14px;
+    font-family: "Nunito", sans-serif;
+    font-size: clamp(12px, 1.4vw, 16px);
+    color: var(--text);
+    border-bottom: 1px solid #e0e0e0;
+}
+.data-table tbody tr:nth-child(odd) {
+    background: #ffffff;
+}
+.data-table tbody tr:nth-child(even) {
+    background: #f7f7f7;
+}
+.highlight {
+    border-left: 3px solid var(--red);
+}
+.terminal-line {
+    font-family: "Nunito", "Noto Sans SC", monospace;
+    font-size: clamp(11px, 1.2vw, 14px);
+    background: var(--bg-dark);
+    color: var(--text-light);
+    padding: 10px 16px;
+    display: inline-block;
+}
+.terminal-line::before {
+    content: '$ ';
+    color: var(--red);
+}
+
+/* Index and evidence grid */
+.index-item {
+    display: flex;
+    align-items: baseline;
+    gap: clamp(8px, 1.5vw, 20px);
+    padding: clamp(6px, 1vw, 12px) 0;
+    border-bottom: 1px solid var(--grid-line);
+}
+.index-num {
+    font-family: "Archivo Black", sans-serif;
+    font-size: clamp(1.5rem, 3vw, 3rem);
+    font-weight: 900;
+    color: var(--red);
+    line-height: 1;
+    min-width: clamp(2.5rem, 4vw, 4.5rem);
+}
+.index-title {
+    font-family: "Archivo Black", sans-serif;
+    font-size: clamp(1rem, 2vw, 1.5rem);
+    font-weight: 900;
+    color: var(--text);
+    line-height: 1.2;
+}
+.index-desc {
+    font-family: "Nunito", sans-serif;
+    font-size: clamp(12px, 1.4vw, 16px);
+    color: var(--text-muted);
+    line-height: 1.4;
+}
+.feat-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: clamp(8px, 1.5vw, 16px);
+}
+.feat-card {
+    padding: clamp(14px, 2vw, 24px);
+    border: 1px solid var(--grid-line);
+    position: relative;
+}
+.feat-key {
+    font-family: "Archivo Black", sans-serif;
+    font-size: clamp(20px, 3vw, 36px);
+    font-weight: 900;
+    color: var(--text);
+    line-height: 1;
+}
+.feat-name {
+    font-family: "Archivo Black", sans-serif;
+    font-size: clamp(12px, 1.3vw, 16px);
+    font-weight: 900;
+    color: var(--text);
+    text-transform: uppercase;
+}
+.feat-desc {
+    font-family: "Nunito", sans-serif;
+    font-size: clamp(12px, 1.4vw, 16px);
+    color: var(--text-muted);
+    line-height: 1.45;
+}
+
+/* Evidence blocks and CTA */
+.inst-blocks {
+    display: flex;
+    flex-direction: column;
+    gap: clamp(16px, 2vw, 28px);
+}
+.inst-block {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding: clamp(16px, 2vw, 24px);
+    border-left: 3px solid var(--bg-dark);
+}
+.inst-label {
+    font-family: "Archivo Black", sans-serif;
+    font-size: clamp(11px, 1.1vw, 14px);
+    font-weight: 900;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+}
+.inst-link {
+    font-family: "Nunito", sans-serif;
+    font-size: clamp(12px, 1.4vw, 16px);
+    color: var(--red);
+    text-decoration: none;
+    border-bottom: 1px solid var(--red);
+}
+.cta-block {
+    font-family: "Archivo Black", sans-serif;
+    font-size: clamp(1.2rem, 2.5vw, 2rem);
+    font-weight: 900;
+    background: var(--bg-dark);
+    color: var(--text-light);
+    padding: clamp(12px, 2vw, 20px) clamp(20px, 3vw, 36px);
+    display: inline-block;
+    letter-spacing: 0.02em;
+}
+.cta-title {
+    max-width: 13ch;
+}
+.cta-line {
+    display: block;
+    white-space: nowrap;
+}
+.cta-echo {
+    display: flex;
+    gap: clamp(16px, 3vw, 40px);
+}
+.cta-echo-num {
+    font-family: "Archivo Black", sans-serif;
+    font-size: clamp(20px, 3vw, 36px);
+    font-weight: 900;
+    color: var(--red);
+    line-height: 1;
+}
+.cta-echo-label {
+    font-family: "Nunito", sans-serif;
+    font-size: clamp(9px, 0.85vw, 11px);
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+}
+
+.reveal {
+    opacity: 0;
+    transition: opacity 0.4s ease;
+}
+.reveal.visible { opacity: 1; }
+.reveal:nth-child(1) { transition-delay: 0.05s; }
+.reveal:nth-child(2) { transition-delay: 0.15s; }
+.reveal:nth-child(3) { transition-delay: 0.25s; }
+
+.swiss-body {
+    font-size: clamp(14px, 1.75vw, 18px);
+    line-height: 1.62;
+}
+
+.pain-desc,
+.stat-value,
+.disc-step-desc,
+.index-desc {
+    font-size: clamp(14px, 1.7vw, 18px);
+    line-height: 1.62;
+}
+
+.pain-title,
+.disc-step-title,
+.index-title,
+.stat-label,
+.data-table td,
+.data-table th {
+    font-size: clamp(14px, 1.6vw, 17px);
+}
+
+.pain-item {
+    padding-left: clamp(14px, 2.2vw, 24px);
+}
+
+html {
+    height: 100%;
+    overflow-x: hidden;
+    scroll-snap-type: y mandatory;
+}
+
+body {
+    margin: 0;
+    min-height: 100%;
+    overflow-x: hidden;
+    background: var(--bg);
+    color: var(--text);
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+
+body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+        linear-gradient(rgba(0,0,0,0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0,0,0,0.03) 1px, transparent 1px);
+    background-size: calc(100vw / 12) 100vh;
+    pointer-events: none;
+    z-index: 0;
+}
+
+.slide {
+    width: 100vw;
+    height: 100vh;
+    height: 100dvh;
+    overflow: hidden;
+    scroll-snap-align: start;
+    display: flex;
+    position: relative;
+    background: #ffffff;
+}
+
+.slide-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: clamp(10px, 1.5vw, 18px);
+    max-height: 100%;
+    overflow: hidden;
+    padding: var(--slide-padding, clamp(1rem, 4vw, 4rem));
+}
+
+.title-balance {
+    display: flex;
+    flex-direction: column;
+    gap: 0.02em;
+    text-wrap: balance;
+}
+
+.title-line {
+    display: block;
+    white-space: nowrap;
+}
+
+#brand-mark {
+    position: fixed;
+    top: 20px;
+    left: 28px;
+    font-family: "Archivo Black", sans-serif;
+    font-size: 15px;
+    font-weight: 900;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--text);
+    z-index: 1000;
+}
+
+.progress-bar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 0;
+    height: 4px;
+    background: var(--red);
+    z-index: 1000;
+    transition: width 0.3s ease;
+}
+
+.nav-dots { position: fixed; right: 22px; top: 50%; transform: translateY(-50%); z-index: 1000; }
+
+.edit-hotzone {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 84px;
+    height: 84px;
+    z-index: 9998;
+}
+
+.edit-toggle {
+    position: fixed;
+    top: 18px;
+    left: 18px;
+    z-index: 9999;
+    border: none;
+    background: rgba(0, 0, 0, 0.86);
+    color: #fff;
+    padding: 8px 12px;
+    border-radius: 999px;
+    font-size: 12px;
+    cursor: pointer;
+    opacity: 0;
+    transform: translateY(-6px);
+    transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+.edit-toggle.show,
+.edit-toggle.active {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+#notes-panel {
+    display: none;
+    position: fixed;
+    right: 18px;
+    bottom: 18px;
+    width: min(380px, 36vw);
+    background: rgba(255, 255, 255, 0.96);
+    border: 1px solid rgba(0, 0, 0, 0.12);
+    z-index: 9996;
+    box-shadow: 0 14px 40px rgba(0, 0, 0, 0.12);
+}
+
+#notes-panel.active { display: block; }
+#notes-panel.collapsed #notes-body { display: none; }
+
+#notes-panel-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 12px 14px;
+    cursor: pointer;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+}
+
+#notes-panel-label {
+    font-size: 11px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: #555;
+}
+
+#notes-body {
+    padding: 12px 14px 14px;
+}
+
+#notes-textarea {
+    width: 100%;
+    min-height: 160px;
+    resize: vertical;
+    border: none;
+    background: transparent;
+    font: inherit;
+    color: #111;
+    outline: none;
+}
+
+#notes-collapse-btn {
+    border: none;
+    background: transparent;
+    font-size: 16px;
+    cursor: pointer;
+}
+
+#present-btn {
+    position: fixed;
+    right: 18px;
+    bottom: 18px;
+    z-index: 9997;
+    width: 42px;
+    height: 42px;
+    border-radius: 999px;
+    border: none;
+    background: rgba(0, 0, 0, 0.86);
+    color: #fff;
+    cursor: pointer;
+}
+
+#present-counter {
+    display: none;
+    position: fixed;
+    bottom: 18px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 9997;
+    font-size: 11px;
+    letter-spacing: 0.12em;
+    color: rgba(0, 0, 0, 0.35);
+}
+
+body.presenting {
+    background: #000 !important;
+    overflow: hidden !important;
+}
+
+body.presenting .slide {
+    position: fixed !important;
+    inset: 0;
+    width: 100vw !important;
+    height: 100vh !important;
+    transform-origin: center center;
+    scroll-snap-align: none !important;
+    display: none !important;
+}
+
+body.presenting .slide.p-on { display: flex !important; }
+body.presenting #present-btn { display: none !important; }
+body.presenting #present-counter { display: block; }
+body.presenting.presenting-black .slide { visibility: hidden !important; }
+body.presenting.presenting-black::after {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background: #000;
+    z-index: 99999;
+}
+
+.slide-credit {
+    position: absolute;
+    bottom: 8px;
+    right: 14px;
+    font-size: 9px;
+    color: rgba(0, 0, 0, 0.35);
+    pointer-events: none;
+    z-index: 1;
+    font-family: system-ui, sans-serif;
+}
+
+body.presenting .slide-credit { display: none !important; }
+</style>
+</head>
+<body data-export-progress="true" data-preset="Swiss Modern">
+<span id="brand-mark">AI 原生工作中枢设计推演</span>
+<div class="progress-bar"></div>
+<nav class="nav-dots" aria-label="Slide navigation"></nav>
+<div class="edit-hotzone"></div>
+<button class="edit-toggle" id="editToggle" title="Edit mode (E)">Edit</button>
+<div id="notes-panel">
+    <div id="notes-panel-header">
+        <div id="notes-panel-label">SPEAKER NOTES - SLIDE 1 / 10</div>
+        <div id="notes-drag-hint"></div>
+        <button id="notes-collapse-btn" title="Collapse / expand">▾</button>
+    </div>
+    <div id="notes-body">
+        <textarea id="notes-textarea" placeholder="Add speaker notes..."></textarea>
+    </div>
+</div>
+<section class="slide title_grid" id="slide-1" data-notes="cover: 云之家真正有机会垄断的位置，不是消息入口，而是 AI 原生工作平台与 ERP 的唯一入口。" aria-label="cover" data-export-role="title_grid">
+        <div class="bg-num reveal">01</div>
+        <div class="slide-content content">
+            <div class="eyebrow swiss-label reveal">cover</div>
+            <div class="hero-rule reveal"></div>
+            <h1 class="swiss-title reveal title-balance"><span class="title-line">战略机会不在保住 IM</span><span class="title-line">，而在重定义工作中枢</span></h1>
+            <p class="swiss-body hero-sub reveal">云之家真正有机会垄断的位置，不是消息入口，而是 AI 原生工作平台与 ERP 的唯一入口。</p>
+            <div class="hero-stats">
+                <div class="hero-stat reveal">
+                    <div class="hero-stat-num">ERP</div>
+                    <div class="hero-stat-label">AI 原生工作平台 + AI 原生 ERP 的唯一入口</div>
+                </div>
+                
+                <div class="hero-stat reveal">
+                    <div class="hero-stat-num">IM</div>
+                    <div class="hero-stat-label">IM 不是被降级，而是被变性</div>
+                </div>
+                
+                <div class="hero-stat reveal">
+                    <div class="hero-stat-num">1</div>
+                    <div class="hero-stat-label">TOIS 与 L1-L4 完全同构</div>
+                </div>
+                </div>
+        </div>
+        <span class="slide-num-label">01 / 10</span>
+    </section>
+
+<section class="slide column_content" id="slide-2" data-notes="problem: 如果首页仍围绕消息流组织，用户将先看到等待输入的对话框，而不是 Agent 已完成的工作结果。" aria-label="problem" data-export-role="column_content">
+        <div class="bg-num reveal">02</div>
+        <div class="left-panel">
+            <div class="red-bar"></div>
+            <div class="slide-content content">
+                <div class="eyebrow swiss-label reveal">problem</div>
+                <h2 class="swiss-title reveal title-balance"><span class="title-line">继续把 IM 当主舞台，会把</span><span class="title-line">产品锁在上一代交互里</span></h2>
+                <div class="left-rule reveal"></div>
+                <p class="swiss-body reveal" style="color:var(--text-light);max-width:26ch;">如果首页仍围绕消息流组织，用户将先看到等待输入的对话框，而不是 Agent 已完成的工作结果。</p>
+            </div>
+        </div>
+        <div class="right-panel">
+            <div class="slide-content content">
+                
+        <div class="pain-item accent-border reveal">
+            <div class="pain-num">2.1</div>
+            <div class="pain-title">如果首页仍围绕消息流组织</div>
+            <div class="pain-desc">如果首页仍围绕消息流组织，用户将先看到等待输入的对话框，而不是 Agent 已完成的工作结果。</div>
+        </div>
+        
+        <div class="pain-item reveal">
+            <div class="pain-num">2.2</div>
+            <div class="pain-title">继续把 IM 当主舞台</div>
+            <div class="pain-desc">AI 原生工作平台 + AI 原生 ERP 的唯一入口</div>
+        </div>
+        
+        <div class="pain-item reveal">
+            <div class="pain-num">2.3</div>
+            <div class="pain-title">IM 不是被降级，而是被变性</div>
+            <div class="pain-desc">TOIS 与 L1-L4 完全同构</div>
+        </div>
+        
+            </div>
+        </div>
+        <span class="slide-num-label light">02 / 10</span>
+    </section>
+
+<section class="slide stat_block" id="slide-3" data-notes="baseline: AI 原生工作平台加 AI 原生 ERP 的唯一入口，是这次推演的稳定出发点，而不是需要回撤的口号。" aria-label="baseline" data-export-role="stat_block">
+        <div class="bg-num reveal">03</div>
+        <div class="slide-content content">
+            <div class="eyebrow swiss-label reveal">baseline</div>
+            <div class="stat-row reveal">
+                <div>
+                    <div class="swiss-stat accent">入口</div>
+                    <div class="swiss-rule red"></div>
+                </div>
+                <div class="stat-divider"></div>
+                <div class="stat-copy">
+                    <div class="stat-label">V12 的定位已经给出正确锚点：唯一入口</div>
+                    <div class="stat-value">AI 原生工作平台加 AI 原生 ERP 的唯一入口，是这次推演的稳定出发点，而不是需要回撤的口号。</div>
+                </div>
+            </div>
+        </div>
+        <span class="slide-num-label">03 / 10</span>
+    </section>
+
+<section class="slide geometric_diagram" id="slide-4" data-notes="workflow: Theory、Ontology、Instance、Skill 与 L1 到 L4 四层结构完全同构，意味着产品架构、理论架构和组织语言可以统一。" aria-label="workflow" data-export-role="geometric_diagram">
+        <div class="bg-num reveal">04</div>
+        <div class="slide-content content disc-header">
+            <div class="eyebrow swiss-label reveal">workflow</div>
+            <h2 class="swiss-title reveal title-balance"><span class="title-line">TOIS 与 L1-L4 的映射说明</span><span class="title-line">架构并不缺理论，只缺落位</span></h2>
+            <div class="disc-body">
+                <div class="disc-steps">
+                    
+        <div class="disc-step reveal">
+            <div class="disc-step-num">1</div>
+            <div>
+                <div class="disc-step-title">Theory</div>
+                <div class="disc-step-desc">Theory、Ontology、Instance、Skill 与 L1 到 L4 四层结构完全同构，意味着产品架构、理论架构和组织语言可以统一。</div>
+            </div>
+        </div>
+        
+        <div class="disc-step reveal">
+            <div class="disc-step-num">2</div>
+            <div>
+                <div class="disc-step-title">TOIS 与 L1-L4 的映射说明架构并不缺理论</div>
+                <div class="disc-step-desc">90/9/1 原则</div>
+            </div>
+        </div>
+        
+        <div class="disc-step reveal">
+            <div class="disc-step-num">3</div>
+            <div>
+                <div class="disc-step-title">TOIS 与 L1-L4 完全同构</div>
+                <div class="disc-step-desc">IM 不是被降级，而是被变性</div>
+            </div>
+        </div>
+        
+                </div>
+                <div class="disc-diagram reveal">
+                    <svg class="diagram-svg" viewBox="0 0 320 220" role="img" aria-label="mapping workflow">
+                        <rect x="20" y="20" width="110" height="46" fill="none" stroke="#0a0a0a" stroke-width="1.5"></rect>
+                        <rect x="190" y="20" width="110" height="46" fill="#ff3300" stroke="#0a0a0a" stroke-width="1.5"></rect>
+                        <rect x="105" y="144" width="110" height="46" fill="none" stroke="#0a0a0a" stroke-width="1.5"></rect>
+                        <line x1="130" y1="43" x2="190" y2="43" stroke="#0a0a0a" stroke-width="1.5"></line>
+                        <line x1="245" y1="66" x2="160" y2="144" stroke="#0a0a0a" stroke-width="1.5"></line>
+                        <line x1="75" y1="66" x2="160" y2="144" stroke="#0a0a0a" stroke-width="1.5"></line>
+                        <text x="34" y="47" font-size="12" fill="#0a0a0a">Theory</text>
+                        <text x="204" y="47" font-size="12" fill="#ffffff">TOIS</text>
+                        <text x="124" y="171" font-size="12" fill="#0a0a0a">TOIS</text>
+                    </svg>
+                </div>
+            </div>
+        </div>
+        <span class="slide-num-label">04 / 10</span>
+    </section>
+
+<section class="slide data_table" id="slide-5" data-notes="evidence: Agent 工作区应升级为 L1 容器，其余模块按层归位，否则 Workspace 永远只是并列功能页而不是操作系统级容器。" aria-label="evidence" data-export-role="data_table">
+        <div class="bg-num reveal">05</div>
+        <div class="slide-content content">
+            <div class="eyebrow swiss-label reveal">evidence</div>
+            <h2 class="swiss-title reveal title-balance"><span class="title-line">九大模块必须从并</span><span class="title-line">列拼图改成四层嵌套</span></h2>
+            <table class="data-table reveal">
+                <thead>
+                    <tr><th>Signal</th><th>Meaning</th><th>Focus</th></tr>
+                </thead>
+                <tbody>
+                    <tr class="highlight"><td>Agent 工作区应升级为 L1 容器</td><td>Agent 工作区应升级为 L1 容器，其余模块按层归位，否则 Workspace 永远只是并列功能页而不是操作系统级容器。</td><td>容器</td></tr>
+<tr><td>TOIS 与 L1-L4 完全同构</td><td>IM 不是被降级，而是被变性</td><td>TOIS</td></tr>
+<tr><td>90/9/1 原则</td><td>Agent 工作区应升级为 L1 容器</td><td>90/9/1</td></tr>
+                </tbody>
+            </table>
+        </div>
+        <span class="slide-num-label">05 / 10</span>
+    </section>
+
+<section class="slide contents_index" id="slide-6" data-notes="decision: Workspace 负责承载完整工作上下文，小 K 负责在其中发起和追踪任务；两者不是二选一，而是容器与入口器的分工。" aria-label="decision" data-export-role="contents_index">
+        <div class="bg-num reveal">06</div>
+        <div class="slide-content content">
+            <div class="eyebrow swiss-label reveal">decision</div>
+            <h2 class="swiss-title reveal title-balance"><span class="title-line">Workspace 是体，小 K 是</span><span class="title-line">用，入口关系必须先钉死</span></h2>
+            <ul style="list-style:none;display:grid;gap:14px;padding:0;margin:0;">
+        <li class="index-item reveal">
+            <div class="index-num">1</div>
+            <div>
+                <div class="index-title">Workspace 负责承载完整工作上下文</div>
+                <div class="index-desc">Workspace 负责承载完整工作上下文，小 K 负责在其中发起和追踪任务；两者不是二选一，而是容器与入口器的分工。</div>
+            </div>
+        </li>
+        
+        <li class="index-item reveal">
+            <div class="index-num">2</div>
+            <div>
+                <div class="index-title">Workspace 是体</div>
+                <div class="index-desc">AI 原生工作平台 + AI 原生 ERP 的唯一入口</div>
+            </div>
+        </li>
+        
+        <li class="index-item reveal">
+            <div class="index-num">3</div>
+            <div>
+                <div class="index-title">IM 不是被降级，而是被变性</div>
+                <div class="index-desc">TOIS 与 L1-L4 完全同构</div>
+            </div>
+        </li>
+        </ul>
+        </div>
+        <span class="slide-num-label">06 / 10</span>
+    </section>
+
+<section class="slide column_content" id="slide-7" data-notes="tradeoff: 当 90% 工作由 Agent 自动执行、9% 由用户确认、1% 由用户配置时，产品首页理应优先呈现执行报告而不是空对话框。" aria-label="tradeoff" data-export-role="column_content">
+        <div class="bg-num reveal">07</div>
+        <div class="left-panel">
+            <div class="red-bar"></div>
+            <div class="slide-content content">
+                <div class="eyebrow swiss-label reveal">tradeoff</div>
+                <h2 class="swiss-title reveal title-balance"><span class="title-line">90/9/1 不是效率口号，</span><span class="title-line">而是首页形态的判决书</span></h2>
+                <div class="left-rule reveal"></div>
+                <p class="swiss-body reveal" style="color:var(--text-light);max-width:26ch;">当 90% 工作由 Agent 自动执行、9% 由用户确认、1% 由用户配置时，产品首页理应优先呈现执行报告而不是空对话框。</p>
+            </div>
+        </div>
+        <div class="right-panel">
+            <div class="slide-content content">
+                
+        <div class="pain-item accent-border reveal">
+            <div class="pain-num">7.1</div>
+            <div class="pain-title">当 90% 工作由 Agent 自动执行</div>
+            <div class="pain-desc">当 90% 工作由 Agent 自动执行、9% 由用户确认、1% 由用户配置时，产品首页理应优先呈现执行报告而不是空对话框。</div>
+        </div>
+        
+        <div class="pain-item reveal">
+            <div class="pain-num">7.2</div>
+            <div class="pain-title">90/9/1 不是效率口号</div>
+            <div class="pain-desc">TOIS 与 L1-L4 完全同构</div>
+        </div>
+        
+        <div class="pain-item reveal">
+            <div class="pain-num">7.3</div>
+            <div class="pain-title">90/9/1 原则</div>
+            <div class="pain-desc">IM 不是被降级，而是被变性</div>
+        </div>
+        
+            </div>
+        </div>
+        <span class="slide-num-label light">07 / 10</span>
+    </section>
+
+<section class="slide stat_block" id="slide-8" data-notes="solution: B 形态以小 K 为主是当前现实，A 形态以 Workspace 为主是终局，18 个月切换是否成立取决于 ERP 连通深度是否先完成。" aria-label="solution" data-export-role="stat_block">
+        <div class="bg-num reveal">08</div>
+        <div class="slide-content content">
+            <div class="eyebrow swiss-label reveal">solution</div>
+            <div class="stat-row reveal">
+                <div>
+                    <div class="swiss-stat accent">18</div>
+                    <div class="swiss-rule red"></div>
+                </div>
+                <div class="stat-divider"></div>
+                <div class="stat-copy">
+                    <div class="stat-label">B 到 A 的过渡不是摇摆，而是被 ERP 连通度约束的路线图</div>
+                    <div class="stat-value">B 形态以小 K 为主是当前现实，A 形态以 Workspace 为主是终局，18 个月切换是否成立取决于 ERP 连通深度是否先完成。</div>
+                </div>
+            </div>
+        </div>
+        <span class="slide-num-label">08 / 10</span>
+    </section>
+
+<section class="slide geometric_diagram" id="slide-9" data-notes="architecture: 优先统一 AI 入口协议、按 A 规格搭建 Workspace 底层、推动九大模块按 L1 到 L4 归位，这三件事比继续堆新功能更关键。" aria-label="architecture" data-export-role="geometric_diagram">
+        <div class="bg-num reveal">09</div>
+        <div class="slide-content content disc-header">
+            <div class="eyebrow swiss-label reveal">architecture</div>
+            <h2 class="swiss-title reveal title-balance"><span class="title-line">三个今天必须做的架构动</span><span class="title-line">作，决定 18 个月后能否切换</span></h2>
+            <div class="disc-body">
+                <div class="disc-steps">
+                    
+        <div class="disc-step reveal">
+            <div class="disc-step-num">1</div>
+            <div>
+                <div class="disc-step-title">优先统一 AI 入口协议</div>
+                <div class="disc-step-desc">优先统一 AI 入口协议、按 A 规格搭建 Workspace 底层、推动九大模块按 L1 到 L4 归位，这三件事比继续堆新功能更关键。</div>
+            </div>
+        </div>
+        
+        <div class="disc-step reveal">
+            <div class="disc-step-num">2</div>
+            <div>
+                <div class="disc-step-title">三个今天必须做的架构动作</div>
+                <div class="disc-step-desc">TOIS 与 L1-L4 完全同构</div>
+            </div>
+        </div>
+        
+        <div class="disc-step reveal">
+            <div class="disc-step-num">3</div>
+            <div>
+                <div class="disc-step-title">18 个月</div>
+                <div class="disc-step-desc">90/9/1 原则</div>
+            </div>
+        </div>
+        
+                </div>
+                <div class="disc-diagram reveal">
+                    <svg class="diagram-svg" viewBox="0 0 320 220" role="img" aria-label="architecture priorities">
+                        <rect x="20" y="20" width="110" height="46" fill="none" stroke="#0a0a0a" stroke-width="1.5"></rect>
+                        <rect x="190" y="20" width="110" height="46" fill="#ff3300" stroke="#0a0a0a" stroke-width="1.5"></rect>
+                        <rect x="105" y="144" width="110" height="46" fill="none" stroke="#0a0a0a" stroke-width="1.5"></rect>
+                        <line x1="130" y1="43" x2="190" y2="43" stroke="#0a0a0a" stroke-width="1.5"></line>
+                        <line x1="245" y1="66" x2="160" y2="144" stroke="#0a0a0a" stroke-width="1.5"></line>
+                        <line x1="75" y1="66" x2="160" y2="144" stroke="#0a0a0a" stroke-width="1.5"></line>
+                        <text x="34" y="47" font-size="12" fill="#0a0a0a">优先统一</text>
+                        <text x="204" y="47" font-size="12" fill="#ffffff">三个今天</text>
+                        <text x="124" y="171" font-size="12" fill="#0a0a0a">18月</text>
+                    </svg>
+                </div>
+            </div>
+        </div>
+        <span class="slide-num-label">09 / 10</span>
+    </section>
+
+<section class="slide pull_quote" id="slide-10" data-notes="closing: 这不是单点 AI 功能竞争，而是一次入口级换道；今天的结构选择会决定金蝶能否在下一代工作中枢里占住主位。" aria-label="closing" data-export-role="pull_quote">
+        <div class="bg-num reveal">10</div>
+        <div class="slide-content content" style="align-items:flex-start;justify-content:flex-start;padding-top:18vh;">
+            <div class="eyebrow swiss-label reveal">closing</div>
+            <h2 class="swiss-title reveal title-balance" style="max-width:18ch;"><span class="title-line">这不是单点 AI 功能竞争，而是一次入</span><span class="title-line">口级换道；今天的结构选择会决定金</span><span class="title-line">蝶能否在下一代工作中枢里占住主位。</span></h2>
+            <div class="swiss-rule red reveal" style="width:120px;margin:18px 0 10px;"></div>
+            <p class="swiss-body reveal">金蝶真正稀缺的资产，是 AI 工作平台与 ERP 的唯一入口资格</p>
+        </div>
+        <span class="slide-num-label">10 / 10</span>
+    </section>
+<script>
+class SlidePresentation {
+    constructor() {
+        this.slides = document.querySelectorAll('.slide');
+        this.currentSlide = 0;
+        this.channel = new BroadcastChannel('slide-creator-presenter');
+        this.slides[0]?.classList.add('visible');
+        this.slides[0]?.querySelectorAll('.reveal').forEach(function(r) { r.classList.add('visible'); });
+        this.setActiveSlide(0);
+        this.setupNavDots(); this.setupObserver(); this.setupKeyboard();
+        this.setupTouch(); this.setupWheel(); this.setupPresenter(); this.setupEditor(); this.updateProgress();
+    }
+
+    setActiveSlide(index) {
+        this.slides.forEach((slide, i) => {
+            const active = i === index;
+            slide.classList.toggle('visible', active);
+            slide.querySelectorAll('.reveal').forEach(function(r) { r.classList.toggle('visible', active); });
+        });
+    }
+
+    setupNavDots() {
+        const nav = document.querySelector('.nav-dots');
+        if (!nav) return;
+        this.slides.forEach((_, i) => {
+            const dot = document.createElement('button');
+            dot.setAttribute('aria-label', 'Go to slide ' + (i + 1));
+            dot.style.cssText = 'width:8px;height:8px;border-radius:50%;border:none;cursor:pointer;background:rgba(255,255,255,0.3);transition:all 0.3s;';
+            dot.addEventListener('click', () => this.goTo(i)); nav.appendChild(dot);
+        });
+        nav.style.cssText = 'position:fixed;right:1.5rem;top:50%;transform:translateY(-50%);display:flex;flex-direction:column;gap:8px;z-index:100;';
+    }
+
+    setupObserver() {
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    this.currentSlide = [...this.slides].indexOf(entry.target);
+                    if (this.currentSlide < 0) return;
+                    this.setActiveSlide(this.currentSlide);
+                    this.updateProgress(); this.updateDots(); this.broadcastState();
+                    this.updateNotesPanel();
+                }
+            });
+        }, { threshold: 0.5 });
+        this.slides.forEach(s => observer.observe(s));
+    }
+
+    setupKeyboard() {
+        document.addEventListener('keydown', (e) => {
+            if (e.target.getAttribute('contenteditable') || e.target.tagName === 'TEXTAREA') return;
+            if (['ArrowDown','ArrowRight',' ','PageDown','Enter'].includes(e.key)) { e.preventDefault(); this.next(); }
+            else if (['ArrowUp','ArrowLeft','PageUp','Backspace'].includes(e.key)) { e.preventDefault(); this.prev(); }
+            else if (e.key === 'p' || e.key === 'P') { window.open(location.href.split('?')[0] + '?presenter', 'slide-presenter-' + Date.now(), 'width=1100,menubar=no,toolbar=no,location=no'); }
+            else if (e.key === 'e' || e.key === 'E') { if (this.editor && !this.editor.active) this.editor.enter(); else if (this.editor && this.editor.active) this.editor.exit(); }
+        });
+    }
+
+    setupTouch() {
+        let startY = 0, startX = 0;
+        document.addEventListener('touchstart', e => { startY = e.touches[0].clientY; startX = e.touches[0].clientX; }, { passive: true });
+        document.addEventListener('touchend', e => {
+            const dy = startY - e.changedTouches[0].clientY;
+            const dx = Math.abs(startX - e.changedTouches[0].clientX);
+            if (Math.abs(dy) > 50 && Math.abs(dy) > dx * 1.2) dy > 0 ? this.next() : this.prev();
+        });
+    }
+
+    setupWheel() {
+        this.wState = 'idle';
+        this.wLastTime = 0;
+        this.wFallback = null;
+        this.scrollSettleTimer = null;
+
+        const enterDraining = () => {
+            if (this.wState !== 'animating') return;
+            this.wState = 'draining';
+            this.wLastTime = Date.now();
+            clearTimeout(this.wFallback);
+            this.wFallback = setTimeout(() => { this.wState = 'idle'; }, 1500);
+        };
+
+        window.addEventListener('scroll', () => {
+            if (this.wState !== 'animating') return;
+            clearTimeout(this.scrollSettleTimer);
+            this.scrollSettleTimer = setTimeout(enterDraining, 120);
+        }, { passive: true });
+
+        document.addEventListener('wheel', (e) => {
+            if (e.target.tagName === 'TEXTAREA' || e.target.tagName === 'INPUT'
+              || e.target.getAttribute('contenteditable')) return;
+            if (e.target.closest && e.target.closest('#notes-panel')) return;
+
+            let dx = e.deltaX, dy = e.deltaY;
+            if (e.deltaMode === WheelEvent.DOM_DELTA_LINE) { dx *= 20; dy *= 20; }
+            if (e.deltaMode === WheelEvent.DOM_DELTA_PAGE) { dx *= window.innerHeight; dy *= window.innerHeight; }
+            const delta = Math.abs(dy) >= Math.abs(dx) ? dy : dx;
+            if (Math.abs(delta) < 6) return;
+
+            e.preventDefault();
+            if (this.wState === 'animating') return;
+
+            const now = Date.now();
+            if (this.wState === 'draining') {
+                const gap = now - this.wLastTime;
+                this.wLastTime = now;
+                if (gap <= 80) return;
+                this.wState = 'idle';
+                clearTimeout(this.wFallback);
+            }
+
+            this.wState = 'animating';
+            clearTimeout(this.scrollSettleTimer);
+            const moved = delta > 0 ? this.next() : this.prev();
+            if (!moved) {
+                this.wState = 'idle';
+                return;
+            }
+
+            this.scrollSettleTimer = setTimeout(enterDraining, 450);
+        }, { passive: false });
+    }
+
+    setupPresenter() {
+        this.channel.addEventListener('message', e => {
+            if (e.data.type === 'nav-next') this.next();
+            else if (e.data.type === 'nav-prev') this.prev();
+            else if (e.data.type === 'request-state') this.broadcastState();
+        });
+    }
+
+    broadcastState() {
+        const slide = this.slides[this.currentSlide];
+        this.channel.postMessage({ type: 'state', index: this.currentSlide, total: this.slides.length, notes: slide?.dataset.notes || '' });
+    }
+
+    goTo(index) {
+        const idx = Math.max(0, Math.min(index, this.slides.length - 1));
+        const moved = idx !== this.currentSlide;
+        this.currentSlide = idx;
+        this.setActiveSlide(idx);
+        this.slides[idx]?.scrollIntoView({ behavior: moved ? 'smooth' : 'auto' });
+        this.updateProgress(); this.updateDots(); this.broadcastState();
+        this.updateNotesPanel();
+        return moved;
+    }
+    next() { return this.goTo(Math.min(this.currentSlide + 1, this.slides.length - 1)); }
+    prev() { return this.goTo(Math.max(this.currentSlide - 1, 0)); }
+
+    updateProgress() {
+        const pct = (this.currentSlide / (this.slides.length - 1)) * 100;
+        const bar = document.querySelector('.progress-bar');
+        if (bar) bar.style.width = pct + '%';
+    }
+
+    updateDots() {
+        document.querySelectorAll('.nav-dots button').forEach((dot, i) => {
+            dot.style.background = i === this.currentSlide ? 'var(--accent)' : 'rgba(255,255,255,0.3)';
+            dot.style.transform = i === this.currentSlide ? 'scale(1.3)' : 'scale(1)';
+        });
+    }
+
+    setupEditor() {
+        const panel = document.getElementById('notes-panel');
+        const label = document.getElementById('notes-panel-label');
+        const textarea = document.getElementById('notes-textarea');
+        const toggle = document.getElementById('editToggle');
+        const hotzone = document.querySelector('.edit-hotzone');
+        let hideTimeout = null;
+
+        hotzone.addEventListener('mouseenter', () => { clearTimeout(hideTimeout); toggle.classList.add('show'); });
+        hotzone.addEventListener('mouseleave', () => { hideTimeout = setTimeout(() => { if (this.editor.active) return; toggle.classList.remove('show'); }, 400); });
+        toggle.addEventListener('mouseenter', () => clearTimeout(hideTimeout));
+        toggle.addEventListener('mouseleave', () => { hideTimeout = setTimeout(() => { if (this.editor.active) return; toggle.classList.remove('show'); }, 400); });
+        hotzone.addEventListener('click', () => this.editor.toggle());
+        toggle.addEventListener('click', () => this.editor.toggle());
+
+        document.getElementById('notes-panel-header').addEventListener('click', () => panel.classList.toggle('collapsed'));
+
+        textarea.addEventListener('input', () => {
+            const slide = this.slides[this.currentSlide];
+            if (slide) { slide.dataset.notes = textarea.value; this.broadcastState(); }
+        });
+
+        document.addEventListener('keydown', (e) => {
+            if ((e.ctrlKey || e.metaKey) && e.key === 's') { e.preventDefault(); this.saveFile(); }
+        });
+
+        this.editor = {
+            active: false,
+            toggle: () => this.editor.active ? this.editor.exit() : this.editor.enter(),
+            enter: () => {
+                this.editor.active = true;
+                toggle.classList.add('active'); toggle.textContent = 'Done';
+                this.slides.forEach(s => s.querySelectorAll('h1,h2,h3,p,li,span,td,th').forEach(el => {
+                    el.setAttribute('contenteditable', 'true'); el.style.outline = 'none';
+                }));
+                panel.classList.add('active'); this.updateNotesPanel();
+            },
+            exit: () => {
+                this.editor.active = false;
+                toggle.classList.remove('active'); toggle.textContent = 'Edit';
+                this.slides.forEach(s => s.querySelectorAll('[contenteditable]').forEach(el => {
+                    el.removeAttribute('contenteditable'); el.style.outline = '';
+                }));
+                panel.classList.remove('active');
+            }
+        };
+        this._notesLabel = label; this._notesTextarea = textarea;
+    }
+
+    updateNotesPanel() {
+        if (!this.editor?.active) return;
+        const slide = this.slides[this.currentSlide];
+        this._notesLabel.textContent = 'SPEAKER NOTES \u2014 SLIDE ' + (this.currentSlide + 1) + ' / ' + this.slides.length;
+        this._notesTextarea.value = slide?.dataset.notes || '';
+    }
+
+    saveFile() {
+        const html = '<!DOCTYPE html>\n' + document.documentElement.outerHTML;
+        const bytes = new TextEncoder().encode(html);
+        fetch(location.pathname, { method: 'PUT', body: bytes, headers: { 'Content-Type': 'text/html' } })
+            .catch(() => {
+                const a = Object.assign(document.createElement('a'), {
+                    href: URL.createObjectURL(new Blob([html], { type: 'text/html' })),
+                    download: location.pathname.split('/').pop() || 'presentation.html'
+                }); a.click(); URL.revokeObjectURL(a.href);
+            });
+    }
+}
+
+if (new URLSearchParams(location.search).has('presenter')) {
+    document.title = 'Presenter \u2014 ' + document.title;
+    document.body.innerHTML = `
+    <style>
+        * { box-sizing: border-box; margin: 0; }
+        body { background: #111; color: #fff; font-family: system-ui, sans-serif; }
+        #pv { display: grid; grid-template-columns: 1fr 220px; gap: 1rem; padding: 1.25rem; align-items: start; }
+        .pv-panel { background: #1e1e1e; border-radius: 12px; padding: 1.25rem; }
+        #pv-label { font-size: 0.6rem; letter-spacing: 0.18em; text-transform: uppercase; color: #555; margin-bottom: 0.6rem; }
+        #pv-notes { font-size: 1.05rem; line-height: 1.85; color: #d0d0d0; }
+        #pv-right { display: flex; flex-direction: column; gap: 1rem; }
+        #pv-nav { display: flex; align-items: center; justify-content: space-between; gap: 0.5rem; }
+        .pv-arrow { width: 32px; height: 32px; border-radius: 6px; border: 1px solid #333; background: #2a2a2a; color: #aaa; font-size: 1rem; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+        .pv-arrow:hover { background: #383838; color: #fff; }
+        #pv-counter { text-align: center; flex: 1; }
+        #pv-num { font-size: 1.6rem; font-weight: 700; font-variant-numeric: tabular-nums; line-height: 1; }
+        #pv-of { color: #555; font-size: 0.75rem; margin-top: 0.2rem; }
+        #pv-timer { font-size: 1.5rem; font-weight: 700; font-family: monospace; font-variant-numeric: tabular-nums; }
+        #pv-timer-label { font-size: 0.6rem; letter-spacing: 0.18em; text-transform: uppercase; color: #555; }
+    </style>
+    <div id="pv">
+        <div class="pv-panel"><div id="pv-label">Speaker Notes</div><div id="pv-notes">Waiting for main window...</div></div>
+        <div id="pv-right">
+            <div class="pv-panel"><div id="pv-nav">
+                <button class="pv-arrow" id="pv-prev">\u2190</button>
+                <div id="pv-counter"><div id="pv-num">\u2014</div><div id="pv-of">/ \u2014</div></div>
+                <button class="pv-arrow" id="pv-next">\u2192</button>
+            </div></div>
+            <div class="pv-panel"><div id="pv-timer-label">Elapsed</div><div id="pv-timer">0:00</div></div>
+        </div>
+    </div>`;
+
+    const ch = new BroadcastChannel('slide-creator-presenter');
+    let startTime = null;
+    const pv = document.getElementById('pv');
+    let lastH = 0, roTimer = null;
+    new ResizeObserver(() => {
+        clearTimeout(roTimer);
+        roTimer = setTimeout(() => {
+            const h = Math.ceil(pv.getBoundingClientRect().height);
+            if (h === lastH) return;
+            lastH = h;
+            const chrome = window.outerHeight - window.innerHeight;
+            window.resizeTo(window.outerWidth, Math.max(260, h + chrome + 4));
+        }, 40);
+    }).observe(pv);
+
+    ch.addEventListener('message', e => {
+        if (e.data.type !== 'state') return;
+        if (!startTime) startTime = Date.now();
+        document.getElementById('pv-notes').textContent = e.data.notes || '(no notes for this slide)';
+        document.getElementById('pv-num').textContent = e.data.index + 1;
+        document.getElementById('pv-of').textContent = '/ ' + e.data.total;
+    });
+    ch.postMessage({ type: 'request-state' });
+
+    setInterval(() => {
+        if (!startTime) return;
+        const s = Math.floor((Date.now() - startTime) / 1000);
+        document.getElementById('pv-timer').textContent = Math.floor(s / 60) + ':' + String(s % 60).padStart(2, '0');
+    }, 1000);
+
+    document.getElementById('pv-prev').addEventListener('click', () => ch.postMessage({ type: 'nav-prev' }));
+    document.getElementById('pv-next').addEventListener('click', () => ch.postMessage({ type: 'nav-next' }));
+    document.addEventListener('keydown', e => {
+        if (e.key === 'ArrowRight' || e.key === 'ArrowDown' || e.key === ' ' || e.key === 'PageDown' || e.key === 'Enter') ch.postMessage({ type: 'nav-next' });
+        else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp' || e.key === 'PageUp' || e.key === 'Backspace') ch.postMessage({ type: 'nav-prev' });
+    });
+
+} else {
+// PresentMode class goes here, then: new PresentMode(new SlidePresentation());
+
+class PresentMode {
+    constructor(ctrl) {
+        this.ctrl = ctrl;
+        this.baseW = 1440; this.baseH = 900;
+        this.active = false;
+        const btn = document.createElement('button');
+        btn.id = 'present-btn'; btn.title = 'Present (F5)'; btn.setAttribute('aria-label', 'Present'); btn.textContent = '\u25B6';
+        document.body.appendChild(btn);
+        const counter = document.createElement('div');
+        counter.id = 'present-counter'; document.body.appendChild(counter);
+        btn.addEventListener('click', () => this.enter());
+        document.addEventListener('keydown', e => {
+            if (e.key === 'F5') { e.preventDefault(); this.enter(); }
+            if (e.key === 'Escape' && this.active) this.exit();
+            if ((e.key === 'b' || e.key === 'B') && this.active) document.body.classList.toggle('presenting-black');
+        });
+        document.addEventListener('fullscreenchange', () => { if (this.active) { setTimeout(() => this._scale(), 100); } if (!document.fullscreenElement && this.active) this.exit(); });
+        window.addEventListener('resize', () => { if (this.active) this._scale(); });
+    }
+    enter() {
+        if (this.active) return;
+        this.active = true;
+        document.body.classList.add('presenting');
+        if (document.documentElement.requestFullscreen) document.documentElement.requestFullscreen().catch(() => {});
+        this._scale();
+        this._show(this.ctrl.currentSlide);
+        this._updateCounter();
+        this._origGoTo = this.ctrl.goTo.bind(this.ctrl);
+        this.ctrl.goTo = (i) => {
+            const idx = Math.max(0, Math.min(i, this.ctrl.slides.length - 1));
+            this.ctrl.currentSlide = idx;
+            this.ctrl.setActiveSlide(idx);
+            this._show(idx);
+            this.ctrl.updateProgress?.();
+            this.ctrl.updateDots?.();
+            this.ctrl.broadcastState?.();
+            this.ctrl.updateNotesPanel?.();
+        };
+    }
+    exit() {
+        if (!this.active) return;
+        this.active = false;
+        document.body.classList.remove('presenting', 'presenting-black');
+        this._reset();
+        if (document.fullscreenElement) document.exitFullscreen?.();
+        if (this._origGoTo) { this.ctrl.goTo = this._origGoTo; this._origGoTo = null; }
+        this.ctrl.slides[this.ctrl.currentSlide]?.scrollIntoView({ behavior: 'instant' });
+    }
+    _scale() {
+        const vw = window.innerWidth;
+        const vh = window.innerHeight;
+        const s = Math.min(vw / this.baseW, vh / this.baseH);
+        const ox = (vw - this.baseW * s) / 2;
+        const oy = (vh - this.baseH * s) / 2;
+        this.ctrl.slides.forEach(slide => {
+            slide.style.transform = 'translate(' + ox + 'px, ' + oy + 'px) scale(' + s + ')';
+        });
+    }
+    _reset() {
+        this.ctrl.slides.forEach(slide => { slide.style.transform = ''; slide.classList.remove('p-on'); });
+    }
+    _show(i) {
+        this.ctrl.slides.forEach((s, idx) => s.classList.toggle('p-on', idx === i));
+    }
+    _updateCounter() {
+        const c = document.getElementById('present-counter');
+        if (c) c.textContent = (this.ctrl.currentSlide + 1) + ' / ' + this.ctrl.slides.length;
+    }
+}
+new PresentMode(new SlidePresentation());
+}
+
+(function() {
+    var slides = document.querySelectorAll('.slide');
+    if (!slides.length) return;
+    var last = slides[slides.length - 1];
+    var credit = document.createElement('div');
+    credit.className = 'slide-credit';
+    credit.textContent = 'By kai-slide-creator v2.23.2 · Swiss Modern';
+    last.appendChild(credit);
+})();
+</script>
+</body>
+</html>
