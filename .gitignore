@@ -10,6 +10,9 @@ __pycache__/
 # Product docs & scratchpads
 PRODUCT.md
 TODO.md
+PLANNING.md
+plans/
+evals/generated-decks/
 *-test.html
 scripts/
 docs/
