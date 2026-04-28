@@ -41,6 +41,9 @@ def test_chinese_chan_reference_defines_minimalist_contract():
     content = read_ref("chinese-chan")
     assert "## User-Content 12-Page Route" in content
     assert "## Canonical Export Contract" in content
-    assert "zen_center" in content and "zen_vertical" in content
+    assert "zen_center" in content and "zen_vertical" in content and "zen_stat" in content
     assert "Canonical emitted classes are `.zen-*`" in content
     assert "ghost-kanji" in content
+    assert ".zen-h2" in content
+    assert "Noto Serif SC" in content
+    assert ".zen-stat .num" in content

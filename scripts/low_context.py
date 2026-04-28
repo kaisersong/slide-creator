@@ -4,15 +4,18 @@ import hashlib
 import html
 import json
 import re
+from functools import lru_cache
 from pathlib import Path
 from typing import Any
 
+from preset_support import preset_support_tier
 from title_profiles import profile_allows_explicit_line_control, resolve_title_profile
 
 
 ROOT = Path(__file__).resolve().parent.parent
 REFERENCES_DIR = ROOT / "references"
 BRIEF_SCHEMA_PATH = ROOT / "schemas" / "generation-brief.schema.json"
+PRESET_USAGE_RULES_PATH = ROOT / "references" / "preset-usage-rules.json"
 
 DEFAULT_SHELL_MARKERS = [
     "body[data-preset]",
@@ -59,29 +62,41 @@ DEFAULT_LAYOUTS = {
         "pull_quote",
         "contents_index",
     ],
+    "chinese chan": [
+        "zen_center",
+        "zen_split",
+        "zen_stat",
+        "zen_vertical",
+    ],
 }
 
 SWISS_ROLE_LAYOUTS = {
     "cover": "title_grid",
     "hook": "title_grid",
     "problem": "column_content",
+    "risk": "column_content",
     "two-depths": "column_content",
     "definition": "column_content",
     "boundary": "column_content",
+    "baseline": "stat_block",
     "principles": "contents_index",
     "workflow": "geometric_diagram",
     "style-discovery": "contents_index",
+    "driver": "contents_index",
     "solution": "stat_block",
     "signals": "contents_index",
     "feature": "data_table",
     "features": "data_table",
     "data-proof": "data_table",
     "proof": "data_table",
+    "evidence": "data_table",
     "reliability": "geometric_diagram",
     "state-machines": "geometric_diagram",
     "architecture": "geometric_diagram",
     "verification": "data_table",
     "best-fit": "contents_index",
+    "decision": "contents_index",
+    "tradeoff": "column_content",
     "closing": "pull_quote",
     "cta": "pull_quote",
 }
@@ -90,19 +105,27 @@ ENTERPRISE_ROLE_LAYOUTS = {
     "cover": "kpi_dashboard",
     "hook": "kpi_dashboard",
     "problem": "consulting_split",
+    "baseline": "insight_pull",
+    "risk": "consulting_split",
     "definition": "consulting_split",
     "workflow": "consulting_split",
     "discovery": "architecture_map",
+    "core-concepts": "architecture_map",
+    "architecture": "architecture_map",
     "solution": "insight_pull",
+    "principles": "insight_pull",
+    "tradeoff": "comparison_matrix",
     "feature": "comparison_matrix",
     "features": "comparison_matrix",
     "evidence": "data_table",
     "proof": "data_table",
     "metrics": "kpi_dashboard",
     "timeline": "timeline",
+    "state-machines": "timeline",
     "comparison": "comparison_matrix",
     "checkpoint": "data_table",
     "best-fit": "comparison_matrix",
+    "decision": "cta_close",
     "closing": "cta_close",
     "cta": "cta_close",
 }
@@ -111,21 +134,51 @@ DATA_STORY_ROLE_LAYOUTS = {
     "cover": "hero_number",
     "hook": "hero_number",
     "problem": "kpi_chart",
+    "baseline": "kpi_grid",
     "definition": "kpi_chart",
     "workflow": "workflow_chart",
+    "driver": "workflow_chart",
     "discovery": "chart_insight",
-    "solution": "kpi_grid",
+    "solution": "comparison_matrix",
     "feature": "kpi_grid",
     "features": "kpi_grid",
     "evidence": "chart_insight",
     "proof": "chart_insight",
-    "metrics": "kpi_grid",
+    "metrics": "kpi_chart",
     "timeline": "workflow_chart",
     "comparison": "comparison_matrix",
+    "risk": "chart_insight",
+    "decision": "cta_close",
     "checkpoint": "workflow_chart",
     "best-fit": "comparison_matrix",
     "closing": "cta_close",
     "cta": "cta_close",
+}
+
+CHINESE_CHAN_ROLE_LAYOUTS = {
+    "cover": "zen_center",
+    "hook": "zen_center",
+    "problem": "zen_split",
+    "definition": "zen_split",
+    "discovery": "zen_split",
+    "workflow": "zen_split",
+    "translation": "zen_split",
+    "evidence": "zen_split",
+    "proof": "zen_split",
+    "comparison": "zen_split",
+    "checkpoint": "zen_split",
+    "best-fit": "zen_split",
+    "summary": "zen_split",
+    "noise-filter": "zen_split",
+    "driver": "zen_stat",
+    "metrics": "zen_stat",
+    "signals": "zen_stat",
+    "solution": "zen_center",
+    "reflection": "zen_center",
+    "statement": "zen_center",
+    "decision": "zen_vertical",
+    "closing": "zen_vertical",
+    "cta": "zen_vertical",
 }
 
 ENTERPRISE_ROLE_BADGES_ZH = {
@@ -189,6 +242,21 @@ class RenderError(RuntimeError):
 
 def _read_text(path: Path) -> str:
     return path.read_text(encoding="utf-8")
+
+
+@lru_cache(maxsize=1)
+def _load_preset_usage_rules() -> dict[str, Any]:
+    return json.loads(_read_text(PRESET_USAGE_RULES_PATH))
+
+
+def _preset_usage_rules(preset: str) -> dict[str, Any]:
+    matrix = _load_preset_usage_rules()
+    presets = matrix.get("presets", {})
+    normalized = _normalize_preset_name(preset)
+    for candidate, rules in presets.items():
+        if _normalize_preset_name(candidate) == normalized:
+            return rules
+    return {}
 
 
 def _canonical_json(data: Any) -> str:
@@ -338,13 +406,16 @@ def validate_brief_data(brief: Any) -> list[str]:
         errors.append("brief.content must be an object")
     else:
         required = {"source_policy", "must_include", "must_avoid"}
+        optional = {"global_facts", "optional_support"}
         _ensure_required_keys(content, "brief.content", errors, required)
-        _ensure_no_extra_keys(content, "brief.content", errors, required)
+        _ensure_no_extra_keys(content, "brief.content", errors, required | optional)
         if content.get("source_policy") != "distill-only":
             errors.append("brief.content.source_policy must equal distill-only")
-        for key in ("must_include", "must_avoid"):
+        for key in ("must_include", "must_avoid", "global_facts", "optional_support"):
+            if key not in content:
+                continue
             value = content.get(key)
-            if not isinstance(value, list) or not value:
+            if not isinstance(value, list) or (key in required and not value):
                 errors.append(f"brief.content.{key} must be a non-empty array")
                 continue
             for index, item in enumerate(value, start=1):
@@ -372,18 +443,41 @@ def validate_brief_data(brief: Any) -> list[str]:
             errors.append("brief.narrative.slides must be an array with at least 5 items")
         else:
             slide_required = {"slide_number", "role", "title", "key_point", "visual"}
+            slide_optional = {
+                "claim",
+                "explanation",
+                "visual_intent",
+                "preferred_layout_family",
+                "chart_policy",
+                "supporting_facts",
+                "numeric_facts",
+            }
             for index, slide in enumerate(slides, start=1):
                 path = f"brief.narrative.slides[{index}]"
                 if not isinstance(slide, dict):
                     errors.append(f"{path} must be an object")
                     continue
                 _ensure_required_keys(slide, path, errors, slide_required)
-                _ensure_no_extra_keys(slide, path, errors, slide_required)
+                _ensure_no_extra_keys(slide, path, errors, slide_required | slide_optional)
                 if "slide_number" in slide:
                     _ensure_integer(slide["slide_number"], f"{path}.slide_number", errors, minimum=1)
                 for key in ("role", "title", "key_point", "visual"):
                     if key in slide:
                         _ensure_string(slide[key], f"{path}.{key}", errors)
+                for key in ("claim", "explanation", "visual_intent", "preferred_layout_family"):
+                    if key in slide and slide[key] is not None:
+                        _ensure_string(slide[key], f"{path}.{key}", errors)
+                if "chart_policy" in slide:
+                    _ensure_enum(slide["chart_policy"], f"{path}.chart_policy", errors, {"auto", "required", "avoid"})
+                for key in ("supporting_facts", "numeric_facts"):
+                    if key not in slide:
+                        continue
+                    value = slide.get(key)
+                    if not isinstance(value, list) or not value:
+                        errors.append(f"{path}.{key} must be a non-empty array")
+                        continue
+                    for fact_index, item in enumerate(value, start=1):
+                        _ensure_string(item, f"{path}.{key}[{fact_index}]", errors)
 
     runtime = brief.get("runtime")
     if not isinstance(runtime, dict):
@@ -708,10 +802,65 @@ def _extract_forbidden_aliases(lines: list[str]) -> list[str]:
     return forbidden
 
 
+IGNORED_SIGNATURE_TOKENS = {
+    ".slide",
+    ".reveal",
+    ".visible",
+    ".js",
+    ".pos",
+    ".neg",
+    ".neu",
+    ".up",
+    ".down",
+    ".positive",
+    ".negative",
+    ".neutral",
+    ".green",
+    ".red",
+    ".blue",
+    ".muted",
+    ".secondary",
+    ".tertiary",
+    ".card",
+    ".badge",
+    ".code",
+    ".sep",
+    ".label-tag",
+    ".status-dot",
+    ".kpi",
+    ".kpi-value",
+    ".kpi-label",
+    ".kpi-number",
+    ".kpi-grid",
+    ".kpi-card",
+    ".kpi-trend",
+    ".chart-layout",
+    ".chart-bar",
+    ".chart-line",
+    ".chart-area",
+    ".divider",
+    ".eyebrow",
+}
+
+
+def _keep_signature_token(token: str) -> bool:
+    if not token:
+        return False
+    if token in IGNORED_SIGNATURE_TOKENS:
+        return False
+    if token.endswith("-"):
+        return False
+    if token.startswith("#") and re.fullmatch(r"#[0-9a-fA-F]{3,8}", token):
+        return False
+    return True
+
+
 def _extract_signature_classes(text: str) -> list[str]:
     classes: list[str] = []
     for match in re.finditer(r"(?<![a-zA-Z0-9_-])(\.[A-Za-z][A-Za-z0-9_-]*)", text):
         class_name = match.group(1)
+        if not _keep_signature_token(class_name):
+            continue
         if class_name not in classes:
             classes.append(class_name)
     return classes
@@ -721,11 +870,14 @@ def _extract_background_layers(text: str) -> list[str]:
     layers: list[str] = []
     for pattern in (
         r"(body::before|body::after)",
+        r"(\.[A-Za-z][A-Za-z0-9_-]*::before|\.[A-Za-z][A-Za-z0-9_-]*::after)",
         r"(#[A-Za-z][A-Za-z0-9_-]*)",
         r"(\.[A-Za-z][A-Za-z0-9_-]*)",
     ):
         for match in re.finditer(pattern, text):
             value = match.group(1)
+            if not _keep_signature_token(value):
+                continue
             if value not in layers:
                 layers.append(value)
     return layers
@@ -854,6 +1006,17 @@ def compile_style_contract(preset_or_path: str | Path) -> dict[str, Any]:
         }
         contract["preset"] = friendly.get(normalized, contract["preset"])
 
+    if contract["forbidden_aliases"]:
+        forbidden = set(contract["forbidden_aliases"])
+        contract["required_signature_classes"] = [
+            token for token in contract["required_signature_classes"]
+            if token not in forbidden
+        ]
+        contract["required_background_layers"] = [
+            token for token in contract["required_background_layers"]
+            if token not in forbidden
+        ]
+
     if not contract["allowed_layout_ids"]:
         contract["allowed_layout_ids"] = DEFAULT_LAYOUTS.get(normalized, [])
     if not contract["tokens"]:
@@ -904,8 +1067,9 @@ def assess_quality_tier(brief: dict[str, Any]) -> str:
     return "tier2"
 
 
-def _canonical_layout_for_role(role: str, allowed_layouts: list[str]) -> str:
-    role_specific = SWISS_ROLE_LAYOUTS.get(role)
+def _canonical_layout_for_role(role: str, allowed_layouts: list[str], preset: str | None = None) -> str:
+    role_map = _layout_map_for_preset(preset or "Swiss Modern")
+    role_specific = role_map.get(role)
     if role_specific in allowed_layouts:
         return role_specific
     if allowed_layouts:
@@ -921,6 +1085,8 @@ def _layout_map_for_preset(preset: str) -> dict[str, str]:
         return ENTERPRISE_ROLE_LAYOUTS
     if normalized == "data story":
         return DATA_STORY_ROLE_LAYOUTS
+    if normalized == "chinese chan":
+        return CHINESE_CHAN_ROLE_LAYOUTS
     return SWISS_ROLE_LAYOUTS
 
 
@@ -931,6 +1097,119 @@ def _avoid_long_layout_runs(layout_id: str, previous_layouts: list[str], layout_
         if candidate != layout_id:
             return candidate
     return layout_id
+
+
+def _slide_claim(slide: dict[str, Any]) -> str:
+    return str(slide.get("claim") or slide.get("title") or "").strip()
+
+
+def _slide_explanation(slide: dict[str, Any]) -> str:
+    return str(slide.get("explanation") or slide.get("key_point") or "").strip()
+
+
+def _slide_visual_intent(slide: dict[str, Any]) -> str:
+    return str(slide.get("visual_intent") or slide.get("visual") or "").strip()
+
+
+def _slide_supporting_facts(slide: dict[str, Any]) -> list[str]:
+    values = slide.get("supporting_facts")
+    if not isinstance(values, list):
+        return []
+    return [str(value).strip() for value in values if str(value).strip()]
+
+
+def _slide_numeric_facts(slide: dict[str, Any]) -> list[str]:
+    values = slide.get("numeric_facts")
+    if not isinstance(values, list):
+        return []
+    return [str(value).strip() for value in values if str(value).strip()]
+
+
+def _preferred_layout_from_family(
+    family: str | None,
+    usage_rules: dict[str, Any],
+    allowed_layouts: list[str],
+) -> str | None:
+    if not family:
+        return None
+    family_map = usage_rules.get("layout_family_map", {})
+    layout_id = family_map.get(str(family).strip().lower())
+    if layout_id in allowed_layouts:
+        return layout_id
+    return None
+
+
+def _title_component_for_layout(
+    preset: str,
+    layout_id: str,
+    *,
+    default: str = "title",
+) -> str:
+    rules = _preset_usage_rules(preset)
+    mapping = rules.get("title_component_by_layout", {})
+    value = mapping.get(layout_id)
+    if isinstance(value, str) and value.strip():
+        return value.strip()
+    return default
+
+
+def _slide_global_facts(brief: dict[str, Any]) -> list[str]:
+    content = brief.get("content") if isinstance(brief.get("content"), dict) else {}
+    facts = content.get("global_facts")
+    if isinstance(facts, list) and facts:
+        return [str(value).strip() for value in facts if str(value).strip()]
+    return [str(value).strip() for value in content.get("must_include", []) if str(value).strip()]
+
+
+def _slide_optional_support(brief: dict[str, Any]) -> list[str]:
+    content = brief.get("content") if isinstance(brief.get("content"), dict) else {}
+    values = content.get("optional_support")
+    if not isinstance(values, list):
+        return []
+    return [str(value).strip() for value in values if str(value).strip()]
+
+
+def _semantic_blob(*values: str) -> str:
+    return " ".join(str(value or "").strip() for value in values if str(value or "").strip())
+
+
+def _has_comparison_signal(*values: str) -> bool:
+    blob = _semantic_blob(*values)
+    patterns = [
+        r"\bvs\b",
+        r"versus",
+        r"A/B",
+        r"二选一",
+        r"不是.+而是",
+        r"对比",
+        r"边界",
+        r"分工",
+        r"更适合",
+        r"承担",
+        r"负责",
+    ]
+    return any(re.search(pattern, blob, re.IGNORECASE) for pattern in patterns)
+
+
+def _has_progression_signal(*values: str) -> bool:
+    blob = _semantic_blob(*values)
+    patterns = [
+        r"先.+再",
+        r"最后",
+        r"阶段",
+        r"里程碑",
+        r"路径",
+        r"个月",
+        r"周期",
+        r"逐步",
+        r"today|tomorrow|next",
+    ]
+    return any(re.search(pattern, blob, re.IGNORECASE) for pattern in patterns)
+
+
+def _has_compact_anchor(text: str) -> bool:
+    compact = _compact_display_token(text, fallback="")
+    return bool(compact) and len(compact) <= 6
 
 
 def build_render_packet(
@@ -986,6 +1265,7 @@ def build_render_packet(
     packet = {
         "brief_hash": _sha256_text(_canonical_json(brief)),
         "preset": preset,
+        "preset_support_tier": preset_support_tier(preset),
         "deck_type": deck_type,
         "page_count": page_count,
         "composition_source": composition_source,
@@ -1002,14 +1282,94 @@ def build_render_packet(
 
 
 def _split_supporting_phrases(value: str, *, minimum: int = 3) -> list[str]:
-    parts = re.split(r"[，。；、,;:.]| and | with | / ", value)
-    cleaned = [part.strip() for part in parts if part.strip()]
+    parts = re.split(r"[，。；、,;:]| and | with | / ", value)
+    cleaned: list[str] = []
+    for part in parts:
+        normalized = re.sub(r"\s+", " ", part).strip()
+        if normalized and normalized not in cleaned:
+            cleaned.append(normalized)
     if len(cleaned) >= minimum:
         return cleaned[:minimum]
     base = cleaned or [value.strip()]
     while len(base) < minimum:
         base.append(base[-1])
     return base[:minimum]
+
+
+def _normalize_match_text(value: str) -> str:
+    return re.sub(r"\s+", "", value or "").lower()
+
+
+def _content_tokens(value: str) -> list[str]:
+    chunks = re.split(r"[，。；、,;:：/+\-\s（）()【】\[\]“”\"']+", value or "")
+    tokens: list[str] = []
+    for chunk in chunks:
+        cleaned = chunk.strip()
+        if not cleaned:
+            continue
+        if re.fullmatch(r"\d+(?:\.\d+)?(?:\+|%|万|亿|年|个月)?", cleaned):
+            tokens.append(cleaned)
+            continue
+        if len(cleaned) >= 2 and cleaned not in tokens:
+            tokens.append(cleaned)
+    return tokens
+
+
+def _select_relevant_evidence_items(
+    slide: dict[str, Any],
+    must_include: list[str],
+    *,
+    limit: int,
+    usage: dict[str, int] | None = None,
+) -> list[str]:
+    usage = usage or {}
+    blob = " ".join([slide.get("title", ""), slide.get("key_point", ""), slide.get("visual", "")])
+    normalized_blob = _normalize_match_text(blob)
+    blob_numbers = set(_extract_numbers(blob))
+    ranked: list[tuple[float, int, str]] = []
+
+    for index, item in enumerate(must_include):
+        cleaned = item.strip()
+        if not cleaned:
+            continue
+        normalized_item = _normalize_match_text(cleaned)
+        score = 0.0
+        if normalized_item and normalized_item in normalized_blob:
+            score += 10.0
+
+        item_numbers = set(_extract_numbers(cleaned))
+        if item_numbers and blob_numbers:
+            score += 4.0 * len(item_numbers & blob_numbers)
+
+        for token in _content_tokens(cleaned):
+            if _normalize_match_text(token) in normalized_blob:
+                score += 1.5 if len(token) <= 6 else 1.0
+
+        score -= usage.get(cleaned, 0) * 1.2
+        ranked.append((score, index, cleaned))
+
+    ranked.sort(key=lambda entry: (-entry[0], entry[1]))
+    selected = [item for _, _, item in ranked[:limit]]
+    for item in selected:
+        usage[item] = usage.get(item, 0) + 1
+    return selected
+
+
+def _build_supporting_items(slide: dict[str, Any], evidence: list[str], *, minimum: int) -> list[str]:
+    candidates: list[str] = []
+    for source in (slide.get("key_point", ""), slide.get("title", "")):
+        for item in _split_supporting_phrases(source, minimum=1):
+            cleaned = item.strip()
+            if cleaned and cleaned not in candidates and cleaned != slide.get("title", "").strip():
+                candidates.append(cleaned)
+    for item in evidence:
+        if item not in candidates:
+            candidates.append(item)
+    if not candidates:
+        candidates = [slide.get("key_point", "").strip() or slide.get("title", "").strip()]
+    while len(candidates) < minimum:
+        candidates.append(candidates[-1])
+    return candidates[:minimum]
 
 
 def _has_numeric_signal(*values: str) -> bool:
@@ -1120,11 +1480,115 @@ def _build_enterprise_story_items(
     return items
 
 
+def _build_candidate_fact_pool(
+    slide: dict[str, Any],
+    brief: dict[str, Any],
+) -> list[str]:
+    return _dedupe_preserve(
+        [
+            *_slide_supporting_facts(slide),
+            *_slide_numeric_facts(slide),
+            *_slide_global_facts(brief),
+            *_slide_optional_support(brief),
+        ]
+    )
+
+
+def _layout_requirement_failure(
+    spec: dict[str, Any],
+    layout_id: str,
+    usage_rules: dict[str, Any],
+) -> str | None:
+    layout_rules = usage_rules.get("layout_requirements", {}).get(layout_id, {})
+    if not layout_rules:
+        return None
+
+    if layout_rules.get("disallow_chart_policy_avoid") and spec.get("chart_policy") == "avoid":
+        return "chart-policy-avoid"
+
+    minimum_numeric_count = int(layout_rules.get("minimum_numeric_count", 3))
+    if layout_rules.get("require_local_numeric_signal"):
+        if not _chart_metric_values_from_spec(spec, ["0"] * minimum_numeric_count):
+            return "missing-local-numeric-signal"
+
+    if layout_rules.get("require_comparison_signal"):
+        comparison_exempt_roles = {"feature", "features", "best-fit"}
+        if spec["role"] not in comparison_exempt_roles and not _has_comparison_signal(
+            spec["claim"],
+            spec["key_point"],
+            spec["visual_intent"],
+            *spec["supporting_facts"],
+            *spec["supporting_items"],
+        ):
+            return "missing-comparison-signal"
+
+    if layout_rules.get("require_progression_signal") and not _has_progression_signal(
+        spec["claim"],
+        spec["key_point"],
+        spec["visual_intent"],
+        *spec["supporting_facts"],
+        *spec["supporting_items"],
+    ):
+        return "missing-progression-signal"
+
+    if layout_rules.get("require_supporting_facts"):
+        if not spec.get("supporting_facts") and not spec.get("evidence_items"):
+            return "missing-supporting-facts"
+
+    if layout_rules.get("require_compact_anchor"):
+        claim = spec["claim"].strip() or spec["title"]
+        if not (_has_compact_anchor(claim) or _has_numeric_signal(claim, spec["key_point"])):
+            return "missing-compact-anchor"
+
+    return None
+
+
+def _resolve_layout_with_usage_rules(
+    spec: dict[str, Any],
+    layout_id: str,
+    *,
+    usage_rules: dict[str, Any],
+    allowed_layouts: list[str],
+) -> str:
+    current = layout_id
+    visited: set[str] = set()
+    role_forbidden = usage_rules.get("role_forbidden_layouts", {}).get(spec["role"], [])
+
+    while current not in visited:
+        visited.add(current)
+
+        if current in role_forbidden:
+            fallback = usage_rules.get("layout_fallbacks", {}).get(current)
+            if fallback in allowed_layouts:
+                current = fallback
+                continue
+            break
+
+        failure = _layout_requirement_failure(spec, current, usage_rules)
+        if not failure:
+            return current
+
+        if spec.get("chart_policy") == "required" and failure == "missing-local-numeric-signal":
+            raise RenderError(
+                f"Slide {spec['slide_number']} requires chart-driven rendering but lacks slide-local numeric facts"
+            )
+
+        fallback = usage_rules.get("layout_requirements", {}).get(current, {}).get("fallback")
+        if fallback in allowed_layouts:
+            current = fallback
+            continue
+        break
+
+    return current if current in allowed_layouts else allowed_layouts[0]
+
+
 def build_slide_spec(brief: dict[str, Any], packet: dict[str, Any] | None = None) -> list[dict[str, Any]]:
     packet = packet or build_render_packet(brief)
     quality_tier = packet["quality_tier"]
-    role_layouts = _layout_map_for_preset(brief["style"]["preset"])
-    allowed_layouts = packet["allowed_layouts"] or DEFAULT_LAYOUTS.get(_normalize_preset_name(brief["style"]["preset"]), [])
+    preset = brief["style"]["preset"]
+    role_layouts = _layout_map_for_preset(preset)
+    usage_rules = _preset_usage_rules(preset)
+    allowed_layouts = packet["allowed_layouts"] or DEFAULT_LAYOUTS.get(_normalize_preset_name(preset), [])
     layout_cycle = allowed_layouts or ["default"]
     if quality_tier == "tier1":
         layout_cycle = allowed_layouts[:4] or layout_cycle
@@ -1134,30 +1598,50 @@ def build_slide_spec(brief: dict[str, Any], packet: dict[str, Any] | None = None
 
     specs: list[dict[str, Any]] = []
     previous_layouts: list[str] = []
+    evidence_usage: dict[str, int] = {}
     for index, slide in enumerate(brief["narrative"]["slides"], start=1):
         role = slide["role"]
-        layout_id = role_layouts.get(role)
+        claim = _slide_claim(slide)
+        explanation = _slide_explanation(slide)
+        visual_intent = _slide_visual_intent(slide)
+        preferred_layout_family = str(slide.get("preferred_layout_family") or "").strip().lower() or None
+        chart_policy = str(slide.get("chart_policy") or "auto").strip().lower()
+        supporting_facts = _slide_supporting_facts(slide)
+        numeric_facts = _slide_numeric_facts(slide)
+
+        preferred_layout = _preferred_layout_from_family(preferred_layout_family, usage_rules, layout_cycle)
+        layout_id = preferred_layout or role_layouts.get(role)
         if layout_id not in layout_cycle:
-            layout_id = _canonical_layout_for_role(role, layout_cycle)
+            layout_id = _canonical_layout_for_role(role, layout_cycle, preset)
         if quality_tier == "tier0" and layout_id not in layout_cycle:
             layout_id = layout_cycle[(index - 1) % len(layout_cycle)]
         elif quality_tier == "tier2":
-            layout_id = role_layouts.get(role)
+            layout_id = preferred_layout or role_layouts.get(role)
             if layout_id not in layout_cycle:
-                layout_id = _canonical_layout_for_role(role, layout_cycle)
-        layout_id = _avoid_long_layout_runs(layout_id, previous_layouts, layout_cycle)
+                layout_id = _canonical_layout_for_role(role, layout_cycle, preset)
 
-        supporting = _split_supporting_phrases(
-            slide["key_point"],
+        evidence_limit = 3 if quality_tier == "tier0" else 2
+        candidate_fact_pool = _build_candidate_fact_pool(slide, brief)
+        evidence = _select_relevant_evidence_items(
+            {
+                **slide,
+                "title": claim,
+                "key_point": explanation,
+                "visual": visual_intent,
+            },
+            candidate_fact_pool,
+            limit=evidence_limit,
+            usage=evidence_usage,
+        )
+        supporting = _build_supporting_items(
+            {
+                **slide,
+                "title": claim,
+                "key_point": explanation,
+            },
+            evidence,
             minimum=3 if quality_tier == "tier0" else 2,
         )
-        evidence = []
-        for item in brief["content"]["must_include"]:
-            cleaned = item.strip()
-            if cleaned and cleaned not in evidence:
-                evidence.append(cleaned)
-            if len(evidence) == (3 if quality_tier == "tier0" else 2):
-                break
 
         if quality_tier == "tier1":
             supporting = supporting[:2]
@@ -1166,21 +1650,40 @@ def build_slide_spec(brief: dict[str, Any], packet: dict[str, Any] | None = None
             supporting = supporting[:1]
             evidence = evidence[:1]
 
-        specs.append(
-            {
-                "slide_number": slide["slide_number"],
-                "role": role,
-                "layout_id": layout_id,
-                "title": slide["title"],
-                "key_point": slide["key_point"],
-                "supporting_items": supporting,
-                "evidence_items": evidence,
-                "speaker_note": f"{role}: {slide['key_point']}",
-                "visual": slide["visual"],
-                "quality_tier": quality_tier,
-            }
+        spec = {
+            "slide_number": slide["slide_number"],
+            "role": role,
+            "layout_id": layout_id,
+            "title": slide["title"],
+            "claim": claim,
+            "key_point": explanation,
+            "explanation": explanation,
+            "supporting_items": supporting,
+            "evidence_items": evidence,
+            "supporting_facts": supporting_facts,
+            "numeric_facts": numeric_facts,
+            "speaker_note": f"{role}: {explanation}",
+            "visual": visual_intent,
+            "visual_intent": visual_intent,
+            "preferred_layout_family": preferred_layout_family,
+            "chart_policy": chart_policy,
+            "quality_tier": quality_tier,
+        }
+        spec["layout_id"] = _resolve_layout_with_usage_rules(
+            spec,
+            spec["layout_id"],
+            usage_rules=usage_rules,
+            allowed_layouts=layout_cycle,
         )
-        previous_layouts.append(layout_id)
+        spec["layout_id"] = _avoid_long_layout_runs(spec["layout_id"], previous_layouts, layout_cycle)
+        spec["layout_id"] = _resolve_layout_with_usage_rules(
+            spec,
+            spec["layout_id"],
+            usage_rules=usage_rules,
+            allowed_layouts=layout_cycle,
+        )
+        specs.append(spec)
+        previous_layouts.append(spec["layout_id"])
 
     if _normalize_preset_name(brief["style"]["preset"]) == "enterprise dark":
         language = brief["language"]
@@ -1317,11 +1820,12 @@ def _title_partition_cost(lines: list[str]) -> float:
     return cost
 
 
-def _balance_title_lines(text: str, max_lines: int = 3) -> list[str]:
+def _balance_title_lines(text: str, max_lines: int = 3, force_balance: bool = False) -> list[str]:
     normalized = _normalize_title_text(text)
     if not normalized:
         return []
-    if _title_visual_units(normalized) <= 12.5:
+    total_units = _title_visual_units(normalized)
+    if not force_balance and total_units <= 12.5:
         return [normalized]
 
     tokens = _tokenize_title(normalized)
@@ -1330,6 +1834,8 @@ def _balance_title_lines(text: str, max_lines: int = 3) -> list[str]:
 
     best_lines = [normalized]
     best_cost = _title_partition_cost(best_lines)
+    if force_balance and total_units >= 12.0:
+        best_cost += 25.0
     token_count = len(tokens)
     max_lines = max(1, min(max_lines, 3, token_count))
 
@@ -1367,6 +1873,7 @@ def _render_title_markup(
     layout_id: str | None = None,
     line_class: str = "title-line",
     accent_class: str | None = None,
+    force_balance: bool = False,
 ) -> tuple[str, bool]:
     profile = resolve_title_profile(preset, layout_id=layout_id) if preset else None
     if profile and not profile_allows_explicit_line_control(profile):
@@ -1376,7 +1883,7 @@ def _render_title_markup(
         return inner, False
 
     max_lines = int(profile.get("max_lines", 3)) if profile else 3
-    lines = _balance_title_lines(text, max_lines=max_lines)
+    lines = _balance_title_lines(text, max_lines=max_lines, force_balance=force_balance)
     if len(lines) <= 1:
         inner = _escape(lines[0] if lines else text)
         if accent_class:
@@ -1400,6 +1907,7 @@ def _title_tag(
     preset: str | None = None,
     layout_id: str | None = None,
     accent_class: str | None = None,
+    force_balance: bool = False,
     extra_classes: str = "",
     extra_attrs: str = "",
 ) -> str:
@@ -1408,6 +1916,7 @@ def _title_tag(
         preset=preset,
         layout_id=layout_id,
         accent_class=accent_class,
+        force_balance=force_balance,
     )
     classes = [base_class, "reveal"]
     if extra_classes:
@@ -1468,7 +1977,11 @@ def _assemble_shell_html(
 def _build_non_swiss_shell_css(style_contract: dict[str, Any], preset: str) -> str:
     contract_css = "\n\n".join(style_contract["css_blocks"])
     slide_background = "transparent" if preset == "Enterprise Dark" else "var(--bg-primary, var(--bg, #0f1117))"
+    nav_dot_idle = "rgba(255,255,255,0.28)"
+    nav_dot_active = "var(--accent-blue, var(--chart-primary, #3b82f6))"
     if preset == "Data Story":
+        nav_dot_idle = "rgba(15, 23, 42, 0.22)"
+        nav_dot_active = "var(--chart-primary, #2563eb)"
         slide_overlay = """
 .slide::before {
     content: '';
@@ -1520,6 +2033,8 @@ body {{
     overscroll-behavior-y: contain;
     color: var(--text-primary, var(--text, #f3f4f6));
     background: var(--bg-primary, var(--bg, #0f1117));
+    --nav-dot-idle: {nav_dot_idle};
+    --nav-dot-active: {nav_dot_active};
 }}
 
 *, *::before, *::after {{ box-sizing: border-box; }}
@@ -1587,6 +2102,21 @@ body {{
 }}
 
 .nav-dots {{ position: fixed; right: 20px; top: 50%; transform: translateY(-50%); z-index: 1000; }}
+
+.nav-dots button {{
+    width: 8px;
+    height: 8px;
+    border: none;
+    border-radius: 50%;
+    cursor: pointer;
+    background: var(--nav-dot-idle);
+    transition: background 0.3s ease, transform 0.3s ease;
+}}
+
+.nav-dots button.active {{
+    background: var(--nav-dot-active);
+    transform: scale(1.3);
+}}
 
 .edit-hotzone {{
     position: fixed;
@@ -1756,23 +2286,396 @@ def _extract_numbers(text: str) -> list[str]:
     return re.findall(r"\d+(?:\.\d+)?(?:\+|%|万|亿|座|年)?", text)
 
 
+def _dedupe_preserve(values: list[str]) -> list[str]:
+    deduped: list[str] = []
+    for value in values:
+        cleaned = re.sub(r"\s+", " ", value or "").strip()
+        if cleaned and cleaned not in deduped:
+            deduped.append(cleaned)
+    return deduped
+
+
+def _spec_explicit_numbers(spec: dict[str, Any]) -> list[str]:
+    return _dedupe_preserve(
+        _extract_numbers(
+            " ".join(
+                [
+                    spec["title"],
+                    spec.get("claim", ""),
+                    spec["key_point"],
+                    spec.get("visual_intent", spec.get("visual", "")),
+                    *spec.get("supporting_facts", []),
+                    *spec["supporting_items"],
+                    *spec.get("numeric_facts", []),
+                ]
+            )
+        )
+    )
+
+
 def _metric_values_from_spec(spec: dict[str, Any], fallback: list[str]) -> list[str]:
-    values = _extract_numbers(" ".join([spec["title"], spec["key_point"], spec["visual"], *spec["supporting_items"], *spec["evidence_items"]]))
+    values = _spec_explicit_numbers(spec)
+    if not values:
+        values = _dedupe_preserve(_extract_numbers(" ".join(spec["evidence_items"])))
     deduped: list[str] = []
     for value in values:
         if value not in deduped:
             deduped.append(value)
-    while len(deduped) < len(fallback):
-        deduped.append(fallback[len(deduped)])
+    if deduped:
+        while len(deduped) < len(fallback):
+            deduped.append(deduped[-1])
+    else:
+        while len(deduped) < len(fallback):
+            deduped.append(fallback[len(deduped)])
     return deduped[: len(fallback)]
 
 
-def _svg_bar_chart(labels: list[str], values: list[int], *, color_class: str = "chart-bar") -> str:
-    max_value = max(values) if values else 1
+def _chart_metric_values_from_spec(
+    spec: dict[str, Any],
+    fallback: list[str],
+    *,
+    allow_evidence_fill: bool = False,
+) -> list[str]:
+    values = _dedupe_preserve(
+        [
+            *_extract_numbers(" ".join(spec.get("numeric_facts", []))),
+            *_extract_numbers(
+                " ".join(
+                    [
+                        spec["title"],
+                        spec.get("claim", ""),
+                        spec["key_point"],
+                        spec.get("visual_intent", spec.get("visual", "")),
+                        *spec.get("supporting_facts", []),
+                        *spec["supporting_items"],
+                    ]
+                )
+            ),
+        ]
+    )
+    if allow_evidence_fill and len(values) < len(fallback):
+        for value in _dedupe_preserve(_extract_numbers(" ".join(spec["evidence_items"]))):
+            if value not in values:
+                values.append(value)
+
+    if len(values) < len(fallback):
+        return []
+
+    trimmed = values[: len(fallback)]
+    distinct_numeric = {
+        _numeric_value(value)
+        for value in trimmed
+        if _numeric_value(value) > 0
+    }
+    if len(trimmed) > 1 and len(distinct_numeric) < 2:
+        return []
+    return trimmed
+
+def _numeric_value(value: str) -> float:
+    match = re.search(r"\d+(?:\.\d+)?", value or "")
+    return float(match.group(0)) if match else 0.0
+
+
+GENERIC_DISPLAY_TOKENS = {
+    "AI",
+    "组织",
+    "企业",
+    "公司",
+    "系统",
+    "平台",
+    "能力",
+    "工作",
+    "管理",
+    "团队",
+    "客户",
+    "节点",
+}
+
+BAD_DISPLAY_SUFFIX_CHARS = set("不的了和与及会将在中里上下")
+
+DISPLAY_KEYWORDS: list[tuple[str, str]] = [
+    ("90/9/1", "90/9/1"),
+    ("TOIS", "TOIS"),
+    ("L1-L4", "L1-L4"),
+    ("ERP", "ERP"),
+    ("IM", "IM"),
+    ("Workspace", "Workspace"),
+    ("小K", "小K"),
+    ("流体化", "流体化"),
+    ("相变", "相变"),
+    ("科层制", "科层制"),
+    ("核心竞争力", "竞争力"),
+    ("认知力", "认知力"),
+    ("敏捷力", "敏捷力"),
+    ("乘法关系", "乘法"),
+    ("活化能", "活化能"),
+    ("摩擦力", "摩擦"),
+    ("中层", "中层"),
+    ("质量", "质量"),
+    ("信任", "信任"),
+    ("边界", "边界"),
+    ("骨架", "骨架"),
+    ("循环系统", "循环"),
+    ("上下文", "上下文"),
+    ("能力库", "能力库"),
+    ("价值信号", "价值"),
+]
+
+
+def _cleanup_display_candidate(text: str) -> str:
+    candidate = re.sub(r"\s+", "", text or "").strip("，。；、,;:：/+-（）()【】[]“”\"' ")
+    if not candidate:
+        return ""
+
+    cleanup_patterns = [
+        r"^(?:AI原生组织的|AI原生企业的|AI原生组织|AI原生企业|AI原生|AI)",
+        r"^(?:组织的|企业的|公司的|团队的|客户的|管理的|工作的|文章的)",
+        r"^(?:真正的|新的|现有的|过去的|当前的|历史性的|这种|这个|这次|一次|一个)",
+    ]
+    changed = True
+    while changed and candidate:
+        changed = False
+        for pattern in cleanup_patterns:
+            updated = re.sub(pattern, "", candidate)
+            if updated != candidate and len(updated) >= 2:
+                candidate = updated
+                changed = True
+        candidate = candidate.lstrip("的")
+
+    if len(candidate) > 8 and re.search(r"[\u4e00-\u9fff]", candidate):
+        for phrase, token in DISPLAY_KEYWORDS:
+            if phrase in candidate:
+                return token
+
+    if len(candidate) > 6 and re.search(r"[\u4e00-\u9fff]", candidate):
+        shortened = candidate[:4]
+        if shortened and shortened[-1] not in BAD_DISPLAY_SUFFIX_CHARS:
+            return shortened
+        return ""
+    return candidate
+
+
+def _is_bad_display_token(token: str, source_text: str) -> bool:
+    if not token:
+        return True
+    if token in GENERIC_DISPLAY_TOKENS and len(re.sub(r"\s+", "", source_text or "")) > len(token) + 2:
+        return True
+    if "而是" in (source_text or "") and any(verb in token for verb in ("改变", "优化", "升级", "重写", "重构", "新增")):
+        return True
+    if len(token) >= 2 and token[-1] in BAD_DISPLAY_SUFFIX_CHARS:
+        return True
+    if token.upper() == "AI" and len(re.sub(r"\s+", "", source_text or "")) > 4:
+        return True
+    return False
+
+
+def _compact_display_candidates(text: str, *, fallback: str) -> list[str]:
+    cleaned = re.sub(r"\s+", " ", text or "").strip()
+    if not cleaned:
+        return [fallback]
+
+    candidates: list[str] = []
+
+    def _add(raw: str | None) -> None:
+        token = _cleanup_display_candidate(raw or "")
+        if token and token not in candidates:
+            candidates.append(token)
+
+    if "90/9/1" in cleaned:
+        _add("90/9/1")
+
+    semantic_pairs = [
+        (r"\bTOIS\b", "TOIS"),
+        (r"L1-L4", "L1-L4"),
+        (r"\bERP\b", "ERP"),
+        (r"\bIM\b", "IM"),
+        (r"Workspace", "Workspace"),
+        (r"小\s*K|小K", "小K"),
+    ]
+    for pattern, token in semantic_pairs:
+        if re.search(pattern, cleaned, re.IGNORECASE):
+            _add(token)
+
+    lhs_match = re.match(r"^\s*([^，。；、,;:：]{1,8}?)\s*不是", cleaned)
+    if lhs_match:
+        _add(lhs_match.group(1))
+
+    rhs_match = re.search(r"(?:而是|转向|变成|成为)([^，。；、,;:：]{1,10})", cleaned)
+    if rhs_match:
+        _add(rhs_match.group(1))
+
+    phrase_pairs = [
+        ("唯一入口", "入口"),
+        ("优先动作", "3项"),
+        ("三项", "3项"),
+        ("18 个月", "18月"),
+        ("18个月", "18月"),
+        ("容器", "容器"),
+        ("发起器", "任务"),
+        ("发起任务", "任务"),
+        ("自动执行", "执行"),
+        ("上下文", "上下文"),
+        ("归位", "归位"),
+        ("连通", "连通"),
+        ("终局", "终局"),
+    ]
+    for phrase, token in phrase_pairs:
+        if phrase in cleaned:
+            _add(token)
+
+    for phrase, token in DISPLAY_KEYWORDS:
+        if phrase in cleaned:
+            _add(token)
+
+    direct_numbers = _extract_numbers(cleaned)
+    if direct_numbers:
+        _add(direct_numbers[0])
+
+    segments = re.split(r"[，。；、,;:：/]|不是|而是|以及|并且|同时|因为|所以|如果|那么", cleaned)
+    for segment in segments:
+        _add(segment)
+
+    split_candidates = re.split(r"[，。；、,;:：/+\-\s（）()【】\[\]]+", cleaned)
+    filtered = [item for item in split_candidates if len(item) >= 2]
+    if filtered:
+        for candidate in filtered:
+            _add(candidate)
+
+    fallback_token = cleaned[:4] if re.search(r"[\u4e00-\u9fff]", cleaned) else cleaned[:8]
+    _add(fallback_token)
+    _add(fallback)
+    return candidates
+
+
+def _compact_display_token(
+    text: str,
+    *,
+    fallback: str = "关键",
+    used_tokens: set[str] | None = None,
+) -> str:
+    candidates = _compact_display_candidates(text, fallback=fallback)
+    if not candidates:
+        return fallback
+
+    first_unique = next((token for token in candidates if not used_tokens or token not in used_tokens), candidates[0])
+    for token in candidates:
+        if used_tokens and token in used_tokens:
+            continue
+        if _is_bad_display_token(token, text):
+            continue
+        return token
+    return first_unique
+
+
+def _spec_display_items(spec: dict[str, Any], *, limit: int = 4) -> list[str]:
+    items = _dedupe_preserve(
+        [
+            *spec["supporting_items"],
+            *spec["evidence_items"],
+            *_split_supporting_phrases(spec["title"], minimum=1),
+        ]
+    )
+    if not items:
+        items = [spec["key_point"]]
+    while len(items) < limit:
+        items.append(items[-1])
+    return items[:limit]
+
+
+def _spec_detail_pairs(spec: dict[str, Any], *, count: int = 4) -> list[tuple[str, str]]:
+    titles = _spec_display_items(spec, limit=count)
+    detail_pool = _dedupe_preserve(
+        [
+            *_split_supporting_phrases(spec["key_point"], minimum=1),
+            spec["key_point"],
+            *spec["supporting_items"],
+            *spec["evidence_items"],
+        ]
+    )
+    pairs: list[tuple[str, str]] = []
+    used_bodies: set[str] = set()
+    for title in titles:
+        body = next(
+            (
+                candidate
+                for candidate in detail_pool
+                if candidate != title and candidate not in used_bodies
+                and candidate not in titles
+            ),
+            next(
+                (
+                    candidate
+                    for candidate in detail_pool
+                    if candidate != title and candidate not in used_bodies
+                ),
+                spec["key_point"],
+            ),
+        )
+        used_bodies.add(body)
+        pairs.append((title, body))
+    return pairs
+
+
+def _metric_value_for_item(
+    item: str,
+    spec: dict[str, Any],
+    *,
+    index: int = 0,
+    used_tokens: set[str] | None = None,
+) -> str:
+    direct_numbers = _extract_numbers(item)
+    if direct_numbers:
+        if "90/9/1" in item:
+            return "90/9/1"
+        return direct_numbers[0]
+
+    compact = _compact_display_token(item, fallback=str(index + 1), used_tokens=used_tokens)
+    explicit_numbers = _spec_explicit_numbers(spec)
+    if compact not in {"关键", str(index + 1)}:
+        return compact
+    if explicit_numbers:
+        return explicit_numbers[min(index, len(explicit_numbers) - 1)]
+    evidence_numbers = _dedupe_preserve(_extract_numbers(" ".join(spec["evidence_items"])))
+    if evidence_numbers:
+        return evidence_numbers[min(index, len(evidence_numbers) - 1)]
+    return compact
+
+
+def _chart_labels_from_spec(spec: dict[str, Any], *, count: int = 4, family: str = "alpha") -> list[str]:
+    labels = [_compact_display_token(item, fallback=f"Step{index + 1}") for index, item in enumerate(_spec_display_items(spec, limit=count))]
+    if len(labels) >= count:
+        return labels[:count]
+    defaults = _sequence_labels(count, family=family)
+    for label in defaults:
+        if len(labels) == count:
+            break
+        if label not in labels:
+            labels.append(label)
+    return labels[:count]
+
+
+def _has_chart_ready_numbers(spec: dict[str, Any], *, minimum: int = 3) -> bool:
+    return bool(_chart_metric_values_from_spec(spec, ["0"] * minimum))
+
+
+def _sequence_labels(count: int, *, family: str = "alpha") -> list[str]:
+    if family == "workflow":
+        base = ["Input", "Build", "Check", "Ship", "Learn", "Scale"]
+    else:
+        base = ["Alpha", "Beta", "Gamma", "Delta", "Epsilon", "Zeta"]
+    labels = base[:count]
+    while len(labels) < count:
+        labels.append(f"Step{len(labels) + 1}")
+    return labels
+
+
+def _svg_bar_chart(labels: list[str], values: list[str], *, color_class: str = "chart-bar") -> str:
+    magnitudes = [_numeric_value(value) for value in values]
+    max_value = max(magnitudes) if any(magnitudes) else 1
     bars = []
-    for index, (label, value) in enumerate(zip(labels, values), start=0):
+    for index, (label, value, magnitude) in enumerate(zip(labels, values, magnitudes), start=0):
         x = 60 + index * 70
-        height = max(24, int((value / max_value) * 110))
+        height = max(24, int((magnitude / max_value) * 110)) if magnitude > 0 else 24
         y = 140 - height
         bars.append(
             f'<rect x="{x}" y="{y}" width="42" height="{height}" rx="4" class="{color_class}{" secondary" if index == 1 else (" tertiary" if index == 2 else "")}"></rect>'
@@ -1790,13 +2693,14 @@ def _svg_bar_chart(labels: list[str], values: list[int], *, color_class: str = "
     )
 
 
-def _svg_line_chart(labels: list[str], values: list[int]) -> str:
-    max_value = max(values) if values else 1
+def _svg_line_chart(labels: list[str], values: list[str]) -> str:
+    magnitudes = [_numeric_value(value) for value in values]
+    max_value = max(magnitudes) if any(magnitudes) else 1
     points = []
     labels_html = []
-    for index, (label, value) in enumerate(zip(labels, values), start=0):
+    for index, (label, value, magnitude) in enumerate(zip(labels, values, magnitudes), start=0):
         x = 50 + index * 60
-        y = 135 - int((value / max_value) * 90)
+        y = 135 - int((magnitude / max_value) * 90) if magnitude > 0 else 135
         points.append(f"{x},{y}")
         labels_html.append(
             f'<circle cx="{x}" cy="{y}" r="4" class="ds-dot"></circle>'
@@ -1819,6 +2723,23 @@ def _svg_line_chart(labels: list[str], values: list[int]) -> str:
 def _render_swiss_title_grid(spec: dict[str, Any], total: int) -> str:
     slide_number = spec["slide_number"]
     title_tag = _title_tag("h1", "swiss-title", spec["title"], preset="Swiss Modern", layout_id=spec["layout_id"])
+    hero_stats = ""
+    stat_items = spec["evidence_items"][:3] or spec["supporting_items"][:3]
+    if stat_items:
+        stat_blocks = []
+        used_tokens: set[str] = set()
+        for index, item in enumerate(stat_items, start=1):
+            stat_value = _metric_value_for_item(item, spec, index=index - 1, used_tokens=used_tokens)
+            used_tokens.add(stat_value)
+            stat_blocks.append(
+                f"""
+                <div class="hero-stat reveal">
+                    <div class="hero-stat-num">{_escape(stat_value)}</div>
+                    <div class="hero-stat-label">{_escape(item)}</div>
+                </div>
+                """
+            )
+        hero_stats = f'<div class="hero-stats">{"".join(stat_blocks)}</div>'
     return f"""
     <section class="slide title_grid" id="slide-{slide_number}" data-notes="{_escape(spec['speaker_note'])}" aria-label="{_escape(spec['role'])}" data-export-role="title_grid">
         <div class="bg-num reveal">{slide_number:02d}</div>
@@ -1827,6 +2748,7 @@ def _render_swiss_title_grid(spec: dict[str, Any], total: int) -> str:
             <div class="hero-rule reveal"></div>
             {title_tag}
             <p class="swiss-body hero-sub reveal">{_escape(spec['key_point'])}</p>
+            {hero_stats}
         </div>
         <span class="slide-num-label">{slide_number:02d} / {total:02d}</span>
     </section>
@@ -1836,15 +2758,16 @@ def _render_swiss_title_grid(spec: dict[str, Any], total: int) -> str:
 def _render_swiss_column_content(spec: dict[str, Any], total: int) -> str:
     slide_number = spec["slide_number"]
     title_tag = _title_tag("h2", "swiss-title", spec["title"], preset="Swiss Modern", layout_id=spec["layout_id"])
+    pairs = _spec_detail_pairs(spec, count=3)
     items = "".join(
         f"""
         <div class="pain-item{' accent-border' if index == 0 else ''} reveal">
             <div class="pain-num">{slide_number}.{index + 1}</div>
-            <div class="pain-title">{_escape(item)}</div>
-            <div class="pain-desc">{_escape(spec['visual'])}</div>
+            <div class="pain-title">{_escape(title)}</div>
+            <div class="pain-desc">{_escape(body)}</div>
         </div>
         """
-        for index, item in enumerate(spec["supporting_items"][:3])
+        for index, (title, body) in enumerate(pairs[:3])
     )
     return f"""
     <section class="slide column_content" id="slide-{slide_number}" data-notes="{_escape(spec['speaker_note'])}" aria-label="{_escape(spec['role'])}" data-export-role="column_content">
@@ -1871,7 +2794,7 @@ def _render_swiss_column_content(spec: dict[str, Any], total: int) -> str:
 def _render_swiss_stat_block(spec: dict[str, Any], total: int) -> str:
     slide_number = spec["slide_number"]
     emphasis = re.search(r"\d+(?:\.\d+)?", spec["key_point"])
-    value = emphasis.group(0) if emphasis else f"{slide_number:02d}"
+    value = emphasis.group(0) if emphasis else _compact_display_token(spec["title"], fallback="入口")
     return f"""
     <section class="slide stat_block" id="slide-{slide_number}" data-notes="{_escape(spec['speaker_note'])}" aria-label="{_escape(spec['role'])}" data-export-role="stat_block">
         <div class="bg-num reveal">{slide_number:02d}</div>
@@ -1897,18 +2820,20 @@ def _render_swiss_stat_block(spec: dict[str, Any], total: int) -> str:
 def _render_swiss_geometric_diagram(spec: dict[str, Any], total: int) -> str:
     slide_number = spec["slide_number"]
     title_tag = _title_tag("h2", "swiss-title", spec["title"], preset="Swiss Modern", layout_id=spec["layout_id"])
+    pairs = _spec_detail_pairs(spec, count=3)
     steps = "".join(
         f"""
         <div class="disc-step reveal">
             <div class="disc-step-num">{index + 1}</div>
             <div>
-                <div class="disc-step-title">{_escape(item)}</div>
-                <div class="disc-step-desc">{_escape(spec['visual'])}</div>
+                <div class="disc-step-title">{_escape(title)}</div>
+                <div class="disc-step-desc">{_escape(body)}</div>
             </div>
         </div>
         """
-        for index, item in enumerate(spec["supporting_items"][:3])
+        for index, (title, body) in enumerate(pairs[:3])
     )
+    diagram_labels = _chart_labels_from_spec(spec, count=3)
     return f"""
     <section class="slide geometric_diagram" id="slide-{slide_number}" data-notes="{_escape(spec['speaker_note'])}" aria-label="{_escape(spec['role'])}" data-export-role="geometric_diagram">
         <div class="bg-num reveal">{slide_number:02d}</div>
@@ -1927,9 +2852,9 @@ def _render_swiss_geometric_diagram(spec: dict[str, Any], total: int) -> str:
                         <line x1="130" y1="43" x2="190" y2="43" stroke="#0a0a0a" stroke-width="1.5"></line>
                         <line x1="245" y1="66" x2="160" y2="144" stroke="#0a0a0a" stroke-width="1.5"></line>
                         <line x1="75" y1="66" x2="160" y2="144" stroke="#0a0a0a" stroke-width="1.5"></line>
-                        <text x="34" y="47" font-size="12" fill="#0a0a0a">Input</text>
-                        <text x="204" y="47" font-size="12" fill="#ffffff">Freeze</text>
-                        <text x="124" y="171" font-size="12" fill="#0a0a0a">Output</text>
+                        <text x="34" y="47" font-size="12" fill="#0a0a0a">{_escape(diagram_labels[0])}</text>
+                        <text x="204" y="47" font-size="12" fill="#ffffff">{_escape(diagram_labels[1])}</text>
+                        <text x="124" y="171" font-size="12" fill="#0a0a0a">{_escape(diagram_labels[2])}</text>
                     </svg>
                 </div>
             </div>
@@ -1942,11 +2867,12 @@ def _render_swiss_geometric_diagram(spec: dict[str, Any], total: int) -> str:
 def _render_swiss_data_table(spec: dict[str, Any], total: int) -> str:
     slide_number = spec["slide_number"]
     title_tag = _title_tag("h2", "swiss-title", spec["title"], preset="Swiss Modern", layout_id=spec["layout_id"])
+    pairs = _spec_detail_pairs(spec, count=3)
     rows = []
-    for index, item in enumerate(spec["evidence_items"][:3]):
+    for index, (item, body) in enumerate(pairs[:3]):
         highlight = " class=\"highlight\"" if index == 0 else ""
         rows.append(
-            f"<tr{highlight}><td>{_escape(item)}</td><td>{_escape(spec['key_point'])}</td><td>{_escape(spec['visual'])}</td></tr>"
+            f"<tr{highlight}><td>{_escape(item)}</td><td>{_escape(body)}</td><td>{_escape(_compact_display_token(item, fallback=spec['role']))}</td></tr>"
         )
     rows_html = "\n".join(rows)
     return f"""
@@ -1957,7 +2883,7 @@ def _render_swiss_data_table(spec: dict[str, Any], total: int) -> str:
             {title_tag}
             <table class="data-table reveal">
                 <thead>
-                    <tr><th>Signal</th><th>Meaning</th><th>Visual</th></tr>
+                    <tr><th>Signal</th><th>Meaning</th><th>Focus</th></tr>
                 </thead>
                 <tbody>
                     {rows_html}
@@ -1999,17 +2925,18 @@ def _render_swiss_pull_quote(spec: dict[str, Any], total: int) -> str:
 def _render_swiss_contents_index(spec: dict[str, Any], total: int) -> str:
     slide_number = spec["slide_number"]
     title_tag = _title_tag("h2", "swiss-title", spec["title"], preset="Swiss Modern", layout_id=spec["layout_id"])
+    pairs = _spec_detail_pairs(spec, count=3)
     items = "".join(
         f"""
-        <div class="index-item reveal">
+        <li class="index-item reveal">
             <div class="index-num">{index + 1}</div>
             <div>
-                <div class="index-title">{_escape(item)}</div>
-                <div class="index-desc">{_escape(spec['visual'])}</div>
+                <div class="index-title">{_escape(title)}</div>
+                <div class="index-desc">{_escape(body)}</div>
             </div>
-        </div>
+        </li>
         """
-        for index, item in enumerate(spec["supporting_items"][:3])
+        for index, (title, body) in enumerate(pairs[:3])
     )
     return f"""
     <section class="slide contents_index" id="slide-{slide_number}" data-notes="{_escape(spec['speaker_note'])}" aria-label="{_escape(spec['role'])}" data-export-role="contents_index">
@@ -2017,7 +2944,7 @@ def _render_swiss_contents_index(spec: dict[str, Any], total: int) -> str:
         <div class="slide-content content">
             <div class="eyebrow swiss-label reveal">{_escape(spec['role'])}</div>
             {title_tag}
-            <div>{items}</div>
+            <ul style="list-style:none;display:grid;gap:14px;padding:0;margin:0;">{items}</ul>
         </div>
         <span class="slide-num-label">{slide_number:02d} / {total:02d}</span>
     </section>
@@ -2046,6 +2973,32 @@ def _build_swiss_shell_css(style_contract: dict[str, Any]) -> str:
     return f"""
 {contract_css}
 
+.swiss-body {{
+    font-size: clamp(14px, 1.75vw, 18px);
+    line-height: 1.62;
+}}
+
+.pain-desc,
+.stat-value,
+.disc-step-desc,
+.index-desc {{
+    font-size: clamp(14px, 1.7vw, 18px);
+    line-height: 1.62;
+}}
+
+.pain-title,
+.disc-step-title,
+.index-title,
+.stat-label,
+.data-table td,
+.data-table th {{
+    font-size: clamp(14px, 1.6vw, 17px);
+}}
+
+.pain-item {{
+    padding-left: clamp(14px, 2.2vw, 24px);
+}}
+
 html {{
     height: 100%;
     overflow-x: hidden;
@@ -2058,6 +3011,8 @@ body {{
     overflow-x: hidden;
     background: var(--bg);
     color: var(--text);
+    --nav-dot-idle: rgba(10, 10, 10, 0.18);
+    --nav-dot-active: var(--red);
 }}
 
 *, *::before, *::after {{ box-sizing: border-box; }}
@@ -2133,6 +3088,52 @@ body::before {{
 }}
 
 .nav-dots {{ position: fixed; right: 22px; top: 50%; transform: translateY(-50%); z-index: 1000; }}
+
+.nav-dots button {{
+    width: 8px;
+    height: 8px;
+    border: none;
+    border-radius: 50%;
+    cursor: pointer;
+    background: var(--nav-dot-idle);
+    transition: background 0.3s ease, transform 0.3s ease;
+}}
+
+.nav-dots button.active {{
+    background: var(--nav-dot-active);
+    transform: scale(1.3);
+}}
+
+.bg-num {{
+    position: absolute;
+    right: clamp(2rem, 5vw, 5rem);
+    top: 0;
+    font-family: "Archivo Black", sans-serif;
+    font-weight: 900;
+    font-size: clamp(8rem, 25vw, 18rem);
+    color: #f0f0f0;
+    line-height: 0.85;
+    pointer-events: none;
+    user-select: none;
+    z-index: 0;
+}}
+
+.slide-num-label {{
+    position: absolute;
+    top: 28px;
+    right: 28px;
+    font-family: "Archivo Black", sans-serif;
+    font-size: 11px;
+    font-weight: 900;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: rgba(0, 0, 0, 0.18);
+    z-index: 2;
+}}
+
+.slide-num-label.light {{
+    color: rgba(255, 255, 255, 0.28);
+}}
 
 .edit-hotzone {{
     position: fixed;
@@ -2604,15 +3605,18 @@ def _render_enterprise_kpi_dashboard(spec: dict[str, Any], total: int) -> str:
         layout_id=spec["layout_id"],
         accent_class="ent-accent-blue",
     )
-    values = _metric_values_from_spec(spec, ["2", "4", "1"])
+    values = _metric_values_from_spec(spec, ["入口", "结构", "动作"])
     cards = []
-    labels = spec["supporting_items"] + spec["evidence_items"]
+    labels = _spec_display_items(spec, limit=3)
+    used_tokens: set[str] = set()
     for index, label in enumerate(labels[:3]):
         trend_class = "positive" if index == 0 else ("neutral" if index == 1 else "negative")
+        metric_value = _metric_value_for_item(label, spec, index=index, used_tokens=used_tokens) or values[index]
+        used_tokens.add(metric_value)
         cards.append(
             f"""
             <div class="ent-kpi-card reveal">
-                <div class="ent-kpi-number {trend_class}">{_escape(values[index])}</div>
+                <div class="ent-kpi-number {trend_class}">{_escape(metric_value)}</div>
                 <div class="ent-kpi-label">{_escape(label)}</div>
                 <div class="ent-trend {'up' if index != 2 else 'down'}">{'▲' if index != 2 else '▼'} {_escape(spec['key_point'])}</div>
             </div>
@@ -2682,20 +3686,21 @@ def _render_enterprise_story_dashboard(spec: dict[str, Any], total: int) -> str:
 def _render_enterprise_consulting_split(spec: dict[str, Any], total: int) -> str:
     slide_number = spec["slide_number"]
     title_tag = _title_tag("h2", "ent-title", spec["title"], preset="Enterprise Dark", layout_id=spec["layout_id"])
-    labels = "".join(f'<div class="ent-split-label">{_escape(item)}</div>' for item in spec["supporting_items"][:3])
+    labels = "".join(f'<div class="ent-split-label">{_escape(item)}</div>' for item in _spec_display_items(spec, limit=3))
+    pairs = _spec_detail_pairs(spec, count=3)
     rows = "".join(
         f"""
         <div class="ent-feature-row reveal">
             <div class="ent-feature-icon">{index + 1}</div>
             <div style="flex:1;">
-                <h3 style="margin:0 0 6px;color:var(--text-primary);font-size:1rem;">{_escape(item)}</h3>
-                <p style="margin:0;color:var(--text-body);font-size:0.92rem;line-height:1.5;">{_escape(spec['visual'])}</p>
+                <h3 style="margin:0 0 6px;color:var(--text-primary);font-size:1rem;">{_escape(title)}</h3>
+                <p style="margin:0;color:var(--text-body);font-size:0.92rem;line-height:1.5;">{_escape(body)}</p>
                 <div class="ent-prog-bar" style="margin-top:10px;"><div class="ent-prog-fill" style="width:{70 - index * 15}%"></div></div>
             </div>
             <span class="ent-badge ent-badge-blue">Flow</span>
         </div>
         """
-        for index, item in enumerate((spec["evidence_items"] or spec["supporting_items"])[:3])
+        for index, (title, body) in enumerate(pairs[:3])
     )
     return f"""
     <section class="slide enterprise-split" id="slide-{slide_number}" data-notes="{_escape(spec['speaker_note'])}" aria-label="{_escape(spec['role'])}" data-export-role="consulting_split">
@@ -2763,9 +3768,10 @@ def _render_enterprise_data_table(spec: dict[str, Any], total: int) -> str:
 def _render_enterprise_architecture_map(spec: dict[str, Any], total: int) -> str:
     slide_number = spec["slide_number"]
     title_tag = _title_tag("h2", "ent-title", spec["title"], preset="Enterprise Dark", layout_id=spec["layout_id"])
+    pairs = _spec_detail_pairs(spec, count=3)
     cards = "".join(
-        f'<div class="ent-arch-card reveal"><div class="ent-label">{index + 1:02d}</div><h3 style="margin:6px 0;color:var(--text-primary);">{_escape(item)}</h3><p style="margin:0;color:var(--text-body);line-height:1.5;">{_escape(spec["visual"])}</p></div>'
-        for index, item in enumerate(spec["supporting_items"][:3])
+        f'<div class="ent-arch-card reveal"><div class="ent-label">{index + 1:02d}</div><h3 style="margin:6px 0;color:var(--text-primary);">{_escape(title)}</h3><p style="margin:0;color:var(--text-body);line-height:1.5;">{_escape(body)}</p></div>'
+        for index, (title, body) in enumerate(pairs[:3])
     )
     return f"""
     <section class="slide enterprise-architecture" id="slide-{slide_number}" data-notes="{_escape(spec['speaker_note'])}" aria-label="{_escape(spec['role'])}" data-export-role="architecture_map">
@@ -2785,9 +3791,9 @@ def _render_enterprise_architecture_map(spec: dict[str, Any], total: int) -> str
 def _render_enterprise_feature_grid(spec: dict[str, Any], total: int) -> str:
     slide_number = spec["slide_number"]
     title_tag = _title_tag("h2", "ent-title", spec["title"], preset="Enterprise Dark", layout_id=spec["layout_id"])
-    card_titles = spec["supporting_items"][:4] or spec["evidence_items"][:4] or [spec["visual"]]
+    pairs = _spec_detail_pairs(spec, count=4)
     cards = []
-    for index, item in enumerate(card_titles[:4]):
+    for index, (item, body) in enumerate(pairs[:4]):
         cards.append(
             f"""
             <div class="ent-feature-card reveal">
@@ -2798,7 +3804,7 @@ def _render_enterprise_feature_grid(spec: dict[str, Any], total: int) -> str:
                     </div>
                     <span class="ent-badge ent-badge-blue">AI default</span>
                 </div>
-                <p class="ent-feature-card-copy">{_escape(spec['visual'])}</p>
+                <p class="ent-feature-card-copy">{_escape(body)}</p>
                 <div class="ent-prog-bar"><div class="ent-prog-fill" style="width:{78 - index * 14}%"></div></div>
             </div>
             """
@@ -2821,15 +3827,16 @@ def _render_enterprise_feature_grid(spec: dict[str, Any], total: int) -> str:
 def _render_enterprise_comparison_matrix(spec: dict[str, Any], total: int) -> str:
     slide_number = spec["slide_number"]
     title_tag = _title_tag("h2", "ent-title", spec["title"], preset="Enterprise Dark", layout_id=spec["layout_id"])
+    pairs = _spec_detail_pairs(spec, count=4)
     cells = "".join(
         f"""
         <div class="ent-kpi-card reveal">
-            <div class="ent-label">{_escape(item)}</div>
-            <h3 style="margin:8px 0;color:var(--text-primary);">{_escape(spec['title'])}</h3>
-            <p style="margin:0;color:var(--text-body);line-height:1.5;">{_escape(spec['key_point'])}</p>
+            <div class="ent-label">{_escape(title)}</div>
+            <h3 style="margin:8px 0;color:var(--text-primary);">{_escape(title)}</h3>
+            <p style="margin:0;color:var(--text-body);line-height:1.5;">{_escape(body)}</p>
         </div>
         """
-        for item in (spec["supporting_items"] + spec["evidence_items"])[:4]
+        for title, body in pairs[:4]
     )
     return f"""
     <section class="slide enterprise-matrix" id="slide-{slide_number}" data-notes="{_escape(spec['speaker_note'])}" aria-label="{_escape(spec['role'])}" data-export-role="comparison_matrix">
@@ -2867,11 +3874,15 @@ def _render_enterprise_insight_pull(spec: dict[str, Any], total: int) -> str:
 def _render_enterprise_timeline(spec: dict[str, Any], total: int) -> str:
     slide_number = spec["slide_number"]
     title_tag = _title_tag("h2", "ent-title", spec["title"], preset="Enterprise Dark", layout_id=spec["layout_id"])
-    dates = _metric_values_from_spec(spec, ["2016", "2023", "2024", "2025"])
+    explicit_numbers = _spec_explicit_numbers(spec)
+    if len(explicit_numbers) >= 4:
+        dates = explicit_numbers[:4]
+    else:
+        dates = ["现在", "样板", "协同", "切换"]
     items = []
-    labels = (spec["supporting_items"] + spec["evidence_items"])[:4]
+    labels = _spec_display_items(spec, limit=4)
     while len(labels) < 4:
-        labels.append(spec["visual"])
+        labels.append(spec["key_point"])
     for idx in range(4):
         items.append(
             f"""
@@ -2907,7 +3918,13 @@ def _render_enterprise_cta_close(spec: dict[str, Any], total: int) -> str:
         layout_id=spec["layout_id"],
         accent_class="ent-accent-blue",
     )
-    values = _metric_values_from_spec(spec, ["2", "1", "90%"])
+    items = _spec_display_items(spec, limit=3)
+    used_tokens: set[str] = set()
+    value0 = _metric_value_for_item(items[0], spec, index=0, used_tokens=used_tokens)
+    used_tokens.add(value0)
+    value1 = _metric_value_for_item(items[1], spec, index=1, used_tokens=used_tokens)
+    used_tokens.add(value1)
+    value2 = _metric_value_for_item(items[2], spec, index=2, used_tokens=used_tokens)
     return f"""
     <section class="slide enterprise-close" id="slide-{slide_number}" data-notes="{_escape(spec['speaker_note'])}" aria-label="{_escape(spec['role'])}" data-export-role="cta_close">
         <div class="slide-content">
@@ -2917,9 +3934,9 @@ def _render_enterprise_cta_close(spec: dict[str, Any], total: int) -> str:
                 <div class="ent-sep reveal"></div>
                 <div class="ent-code reveal"><span class="green">thesis</span> = {_escape(spec['key_point'])}</div>
                 <div class="ent-kpi-row" style="margin-top:18px;">
-                    <div class="ent-kpi-card reveal"><div class="ent-kpi-number neutral">{_escape(values[0])}</div><div class="ent-kpi-label">industry archetypes</div></div>
-                    <div class="ent-kpi-card reveal"><div class="ent-kpi-number neutral">{_escape(values[1])}</div><div class="ent-kpi-label">shared direction</div></div>
-                    <div class="ent-kpi-card reveal"><div class="ent-kpi-number positive">{_escape(values[2])}</div><div class="ent-kpi-label">repeatable work automated</div></div>
+                    <div class="ent-kpi-card reveal"><div class="ent-kpi-number neutral">{_escape(value0)}</div><div class="ent-kpi-label">{_escape(items[0])}</div></div>
+                    <div class="ent-kpi-card reveal"><div class="ent-kpi-number neutral">{_escape(value1)}</div><div class="ent-kpi-label">{_escape(items[1])}</div></div>
+                    <div class="ent-kpi-card reveal"><div class="ent-kpi-number positive">{_escape(value2)}</div><div class="ent-kpi-label">{_escape(items[2])}</div></div>
                 </div>
             </div>
         </div>
@@ -3012,26 +4029,85 @@ def _data_story_extra_css() -> str:
     padding: 18px;
 }
 
+.ds-stage-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 16px;
+}
+
+.ds-stage-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 18px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.ds-stage-index {
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+}
+
+.ds-stage-title {
+    margin: 0;
+    font-size: 1.05rem;
+    line-height: 1.35;
+    color: var(--text);
+}
+
+.ds-stage-copy {
+    margin: 0;
+    color: var(--text);
+    line-height: 1.58;
+}
+
 .ds-cta-block {
     display: grid;
     grid-template-columns: 1.2fr 1fr;
     gap: 20px;
     align-items: end;
 }
+
+@media (max-width: 900px) {
+    .ds-stage-grid,
+    .ds-cta-block {
+        grid-template-columns: 1fr;
+    }
+}
 """.strip()
+
+
+def _render_data_story_stage_grid(spec: dict[str, Any], *, count: int = 4, prefix: str = "stage") -> str:
+    cards = []
+    for index, (title, body) in enumerate(_spec_detail_pairs(spec, count=count), start=1):
+        cards.append(
+            f"""
+            <div class="ds-stage-card reveal">
+                <div class="ds-stage-index">{_escape(prefix)} {index:02d}</div>
+                <h3 class="ds-stage-title">{_escape(title)}</h3>
+                <p class="ds-stage-copy">{_escape(body)}</p>
+            </div>
+            """
+        )
+    return f'<div class="ds-stage-grid">{"".join(cards)}</div>'
 
 
 def _render_data_story_hero_number(spec: dict[str, Any], total: int) -> str:
     slide_number = spec["slide_number"]
     title_tag = _title_tag("h1", "ds-heading", spec["title"], preset="Data Story", layout_id=spec["layout_id"])
-    value = _metric_values_from_spec(spec, ["2"])[0]
+    value = _metric_values_from_spec(spec, [_compact_display_token(spec["title"], fallback="关键")])[0]
+    label = _split_supporting_phrases(spec["key_point"], minimum=1)[0]
     return f"""
     <section class="slide ds-hero-number" id="slide-{slide_number}" data-notes="{_escape(spec['speaker_note'])}" aria-label="{_escape(spec['role'])}" data-export-role="hero_number">
         <div class="slide-content ds-hero-slide">
             <div class="ds-shell">
                 <div class="ds-subhead reveal">AI industry landscape</div>
                 <div class="ds-kpi positive reveal">{_escape(value)}</div>
-                <div class="ds-kpi-label reveal">reference archetypes</div>
+                <div class="ds-kpi-label reveal">{_escape(label)}</div>
                 {title_tag}
                 <p style="max-width:42rem;margin:0 auto;color:var(--text);line-height:1.6;" class="reveal">{_escape(spec['key_point'])}</p>
             </div>
@@ -3044,16 +4120,28 @@ def _render_data_story_hero_number(spec: dict[str, Any], total: int) -> str:
 def _render_data_story_kpi_chart(spec: dict[str, Any], total: int) -> str:
     slide_number = spec["slide_number"]
     title_tag = _title_tag("h2", "ds-heading", spec["title"], preset="Data Story", layout_id=spec["layout_id"])
-    chart = _svg_bar_chart(["SaaS", "Auto", "Energy"], [42, 76, 14])
+    labels = _spec_display_items(spec, limit=3)
+    used_tokens: set[str] = set()
+    metric_values = []
+    for index, item in enumerate(labels):
+        value = _metric_value_for_item(item, spec, index=index, used_tokens=used_tokens)
+        used_tokens.add(value)
+        metric_values.append(value)
+    chart_values = _chart_metric_values_from_spec(spec, ["1", "2", "3"])
+    chart = (
+        _svg_bar_chart(_chart_labels_from_spec(spec, count=3), chart_values)
+        if chart_values
+        else _render_data_story_stage_grid(spec, count=3, prefix="metric")
+    )
     cards = "".join(
         f"""
         <div class="ds-kpi-card reveal">
-            <div class="ds-kpi">{_escape(_metric_values_from_spec(spec, ['4','3','1'])[index])}</div>
+            <div class="ds-kpi">{_escape(metric_values[index])}</div>
             <div class="ds-kpi-label">{_escape(item)}</div>
             <div class="ds-trend {'up' if index < 2 else 'down'}">{'▲' if index < 2 else '▼'} {_escape(spec['role'])}</div>
         </div>
         """
-        for index, item in enumerate((spec["supporting_items"] + spec["evidence_items"])[:3])
+        for index, item in enumerate(labels)
     )
     return f"""
     <section class="slide ds-kpi-chart" id="slide-{slide_number}" data-notes="{_escape(spec['speaker_note'])}" aria-label="{_escape(spec['role'])}" data-export-role="kpi_chart">
@@ -3076,7 +4164,12 @@ def _render_data_story_kpi_chart(spec: dict[str, Any], total: int) -> str:
 def _render_data_story_chart_insight(spec: dict[str, Any], total: int) -> str:
     slide_number = spec["slide_number"]
     title_tag = _title_tag("h2", "ds-heading", spec["title"], preset="Data Story", layout_id=spec["layout_id"])
-    chart = _svg_line_chart(["2016", "2023", "2024", "2025"], [12, 42, 68, 84])
+    chart_values = _chart_metric_values_from_spec(spec, ["1", "2", "3", "4"])
+    insight_body = (
+        _svg_line_chart(_chart_labels_from_spec(spec, count=4), chart_values)
+        if chart_values
+        else _render_data_story_stage_grid(spec, count=4, prefix="evidence")
+    )
     return f"""
     <section class="slide ds-chart-insight" id="slide-{slide_number}" data-notes="{_escape(spec['speaker_note'])}" aria-label="{_escape(spec['role'])}" data-export-role="chart_insight">
         <div class="slide-content">
@@ -3084,7 +4177,7 @@ def _render_data_story_chart_insight(spec: dict[str, Any], total: int) -> str:
                 <div class="ds-subhead reveal">trend</div>
                 {title_tag}
                 <div class="ds-divider reveal"></div>
-                <div class="ds-chart-card reveal">{chart}</div>
+                <div class="ds-chart-card reveal">{insight_body}</div>
                 <div class="ds-insight reveal"><strong>Insight:</strong> {_escape(spec['key_point'])}</div>
             </div>
         </div>
@@ -3096,15 +4189,16 @@ def _render_data_story_chart_insight(spec: dict[str, Any], total: int) -> str:
 def _render_data_story_comparison_matrix(spec: dict[str, Any], total: int) -> str:
     slide_number = spec["slide_number"]
     title_tag = _title_tag("h2", "ds-heading", spec["title"], preset="Data Story", layout_id=spec["layout_id"])
+    pairs = _spec_detail_pairs(spec, count=4)
     cells = "".join(
         f"""
         <div class="ds-matrix-cell reveal">
-            <div class="ds-subhead">{_escape(item)}</div>
-            <h3 style="margin:8px 0;color:var(--text);font-size:1.1rem;">{_escape(spec['title'])}</h3>
-            <p style="margin:0;color:var(--text);line-height:1.5;">{_escape(spec['visual'])}</p>
+            <div class="ds-subhead">{_escape(title)}</div>
+            <h3 style="margin:8px 0;color:var(--text);font-size:1.1rem;">{_escape(title)}</h3>
+            <p style="margin:0;color:var(--text);line-height:1.5;">{_escape(body)}</p>
         </div>
         """
-        for item in (spec["supporting_items"] + spec["evidence_items"])[:4]
+        for title, body in pairs[:4]
     )
     return f"""
     <section class="slide ds-comparison" id="slide-{slide_number}" data-notes="{_escape(spec['speaker_note'])}" aria-label="{_escape(spec['role'])}" data-export-role="comparison_matrix">
@@ -3124,14 +4218,15 @@ def _render_data_story_comparison_matrix(spec: dict[str, Any], total: int) -> st
 def _render_data_story_kpi_grid(spec: dict[str, Any], total: int) -> str:
     slide_number = spec["slide_number"]
     title_tag = _title_tag("h2", "ds-heading", spec["title"], preset="Data Story", layout_id=spec["layout_id"])
-    values = _metric_values_from_spec(spec, ["4", "90%", "3"])
+    items = _spec_display_items(spec, limit=4)
     cards = []
-    for index, item in enumerate((spec["supporting_items"] + spec["evidence_items"])[:4]):
+    for index, item in enumerate(items[:4]):
         tone = "positive" if index == 0 else ("negative" if index == 2 else "neutral")
+        value = _metric_value_for_item(item, spec, index=index)
         cards.append(
             f"""
             <div class="ds-kpi-card reveal">
-                <div class="ds-kpi {tone}">{_escape(values[index % len(values)])}</div>
+                <div class="ds-kpi {tone}">{_escape(value)}</div>
                 <div class="ds-kpi-label">{_escape(item)}</div>
                 <div class="ds-trend {'up' if index != 2 else 'down'}">{'▲' if index != 2 else '▼'} {_escape(spec['role'])}</div>
             </div>
@@ -3155,7 +4250,12 @@ def _render_data_story_kpi_grid(spec: dict[str, Any], total: int) -> str:
 def _render_data_story_workflow_chart(spec: dict[str, Any], total: int) -> str:
     slide_number = spec["slide_number"]
     title_tag = _title_tag("h2", "ds-heading", spec["title"], preset="Data Story", layout_id=spec["layout_id"])
-    chart = _svg_line_chart(["S1", "S2", "S3", "S4"], [20, 44, 63, 88])
+    chart_values = _chart_metric_values_from_spec(spec, ["1", "2", "3", "4"])
+    chart = (
+        _svg_line_chart(_chart_labels_from_spec(spec, count=4, family="workflow"), chart_values)
+        if chart_values
+        else _render_data_story_stage_grid(spec, count=4, prefix="phase")
+    )
     return f"""
     <section class="slide ds-workflow" id="slide-{slide_number}" data-notes="{_escape(spec['speaker_note'])}" aria-label="{_escape(spec['role'])}" data-export-role="workflow_chart">
         <div class="slide-content">
@@ -3178,8 +4278,19 @@ def _render_data_story_workflow_chart(spec: dict[str, Any], total: int) -> str:
 
 def _render_data_story_cta_close(spec: dict[str, Any], total: int) -> str:
     slide_number = spec["slide_number"]
-    title_tag = _title_tag("h2", "ds-heading", spec["title"], preset="Data Story", layout_id=spec["layout_id"])
-    values = _metric_values_from_spec(spec, ["2", "1"])
+    title_tag = _title_tag(
+        "h2",
+        "ds-heading",
+        spec["title"],
+        preset="Data Story",
+        layout_id=spec["layout_id"],
+        force_balance=True,
+    )
+    items = _spec_display_items(spec, limit=2)
+    used_tokens: set[str] = set()
+    value0 = _metric_value_for_item(items[0], spec, index=0, used_tokens=used_tokens)
+    used_tokens.add(value0)
+    value1 = _metric_value_for_item(items[1], spec, index=1, used_tokens=used_tokens)
     return f"""
     <section class="slide ds-close" id="slide-{slide_number}" data-notes="{_escape(spec['speaker_note'])}" aria-label="{_escape(spec['role'])}" data-export-role="cta_close">
         <div class="slide-content">
@@ -3191,8 +4302,8 @@ def _render_data_story_cta_close(spec: dict[str, Any], total: int) -> str:
                     <div class="ds-insight reveal"><strong>Decision:</strong> {_escape(spec['key_point'])}</div>
                 </div>
                 <div class="ds-kpi-grid">
-                    <div class="ds-kpi-card reveal"><div class="ds-kpi positive">{_escape(values[0])}</div><div class="ds-kpi-label">validated archetypes</div></div>
-                    <div class="ds-kpi-card reveal"><div class="ds-kpi neutral">{_escape(values[1])}</div><div class="ds-kpi-label">shared trajectory</div></div>
+                    <div class="ds-kpi-card reveal"><div class="ds-kpi positive">{_escape(value0)}</div><div class="ds-kpi-label">{_escape(items[0])}</div></div>
+                    <div class="ds-kpi-card reveal"><div class="ds-kpi neutral">{_escape(value1)}</div><div class="ds-kpi-label">{_escape(items[1])}</div></div>
                 </div>
             </div>
         </div>
@@ -3234,6 +4345,404 @@ def render_data_story_html(
     return _assemble_shell_html(brief["title"], brief["language"], "Data Story", css, slides_html, total)
 
 
+def _chinese_chan_extra_css() -> str:
+    return """
+#brand-mark {
+    display: none;
+}
+
+body[data-preset="Chinese Chan"] {
+    font-feature-settings: "palt";
+}
+
+body[data-preset="Chinese Chan"] .progress-bar {
+    height: 2px;
+    background: var(--accent);
+}
+
+body[data-preset="Chinese Chan"] .nav-dots button {
+    width: 6px;
+    height: 6px;
+    border: none;
+    border-radius: 50%;
+    background: var(--rule);
+    transition: transform 0.2s ease, background 0.2s ease;
+}
+
+body[data-preset="Chinese Chan"] .nav-dots button.active {
+    background: var(--accent);
+    transform: scale(1.4);
+}
+
+body[data-preset="Chinese Chan"] .slide {
+    justify-content: center;
+    align-items: center;
+    padding: clamp(3rem, 8vw, 8rem) clamp(2rem, 6vw, 6rem);
+}
+
+body[data-preset="Chinese Chan"] .zen-content {
+    width: min(100%, 600px);
+    position: relative;
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+body[data-preset="Chinese Chan"] .zen-center {
+    align-items: center;
+    text-align: center;
+}
+
+body[data-preset="Chinese Chan"] .zen-rule {
+    margin: clamp(18px, 3vh, 28px) 0;
+}
+
+body[data-preset="Chinese Chan"] .zen-paragraph-stack {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+}
+
+body[data-preset="Chinese Chan"] .zen-list {
+    margin: 0;
+}
+
+body[data-preset="Chinese Chan"] .zen-list li {
+    font-size: clamp(0.9rem, 1.6vw, 1.05rem);
+    font-weight: 300;
+    line-height: 1.9;
+    color: var(--text);
+}
+
+body[data-preset="Chinese Chan"] .zen-stat-row {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: clamp(18px, 3vw, 30px);
+    margin: clamp(12px, 2vh, 18px) 0 clamp(18px, 3vh, 26px);
+}
+
+body[data-preset="Chinese Chan"] .zen-stat {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    text-align: center;
+}
+
+body[data-preset="Chinese Chan"] .zen-stat .num {
+    font-family: "EB Garamond", "Noto Serif SC", "Noto Serif CJK SC", Georgia, serif;
+    font-size: clamp(2rem, 4vw, 3.3rem);
+    font-weight: 600;
+    line-height: 1;
+    letter-spacing: 0;
+}
+
+body[data-preset="Chinese Chan"] .zen-stat .label {
+    max-width: 15ch;
+    font-size: clamp(0.7rem, 1vw, 0.84rem);
+    letter-spacing: 0.04em;
+    line-height: 1.65;
+    color: var(--text-muted);
+}
+
+body[data-preset="Chinese Chan"] .zen-vertical-shell {
+    width: min(100%, 680px);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: clamp(18px, 4vh, 36px);
+    padding: clamp(12px, 2vh, 24px) 0;
+    position: relative;
+}
+
+body[data-preset="Chinese Chan"] .zen-vertical-caption {
+    position: static;
+    text-align: center;
+    max-width: 24rem;
+}
+
+body[data-preset="Chinese Chan"] .zen-seal {
+    width: 12px;
+    height: 12px;
+    background: var(--accent);
+    border-radius: 2px;
+    position: static;
+}
+
+body[data-preset="Chinese Chan"] .slide-num-label {
+    font-family: "EB Garamond", "Noto Serif SC", "Noto Serif CJK SC", Georgia, serif;
+    font-size: clamp(0.65rem, 1vw, 0.8rem);
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    font-variant-numeric: proportional-nums;
+}
+
+body[data-preset="Chinese Chan"] #notes-panel {
+    background: rgba(250,250,248,0.94);
+    color: var(--text);
+    border-color: var(--rule);
+    box-shadow: none;
+}
+
+body[data-preset="Chinese Chan"] #notes-panel-label,
+body[data-preset="Chinese Chan"] #notes-collapse-btn {
+    color: var(--text-muted);
+}
+
+body[data-preset="Chinese Chan"] #notes-textarea {
+    color: var(--text);
+}
+
+@media (max-width: 900px) {
+    body[data-preset="Chinese Chan"] .zen-stat-row {
+        grid-template-columns: 1fr;
+    }
+}
+""".strip()
+
+
+def _chinese_chan_caption(spec: dict[str, Any], language: str) -> str:
+    if language.lower().startswith("zh"):
+        return f"第 {spec['slide_number']:02d} 章"
+    return f"Section {spec['slide_number']:02d}"
+
+
+def _chinese_chan_copy_items(spec: dict[str, Any], *, count: int = 3) -> list[str]:
+    items = _dedupe_preserve(
+        [
+            *spec.get("supporting_facts", []),
+            *spec["supporting_items"],
+            *spec["evidence_items"],
+            *_split_supporting_phrases(spec["key_point"], minimum=1),
+        ]
+    )
+    items = [item for item in items if item and item != spec["title"]]
+    if not items:
+        items = [spec["key_point"]]
+    while len(items) < count:
+        items.append(items[-1])
+    return items[:count]
+
+
+def _chinese_chan_metric_value(item: str, spec: dict[str, Any], *, index: int, used_tokens: set[str]) -> str:
+    numeric_facts = [str(value).strip() for value in spec.get("numeric_facts", []) if str(value).strip()]
+    if index < len(numeric_facts):
+        return numeric_facts[index]
+
+    value = _metric_value_for_item(item, spec, index=index, used_tokens=used_tokens)
+    if not _extract_numbers(value) and re.search(r"[\u3400-\u9fff]", value):
+        compact = _compact_display_token(value, fallback=value[:2], used_tokens=used_tokens)
+        value = compact[:2] if len(compact) > 2 else compact
+    return value
+
+
+def _chinese_chan_stat_label(item: str, value: str) -> str:
+    cleaned = re.sub(r"\s+", " ", item or "").strip()
+    if not cleaned:
+        return value
+
+    for sep in ("：", ":"):
+        if sep in cleaned:
+            prefix, suffix = cleaned.split(sep, 1)
+            prefix = prefix.strip()
+            suffix = suffix.strip()
+            if suffix and prefix == value:
+                return suffix
+
+    if value and cleaned.startswith(value):
+        trimmed = cleaned[len(value) :].lstrip("：:，,；;。 ")
+        if trimmed:
+            return trimmed
+    return cleaned
+
+
+def _chinese_chan_ghost(spec: dict[str, Any]) -> str:
+    anchor = _compact_display_token(spec["title"], fallback="空")
+    glyph = next((char for char in anchor if re.fullmatch(r"[\u3400-\u9fff]", char)), "空")
+    styles = [
+        "right: -0.16em; bottom: -0.22em; opacity: 0.08;",
+        "left: -0.12em; top: -0.08em; opacity: 0.08;",
+    ]
+    style = styles[(spec["slide_number"] - 1) % len(styles)]
+    return f'<div class="zen-ghost-kanji reveal" style="{style}">{_escape(glyph)}</div>'
+
+
+def _render_chinese_chan_center(spec: dict[str, Any], total: int, *, language: str) -> str:
+    slide_number = spec["slide_number"]
+    title_class = _title_component_for_layout("Chinese Chan", spec["layout_id"], default="zen-title")
+    title_tag = _title_tag(
+        "h1",
+        title_class,
+        spec["title"],
+        preset="Chinese Chan",
+        layout_id=spec["layout_id"],
+        extra_classes="zen-cn",
+        force_balance=True,
+    )
+    use_ghost = slide_number % 2 == 1
+    ornament = _chinese_chan_ghost(spec) if use_ghost else ""
+    separator = (
+        '<div class="reveal" style="margin-top: 26px;"><div class="zen-vline"></div></div>'
+        if not use_ghost else ""
+    )
+    return f"""
+    <section class="slide" id="slide-{slide_number}" data-notes="{_escape(spec['speaker_note'])}" aria-label="{_escape(spec['role'])}" data-export-role="zen_center">
+        {ornament}
+        <div class="zen-content zen-center">
+            <div class="zen-caption reveal">{_escape(_chinese_chan_caption(spec, language))}</div>
+            {title_tag}
+            <p class="zen-body zen-cn reveal" style="margin-top: 18px;">{_escape(spec['key_point'])}</p>
+            {separator}
+        </div>
+        <span class="slide-num-label zen-caption">{slide_number:02d} / {total:02d}</span>
+    </section>
+    """.strip()
+
+
+def _render_chinese_chan_split(spec: dict[str, Any], total: int, *, language: str) -> str:
+    slide_number = spec["slide_number"]
+    title_class = _title_component_for_layout("Chinese Chan", spec["layout_id"], default="zen-h2")
+    title_tag = _title_tag(
+        "h2",
+        title_class,
+        spec["title"],
+        preset="Chinese Chan",
+        layout_id=spec["layout_id"],
+        extra_classes="zen-cn",
+        force_balance=True,
+    )
+    items = _chinese_chan_copy_items(spec, count=3)
+    list_html = "".join(f"<li>{_escape(item)}</li>" for item in items)
+    return f"""
+    <section class="slide" id="slide-{slide_number}" data-notes="{_escape(spec['speaker_note'])}" aria-label="{_escape(spec['role'])}" data-export-role="zen_split">
+        <div class="zen-content">
+            <span class="zen-caption reveal">{_escape(_chinese_chan_caption(spec, language))}</span>
+            {title_tag}
+            <div class="zen-rule reveal"><span class="zen-rule-line"></span></div>
+            <div class="zen-paragraph-stack">
+                <p class="zen-body zen-cn reveal">{_escape(spec['key_point'])}</p>
+                <ul class="zen-list zen-body zen-cn reveal">{list_html}</ul>
+            </div>
+        </div>
+        <span class="slide-num-label zen-caption">{slide_number:02d} / {total:02d}</span>
+    </section>
+    """.strip()
+
+
+def _render_chinese_chan_stat(spec: dict[str, Any], total: int, *, language: str) -> str:
+    slide_number = spec["slide_number"]
+    title_class = _title_component_for_layout("Chinese Chan", spec["layout_id"], default="zen-h2")
+    title_tag = _title_tag(
+        "h2",
+        title_class,
+        spec["title"],
+        preset="Chinese Chan",
+        layout_id=spec["layout_id"],
+        extra_classes="zen-cn",
+        force_balance=True,
+    )
+    items = _chinese_chan_copy_items(spec, count=3)
+    used_tokens: set[str] = set()
+    cards = []
+    for index, item in enumerate(items):
+        value = _chinese_chan_metric_value(item, spec, index=index, used_tokens=used_tokens)
+        used_tokens.add(value)
+        label = _chinese_chan_stat_label(item, value)
+        cards.append(
+            f"""
+            <div class="zen-stat reveal">
+                <div class="num">{_escape(value)}</div>
+                <div class="label">{_escape(label)}</div>
+            </div>
+            """
+        )
+    return f"""
+    <section class="slide" id="slide-{slide_number}" data-notes="{_escape(spec['speaker_note'])}" aria-label="{_escape(spec['role'])}" data-export-role="zen_stat">
+        <div class="zen-content">
+            <span class="zen-caption reveal">{_escape(_chinese_chan_caption(spec, language))}</span>
+            {title_tag}
+            <div class="zen-rule reveal"><span class="zen-rule-line"></span></div>
+            <div class="zen-stat-row">
+                {''.join(cards)}
+            </div>
+            <p class="zen-body zen-cn reveal" style="text-align:center;">{_escape(spec['key_point'])}</p>
+        </div>
+        <span class="slide-num-label zen-caption">{slide_number:02d} / {total:02d}</span>
+    </section>
+    """.strip()
+
+
+def _render_chinese_chan_vertical(spec: dict[str, Any], total: int) -> str:
+    slide_number = spec["slide_number"]
+    raw_title = re.sub(r"\s+", "", spec["title"])
+    title_text = spec["title"]
+    if len(raw_title) > 12:
+        segments = [segment.strip() for segment in re.split(r"[，。；、,:：]", spec["title"]) if segment.strip()]
+        tail = next((segment for segment in reversed(segments) if 2 <= len(re.sub(r"\s+", "", segment)) <= 12), "")
+        if tail:
+            compact_tail = re.sub(r"^(?:是|让|把)", "", tail).strip()
+            if compact_tail:
+                title_text = compact_tail
+    if len(re.sub(r"\s+", "", title_text)) > 12:
+        title_text = _compact_display_token(title_text, fallback="答案")
+    extra_attrs = ""
+    if len(raw_title) > 14:
+        extra_attrs = 'style="font-size: clamp(1.55rem, 4.4vw, 3.9rem); letter-spacing: 0.12em;"'
+    elif len(raw_title) > 10:
+        extra_attrs = 'style="font-size: clamp(1.75rem, 4.8vw, 4.4rem);"'
+    title_class = _title_component_for_layout("Chinese Chan", spec["layout_id"], default="zen-vertical-title")
+    title_tag = _title_tag(
+        "div",
+        title_class,
+        title_text,
+        preset="Chinese Chan",
+        layout_id=spec["layout_id"],
+        extra_classes="zen-cn",
+        extra_attrs=extra_attrs,
+    )
+    return f"""
+    <section class="slide" id="slide-{slide_number}" data-notes="{_escape(spec['speaker_note'])}" aria-label="{_escape(spec['role'])}" data-export-role="zen_vertical">
+        <div class="zen-vertical-shell">
+            {title_tag}
+            <div class="zen-seal"></div>
+            <div class="zen-vertical-caption">
+                <p class="zen-body zen-cn reveal">{_escape(spec['key_point'])}</p>
+            </div>
+        </div>
+        <span class="slide-num-label zen-caption">{slide_number:02d} / {total:02d}</span>
+    </section>
+    """.strip()
+
+
+def _render_chinese_chan_slide(spec: dict[str, Any], total: int, *, language: str) -> str:
+    if spec["layout_id"] == "zen_vertical":
+        return _render_chinese_chan_vertical(spec, total)
+    if spec["layout_id"] == "zen_stat":
+        return _render_chinese_chan_stat(spec, total, language=language)
+    if spec["layout_id"] == "zen_center":
+        return _render_chinese_chan_center(spec, total, language=language)
+    return _render_chinese_chan_split(spec, total, language=language)
+
+
+def render_chinese_chan_html(
+    brief: dict[str, Any],
+    *,
+    packet: dict[str, Any] | None = None,
+    style_contract: dict[str, Any] | None = None,
+) -> str:
+    packet = packet or build_render_packet(brief)
+    style_contract = style_contract or compile_style_contract("Chinese Chan")
+    if brief["style"]["preset"] != "Chinese Chan":
+        raise RenderError("Chinese Chan renderer only accepts Chinese Chan briefs")
+    specs = build_slide_spec(brief, packet=packet)
+    total = len(specs)
+    slides_html = "\n\n".join(_render_chinese_chan_slide(spec, total, language=brief["language"]) for spec in specs)
+    css = _build_non_swiss_shell_css(style_contract, "Chinese Chan") + "\n\n" + _chinese_chan_extra_css()
+    return _assemble_shell_html(brief["title"], brief["language"], "Chinese Chan", css, slides_html, total)
+
+
 def render_from_brief(brief: dict[str, Any]) -> tuple[str, dict[str, Any], dict[str, Any]]:
     packet = build_render_packet(brief)
     style_contract = compile_style_contract(brief["style"]["preset"])
@@ -3244,9 +4753,11 @@ def render_from_brief(brief: dict[str, Any]) -> tuple[str, dict[str, Any], dict[
         html_text = render_enterprise_dark_html(brief, packet=packet, style_contract=style_contract)
     elif preset == "Data Story":
         html_text = render_data_story_html(brief, packet=packet, style_contract=style_contract)
+    elif preset == "Chinese Chan":
+        html_text = render_chinese_chan_html(brief, packet=packet, style_contract=style_contract)
     else:
         raise RenderError(
-            f"Deterministic low-context render is only implemented for Swiss Modern, Enterprise Dark, and Data Story right now; got {preset}"
+            f"Deterministic low-context render is only implemented for Swiss Modern, Enterprise Dark, Data Story, and Chinese Chan right now; got {preset}"
         )
     return html_text, packet, style_contract
 

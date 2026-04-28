@@ -1,0 +1,220 @@
+{
+  "schema_version": 1,
+  "presets": {
+    "Swiss Modern": {
+      "layout_family_map": {
+        "hero": "title_grid",
+        "statement": "pull_quote",
+        "evidence": "data_table",
+        "comparison": "column_content",
+        "stat": "stat_block",
+        "flow": "geometric_diagram",
+        "index": "contents_index"
+      },
+      "layout_fallbacks": {
+        "stat_block": "column_content",
+        "data_table": "contents_index"
+      },
+      "role_forbidden_layouts": {
+        "problem": [
+          "stat_block"
+        ],
+        "risk": [
+          "stat_block"
+        ]
+      },
+      "layout_requirements": {
+        "stat_block": {
+          "require_compact_anchor": true,
+          "fallback": "column_content"
+        },
+        "data_table": {
+          "require_supporting_facts": true,
+          "fallback": "contents_index"
+        }
+      }
+    },
+    "Enterprise Dark": {
+      "coverage_signature": {
+        "required_classes": [
+          ".ent-shell",
+          ".ent-title",
+          ".ent-label-tag",
+          ".ent-kpi-card",
+          ".ent-kpi-number",
+          ".ent-kpi-label",
+          ".ent-badge",
+          ".ent-sep",
+          ".ent-split",
+          ".ent-split-panel",
+          ".ent-feature-row",
+          ".ent-arch-grid"
+        ],
+        "required_backgrounds": [
+          "body::before"
+        ]
+      },
+      "layout_family_map": {
+        "hero": "kpi_dashboard",
+        "statement": "insight_pull",
+        "evidence": "data_table",
+        "comparison": "comparison_matrix",
+        "flow": "consulting_split",
+        "timeline": "timeline",
+        "architecture": "architecture_map",
+        "close": "cta_close"
+      },
+      "layout_fallbacks": {
+        "kpi_dashboard": "insight_pull",
+        "timeline": "consulting_split"
+      },
+      "role_forbidden_layouts": {
+        "problem": [
+          "kpi_dashboard"
+        ],
+        "risk": [
+          "kpi_dashboard"
+        ]
+      },
+      "layout_requirements": {
+        "kpi_dashboard": {
+          "fallback": "insight_pull"
+        },
+        "timeline": {
+          "require_progression_signal": true,
+          "fallback": "consulting_split"
+        },
+        "comparison_matrix": {
+          "require_comparison_signal": true,
+          "fallback": "consulting_split"
+        }
+      }
+    },
+    "Data Story": {
+      "coverage_signature": {
+        "required_classes": [
+          ".ds-shell",
+          ".ds-heading",
+          ".ds-hero-slide",
+          ".ds-kpi",
+          ".ds-kpi-card",
+          ".ds-kpi-grid",
+          ".ds-kpi-label",
+          ".ds-chart-svg",
+          ".ds-insight",
+          ".ds-divider",
+          ".ds-split-layout",
+          ".ds-stage-grid"
+        ],
+        "required_backgrounds": [
+          ".slide::before"
+        ]
+      },
+      "layout_family_map": {
+        "hero": "hero_number",
+        "chart": "kpi_chart",
+        "insight": "chart_insight",
+        "comparison": "comparison_matrix",
+        "kpi": "kpi_grid",
+        "flow": "workflow_chart",
+        "evidence": "chart_insight",
+        "close": "cta_close"
+      },
+      "layout_fallbacks": {
+        "kpi_chart": "chart_insight",
+        "comparison_matrix": "chart_insight"
+      },
+      "role_forbidden_layouts": {
+        "risk": [
+          "comparison_matrix"
+        ]
+      },
+      "layout_requirements": {
+        "kpi_chart": {
+          "disallow_chart_policy_avoid": true,
+          "require_local_numeric_signal": true,
+          "minimum_numeric_count": 3,
+          "fallback": "chart_insight"
+        },
+        "comparison_matrix": {
+          "require_comparison_signal": true,
+          "fallback": "chart_insight"
+        }
+      }
+    },
+    "Chinese Chan": {
+      "coverage_signature": {
+        "required_classes": [
+          ".zen-content",
+          ".zen-title",
+          ".zen-h2",
+          ".zen-body",
+          ".zen-caption",
+          ".zen-rule",
+          ".zen-rule-line",
+          ".zen-ghost-kanji",
+          ".zen-vertical-title",
+          ".zen-stat",
+          ".zen-stat-row"
+        ],
+        "required_backgrounds": [
+          "body::before"
+        ]
+      },
+      "layout_family_map": {
+        "hero": "zen_center",
+        "statement": "zen_center",
+        "evidence": "zen_split",
+        "comparison": "zen_split",
+        "flow": "zen_split",
+        "stat": "zen_stat",
+        "close": "zen_vertical"
+      },
+      "layout_fallbacks": {
+        "zen_center": "zen_split",
+        "zen_vertical": "zen_center",
+        "zen_stat": "zen_split"
+      },
+      "title_component_by_layout": {
+        "zen_center": "zen-title",
+        "zen_split": "zen-h2",
+        "zen_stat": "zen-h2",
+        "zen_vertical": "zen-vertical-title"
+      },
+      "role_forbidden_layouts": {
+        "problem": [
+          "zen_center",
+          "zen_vertical"
+        ],
+        "discovery": [
+          "zen_center",
+          "zen_vertical"
+        ],
+        "evidence": [
+          "zen_center",
+          "zen_vertical"
+        ],
+        "summary": [
+          "zen_center",
+          "zen_vertical"
+        ],
+        "closing": [
+          "zen_stat"
+        ]
+      },
+      "layout_requirements": {
+        "zen_center": {
+          "fallback": "zen_split"
+        },
+        "zen_stat": {
+          "require_compact_anchor": true,
+          "fallback": "zen_split"
+        },
+        "zen_vertical": {
+          "require_compact_anchor": true,
+          "fallback": "zen_center"
+        }
+      }
+    }
+  }
+}

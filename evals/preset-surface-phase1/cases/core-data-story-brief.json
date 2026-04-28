@@ -1,0 +1,149 @@
+{
+  "schema_version": 1,
+  "brief_id": "preset-surface-phase1-data-story",
+  "mode": "polish",
+  "language": "zh-CN",
+  "title": "Agent Delivery Metrics Review",
+  "audience": "关心试点成效和扩面节奏的工程管理者与项目负责人",
+  "desired_action": "确认当前试点具备扩展到更多团队的证据基础",
+  "deck": {
+    "deck_type": "user-content",
+    "page_count": 8,
+    "output_format": "html-slides"
+  },
+  "style": {
+    "preset": "Data Story",
+    "tone": "数据驱动、简洁、偏经营复盘",
+    "visual_density": "medium"
+  },
+  "content": {
+    "source_policy": "distill-only",
+    "must_include": [
+      "12 个团队",
+      "PR 首次通过率 68% -> 84%",
+      "回归测试耗时 9.5 小时 -> 4.1 小时",
+      "缺陷逃逸率 2.8% -> 1.6%"
+    ],
+    "must_avoid": [
+      "没有数字的抽象复盘",
+      "把指标变化写成情绪判断",
+      "连续相同图形"
+    ]
+  },
+  "narrative": {
+    "thesis": "试点成效已经足够证明，收益来自更短的澄清到验收闭环，而不是来自单点自动化炫技。",
+    "page_roles": [
+      "cover",
+      "baseline",
+      "comparison",
+      "driver",
+      "evidence",
+      "risk",
+      "decision",
+      "closing"
+    ],
+    "slides": [
+      {
+        "slide_number": 1,
+        "role": "cover",
+        "title": "试点价值已经显性化，但收益结构需要被看清",
+        "key_point": "12 个团队、8 周样本已经足够判断哪些改动真正有效",
+        "visual": "hero metrics"
+      },
+      {
+        "slide_number": 2,
+        "role": "baseline",
+        "title": "四个核心指标同时改善，说明变化不是偶然波动",
+        "key_point": "PR 首次通过率、回归耗时、缺陷逃逸率和澄清往返次数都同步转好",
+        "visual": "baseline chart"
+      },
+      {
+        "slide_number": 3,
+        "role": "comparison",
+        "title": "最大的收益出现在验收前移和返工减少",
+        "key_point": "PR 首次通过率 68% 到 84%，回归测试耗时 9.5 小时到 4.1 小时",
+        "visual": "before after comparison"
+      },
+      {
+        "slide_number": 4,
+        "role": "driver",
+        "title": "指标改善主要来自三类动作叠加",
+        "key_point": "模板化澄清、自动检查和更短的验收闭环，构成了复利链条",
+        "visual": "driver stack"
+      },
+      {
+        "slide_number": 5,
+        "role": "evidence",
+        "title": "缺陷逃逸率下降证明质量没有被速度换掉",
+        "key_point": "缺陷逃逸率从 2.8% 降到 1.6%，说明验收质量在同步增强",
+        "visual": "quality evidence"
+      },
+      {
+        "slide_number": 6,
+        "role": "risk",
+        "title": "如果直接扩面到低频复杂场景，收益会先被稀释",
+        "key_point": "当前数据支持先扩高频稳定任务，不支持一次性铺开所有场景",
+        "visual": "risk ladder"
+      },
+      {
+        "slide_number": 7,
+        "role": "decision",
+        "title": "下一阶段应复制流程，而不是复制热情",
+        "key_point": "把高频任务模板、验收门禁和度量口径一起复制，扩面才不会失真",
+        "visual": "decision table"
+      },
+      {
+        "slide_number": 8,
+        "role": "closing",
+        "title": "这轮数据已经足够支持谨慎扩面",
+        "key_point": "先复制有效工作流，再继续扩大试点范围，能把收益保持在可解释区间",
+        "visual": "closing metric bar"
+      }
+    ]
+  },
+  "runtime": {
+    "editing_mode": true,
+    "presenter_mode": true,
+    "watermark_mode": "injected-last-slide",
+    "export_intent": "none"
+  },
+  "plan_view": {
+    "emit_planning_view": false,
+    "planning_view_path": "PLANNING.md"
+  },
+  "timing": {
+    "estimate": {
+      "plan": "2-4 min",
+      "generate": "2-4 min",
+      "validate": "<1 min",
+      "polish": "2-6 min",
+      "total": "8-15 min"
+    },
+    "actual": {
+      "plan": "0m 00s",
+      "generate": "0m 00s",
+      "validate": "0m 00s",
+      "polish": "0m 00s",
+      "total": "0m 00s"
+    }
+  },
+  "polish_controls": {
+    "style_constraints": [
+      "每页必须保留明确的数据载体",
+      "对比页优先于纯叙述页",
+      "结论页不能回避下一步动作"
+    ],
+    "image_plan": [
+      {
+        "slide_number": 2,
+        "intent": "用对比图承载四个核心指标的基线变化"
+      },
+      {
+        "slide_number": 5,
+        "intent": "用质量证据图承载缺陷逃逸率改善"
+      }
+    ],
+    "reference_branch": "参考驱动"
+  },
+  "notes": ""
+}

@@ -1,0 +1,50 @@
+{
+  "version": 1,
+  "policy": {
+    "phase_1_focus": "Deepen and regression-gate the core four before expanding the default recommendation surface.",
+    "default_visible_shortlist_phase_1": [
+      "Swiss Modern",
+      "Enterprise Dark",
+      "Data Story",
+      "Blue Sky"
+    ],
+    "default_recommendation_presets": [
+      "Swiss Modern",
+      "Enterprise Dark",
+      "Data Story",
+      "Blue Sky"
+    ],
+    "explicit_user_selection": "Honor any current preset when explicitly requested unless it has been formally archived.",
+    "next_editorial_candidate": "Paper & Ink"
+  },
+  "tiers": {
+    "production": [
+      "Swiss Modern",
+      "Enterprise Dark",
+      "Data Story",
+      "Blue Sky"
+    ],
+    "supported": [
+      "Paper & Ink",
+      "Glassmorphism",
+      "Chinese Chan",
+      "Bold Signal",
+      "Aurora Mesh",
+      "Terminal Green"
+    ],
+    "experimental": [
+      "Electric Studio",
+      "Creative Voltage",
+      "Dark Botanical",
+      "Modern Newspaper",
+      "Neon Cyber",
+      "Notebook Tabs",
+      "Pastel Geometry",
+      "Split Pastel",
+      "Vintage Editorial",
+      "Neo-Brutalism",
+      "Neo-Retro Dev Deck"
+    ],
+    "archive_candidate": []
+  }
+}

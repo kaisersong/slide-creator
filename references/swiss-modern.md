@@ -106,6 +106,37 @@ body {
     opacity: 0.2;
 }
 
+.bg-num {
+    position: absolute;
+    right: clamp(2rem, 5vw, 5rem);
+    top: 0;
+    font-family: "Archivo Black", sans-serif;
+    font-weight: 900;
+    font-size: clamp(8rem, 25vw, 18rem);
+    color: #f0f0f0;
+    line-height: 0.85;
+    pointer-events: none;
+    user-select: none;
+    z-index: 0;
+}
+
+.slide-num-label {
+    position: absolute;
+    top: 28px;
+    right: 28px;
+    font-family: "Archivo Black", sans-serif;
+    font-size: 11px;
+    font-weight: 900;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: rgba(0, 0, 0, 0.18);
+    z-index: 2;
+}
+
+.slide-num-label.light {
+    color: rgba(255, 255, 255, 0.28);
+}
+
 /* Accent word or local numeric hit — never a full-page fill */
 .accent {
     color: var(--red);

@@ -7,7 +7,7 @@ from typing import Any
 
 from bs4 import BeautifulSoup
 
-from low_context import compile_style_contract, load_brief
+from low_context import _preset_usage_rules, compile_style_contract, load_brief
 from title_browser_qa import analyze_title_composition_path
 
 
@@ -171,6 +171,66 @@ def _must_include_coverage(brief: dict[str, Any] | None, html_text: str) -> floa
     return round(matched / len(must_include), 4)
 
 
+def _slide_local_numeric_tokens(slide: dict[str, Any]) -> set[str]:
+    corpus = [
+        slide.get("title", ""),
+        slide.get("key_point", ""),
+        slide.get("claim", ""),
+        slide.get("explanation", ""),
+        slide.get("visual_intent", ""),
+        " ".join(str(value) for value in slide.get("supporting_facts", []) if str(value).strip()),
+        " ".join(str(value) for value in slide.get("numeric_facts", []) if str(value).strip()),
+    ]
+    tokens: set[str] = set()
+    for chunk in corpus:
+        tokens.update(_meaningful_numeric_tokens(str(chunk)))
+    return tokens
+
+
+def _chart_signal_mismatch(brief: dict[str, Any] | None, slides: list[Any]) -> tuple[int | None, float | None]:
+    if not brief:
+        return None, None
+    mismatch = 0
+    chart_slide_count = 0
+    brief_slides = brief.get("narrative", {}).get("slides", [])
+    for slide_meta, slide_dom in zip(brief_slides, slides):
+        has_chart = bool(slide_dom.select_one('svg[aria-label="bar chart"], svg[aria-label="line chart"]'))
+        if not has_chart:
+            continue
+        chart_slide_count += 1
+        chart_policy = str(slide_meta.get("chart_policy") or "auto").strip().lower()
+        if chart_policy == "required":
+            continue
+        local_numeric = _slide_local_numeric_tokens(slide_meta)
+        if len(local_numeric) < 2:
+            mismatch += 1
+    if chart_slide_count == 0:
+        return 0, 0.0
+    return mismatch, round(mismatch / chart_slide_count, 4)
+
+
+def _global_fact_overuse(brief: dict[str, Any] | None, slides: list[Any]) -> int | None:
+    if not brief:
+        return None
+    content = brief.get("content", {})
+    facts = content.get("global_facts") or content.get("must_include") or []
+    normalized_facts = [str(item).strip() for item in facts if str(item).strip()]
+    if not normalized_facts:
+        return 0
+
+    threshold = max(3, len(slides) // 2)
+    overused = 0
+    for fact in normalized_facts:
+        count = 0
+        for slide in slides:
+            text = slide.get_text(" ", strip=True)
+            if _phrase_present(fact, text):
+                count += 1
+        if count > threshold:
+            overused += 1
+    return overused
+
+
 def _narrative_role_coverage(brief: dict[str, Any] | None, soup: BeautifulSoup) -> tuple[float | None, bool | None]:
     if not brief:
         return None, None
@@ -235,12 +295,22 @@ def _layout_variety(slides: list[Any]) -> float:
 def _style_signature_coverage(soup: BeautifulSoup, preset: str | None) -> float | None:
     if not preset:
         return None
+    required: set[str] = set()
     try:
-        contract = compile_style_contract(preset)
+        usage_rules = _preset_usage_rules(preset)
     except Exception:
-        return None
-
-    required = set(contract["required_signature_classes"]) | set(contract["required_background_layers"])
+        usage_rules = {}
+    coverage_signature = usage_rules.get("coverage_signature", {}) if isinstance(usage_rules, dict) else {}
+    if coverage_signature:
+        required = set(coverage_signature.get("required_classes", [])) | set(
+            coverage_signature.get("required_backgrounds", [])
+        )
+    if not required:
+        try:
+            contract = compile_style_contract(preset)
+        except Exception:
+            return None
+        required = set(contract["required_signature_classes"]) | set(contract["required_background_layers"])
     if not required:
         return None
 
@@ -256,9 +326,13 @@ def _style_signature_coverage(soup: BeautifulSoup, preset: str | None) -> float 
     }
     pseudo_present: set[str] = set()
     css_text = _extract_css_text(str(soup))
-    for pseudo in ("body::before", "body::after"):
-        if pseudo in css_text:
-            pseudo_present.add(pseudo)
+    for pseudo in set(
+        re.findall(
+            r"(body::before|body::after|\.[A-Za-z][A-Za-z0-9_-]*::before|\.[A-Za-z][A-Za-z0-9_-]*::after)",
+            css_text,
+        )
+    ):
+        pseudo_present.add(pseudo)
 
     present = classes_present | ids_present | pseudo_present
     matched = len(required & present)
@@ -343,6 +417,8 @@ def analyze_html_quality(
     minimal_slide_ratio, max_minimal_run = _minimal_slide_ratio(slides)
     role_coverage, role_sequence_match = _narrative_role_coverage(brief, soup)
     must_include_coverage = _must_include_coverage(brief, soup.get_text(" ", strip=True))
+    chart_signal_mismatch_count, chart_signal_mismatch_rate = _chart_signal_mismatch(brief, slides)
+    global_fact_overuse_count = _global_fact_overuse(brief, slides)
     style_signature_coverage = _style_signature_coverage(soup, inferred_preset)
 
     diagnostics = {
@@ -356,6 +432,9 @@ def analyze_html_quality(
         "numeric_faithfulness": numeric_faithfulness,
         "hallucinated_numeric_tokens": hallucinated_numeric_tokens,
         "source_fact_coverage": must_include_coverage,
+        "chart_signal_mismatch_count": chart_signal_mismatch_count,
+        "chart_signal_mismatch_rate": chart_signal_mismatch_rate,
+        "global_fact_overuse_count": global_fact_overuse_count,
         "narrative_role_coverage": role_coverage,
         "role_sequence_match": role_sequence_match,
         "minimal_slide_ratio": minimal_slide_ratio,
@@ -371,6 +450,7 @@ def analyze_html_quality(
         "no-content-occlusion-risk": not content_occlusion_risk,
         "numeric-faithfulness": numeric_faithfulness >= 0.95,
         "source-fact-coverage": must_include_coverage is None or must_include_coverage >= 0.67,
+        "chart-local-signal": chart_signal_mismatch_count in (None, 0),
         "narrative-role-coverage": role_coverage is None or role_coverage == 1.0,
         "minimal-slide-run": max_minimal_run < 3,
     }
@@ -384,6 +464,8 @@ def analyze_html_quality(
         hard_failures.append("content-occlusion-risk")
     if hallucinated_numeric_tokens:
         hard_failures.append("hallucinated-numeric-chart-values")
+    if chart_signal_mismatch_count:
+        hard_failures.append("chart-without-local-numeric-signal")
     if role_coverage is not None and role_coverage < 1.0:
         hard_failures.append("narrative-role-mismatch")
     if title_browser_report:

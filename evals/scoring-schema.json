@@ -138,6 +138,19 @@
               "minimum": 0,
               "maximum": 1
             },
+            "chart_signal_mismatch_count": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "chart_signal_mismatch_rate": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 1
+            },
+            "global_fact_overuse_count": {
+              "type": "integer",
+              "minimum": 0
+            },
             "narrative_role_coverage": {
               "type": "number",
               "minimum": 0,

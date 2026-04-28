@@ -5,12 +5,14 @@ import subprocess
 import sys
 from pathlib import Path
 
+from bs4 import BeautifulSoup
+
 
 ROOT = Path(__file__).resolve().parent.parent
 SCRIPTS = ROOT / "scripts"
 sys.path.insert(0, str(SCRIPTS))
 
-from quality_eval import analyze_html_quality  # noqa: E402
+from quality_eval import _style_signature_coverage, analyze_html_quality  # noqa: E402
 
 
 QUALITY_EVAL_CLI = SCRIPTS / "eval-quality.py"
@@ -269,3 +271,109 @@ def test_quality_eval_cli_accepts_precomputed_title_browser_report(tmp_path: Pat
     assert report["quality_gates"]["browser-title-composition"] is False
     assert report["diagnostics"]["title_hard_fail_rate"] == 1.0
     assert "browser-title-too-many-lines" in report["hard_failures"]
+
+
+def test_quality_eval_flags_chart_without_slide_local_numeric_signal():
+    brief = {
+        "content": {
+            "must_include": ["90/9/1", "18 个月"],
+            "global_facts": ["90/9/1", "18 个月"],
+        },
+        "narrative": {
+            "slides": [
+                {
+                    "role": "driver",
+                    "title": "ERP 连通深度是切换的硬开关",
+                    "key_point": "没有深连通就切不过去",
+                    "visual": "workflow chart",
+                    "chart_policy": "auto",
+                }
+            ]
+        },
+    }
+    html = """
+    <html>
+    <body data-preset="Data Story">
+      <section class="slide" aria-label="driver" data-export-role="workflow_chart">
+        <svg aria-label="line chart"><text class="chart-val">90</text><text class="chart-val">18</text></svg>
+      </section>
+    </body>
+    </html>
+    """
+
+    report = analyze_html_quality(html, brief=brief, preset="Data Story")
+
+    assert report["diagnostics"]["chart_signal_mismatch_count"] == 1
+    assert report["diagnostics"]["chart_signal_mismatch_rate"] == 1.0
+    assert report["quality_gates"]["chart-local-signal"] is False
+    assert "chart-without-local-numeric-signal" in report["hard_failures"]
+
+
+def test_quality_eval_tracks_global_fact_overuse_without_forcing_hard_fail():
+    brief = {
+        "content": {
+            "must_include": ["唯一入口", "90/9/1"],
+            "global_facts": ["唯一入口", "90/9/1"],
+        },
+        "narrative": {
+            "slides": [
+                {"role": "cover"},
+                {"role": "problem"},
+                {"role": "solution"},
+                {"role": "closing"},
+            ]
+        },
+    }
+    html = """
+    <html>
+    <body data-preset="Swiss Modern">
+      <section class="slide" aria-label="cover" data-export-role="title_grid"><h1>唯一入口</h1><p>90/9/1</p></section>
+      <section class="slide" aria-label="problem" data-export-role="column_content"><h2>唯一入口</h2><p>90/9/1</p></section>
+      <section class="slide" aria-label="solution" data-export-role="stat_block"><h2>唯一入口</h2><p>90/9/1</p></section>
+      <section class="slide" aria-label="closing" data-export-role="pull_quote"><h2>唯一入口</h2><p>90/9/1</p></section>
+    </body>
+    </html>
+    """
+
+    report = analyze_html_quality(html, brief=brief, preset="Swiss Modern")
+
+    assert report["diagnostics"]["global_fact_overuse_count"] == 2
+    assert "chart-without-local-numeric-signal" not in report["hard_failures"]
+
+
+def test_enterprise_dark_style_coverage_uses_curated_signature_set():
+    html = """
+    <html>
+    <head>
+      <style>body::before { content: ""; }</style>
+    </head>
+    <body data-preset="Enterprise Dark">
+      <section class="slide">
+        <div class="ent-shell ent-title ent-label-tag ent-kpi-card ent-kpi-number ent-kpi-label ent-badge ent-sep ent-split ent-split-panel ent-feature-row ent-arch-grid"></div>
+      </section>
+    </body>
+    </html>
+    """
+
+    coverage = _style_signature_coverage(BeautifulSoup(html, "html.parser"), "Enterprise Dark")
+
+    assert coverage == 1.0
+
+
+def test_data_story_style_coverage_counts_slide_before_background():
+    html = """
+    <html>
+    <head>
+      <style>.slide::before { content: ""; }</style>
+    </head>
+    <body data-preset="Data Story">
+      <section class="slide">
+        <div class="ds-shell ds-heading ds-hero-slide ds-kpi ds-kpi-card ds-kpi-grid ds-kpi-label ds-chart-svg ds-insight ds-divider ds-split-layout ds-stage-grid"></div>
+      </section>
+    </body>
+    </html>
+    """
+
+    coverage = _style_signature_coverage(BeautifulSoup(html, "html.parser"), "Data Story")
+
+    assert coverage == 1.0

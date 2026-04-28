@@ -17,6 +17,8 @@ import re
 import sys
 import os
 
+from low_context import _balance_title_lines
+
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.dirname(SCRIPT_DIR)
 
@@ -122,6 +124,44 @@ def _render_inline_bold(text):
         else:
             parts.append(ch)
     return "".join(parts)
+
+
+def _split_text_lines(text):
+    return [line.strip() for line in re.split(r"\n+", text or "") if line.strip()]
+
+
+def _collect_plain_child_lines(children):
+    lines = []
+    for child in children:
+        if child["component"] is None and child["text"].strip():
+            lines.append(child["text"].strip())
+    return lines
+
+
+def _render_bullet_items(children):
+    items_html = ""
+    for child in children:
+        if child["component"] is None:
+            items_html += f'<li>{_render_inline_bold(child["text"])}</li>\n'
+        elif child["component"] == "kbd":
+            items_html += _render_kbd_child(child)
+        else:
+            items_html += _render_children([child])
+    return items_html
+
+
+def _render_plain_text_stack(text, *, font_size="0.9rem", color="var(--text-secondary)", weight="500"):
+    lines = _split_text_lines(text)
+    if len(lines) <= 1:
+        return _render_inline_bold(text)
+
+    rows = []
+    for line in lines:
+        rows.append(
+            f'<p style="font-size:{font_size};line-height:1.65;color:{color};font-weight:{weight};">'
+            f"{_render_inline_bold(line)}</p>"
+        )
+    return '<div style="display:flex;flex-direction:column;gap:8px;">' + "".join(rows) + "</div>"
 
 
 def _render_children(children, parent_component=None):
@@ -297,10 +337,22 @@ def _render_children(children, parent_component=None):
             # Plain .g card with no modifier
             else:
                 if kids:
-                    inner = _render_children(kids)
-                    parts.append(f'<div class="g" style="padding:22px 24px;">\n{inner}</div>')
+                    has_bullets = any(c["component"] is None for c in kids)
+                    if has_bullets:
+                        title_html = f'<h4 style="margin-bottom:10px;">{text}</h4>\n' if text else ""
+                        items_html = _render_bullet_items(kids)
+                        parts.append(
+                            f'<div class="g" style="padding:22px 24px;">\n'
+                            f"{title_html}<ul class=\"bl\">\n{items_html}</ul></div>"
+                        )
+                    else:
+                        inner = _render_children(kids)
+                        title_html = f'<h4 style="margin-bottom:10px;">{text}</h4>\n' if text else ""
+                        parts.append(f'<div class="g" style="padding:22px 24px;">\n{title_html}{inner}</div>')
                 else:
-                    parts.append(f'<div class="g" style="padding:22px 24px;">\n{_render_inline_bold(text)}\n</div>')
+                    parts.append(
+                        f'<div class="g" style="padding:22px 24px;">\n{_render_plain_text_stack(text)}\n</div>'
+                    )
 
         elif comp == "layer":
             step_html = ""
@@ -354,7 +406,13 @@ def _render_children(children, parent_component=None):
 def _looks_stat(item):
     """Check if a .g card item looks like a stat KPI."""
     t = item.get("text", "").strip()
-    if not t or len(t) > 2:
+    if not t:
+        return False
+    if re.fullmatch(r"\d+(?:\.\d+)?(?:%|x)?", t):
+        return True
+    if t in {"∞", "∞+", "N/A"}:
+        return True
+    if len(t) > 2:
         return False
     # Stat KPIs are single characters/digits like "0", "3", "∞"
     # Reject CJK characters and Chinese punctuation
@@ -460,12 +518,7 @@ def _render_col_child(item):
             has_bullets = any(c["component"] is None for c in kids)
 
             if has_bullets:
-                items_html = ""
-                for c in kids:
-                    if c["component"] is None:
-                        items_html += f'<li>{_render_inline_bold(c["text"])}</li>\n'
-                    else:
-                        items_html += _render_children([c])
+                items_html = _render_bullet_items(kids)
                 h4_styles = "margin-bottom:10px;"
                 if title_color:
                     color_val = title_color.replace('style="', '').replace('"', '')
@@ -478,7 +531,10 @@ def _render_col_child(item):
             title_html = f'<h4 {title_color}>{text}</h4>\n' if text else ""
             return f'<div class="g" style="padding:22px 24px;{border_style}">\n{title_html}{inner}</div>'
         else:
-            return f'<div class="g" style="padding:22px 24px;{border_style}">\n{_render_inline_bold(text)}\n</div>'
+            return (
+                f'<div class="g" style="padding:22px 24px;{border_style}">\n'
+                f"{_render_plain_text_stack(text)}\n</div>"
+            )
 
     elif comp:
         return _render_children([item])
@@ -525,19 +581,244 @@ def _get_subtitle(tree):
     return ""
 
 
+def _slide_role_token(value):
+    token = re.sub(r"[^a-z0-9]+", "-", (value or "").strip().lower())
+    token = re.sub(r"-{2,}", "-", token).strip("-")
+    return token or "content"
+
+
+def _render_balanced_title_html(title):
+    if "<br>" in title or "<br/>" in title or "<br />" in title:
+        return title
+    lines = _balance_title_lines(title, max_lines=3)
+    return "<br>".join(lines) if len(lines) > 1 else title
+
+
+def _render_positioning_body(items):
+    if not items:
+        return ""
+    lead = items[0] if items and items[0]["component"] == "g" and not items[0]["children"] else None
+    rest = items[1:] if lead else items
+    sections = []
+    if lead:
+        sections.append(
+            '<div class="g" style="padding:20px 22px;border:1px solid rgba(37,99,235,0.22);'
+            'background:linear-gradient(135deg, rgba(255,255,255,0.86), rgba(219,234,254,0.56));">'
+            '<div style="font-size:0.74rem;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;'
+            'color:var(--accent-blue);margin-bottom:8px;">Strategic Anchor</div>'
+            f'<p style="font-size:1.02rem;line-height:1.72;color:var(--text-primary);font-weight:600;">'
+            f'{_render_inline_bold(lead["text"])}</p></div>'
+        )
+    if rest:
+        sections.append(_render_body(rest))
+    return '<div style="display:flex;flex-direction:column;gap:18px;">' + "".join(sections) + "</div>"
+
+
+def _render_modules_body(items):
+    if not items:
+        return ""
+    main = next((item for item in items if item["component"] == "g"), None)
+    if main is None:
+        return _render_body(items)
+
+    lines = _collect_plain_child_lines(main["children"])
+    if not lines:
+        return _render_body(items)
+
+    layers = []
+    for idx, line in enumerate(lines, start=1):
+        layers.append(
+            '<div class="layer" style="padding:12px 14px;background:rgba(255,255,255,0.82);">'
+            f'<div class="step">{idx}</div>'
+            f'<div><p style="font-size:0.92rem;line-height:1.6;color:var(--text-primary);font-weight:600;">'
+            f"{_render_inline_bold(line)}</p></div></div>"
+        )
+    main_html = (
+        '<div class="g" style="padding:22px 24px;">'
+        '<div style="display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:12px;">'
+        f'<h4 style="font-size:1rem;">{_render_inline_bold(main["text"])}</h4>'
+        '<span class="pill green">L1-L4</span>'
+        '</div>'
+        '<div style="display:flex;flex-direction:column;gap:10px;">'
+        + "".join(layers)
+        + "</div></div>"
+    )
+
+    sections = [main_html]
+    for item in items:
+        if item is main:
+            continue
+        sections.append(_render_children([item]))
+    return '<div style="display:flex;flex-direction:column;gap:16px;">' + "".join(sections) + "</div>"
+
+
+def _render_entry_model_body(items):
+    cols = next((item for item in items if item["component"] == "cols2"), None)
+    if cols is None or len(cols["children"]) < 2:
+        return _render_body(items)
+
+    left, right = cols["children"][0], cols["children"][1]
+    right_lines = _collect_plain_child_lines(right["children"])
+    if not right_lines:
+        return _render_body(items)
+
+    right_rows = []
+    for idx, line in enumerate(right_lines, start=1):
+        right_rows.append(
+            '<div class="layer" style="padding:12px 14px;background:rgba(255,255,255,0.80);border-left-color:#2563eb;">'
+            f'<div style="font-size:0.72rem;font-weight:700;letter-spacing:0.10em;text-transform:uppercase;'
+            f'color:var(--accent-blue);min-width:34px;">0{idx}</div>'
+            f'<div><p style="font-size:0.9rem;line-height:1.55;color:var(--text-primary);font-weight:600;">'
+            f"{_render_inline_bold(line)}</p></div></div>"
+        )
+
+    split_html = (
+        '<div class="cols2" style="grid-template-columns:1.12fr 0.88fr;align-items:start;">'
+        + _render_col_child(left)
+        + '<div class="g" style="padding:20px 22px;">'
+        '<div style="display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:12px;">'
+        f'<h4 style="font-size:1rem;">{_render_inline_bold(right["text"])}</h4>'
+        '<span class="pill">Use</span>'
+        '</div>'
+        '<div style="display:flex;flex-direction:column;gap:10px;">'
+        + "".join(right_rows)
+        + "</div></div></div>"
+    )
+
+    trailing = [item for item in items if item is not cols]
+    if not trailing:
+        return split_html
+    return (
+        '<div style="display:flex;flex-direction:column;gap:16px;">'
+        + split_html
+        + _render_body(trailing)
+        + "</div>"
+    )
+
+
+def _render_action_layers(cols_item):
+    layers = []
+    for idx, child in enumerate(cols_item["children"], start=1):
+        detail_lines = _collect_plain_child_lines(child["children"])
+        detail = " / ".join(_render_inline_bold(line) for line in detail_lines)
+        layers.append(
+            '<div class="layer">'
+            f'<div class="step">{idx}</div>'
+            '<div>'
+            f'<h4 style="margin-bottom:4px;">{_render_inline_bold(child["text"])}</h4>'
+            f'<p style="font-size:0.9rem;line-height:1.6;">{detail}</p>'
+            '</div></div>'
+        )
+    return '<div style="display:flex;flex-direction:column;gap:11px;">' + "".join(layers) + "</div>"
+
+
+def _render_actions_body(items):
+    cols = next((item for item in items if item["component"] == "cols3"), None)
+    if cols is None:
+        return _render_body(items)
+
+    sections = [_render_action_layers(cols)]
+    for item in items:
+        if item is cols:
+            continue
+        sections.append(_render_children([item]))
+    return '<div style="display:flex;flex-direction:column;gap:16px;">' + "".join(sections) + "</div>"
+
+
+def _render_closing_body(items):
+    summary = next((item for item in items if item["component"] == "g"), None)
+    if summary is None:
+        return _render_body(items)
+
+    lines = _collect_plain_child_lines(summary["children"])
+    if not lines:
+        return _render_body(items)
+
+    rows = []
+    for line in lines:
+        rows.append(
+            '<div style="display:flex;align-items:flex-start;gap:10px;padding:10px 12px;'
+            'border-radius:14px;background:rgba(255,255,255,0.72);border:1px solid rgba(37,99,235,0.12);">'
+            '<div style="width:10px;height:10px;border-radius:50%;margin-top:8px;flex-shrink:0;'
+            'background:linear-gradient(135deg,#2563eb,#0ea5e9);"></div>'
+            f'<p style="font-size:0.92rem;line-height:1.6;color:var(--text-primary);font-weight:600;">'
+            f"{_render_inline_bold(line)}</p></div>"
+        )
+
+    summary_html = (
+        '<div class="g" style="padding:24px 26px;background:linear-gradient(135deg, rgba(255,255,255,0.84), '
+        'rgba(224,242,254,0.68));border:1px solid rgba(37,99,235,0.18);">'
+        '<div style="display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:14px;">'
+        f'<h4 style="font-size:1rem;">{_render_inline_bold(summary["text"])}</h4>'
+        '<span class="pill green">唯一入口</span>'
+        '</div>'
+        '<div style="display:flex;flex-direction:column;gap:10px;">'
+        + "".join(rows)
+        + "</div></div>"
+    )
+
+    sections = [summary_html]
+    for item in items:
+        if item is summary:
+            continue
+        sections.append(_render_children([item]))
+    return '<div style="display:flex;flex-direction:column;gap:16px;">' + "".join(sections) + "</div>"
+
+
+def _render_role_body(slide_role, items):
+    if slide_role == "positioning":
+        return _render_positioning_body(items)
+    if slide_role == "modules":
+        return _render_modules_body(items)
+    if slide_role == "entry-model":
+        return _render_entry_model_body(items)
+    if slide_role == "actions":
+        return _render_actions_body(items)
+    if slide_role == "closing":
+        return _render_closing_body(items)
+    return _render_body(items)
+
+
+def _extract_cover_metrics(title, subtitle, deck_slide_count):
+    duration_match = re.search(r"(\d+\s*个月)", subtitle or "")
+    quoted_terms = re.findall(r"[“\"]([^”\"]+)[”\"]", subtitle or "")
+    anchor = quoted_terms[-1] if quoted_terms else ("AI 原生" if "AI" in title else "战略")
+    if "中心" in anchor and len(anchor) > 8:
+        anchor = anchor.replace(" 中心", "").replace("中心", "")
+    if len(anchor) > 10 and " " in anchor:
+        anchor = anchor.split(" ", 1)[0]
+    duration = duration_match.group(1).replace(" ", "") if duration_match else "当前判断"
+    return [
+        (str(deck_slide_count or 0), "关键页"),
+        (duration, "路线窗口"),
+        (anchor, "中心锚点"),
+    ]
+
+
 def build_slide_html(si):
     """Build slide HTML from the component tree, matching backup template structure."""
     tree = si.get("tree", [])
     slide_type = si["type"].lower()
+    slide_role = _slide_role_token(slide_type)
 
     # Cover slide (slide 1)
     if slide_type == "cover" and si["number"] == 1:
-        title = _get_title(tree, "AI 驱动的<br>HTML 演示文稿")
+        title = _render_balanced_title_html(_get_title(tree, "AI 驱动的<br>HTML 演示文稿"))
         subtitle = _get_subtitle(tree)
+        cover_metrics = _extract_cover_metrics(title.replace("<br>", " "), subtitle, si.get("deck_slide_count", 0))
+        metric_cards = []
+        for value, label in cover_metrics:
+            metric_font_size = "1.3rem" if len(value) > 8 else "2.15rem"
+            metric_cards.append(
+                '<div class="g" style="padding:16px 24px;text-align:center;min-width:150px;">'
+                f'<div class="stat" style="font-size:{metric_font_size};line-height:1.15;">{value}</div>'
+                f'<p style="font-size:0.78rem;margin-top:6px;">{label}</p>'
+                "</div>"
+            )
         return f"""  <!-- ══════════════════════════════════════════
        01 — COVER
        ══════════════════════════════════════════ -->
-  <section class="slide cover" style="overflow:hidden;" data-notes="欢迎！slide-creator 从提示词生成精美的 HTML 演示文稿 — 零依赖，浏览器原生。21 个主题，单文件输出。">
+  <section class="slide cover" data-export-role="cover" style="overflow:hidden;" data-notes="欢迎！slide-creator 从提示词生成精美的 HTML 演示文稿 — 零依赖，浏览器原生。21 个主题，单文件输出。">
 
     <svg width="0" height="0" style="position:absolute;pointer-events:none;">
       <defs>
@@ -598,30 +879,19 @@ def build_slide_html(si):
     </div>
 
     <div style="text-align:center;position:relative;z-index:10;">
-      <span class="pill" style="margin-bottom:20px;display:inline-block;">slide-creator v2.14</span>
+      <span class="pill" style="margin-bottom:20px;display:inline-block;">Blue Sky · {si.get("deck_slide_count", 0)} 页</span>
       <h1 class="gt" style="margin-bottom:14px;">{title}</h1>
       <p style="font-size:1.1rem;max-width:560px;margin:0 auto 28px;">
         {subtitle}
       </p>
       <div style="display:flex;gap:14px;justify-content:center;flex-wrap:wrap;">
-        <div class="g" style="padding:16px 28px;text-align:center;">
-          <div class="stat" style="font-size:2.8rem;">21</div>
-          <p style="font-size:0.78rem;margin-top:2px;">主题</p>
-        </div>
-        <div class="g" style="padding:16px 28px;text-align:center;">
-          <div class="stat" style="font-size:2.8rem;">0</div>
-          <p style="font-size:0.78rem;margin-top:2px;">依赖</p>
-        </div>
-        <div class="g" style="padding:16px 28px;text-align:center;">
-          <div class="stat" style="font-size:2.8rem;">1</div>
-          <p style="font-size:0.78rem;margin-top:2px;">HTML 文件</p>
-        </div>
+        {"".join(metric_cards)}
       </div>
     </div>
   </section>"""
 
     # Content slides
-    title = _get_title(tree)
+    title = _render_balanced_title_html(_get_title(tree))
     body_items = tree[1:] if tree and tree[0]["component"] is None else tree
 
     # Extract first pill from body if present
@@ -633,12 +903,12 @@ def build_slide_html(si):
 
     # Check if the first non-pill item is a layout component (cols2/3/4)
     # If so, wrap layers in a flex column container
-    body_html = _render_body(body_to_render)
+    body_html = _render_role_body(slide_role, body_to_render)
 
     return f"""  <!-- ══════════════════════════════════════════
        {str(si['number']).zfill(2)} — {title.upper()}
        ══════════════════════════════════════════ -->
-  <section class="slide" data-notes="{_get_notes(si)}">
+  <section class="slide {slide_role}" data-export-role="{slide_role}" data-notes="{_get_notes(si)}">
     <div style="max-width:860px;width:100%;">
       {pill_html}<h2 class="gt">{title}</h2>
       <div class="divider"></div>
@@ -663,7 +933,7 @@ def _get_notes(si):
 
 def _render_body(items):
     """Render body items with proper layout wrapping."""
-    BLOCK_COMPONENTS = ("cols2", "cols3", "cols4", "bento", "info", "co", "cmd", "gt")
+    BLOCK_COMPONENTS = ("g", "cols2", "cols3", "cols4", "bento", "info", "co", "cmd", "gt")
 
     def _is_block(item):
         if item["component"] in BLOCK_COMPONENTS:
@@ -675,7 +945,7 @@ def _render_body(items):
     def _render_item(item):
         if item["component"] == "layer":
             return _render_children([item])
-        elif item["component"] in ("cols2", "cols3", "cols4", "bento"):
+        elif item["component"] in ("g", "cols2", "cols3", "cols4", "bento"):
             return _render_children([item])
         elif item["component"] in ("info", "co", "cmd", "gt", "pill"):
             return _render_children([item])
@@ -702,11 +972,11 @@ def _render_body(items):
             nl = "\n"
             parts.append(f'<div style="display:flex;flex-direction:column;gap:11px;">{nl}{nl.join(layer_parts)}{nl}</div>')
             i = j
-        elif item["component"] in ("cols2", "cols3", "cols4", "bento"):
-            # Collect consecutive block elements (cols + info/co)
+        elif item["component"] in ("g", "cols2", "cols3", "cols4", "bento"):
+            # Collect consecutive block elements (cards + layouts + notes)
             blocks = [item]
             j = i + 1
-            while j < len(items) and items[j]["component"] in ("cols2", "cols3", "cols4", "bento", "info", "co", "cmd"):
+            while j < len(items) and items[j]["component"] in ("g", "cols2", "cols3", "cols4", "bento", "info", "co", "cmd"):
                 blocks.append(items[j])
                 j += 1
             rendered_parts = [_render_item(b) for b in blocks]
@@ -766,10 +1036,12 @@ def generate():
 
     # ── Step 1: Update slide count ──
     html = re.sub(r"--slide-count:\s*\d+", f"--slide-count: {slide_count}", base_html)
+    html = re.sub(r"<body(?![^>]*data-preset)([^>]*)>", r'<body\1 data-preset="Blue Sky">', html, count=1)
 
     # ── Step 2: Build slides ──
     new_slides = []
     for si in slides_info:
+        si["deck_slide_count"] = slide_count
         new_slides.append(build_slide_html(si))
 
     # ── Step 3: Replace slides in #track ──

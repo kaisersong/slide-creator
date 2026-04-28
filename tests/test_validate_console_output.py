@@ -28,3 +28,14 @@ def test_validate_keeps_unicode_symbols_on_utf8_terminals():
     validate = load_validate_module()
 
     assert validate.render_console_symbol("✓", "OK", encoding="utf-8") == "✓"
+
+
+def test_validate_module_executes_without___file___when_cwd_is_repo_root(monkeypatch):
+    monkeypatch.chdir(ROOT)
+    source = VALIDATE_PY.read_text(encoding="utf-8")
+    namespace = {"__name__": "validate_module_exec"}
+
+    exec(compile(source, str(VALIDATE_PY), "exec"), namespace)
+
+    assert namespace["ROOT"] == ROOT
+    assert namespace["SCRIPTS_DIR"] == ROOT / "scripts"

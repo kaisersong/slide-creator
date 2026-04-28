@@ -202,3 +202,46 @@ def test_chinese_chan_contract_rejects_alias_or_centered_ghost():
     ok, message = validate.check_chinese_chan_contract(centered_soup, centered_html, [])
     assert not ok
     assert "off-center" in message
+
+
+def test_chinese_chan_contract_requires_roles_and_layout_specific_title_components():
+    validate = load_validate_module()
+    missing_role_html = """
+    <!DOCTYPE html>
+    <html>
+      <head>
+        <style>
+          :root { --bg:#FAFAF8; --text:#1a1a18; --text-muted:#6b6b68; --accent:#C41E3A; --accent-alt:#1B3A6B; --rule:rgba(26,26,24,0.15); }
+        </style>
+      </head>
+      <body data-preset="Chinese Chan">
+        <section class="slide">
+          <div class="zen-content"><h2 class="zen-h2">标题</h2></div>
+        </section>
+      </body>
+    </html>
+    """
+    soup = BeautifulSoup(missing_role_html, "html.parser")
+    ok, message = validate.check_chinese_chan_contract(soup, missing_role_html, [])
+    assert not ok
+    assert "missing data-export-role" in message
+
+    wrong_title_html = """
+    <!DOCTYPE html>
+    <html>
+      <head>
+        <style>
+          :root { --bg:#FAFAF8; --text:#1a1a18; --text-muted:#6b6b68; --accent:#C41E3A; --accent-alt:#1B3A6B; --rule:rgba(26,26,24,0.15); }
+        </style>
+      </head>
+      <body data-preset="Chinese Chan">
+        <section class="slide" data-export-role="zen_split">
+          <div class="zen-content"><h2 class="zen-title">标题</h2></div>
+        </section>
+      </body>
+    </html>
+    """
+    soup = BeautifulSoup(wrong_title_html, "html.parser")
+    ok, message = validate.check_chinese_chan_contract(soup, wrong_title_html, [])
+    assert not ok
+    assert "must use .zen-h2" in message

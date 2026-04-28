@@ -132,14 +132,14 @@ That is why slide-creator is moving quality checks earlier:
 - `--plan` creates a structured `BRIEF.json`
 - `--generate` renders from the IR instead of from the whole conversation
 - `validate-brief.py` checks the brief contract
-- `tests/validate.py --strict` checks the runtime contract
+- `scripts/validate_html.py --strict` checks the runtime contract
 - evals score route / compression / render / efficiency
 
 The important design idea here is not "more tests". It is **better failure localization**. If a result is bad, we want to know whether the mistake happened in routing, compression, rendering, or polish. That feedback then improves the skill itself.
 
 **Validation positioning: pre-write gate, not optional review**
 
-validate.py should run inside `--generate`, but after rendering and before the final file is accepted. The right sequence is: assemble HTML → write temp file → run `python3 tests/validate.py "$TMP_HTML" --strict` → fix/regenerate until pass → write final output.
+validate.py should run inside `--generate`, but after rendering and before the final file is accepted. The right sequence is: assemble HTML → write temp file → run `python3 scripts/validate_html.py "$TMP_HTML" --strict` → fix/regenerate until pass → write final output.
 
 This keeps validation out of planning and composition, but inside delivery:
 - No extra planning step → no extra LLM cognitive load during ideation
@@ -196,6 +196,15 @@ Developer tool / API docs   → Terminal Green, Neon Cyber, Neo-Retro Dev Deck
 ```
 
 Good defaults reduce rework. In practice, that means fewer bad first drafts, fewer style resets, and less wasted context.
+
+Phase 1 recommendation surface is intentionally narrower than the full preset library:
+
+- `Swiss Modern`
+- `Enterprise Dark`
+- `Data Story`
+- `Blue Sky`
+
+This does **not** remove the other presets. Explicit preset selection still wins; the narrower surface only affects defaults and recommendation priority.
 
 ---
 
@@ -427,6 +436,8 @@ For PPTX/PNG export: `clawhub install kai-html-export` or `pip install playwrigh
 ---
 
 ## Version History
+
+**v2.24.0** — Core preset hardening and quality-gate release: added preset support tiers plus manifest-driven eval/release-gate tooling, upgraded low-context BRIEF semantics and preset usage rules, repaired Chinese Chan formal contracts and production/shared runtime drift, modernized family demo runtimes, moved the canonical HTML validator to `scripts/validate_html.py` with a compatibility wrapper, and tightened Swiss Modern/shared shell chrome so nav dots and page-number treatments render correctly across presets.
 
 **v2.23.2** — Sandbox entrypoint and skill-surface patch: added root `main.py` plus `slide-creator` wrapper for bare-sandbox BRIEF validation/rendering, made `--plan` fail with a clear slash-skill boundary instead of a misleading runtime error, restored `SKILL.md`'s user-facing style recommendation surface, and clarified that built-in presets live under `references/` while `themes/<name>/reference.md` is only for custom themes.
 

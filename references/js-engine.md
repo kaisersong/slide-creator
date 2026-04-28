@@ -32,8 +32,8 @@ class SlidePresentation {
         if (!nav) return;
         this.slides.forEach((_, i) => {
             const dot = document.createElement('button');
+            dot.type = 'button';
             dot.setAttribute('aria-label', 'Go to slide ' + (i + 1));
-            dot.style.cssText = 'width:8px;height:8px;border-radius:50%;border:none;cursor:pointer;background:rgba(255,255,255,0.3);transition:all 0.3s;';
             dot.addEventListener('click', () => this.goTo(i)); nav.appendChild(dot);
         });
         nav.style.cssText = 'position:fixed;right:1.5rem;top:50%;transform:translateY(-50%);display:flex;flex-direction:column;gap:8px;z-index:100;';
@@ -163,8 +163,10 @@ class SlidePresentation {
 
     updateDots() {
         document.querySelectorAll('.nav-dots button').forEach((dot, i) => {
-            dot.style.background = i === this.currentSlide ? 'var(--accent)' : 'rgba(255,255,255,0.3)';
-            dot.style.transform = i === this.currentSlide ? 'scale(1.3)' : 'scale(1)';
+            const active = i === this.currentSlide;
+            dot.classList.toggle('active', active);
+            if (active) dot.setAttribute('aria-current', 'true');
+            else dot.removeAttribute('aria-current');
         });
     }
 
