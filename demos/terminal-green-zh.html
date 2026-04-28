@@ -506,11 +506,11 @@ body.presenting #present-counter { display: block; }
         <div class="g">
           <div class="t-label" style="margin-bottom: 8px;"><span class="dot" style="background:var(--red)"></span>传统工具问题</div>
           <div class="t-body" style="font-size: clamp(0.65rem, 1.1vw, 0.8rem); line-height: 2;">
-            <span class="t-comment"># 模板千篇一律</span><br>
+            <span class="t-comment">模板千篇一律</span><br>
             PPT 模板看起来都一样<br>
-            <span class="t-comment"># AI 生成通用审美</span><br>
+            <span class="t-comment">AI 生成通用审美</span><br>
             AI 生成的幻灯片缺乏个性<br>
-            <span class="t-comment"># 导出丢失设计</span><br>
+            <span class="t-comment">导出丢失设计</span><br>
             导出后视觉一致性被破坏
           </div>
         </div>
@@ -673,6 +673,7 @@ class SlidePresentation {
 
     this.slides[0]?.classList.add('visible');
     this.slides[0]?.querySelectorAll('.reveal').forEach(r => r.classList.add('visible'));
+    this.setActiveSlide(0);
 
     this.setupNavDots();
     this.setupObserver();
@@ -682,6 +683,14 @@ class SlidePresentation {
     this.setupPresenter();
     this.updateProgress();
     this.setupEditor();
+  }
+
+  setActiveSlide(index) {
+    this.slides.forEach((slide, i) => {
+      const active = i === index;
+      slide.classList.toggle('visible', active);
+      slide.querySelectorAll('.reveal').forEach(r => r.classList.toggle('visible', active));
+    });
   }
 
   setupNavDots() {
@@ -700,8 +709,9 @@ class SlidePresentation {
     const observer = new IntersectionObserver((entries) => {
       entries.forEach(entry => {
         if (entry.isIntersecting) {
-          entry.target.classList.add('visible');
           this.currentSlide = Array.prototype.indexOf.call(this.slides, entry.target);
+          if (this.currentSlide < 0) return;
+          this.setActiveSlide(this.currentSlide);
           this.updateProgress();
           this.updateDots();
           this.broadcastState();
@@ -713,16 +723,17 @@ class SlidePresentation {
   }
 
   setupKeyboard() {
-    const _self = this;
-    document.addEventListener('keydown', function(e) {
-      if (e.target.getAttribute('contenteditable')) return;
+    document.addEventListener('keydown', (e) => {
+      if (e.target.getAttribute('contenteditable') || e.target.tagName === 'TEXTAREA') return;
       if (e.key === 'ArrowDown' || e.key === 'ArrowRight' || e.key === ' ' || e.key === 'PageDown' || e.key === 'Enter') {
-        e.preventDefault(); self.next();
+        e.preventDefault(); this.next();
       } else if (e.key === 'ArrowUp' || e.key === 'ArrowLeft' || e.key === 'PageUp' || e.key === 'Backspace') {
-        e.preventDefault(); self.prev();
-      } else if (e.key === 'Home') { e.preventDefault(); self.goTo(0); }
-      else if (e.key === 'End') { e.preventDefault(); self.goTo(self.slides.length - 1); }
-      else if (e.key === 'p' || e.key === 'P') {
+        e.preventDefault(); this.prev();
+      } else if (e.key === 'Home') {
+        e.preventDefault(); this.goTo(0);
+      } else if (e.key === 'End') {
+        e.preventDefault(); this.goTo(this.slides.length - 1);
+      } else if (e.key === 'p' || e.key === 'P') {
         const url = location.href.split('?')[0] + '?presenter';
         window.open(url, 'slide-presenter-' + Date.now(), 'width=1100,menubar=no,toolbar=no');
       } else if (e.key === 'e' || e.key === 'E') {
@@ -733,25 +744,74 @@ class SlidePresentation {
   }
 
   setupTouch() {
-    const _self = this;
     let startY = 0;
     document.addEventListener('touchstart', e => { startY = e.touches[0].clientY; }, { passive: true });
     document.addEventListener('touchend', e => {
       const delta = startY - e.changedTouches[0].clientY;
-      if (Math.abs(delta) > 50) delta > 0 ? self.next() : self.prev();
+      if (Math.abs(delta) > 50) delta > 0 ? this.next() : this.prev();
     });
   }
 
   setupWheel() {
-    // scroll-snap-type: y mandatory handles wheel natively
+    this.wState = 'idle';
+    this.wLastTime = 0;
+    this.wFallback = null;
+    this.scrollSettleTimer = null;
+
+    const enterDraining = () => {
+      if (this.wState !== 'animating') return;
+      this.wState = 'draining';
+      this.wLastTime = Date.now();
+      clearTimeout(this.wFallback);
+      this.wFallback = setTimeout(() => { this.wState = 'idle'; }, 1500);
+    };
+
+    window.addEventListener('scroll', () => {
+      if (this.wState !== 'animating') return;
+      clearTimeout(this.scrollSettleTimer);
+      this.scrollSettleTimer = setTimeout(enterDraining, 120);
+    }, { passive: true });
+
+    document.addEventListener('wheel', (e) => {
+      if (e.target.tagName === 'TEXTAREA' || e.target.tagName === 'INPUT'
+        || e.target.getAttribute('contenteditable')) return;
+      if (e.target.closest && e.target.closest('#notes-panel')) return;
+
+      let dx = e.deltaX, dy = e.deltaY;
+      if (e.deltaMode === WheelEvent.DOM_DELTA_LINE) { dx *= 20; dy *= 20; }
+      if (e.deltaMode === WheelEvent.DOM_DELTA_PAGE) { dx *= window.innerHeight; dy *= window.innerHeight; }
+      const delta = Math.abs(dy) >= Math.abs(dx) ? dy : dx;
+      if (Math.abs(delta) < 6) return;
+
+      e.preventDefault();
+      if (this.wState === 'animating') return;
+
+      const now = Date.now();
+      if (this.wState === 'draining') {
+        const gap = now - this.wLastTime;
+        this.wLastTime = now;
+        if (gap <= 80) return;
+        this.wState = 'idle';
+        clearTimeout(this.wFallback);
+      }
+
+      this.wState = 'animating';
+      clearTimeout(this.scrollSettleTimer);
+      const moved = delta > 0 ? this.next() : this.prev();
+      if (!moved) {
+        this.wState = 'idle';
+        return;
+      }
+
+      this.scrollSettleTimer = setTimeout(enterDraining, 450);
+    }, { passive: false });
   }
 
   setupPresenter() {
-    const _self = this;
-    this.channel.addEventListener('message', function(e) {
-      if (e.data.type === 'nav-next') self.next();
-      else if (e.data.type === 'nav-prev') self.prev();
-      else if (e.data.type === 'request-state') self.broadcastState();
+    this.channel.addEventListener('message', (e) => {
+      if (e.data.type === 'nav-next') this.next();
+      else if (e.data.type === 'nav-prev') this.prev();
+      else if (e.data.type === 'request-state') this.broadcastState();
     });
   }
 
@@ -766,10 +826,19 @@ class SlidePresentation {
   }
 
   goTo(index) {
-    this.slides[index]?.scrollIntoView({ behavior: 'smooth' });
+    const idx = Math.max(0, Math.min(index, this.slides.length - 1));
+    const moved = idx !== this.currentSlide;
+    this.currentSlide = idx;
+    this.setActiveSlide(idx);
+    this.slides[idx]?.scrollIntoView({ behavior: moved ? 'smooth' : 'auto' });
+    this.updateProgress();
+    this.updateDots();
+    this.broadcastState();
+    this.updateNotesPanel();
+    return moved;
   }
-  next() { this.goTo(Math.min(this.currentSlide + 1, this.slides.length - 1)); }
-  prev() { this.goTo(Math.max(this.currentSlide - 1, 0)); }
+  next() { return this.goTo(Math.min(this.currentSlide + 1, this.slides.length - 1)); }
+  prev() { return this.goTo(Math.max(this.currentSlide - 1, 0)); }
 
   updateProgress() {
     const pct = (this.currentSlide / (this.slides.length - 1)) * 100;
@@ -785,7 +854,6 @@ class SlidePresentation {
   }
 
   setupEditor() {
-    const _self = this;
     const panel = document.getElementById('notes-panel');
     const label = document.getElementById('notes-panel-label');
     const textarea = document.getElementById('notes-textarea');
@@ -793,50 +861,50 @@ class SlidePresentation {
     const hotzone = document.querySelector('.edit-hotzone');
     let hideTimeout = null;
 
-    hotzone.addEventListener('mouseenter', function() { clearTimeout(hideTimeout); toggle.classList.add('show'); });
-    hotzone.addEventListener('mouseleave', function() { hideTimeout = setTimeout(function() { if (!this.editor?.active) toggle.classList.remove('show'); }, 400); });
-    toggle.addEventListener('mouseenter', function() { clearTimeout(hideTimeout); });
-    toggle.addEventListener('mouseleave', function() { hideTimeout = setTimeout(function() { if (!this.editor?.active) toggle.classList.remove('show'); }, 400); });
-    hotzone.addEventListener('click', function() { self.editor.toggle(); });
-    toggle.addEventListener('click', function() { self.editor.toggle(); });
+    hotzone.addEventListener('mouseenter', () => { clearTimeout(hideTimeout); toggle.classList.add('show'); });
+    hotzone.addEventListener('mouseleave', () => { hideTimeout = setTimeout(() => { if (!this.editor?.active) toggle.classList.remove('show'); }, 400); });
+    toggle.addEventListener('mouseenter', () => { clearTimeout(hideTimeout); });
+    toggle.addEventListener('mouseleave', () => { hideTimeout = setTimeout(() => { if (!this.editor?.active) toggle.classList.remove('show'); }, 400); });
+    hotzone.addEventListener('click', () => this.editor.toggle());
+    toggle.addEventListener('click', () => this.editor.toggle());
 
-    document.getElementById('notes-panel-header').addEventListener('click', function() {
+    document.getElementById('notes-panel-header').addEventListener('click', () => {
       panel.classList.toggle('collapsed');
     });
 
-    textarea.addEventListener('input', function() {
-      const slide = self.slides[self.currentSlide];
-      if (slide) { slide.dataset.notes = textarea.value; self.broadcastState(); }
+    textarea.addEventListener('input', () => {
+      const slide = this.slides[this.currentSlide];
+      if (slide) { slide.dataset.notes = textarea.value; this.broadcastState(); }
     });
 
-    document.addEventListener('keydown', function(e) {
+    document.addEventListener('keydown', (e) => {
       if ((e.ctrlKey || e.metaKey) && e.key === 's') {
-        e.preventDefault(); self.saveFile();
+        e.preventDefault(); this.saveFile();
       }
     });
 
     this.editor = {
       active: false,
-      toggle: function() { self.editor.active ? self.editor.exit() : self.editor.enter(); },
-      enter: function() {
-        self.editor.active = true;
+      toggle: () => this.editor.active ? this.editor.exit() : this.editor.enter(),
+      enter: () => {
+        this.editor.active = true;
         toggle.classList.add('active');
         toggle.textContent = 'Done';
-        self.slides.forEach(function(s) {
-          s.querySelectorAll('h1,h2,h3,p,li,span,td,th').forEach(function(el) {
+        this.slides.forEach((s) => {
+          s.querySelectorAll('h1,h2,h3,p,li,span,td,th').forEach((el) => {
             el.setAttribute('contenteditable', 'true');
             el.style.outline = 'none';
           });
         });
         panel.classList.add('active');
-        self.updateNotesPanel();
+        this.updateNotesPanel();
       },
-      exit: function() {
-        self.editor.active = false;
+      exit: () => {
+        this.editor.active = false;
         toggle.classList.remove('active');
         toggle.textContent = 'Edit';
-        self.slides.forEach(function(s) {
-          s.querySelectorAll('[contenteditable]').forEach(function(el) {
+        this.slides.forEach((s) => {
+          s.querySelectorAll('[contenteditable]').forEach((el) => {
             el.removeAttribute('contenteditable');
             el.style.outline = '';
           });
@@ -927,11 +995,12 @@ if (new URLSearchParams(location.search).has('presenter')) {
       this.ctrl.goTo = (i) => {
         const idx = Math.max(0, Math.min(i, this.ctrl.slides.length - 1));
         this.ctrl.currentSlide = idx;
-        this.ctrl.slides.forEach((s, j) => s.classList.toggle('visible', j === idx));
+        this.ctrl.setActiveSlide(idx);
         this._show(idx);
         this.ctrl.updateProgress?.();
         this.ctrl.updateDots?.();
         this.ctrl.broadcastState?.();
+        this.ctrl.updateNotesPanel?.();
       };
     }
     _reset() {
