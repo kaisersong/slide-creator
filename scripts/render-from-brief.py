@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import tempfile
 from pathlib import Path
 
 from low_context import (
@@ -14,6 +15,18 @@ from low_context import (
     render_from_brief,
     render_from_context_path,
 )
+from validate_html import validate
+
+
+def _strict_validate_rendered_html(html_text: str) -> bool:
+    with tempfile.NamedTemporaryFile("w", suffix=".html", encoding="utf-8", delete=False) as handle:
+        handle.write(html_text)
+        tmp_path = Path(handle.name)
+
+    try:
+        return validate(tmp_path, strict=True)
+    finally:
+        tmp_path.unlink(missing_ok=True)
 
 
 def main() -> int:
@@ -38,6 +51,10 @@ def main() -> int:
         return 1
     except RenderError as exc:
         print(f"RENDER ERROR: {exc}")
+        return 1
+
+    if not _strict_validate_rendered_html(html_text):
+        print("VALIDATE ERROR: strict pre-write gate failed; refusing to write output")
         return 1
 
     output_path = Path(args.output)

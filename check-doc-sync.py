@@ -64,6 +64,7 @@ def evaluate(root: Path) -> list[RuleResult]:
             "BRIEF.json",
             "themes/<name>/reference.md",
             "用户显式指定任意当前 preset 时，必须保留该选择",
+            "禁止手拼最终 HTML",
         ],
     )
     if ok:
@@ -81,6 +82,7 @@ def evaluate(root: Path) -> list[RuleResult]:
             "themes/your-theme/",
             "reference.md",
             "Explicit preset selection still wins",
+            "The same rule applies to direct prompt generation",
         ],
     )
     if ok:
@@ -95,6 +97,7 @@ def evaluate(root: Path) -> list[RuleResult]:
             "single AskUserQuestion call with all 5 questions at once",
             "1280x720",
             "Support tier only affects default recommendation priority",
+            "do **not** hand-compose final HTML",
         ],
     )
     results.append(RuleResult("workflow-contract", ok, detail))

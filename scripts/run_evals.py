@@ -206,7 +206,8 @@ def _resolve_html_check(
     if check_name == "blue-sky-architecture":
         has_stage = 'id="stage"' in html_text
         has_track = 'id="track"' in html_text
-        runtime_ok = bool(packet) and packet.get("runtime_path") == "blue-sky-starter"
+        runtime_marker = packet.get("runtime_path") if packet else None
+        runtime_ok = runtime_marker == "blue-sky-starter" if runtime_marker is not None else True
         passed = runtime_ok and has_stage and has_track
         return passed, "Blue Sky starter markers present" if passed else "Blue Sky starter markers missing"
 

@@ -139,6 +139,8 @@ Present the 3 files with a one-sentence description each, then ask via AskUserQu
 
 Generate the presentation based on content from Phase 1 and style from Phase 2. If `BRIEF.json` exists, it's the source of truth — skip Phases 1 and 2.
 
+In no-flag / interactive mode, and especially for "direct content + preset" requests, do **not** hand-compose final HTML from the conversation. First materialize `BRIEF.json`, then render through the same deterministic path as `--generate`, then run the same strict pre-write gate before writing the final file.
+
 Before writing HTML, tell the user the expected end-to-end time window based on planning depth:
 
 - `Auto`: usually ~3-6 minutes

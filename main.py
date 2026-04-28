@@ -5,6 +5,7 @@ from __future__ import annotations
 import argparse
 import json
 import sys
+import tempfile
 from pathlib import Path
 
 
@@ -97,6 +98,18 @@ def run_generate(
     packet_out: str | None,
     extract_brief_out: str | None,
 ) -> int:
+    def _strict_validate_rendered_html(html_text: str) -> bool:
+        from validate_html import validate  # noqa: WPS433
+
+        with tempfile.NamedTemporaryFile("w", suffix=".html", encoding="utf-8", delete=False) as handle:
+            handle.write(html_text)
+            tmp_path = Path(handle.name)
+
+        try:
+            return validate(tmp_path, strict=True)
+        finally:
+            tmp_path.unlink(missing_ok=True)
+
     try:
         if context_file:
             brief, html_text, packet, _style_contract = render_from_context_path(context_file)
@@ -110,6 +123,10 @@ def run_generate(
         return 1
     except RenderError as exc:
         print(f"RENDER ERROR: {exc}")
+        return 1
+
+    if not _strict_validate_rendered_html(html_text):
+        print("VALIDATE ERROR: strict pre-write gate failed; refusing to write output")
         return 1
 
     output.write_text(html_text, encoding="utf-8")

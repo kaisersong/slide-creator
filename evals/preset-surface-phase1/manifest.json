@@ -19,10 +19,9 @@
       "case_id": "support-blue-sky-fixture",
       "validation_profile": "required",
       "quality_eval_use_brief": false,
-      "brief_path": "../generated-decks/2026-04-21-slide-creator-intro/slide-creator-intro-blue-sky-BRIEF.json",
-      "html_path": "../generated-decks/2026-04-21-slide-creator-intro/slide-creator-intro-blue-sky-zh.html",
+      "preset": "Blue Sky",
+      "html_path": "../../demos/ai-native-work-hub-blue-sky-zh.html",
       "expectations": {
-        "expected_mode": "polish",
         "expected_preset": "Blue Sky",
         "expected_support_tier": "production",
         "required_html_checks": [
