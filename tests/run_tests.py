@@ -17,6 +17,7 @@ import argparse
 from pathlib import Path
 
 TESTS_DIR = Path(__file__).parent
+ROOT = TESTS_DIR.parent
 
 
 def check_deps():
@@ -43,9 +44,8 @@ def run_pytest(verbose: bool) -> int:
 
 
 def run_validate(html_path: str, strict: bool) -> int:
-    # Import and run validate directly
-    sys.path.insert(0, str(TESTS_DIR))
-    from validate import validate
+    sys.path.insert(0, str(ROOT / "scripts"))
+    from validate_html import validate
     ok = validate(html_path, strict=strict)
     return 0 if ok else 1
 

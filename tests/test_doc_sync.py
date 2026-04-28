@@ -43,6 +43,7 @@ def test_doc_sync_checker_passes_for_valid_fixture():
             "IR-first workflow: --plan creates BRIEF.json, --generate reads BRIEF.json\n"
             "PLANNING.md only on explicit request\n"
             "Custom theme: themes/<name>/reference.md\n"
+            "用户显式指定任意当前 preset 时，必须保留该选择\n"
         ),
         readme=(
             "IR-first workflow with BRIEF.json and optional PLANNING.md view.\n"
@@ -50,12 +51,14 @@ def test_doc_sync_checker_passes_for_valid_fixture():
             "--generate\n"
             "Inline editing is Default-on, optional.\n"
             "Custom theme system via themes/your-theme/reference.md.\n"
+            "Explicit preset selection still wins.\n"
         ),
         workflow=(
             "single AskUserQuestion call with all 5 questions at once\n"
             "Enhancement Mode (existing HTML)\n"
             "If `BRIEF.json` exists, it's the source of truth\n"
             "Validate the edited deck at a practical presentation size such as 1280x720 before handing it back.\n"
+            "Support tier only affects default recommendation priority.\n"
         ),
     )
 
@@ -88,6 +91,7 @@ def test_doc_sync_checker_dry_run_does_not_modify_files():
             "IR-first workflow: --plan creates BRIEF.json, --generate reads BRIEF.json\n"
             "PLANNING.md only on explicit request\n"
             "Custom theme: themes/<name>/reference.md\n"
+            "用户显式指定任意当前 preset 时，必须保留该选择\n"
         ),
         readme=(
             "IR-first workflow with BRIEF.json and optional PLANNING.md view.\n"
@@ -95,12 +99,14 @@ def test_doc_sync_checker_dry_run_does_not_modify_files():
             "--generate\n"
             "Inline editing is Default-on, optional.\n"
             "Custom theme system via themes/your-theme/reference.md.\n"
+            "Explicit preset selection still wins.\n"
         ),
         workflow=(
             "single AskUserQuestion call with all 5 questions at once\n"
             "Enhancement Mode (existing HTML)\n"
             "If `BRIEF.json` exists, it's the source of truth\n"
             "Validate the edited deck at a practical presentation size such as 1280x720 before handing it back.\n"
+            "Support tier only affects default recommendation priority.\n"
         ),
     )
     before = {

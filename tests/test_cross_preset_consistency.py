@@ -44,6 +44,13 @@ def load(path: Path):
     return content
 
 
+def body_preset(content: str) -> str | None:
+    match = re.search(r'data-preset="([^"]+)"', content)
+    if match:
+        return match.group(1).strip()
+    return None
+
+
 class TestPresetDemoCoverage:
     """All 21 presets must have at least one demo file."""
 
@@ -177,7 +184,10 @@ class TestArchitectureIsolation:
     """
 
     @pytest.fixture(
-        params=[d for d in ALL_DEMOS if get_preset_from_demo(d) not in BLUE_SKY_ONLY],
+        params=[
+            d for d in ALL_DEMOS
+            if body_preset(load(d)) != "Blue Sky"
+        ],
         ids=lambda p: p.name,
     )
     def non_blue_sky_demo(self, request):
@@ -188,7 +198,7 @@ class TestArchitectureIsolation:
         # Detect Blue Sky-exclusive patterns
         has_stage = "id=\"stage\"" in content or "#stage" in content
         has_track = "id=\"track\"" in content or "#track" in content
-        has_calc_width = "calc(100vw" in content
+        has_calc_width = "calc(100vw * var(--slide-count))" in content
         has_translatex_nav = (
             ("translateX(-'" in content or 'translateX(-"' in content or "translateX(-`" in content)
             and "100" in content and "vw" in content

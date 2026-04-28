@@ -110,16 +110,18 @@ If the deck is in `精修` / `Polish`, add a short design-lock step before gener
 
 If the user already approved a preset or `BRIEF.json` already names one, skip fresh preset routing and keep that preset. Do not reinterpret the same deck into a different theme just because the planning depth changed.
 
+Support tier only affects default recommendation priority. If the user explicitly names any current preset, honor it unless that preset is formally archived.
+
 ### Style Path
 
 Ask via AskUserQuestion:
 - **"Show me options"** → ask mood question → generate 3 previews based on answer
-- **"I know what I want"** → show preset picker (Bold Signal / Blue Sky / Modern Newspaper / Neo-Retro Dev Deck — with "Other" option for all 21 presets)
+- **"I know what I want"** → show preset picker (`Swiss Modern` / `Enterprise Dark` / `Data Story` / `Blue Sky` — with "Other" option for all current presets)
 
 **Before showing presets, silently scan `<skill-path>/themes/` for subdirectories.**
 Skip any directory whose name starts with `_`. Each remaining subdirectory with a `reference.md` is a custom theme — append as `Custom: <folder-name>` entries.
 
-Read [style-index.md](style-index.md) for the full 21-preset table and mood → preset mapping.
+Read [style-index.md](style-index.md) for the full 21-preset table and mood → preset mapping. Read [preset-support-tiers.json](preset-support-tiers.json) for the current default recommendation surface and support tiers.
 
 ### Generate Previews
 
@@ -272,7 +274,7 @@ Alternate between text-heavy and visual-heavy slides. Three or more consecutive 
 
 ### Step 7: Pre-write validation (ALL modes — Auto, Polish, --generate)
 
-Before writing the final HTML, save the assembled HTML to a temporary file (for example `"$TMP_HTML"`) and run `python3 tests/validate.py "$TMP_HTML" --strict`.
+Before writing the final HTML, save the assembled HTML to a temporary file (for example `"$TMP_HTML"`) and run `python3 scripts/validate_html.py "$TMP_HTML" --strict`.
 Treat strict failures as generation failures: fix or regenerate, then rerun strict validate until it passes. Only then write the final deliverable.
 After the strict gate passes, scan the assembled output for these violations and fix each one found:
 

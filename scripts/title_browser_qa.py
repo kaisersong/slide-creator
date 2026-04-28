@@ -106,10 +106,83 @@ def _measure_title_targets_in_browser(annotated_html: str, targets: list[dict[st
         try:
             page = browser.new_page(viewport={"width": 1440, "height": 900})
             page.goto(html_path.as_uri(), wait_until="load", timeout=20000)
+            page.add_style_tag(
+                content="""
+                *, *::before, *::after {
+                    transition: none !important;
+                    animation: none !important;
+                    scroll-behavior: auto !important;
+                }
+                """
+            )
             page.wait_for_timeout(800)
 
             results: list[dict[str, Any]] = []
+            current_slide_index: int | None = None
             for target in targets:
+                slide_index = int(target.get("slide_index", 1))
+                if slide_index != current_slide_index:
+                    page.evaluate(
+                        """
+                        ({ slideIndex }) => {
+                            const slides = Array.from(document.querySelectorAll('.slide'));
+                            const idx = Math.max(0, Math.min((slideIndex || 1) - 1, slides.length - 1));
+                            const targetSlide = slides[idx];
+                            if (!targetSlide) {
+                                return false;
+                            }
+
+                            const activateViaDots = () => {
+                                const nav = document.querySelector('#nav-dots, .nav-dots');
+                                if (!nav) return false;
+                                const dots = Array.from(nav.querySelectorAll('button, .dot'));
+                                if (dots.length < slides.length || !dots[idx]) return false;
+                                dots[idx].dispatchEvent(new MouseEvent('click', { bubbles: true, cancelable: true }));
+                                return true;
+                            };
+
+                            const activateViaController = () => {
+                                try {
+                                    if (typeof ctrl !== 'undefined' && ctrl && typeof ctrl.goTo === 'function') {
+                                        ctrl.goTo(idx);
+                                        return true;
+                                    }
+                                } catch (_err) {}
+                                try {
+                                    if (typeof goTo !== 'undefined' && typeof goTo === 'function') {
+                                        goTo(idx);
+                                        return true;
+                                    }
+                                } catch (_err) {}
+                                return false;
+                            };
+
+                            const activateViaTrack = () => {
+                                const track = document.getElementById('track');
+                                if (!track || !slides.every((slide) => track.contains(slide))) {
+                                    return false;
+                                }
+                                slides.forEach((slide, slideIdx) => slide.classList.toggle('active', slideIdx === idx));
+                                const previousTransition = track.style.transition;
+                                track.style.transition = 'none';
+                                track.style.transform = `translateX(-${idx * 100}vw)`;
+                                track.getBoundingClientRect();
+                                track.style.transition = previousTransition;
+                                return true;
+                            };
+
+                            if (!activateViaDots() && !activateViaController() && !activateViaTrack()) {
+                                targetSlide.scrollIntoView({ behavior: 'instant', block: 'start', inline: 'nearest' });
+                            }
+
+                            return true;
+                        }
+                        """,
+                        {"slideIndex": slide_index},
+                    )
+                    page.wait_for_timeout(80)
+                    current_slide_index = slide_index
+
                 result = page.evaluate(
                     """
                     ({ qaId, lineClasses, visibleChromeSelectors, companionSelectors, requiredAttributes }) => {
@@ -189,8 +262,15 @@ def _measure_title_targets_in_browser(annotated_html: str, targets: list[dict[st
                         const clippingAncestors = [];
                         let current = el.parentElement;
                         while (current) {
+                            if (current === document.body || current === document.documentElement) {
+                                current = current.parentElement;
+                                continue;
+                            }
                             const currentStyle = window.getComputedStyle(current);
-                            if (['hidden', 'clip'].includes(currentStyle.overflowX) || ['hidden', 'clip'].includes(currentStyle.overflowY)) {
+                            const isScrollableContainer =
+                                ((['auto', 'scroll'].includes(currentStyle.overflowY) || ['auto', 'scroll'].includes(currentStyle.overflowX))
+                                && (current.scrollHeight > current.clientHeight + 2 || current.scrollWidth > current.clientWidth + 2));
+                            if (!isScrollableContainer && (['hidden', 'clip'].includes(currentStyle.overflowX) || ['hidden', 'clip'].includes(currentStyle.overflowY))) {
                                 clippingAncestors.push(current.getBoundingClientRect());
                             }
                             current = current.parentElement;

@@ -134,6 +134,22 @@
             "type": "string",
             "minLength": 1
           }
+        },
+        "global_facts": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "optional_support": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
         }
       }
     },
@@ -191,6 +207,46 @@
               "visual": {
                 "type": "string",
                 "minLength": 1
+              },
+              "claim": {
+                "type": "string",
+                "minLength": 1
+              },
+              "explanation": {
+                "type": "string",
+                "minLength": 1
+              },
+              "visual_intent": {
+                "type": "string",
+                "minLength": 1
+              },
+              "preferred_layout_family": {
+                "type": "string",
+                "minLength": 1
+              },
+              "chart_policy": {
+                "type": "string",
+                "enum": [
+                  "auto",
+                  "required",
+                  "avoid"
+                ]
+              },
+              "supporting_facts": {
+                "type": "array",
+                "minItems": 1,
+                "items": {
+                  "type": "string",
+                  "minLength": 1
+                }
+              },
+              "numeric_facts": {
+                "type": "array",
+                "minItems": 1,
+                "items": {
+                  "type": "string",
+                  "minLength": 1
+                }
               }
             }
           }

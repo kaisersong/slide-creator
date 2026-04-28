@@ -23,6 +23,9 @@ scripts/*
 !scripts/title_browser_qa.py
 !scripts/title_profiles.py
 !scripts/validate-brief.py
+!scripts/preset_support.py
+!scripts/run_evals.py
+!scripts/preset_release_gate.py
 !docs/
 docs/*
 !docs/design/

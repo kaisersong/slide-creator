@@ -25,6 +25,7 @@ sys.path.insert(0, str(SCRIPTS))
 
 from generate import (
     parse_planning,
+    _extract_cover_metrics,
     _render_children,
     _render_col_child,
     _render_body,
@@ -109,6 +110,17 @@ class TestStatDetection:
     def test_punctuation_not_stat(self):
         assert _looks_stat({"text": "。", "component": None}) is False
         assert _looks_stat({"text": "！", "component": None}) is False
+
+    def test_cover_metrics_produce_distinct_triplet_for_ai_org_article(self):
+        metrics = _extract_cover_metrics(
+            "组织的相变 · AI原生组织变革探讨",
+            "2026年4月 · 内部探讨稿",
+            10,
+        )
+
+        values = [value for value, _label in metrics]
+        assert values == ["10", "当前判断", "AI 原生"]
+        assert len(set(values)) == 3
 
 
 # ─── .g card rendering tests ────────────────────────────────────────────────

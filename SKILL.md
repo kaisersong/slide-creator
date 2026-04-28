@@ -1,7 +1,7 @@
 ---
 name: kai-slide-creator
 description: 生成HTML演示文稿/幻灯片 — 21 种风格模版，播放/演讲者模式。适用于路演、产品发布、技术分享、方案宣讲等场景。
-version: 2.23.2
+version: 2.24.0
 metadata: {"openclaw":{"emoji":"🎞","os":["darwin","linux","windows"],"homepage":"https://github.com/kaisersong/slide-creator","requires":{"bins":["python3"]},"install":[]}}
 ---
 
@@ -16,14 +16,7 @@ metadata: {"openclaw":{"emoji":"🎞","os":["darwin","linux","windows"],"homepag
 
 ## 使用方式
 
-```bash
-/slide-creator --plan [prompt]       # 生成 BRIEF.json（IR）
-/slide-creator --generate            # 从 BRIEF.json 生成 HTML
-/slide-creator --review [file.html]  # 17 项检查点自动优化
-/slide-creator                       # 交互式创建（先看风格预览）
-```
-
-`/slide-creator ...` 是 Claude/OpenClaw 的 slash 技能调用，不是 bash/python 命令。原始沙箱里请改用 `python3 main.py --validate-brief ...` / `python3 main.py --generate ...`。
+`/slide-creator ...` 是 Claude/OpenClaw 的 slash 技能调用，不是 bash 命令。
 
 **规划深度：**
 - `自动` (Auto) — 快速出稿，约 3-6 分钟
@@ -60,6 +53,7 @@ metadata: {"openclaw":{"emoji":"🎞","os":["darwin","linux","windows"],"homepag
 
 1. **风格强制**
    所有颜色、字体、组件、背景、动画、图表色、signature elements 都**必须且只能**来自选中的风格文件。模板里的 `[from style file]` 和示例值只是占位，禁止直接使用。  
+   默认推荐面第一阶段聚焦 4 个 production presets：`Swiss Modern / Enterprise Dark / Data Story / Blue Sky`；**但用户显式指定任意当前 preset 时，必须保留该选择**。support tier 只影响默认推荐优先级，不影响显式指定。  
    **Swiss Modern 额外要求 canonical export path**：面板保持 `.slide` direct child，token 保持 `--bg/--text/--red`，使用 canonical 类（`.left-panel/.right-panel/.stat-row/.cta-block`），并写入 `data-export-role`；不得生成 `.left-col/.right-col` 或 `--bg-primary/--accent` 这类兼容别名。
 
 2. **叙事弧线**
@@ -83,9 +77,6 @@ metadata: {"openclaw":{"emoji":"🎞","os":["darwin","linux","windows"],"homepag
 
 组装完整 HTML 后，先写入临时文件，再运行：
 
-```bash
-python3 tests/validate.py "$TMP_HTML" --strict
-```
 
 任一失败都算生成失败，必须修复或重生直到通过。
 
@@ -125,6 +116,7 @@ python3 tests/validate.py "$TMP_HTML" --strict
 只读取已选风格的文件：
 
 - **内置预设**：完整列表、风格说明和选择建议都在 `references/style-index.md`
+- **支持层级**：默认推荐面与 support tier 定义在 `references/preset-support-tiers.json`
 - **内置风格文件位置**：统一在 `references/` 下；Blue Sky 例外，使用 `references/blue-sky-starter.html`
 - **自定义主题**：`themes/<name>/reference.md`
 
@@ -134,14 +126,7 @@ python3 tests/validate.py "$TMP_HTML" --strict
 - 标题规则：`references/title-quality.md`
 - 反模式：`references/impeccable-anti-patterns.md`
 
-## 面向 AI 智能体
 
-```bash
-/slide-creator 为 [主题] 制作路演 deck
-/slide-creator --plan "Acme v2 产品发布"
-/slide-creator --generate
-/kai-html-export presentation.html
-/kai-html-export --mode native presentation.html
 ```
 
 - `BRIEF.json` 已存在 → 直接读取并作为真相源

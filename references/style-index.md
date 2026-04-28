@@ -4,6 +4,25 @@ Read this file when the user is choosing a style preset (Phase 2).
 
 ---
 
+## Core Recommendation Surface (Phase 1)
+
+Use these 4 presets as the default recommendation surface when the user did not explicitly name a style:
+
+- `Swiss Modern`
+- `Enterprise Dark`
+- `Data Story`
+- `Blue Sky`
+
+This is a recommendation surface, not a hard capability boundary.
+
+- If the user explicitly names any current preset, honor that selection.
+- Support tier affects default recommendation priority only.
+- Current editorial next-shortlist candidate: `Paper & Ink`
+
+Machine-readable source of truth: `references/preset-support-tiers.json`
+
+---
+
 ## 21 Presets
 
 | Preset | Vibe | Best For |
@@ -37,6 +56,17 @@ For styles without a dedicated file, use the relevant section in `STYLE-DESC.md`
 
 ---
 
+## Support Tier Snapshot
+
+| Tier | Current Presets | Notes |
+|------|-----------------|-------|
+| Production | Swiss Modern, Enterprise Dark, Data Story, Blue Sky | Phase 1 default recommendation surface |
+| Supported | Paper & Ink, Glassmorphism, Chinese Chan, Bold Signal, Aurora Mesh, Terminal Green | Still selectable directly; not first-line defaults |
+| Experimental | Electric Studio, Creative Voltage, Dark Botanical, Modern Newspaper, Neon Cyber, Notebook Tabs, Pastel Geometry, Split Pastel, Vintage Editorial, Neo-Brutalism, Neo-Retro Dev Deck | Keep available when explicitly requested |
+| Archive Candidate | None yet | Do not archive before usage evidence exists |
+
+---
+
 ## Mood → Preset Mapping
 
 Use when the user answers the mood question in Phase 2.
@@ -45,13 +75,13 @@ Use when the user answers the mood question in Phase 2.
 |------|---------------|
 | Impressed/Confident | Bold Signal, Enterprise Dark, Neo-Brutalism |
 | Excited/Energized | Creative Voltage, Neon Cyber, Aurora Mesh |
-| Calm/Focused | Notebook Tabs, Paper & Ink, Chinese Chan |
+| Calm/Focused | Paper & Ink, Chinese Chan, Notebook Tabs |
 | Inspired/Moved | Dark Botanical, Vintage Editorial, Glassmorphism |
 | Clean/Enterprise | Blue Sky, Electric Studio, Enterprise Dark |
 | Data-Driven | Data Story, Enterprise Dark, Swiss Modern |
 | Playful/Creative | Split Pastel, Pastel Geometry, Neo-Brutalism |
 | Developer-Focused | Terminal Green, Neon Cyber, Neo-Retro Dev Deck |
-| Editorial/Organized | Notebook Tabs, Vintage Editorial, Modern Newspaper |
+| Editorial/Organized | Paper & Ink, Notebook Tabs, Modern Newspaper |
 
 ---
 

@@ -57,6 +57,14 @@ def test_swiss_reference_defines_canonical_export_contract():
         assert required in content, f"Swiss Modern canonical export contract missing {required}"
 
 
+def test_swiss_reference_includes_executable_bg_num_and_slide_num_css():
+    content = SWISS_REF.read_text(encoding="utf-8")
+
+    assert ".bg-num {" in content
+    assert ".slide-num-label {" in content
+    assert ".slide-num-label.light {" in content
+
+
 def test_swiss_named_layout_class_mentions_are_backed_by_css_or_signature():
     content = SWISS_REF.read_text(encoding="utf-8")
     sig_start = content.find("## Signature Elements")

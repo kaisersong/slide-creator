@@ -63,6 +63,7 @@ def evaluate(root: Path) -> list[RuleResult]:
             "--generate",
             "BRIEF.json",
             "themes/<name>/reference.md",
+            "用户显式指定任意当前 preset 时，必须保留该选择",
         ],
     )
     if ok:
@@ -79,6 +80,7 @@ def evaluate(root: Path) -> list[RuleResult]:
             "Default-on",
             "themes/your-theme/",
             "reference.md",
+            "Explicit preset selection still wins",
         ],
     )
     if ok:
@@ -92,6 +94,7 @@ def evaluate(root: Path) -> list[RuleResult]:
             "If `BRIEF.json` exists, it's the source of truth",
             "single AskUserQuestion call with all 5 questions at once",
             "1280x720",
+            "Support tier only affects default recommendation priority",
         ],
     )
     results.append(RuleResult("workflow-contract", ok, detail))
