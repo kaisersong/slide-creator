@@ -1,0 +1,260 @@
+{
+  "schema_version": 1,
+  "brief_id": "org-phase-change-ai-native-org-swiss-modern",
+  "mode": "auto",
+  "language": "zh-CN",
+  "title": "组织的相变",
+  "audience": "关注 AI 转型、组织设计和管理变革的内部管理者与产研负责人",
+  "desired_action": "把文章观点转成一条可讨论、可传播的组织变革判断链",
+  "deck": {
+    "deck_type": "user-content",
+    "page_count": 10,
+    "output_format": "html-slides"
+  },
+  "style": {
+    "preset": "Swiss Modern",
+    "tone": "理性、克制、研究型、判断先行",
+    "visual_density": "medium"
+  },
+  "content": {
+    "source_policy": "distill-only",
+    "must_include": [
+      "科层制源于信息摩擦与技能活化能",
+      "流体化是组织特性，不是新的架构图",
+      "核心竞争力 = 全员AI认知力 × 组织敏捷力",
+      "Amazon / Meta / Shopify / Duolingo / Klarna / Gartner 案例",
+      "AI 消除的是耗散性摩擦，不是功能性压缩",
+      "管理的本质将从结构设计转向场的维护"
+    ],
+    "must_avoid": [
+      "把文章改写成泛泛而谈的 AI 愿景",
+      "连续重复布局",
+      "脱离原文新增结论",
+      "把案例数字当成装饰而不是论据"
+    ],
+    "global_facts": [
+      "AI 改变组织不是渐进优化，而是相变",
+      "纵向层级来自信息摩擦，横向分工来自技能活化能",
+      "流体化不是拆掉骨架，而是建设循环系统",
+      "AI 原生组织的核心竞争力是全员AI认知力与组织敏捷力的乘法关系"
+    ],
+    "optional_support": [
+      "AI 认知力包含操作层、判断层、设计层",
+      "组织敏捷力包含决策速度、能力重组速度、响应速度",
+      "人的惰性、身份需求和政治动机是变革中的真实粘滞力"
+    ]
+  },
+  "narrative": {
+    "thesis": "AI 正在同时改写信息摩擦与技能活化能两类组织约束，因此组织变革的本质不是效率优化，而是从科层固态向流体化特性的相变。",
+    "page_roles": [
+      "cover",
+      "definition",
+      "workflow",
+      "baseline",
+      "principles",
+      "evidence",
+      "tradeoff",
+      "verification",
+      "architecture",
+      "closing"
+    ],
+    "slides": [
+      {
+        "slide_number": 1,
+        "role": "cover",
+        "title": "AI 改变组织，不是效率优化，而是一次相变",
+        "key_point": "文章真正要论证的，不是工具升级，而是组织基本物理约束已经被改写。",
+        "visual": "hero thesis",
+        "claim": "当信息摩擦和技能活化能同时下降，组织形态就不再只是优化，而会发生状态跃迁。",
+        "explanation": "科层制是在特定约束下的必然解，而 AI 正在动摇这些约束本身。",
+        "visual_intent": "hero statement with one strong thesis and restrained supporting lines",
+        "preferred_layout_family": "hero"
+      },
+      {
+        "slide_number": 2,
+        "role": "definition",
+        "title": "科层制不是管理偏好，而是对两种物理约束的回应",
+        "key_point": "纵向层级解决信息传递摩擦，横向分工解决技能迁移成本。",
+        "visual": "two-column constraint explanation",
+        "claim": "组织之所以层层分工，不是因为管理者偏爱复杂，而是因为信息和技能都曾经很难流动。",
+        "explanation": "一条战略指令层层衰减，一个岗位技能难以快速迁移，这两件事共同塑造了科层制。",
+        "visual_intent": "two constrained forces explained as left-right comparison",
+        "preferred_layout_family": "comparison",
+        "supporting_facts": [
+          "信息传递会失真、延迟、被选择性解读",
+          "经理人长期承担信息中继站角色",
+          "学习新技能和切换岗位需要高活化能"
+        ]
+      },
+      {
+        "slide_number": 3,
+        "role": "workflow",
+        "title": "AI 正在同时松动纵向层级和横向分工",
+        "key_point": "上下文可直达、能力可插拔，组织开始从固态转向更流动的连接方式。",
+        "visual": "constraint-to-network flow",
+        "claim": "当节点都能直接获取组织上下文与能力模块，中间层和固定职能边界都会开始失去必要性。",
+        "explanation": "AI 把信息拉通，也把经验抽取成可复用模块，因此纵向与横向结构会同步松动。",
+        "visual_intent": "before-after flow from hierarchy to networked value creation",
+        "preferred_layout_family": "flow",
+        "supporting_facts": [
+          "信息摩擦趋向零，中间传导节点的必要性下降",
+          "隐性知识被抽取成可插拔能力模块",
+          "人和 Agent 都能更低成本地获取与组合技能"
+        ]
+      },
+      {
+        "slide_number": 4,
+        "role": "baseline",
+        "title": "流体化不是新的组织架构图，而是组织新增的特性",
+        "key_point": "骨架可以保留，真正变化的是能力、信息和资源如何按需流动。",
+        "visual": "three-part stat anchor",
+        "claim": "文章并不主张一夜之间消灭组织骨架，而是主张在骨架之上建立流体化的循环系统。",
+        "explanation": "法律实体、问责链、资源池仍然存在，但协作与价值创造路径开始获得流体特性。",
+        "visual_intent": "three anchored traits with skeletal structure versus circulation metaphor",
+        "preferred_layout_family": "stat",
+        "supporting_facts": [
+          "流体化降低变革防御性，因为它不否定现有骨架的价值",
+          "流体化允许企业以过渡态逐步增加流动程度",
+          "流体化指数可以成为衡量 AI 转型深度的指标"
+        ]
+      },
+      {
+        "slide_number": 5,
+        "role": "principles",
+        "title": "核心竞争力公式要求 AI 认知力和组织敏捷力同时成立",
+        "key_point": "这是乘法关系，不是两项优势的松散相加。",
+        "visual": "formula and principle index",
+        "claim": "任何一家公司只强化个人用 AI 的能力，或只强化组织速度，都会在另一端被短板拖垮。",
+        "explanation": "AI 认知力决定人能否正确设计与判断人机协作，敏捷力决定组织能否把这种能力快速转成客户价值。",
+        "visual_intent": "formula-led index with two dimensions and three layers each",
+        "preferred_layout_family": "index",
+        "supporting_facts": [
+          "AI 认知力分为操作层、判断层、设计层",
+          "组织敏捷力分为决策速度、能力重组速度、响应速度",
+          "强 AI 弱组织，只会停留在单点效率提升"
+        ]
+      },
+      {
+        "slide_number": 6,
+        "role": "evidence",
+        "title": "硅谷案例已经把组织相变从推演推向现实",
+        "key_point": "头部企业正在用裁撤中层、重配资本和重写制度来验证这条判断链。",
+        "visual": "evidence table with landmark cases",
+        "claim": "真正有说服力的不是概念，而是 Amazon、Meta、Shopify、Duolingo、Klarna 与 Gartner 已经给出的集体验证。",
+        "explanation": "这些案例共同指向同一件事：组织结构、资本配置和人才制度都在被 AI 重写。",
+        "visual_intent": "evidence table anchored by company cases and one market forecast",
+        "preferred_layout_family": "evidence",
+        "supporting_facts": [
+          "Amazon 自 2025 年 10 月以来累计削减近 30,000 个企业岗位，2026 年初约 16,000 个，方向指向中层压缩",
+          "Meta 计划裁减约 8,000 人，2026 年资本开支预计 1,150 亿至 1,350 亿美元，较 2025 年增长 75%",
+          "Shopify 人数从 11,600 降至 8,100，并把实习项目从 75 扩到 1,000",
+          "Duolingo 不到一年构建 148 门课程，同时暴露制度推进的边界",
+          "Klarna 员工从 5,500 降到 3,400，AI 客服一度宣称可替代 700 人，但服务质量下滑",
+          "Gartner 预测到 2026 年，20% 的组织将用 AI 扁平化结构并消除超过一半的中层岗位"
+        ],
+        "numeric_facts": [
+          "30,000",
+          "16,000",
+          "8,000",
+          "1,150 亿至 1,350 亿美元",
+          "75%",
+          "11,600",
+          "8,100",
+          "75",
+          "1,000",
+          "148",
+          "5,500",
+          "3,400",
+          "700",
+          "20%"
+        ]
+      },
+      {
+        "slide_number": 7,
+        "role": "tradeoff",
+        "title": "AI-first 不等于 AI 全面替人，质量边界会先反弹回来",
+        "key_point": "Klarna 和 Duolingo 的回摆说明，真正的流体化不是用 AI 替掉所有固态节点。",
+        "visual": "boundary contrast",
+        "claim": "只抓效率、不抓质量与信任，会把组织推向过度流体化，并在客户体验处遭遇反噬。",
+        "explanation": "某些需要判断、信任和情感连接的节点，必须继续由人承担，只是协作方式被重构。",
+        "visual_intent": "contrast between AI acceleration and quality boundary",
+        "preferred_layout_family": "comparison",
+        "supporting_facts": [
+          "Duolingo 后来回撤了把 AI 使用纳入绩效考核的要求",
+          "Klarna 因服务质量下滑不得不让工程师和设计师支援客服",
+          "真正的目标不是为了用 AI 而用 AI，而是让人和 AI 在更合适的位置组合"
+        ]
+      },
+      {
+        "slide_number": 8,
+        "role": "verification",
+        "title": "流体化能否落地，取决于三条边界有没有被正视",
+        "key_point": "AI 消除的是耗散性摩擦，不是决策吸收、社会性需求和人本身的粘滞力。",
+        "visual": "boundary verification table",
+        "claim": "文章最有价值的部分，不是鼓吹去层级，而是补上了相变不会自动发生的三个约束条件。",
+        "explanation": "如果忽略功能性压缩、历史失败经验和人的惯性，流体化只会变成新的组织口号。",
+        "visual_intent": "three-row verification table with constraint, implication, and management correction",
+        "preferred_layout_family": "evidence",
+        "supporting_facts": [
+          "经理人不仅是信息中继器，还承担功能性压缩与决策吸收",
+          "历史上的去层级化尝试大多失败，因为只拆结构，没有替代基础设施",
+          "人有舒适区、政治动机和头衔需求，这些都构成变革中的粘滞力"
+        ]
+      },
+      {
+        "slide_number": 9,
+        "role": "architecture",
+        "title": "管理动作将从画结构图，转向维护共享上下文与能力流动的场",
+        "key_point": "下一代管理不再只定义岗位和汇报线，而是维护节点如何按价值信号自发组合。",
+        "visual": "field maintenance architecture",
+        "claim": "当组织获得流体化特性后，管理者真正需要设计的，不再是刚性的晶体结构，而是能持续驱动组合与分离的场。",
+        "explanation": "这个场至少包括共享上下文、可获取能力库和透明价值信号三部分，它们共同决定流动是否高效。",
+        "visual_intent": "three-part architecture of context, capability library, and value signals",
+        "preferred_layout_family": "flow",
+        "supporting_facts": [
+          "共享上下文让节点理解全局",
+          "能力库让节点低成本获得所需技能",
+          "价值信号透明传导让节点感知客户需求方向与强度"
+        ]
+      },
+      {
+        "slide_number": 10,
+        "role": "closing",
+        "title": "组织已经开始相变，真正的问题是谁来主动驱动它",
+        "key_point": "企业不会停在旧状态里，差别只在于是被动被冲刷，还是主动设计过渡。",
+        "visual": "closing conviction",
+        "claim": "这篇文章最终留下的不是一个组织图，而是一句管理判断：相变已启动，主动权比结论本身更重要。",
+        "explanation": "谁先把 AI 认知力、组织敏捷力和边界条件放进同一个变革框架里，谁就更可能在下一轮组织竞争中占先。",
+        "visual_intent": "authoritative close with one decisive takeaway",
+        "preferred_layout_family": "statement"
+      }
+    ]
+  },
+  "runtime": {
+    "editing_mode": true,
+    "presenter_mode": true,
+    "watermark_mode": "injected-last-slide",
+    "export_intent": "none"
+  },
+  "plan_view": {
+    "emit_planning_view": false,
+    "planning_view_path": "PLANNING.md"
+  },
+  "timing": {
+    "estimate": {
+      "plan": "1-2 min",
+      "generate": "1-3 min",
+      "validate": "<1 min",
+      "polish": "0-2 min",
+      "total": "3-6 min"
+    },
+    "actual": {
+      "plan": "0m 00s",
+      "generate": "0m 00s",
+      "validate": "0m 00s",
+      "polish": "0m 00s",
+      "total": "0m 00s"
+    }
+  },
+  "notes": "Source distilled from the DOCX article about AI-native organizational phase change; preserve argument fidelity over rhetorical embellishment."
+}

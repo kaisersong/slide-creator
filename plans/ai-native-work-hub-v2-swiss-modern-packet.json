@@ -1,0 +1,45 @@
+{
+  "brief_hash": "sha256:e68391d6cb6b86261d172070b622d0986f6a03481b78938b07005b4a7d512a79",
+  "preset": "Swiss Modern",
+  "preset_support_tier": "production",
+  "deck_type": "user-content",
+  "page_count": 10,
+  "composition_source": "references/composition-guide.md",
+  "runtime_path": "shared-js-engine",
+  "required_refs": [
+    "references/composition-guide.md",
+    "references/html-template.md",
+    "references/js-engine.md",
+    "references/base-css.md",
+    "references/swiss-modern.md"
+  ],
+  "required_contracts": [
+    "preset-metadata",
+    "shared-runtime",
+    "style-signature",
+    "shell-ui-markers"
+  ],
+  "required_shell_markers": [
+    "body[data-preset]",
+    "#brand-mark",
+    ".progress-bar",
+    ".nav-dots",
+    ".edit-hotzone",
+    "#editToggle",
+    "#notes-panel"
+  ],
+  "style_contract_digest": "sha256:405894bf1d71b496a8b551a7253bc52a4880f5bf2793ca3e491e7b0ec2f82c69",
+  "allowed_layouts": [
+    "title_grid",
+    "column_content",
+    "stat_block",
+    "pull_quote",
+    "geometric_diagram",
+    "data_table",
+    "contents_index",
+    "user_content_12_page_route",
+    "canonical_export_contract"
+  ],
+  "quality_tier": "tier0",
+  "fallback_policy": "full-preset-contract"
+}

@@ -1,0 +1,237 @@
+{
+  "schema_version": 1,
+  "brief_id": "life-meaning-chinese-chan-regenerated",
+  "mode": "auto",
+  "language": "zh-CN",
+  "title": "人生的意义",
+  "audience": "面向泛大众的中文思想分享观众，适合演讲、直播分享或个人表达场景",
+  "desired_action": "让观众把“追问意义”从抽象焦虑，转成具体的自我觉察与日常行动",
+  "deck": {
+    "deck_type": "user-content",
+    "page_count": 9,
+    "output_format": "html-slides"
+  },
+  "style": {
+    "preset": "Chinese Chan",
+    "tone": "静定、克制、内省、留白优先",
+    "visual_density": "low"
+  },
+  "content": {
+    "source_policy": "distill-only",
+    "must_include": [
+      "人会追问人生的意义",
+      "意义没有唯一答案，但有多个生长维度",
+      "意义感缺失常来自外部标准裹挟、目标断层和行动价值错位",
+      "意义不是想出来的，而是在行动中逐步浮现",
+      "人生的意义最终要靠自己活出来"
+    ],
+    "must_avoid": [
+      "连续使用 hero 级大标题作为内容页 headline",
+      "把 Chinese Chan 做成空洞鸡汤或泛哲学口号",
+      "重复同一种装饰元素导致留白失效"
+    ],
+    "global_facts": [
+      "意义感与存在感、价值感紧密相关",
+      "意义可以沿着体验、价值和精神三个方向生长",
+      "行动比继续抽象思辨更能帮助意义变得具体"
+    ],
+    "optional_support": [
+      "普通人的日常选择同样可以承载意义",
+      "意义会随着人生阶段变化，不是一劳永逸的固定答案",
+      "从小行动开始，比等待完美时机更有效"
+    ]
+  },
+  "narrative": {
+    "thesis": "人生的意义不是外界预先给出的统一答案，而是在觉察、关系与行动中被慢慢活出来的。",
+    "page_roles": [
+      "cover",
+      "problem",
+      "discovery",
+      "problem",
+      "solution",
+      "evidence",
+      "summary",
+      "driver",
+      "closing"
+    ],
+    "slides": [
+      {
+        "slide_number": 1,
+        "role": "cover",
+        "title": "人生的意义",
+        "key_point": "在有限的生命里，寻找属于自己的答案。",
+        "visual": "centered contemplative title",
+        "claim": "每个人都会在某个时刻，开始认真追问自己为什么而活。",
+        "explanation": "这不是为了得到一个标准答案，而是为了重新确认自己真正重视什么。",
+        "visual_intent": "hero statement with large empty space",
+        "preferred_layout_family": "hero",
+        "supporting_facts": [
+          "深夜发问",
+          "有限生命",
+          "属于自己的答案"
+        ]
+      },
+      {
+        "slide_number": 2,
+        "role": "problem",
+        "title": "我们为何会追问人生的意义",
+        "key_point": "当温饱焦虑退去、重复感累积、失去和挫折出现，人会开始追问现在的生活是否真的属于自己。",
+        "visual": "narrow column with one caption and one list",
+        "claim": "追问意义，本质上是在追问存在感和价值感是否还成立。",
+        "explanation": "这不是无病呻吟，而是人开始觉察自己与既有生活之间的差距。",
+        "visual_intent": "single-column reflective evidence",
+        "preferred_layout_family": "evidence",
+        "supporting_facts": [
+          "温饱焦虑退去后，问题会从生存转向价值",
+          "重复日常和重大变故都会触发这类追问",
+          "真正的问题是“我现在过的生活是不是我想要的”"
+        ]
+      },
+      {
+        "slide_number": 3,
+        "role": "discovery",
+        "title": "意义没有唯一答案，却有万千维度",
+        "key_point": "人生不必套进统一模板，意义可以沿着个人体验、社会价值和精神追求三个方向生长。",
+        "visual": "quiet list with three dimensions",
+        "claim": "没有唯一标准答案，不等于没有可辨认的意义维度。",
+        "explanation": "找到最适合自己的那条线索，比追求普适正确更重要。",
+        "visual_intent": "three-dimension evidence list",
+        "preferred_layout_family": "evidence",
+        "supporting_facts": [
+          "个人体验：平静、喜悦、热爱和感受",
+          "社会价值：照顾家人、帮助他人、创造价值",
+          "精神追求：智慧增长、修行与信念"
+        ]
+      },
+      {
+        "slide_number": 4,
+        "role": "problem",
+        "title": "我们为何会陷入意义感的缺失",
+        "key_point": "很多无意义感并不是因为人生真的没有意义，而是因为意义被外部标准、断裂目标和错位行动遮住了。",
+        "visual": "three-trap stat anchors",
+        "claim": "无意义感常常是结构性困境，不只是情绪低落。",
+        "explanation": "当人长期活在别人定义的成功里，或每天做的事情与认同的价值冲突时，热情会被慢慢耗尽。",
+        "visual_intent": "diagnostic stat row with three traps",
+        "preferred_layout_family": "stat",
+        "supporting_facts": [
+          "外界标准裹挟：活在别人的期待里",
+          "目标断层：完成阶段目标后找不到下一个方向",
+          "行动与价值错位：日常行为无法支撑内心认同"
+        ]
+      },
+      {
+        "slide_number": 5,
+        "role": "solution",
+        "title": "找到意义的核心不是「想」，而是「做」",
+        "key_point": "意义不会在抽象推理里自动出现，而会在投入、利他、关系和日常选择里慢慢变得清晰。",
+        "visual": "restrained center statement",
+        "claim": "实践不是意义的附属品，而是意义真正浮现的现场。",
+        "explanation": "当你开始记录心流时刻、尝试微小利他、梳理遗憾清单，意义感会比继续空想更快具象化。",
+        "visual_intent": "centered thesis with strong breathing room",
+        "preferred_layout_family": "statement",
+        "supporting_facts": [
+          "记录心流时刻",
+          "尝试微小利他",
+          "梳理遗憾清单"
+        ]
+      },
+      {
+        "slide_number": 6,
+        "role": "evidence",
+        "title": "普通人的意义，藏在日常的选择里",
+        "key_point": "真正动人的意义，往往不在宏大叙事里，而在普通人持续做的小事里。",
+        "visual": "quiet narrative evidence list",
+        "claim": "普通人的日常选择，同样足以构成深刻的人生意义。",
+        "explanation": "开书店培养孩子阅读、提前到岗保持整洁、退休后免费拍照留念，这些都说明意义可以具体而微小。",
+        "visual_intent": "story evidence in a narrow column",
+        "preferred_layout_family": "evidence",
+        "supporting_facts": [
+          "回乡开书店，把孩子带进阅读",
+          "保洁阿姨用整洁环境照顾别人",
+          "退休老人用摄影为社区留下纪念"
+        ]
+      },
+      {
+        "slide_number": 7,
+        "role": "summary",
+        "title": "关于人生意义的三个常见误区",
+        "key_point": "意义不是宏大叙事，不是一劳永逸，也不需要与众不同。",
+        "visual": "summary list with three corrections",
+        "claim": "看清误区，往往比继续寻找某个终极定义更重要。",
+        "explanation": "只要你能照顾好自己与重要的人，并让生活与价值慢慢靠近，意义就已经开始生成。",
+        "visual_intent": "correction list in restrained rhythm",
+        "preferred_layout_family": "comparison",
+        "supporting_facts": [
+          "不是宏大叙事：过好每一天本身就有意义",
+          "不是一劳永逸：意义会随人生阶段变化",
+          "不是必须与众不同：充实满足比标新立异更重要"
+        ]
+      },
+      {
+        "slide_number": 8,
+        "role": "driver",
+        "title": "现在，你可以从这三件小事开始",
+        "key_point": "意义感最怕被无限推迟，真正有效的起点通常都很小。",
+        "visual": "restrained stat row",
+        "claim": "把意义落地的最好方法，是立刻开始一件足够小、但足够真实的行动。",
+        "explanation": "今晚写下让你开心的小事，这周完成一件拖延的小事，给重要的人发一句问候，让意义从抽象命题变成日常动作。",
+        "visual_intent": "three-action stat anchor",
+        "preferred_layout_family": "stat",
+        "chart_policy": "avoid",
+        "supporting_facts": [
+          "10分钟：写下最近让你开心的小事",
+          "1件：完成一直想做但没做的小事",
+          "1句：给重要的人发出一句问候"
+        ],
+        "numeric_facts": [
+          "10分钟",
+          "1件",
+          "1句"
+        ]
+      },
+      {
+        "slide_number": 9,
+        "role": "closing",
+        "title": "人生的意义，是你活出来的答案",
+        "key_point": "探索本身，就是意义的一部分。",
+        "visual": "vertical closing statement",
+        "claim": "没有白走的路，每一步认真活过的生活都会留下答案。",
+        "explanation": "意义不是等别人宣布，也不是等未来突然降临，而是在你一次次选择、承担和珍惜中自然成形。",
+        "visual_intent": "vertical title close",
+        "preferred_layout_family": "close",
+        "supporting_facts": [
+          "每一步都算数",
+          "探索本身就是意义",
+          "答案来自活过的生活"
+        ]
+      }
+    ]
+  },
+  "runtime": {
+    "editing_mode": true,
+    "presenter_mode": true,
+    "watermark_mode": "injected-last-slide",
+    "export_intent": "none"
+  },
+  "plan_view": {
+    "emit_planning_view": false,
+    "planning_view_path": "PLANNING.md"
+  },
+  "timing": {
+    "estimate": {
+      "plan": "1-2 min",
+      "generate": "1-3 min",
+      "validate": "<1 min",
+      "polish": "0-2 min",
+      "total": "3-6 min"
+    },
+    "actual": {
+      "plan": "0m 00s",
+      "generate": "0m 00s",
+      "validate": "0m 00s",
+      "polish": "0m 00s",
+      "total": "0m 00s"
+    }
+  },
+  "notes": "源内容来自用户已有 Chinese Chan HTML，重新按 formal contract 生成。"
+}

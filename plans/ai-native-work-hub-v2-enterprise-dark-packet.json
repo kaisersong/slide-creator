@@ -1,0 +1,46 @@
+{
+  "brief_hash": "sha256:e21d1bea92e8bc285d44ee59ee0293568dafa0c01562e2d2f6d68e02d09ec8f1",
+  "preset": "Enterprise Dark",
+  "preset_support_tier": "production",
+  "deck_type": "user-content",
+  "page_count": 10,
+  "composition_source": "references/composition-guide.md",
+  "runtime_path": "shared-js-engine",
+  "required_refs": [
+    "references/composition-guide.md",
+    "references/html-template.md",
+    "references/js-engine.md",
+    "references/base-css.md",
+    "references/enterprise-dark.md"
+  ],
+  "required_contracts": [
+    "preset-metadata",
+    "shared-runtime",
+    "style-signature",
+    "shell-ui-markers"
+  ],
+  "required_shell_markers": [
+    "body[data-preset]",
+    "#brand-mark",
+    ".progress-bar",
+    ".nav-dots",
+    ".edit-hotzone",
+    "#editToggle",
+    "#notes-panel"
+  ],
+  "style_contract_digest": "sha256:39f4462e10a93123536fb35a5c57763a579898b0c827230f79ae3c6afaf32ed2",
+  "allowed_layouts": [
+    "kpi_dashboard",
+    "consulting_split",
+    "data_table",
+    "architecture_map",
+    "comparison_matrix",
+    "insight_pull",
+    "timeline",
+    "cta_close",
+    ".cta-group",
+    "horizontal_timeline"
+  ],
+  "quality_tier": "tier0",
+  "fallback_policy": "full-preset-contract"
+}
