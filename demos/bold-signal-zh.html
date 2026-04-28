@@ -16,6 +16,7 @@
             --text-primary: #ffffff;
             --text-on-card: #ffffff;
             --text-secondary: rgba(255,255,255,0.6);
+            --text-muted: rgba(255,255,255,0.6);
             --font-display: "Archivo Black", "Noto Sans SC", sans-serif;
             --font-body: "Space Grotesk", "Noto Sans SC", sans-serif;
             --title-size: clamp(2rem, 6vw, 5rem);
@@ -616,7 +617,7 @@
             <div class="reveal" style="margin-bottom:1.5rem;">
                 <div class="bold-hero-card" style="max-width:70%;padding:clamp(1.5rem,3vw,2.5rem);">
                     <div style="font-size:0.65rem;text-transform:uppercase;letter-spacing:0.12em;color:rgba(255,255,255,0.5);margin-bottom:0.75rem;">开始使用</div>
-                    <h2 style="font-family:var(--font-display);font-size:clamp(1.3rem,3vw,2.5rem);font-weight:900;line-height:1.1;color:var(--text-on-card);margin-bottom:0.75rem;">从设计预设开始，让内容自己说话</h2>
+                    <h2 style="font-family:var(--font-display);font-size:clamp(1.3rem,3vw,2.5rem);font-weight:900;line-height:1.1;color:var(--text-on-card);margin-bottom:0.75rem;">从设计预设开始，<br>让内容自己说话</h2>
                     <p style="font-size:clamp(0.8rem,1.3vw,1rem);color:rgba(255,255,255,0.7);line-height:1.6;">不再从空白幻灯片挣扎，3 分钟出第一稿</p>
                 </div>
             </div>
@@ -652,6 +653,7 @@
                 this.channel = new BroadcastChannel('slide-creator-presenter');
                 this.slides[0]?.classList.add('visible');
                 this.slides[0]?.querySelectorAll('.reveal').forEach(function(r) { r.classList.add('visible'); });
+                this.setActiveSlide(0);
                 this.setupNavDots();
                 this.setupObserver();
                 this.setupKeyboard();
@@ -661,6 +663,14 @@
                 this.setupEditor();
                 this.updateProgress();
                 this.insertWatermark();
+            }
+
+            setActiveSlide(index) {
+                this.slides.forEach((slide, i) => {
+                    const active = i === index;
+                    slide.classList.toggle('visible', active);
+                    slide.querySelectorAll('.reveal').forEach(function(r) { r.classList.toggle('visible', active); });
+                });
             }
 
             setupNavDots() {
@@ -682,8 +692,9 @@
                 const observer = new IntersectionObserver(function(entries) {
                     entries.forEach(function(entry) {
                         if (entry.isIntersecting) {
-                            entry.target.classList.add('visible');
                             self.currentSlide = Array.prototype.indexOf.call(self.slides, entry.target);
+                            if (self.currentSlide < 0) return;
+                            self.setActiveSlide(self.currentSlide);
                             self.updateProgress();
                             self.updateDots();
                             self.broadcastState();
@@ -702,13 +713,9 @@
                         e.preventDefault(); self.next();
                     } else if (e.key === 'ArrowUp' || e.key === 'ArrowLeft' || e.key === 'PageUp' || e.key === 'Backspace') {
                         e.preventDefault(); self.prev();
-                    } else if (e.key === 'F5') {
-                        e.preventDefault(); self.enterPresentMode();
                     } else if (e.key === 'p' || e.key === 'P') {
                         var url = location.href.split('?')[0] + '?presenter';
                         window.open(url, 'slide-presenter-' + Date.now(), 'width=1100,menubar=no,toolbar=no,location=no');
-                    } else if (e.key === 'Escape') {
-                        if (document.body.classList.contains('presenting')) self.exitPresentMode();
                     } else if (e.key === 'e' || e.key === 'E') {
                         if (!self.editor.active) self.editor.enter();
                         else self.editor.exit();
@@ -726,7 +733,60 @@
                 });
             }
 
-            setupWheel() {}
+            setupWheel() {
+                this.wState = 'idle';
+                this.wLastTime = 0;
+                this.wFallback = null;
+                this.scrollSettleTimer = null;
+
+                const enterDraining = () => {
+                    if (this.wState !== 'animating') return;
+                    this.wState = 'draining';
+                    this.wLastTime = Date.now();
+                    clearTimeout(this.wFallback);
+                    this.wFallback = setTimeout(() => { this.wState = 'idle'; }, 1500);
+                };
+
+                window.addEventListener('scroll', () => {
+                    if (this.wState !== 'animating') return;
+                    clearTimeout(this.scrollSettleTimer);
+                    this.scrollSettleTimer = setTimeout(enterDraining, 120);
+                }, { passive: true });
+
+                document.addEventListener('wheel', (e) => {
+                    if (e.target.tagName === 'TEXTAREA' || e.target.tagName === 'INPUT'
+                      || e.target.getAttribute('contenteditable')) return;
+                    if (e.target.closest && e.target.closest('#notes-panel')) return;
+
+                    let dx = e.deltaX, dy = e.deltaY;
+                    if (e.deltaMode === WheelEvent.DOM_DELTA_LINE) { dx *= 20; dy *= 20; }
+                    if (e.deltaMode === WheelEvent.DOM_DELTA_PAGE) { dx *= window.innerHeight; dy *= window.innerHeight; }
+                    const delta = Math.abs(dy) >= Math.abs(dx) ? dy : dx;
+                    if (Math.abs(delta) < 6) return;
+
+                    e.preventDefault();
+                    if (this.wState === 'animating') return;
+
+                    const now = Date.now();
+                    if (this.wState === 'draining') {
+                        const gap = now - this.wLastTime;
+                        this.wLastTime = now;
+                        if (gap <= 80) return;
+                        this.wState = 'idle';
+                        clearTimeout(this.wFallback);
+                    }
+
+                    this.wState = 'animating';
+                    clearTimeout(this.scrollSettleTimer);
+                    const moved = delta > 0 ? this.next() : this.prev();
+                    if (!moved) {
+                        this.wState = 'idle';
+                        return;
+                    }
+
+                    this.scrollSettleTimer = setTimeout(enterDraining, 450);
+                }, { passive: false });
+            }
 
             setupPresenter() {
                 const self = this;
@@ -748,11 +808,20 @@
             }
 
             goTo(index) {
-                this.slides[index]?.scrollIntoView({ behavior: 'smooth' });
+                const idx = Math.max(0, Math.min(index, this.slides.length - 1));
+                const moved = idx !== this.currentSlide;
+                this.currentSlide = idx;
+                this.setActiveSlide(idx);
+                this.slides[idx]?.scrollIntoView({ behavior: moved ? 'smooth' : 'auto' });
+                this.updateProgress();
+                this.updateDots();
+                this.broadcastState();
+                this.updateNotesPanel();
+                return moved;
             }
 
-            next() { this.goTo(Math.min(this.currentSlide + 1, this.slides.length - 1)); }
-            prev() { this.goTo(Math.max(this.currentSlide - 1, 0)); }
+            next() { return this.goTo(Math.min(this.currentSlide + 1, this.slides.length - 1)); }
+            prev() { return this.goTo(Math.max(this.currentSlide - 1, 0)); }
 
             updateProgress() {
                 const pct = (this.currentSlide / (this.slides.length - 1)) * 100;
@@ -814,7 +883,8 @@
             }
 
             insertWatermark() {
-                const lastSlide = this.slides[this.slides.length - 1];
+                const slides = this.slides;
+                const lastSlide = slides[slides.length - 1];
                 if (!lastSlide) return;
                 const credit = document.createElement('div');
                 credit.className = 'slide-credit';
@@ -908,13 +978,87 @@
             }
         }
 
+        class PresentMode {
+            constructor(ctrl) {
+                this.ctrl = ctrl;
+                this.baseW = 1440;
+                this.baseH = 900;
+                this.active = false;
+                const btn = document.createElement('button');
+                btn.id = 'present-btn';
+                btn.title = 'Present (F5)';
+                btn.setAttribute('aria-label', 'Present');
+                btn.textContent = '\u25B6';
+                document.body.appendChild(btn);
+                const counter = document.createElement('div');
+                counter.id = 'present-counter';
+                document.body.appendChild(counter);
+                btn.addEventListener('click', () => this.enter());
+                document.addEventListener('keydown', e => {
+                    if (e.key === 'F5') { e.preventDefault(); this.enter(); }
+                    if (e.key === 'Escape' && this.active) this.exit();
+                    if ((e.key === 'b' || e.key === 'B') && this.active) document.body.classList.toggle('presenting-black');
+                });
+                document.addEventListener('fullscreenchange', () => { if (this.active) { setTimeout(() => this._scale(), 100); } if (!document.fullscreenElement && this.active) this.exit(); });
+                window.addEventListener('resize', () => { if (this.active) this._scale(); });
+            }
+            enter() {
+                if (this.active) return;
+                this.active = true;
+                document.body.classList.add('presenting');
+                if (document.documentElement.requestFullscreen) document.documentElement.requestFullscreen().catch(() => {});
+                this._scale();
+                this._show(this.ctrl.currentSlide);
+                this._updateCounter();
+                this._origGoTo = this.ctrl.goTo.bind(this.ctrl);
+                this.ctrl.goTo = (i) => {
+                    const idx = Math.max(0, Math.min(i, this.ctrl.slides.length - 1));
+                    this.ctrl.currentSlide = idx;
+                    this.ctrl.setActiveSlide(idx);
+                    this._show(idx);
+                    this.ctrl.updateProgress?.();
+                    this.ctrl.updateDots?.();
+                    this.ctrl.broadcastState?.();
+                    this.ctrl.updateNotesPanel?.();
+                };
+            }
+            exit() {
+                if (!this.active) return;
+                this.active = false;
+                document.body.classList.remove('presenting', 'presenting-black');
+                this._reset();
+                if (document.fullscreenElement) document.exitFullscreen?.();
+                if (this._origGoTo) { this.ctrl.goTo = this._origGoTo; this._origGoTo = null; }
+                this.ctrl.slides[this.ctrl.currentSlide]?.scrollIntoView({ behavior: 'instant' });
+            }
+            _scale() {
+                const vw = window.innerWidth;
+                const vh = window.innerHeight;
+                const s = Math.min(vw / this.baseW, vh / this.baseH);
+                const ox = (vw - this.baseW * s) / 2;
+                const oy = (vh - this.baseH * s) / 2;
+                this.ctrl.slides.forEach(slide => {
+                    slide.style.transform = 'translate(' + ox + 'px, ' + oy + 'px) scale(' + s + ')';
+                });
+            }
+            _reset() {
+                this.ctrl.slides.forEach(slide => { slide.style.transform = ''; slide.classList.remove('p-on'); });
+            }
+            _show(i) {
+                this.ctrl.slides.forEach((s, idx) => s.classList.toggle('p-on', idx === i));
+            }
+            _updateCounter() {
+                const c = document.getElementById('present-counter');
+                if (c) c.textContent = (this.ctrl.currentSlide + 1) + ' / ' + this.ctrl.slides.length;
+            }
+        }
+
         if (new URLSearchParams(location.search).has('presenter')) {
             document.title = 'Presenter — ' + document.title;
             document.body.innerHTML = '<style>*{box-sizing:border-box;margin:0}body{background:#111;color:#fff;font-family:system-ui,sans-serif}#pv{display:grid;grid-template-columns:1fr 220px;gap:1rem;padding:1.25rem;align-items:start}.pv-panel{background:#1e1e1e;border-radius:12px;padding:1.25rem}#pv-label{font-size:0.6rem;letter-spacing:0.18em;text-transform:uppercase;color:#555;margin-bottom:0.6rem}#pv-notes{font-size:1.05rem;line-height:1.85;color:#d0d0d0}#pv-right{display:flex;flex-direction:column;gap:1rem}#pv-nav{display:flex;align-items:center;justify-content:space-between;gap:0.5rem}.pv-arrow{width:32px;height:32px;border-radius:6px;border:1px solid #333;background:#2a2a2a;color:#aaa;font-size:1rem;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:background 0.15s,color 0.15s;flex-shrink:0}.pv-arrow:hover{background:#383838;color:#fff}#pv-counter{text-align:center;flex:1}#pv-num{font-size:1.6rem;font-weight:700;font-variant-numeric:tabular-nums;line-height:1}#pv-of{color:#555;font-size:0.75rem;margin-top:0.2rem}#pv-timer-box{text-align:center}#pv-timer-label{font-size:0.6rem;letter-spacing:0.18em;text-transform:uppercase;color:#555;margin-bottom:0.3rem}#pv-timer{font-size:1.5rem;font-weight:700;font-family:monospace;font-variant-numeric:tabular-nums}</style><div id="pv"><div class="pv-panel"><div id="pv-label">Speaker Notes</div><div id="pv-notes">Waiting for main window...</div></div><div id="pv-right"><div class="pv-panel"><div id="pv-nav"><button class="pv-arrow" id="pv-prev">&#x2190;</button><div id="pv-counter"><div id="pv-num">—</div><div id="pv-of">/ —</div></div><button class="pv-arrow" id="pv-next">&#x2192;</button></div></div><div class="pv-panel" id="pv-timer-box"><div id="pv-timer-label">Elapsed</div><div id="pv-timer">0:00</div></div></div></div><script>(function(){var ch=new BroadcastChannel("slide-creator-presenter");ch.postMessage({type:"request-state"});ch.addEventListener("message",function(e){if(e.data.type==="state"){document.getElementById("pv-notes").textContent=e.data.notes||"No notes for this slide.";document.getElementById("pv-num").textContent=e.data.index+1;document.getElementById("pv-of").textContent="/ "+e.data.total}});document.getElementById("pv-next").addEventListener("click",function(){ch.postMessage({type:"nav-next"})});document.getElementById("pv-prev").addEventListener("click",function(){ch.postMessage({type:"nav-prev"})});var start=Date.now(),timerEl=document.getElementById("pv-timer");setInterval(function(){var s=Math.floor((Date.now()-start)/1000),m=Math.floor(s/60);s%=60;timerEl.textContent=m+":"+(s<10?"0":"")+s},1000)})();<\/script>';
         } else {
-            new SlidePresentation();
+            new PresentMode(new SlidePresentation());
         }
     </script>
 </body>
 </html>
-

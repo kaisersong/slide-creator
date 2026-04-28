@@ -463,8 +463,17 @@ class SlidePresentation {
         this.channel = new BroadcastChannel('slide-creator-presenter');
         this.slides[0]?.classList.add('visible');
         this.slides[0]?.querySelectorAll('.reveal').forEach(function(r) { r.classList.add('visible'); });
+        this.setActiveSlide(0);
         this.setupNavDots(); this.setupObserver(); this.setupKeyboard();
         this.setupTouch(); this.setupWheel(); this.setupPresenter(); this.setupEditor(); this.updateProgress();
+    }
+
+    setActiveSlide(index) {
+        this.slides.forEach((slide, i) => {
+            const active = i === index;
+            slide.classList.toggle('visible', active);
+            slide.querySelectorAll('.reveal').forEach(function(r) { r.classList.toggle('visible', active); });
+        });
     }
 
     setupNavDots() {
@@ -483,8 +492,9 @@ class SlidePresentation {
         const observer = new IntersectionObserver((entries) => {
             entries.forEach(entry => {
                 if (entry.isIntersecting) {
-                    entry.target.classList.add('visible');
                     this.currentSlide = [...this.slides].indexOf(entry.target);
+                    if (this.currentSlide < 0) return;
+                    this.setActiveSlide(this.currentSlide);
                     this.updateProgress(); this.updateDots(); this.broadcastState();
                     this.updateNotesPanel();
                 }
@@ -509,7 +519,60 @@ class SlidePresentation {
         document.addEventListener('touchend', e => { const d = startY - e.changedTouches[0].clientY; if (Math.abs(d) > 50) d > 0 ? this.next() : this.prev(); });
     }
 
-    setupWheel() {}
+    setupWheel() {
+        this.wState = 'idle';
+        this.wLastTime = 0;
+        this.wFallback = null;
+        this.scrollSettleTimer = null;
+
+        const enterDraining = () => {
+            if (this.wState !== 'animating') return;
+            this.wState = 'draining';
+            this.wLastTime = Date.now();
+            clearTimeout(this.wFallback);
+            this.wFallback = setTimeout(() => { this.wState = 'idle'; }, 1500);
+        };
+
+        window.addEventListener('scroll', () => {
+            if (this.wState !== 'animating') return;
+            clearTimeout(this.scrollSettleTimer);
+            this.scrollSettleTimer = setTimeout(enterDraining, 120);
+        }, { passive: true });
+
+        document.addEventListener('wheel', (e) => {
+            if (e.target.tagName === 'TEXTAREA' || e.target.tagName === 'INPUT'
+              || e.target.getAttribute('contenteditable')) return;
+            if (e.target.closest && e.target.closest('#notes-panel')) return;
+
+            let dx = e.deltaX, dy = e.deltaY;
+            if (e.deltaMode === WheelEvent.DOM_DELTA_LINE) { dx *= 20; dy *= 20; }
+            if (e.deltaMode === WheelEvent.DOM_DELTA_PAGE) { dx *= window.innerHeight; dy *= window.innerHeight; }
+            const delta = Math.abs(dy) >= Math.abs(dx) ? dy : dx;
+            if (Math.abs(delta) < 6) return;
+
+            e.preventDefault();
+            if (this.wState === 'animating') return;
+
+            const now = Date.now();
+            if (this.wState === 'draining') {
+                const gap = now - this.wLastTime;
+                this.wLastTime = now;
+                if (gap <= 80) return;
+                this.wState = 'idle';
+                clearTimeout(this.wFallback);
+            }
+
+            this.wState = 'animating';
+            clearTimeout(this.scrollSettleTimer);
+            const moved = delta > 0 ? this.next() : this.prev();
+            if (!moved) {
+                this.wState = 'idle';
+                return;
+            }
+
+            this.scrollSettleTimer = setTimeout(enterDraining, 450);
+        }, { passive: false });
+    }
 
     setupPresenter() {
         this.channel.addEventListener('message', e => {
@@ -525,14 +588,17 @@ class SlidePresentation {
     }
 
     goTo(index) {
-
-
-        this.slides[index]?.scrollIntoView({ behavior: "smooth" });
-
-
+        const idx = Math.max(0, Math.min(index, this.slides.length - 1));
+        const moved = idx !== this.currentSlide;
+        this.currentSlide = idx;
+        this.setActiveSlide(idx);
+        this.slides[idx]?.scrollIntoView({ behavior: moved ? 'smooth' : 'auto' });
+        this.updateProgress(); this.updateDots(); this.broadcastState();
+        this.updateNotesPanel();
+        return moved;
     }
-    next() { this.goTo(Math.min(this.currentSlide + 1, this.slides.length - 1)); }
-    prev() { this.goTo(Math.max(this.currentSlide - 1, 0)); }
+    next() { return this.goTo(Math.min(this.currentSlide + 1, this.slides.length - 1)); }
+    prev() { return this.goTo(Math.max(this.currentSlide - 1, 0)); }
 
     updateProgress() {
         const pct = (this.currentSlide / (this.slides.length - 1)) * 100;
@@ -717,11 +783,12 @@ class PresentMode {
         this.ctrl.goTo = (i) => {
             const idx = Math.max(0, Math.min(i, this.ctrl.slides.length - 1));
             this.ctrl.currentSlide = idx;
-            this.ctrl.slides.forEach((s, j) => s.classList.toggle('visible', j === idx));
+            this.ctrl.setActiveSlide(idx);
             this._show(idx);
             this.ctrl.updateProgress?.();
             this.ctrl.updateDots?.();
             this.ctrl.broadcastState?.();
+            this.ctrl.updateNotesPanel?.();
         };
     }
     exit() {
