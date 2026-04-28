@@ -1,0 +1,162 @@
+{
+  "schema_version": 1,
+  "brief_id": "ai-native-org-transformation-guide-zh-20260425",
+  "mode": "auto",
+  "language": "zh-CN",
+  "title": "AI原生组织转型指南",
+  "audience": "金蝶集团与云之家产研管理者、产品经理、设计、研发、测试、项目经理",
+  "desired_action": "确认云之家作为集团AI原生产研样板间，启动90天试点并沉淀可复制的方法、流程和评测体系",
+  "deck": {
+    "deck_type": "user-content",
+    "page_count": 12,
+    "output_format": "html-slides"
+  },
+  "style": {
+    "preset": "Enterprise Dark",
+    "tone": "内部战略分享、数据驱动、务实克制、带执行压强",
+    "visual_density": "medium"
+  },
+  "content": {
+    "source_policy": "distill-only",
+    "must_include": [
+      "公开趋势：AI使用深度决定收益",
+      "集团方向：企业管理AI公司",
+      "组织底座：数据治理、评测、AI champions"
+    ],
+    "must_avoid": [
+      "把AI转型写成单点工具培训",
+      "假设云之家内部流程已有未经验证的细节",
+      "脱离业务价值的空泛口号"
+    ]
+  },
+  "narrative": {
+    "thesis": "AI原生组织转型的本质，不是给每个人多配一个AI工具，而是把需求、设计、研发、测试、发布和复盘重写为“人定义目标与门禁、智能体承担高频执行、团队用评测和数据持续校正”的新型产研系统。",
+    "page_roles": [
+      "cover",
+      "problem",
+      "discovery",
+      "solution",
+      "workflow",
+      "feature",
+      "features",
+      "evidence",
+      "metrics",
+      "timeline",
+      "checkpoint",
+      "closing"
+    ],
+    "slides": [
+      {
+        "slide_number": 1,
+        "role": "cover",
+        "title": "AI原生组织不是“多用几个AI工具”，而是把产研流水线重写成“人+智能体”协同系统",
+        "key_point": "转型目标不是局部提效，而是让需求、设计、研发、测试、发布和复盘形成新的默认工作方式",
+        "visual": "组织能力重构总览"
+      },
+      {
+        "slide_number": 2,
+        "role": "problem",
+        "title": "市场已经进入“深度使用决定差距”的阶段，试点心态会把团队锁死在效率下游",
+        "key_point": "公开案例显示收益来自使用深度、标准化复用和组织准备度，而不是偶尔写几段提示词",
+        "visual": "外部趋势与组织差距对照"
+      },
+      {
+        "slide_number": 3,
+        "role": "discovery",
+        "title": "金蝶的要求已经很清楚：转型目标不是工具加法，而是成为企业管理AI公司",
+        "key_point": "金蝶公开强调思维转型、业务变革、新一代软件与数据治理同步推进，云之家必须把集团方向翻译成日常动作",
+        "visual": "集团战略到产研动作的映射图"
+      },
+      {
+        "slide_number": 4,
+        "role": "solution",
+        "title": "云之家最适合率先打样，因为它天然就是“统一入口 + 协同流程 + 数据连接”的工作前台",
+        "key_point": "入口、审批、门户、知识、低代码、数据协同都已经在云之家上，最适合先跑出“人+智能体场景化协作”的样板",
+        "visual": "云之家样板间定位"
+      },
+      {
+        "slide_number": 5,
+        "role": "workflow",
+        "title": "AI原生产研的核心不是替代人，而是把“探索、规划、执行、验证”做成可复用闭环",
+        "key_point": "外部最佳实践都指向同一件事：先探索、再规划、后执行、最后验证，让每类任务都有模板、工具链和门禁",
+        "visual": "探索规划执行验证四段闭环"
+      },
+      {
+        "slide_number": 6,
+        "role": "feature",
+        "title": "云之家现有产研主链路可以不推倒重来，但每个环节都要插入AI默认动作",
+        "key_point": "需求澄清、方案设计、设计出稿、开发实现、测试回归、上线复盘都应该有明确的AI默认动作与人工审批点",
+        "visual": "产研主链路插桩改造"
+      },
+      {
+        "slide_number": 7,
+        "role": "features",
+        "title": "产品、设计、研发、测试、项目经理要从“单点交付”转向“任务编排 + 结果验收”",
+        "key_point": "角色不会消失，但职责会迁移到问题定义、上下文组织、智能体编排、结果校验和风险兜底上",
+        "visual": "角色迁移与职责重构矩阵"
+      },
+      {
+        "slide_number": 8,
+        "role": "evidence",
+        "title": "第一批场景不要贪大，先打透需求分析、研发提效、测试回归三个高频闭环",
+        "key_point": "首批试点必须高频、低耦合、容易验证，先在三个闭环拿到速度、质量和可复制性，再扩面",
+        "visual": "试点场景优先级表"
+      },
+      {
+        "slide_number": 9,
+        "role": "metrics",
+        "title": "没有评测和数据治理的AI转型只会制造更多“看起来很快”的返工",
+        "key_point": "知识沉淀、接口治理、数据分级、评测集、过程指标和结果指标必须先建起来，速度才不会反噬质量",
+        "visual": "治理与评测北极星指标"
+      },
+      {
+        "slide_number": 10,
+        "role": "timeline",
+        "title": "30-60-90天推进法比“大跃进式全员铺开”更容易形成组织正反馈",
+        "key_point": "先打通试点，再沉淀模板和指标，最后扩展到团队级默认流程，用小闭环滚出组织信心",
+        "visual": "30-60-90天推进路线图"
+      },
+      {
+        "slide_number": 11,
+        "role": "checkpoint",
+        "title": "周节奏和月节奏必须改掉，否则AI会停留在个人技巧而不是组织能力",
+        "key_point": "日会、周会、复盘会、月度经营会都要纳入AI使用率、模板复用率、评测通过率和场景ROI",
+        "visual": "周月治理节奏与经营看板"
+      },
+      {
+        "slide_number": 12,
+        "role": "closing",
+        "title": "云之家要交付的不是一个工具包，而是一套能复制到金蝶全集团的AI原生样板间",
+        "key_point": "从同一入口、同一评测、同一方法开始，先在云之家跑通，再复制到集团更多业务与管理场景",
+        "visual": "样板间到集团复制路径"
+      }
+    ]
+  },
+  "runtime": {
+    "editing_mode": true,
+    "presenter_mode": true,
+    "watermark_mode": "injected-last-slide",
+    "export_intent": "none"
+  },
+  "plan_view": {
+    "emit_planning_view": false,
+    "planning_view_path": "PLANNING.md"
+  },
+  "timing": {
+    "estimate": {
+      "plan": "5-8 min",
+      "generate": "1-2 min",
+      "validate": "<1 min",
+      "polish": "2-4 min",
+      "total": "8-15 min"
+    },
+    "actual": {
+      "plan": "0m 00s",
+      "generate": "0m 00s",
+      "validate": "0m 00s",
+      "polish": "0m 00s",
+      "total": "0m 00s"
+    }
+  },
+  "notes": "关于“云之家产研团队实际工作流程”的内容，基于云之家公开产品形态与企业SaaS常见产研主链路进行建模，用于内部分享讨论，不替代正式流程制度。"
+}

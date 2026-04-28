@@ -1,0 +1,150 @@
+{
+  "schema_version": 1,
+  "brief_id": "ai-native-work-hub-v2-swiss-modern",
+  "mode": "auto",
+  "language": "zh-CN",
+  "title": "AI 原生工作中枢设计推演",
+  "audience": "金蝶与云之家管理层、产品架构负责人、AI 战略推进负责人",
+  "desired_action": "统一对 AI 原生工作中枢终局形态与未来 18 个月架构动作的判断",
+  "deck": {
+    "deck_type": "user-content",
+    "page_count": 10,
+    "output_format": "html-slides"
+  },
+  "style": {
+    "preset": "Swiss Modern",
+    "tone": "清晰、克制、战略推演、偏咨询式判断",
+    "visual_density": "medium"
+  },
+  "content": {
+    "source_policy": "distill-only",
+    "must_include": [
+      "IM 不是被降级，而是被变性",
+      "AI 原生工作平台 + AI 原生 ERP 的唯一入口",
+      "TOIS 与 L1-L4 完全同构",
+      "90/9/1 原则",
+      "18 个月",
+      "三项优先动作"
+    ],
+    "must_avoid": [
+      "把 IM 简化成功能升级",
+      "只讲愿景不讲切换条件",
+      "连续重复布局",
+      "与 thesis 无关的背景扩写"
+    ]
+  },
+  "narrative": {
+    "thesis": "云之家的机会不在继续放大 IM，而在把 Workspace 做成 AI 原生工作中枢，并用 ERP 连通深度驱动从小 K 中心到 Workspace 中心的切换。",
+    "page_roles": [
+      "cover",
+      "problem",
+      "baseline",
+      "workflow",
+      "evidence",
+      "decision",
+      "tradeoff",
+      "solution",
+      "architecture",
+      "closing"
+    ],
+    "slides": [
+      {
+        "slide_number": 1,
+        "role": "cover",
+        "title": "战略机会不在保住 IM，而在重定义工作中枢",
+        "key_point": "云之家真正有机会垄断的位置，不是消息入口，而是 AI 原生工作平台与 ERP 的唯一入口。",
+        "visual": "hero thesis"
+      },
+      {
+        "slide_number": 2,
+        "role": "problem",
+        "title": "继续把 IM 当主舞台，会把产品锁在上一代交互里",
+        "key_point": "如果首页仍围绕消息流组织，用户将先看到等待输入的对话框，而不是 Agent 已完成的工作结果。",
+        "visual": "risk contrast"
+      },
+      {
+        "slide_number": 3,
+        "role": "baseline",
+        "title": "V12 的定位已经给出正确锚点：唯一入口",
+        "key_point": "AI 原生工作平台加 AI 原生 ERP 的唯一入口，是这次推演的稳定出发点，而不是需要回撤的口号。",
+        "visual": "baseline position"
+      },
+      {
+        "slide_number": 4,
+        "role": "workflow",
+        "title": "TOIS 与 L1-L4 的映射说明架构并不缺理论，只缺落位",
+        "key_point": "Theory、Ontology、Instance、Skill 与 L1 到 L4 四层结构完全同构，意味着产品架构、理论架构和组织语言可以统一。",
+        "visual": "mapping workflow"
+      },
+      {
+        "slide_number": 5,
+        "role": "evidence",
+        "title": "九大模块必须从并列拼图改成四层嵌套",
+        "key_point": "Agent 工作区应升级为 L1 容器，其余模块按层归位，否则 Workspace 永远只是并列功能页而不是操作系统级容器。",
+        "visual": "evidence matrix"
+      },
+      {
+        "slide_number": 6,
+        "role": "decision",
+        "title": "Workspace 是体，小 K 是用，入口关系必须先钉死",
+        "key_point": "Workspace 负责承载完整工作上下文，小 K 负责在其中发起和追踪任务；两者不是二选一，而是容器与入口器的分工。",
+        "visual": "decision map"
+      },
+      {
+        "slide_number": 7,
+        "role": "tradeoff",
+        "title": "90/9/1 不是效率口号，而是首页形态的判决书",
+        "key_point": "当 90% 工作由 Agent 自动执行、9% 由用户确认、1% 由用户配置时，产品首页理应优先呈现执行报告而不是空对话框。",
+        "visual": "tradeoff lens"
+      },
+      {
+        "slide_number": 8,
+        "role": "solution",
+        "title": "B 到 A 的过渡不是摇摆，而是被 ERP 连通度约束的路线图",
+        "key_point": "B 形态以小 K 为主是当前现实，A 形态以 Workspace 为主是终局，18 个月切换是否成立取决于 ERP 连通深度是否先完成。",
+        "visual": "solution roadmap"
+      },
+      {
+        "slide_number": 9,
+        "role": "architecture",
+        "title": "三个今天必须做的架构动作，决定 18 个月后能否切换",
+        "key_point": "优先统一 AI 入口协议、按 A 规格搭建 Workspace 底层、推动九大模块按 L1 到 L4 归位，这三件事比继续堆新功能更关键。",
+        "visual": "architecture priorities"
+      },
+      {
+        "slide_number": 10,
+        "role": "closing",
+        "title": "金蝶真正稀缺的资产，是 AI 工作平台与 ERP 的唯一入口资格",
+        "key_point": "这不是单点 AI 功能竞争，而是一次入口级换道；今天的结构选择会决定金蝶能否在下一代工作中枢里占住主位。",
+        "visual": "closing conviction"
+      }
+    ]
+  },
+  "runtime": {
+    "editing_mode": true,
+    "presenter_mode": true,
+    "watermark_mode": "injected-last-slide",
+    "export_intent": "none"
+  },
+  "plan_view": {
+    "emit_planning_view": false,
+    "planning_view_path": "PLANNING.md"
+  },
+  "timing": {
+    "estimate": {
+      "plan": "1-2 min",
+      "generate": "1-3 min",
+      "validate": "<1 min",
+      "polish": "0-2 min",
+      "total": "3-6 min"
+    },
+    "actual": {
+      "plan": "0m 00s",
+      "generate": "0m 00s",
+      "validate": "0m 00s",
+      "polish": "0m 00s",
+      "total": "0m 00s"
+    }
+  },
+  "notes": "Source distilled from AI 原生工作中枢设计推演 v2.docx"
+}

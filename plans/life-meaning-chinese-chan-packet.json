@@ -1,0 +1,45 @@
+{
+  "brief_hash": "sha256:e76b01c0c2f825a823bdf0b339f8795f2869e7998cdcec1d44a99f082cef2be4",
+  "preset": "Chinese Chan",
+  "preset_support_tier": "supported",
+  "deck_type": "user-content",
+  "page_count": 9,
+  "composition_source": "references/composition-guide.md",
+  "runtime_path": "shared-js-engine",
+  "required_refs": [
+    "references/composition-guide.md",
+    "references/html-template.md",
+    "references/js-engine.md",
+    "references/base-css.md",
+    "references/chinese-chan.md"
+  ],
+  "required_contracts": [
+    "preset-metadata",
+    "shared-runtime",
+    "style-signature",
+    "shell-ui-markers"
+  ],
+  "required_shell_markers": [
+    "body[data-preset]",
+    "#brand-mark",
+    ".progress-bar",
+    ".nav-dots",
+    ".edit-hotzone",
+    "#editToggle",
+    "#notes-panel"
+  ],
+  "style_contract_digest": "sha256:3ff82abc0386edcee4a1f8b24adff95d06c9724e25f8151d77cd58fd77f290db",
+  "allowed_layouts": [
+    "zen_center",
+    "zen_split",
+    "zen_vertical",
+    "zen_stat",
+    "zen_center -> .zen-title",
+    "zen_split -> .zen-h2",
+    "zen_stat -> .zen-h2",
+    "zen_vertical -> .zen-vertical-title",
+    "zen_vertical_optional"
+  ],
+  "quality_tier": "tier1",
+  "fallback_policy": "canonical-layouts-before-fail"
+}
