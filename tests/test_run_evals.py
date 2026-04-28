@@ -29,14 +29,9 @@ def test_run_suite_supports_fixture_and_render_cases(tmp_path: Path):
             {
                 "case_id": "fixture-blue-sky",
                 "validation_profile": "required",
-                "brief_path": str(
-                    ROOT / "evals" / "generated-decks" / "2026-04-21-slide-creator-intro" / "slide-creator-intro-blue-sky-BRIEF.json"
-                ),
-                "html_path": str(
-                    ROOT / "evals" / "generated-decks" / "2026-04-21-slide-creator-intro" / "slide-creator-intro-blue-sky-zh.html"
-                ),
+                "preset": "Blue Sky",
+                "html_path": str(ROOT / "demos" / "ai-native-work-hub-blue-sky-zh.html"),
                 "expectations": {
-                    "expected_mode": "polish",
                     "expected_preset": "Blue Sky",
                     "expected_support_tier": "production",
                     "required_html_checks": [

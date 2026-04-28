@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+import importlib.util
 import os
 import subprocess
 import sys
@@ -11,6 +12,11 @@ ROOT = Path(__file__).resolve().parent.parent
 MAIN = ROOT / "main.py"
 WRAPPER = ROOT / "slide-creator"
 POLISH_DEMO = ROOT / "demos" / "mode-paths" / "polish-BRIEF.json"
+
+SPEC = importlib.util.spec_from_file_location("slide_creator_main", MAIN)
+assert SPEC and SPEC.loader
+main_cli = importlib.util.module_from_spec(SPEC)
+SPEC.loader.exec_module(main_cli)
 
 
 def read_json(path: Path) -> dict:
@@ -98,3 +104,37 @@ def test_shell_wrapper_forwards_to_main_help():
 
     assert result.returncode == 0
     assert "Sandbox-friendly CLI" in result.stdout
+
+
+def test_main_run_generate_refuses_to_write_invalid_render(monkeypatch, tmp_path: Path):
+    monkeypatch.setattr(main_cli, "load_brief", lambda _path: {"style": {"preset": "Chinese Chan"}})
+
+    bad_html = """
+    <!doctype html>
+    <html>
+      <body data-preset="Chinese Chan">
+        <section class="slide" id="slide-1"></section>
+      </body>
+    </html>
+    """
+    monkeypatch.setattr(
+        main_cli,
+        "render_from_brief",
+        lambda _brief: (
+            bad_html,
+            {"preset": "Chinese Chan", "quality_tier": "tier0", "runtime_path": "shared-js-engine"},
+            {},
+        ),
+    )
+
+    output_path = tmp_path / "invalid-deck.html"
+    result = main_cli.run_generate(
+        brief_path=tmp_path / "brief.json",
+        context_file=None,
+        output=output_path,
+        packet_out=None,
+        extract_brief_out=None,
+    )
+
+    assert result == 1
+    assert not output_path.exists()

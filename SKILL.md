@@ -1,7 +1,7 @@
 ---
 name: kai-slide-creator
 description: 生成HTML演示文稿/幻灯片 — 21 种风格模版，播放/演讲者模式。适用于路演、产品发布、技术分享、方案宣讲等场景。
-version: 2.24.0
+version: 2.24.1
 metadata: {"openclaw":{"emoji":"🎞","os":["darwin","linux","windows"],"homepage":"https://github.com/kaisersong/slide-creator","requires":{"bins":["python3"]},"install":[]}}
 ---
 
@@ -45,7 +45,7 @@ metadata: {"openclaw":{"emoji":"🎞","os":["darwin","linux","windows"],"homepag
 | `--generate` | SKILL.md + 已选风格文件（内置 `references/*.md` / `blue-sky-starter.html`；自定义 `themes/<name>/reference.md`）+ composition 源 + `references/title-quality.md` + `references/html-template.md` + `references/js-engine.md` + `references/base-css.md` + `references/impeccable-anti-patterns.md` | 从 `BRIEF.json` 生成 HTML，并执行写入前门禁 |
 | `--review [file.html]` | `references/review-checklist.md` + 目标 HTML | 执行 17 项检查点 → 确认窗口 → 修复/报告 |
 | 无 flag (交互式) | `references/workflow.md` + 其他按需 | 遵循 Phase 0-5 |
-| 直接给内容 + 风格 | 同 `--generate` | 立即生成，执行同一套写入前门禁 |
+| 直接给内容 + 风格 | 同 `--generate` | 先落一个有效 `BRIEF.json`，再走同一个 deterministic renderer 与 strict 写入前门禁；禁止手拼最终 HTML |
 
 **渐进式披露：** 每个命令只加载所需文件。`--plan` 只提炼 IR，不接触 CSS。
 
@@ -72,6 +72,8 @@ metadata: {"openclaw":{"emoji":"🎞","os":["darwin","linux","windows"],"homepag
    - 水印：默认保留，但必须是 JS 注入到最后一页，`position: absolute`，禁止 `position: fixed`
 
 详见 `references/html-template.md`。生成任何 HTML 前必读此文件。
+
+**Direct-route guard:** 无论是 `--generate` 还是“直接给内容 + 风格”，都必须先 materialize 一个有效 `BRIEF.json`，再通过 `render_from_brief()` 同一路径渲染，并在写出最终文件前通过 `python3 scripts/validate_html.py "$TMP_HTML" --strict`。禁止在交互式路径里绕过 BRIEF 直接手写最终 HTML。
 
 ## Pre-Write Validation Pipeline（写入前门禁）
 

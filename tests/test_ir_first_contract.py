@@ -13,9 +13,7 @@ SCORING_SCHEMA = ROOT / "evals" / "scoring-schema.json"
 FAILURE_MAP = ROOT / "evals" / "failure-map.md"
 LATE_CONTEXT = ROOT / "evals" / "late-context"
 VALIDATE_BRIEF = ROOT / "scripts" / "validate-brief.py"
-GENERATED_DECK_EVAL = (
-    ROOT / "evals" / "generated-decks" / "2026-04-21-slide-creator-intro" / "eval-results.json"
-)
+PHASE1_MANIFEST = ROOT / "evals" / "preset-surface-phase1" / "manifest.json"
 CORE_MD_CASES = {
     "lc-004-core-runtime-guard",
     "lc-005-preset-metadata-bypass",
@@ -267,25 +265,20 @@ def test_title_composition_cases_define_browser_title_expectations():
             }
 
 
-def test_generated_deck_eval_results_include_low_context_diagnostics_examples():
-    report = read_json(GENERATED_DECK_EVAL)
-    assert report["cases"], "expected at least one benchmark case"
-    for case in report["cases"]:
-        diagnostics = case["diagnostics"]["low_context"]
-        assert diagnostics["quality_tier"] == "tier0"
-        assert diagnostics["strict_pass_first_try"] is True
-        assert diagnostics["repair_rounds"] == 0
-        assert diagnostics["route_drift"] is False
-        assert diagnostics["layout_variety"] > 0
-        assert diagnostics["avg_component_kinds_per_slide"] >= 2
-        assert diagnostics["style_signature_coverage"] > 0
-        assert diagnostics["chrome_leak"] is False
-        assert diagnostics["content_occlusion_risk"] is False
-        assert diagnostics["numeric_faithfulness"] >= 0.95
-        assert diagnostics["source_fact_coverage"] >= 0.67
-        assert diagnostics["narrative_role_coverage"] == 1.0
-        assert diagnostics["minimal_slide_ratio"] <= 0.4
-        assert diagnostics["max_minimal_slide_run"] <= 2
+def test_phase1_suite_no_longer_depends_on_removed_generated_decks_assets():
+    manifest = read_json(PHASE1_MANIFEST)
+    cases = manifest["cases"]
+    assert cases, "expected phase-1 eval cases"
+    for case in cases:
+        html_path = case.get("html_path", "")
+        brief_path = case.get("brief_path", "")
+        assert "generated-decks" not in html_path
+        assert "generated-decks" not in brief_path
+
+    blue_sky = next(case for case in cases if case["case_id"] == "support-blue-sky-fixture")
+    assert blue_sky["preset"] == "Blue Sky"
+    assert blue_sky["html_path"] == "../../demos/ai-native-work-hub-blue-sky-zh.html"
+    assert "brief_path" not in blue_sky
 
 
 def test_brief_validator_accepts_template():

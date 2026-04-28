@@ -38,6 +38,19 @@ def test_skill_and_workflow_lock_preset_across_modes():
     assert "record segmented timing for:" in workflow
 
 
+def test_direct_content_route_is_forced_back_through_brief_and_strict_gate():
+    skill = read_text(SKILL_MD)
+    workflow = read_text(WORKFLOW_MD)
+    readme = read_text(README_MD)
+    readme_zh = read_text(README_ZH_MD)
+
+    assert "禁止手拼最终 HTML" in skill
+    assert 'python3 scripts/validate_html.py "$TMP_HTML" --strict' in skill
+    assert "do **not** hand-compose final HTML" in workflow
+    assert "The same rule applies to direct prompt generation" in readme
+    assert "直接给内容 + 风格，立刻生成" in readme_zh
+
+
 def test_swiss_modern_docs_define_canonical_export_path():
     skill = read_text(SKILL_MD)
     workflow = read_text(WORKFLOW_MD)
@@ -116,7 +129,7 @@ def test_validate_is_documented_as_pre_write_gate():
     readme = read_text(README_MD)
     readme_zh = read_text(README_ZH_MD)
 
-    strict_cmd = 'python3 tests/validate.py "$TMP_HTML" --strict'
+    strict_cmd = 'python3 scripts/validate_html.py "$TMP_HTML" --strict'
 
     assert strict_cmd in skill
     assert strict_cmd in workflow

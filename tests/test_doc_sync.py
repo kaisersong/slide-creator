@@ -44,6 +44,7 @@ def test_doc_sync_checker_passes_for_valid_fixture():
             "PLANNING.md only on explicit request\n"
             "Custom theme: themes/<name>/reference.md\n"
             "用户显式指定任意当前 preset 时，必须保留该选择\n"
+            "禁止手拼最终 HTML\n"
         ),
         readme=(
             "IR-first workflow with BRIEF.json and optional PLANNING.md view.\n"
@@ -52,6 +53,7 @@ def test_doc_sync_checker_passes_for_valid_fixture():
             "Inline editing is Default-on, optional.\n"
             "Custom theme system via themes/your-theme/reference.md.\n"
             "Explicit preset selection still wins.\n"
+            "The same rule applies to direct prompt generation.\n"
         ),
         workflow=(
             "single AskUserQuestion call with all 5 questions at once\n"
@@ -59,6 +61,7 @@ def test_doc_sync_checker_passes_for_valid_fixture():
             "If `BRIEF.json` exists, it's the source of truth\n"
             "Validate the edited deck at a practical presentation size such as 1280x720 before handing it back.\n"
             "Support tier only affects default recommendation priority.\n"
+            "do **not** hand-compose final HTML\n"
         ),
     )
 
@@ -92,6 +95,7 @@ def test_doc_sync_checker_dry_run_does_not_modify_files():
             "PLANNING.md only on explicit request\n"
             "Custom theme: themes/<name>/reference.md\n"
             "用户显式指定任意当前 preset 时，必须保留该选择\n"
+            "禁止手拼最终 HTML\n"
         ),
         readme=(
             "IR-first workflow with BRIEF.json and optional PLANNING.md view.\n"
@@ -100,6 +104,7 @@ def test_doc_sync_checker_dry_run_does_not_modify_files():
             "Inline editing is Default-on, optional.\n"
             "Custom theme system via themes/your-theme/reference.md.\n"
             "Explicit preset selection still wins.\n"
+            "The same rule applies to direct prompt generation.\n"
         ),
         workflow=(
             "single AskUserQuestion call with all 5 questions at once\n"
@@ -107,6 +112,7 @@ def test_doc_sync_checker_dry_run_does_not_modify_files():
             "If `BRIEF.json` exists, it's the source of truth\n"
             "Validate the edited deck at a practical presentation size such as 1280x720 before handing it back.\n"
             "Support tier only affects default recommendation priority.\n"
+            "do **not** hand-compose final HTML\n"
         ),
     )
     before = {
