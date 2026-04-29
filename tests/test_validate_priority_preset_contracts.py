@@ -30,6 +30,7 @@ def test_enterprise_dark_contract_accepts_canonical_ent_classes():
             --text-primary:#e6edf3; --text-body:#c9d1d9; --text-muted:#8b949e;
             --accent-blue:#388bfd; --accent-green:#3fb950; --accent-red:#f85149; --accent-amber:#d29922;
           }
+          #brand-mark { display: none; }
           .slide { display:flex; position:relative; }
           .ent-split { display:grid; }
         </style>
@@ -72,6 +73,33 @@ def test_enterprise_dark_contract_rejects_generic_aliases():
     ok, message = validate.check_enterprise_dark_contract(soup, html, [])
     assert not ok
     assert "generic alias classes" in message
+
+
+def test_enterprise_dark_contract_requires_hidden_brand_mark():
+    validate = load_validate_module()
+    html = """
+    <!DOCTYPE html>
+    <html>
+      <head>
+        <style>
+          :root {
+            --bg-primary:#0d1117; --bg-secondary:#161b22; --bg-header:#21262d; --border:#30363d;
+            --text-primary:#e6edf3; --text-body:#c9d1d9; --text-muted:#8b949e;
+            --accent-blue:#388bfd; --accent-green:#3fb950; --accent-red:#f85149; --accent-amber:#d29922;
+          }
+          #brand-mark { position: fixed; top: 1rem; left: 1rem; color: var(--text-muted); }
+        </style>
+      </head>
+      <body data-preset="Enterprise Dark">
+        <span id="brand-mark">skill-creator · v1.0</span>
+        <section class="slide" data-export-role="cta_close"></section>
+      </body>
+    </html>
+    """
+    soup = BeautifulSoup(html, "html.parser")
+    ok, message = validate.check_enterprise_dark_contract(soup, html, [])
+    assert not ok
+    assert "#brand-mark must be hidden by default" in message
 
 
 def test_data_story_contract_requires_svg_css_path_not_chart_library():
@@ -163,6 +191,33 @@ def test_glassmorphism_contract_rejects_missing_orbs():
     assert "blurred orb layers missing" in message
 
 
+def test_watermark_check_rejects_stale_version_for_current_preset():
+    validate = load_validate_module()
+    html = """
+    <!DOCTYPE html>
+    <html>
+      <body data-preset="Enterprise Dark">
+        <section class="slide"></section>
+        <script>
+        (function() {
+            var slides = document.querySelectorAll('.slide');
+            if (!slides.length) return;
+            var last = slides[slides.length - 1];
+            var credit = document.createElement('div');
+            credit.className = 'slide-credit';
+            credit.textContent = 'By kai-slide-creator v1.0 · Enterprise Dark';
+            last.appendChild(credit);
+        })();
+        </script>
+      </body>
+    </html>
+    """
+    soup = BeautifulSoup(html, "html.parser")
+    ok, message = validate.check_watermark_injection(soup, html, [])
+    assert not ok
+    assert "Watermark version/preset mismatch" in message
+
+
 def test_chinese_chan_contract_rejects_alias_or_centered_ghost():
     validate = load_validate_module()
     alias_html = """
@@ -202,6 +257,31 @@ def test_chinese_chan_contract_rejects_alias_or_centered_ghost():
     ok, message = validate.check_chinese_chan_contract(centered_soup, centered_html, [])
     assert not ok
     assert "off-center" in message
+
+
+def test_chinese_chan_contract_requires_hidden_brand_mark():
+    validate = load_validate_module()
+    html = """
+    <!DOCTYPE html>
+    <html>
+      <head>
+        <style>
+          :root { --bg:#FAFAF8; --text:#1a1a18; --text-muted:#6b6b68; --accent:#C41E3A; --accent-alt:#1B3A6B; --rule:rgba(26,26,24,0.15); }
+          #brand-mark { position: fixed; top: 1rem; left: 1rem; color: var(--text-muted); }
+        </style>
+      </head>
+      <body data-preset="Chinese Chan">
+        <span id="brand-mark">人生的意义</span>
+        <section class="slide" data-export-role="zen_center">
+          <div class="zen-content"><h1 class="zen-title">标题</h1></div>
+        </section>
+      </body>
+    </html>
+    """
+    soup = BeautifulSoup(html, "html.parser")
+    ok, message = validate.check_chinese_chan_contract(soup, html, [])
+    assert not ok
+    assert "#brand-mark must be hidden by default" in message
 
 
 def test_chinese_chan_contract_requires_roles_and_layout_specific_title_components():
