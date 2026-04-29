@@ -439,6 +439,8 @@ For PPTX/PNG export: `clawhub install kai-html-export` or `pip install playwrigh
 
 ## Version History
 
+**v2.24.2** — Enterprise Dark / Chinese Chan chrome hardening: validator now rejects hidden-brand regressions for presets that must suppress `#brand-mark`, and watermark checks now fail stale version/preset strings so non-canonical shell output cannot pass `--strict` with leaked skill names or outdated credits.
+
 **v2.24.1** — Direct-route contract and pre-write gate fix: forced direct prompt generation back through `BRIEF.json -> render_from_brief()`, made both CLI render entrypoints run `scripts/validate_html.py --strict` before writing output, and tightened the SKILL/workflow/doc contracts plus regression tests so non-canonical Chinese Chan HTML can no longer slip through a current-version generation path.
 
 **v2.24.0** — Core preset hardening and quality-gate release: added preset support tiers plus manifest-driven eval/release-gate tooling, upgraded low-context BRIEF semantics and preset usage rules, repaired Chinese Chan formal contracts and production/shared runtime drift, modernized family demo runtimes, moved the canonical HTML validator to `scripts/validate_html.py` with a compatibility wrapper, and tightened Swiss Modern/shared shell chrome so nav dots and page-number treatments render correctly across presets.

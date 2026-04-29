@@ -94,6 +94,15 @@ def _collect_css_text(soup) -> str:
     return "\n".join(css_sources)
 
 
+def _skill_version() -> str:
+    skill_path = ROOT / "SKILL.md"
+    if not skill_path.exists():
+        return "unknown"
+    skill_text = skill_path.read_text(encoding="utf-8", errors="ignore")
+    match = re.search(r"^version:\s*([^\s]+)\s*$", skill_text, re.MULTILINE)
+    return match.group(1) if match else "unknown"
+
+
 def _class_tokens(value) -> list[str]:
     if not value:
         return []
@@ -799,6 +808,9 @@ def check_enterprise_dark_contract(soup, content, warnings) -> tuple[bool, str]:
     if found_alias_classes:
         issues.append("generic alias classes " + ", ".join(found_alias_classes[:6]))
 
+    if not _selector_hidden_by_default(css_text, "#brand-mark"):
+        issues.append("#brand-mark must be hidden by default")
+
     slides = soup.find_all(class_="slide")
     issues.extend(_collect_role_issues(
         slides,
@@ -951,6 +963,9 @@ def check_chinese_chan_contract(soup, content, warnings) -> tuple[bool, str]:
     found_alias_classes = [cls for cls in alias_classes if _has_exact_class(soup, cls)]
     if found_alias_classes:
         issues.append("input-only aliases emitted " + ", ".join(found_alias_classes[:6]))
+
+    if not _selector_hidden_by_default(css_text, "#brand-mark"):
+        issues.append("#brand-mark must be hidden by default")
 
     slides = soup.find_all(class_="slide")
     issues.extend(_collect_role_issues(
@@ -1237,9 +1252,15 @@ def check_watermark_injection(soup, content, warnings) -> tuple[bool, str]:
     scripts = " ".join(s.string or "" for s in soup.find_all("script"))
     has_js_injection = "slides[slides.length - 1]" in scripts and "slide-credit" in scripts
     unresolved_placeholders = "[version]" in scripts or "[preset-name]" in scripts
+    body = soup.find("body")
+    preset = body.get("data-preset", "").strip() if body else ""
+    expected_watermark = f"By kai-slide-creator v{_skill_version()} · {preset}" if preset else None
 
     if unresolved_placeholders:
         return False, "Watermark placeholder unresolved: version or preset name not substituted"
+
+    if expected_watermark and "By kai-slide-creator" in scripts and expected_watermark not in scripts:
+        return False, f"Watermark version/preset mismatch: expected '{expected_watermark}'"
 
     if has_js_injection:
         return True, "Watermark appears JS-injected (heuristic)"
