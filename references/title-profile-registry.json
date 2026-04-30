@@ -8,6 +8,13 @@
       "explicit_line_control_allowed": true,
       "auto_fix_policy": "safe_line_balance"
     },
+    "horizontal_balanced_left_anchor_compact": {
+      "node_type": "ordinary_heading",
+      "measure_policy": "left_anchor_balance",
+      "max_lines": 2,
+      "explicit_line_control_allowed": true,
+      "auto_fix_policy": "safe_line_balance"
+    },
     "horizontal_balanced_centered": {
       "node_type": "ordinary_heading",
       "measure_policy": "centered_balance",
@@ -117,7 +124,7 @@
       "default_profile": "horizontal_balanced_centered"
     },
     "Data Story": {
-      "default_profile": "horizontal_balanced_left_anchor",
+      "default_profile": "horizontal_balanced_left_anchor_compact",
       "layout_overrides": {
         "cta_close": {
           "profile": "single_statement_display"

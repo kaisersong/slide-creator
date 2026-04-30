@@ -76,7 +76,50 @@ def test_main_cli_generate_renders_html_from_brief(tmp_path: Path):
     assert output_path.exists()
     assert packet_path.exists()
     assert "RENDERED:" in result.stdout
-    assert 'data-preset="Swiss Modern"' in output_path.read_text(encoding="utf-8")
+    rendered = output_path.read_text(encoding="utf-8")
+    assert 'data-preset="Swiss Modern"' in rendered
+    assert 'data-generator="kai-slide-creator"' in rendered
+    assert 'data-render-path="brief-canonical"' in rendered
+    assert 'data-validate-strict="pass"' in rendered
+
+
+def test_main_cli_generate_can_write_single_deck_eval_report(tmp_path: Path):
+    brief = read_json(POLISH_DEMO)
+    brief["style"]["preset"] = "Data Story"
+    brief["title"] = "Single Deck Eval"
+    brief["audience"] = "Operators"
+    brief["desired_action"] = "Verify eval wiring"
+
+    brief_path = tmp_path / "brief.json"
+    output_path = tmp_path / "deck.html"
+    write_json(brief_path, brief)
+
+    result = subprocess.run(
+        [
+            sys.executable,
+            str(MAIN),
+            "--generate",
+            "--brief",
+            str(brief_path),
+            "--output",
+            str(output_path),
+            "--eval",
+        ],
+        capture_output=True,
+        text=True,
+        timeout=30,
+    )
+
+    eval_path = tmp_path / "deck.eval.json"
+    assert result.returncode == 0, result.stdout + result.stderr
+    assert eval_path.exists()
+    report = read_json(eval_path)
+    assert report["preset"] == "Data Story"
+    assert report["render_packet"]["preset"] == "Data Story"
+    assert "style_score" in report["summary"]
+    assert "quality_gates_passed" in report["summary"]
+    assert "EVAL:" in result.stdout
+    assert "STYLE SCORE:" in result.stdout
 
 
 def test_main_cli_plan_explains_host_skill_boundary():
@@ -128,6 +171,40 @@ def test_main_run_generate_refuses_to_write_invalid_render(monkeypatch, tmp_path
     )
 
     output_path = tmp_path / "invalid-deck.html"
+    result = main_cli.run_generate(
+        brief_path=tmp_path / "brief.json",
+        context_file=None,
+        output=output_path,
+        packet_out=None,
+        extract_brief_out=None,
+    )
+
+    assert result == 1
+    assert not output_path.exists()
+
+
+def test_main_run_generate_refuses_missing_canonical_provenance(monkeypatch, tmp_path: Path):
+    monkeypatch.setattr(main_cli, "load_brief", lambda _path: {"style": {"preset": "Swiss Modern"}})
+
+    html_without_provenance = """
+    <!doctype html>
+    <html>
+      <body data-preset="Swiss Modern">
+        <section class="slide" id="slide-1" data-export-role="cta_close" data-notes="x"></section>
+      </body>
+    </html>
+    """
+    monkeypatch.setattr(
+        main_cli,
+        "render_from_brief",
+        lambda _brief: (
+            html_without_provenance,
+            {"preset": "Swiss Modern", "quality_tier": "tier0", "runtime_path": "shared-js-engine"},
+            {},
+        ),
+    )
+
+    output_path = tmp_path / "invalid-provenance.html"
     result = main_cli.run_generate(
         brief_path=tmp_path / "brief.json",
         context_file=None,

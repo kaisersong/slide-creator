@@ -278,6 +278,7 @@ Alternate between text-heavy and visual-heavy slides. Three or more consecutive 
 
 Before writing the final HTML, save the assembled HTML to a temporary file (for example `"$TMP_HTML"`) and run `python3 scripts/validate_html.py "$TMP_HTML" --strict`.
 Treat strict failures as generation failures: fix or regenerate, then rerun strict validate until it passes. Only then write the final deliverable.
+If the user explicitly asked for `eval` / `评测`, write the deck first, then emit a single-deck eval JSON via the same canonical path. Raw CLI mapping: `--eval` writes a sibling `.eval.json`; `--eval-out <path>` writes to an explicit report path.
 After the strict gate passes, scan the assembled output for these violations and fix each one found:
 
 **Core 8 checks:**

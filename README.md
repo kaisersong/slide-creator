@@ -141,7 +141,7 @@ The important design idea here is not "more tests". It is **better failure local
 
 **Validation positioning: pre-write gate, not optional review**
 
-validate.py should run inside `--generate`, but after rendering and before the final file is accepted. The right sequence is: assemble HTML → write temp file → run `python3 scripts/validate_html.py "$TMP_HTML" --strict` → fix/regenerate until pass → write final output.
+validate.py should run inside `--generate`, but after rendering and before the final file is accepted. The right sequence is: assemble HTML → write temp file → run `python3 scripts/validate_html.py "$TMP_HTML" --strict` → fix/regenerate until pass → write final output. If you also want a single-deck eval artifact, add `--eval` or `--eval-out report.json` after the strict gate passes.
 
 This keeps validation out of planning and composition, but inside delivery:
 - No extra planning step → no extra LLM cognitive load during ideation
@@ -258,6 +258,7 @@ If you are in a bare sandbox or external agent runner:
 ```bash
 python3 main.py --validate-brief --brief BRIEF.json
 python3 main.py --generate --brief BRIEF.json --output presentation.html
+python3 main.py --generate --brief BRIEF.json --output presentation.html --eval
 ```
 
 Built-in presets still load from `references/` / `references/style-index.md`; `themes/<name>/reference.md` is only for custom themes.
@@ -438,6 +439,8 @@ For PPTX/PNG export: `clawhub install kai-html-export` or `pip install playwrigh
 ---
 
 ## Version History
+
+**v2.24.3** — Single-deck eval and production verification release: `--generate` / `render-from-brief` can now emit per-deck eval JSON via `--eval` or `--eval-out`, Data Story chart routing/label logic now fails closed on weak numeric signals instead of drawing fake charts, and production demo fixtures were revalidated and resynced to the current watermark version so core preset verification remains green.
 
 **v2.24.2** — Enterprise Dark / Chinese Chan chrome hardening: validator now rejects hidden-brand regressions for presets that must suppress `#brand-mark`, and watermark checks now fail stale version/preset strings so non-canonical shell output cannot pass `--strict` with leaked skill names or outdated credits.
 
