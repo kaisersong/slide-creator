@@ -1264,12 +1264,16 @@ def build_render_packet(
 
     packet = {
         "brief_hash": _sha256_text(_canonical_json(brief)),
+        "generator": "kai-slide-creator",
+        "generator_version": _skill_version(),
+        "render_path": _canonical_render_path(preset),
         "preset": preset,
         "preset_support_tier": preset_support_tier(preset),
         "deck_type": deck_type,
         "page_count": page_count,
         "composition_source": composition_source,
         "runtime_path": runtime_path,
+        "validate_strict": "pending",
         "required_refs": required_refs,
         "required_contracts": required_contracts,
         "required_shell_markers": DEFAULT_SHELL_MARKERS,
@@ -1415,6 +1419,30 @@ def _skill_version() -> str:
     skill_text = _read_text(ROOT / "SKILL.md")
     match = re.search(r"^version:\s*([^\s]+)\s*$", skill_text, re.MULTILINE)
     return match.group(1) if match else "unknown"
+
+
+def _canonical_render_path(preset: str) -> str:
+    return "blue-sky-starter-canonical" if _normalize_preset_name(preset) == "blue sky" else "brief-canonical"
+
+
+def _html_body_provenance_attrs(packet: dict[str, Any]) -> str:
+    attrs = {
+        "data-generator": packet.get("generator", "kai-slide-creator"),
+        "data-generator-version": packet.get("generator_version", _skill_version()),
+        "data-render-path": packet.get("render_path", "brief-canonical"),
+        "data-brief-hash": packet.get("brief_hash", ""),
+        "data-runtime-path": packet.get("runtime_path", ""),
+        "data-validate-strict": packet.get("validate_strict", "pending"),
+    }
+    return " ".join(f'{key}="{_escape(str(value))}"' for key, value in attrs.items() if value)
+
+
+def stamp_validation_status(html_text: str, *, status: str) -> str:
+    if not re.search(r"<body\b", html_text):
+        return html_text
+    if re.search(r'data-validate-strict=\"[^\"]*\"', html_text):
+        return re.sub(r'data-validate-strict=\"[^\"]*\"', f'data-validate-strict="{status}"', html_text, count=1)
+    return re.sub(r"<body\b", f'<body data-validate-strict="{status}"', html_text, count=1)
 
 
 def _brand_mark_text(title: str, preset: str) -> str:
@@ -1936,9 +1964,11 @@ def _assemble_shell_html(
     css: str,
     slides_html: str,
     total: int,
+    packet: dict[str, Any],
 ) -> str:
     js_engine = _extract_js_engine_blocks(preset=preset, version=_skill_version())
     brand_mark = _brand_mark_text(title, preset)
+    provenance_attrs = _html_body_provenance_attrs(packet)
     return f"""<!DOCTYPE html>
 <html lang="{_escape(language)}">
 <head>
@@ -1949,7 +1979,7 @@ def _assemble_shell_html(
 {css}
 </style>
 </head>
-<body data-export-progress="true" data-preset="{_escape(preset)}">
+<body data-export-progress="true" data-preset="{_escape(preset)}" {provenance_attrs}>
 <span id="brand-mark">{_escape(brand_mark)}</span>
 <div class="progress-bar"></div>
 <nav class="nav-dots" aria-label="Slide navigation"></nav>
@@ -2358,8 +2388,14 @@ def _chart_metric_values_from_spec(
             if value not in values:
                 values.append(value)
 
-    if len(values) < len(fallback):
+    meaningful = [
+        value for value in values
+        if any(marker in value for marker in (".", "%", "+", "万", "亿", "座", "美元", "年"))
+        or _numeric_value(value) >= 10
+    ]
+    if len(meaningful) < len(fallback):
         return []
+    values = meaningful
 
     trimmed = values[: len(fallback)]
     distinct_numeric = {
@@ -2370,6 +2406,7 @@ def _chart_metric_values_from_spec(
     if len(trimmed) > 1 and len(distinct_numeric) < 2:
         return []
     return trimmed
+
 
 def _numeric_value(value: str) -> float:
     match = re.search(r"\d+(?:\.\d+)?", value or "")
@@ -2427,6 +2464,18 @@ def _cleanup_display_candidate(text: str) -> str:
     if not candidate:
         return ""
 
+    if re.search(r"[A-Za-z]", candidate) and re.search(r"[\u4e00-\u9fff]", candidate):
+        short_latin = re.search(r"(?:(?<=^)|(?<=[\u4e00-\u9fff]))([A-Za-z][A-Za-z0-9%&+/#._:-]{1,7})(?=[\u4e00-\u9fff]|$)", candidate)
+        if short_latin:
+            token = short_latin.group(1)
+            if token.upper() != "AI":
+                return token
+        long_latin_prefix = re.match(r"^[A-Za-z][A-Za-z0-9%&+/#._:-]{8,}的?(.*)$", candidate)
+        if long_latin_prefix:
+            remainder = long_latin_prefix.group(1).lstrip("的")
+            if len(remainder) >= 2 and re.search(r"[\u4e00-\u9fff]", remainder):
+                candidate = remainder
+
     cleanup_patterns = [
         r"^(?:AI原生组织的|AI原生企业的|AI原生组织|AI原生企业|AI原生|AI)",
         r"^(?:组织的|企业的|公司的|团队的|客户的|管理的|工作的|文章的)",
@@ -2448,7 +2497,8 @@ def _cleanup_display_candidate(text: str) -> str:
                 return token
 
     if len(candidate) > 6 and re.search(r"[\u4e00-\u9fff]", candidate):
-        shortened = candidate[:4]
+        cjk_match = re.search(r"[\u4e00-\u9fffA-Za-z0-9]{2,6}", candidate)
+        shortened = cjk_match.group(0)[:4] if cjk_match else candidate[:4]
         if shortened and shortened[-1] not in BAD_DISPLAY_SUFFIX_CHARS:
             return shortened
         return ""
@@ -2641,11 +2691,41 @@ def _metric_value_for_item(
     return compact
 
 
+def _strip_chart_label_prefix(text: str) -> str:
+    cleaned = str(text).strip()
+    patterns = [
+        r"^\s*\d+(?:\.\d+)?(?:[-–—]\d+(?:\.\d+)?)?(?:\+|%|万|亿|座|年)?\s*[：:、，,;；\-—–]*\s*",
+        r"^\s*阶段\s*\d+\s*[：:、，,;；\-—–]*\s*",
+        r"^\s*phase\s*\d+\s*[:：,\-—–]?\s*",
+    ]
+    for pattern in patterns:
+        cleaned = re.sub(pattern, "", cleaned, flags=re.IGNORECASE)
+    return cleaned.strip()
+
+
+def _is_weak_chart_label(label: str) -> bool:
+    cleaned = re.sub(r"\s+", "", str(label or ""))
+    if not cleaned:
+        return True
+    if re.fullmatch(r"[\d\.\-%+/年月万亿座]+", cleaned):
+        return True
+    semantic_chars = re.sub(r"[^A-Za-z\u3400-\u9fff]", "", cleaned)
+    return len(semantic_chars) < 2
+
+
 def _chart_labels_from_spec(spec: dict[str, Any], *, count: int = 4, family: str = "alpha") -> list[str]:
-    labels = [_compact_display_token(item, fallback=f"Step{index + 1}") for index, item in enumerate(_spec_display_items(spec, limit=count))]
+    defaults = _sequence_labels(count, family=family)
+    labels: list[str] = []
+    for index, item in enumerate(_spec_display_items(spec, limit=count)):
+        fallback = defaults[index] if index < len(defaults) else f"Step{index + 1}"
+        candidate = _compact_display_token(item, fallback=fallback)
+        if _is_weak_chart_label(candidate):
+            candidate = _compact_display_token(_strip_chart_label_prefix(item), fallback=fallback)
+        if _is_weak_chart_label(candidate):
+            candidate = fallback
+        labels.append(candidate)
     if len(labels) >= count:
         return labels[:count]
-    defaults = _sequence_labels(count, family=family)
     for label in defaults:
         if len(labels) == count:
             break
@@ -2660,9 +2740,9 @@ def _has_chart_ready_numbers(spec: dict[str, Any], *, minimum: int = 3) -> bool:
 
 def _sequence_labels(count: int, *, family: str = "alpha") -> list[str]:
     if family == "workflow":
-        base = ["Input", "Build", "Check", "Ship", "Learn", "Scale"]
+        base = [f"Phase {index:02d}" for index in range(1, 7)]
     else:
-        base = ["Alpha", "Beta", "Gamma", "Delta", "Epsilon", "Zeta"]
+        base = [f"Signal {index:02d}" for index in range(1, 7)]
     labels = base[:count]
     while len(labels) < count:
         labels.append(f"Step{len(labels) + 1}")
@@ -2672,22 +2752,25 @@ def _sequence_labels(count: int, *, family: str = "alpha") -> list[str]:
 def _svg_bar_chart(labels: list[str], values: list[str], *, color_class: str = "chart-bar") -> str:
     magnitudes = [_numeric_value(value) for value in values]
     max_value = max(magnitudes) if any(magnitudes) else 1
+    chart_bottom = 150
+    chart_top = 18
+    plot_height = chart_bottom - chart_top
     bars = []
     for index, (label, value, magnitude) in enumerate(zip(labels, values, magnitudes), start=0):
-        x = 60 + index * 70
-        height = max(24, int((magnitude / max_value) * 110)) if magnitude > 0 else 24
-        y = 140 - height
+        x = 38 + index * 68
+        height = max(34, int((magnitude / max_value) * plot_height)) if magnitude > 0 else 34
+        y = chart_bottom - height
         bars.append(
-            f'<rect x="{x}" y="{y}" width="42" height="{height}" rx="4" class="{color_class}{" secondary" if index == 1 else (" tertiary" if index == 2 else "")}"></rect>'
-            f'<text x="{x + 21}" y="158" text-anchor="middle" class="chart-label">{_escape(label)}</text>'
-            f'<text x="{x + 21}" y="{y - 8}" text-anchor="middle" class="chart-val">{value}</text>'
+            f'<rect x="{x}" y="{y}" width="54" height="{height}" rx="4" class="{color_class}{" secondary" if index == 1 else (" tertiary" if index == 2 else "")}"></rect>'
+            f'<text x="{x + 27}" y="174" text-anchor="middle" class="chart-label">{_escape(label)}</text>'
+            f'<text x="{x + 24}" y="{y - 8}" text-anchor="middle" class="chart-val">{value}</text>'
         )
     return (
-        '<svg viewBox="0 0 320 170" class="ds-chart-svg" role="img" aria-label="bar chart">'
-        '<line x1="40" y1="20" x2="40" y2="140" class="chart-axis"></line>'
-        '<line x1="40" y1="140" x2="300" y2="140" class="chart-axis"></line>'
-        '<line x1="40" y1="40" x2="300" y2="40" class="chart-grid"></line>'
-        '<line x1="40" y1="90" x2="300" y2="90" class="chart-grid"></line>'
+        '<svg viewBox="0 0 320 188" class="ds-chart-svg" role="img" aria-label="bar chart">'
+        '<line x1="24" y1="16" x2="24" y2="150" class="chart-axis"></line>'
+        '<line x1="24" y1="150" x2="308" y2="150" class="chart-axis"></line>'
+        '<line x1="24" y1="42" x2="308" y2="42" class="chart-grid"></line>'
+        '<line x1="24" y1="96" x2="308" y2="96" class="chart-grid"></line>'
         + "".join(bars)
         + "</svg>"
     )
@@ -2696,24 +2779,31 @@ def _svg_bar_chart(labels: list[str], values: list[str], *, color_class: str = "
 def _svg_line_chart(labels: list[str], values: list[str]) -> str:
     magnitudes = [_numeric_value(value) for value in values]
     max_value = max(magnitudes) if any(magnitudes) else 1
+    chart_left = 28
+    chart_right = 296
+    chart_top = 18
+    chart_bottom = 150
+    plot_width = chart_right - chart_left
+    plot_height = chart_bottom - chart_top
     points = []
     labels_html = []
     for index, (label, value, magnitude) in enumerate(zip(labels, values, magnitudes), start=0):
-        x = 50 + index * 60
-        y = 135 - int((magnitude / max_value) * 90) if magnitude > 0 else 135
+        ratio = 0 if len(labels) == 1 else index / (len(labels) - 1)
+        x = int(chart_left + ratio * plot_width)
+        y = chart_bottom - int((magnitude / max_value) * plot_height) if magnitude > 0 else chart_bottom
         points.append(f"{x},{y}")
         labels_html.append(
-            f'<circle cx="{x}" cy="{y}" r="4" class="ds-dot"></circle>'
-            f'<text x="{x}" y="156" text-anchor="middle" class="chart-label">{_escape(label)}</text>'
+            f'<circle cx="{x}" cy="{y}" r="5.5" class="ds-dot"></circle>'
+            f'<text x="{x}" y="174" text-anchor="middle" class="chart-label">{_escape(label)}</text>'
             f'<text x="{x}" y="{y - 10}" text-anchor="middle" class="chart-val">{value}</text>'
         )
     point_string = " ".join(points)
     return (
-        '<svg viewBox="0 0 320 170" class="ds-chart-svg" role="img" aria-label="line chart">'
-        '<line x1="36" y1="18" x2="36" y2="140" class="chart-axis"></line>'
-        '<line x1="36" y1="140" x2="294" y2="140" class="chart-axis"></line>'
-        '<line x1="36" y1="50" x2="294" y2="50" class="chart-grid"></line>'
-        '<line x1="36" y1="95" x2="294" y2="95" class="chart-grid"></line>'
+        '<svg viewBox="0 0 320 188" class="ds-chart-svg" role="img" aria-label="line chart">'
+        '<line x1="22" y1="16" x2="22" y2="150" class="chart-axis"></line>'
+        '<line x1="22" y1="150" x2="302" y2="150" class="chart-axis"></line>'
+        '<line x1="22" y1="44" x2="302" y2="44" class="chart-grid"></line>'
+        '<line x1="22" y1="98" x2="302" y2="98" class="chart-grid"></line>'
         f'<polyline points="{point_string}" class="chart-line"></polyline>'
         + "".join(labels_html)
         + "</svg>"
@@ -3307,6 +3397,7 @@ def render_swiss_modern_html(
     js_engine = _extract_js_engine_blocks(preset="Swiss Modern", version=_skill_version())
     language = brief["language"]
     brand_mark = _brand_mark_text(brief["title"], "Swiss Modern")
+    provenance_attrs = _html_body_provenance_attrs(packet)
 
     return f"""<!DOCTYPE html>
 <html lang="{_escape(language)}">
@@ -3318,7 +3409,7 @@ def render_swiss_modern_html(
 {css}
 </style>
 </head>
-<body data-export-progress="true" data-preset="Swiss Modern">
+<body data-export-progress="true" data-preset="Swiss Modern" {provenance_attrs}>
 <span id="brand-mark">{_escape(brand_mark)}</span>
 <div class="progress-bar"></div>
 <nav class="nav-dots" aria-label="Slide navigation"></nav>
@@ -3981,7 +4072,7 @@ def render_enterprise_dark_html(
     total = len(specs)
     slides_html = "\n\n".join(_render_enterprise_slide(spec, total) for spec in specs)
     css = _build_non_swiss_shell_css(style_contract, "Enterprise Dark") + "\n\n" + _enterprise_extra_css()
-    return _assemble_shell_html(brief["title"], brief["language"], "Enterprise Dark", css, slides_html, total)
+    return _assemble_shell_html(brief["title"], brief["language"], "Enterprise Dark", css, slides_html, total, packet)
 
 
 def _data_story_extra_css() -> str:
@@ -4018,7 +4109,7 @@ def _data_story_extra_css() -> str:
 .chart-bar { fill: var(--chart-primary); }
 .chart-bar.secondary { fill: var(--chart-secondary); }
 .chart-bar.tertiary { fill: var(--chart-tertiary); }
-.chart-line { stroke: var(--chart-primary); stroke-width: 2.5; fill: none; stroke-linecap: round; stroke-linejoin: round; }
+.chart-line { stroke: var(--chart-primary); stroke-width: 3.2; fill: none; stroke-linecap: round; stroke-linejoin: round; }
 .chart-label, .chart-val { fill: var(--text-muted); font-size: 10px; font-family: inherit; font-variant-numeric: tabular-nums; }
 .chart-val { fill: var(--text); }
 
@@ -4027,6 +4118,28 @@ def _data_story_extra_css() -> str:
     border: 1px solid var(--border);
     border-radius: 8px;
     padding: 18px;
+}
+
+.ds-chart-insight .ds-heading,
+.ds-workflow .ds-heading,
+.ds-grid .ds-heading,
+.ds-kpi-chart .ds-heading {
+    max-width: min(1040px, 94%);
+}
+
+.ds-chart-insight .ds-chart-card {
+    padding: 12px 14px;
+}
+
+.ds-chart-insight .ds-chart-svg {
+    display: block;
+    max-height: 188px;
+    min-height: 176px;
+    margin: 0 auto;
+}
+
+.ds-chart-insight .ds-insight {
+    margin-top: 16px;
 }
 
 .ds-stage-grid {
@@ -4342,7 +4455,7 @@ def render_data_story_html(
     total = len(specs)
     slides_html = "\n\n".join(_render_data_story_slide(spec, total) for spec in specs)
     css = _build_non_swiss_shell_css(style_contract, "Data Story") + "\n\n" + _data_story_extra_css()
-    return _assemble_shell_html(brief["title"], brief["language"], "Data Story", css, slides_html, total)
+    return _assemble_shell_html(brief["title"], brief["language"], "Data Story", css, slides_html, total, packet)
 
 
 def _chinese_chan_extra_css() -> str:
@@ -4538,6 +4651,45 @@ def _chinese_chan_metric_value(item: str, spec: dict[str, Any], *, index: int, u
     return value
 
 
+def _compact_vertical_title(text: str) -> str:
+    normalized = re.sub(r"\s+", "", text or "")
+    if not normalized:
+        return "答案"
+
+    semantic_pairs = [
+        (("先问", "自己"), "先问自己"),
+        (("意义",), "意义"),
+        (("方向",), "方向"),
+        (("判断",), "判断"),
+        (("连接",), "连接"),
+        (("创造",), "创造"),
+        (("责任",), "责任"),
+        (("承担",), "承担"),
+    ]
+    for needles, label in semantic_pairs:
+        if all(needle in normalized for needle in needles):
+            return label
+
+    segments = [segment.strip() for segment in re.split(r"[，。；、,:：]", text) if segment.strip()]
+    prefix_patterns = (
+        r"^(?:而在于|不在于|在于|终究不在于|终究|与其问|不如先问|我愿意把自己训练成|我愿意把自己|我愿意)",
+    )
+    for segment in reversed(segments):
+        compact = segment
+        for pattern in prefix_patterns:
+            updated = re.sub(pattern, "", compact).strip()
+            if updated:
+                compact = updated
+        compact = re.sub(r"^(?:你|我)", "", compact).strip()
+        normalized_compact = re.sub(r"\s+", "", compact)
+        if 2 <= len(normalized_compact) <= 6:
+            return compact
+
+    if len(normalized) <= 6:
+        return text
+    return _compact_display_token(text, fallback="答案")
+
+
 def _chinese_chan_stat_label(item: str, value: str) -> str:
     cleaned = re.sub(r"\s+", " ", item or "").strip()
     if not cleaned:
@@ -4677,16 +4829,7 @@ def _render_chinese_chan_stat(spec: dict[str, Any], total: int, *, language: str
 def _render_chinese_chan_vertical(spec: dict[str, Any], total: int) -> str:
     slide_number = spec["slide_number"]
     raw_title = re.sub(r"\s+", "", spec["title"])
-    title_text = spec["title"]
-    if len(raw_title) > 12:
-        segments = [segment.strip() for segment in re.split(r"[，。；、,:：]", spec["title"]) if segment.strip()]
-        tail = next((segment for segment in reversed(segments) if 2 <= len(re.sub(r"\s+", "", segment)) <= 12), "")
-        if tail:
-            compact_tail = re.sub(r"^(?:是|让|把)", "", tail).strip()
-            if compact_tail:
-                title_text = compact_tail
-    if len(re.sub(r"\s+", "", title_text)) > 12:
-        title_text = _compact_display_token(title_text, fallback="答案")
+    title_text = _compact_vertical_title(spec["title"]) if len(raw_title) > 8 else spec["title"]
     extra_attrs = ""
     if len(raw_title) > 14:
         extra_attrs = 'style="font-size: clamp(1.55rem, 4.4vw, 3.9rem); letter-spacing: 0.12em;"'
@@ -4740,7 +4883,7 @@ def render_chinese_chan_html(
     total = len(specs)
     slides_html = "\n\n".join(_render_chinese_chan_slide(spec, total, language=brief["language"]) for spec in specs)
     css = _build_non_swiss_shell_css(style_contract, "Chinese Chan") + "\n\n" + _chinese_chan_extra_css()
-    return _assemble_shell_html(brief["title"], brief["language"], "Chinese Chan", css, slides_html, total)
+    return _assemble_shell_html(brief["title"], brief["language"], "Chinese Chan", css, slides_html, total, packet)
 
 
 def render_from_brief(brief: dict[str, Any]) -> tuple[str, dict[str, Any], dict[str, Any]]:

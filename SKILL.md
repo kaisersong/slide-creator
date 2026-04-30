@@ -1,7 +1,7 @@
 ---
 name: kai-slide-creator
 description: 生成HTML演示文稿/幻灯片 — 21 种风格模版，播放/演讲者模式。适用于路演、产品发布、技术分享、方案宣讲等场景。
-version: 2.24.2
+version: 2.24.3
 metadata: {"openclaw":{"emoji":"🎞","os":["darwin","linux","windows"],"homepage":"https://github.com/kaisersong/slide-creator","requires":{"bins":["python3"]},"install":[]}}
 ---
 
@@ -42,7 +42,7 @@ metadata: {"openclaw":{"emoji":"🎞","os":["darwin","linux","windows"],"homepag
 | 命令 | 加载内容 | 行为 |
 |------|----------|------|
 | `--plan [prompt]` | `references/brief-template.json` | 创建 `BRIEF.json`；仅在用户明确要求时额外派生 `PLANNING.md` |
-| `--generate` | SKILL.md + 已选风格文件（内置 `references/*.md` / `blue-sky-starter.html`；自定义 `themes/<name>/reference.md`）+ composition 源 + `references/title-quality.md` + `references/html-template.md` + `references/js-engine.md` + `references/base-css.md` + `references/impeccable-anti-patterns.md` | 从 `BRIEF.json` 生成 HTML，并执行写入前门禁 |
+| `--generate` | SKILL.md + 已选风格文件（内置 `references/*.md` / `blue-sky-starter.html`；自定义 `themes/<name>/reference.md`）+ composition 源 + `references/title-quality.md` + `references/html-template.md` + `references/js-engine.md` + `references/base-css.md` + `references/impeccable-anti-patterns.md` | 从 `BRIEF.json` 生成 HTML，并执行写入前门禁；如用户显式要求 `eval`，同步产出单 deck 评测 JSON |
 | `--review [file.html]` | `references/review-checklist.md` + 目标 HTML | 执行 17 项检查点 → 确认窗口 → 修复/报告 |
 | 无 flag (交互式) | `references/workflow.md` + 其他按需 | 遵循 Phase 0-5 |
 | 直接给内容 + 风格 | 同 `--generate` | 先落一个有效 `BRIEF.json`，再走同一个 deterministic renderer 与 strict 写入前门禁；禁止手拼最终 HTML |
@@ -74,6 +74,8 @@ metadata: {"openclaw":{"emoji":"🎞","os":["darwin","linux","windows"],"homepag
 详见 `references/html-template.md`。生成任何 HTML 前必读此文件。
 
 **Direct-route guard:** 无论是 `--generate` 还是“直接给内容 + 风格”，都必须先 materialize 一个有效 `BRIEF.json`，再通过 `render_from_brief()` 同一路径渲染，并在写出最终文件前通过 `python3 scripts/validate_html.py "$TMP_HTML" --strict`。禁止在交互式路径里绕过 BRIEF 直接手写最终 HTML。
+
+**Optional eval artifact:** 当用户显式要求 `eval` / `评测` 时，生成链路应在 strict gate 通过后额外写出单 deck 评测 JSON。原始 CLI 对应 `--eval`（默认写同名 `.eval.json`）或 `--eval-out <path>`；评测至少包含 `style_score (= style_signature_coverage)`、quality gates、hard failures 与关键 diagnostics。
 
 ## Pre-Write Validation Pipeline（写入前门禁）
 

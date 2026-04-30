@@ -20,7 +20,13 @@ from low_context import (  # noqa: E402
     load_brief,
     render_from_brief,
     render_from_context_path,
+    stamp_validation_status,
     validate_brief_path,
+)
+from generation_eval import (  # noqa: E402
+    build_generation_eval_report,
+    default_eval_output_path,
+    write_generation_eval_report,
 )
 
 
@@ -61,6 +67,8 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument("--brief", help="Path to BRIEF.json (defaults to ./BRIEF.json)")
     parser.add_argument("--context-file", help="Path to a context artifact containing exactly one valid BRIEF")
     parser.add_argument("--output", help="Output HTML path for --generate")
+    parser.add_argument("--eval", action="store_true", help="Write a single-deck eval JSON next to the output HTML")
+    parser.add_argument("--eval-out", help="Optional path for the single-deck eval JSON report")
     parser.add_argument("--packet-out", help="Optional path to write the render packet as JSON")
     parser.add_argument("--extract-brief-out", help="Optional path to write the extracted BRIEF as JSON")
     return parser
@@ -95,9 +103,22 @@ def run_generate(
     brief_path: Path | None,
     context_file: str | None,
     output: Path,
-    packet_out: str | None,
-    extract_brief_out: str | None,
+    eval_enabled: bool = False,
+    eval_out: str | None = None,
+    packet_out: str | None = None,
+    extract_brief_out: str | None = None,
 ) -> int:
+    def _has_canonical_provenance(html_text: str) -> bool:
+        required_markers = (
+            'data-generator="kai-slide-creator"',
+            'data-generator-version="',
+            'data-render-path="',
+            'data-brief-hash="',
+            'data-runtime-path="',
+            'data-validate-strict="pending"',
+        )
+        return all(marker in html_text for marker in required_markers)
+
     def _strict_validate_rendered_html(html_text: str) -> bool:
         from validate_html import validate  # noqa: WPS433
 
@@ -125,11 +146,16 @@ def run_generate(
         print(f"RENDER ERROR: {exc}")
         return 1
 
+    if not _has_canonical_provenance(html_text):
+        print("PROVENANCE ERROR: canonical render markers missing; refusing to write output")
+        return 1
+
     if not _strict_validate_rendered_html(html_text):
         print("VALIDATE ERROR: strict pre-write gate failed; refusing to write output")
         return 1
 
-    output.write_text(html_text, encoding="utf-8")
+    final_html = stamp_validation_status(html_text, status="pass")
+    output.write_text(final_html, encoding="utf-8")
 
     if packet_out:
         Path(packet_out).write_text(json.dumps(packet, ensure_ascii=False, indent=2), encoding="utf-8")
@@ -137,10 +163,24 @@ def run_generate(
     if extract_brief_out:
         Path(extract_brief_out).write_text(json.dumps(brief, ensure_ascii=False, indent=2), encoding="utf-8")
 
+    eval_path: Path | None = None
+    if eval_enabled or eval_out:
+        eval_path = Path(eval_out) if eval_out else default_eval_output_path(output)
+        report = build_generation_eval_report(
+            html_text=final_html,
+            brief=brief,
+            packet=packet,
+            html_path=output,
+        )
+        write_generation_eval_report(eval_path, report)
+
     print(f"RENDERED: {output}")
     print(f"PRESET: {packet['preset']}")
     print(f"QUALITY TIER: {packet['quality_tier']}")
     print(f"RUNTIME PATH: {packet['runtime_path']}")
+    if eval_path is not None:
+        print(f"EVAL: {eval_path}")
+        print(f"STYLE SCORE: {report['summary']['style_score']}")
     return 0
 
 
@@ -163,6 +203,8 @@ def main() -> int:
             brief_path=None if args.context_file else brief_path,
             context_file=args.context_file,
             output=Path(args.output),
+            eval_enabled=args.eval,
+            eval_out=args.eval_out,
             packet_out=args.packet_out,
             extract_brief_out=args.extract_brief_out,
         )
