@@ -90,7 +90,7 @@ metadata: {"openclaw":{"emoji":"🎞","os":["darwin","linux","windows"],"homepag
    选中风格的 Signature Elements、Typography、Components、Background 必须完整注入；不得遗漏 checklist 项。Blue Sky 例外：使用 `blue-sky-starter.html` 基底。
 
 2. **叙事弧线 / composition route**
-   页数、page roles、composition route 必须完整；连续两页不得使用相同布局；每页至少使用 2-3 种组件类型，不得只用 `.g` + `.bl` 堆砌。
+   页数、page roles、composition route 必须完整；连续两页不得使用相同布局；每页至少使用 2-3 种组件类型，不得只用 `.g` + `.bl` 堆砌。单页列表项 ≤ 5 条；标题 + 正文段落 + 列表三者不得同时出现在同一页（内容过多时拆页）。单页列表项 ≤ 5 条；标题 + 正文段落 + 列表三者不得同时出现在同一页。
 
 3. **标题质量**
    标题必须断言式；禁止通用标签；多行标题不得有孤儿行、塌陷中间行或浏览器自然换行失衡。规则只认 `references/title-quality.md`。
