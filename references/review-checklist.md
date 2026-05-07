@@ -7,7 +7,7 @@ Load this file during Phase 3.5 (Polish mode) or when `--review` is called.
 ## Overview
 
 19 checkpoints divided into two categories:
-- **Category 1: Auto-Detectable (9)**: Can be detected programmatically; only 1.1 and 1.6 can be fully auto-fixed
+- **Category 1: Auto-Detectable (9)**: Can be detected programmatically; only 1.1 and 1.5 can be fully auto-fixed
 - **Category 2: AI-Advised (10)**: AI provides judgment suggestions for user consideration
 
 ---
@@ -81,7 +81,7 @@ Technical term indicators:
 
 **Auto-fix capability**: ❌ No — detection only, requires manual intervention
 
-### 1.6 文字/背景对比度 (Text/Background Contrast)
+### 1.5 文字/背景对比度 (Text/Background Contrast)
 
 **Detection**: Check if any element has light text on light background:
 - Search for `color: #cbd5e1` / `#888` / `#999` / `#aaa` / `var(--text-secondary)` inside elements with light inline backgrounds (`#f0f4f8`, `#fef3c7`, `#e8eef7`, `#e8f5e9`, `#f3e5f5`, `#fff`, or any background starting with `#f` or `#e`)
@@ -93,7 +93,7 @@ Technical term indicators:
 
 **Auto-fix capability**: ✅ Yes — can auto-insert color overrides on the container
 
-### 1.7 CSS Class 完整性 (CSS Integrity)
+### 1.6 CSS Class 完整性 (CSS Integrity)
 
 **Detection**:
 1. 从 HTML 中提取所有 `class="..."` 属性中的 class 名（空格分隔）
@@ -108,7 +108,7 @@ Technical term indicators:
 
 **Auto-fix capability**: ⚠️ Partial — 需从风格文件补充
 
-### 1.8 @keyframes 完整性 (Animation Integrity)
+### 1.7 @keyframes 完整性 (Animation Integrity)
 
 **Detection**:
 1. 从 HTML/CSS 中提取所有 `animation:` 和 `animation-name:` 引用的 keyframes 名称
@@ -123,7 +123,7 @@ Technical term indicators:
 
 ---
 
-### 1.5 字号底线 (Font Size Floor)
+### 1.8 字号底线 (Font Size Floor)
 
 **Detection**: Check if body text font-size is below readable threshold:
 - CSS: `< 1rem` or `< clamp(1rem, 2vw, 1.25rem)`
@@ -135,7 +135,7 @@ Technical term indicators:
 
 **Auto-fix capability**: ❌ No — detection only, requires manual intervention
 
-### 1.6 眯眼测试 (Squint Test)
+### 1.9 眯眼测试 (Squint Test)
 
 **Detection**: Check if page has a clear visual focal point:
 - Largest element should be the most important content
@@ -299,10 +299,10 @@ Review 规则分为三类，执行策略不同：
 |---|---|
 | 1.3 三概念法则 | 单页新概念 ≤ 3，超出提示拆分 |
 | 1.4 布局轮换 | 检测连续 3 页同布局 → 提示插入缓冲 |
-| 1.5 字号底线 | 检测字号过低 → 提示调整 |
-| 1.6 眯眼测试 | 检测视觉焦点不明确 → 提示重新分配权重 |
-| 1.7 CSS 完整性 | HTML 中 class 在 <style> 无定义 → 提示从风格文件补充 |
-| 1.8 Animation 完整性 | 引用 @keyframes 无定义 → 提示从模板补充 |
+| 1.6 CSS 完整性 | HTML 中 class 在 <style> 无定义 → 提示从风格文件补充 |
+| 1.7 Animation 完整性 | 引用 @keyframes 无定义 → 提示从模板补充 |
+| 1.8 字号底线 | 检测字号过低 → 提示调整 |
+| 1.9 眯眼测试 | 检测视觉焦点不明确 → 提示重新分配权重 |
 
 ### 情境规则 (Context-Aware Rules)
 
@@ -343,9 +343,9 @@ Review 时提示，不强制执行。
 
 | 规则 | 行为 |
 |---|---|
-| 1.6 文字对比 | 浅色背景+浅色文字 → 自动加深文字颜色 |
-| 1.7 CSS 完整性 | 未定义 class → 从风格/模板文件提取并补充 |
-| 1.8 Animation 完整性 | 未定义 @keyframes → 从模板提取并补充 |
+| 1.5 文字对比 | 浅色背景+浅色文字 → 自动加深文字颜色 |
+| 1.6 CSS 完整性 | 未定义 class → 从风格/模板文件提取并补充 |
+| 1.7 Animation 完整性 | 未定义 @keyframes → 从模板提取并补充 |
 | 2.1 痛点前置 | 前2页无痛点场景 → 提示补充案例 |
 | 2.5 注意力重置点 | 连续 8-10 页干货 → 提示插入案例/提问 |
 | 2.7 留白缓冲页 | 每 5-6 页 → 提示插入呼吸页 |
@@ -359,12 +359,12 @@ Review 时提示，不强制执行。
 
 | 规则 | 阶段 | 内嵌方式 |
 |---|---|---|
-| 1.6 文字对比 | Generate | 浅色背景 block 自动覆盖深色文字 |
+| 1.5 文字对比 | Generate | 浅色背景 block 自动覆盖深色文字 |
 | 1.3 三概念法则 | Generate | 生成时控制单页概念密度 |
 | 1.4 布局轮换 | Generate | 自动轮换布局类型 |
-| 1.5 字号底线 | Generate | 使用 clamp() 响应式字号 |
+| 1.8 字号底线 | Generate | 使用 clamp() 响应式字号 |
 | 1.2 结论先行 | Plan/Generate | 根据内容类型决定标题风格 |
-| 1.7 CSS 完整性 | Generate | Blue Sky 模板 REQUIRED BLOCK 标记必须搬运 |
-| 1.8 Animation 完整性 | Generate | 所有 @keyframes 引用必须有对应定义 |
+| 1.6 CSS 完整性 | Generate | Blue Sky 模板 REQUIRED BLOCK 标记必须搬运 |
+| 1.7 Animation 完整性 | Generate | 所有 @keyframes 引用必须有对应定义 |
 | 2.2 量化收益 | Plan | 检测并提取内容中的量化数据 |
 | 2.8 术语类比 | Generate | 技术术语首次出现时附带类比 |
