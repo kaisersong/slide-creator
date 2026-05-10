@@ -200,6 +200,7 @@ theme 的约束是明确的：
 数据报告 / KPI 看板    → Data Story、Enterprise Dark、Swiss Modern
 商业路演 / VC Deck     → Bold Signal、Aurora Mesh、Enterprise Dark
 开发工具 / API 文档    → Terminal Green、Neon Cyber、Neo-Retro Dev Deck
+咨询报告 / 战略方案    → Strategy Consulting、Enterprise Dark、Swiss Modern
 ```
 
 好的默认值会直接减少返工。结果就是更少的坏第一稿，更少的风格重置，也更少被上下文浪费掉的 token。
@@ -374,6 +375,7 @@ python3 main.py --generate --brief BRIEF.json --output presentation.html --eval
 | **Data Story** | 清晰、精确、说服力 | 业务回顾、KPI、数据分析 |
 | **Modern Newspaper** | 犀利、权威、编辑感 | 业务报告、思想领导力演讲 |
 | **Neo-Retro Dev Deck** | 有主见、技术感、手作风 | 开发工具发布、API 文档、黑客松 |
+| **Strategy Consulting** | 结构化、权威、干净 | 咨询报告、战略方案、尽职调查 |
 
 ### Blue Sky
 

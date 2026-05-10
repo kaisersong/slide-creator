@@ -198,6 +198,7 @@ That is why slide-creator routes by content type:
 Data report / KPI dashboard → Data Story, Enterprise Dark, Swiss Modern
 Business pitch / VC deck    → Bold Signal, Aurora Mesh, Enterprise Dark
 Developer tool / API docs   → Terminal Green, Neon Cyber, Neo-Retro Dev Deck
+Consulting / strategy       → Strategy Consulting, Enterprise Dark, Swiss Modern
 ```
 
 Good defaults reduce rework. In practice, that means fewer bad first drafts, fewer style resets, and less wasted context.
@@ -374,6 +375,7 @@ Tracked segments: `plan`, `generate`, `validate`, `polish`, `total`
 | **Data Story** | Clear, precise, persuasive | Business review, KPI, analytics |
 | **Modern Newspaper** | Punchy, authoritative, editorial | Business reports, thought leadership |
 | **Neo-Retro Dev Deck** | Opinionated, technical, handmade | Dev tool launches, API docs, hackathons |
+| **Strategy Consulting** | Structured, authoritative, clean | Consulting reports, strategy decks, due diligence |
 
 ### Blue Sky
 

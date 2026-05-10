@@ -33,6 +33,7 @@ metadata: {"openclaw":{"emoji":"🎞","os":["darwin","linux","windows"],"homepag
 | 研究 / 思想领导力 | Modern Newspaper、Paper & Ink、Swiss Modern |
 | 创意 / 个人品牌 | Vintage Editorial、Split Pastel、Neo-Brutalism |
 | 哲学 / 思想 | Chinese chan|
+| 咨询报告 / 战略方案 | Strategy Consulting、Enterprise Dark、Swiss Modern |
 
 
 ## 命令路由
