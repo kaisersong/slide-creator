@@ -1,0 +1,880 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>kai-slide-creator — Zero-Dependency HTML Presentation Generator</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+
+:root { --slide-count: 8; }
+
+:root {
+  --bg:           #ffffff;
+  --bg-card:      #f7f8fa;
+  --bg-accent:    #eef2f7;
+  --border:       #d8dfe8;
+  --text:         #1a2b4a;
+  --text-muted:   #6b7a90;
+  --accent:       #1b3a6b;
+  --accent-light: #3366a8;
+  --positive:     #2e7d5b;
+  --negative:     #c0392b;
+  --neutral:      #6b7a90;
+  --highlight:    #f0c850;
+  --divider:      #c8d1dc;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html { scroll-snap-type: y mandatory; height: 100%; }
+
+body {
+  background: var(--bg);
+  font-family: "Inter", system-ui, sans-serif;
+  color: var(--text);
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+  height: 100%;
+}
+
+.slide {
+  width: 100vw; height: 100vh; height: 100dvh;
+  scroll-snap-align: start;
+  overflow: hidden;
+  position: relative;
+  background: #ffffff;
+  display: flex; flex-direction: column;
+  padding: clamp(1.5rem, 3vw, 3rem);
+}
+
+.reveal { opacity: 0; transform: translateX(-12px); transition: opacity 0.4s ease, transform 0.4s ease; }
+.slide.visible .reveal { opacity: 1; transform: none; }
+.reveal:nth-child(1) { transition-delay: 0.1s; }
+.reveal:nth-child(2) { transition-delay: 0.2s; }
+.reveal:nth-child(3) { transition-delay: 0.3s; }
+.reveal:nth-child(4) { transition-delay: 0.4s; }
+.reveal:nth-child(5) { transition-delay: 0.5s; }
+
+/* Action Title */
+.sc-action-title {
+  font-size: clamp(1.2rem, 2.5vw, 1.6rem);
+  font-weight: 700;
+  color: var(--text);
+  line-height: 1.3;
+  border-bottom: 2px solid var(--accent);
+  padding-bottom: 0.5rem;
+  margin-bottom: clamp(1rem, 2vw, 1.5rem);
+}
+
+.sc-section-header {
+  font-size: clamp(0.7rem, 1vw, 0.8rem);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--accent);
+}
+
+.sc-body {
+  font-size: clamp(0.8rem, 1.3vw, 1rem);
+  color: var(--text);
+  line-height: 1.6;
+}
+
+.sc-source {
+  font-size: clamp(0.55rem, 0.8vw, 0.7rem);
+  color: var(--text-muted);
+  position: absolute;
+  bottom: clamp(0.5rem, 1vw, 1rem);
+  left: clamp(1.5rem, 3vw, 3rem);
+}
+
+/* Evidence Card */
+.sc-evidence-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: clamp(0.75rem, 1.5vw, 1.2rem);
+}
+.sc-metric {
+  font-size: clamp(1.5rem, 4vw, 2.5rem);
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+  color: var(--accent);
+  line-height: 1;
+}
+.sc-metric-label {
+  font-size: clamp(0.6rem, 0.9vw, 0.75rem);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--text-muted);
+  margin-top: 0.4rem;
+}
+
+/* Recommendation Box */
+.sc-reco-box {
+  background: var(--bg-accent);
+  border-left: 4px solid var(--accent);
+  padding: clamp(0.75rem, 1.5vw, 1.2rem);
+  border-radius: 0 6px 6px 0;
+  font-size: clamp(0.8rem, 1.2vw, 0.95rem);
+  font-weight: 500;
+  color: var(--text);
+}
+
+/* Before/After */
+.sc-before-after {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: clamp(0.75rem, 1.5vw, 1.2rem);
+  flex: 1;
+}
+.sc-before-panel, .sc-after-panel {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: clamp(0.75rem, 1.5vw, 1.2rem);
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+.sc-before-panel { border-top: 3px solid var(--negative); }
+.sc-after-panel  { border-top: 3px solid var(--positive); }
+.sc-panel-label {
+  font-size: clamp(0.6rem, 0.85vw, 0.7rem);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+.sc-before-panel .sc-panel-label { color: var(--negative); }
+.sc-after-panel .sc-panel-label  { color: var(--positive); }
+
+/* Three Things */
+.sc-three-things {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: clamp(0.75rem, 1.5vw, 1.2rem);
+  flex: 1;
+}
+.sc-thing {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 0.75rem;
+  padding: clamp(0.75rem, 1.5vw, 1.2rem);
+}
+.sc-thing-icon {
+  width: 3rem; height: 3rem; border-radius: 50%;
+  background: var(--bg-accent);
+  border: 2px solid var(--accent);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1.2rem; font-weight: 700; color: var(--accent);
+}
+.sc-thing-title {
+  font-size: clamp(0.8rem, 1.2vw, 1rem);
+  font-weight: 700;
+  color: var(--text);
+}
+.sc-thing-body {
+  font-size: clamp(0.7rem, 1vw, 0.85rem);
+  color: var(--text-muted);
+  line-height: 1.5;
+}
+
+/* Funnel */
+.sc-funnel-svg {
+  width: 100%; max-width: 500px; height: auto; margin: 0 auto; display: block;
+}
+.sc-funnel-layer { fill: var(--accent); }
+.sc-funnel-label {
+  font-family: inherit; font-size: 13px; fill: #ffffff; font-weight: 600; text-anchor: middle;
+}
+.sc-funnel-value {
+  font-family: inherit; font-size: 11px; fill: var(--text-muted); text-anchor: start; font-variant-numeric: tabular-nums;
+}
+
+/* Quote + Evidence */
+.sc-quote-evidence {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: clamp(1rem, 2vw, 1.5rem);
+  align-items: start;
+  flex: 1;
+}
+.sc-quote-block {
+  border-left: 3px solid var(--accent);
+  padding-left: clamp(0.75rem, 1.5vw, 1.2rem);
+}
+.sc-quote-text {
+  font-size: clamp(0.9rem, 1.4vw, 1.1rem);
+  font-style: italic;
+  color: var(--text);
+  line-height: 1.6;
+  margin-bottom: 0.75rem;
+}
+.sc-quote-attribution {
+  font-size: clamp(0.65rem, 0.9vw, 0.8rem);
+  font-weight: 600;
+  color: var(--text-muted);
+}
+.sc-evidence-stack {
+  display: flex;
+  flex-direction: column;
+  gap: clamp(0.5rem, 1vw, 0.75rem);
+}
+
+/* Driver Breakdown */
+.sc-driver-tree {
+  --driver-gap: 2.5rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--driver-gap);
+  flex: 1;
+  justify-content: center;
+}
+.sc-driver-root {
+  background: var(--accent);
+  color: #ffffff;
+  font-weight: 700;
+  font-size: clamp(0.8rem, 1.2vw, 1rem);
+  padding: clamp(0.5rem, 1vw, 0.75rem) clamp(1rem, 2vw, 1.5rem);
+  border-radius: 6px;
+  position: relative;
+}
+.sc-driver-root::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translate(-50%, 100%);
+  width: 2px;
+  height: var(--driver-gap);
+  background: var(--border);
+}
+.sc-driver-children {
+  display: flex;
+  gap: clamp(0.5rem, 1vw, 0.75rem);
+  position: relative;
+  padding-top: 0.5rem;
+}
+.sc-driver-children::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: calc(12.5% + 0.25rem);
+  right: calc(12.5% + 0.25rem);
+  height: 2px;
+  background: var(--border);
+}
+.sc-driver-child {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: clamp(0.6rem, 1.2vw, 1rem);
+  flex: 1;
+  text-align: center;
+  position: relative;
+}
+.sc-driver-child::before {
+  content: '';
+  position: absolute;
+  top: -0.5rem;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 2px;
+  height: 0.5rem;
+  background: var(--border);
+}
+.sc-driver-child-title {
+  font-size: clamp(0.7rem, 1vw, 0.85rem);
+  font-weight: 700;
+  color: var(--accent);
+  margin-bottom: 0.3rem;
+}
+.sc-driver-child-body {
+  font-size: clamp(0.6rem, 0.9vw, 0.75rem);
+  color: var(--text-muted);
+  line-height: 1.4;
+}
+
+/* Matrix */
+.sc-matrix {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: 1fr 1fr;
+  gap: clamp(0.5rem, 1vw, 0.75rem);
+  flex: 1;
+}
+.sc-matrix-cell {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: clamp(0.75rem, 1.5vw, 1.2rem);
+  display: flex;
+  flex-direction: column;
+}
+.sc-matrix-cell.highlight {
+  border-color: var(--accent);
+  background: rgba(27, 58, 107, 0.04);
+}
+
+/* Progress bar */
+.progress-bar {
+  position: fixed; bottom: 0; left: 0;
+  height: 3px; background: var(--accent);
+  transition: width 0.3s ease;
+  z-index: 100;
+}
+
+/* Present Mode */
+#present-btn {
+  position: fixed; bottom: 1.5rem; right: 1.5rem;
+  width: 40px; height: 40px; border-radius: 50%;
+  background: var(--accent); color: #fff;
+  border: none; cursor: pointer; font-size: 1rem;
+  z-index: 200; opacity: 0.6;
+  transition: opacity 0.2s;
+}
+#present-btn:hover { opacity: 1; }
+#present-counter {
+  display: none; position: fixed; bottom: 1.5rem; left: 50%;
+  transform: translateX(-50%); color: #fff; font-size: 0.8rem;
+  z-index: 1001; font-variant-numeric: tabular-nums;
+}
+body.presenting { overflow: hidden; background: #000; }
+body.presenting .slide {
+  position: fixed; inset: 0; display: none;
+  width: 100vw; height: 100vh;
+  transform-origin: center center;
+  scroll-snap-align: none;
+}
+body.presenting .slide.p-on { display: flex; }
+body.presenting #present-counter { display: block; }
+body.presenting #present-btn { display: none; }
+body.presenting .progress-bar,
+body.presenting .edit-hotzone,
+body.presenting .edit-toggle,
+body.presenting #notes-panel { display: none; }
+
+/* Edit Mode */
+.edit-hotzone {
+  position: fixed; top: 0; right: 0;
+  width: 60px; height: 60px; z-index: 150;
+}
+.edit-toggle {
+  position: fixed; top: 1rem; right: 1rem;
+  padding: 0.4rem 0.8rem; border-radius: 6px;
+  background: var(--bg-card); border: 1px solid var(--border);
+  color: var(--text); font-size: 0.75rem; cursor: pointer;
+  z-index: 151; opacity: 0; transition: opacity 0.2s;
+}
+.edit-toggle.show { opacity: 1; }
+.edit-toggle.active { background: var(--accent); color: #fff; border-color: var(--accent); }
+body.editing .slide [contenteditable] {
+  outline: 1px dashed var(--accent);
+  outline-offset: 2px;
+}
+
+/* Notes Panel */
+#notes-panel {
+  position: fixed; bottom: 0; left: 0; right: 0;
+  background: var(--bg-card); border-top: 1px solid var(--border);
+  padding: 0.75rem 1.5rem;
+  transform: translateY(100%); transition: transform 0.3s ease;
+  z-index: 160;
+}
+#notes-panel.active { transform: translateY(0); }
+#notes-panel.collapsed { transform: translateY(calc(100% - 2rem)); }
+#notes-panel-header {
+  display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;
+}
+#notes-panel-label {
+  font-size: 0.6rem; font-weight: 600; text-transform: uppercase;
+  letter-spacing: 0.1em; color: var(--text-muted);
+}
+#notes-collapse-btn {
+  background: none; border: none; color: var(--text-muted);
+  cursor: pointer; font-size: 1rem;
+}
+#notes-textarea {
+  width: 100%; min-height: 60px; resize: vertical;
+  background: var(--bg); border: 1px solid var(--border);
+  border-radius: 4px; padding: 0.5rem;
+  font-family: inherit; font-size: 0.85rem; color: var(--text);
+}
+
+/* Slide credit */
+.slide-credit {
+  position: absolute; bottom: 0.5rem; right: 1rem;
+  font-size: 0.55rem; color: var(--text-muted); opacity: 0.5;
+}
+
+/* ── Slide counter nav ── */
+#slide-counter {
+  position: fixed; top: 1.5rem; right: 2rem; z-index: 100;
+  font-size: 0.7rem; font-weight: 600; letter-spacing: 0.08em;
+  color: var(--text-muted);
+  font-variant-numeric: tabular-nums;
+}
+body.presenting #slide-counter { display: none !important; }
+
+</style>
+</head>
+<body data-preset="Strategy Consulting">
+
+<div class="progress-bar" style="width:0%"></div>
+<div id="slide-counter">01 / 08</div>
+
+<!-- Slide 1: Cover -->
+<section class="slide" id="slide-1" data-export-role="cover" data-notes="kai-slide-creator: 22 design presets, zero dependencies, one HTML file.">
+  <div style="flex:1;display:flex;flex-direction:column;justify-content:center;align-items:flex-start;gap:1rem;">
+    <div class="reveal sc-section-header">Product Overview</div>
+    <h1 class="reveal" style="font-size:clamp(1.8rem,4vw,3rem);font-weight:800;color:var(--text);line-height:1.2;">kai-slide-creator</h1>
+    <p class="reveal" style="font-size:clamp(0.85rem,1.3vw,1.1rem);color:var(--text-muted);max-width:500px;">Zero-dependency HTML presentation generator. 22 design presets, presenter mode, and full edit capability in a single self-contained file.</p>
+    <div class="reveal" style="margin-top:2rem;font-size:0.8rem;color:var(--text-muted);">Version 2.24.3<br>Strategy Consulting Preset</div>
+  </div>
+  <div class="sc-source">kai-slide-creator | github.com/anthropics/kai-slide-creator</div>
+</section>
+
+<!-- Slide 2: Executive Summary -->
+<section class="slide" id="slide-2" data-export-role="exec_summary" data-notes="Three core metrics that define kai-slide-creator's value proposition.">
+  <h2 class="reveal sc-action-title">kai-slide-creator eliminates presentation toolchain complexity while delivering consulting-grade output</h2>
+  <p class="reveal" style="font-size:clamp(0.85rem,1.2vw,1rem);color:var(--text);line-height:1.6;max-width:680px;margin-bottom:clamp(0.75rem,1.5vw,1.2rem);">Built for teams that need professional presentations fast, kai-slide-creator uses an AI-driven style system to compress the ideation-to-delivery pipeline to minutes while enforcing consulting-firm quality standards.</p>
+  <div class="reveal" style="display:grid;grid-template-columns:repeat(3,1fr);gap:clamp(0.75rem,1.5vw,1.2rem);align-items:stretch;margin-bottom:clamp(0.75rem,1.5vw,1.2rem);">
+    <div class="sc-evidence-card">
+      <div class="sc-metric">22</div>
+      <div class="sc-metric-label">Design presets</div>
+      <p style="font-size:clamp(0.65rem,0.9vw,0.75rem);color:var(--text-muted);margin-top:0.5rem;line-height:1.5;">Covering consulting, tech, creative, and academic contexts across a four-tier support system.</p>
+    </div>
+    <div class="sc-evidence-card">
+      <div class="sc-metric">0</div>
+      <div class="sc-metric-label">External dependencies</div>
+      <p style="font-size:clamp(0.65rem,0.9vw,0.75rem);color:var(--text-muted);margin-top:0.5rem;line-height:1.5;">No npm, no build step, no backend. A single HTML file contains all CSS, JS, and content.</p>
+    </div>
+    <div class="sc-evidence-card">
+      <div class="sc-metric">1</div>
+      <div class="sc-metric-label">Output file (HTML)</div>
+      <p style="font-size:clamp(0.65rem,0.9vw,0.75rem);color:var(--text-muted);margin-top:0.5rem;line-height:1.5;">Open in browser to present. Supports PPTX/PNG export and direct link sharing.</p>
+    </div>
+  </div>
+  <div class="reveal sc-reco-box" style="margin-top:auto;">Recommendation: Adopt kai-slide-creator for teams needing fast, professional presentations without PowerPoint, Keynote, or npm-heavy frameworks.</div>
+  <div class="sc-source">Source: Product metrics, v2.24.3 release notes</div>
+</section>
+
+<!-- Slide 3: Before/After -->
+<section class="slide" id="slide-3" data-export-role="before_after" data-notes="Compare traditional presentation workflows with kai-slide-creator approach.">
+  <h2 class="reveal sc-action-title">kai-slide-creator collapses the presentation workflow from hours to minutes</h2>
+  <div class="reveal sc-before-after">
+    <div class="sc-before-panel">
+      <div class="sc-panel-label">Traditional Workflow</div>
+      <ul style="list-style:none;display:flex;flex-direction:column;gap:0.75rem;font-size:clamp(0.85rem,1.2vw,1rem);color:var(--text);line-height:1.5;">
+        <li style="display:flex;gap:0.5rem;align-items:baseline;"><span style="color:var(--negative);font-weight:700;flex-shrink:0;">&#10007;</span> Install PowerPoint or Keynote ($149+/yr)</li>
+        <li style="display:flex;gap:0.5rem;align-items:baseline;"><span style="color:var(--negative);font-weight:700;flex-shrink:0;">&#10007;</span> Search for templates, fight with master slides</li>
+        <li style="display:flex;gap:0.5rem;align-items:baseline;"><span style="color:var(--negative);font-weight:700;flex-shrink:0;">&#10007;</span> Manual layout adjustments per slide</li>
+        <li style="display:flex;gap:0.5rem;align-items:baseline;"><span style="color:var(--negative);font-weight:700;flex-shrink:0;">&#10007;</span> Export to PDF, lose animations and interactivity</li>
+      </ul>
+    </div>
+    <div class="sc-after-panel">
+      <div class="sc-panel-label">kai-slide-creator</div>
+      <ul style="list-style:none;display:flex;flex-direction:column;gap:0.75rem;font-size:clamp(0.85rem,1.2vw,1rem);color:var(--text);line-height:1.5;">
+        <li style="display:flex;gap:0.5rem;align-items:baseline;"><span style="color:var(--positive);font-weight:700;flex-shrink:0;">&#10003;</span> Zero install — runs in any browser</li>
+        <li style="display:flex;gap:0.5rem;align-items:baseline;"><span style="color:var(--positive);font-weight:700;flex-shrink:0;">&#10003;</span> 22 curated presets, style-matched layouts</li>
+        <li style="display:flex;gap:0.5rem;align-items:baseline;"><span style="color:var(--positive);font-weight:700;flex-shrink:0;">&#10003;</span> AI-driven layout selection per narrative role</li>
+        <li style="display:flex;gap:0.5rem;align-items:baseline;"><span style="color:var(--positive);font-weight:700;flex-shrink:0;">&#10003;</span> Single HTML file: present, edit, export, share</li>
+      </ul>
+    </div>
+  </div>
+  <div class="sc-source">Source: Workflow analysis, internal benchmarking (2026)</div>
+</section>
+
+<!-- Slide 4: Three Things -->
+<section class="slide" id="slide-4" data-export-role="three_things" data-notes="Three core capabilities that differentiate kai-slide-creator.">
+  <h2 class="reveal sc-action-title">Three capabilities make kai-slide-creator uniquely suited for professional teams</h2>
+  <div class="reveal sc-three-things" style="align-items:center;">
+    <div class="sc-thing">
+      <div class="sc-thing-icon">P</div>
+      <div class="sc-thing-title">Present Mode</div>
+      <div class="sc-thing-body">F5 enters fullscreen with proportional scaling to design dimensions. BroadcastChannel syncs speaker notes to a secondary display in real time. Supports keyboard arrows, spacebar, and mobile touch gestures.</div>
+    </div>
+    <div class="sc-thing">
+      <div class="sc-thing-icon">E</div>
+      <div class="sc-thing-title">Edit Mode</div>
+      <div class="sc-thing-body">Press E to activate ContentEditable overlays on all text. Built-in speaker notes panel supports per-slide authoring. Edits sync to the presenter window live without refresh.</div>
+    </div>
+    <div class="sc-thing">
+      <div class="sc-thing-icon">X</div>
+      <div class="sc-thing-title">Export Pipeline</div>
+      <div class="sc-thing-body">PPTX conversion preserving layout structure, PNG per-slide screenshots for document embedding, and public share URLs — all from a single HTML source file.</div>
+    </div>
+  </div>
+  <div class="sc-source">Source: Feature matrix, kai-slide-creator v2.24.3</div>
+</section>
+
+<!-- Slide 5: Funnel -->
+<section class="slide" id="slide-5" data-export-role="funnel" data-notes="The generation pipeline narrows from prompt to polished output.">
+  <h2 class="reveal sc-action-title">Generation pipeline converges from brief to polished deck in four stages</h2>
+  <p class="reveal" style="font-size:clamp(0.8rem,1.1vw,0.95rem);color:var(--text-muted);line-height:1.6;max-width:600px;">Each stage progressively narrows the decision space: the brief defines intent, the style system matches visual language, the renderer outputs HTML, and the validation pipeline gates quality before delivery.</p>
+  <div class="reveal" style="flex:1;display:flex;align-items:center;justify-content:center;">
+    <svg class="sc-funnel-svg" viewBox="0 0 500 300" preserveAspectRatio="xMidYMid meet">
+      <polygon points="50,20 450,20 420,80 80,80" class="sc-funnel-layer" style="opacity:0.9"/>
+      <polygon points="80,90 420,90 380,150 120,150" class="sc-funnel-layer" style="opacity:0.7"/>
+      <polygon points="120,160 380,160 340,220 160,220" class="sc-funnel-layer" style="opacity:0.5"/>
+      <polygon points="160,230 340,230 300,280 200,280" class="sc-funnel-layer" style="opacity:0.35"/>
+      <text x="250" y="57" class="sc-funnel-label">BRIEF</text>
+      <text x="250" y="127" class="sc-funnel-label">STYLE + LAYOUT</text>
+      <text x="250" y="197" class="sc-funnel-label">RENDER</text>
+      <text x="250" y="262" class="sc-funnel-label" style="fill:var(--accent)">VALIDATE</text>
+      <text x="460" y="55" class="sc-funnel-value">User prompt</text>
+      <text x="430" y="125" class="sc-funnel-value">22 presets</text>
+      <text x="390" y="195" class="sc-funnel-value">HTML output</text>
+      <text x="350" y="260" class="sc-funnel-value">20+ checks</text>
+    </svg>
+  </div>
+  <p class="reveal" style="font-size:clamp(0.7rem,1vw,0.85rem);color:var(--text-muted);text-align:center;margin-top:auto;">End-to-end latency &lt; 60s · Zero manual intervention · Auto-retry on validation failure</p>
+  <div class="sc-source">Source: Architecture documentation, scripts/validate_html.py</div>
+</section>
+
+<!-- Slide 6: Framework Matrix -->
+<section class="slide" id="slide-6" data-export-role="framework_matrix" data-notes="Preset support tiers balance quality with coverage.">
+  <h2 class="reveal sc-action-title">Support tier framework ensures quality while enabling breadth</h2>
+  <div class="reveal" style="display:grid;grid-template-columns:auto 1fr;grid-template-rows:auto 1fr;gap:0.5rem;flex:1;">
+    <div></div>
+    <div style="display:flex;justify-content:space-between;font-size:0.75rem;font-weight:600;letter-spacing:0.06em;color:var(--text-muted);padding:0 0.5rem;">
+      <span>Narrow Coverage</span><span>Broad Coverage</span>
+    </div>
+    <div style="writing-mode:vertical-rl;display:flex;justify-content:space-between;font-size:0.75rem;font-weight:600;letter-spacing:0.06em;color:var(--text-muted);padding:0.5rem 0.25rem;">
+      <span>High Validation</span><span>Low Validation</span>
+    </div>
+    <div class="sc-matrix">
+      <div class="sc-matrix-cell highlight" style="justify-content:center;">
+        <div style="font-weight:700;color:var(--accent);font-size:1rem;">Production (4)</div>
+        <div style="font-size:0.8rem;color:var(--text-muted);margin-top:0.4rem;line-height:1.5;">Swiss Modern, Enterprise Dark, Data Story, Blue Sky</div>
+      </div>
+      <div class="sc-matrix-cell" style="justify-content:center;">
+        <div style="font-weight:700;color:var(--text);font-size:1rem;">Supported (7)</div>
+        <div style="font-size:0.8rem;color:var(--text-muted);margin-top:0.4rem;line-height:1.5;">Paper &amp; Ink, Chinese Chan, Strategy Consulting...</div>
+      </div>
+      <div class="sc-matrix-cell" style="justify-content:center;">
+        <div style="font-weight:700;color:var(--text);font-size:1rem;">Archive (0)</div>
+        <div style="font-size:0.8rem;color:var(--text-muted);margin-top:0.4rem;line-height:1.5;">Reserved for deprecated presets</div>
+      </div>
+      <div class="sc-matrix-cell" style="justify-content:center;">
+        <div style="font-weight:700;color:var(--text);font-size:1rem;">Experimental (11)</div>
+        <div style="font-size:0.8rem;color:var(--text-muted);margin-top:0.4rem;line-height:1.5;">Neo-Brutalism, Neon Cyber, Creative Voltage...</div>
+      </div>
+    </div>
+  </div>
+  <div class="sc-source">Source: references/preset-support-tiers.json</div>
+</section>
+
+<!-- Slide 7: Quote + Evidence -->
+<section class="slide" id="slide-7" data-export-role="quote_evidence" data-notes="Design philosophy backed by measurable quality metrics.">
+  <h2 class="reveal sc-action-title">Zero-dependency philosophy delivers measurable quality without toolchain burden</h2>
+  <div class="reveal sc-quote-evidence">
+    <div class="sc-quote-block">
+      <div class="sc-quote-text">"Every slide is a self-contained HTML file. No npm, no build step, no server. Open it in a browser and present."</div>
+      <div class="sc-quote-attribution">— kai-slide-creator design principle</div>
+    </div>
+    <div class="sc-evidence-stack">
+      <div class="sc-evidence-card">
+        <div class="sc-metric">20+</div>
+        <div class="sc-metric-label">Automated quality checks</div>
+      </div>
+      <div class="sc-evidence-card">
+        <div class="sc-metric">100%</div>
+        <div class="sc-metric-label">Self-contained (inline CSS/JS)</div>
+      </div>
+      <div class="sc-evidence-card">
+        <div class="sc-metric">3</div>
+        <div class="sc-metric-label">Export formats (HTML, PPTX, PNG)</div>
+      </div>
+    </div>
+  </div>
+  <div class="sc-source">Source: scripts/validate_html.py, Architecture docs</div>
+</section>
+
+<!-- Slide 8: Driver Breakdown -->
+<section class="slide" id="slide-8" data-export-role="driver_breakdown" data-notes="Presentation quality driven by four validated dimensions.">
+  <h2 class="reveal sc-action-title">Output quality is enforced across four validated dimensions</h2>
+  <div class="reveal sc-driver-tree">
+    <div class="sc-driver-root">Presentation Quality</div>
+    <div class="sc-driver-children">
+      <div class="sc-driver-child">
+        <div class="sc-driver-child-title">Structure</div>
+        <div class="sc-driver-child-body">Viewport, snap, nav, edit mode</div>
+      </div>
+      <div class="sc-driver-child">
+        <div class="sc-driver-child-title">Style Fidelity</div>
+        <div class="sc-driver-child-body">Signature classes, tokens, contracts</div>
+      </div>
+      <div class="sc-driver-child">
+        <div class="sc-driver-child-title">Content</div>
+        <div class="sc-driver-child-body">Numeric fidelity, layout variety</div>
+      </div>
+      <div class="sc-driver-child">
+        <div class="sc-driver-child-title">Accessibility</div>
+        <div class="sc-driver-child-body">Keyboard nav, ARIA, data-notes</div>
+      </div>
+    </div>
+  </div>
+  <div class="sc-source">Source: tests/test_demo_quality.py, scripts/quality_eval.py</div>
+</section>
+
+<div class="edit-hotzone"></div>
+<button class="edit-toggle" id="editToggle" title="Edit mode (E)">&#9998; Edit</button>
+<div id="notes-panel">
+  <div id="notes-panel-header">
+    <div id="notes-panel-label">SPEAKER NOTES — SLIDE 1 / 8</div>
+    <button id="notes-collapse-btn" title="Collapse / expand">&#9662;</button>
+  </div>
+  <textarea id="notes-textarea" placeholder="Add speaker notes..."></textarea>
+</div>
+
+<script>
+
+class PresentMode {
+  constructor(ctrl) {
+    this.ctrl = ctrl; this.DW = 1440; this.DH = 900; this.active = false;
+    this._resize = () => this._scale();
+    const btn = document.createElement('button');
+    btn.id = 'present-btn'; btn.title = 'Present (F5)';
+    btn.setAttribute('aria-label', 'Present'); btn.textContent = '\u25B6';
+    document.body.appendChild(btn);
+    const counter = document.createElement('div');
+    counter.id = 'present-counter'; document.body.appendChild(counter);
+    btn.addEventListener('click', () => this.enter());
+    document.addEventListener('keydown', e => {
+      if (e.key === 'F5') { e.preventDefault(); this.enter(); }
+      if (e.key === 'Escape' && this.active) this.exit();
+      if ((e.key === 'b' || e.key === 'B') && this.active) document.body.classList.toggle('presenting-black');
+    });
+    document.addEventListener('fullscreenchange', () => { if (!document.fullscreenElement && this.active) this.exit(); });
+  }
+  enter() {
+    if (this.active) return; this.active = true;
+    document.body.classList.add('presenting');
+    document.documentElement.requestFullscreen?.().catch(() => {});
+    window.addEventListener('resize', this._resize); this._scale(); this._show(this.ctrl.currentSlide);
+    this._origGoTo = this.ctrl.goTo.bind(this.ctrl);
+    this.ctrl.goTo = (i) => {
+      const idx = Math.max(0, Math.min(i, this.ctrl.slides.length - 1));
+      this.ctrl.currentSlide = idx;
+      this.ctrl.slides.forEach((s, j) => s.classList.toggle('visible', j === idx));
+      this._show(idx); this.ctrl.updateProgress?.(); this.ctrl.updateDots?.(); this.ctrl.broadcastState?.();
+    };
+  }
+  exit() {
+    if (!this.active) return; this.active = false;
+    document.body.classList.remove('presenting', 'presenting-black');
+    document.querySelectorAll('.slide').forEach(s => s.classList.remove('p-on'));
+    if (document.fullscreenElement) document.exitFullscreen?.();
+    window.removeEventListener('resize', this._resize);
+    if (this._origGoTo) { this.ctrl.goTo = this._origGoTo; this._origGoTo = null; }
+    this.ctrl.slides[this.ctrl.currentSlide]?.scrollIntoView({ behavior: 'instant' });
+  }
+  _scale() {
+    const s = Math.min(window.innerWidth / this.DW, window.innerHeight / this.DH);
+    const ox = (window.innerWidth - this.DW * s) / 2;
+    const oy = (window.innerHeight - this.DH * s) / 2;
+    const r = document.documentElement;
+    r.style.setProperty('--pdw', this.DW + 'px'); r.style.setProperty('--pdh', this.DH + 'px');
+    r.style.setProperty('--ps', s); r.style.setProperty('--pox', ox + 'px'); r.style.setProperty('--poy', oy + 'px');
+  }
+  _show(i) {
+    document.querySelectorAll('.slide').forEach((s, idx) => s.classList.toggle('p-on', idx === i));
+    const c = document.getElementById('present-counter');
+    if (c) c.textContent = `${i + 1} / ${this.ctrl.slides.length}`;
+  }
+}
+
+
+class SlidePresentation {
+  constructor() {
+    this.slides = document.querySelectorAll('.slide');
+    this.currentSlide = 0;
+    this.channel = new BroadcastChannel('slide-creator-presenter');
+    this.slides[0]?.classList.add('visible');
+    this.slides[0]?.querySelectorAll('.reveal').forEach(function(r) { r.classList.add('visible'); });
+    this.setupObserver();
+    this.setupKeyboard();
+    this.setupTouch();
+    this.setupWheel();
+    this.setupPresenter();
+    this.updateProgress();
+  }
+  setupObserver() {
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
+          this.currentSlide = [...this.slides].indexOf(entry.target);
+          this.updateProgress();
+          this.broadcastState();
+          this.updateNotesPanel();
+        }
+      });
+    }, { threshold: 0.5 });
+    this.slides.forEach(s => observer.observe(s));
+  }
+  setupKeyboard() {
+    document.addEventListener('keydown', (e) => {
+      if (e.target.getAttribute('contenteditable')) return;
+      if (e.key === 'ArrowDown' || e.key === 'ArrowRight' || e.key === ' ' || e.key === 'PageDown' || e.key === 'Enter') {
+        e.preventDefault(); this.next();
+      } else if (e.key === 'ArrowUp' || e.key === 'ArrowLeft' || e.key === 'PageUp' || e.key === 'Backspace') {
+        e.preventDefault(); this.prev();
+      } else if (e.key === 'p' || e.key === 'P') {
+        const url = location.href.split('?')[0] + '?presenter';
+        window.open(url, 'slide-presenter-' + Date.now(), 'width=1100,menubar=no,toolbar=no,location=no');
+      }
+    });
+  }
+  setupTouch() {
+    let startY = 0;
+    document.addEventListener('touchstart', e => { startY = e.touches[0].clientY; }, { passive: true });
+    document.addEventListener('touchend', e => {
+      const delta = startY - e.changedTouches[0].clientY;
+      if (Math.abs(delta) > 50) delta > 0 ? this.next() : this.prev();
+    });
+  }
+  setupWheel() { /* scroll-snap handles natively */ }
+  setupPresenter() {
+    this.channel.addEventListener('message', e => {
+      if (e.data.type === 'nav-next') this.next();
+      else if (e.data.type === 'nav-prev') this.prev();
+      else if (e.data.type === 'request-state') this.broadcastState();
+    });
+  }
+  broadcastState() {
+    const slide = this.slides[this.currentSlide];
+    this.channel.postMessage({
+      type: 'state', index: this.currentSlide,
+      total: this.slides.length, notes: slide?.dataset.notes || ''
+    });
+  }
+  goTo(index) {
+    this.slides[index]?.scrollIntoView({ behavior: "smooth" });
+  }
+  next() { this.goTo(Math.min(this.currentSlide + 1, this.slides.length - 1)); }
+  prev() { this.goTo(Math.max(this.currentSlide - 1, 0)); }
+  updateProgress() {
+    const pct = (this.currentSlide / (this.slides.length - 1)) * 100;
+    const bar = document.querySelector('.progress-bar');
+    if (bar) bar.style.width = pct + '%';
+    const ctr = document.getElementById('slide-counter');
+    if (ctr) ctr.textContent = `${String(this.currentSlide + 1).padStart(2, '0')} / ${String(this.slides.length).padStart(2, '0')}`;
+  }
+  updateNotesPanel() {
+    const label = document.getElementById('notes-panel-label');
+    const textarea = document.getElementById('notes-textarea');
+    if (label) label.textContent = `SPEAKER NOTES \u2014 SLIDE ${this.currentSlide + 1} / ${this.slides.length}`;
+    if (textarea) textarea.value = this.slides[this.currentSlide]?.dataset.notes || '';
+  }
+  setupEditor() {
+    const panel = document.getElementById('notes-panel');
+    const textarea = document.getElementById('notes-textarea');
+    const toggle = document.getElementById('editToggle');
+    const hotzone = document.querySelector('.edit-hotzone');
+    const header = document.getElementById('notes-panel-header');
+    const collapseBtn = document.getElementById('notes-collapse-btn');
+    let hideTimeout = null;
+    this.editor = { active: false };
+    hotzone.addEventListener('mouseenter', () => { clearTimeout(hideTimeout); toggle.classList.add('show'); });
+    hotzone.addEventListener('mouseleave', () => { hideTimeout = setTimeout(() => { if (!this.editor.active) toggle.classList.remove('show'); }, 400); });
+    toggle.addEventListener('mouseenter', () => clearTimeout(hideTimeout));
+    toggle.addEventListener('mouseleave', () => { hideTimeout = setTimeout(() => { if (!this.editor.active) toggle.classList.remove('show'); }, 400); });
+    toggle.addEventListener('click', (e) => {
+      e.stopPropagation();
+      this.editor.active = !this.editor.active;
+      document.body.classList.toggle('editing', this.editor.active);
+      toggle.classList.toggle('active', this.editor.active);
+      toggle.textContent = this.editor.active ? '\u2713 Done' : '\u270E Edit';
+      if (this.editor.active) {
+        panel.classList.add('active');
+        textarea.value = this.slides[this.currentSlide]?.dataset.notes || '';
+        textarea.focus();
+      } else {
+        panel.classList.remove('active');
+      }
+    });
+    header.addEventListener('click', (e) => {
+      if (e.target === collapseBtn) { panel.classList.toggle('collapsed'); return; }
+    });
+    textarea.addEventListener('input', () => {
+      const slide = this.slides[this.currentSlide];
+      if (slide) slide.dataset.notes = textarea.value;
+      this.channel.postMessage({ type: 'state', index: this.currentSlide, total: this.slides.length, notes: textarea.value });
+    });
+  }
+}
+
+if (new URLSearchParams(location.search).has('presenter')) {
+  document.title = 'Presenter \u2014 ' + document.title;
+  document.body.innerHTML = `
+  <style>
+    * { box-sizing: border-box; margin: 0; }
+    body { background: #111; color: #fff; font-family: system-ui, sans-serif; }
+    #pv { display: grid; grid-template-columns: 1fr 220px; gap: 1rem; padding: 1.25rem; align-items: start; }
+    .pv-panel { background: #1e1e1e; border-radius: 12px; padding: 1.25rem; }
+    #pv-label { font-size: 0.6rem; letter-spacing: 0.18em; text-transform: uppercase; color: #555; margin-bottom: 0.6rem; }
+    #pv-notes { font-size: 1.05rem; line-height: 1.85; color: #d0d0d0; }
+    #pv-right { display: flex; flex-direction: column; gap: 1rem; }
+    #pv-nav { display: flex; align-items: center; justify-content: space-between; gap: 0.5rem; }
+    .pv-arrow { width: 32px; height: 32px; border-radius: 6px; border: 1px solid #333; background: #2a2a2a; color: #aaa; font-size: 1rem; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: background 0.15s, color 0.15s; flex-shrink: 0; }
+    .pv-arrow:hover { background: #383838; color: #fff; }
+    #pv-counter { text-align: center; flex: 1; }
+    #pv-num { font-size: 1.6rem; font-weight: 700; font-variant-numeric: tabular-nums; line-height: 1; }
+    #pv-of { color: #555; font-size: 0.75rem; margin-top: 0.2rem; }
+    #pv-timer-box { text-align: center; }
+    #pv-timer-label { font-size: 0.6rem; letter-spacing: 0.18em; text-transform: uppercase; color: #555; margin-bottom: 0.3rem; }
+    #pv-timer { font-size: 1.5rem; font-weight: 700; font-family: monospace; font-variant-numeric: tabular-nums; }
+  </style>
+  <div id="pv">
+    <div class="pv-panel"><div id="pv-label">Speaker Notes</div><div id="pv-notes">Waiting for main window...</div></div>
+    <div id="pv-right">
+      <div class="pv-panel"><div id="pv-nav"><button class="pv-arrow" id="pv-prev">\u2190</button><div id="pv-counter"><div id="pv-num">\u2014</div><div id="pv-of">/ \u2014</div></div><button class="pv-arrow" id="pv-next">\u2192</button></div></div>
+      <div class="pv-panel" id="pv-timer-box"><div id="pv-timer-label">Elapsed</div><div id="pv-timer">0:00</div></div>
+    </div>
+  </div>`;
+  const ch = new BroadcastChannel('slide-creator-presenter');
+  let startTime = null;
+  const pv = document.getElementById('pv');
+  let lastH = 0, roTimer = null;
+  new ResizeObserver(() => { clearTimeout(roTimer); roTimer = setTimeout(() => { const h = Math.ceil(pv.getBoundingClientRect().height); if (h === lastH) return; lastH = h; const chrome = window.outerHeight - window.innerHeight; window.resizeTo(window.outerWidth, Math.max(260, h + chrome + 4)); }, 40); }).observe(pv);
+  ch.addEventListener('message', e => { if (e.data.type !== 'state') return; if (!startTime) startTime = Date.now(); document.getElementById('pv-notes').textContent = e.data.notes || '(no notes for this slide)'; document.getElementById('pv-num').textContent = e.data.index + 1; document.getElementById('pv-of').textContent = `/ ${e.data.total}`; });
+  ch.postMessage({ type: 'request-state' });
+  setInterval(() => { if (!startTime) return; const s = Math.floor((Date.now() - startTime) / 1000); document.getElementById('pv-timer').textContent = `${Math.floor(s / 60)}:${String(s % 60).padStart(2, '0')}`; }, 1000);
+  document.getElementById('pv-prev').addEventListener('click', () => ch.postMessage({ type: 'nav-prev' }));
+  document.getElementById('pv-next').addEventListener('click', () => ch.postMessage({ type: 'nav-next' }));
+  document.addEventListener('keydown', e => {
+    if (e.key === 'ArrowRight' || e.key === 'ArrowDown' || e.key === ' ' || e.key === 'PageDown' || e.key === 'Enter') ch.postMessage({ type: 'nav-next' });
+    else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp' || e.key === 'PageUp' || e.key === 'Backspace') ch.postMessage({ type: 'nav-prev' });
+  });
+} else {
+  const app = new SlidePresentation();
+  app.setupEditor();
+  new PresentMode(app);
+}
+
+</script>
+<script>
+
+(function() {
+  var slides = document.querySelectorAll('.slide');
+  if (!slides.length) return;
+  var last = slides[slides.length - 1];
+  var credit = document.createElement('div');
+  credit.className = 'slide-credit';
+  credit.textContent = 'By kai-slide-creator v2.24.3 \u00B7 Strategy Consulting';
+  last.appendChild(credit);
+})();
+
+</script>
+
+</body>
+</html>

@@ -23,7 +23,7 @@ Machine-readable source of truth: `references/preset-support-tiers.json`
 
 ---
 
-## 21 Presets
+## 22 Presets
 
 | Preset | Vibe | Best For |
 |--------|------|----------|
@@ -48,9 +48,10 @@ Machine-readable source of truth: `references/preset-support-tiers.json`
 | Data Story | Clear, precise, persuasive | Business review, KPI, analytics |
 | Modern Newspaper | Punchy, authoritative, editorial | Business reports, thought leadership |
 | Neo-Retro Dev Deck | Opinionated, technical, handmade | Dev tool launches, API docs, hackathon |
+| Strategy Consulting | Structured, authoritative, insight-driven | Strategy decks, board materials, due diligence |
 
 **Per-style detail files** (read only the chosen one):
-`references/aurora-mesh.md`, `references/chinese-chan.md`, `references/data-story.md`, `references/enterprise-dark.md`, `references/glassmorphism.md`, `references/neo-brutalism.md`
+`references/aurora-mesh.md`, `references/chinese-chan.md`, `references/data-story.md`, `references/enterprise-dark.md`, `references/glassmorphism.md`, `references/neo-brutalism.md`, `references/strategy-consulting.md`
 
 For styles without a dedicated file, use the relevant section in `STYLE-DESC.md`.
 
@@ -61,7 +62,7 @@ For styles without a dedicated file, use the relevant section in `STYLE-DESC.md`
 | Tier | Current Presets | Notes |
 |------|-----------------|-------|
 | Production | Swiss Modern, Enterprise Dark, Data Story, Blue Sky | Phase 1 default recommendation surface |
-| Supported | Paper & Ink, Glassmorphism, Chinese Chan, Bold Signal, Aurora Mesh, Terminal Green | Still selectable directly; not first-line defaults |
+| Supported | Paper & Ink, Glassmorphism, Chinese Chan, Bold Signal, Aurora Mesh, Terminal Green, Strategy Consulting | Still selectable directly; not first-line defaults |
 | Experimental | Electric Studio, Creative Voltage, Dark Botanical, Modern Newspaper, Neon Cyber, Notebook Tabs, Pastel Geometry, Split Pastel, Vintage Editorial, Neo-Brutalism, Neo-Retro Dev Deck | Keep available when explicitly requested |
 | Archive Candidate | None yet | Do not archive before usage evidence exists |
 
@@ -77,8 +78,8 @@ Use when the user answers the mood question in Phase 2.
 | Excited/Energized | Creative Voltage, Neon Cyber, Aurora Mesh |
 | Calm/Focused | Paper & Ink, Chinese Chan, Notebook Tabs |
 | Inspired/Moved | Dark Botanical, Vintage Editorial, Glassmorphism |
-| Clean/Enterprise | Blue Sky, Electric Studio, Enterprise Dark |
-| Data-Driven | Data Story, Enterprise Dark, Swiss Modern |
+| Clean/Enterprise | Blue Sky, Electric Studio, Enterprise Dark, Strategy Consulting |
+| Data-Driven | Data Story, Enterprise Dark, Swiss Modern, Strategy Consulting |
 | Playful/Creative | Split Pastel, Pastel Geometry, Neo-Brutalism |
 | Developer-Focused | Terminal Green, Neon Cyber, Neo-Retro Dev Deck |
 | Editorial/Organized | Paper & Ink, Notebook Tabs, Modern Newspaper |

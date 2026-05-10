@@ -37,6 +37,15 @@ body {
     background: #ffffff;
     border-left: 8px solid #dc2626;
 }
+body::before {
+    content: '';
+    position: fixed; inset: 0;
+    background-image:
+        linear-gradient(rgba(0,0,0,0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0,0,0,0.03) 1px, transparent 1px);
+    background-size: calc(100vw / 12) 100vh;
+    pointer-events: none; z-index: 0;
+}
 
 .slide {
     width: 100vw; height: 100vh; height: 100dvh;

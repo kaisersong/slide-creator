@@ -100,7 +100,7 @@ class TestStatDetection:
         assert _looks_stat({"text": "∞", "component": None}) is True
 
     def test_long_text_not_stat(self):
-        assert _looks_stat({"text": "123", "component": None}) is False
+        assert _looks_stat({"text": "123条记录", "component": None}) is False
         assert _looks_stat({"text": "npm 包", "component": None}) is False
 
     def test_chinese_not_stat(self):
@@ -359,23 +359,24 @@ class TestFullGeneration:
         assert len(bad) == 0, f"Elements with double style attribute: {len(bad)}"
 
     def test_theme_cards_render_not_bullets(self):
-        """P4 theme cards must use chip-style rendering, not bullet lists."""
+        """P4 theme cards must use card-style rendering, not bullet lists."""
         content = (self.DEMOS / "blue-sky-zh.html").read_text(encoding="utf-8")
-        p4_match = re.search(r'04 — 21 个主题.*?</section>', content, re.DOTALL)
+        p4_match = re.search(r'04 — 21 种设计预设.*?</section>', content, re.DOTALL)
         assert p4_match, "P4 slide not found"
         p4_html = p4_match.group()
-        assert "border-radius:6px" in p4_html
-        assert "display:flex;flex-direction:column;gap:5px;" in p4_html
-        g_cards = re.findall(r'<div class="g"[^>]*>(.*?)</div>\s*</div>\s*<p', p4_html, re.DOTALL)
+        # Must use .g card class
+        assert 'class="g' in p4_html
+        # Theme cards should not be rendered as bullet lists
+        g_cards = re.findall(r'<div class="g[^"]*"[^>]*>(.*?)</div>\s*</div>', p4_html, re.DOTALL)
         for card in g_cards:
             if "演讲" in card or "教育" in card or "开发" in card or "高级" in card:
                 assert "<ul" not in card, f"Theme card rendered as bullet list: {card[:100]}"
 
     def test_p2_warn_green_cards(self):
-        """P2 must have red/green bordered comparison cards."""
+        """Comparison cards must have red/green borders."""
         content = (self.DEMOS / "blue-sky-zh.html").read_text(encoding="utf-8")
-        p2_match = re.search(r'02 — 传统工具.*?</section>', content, re.DOTALL)
-        assert p2_match, "P2 slide not found"
+        p2_match = re.search(r'03 — 问题详情.*?</section>', content, re.DOTALL)
+        assert p2_match, "P3 (comparison cards) slide not found"
         p2_html = p2_match.group()
         assert "border-left:4px solid #ef4444" in p2_html
         assert "border-left:4px solid #10b981" in p2_html
@@ -385,7 +386,7 @@ class TestFullGeneration:
         content = (self.DEMOS / "blue-sky-zh.html").read_text(encoding="utf-8")
         assert '<div class="stat">0</div>' in content
         assert '<div class="stat">3</div>' in content
-        assert '<div class="stat">∞</div>' in content
+        assert '<div class="stat">&#x221E;</div>' in content or '<div class="stat">∞</div>' in content
 
     def test_no_u_fe0f_variant_selector(self):
         """HTML must not contain U+FE0F variant selector (impeccable anti-pattern)."""

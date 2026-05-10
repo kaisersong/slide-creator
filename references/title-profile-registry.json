@@ -184,6 +184,9 @@
     "Split Pastel": {
       "default_profile": "horizontal_balanced_centered"
     },
+    "Strategy Consulting": {
+      "default_profile": "horizontal_balanced_left_anchor_compact"
+    },
     "Swiss Modern": {
       "default_profile": "horizontal_balanced_left_anchor",
       "layout_overrides": {
