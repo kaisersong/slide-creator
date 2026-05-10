@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>AI 原生工作中枢设计推演 - Data Story</title>
+<title>从 Salesforce 演进看软件行业 AI 发展路径 - Data Story</title>
 <style>
 /* Dark variant (default) */
 :root {
@@ -267,6 +267,8 @@ body {
     overscroll-behavior-y: contain;
     color: var(--text-primary, var(--text, #f3f4f6));
     background: var(--bg-primary, var(--bg, #0f1117));
+    --nav-dot-idle: rgba(15, 23, 42, 0.22);
+    --nav-dot-active: var(--chart-primary, #2563eb);
 }
 
 *, *::before, *::after { box-sizing: border-box; }
@@ -347,6 +349,21 @@ body {
 }
 
 .nav-dots { position: fixed; right: 20px; top: 50%; transform: translateY(-50%); z-index: 1000; }
+
+.nav-dots button {
+    width: 8px;
+    height: 8px;
+    border: none;
+    border-radius: 50%;
+    cursor: pointer;
+    background: var(--nav-dot-idle);
+    transition: background 0.3s ease, transform 0.3s ease;
+}
+
+.nav-dots button.active {
+    background: var(--nav-dot-active);
+    transform: scale(1.3);
+}
 
 .edit-hotzone {
     position: fixed;
@@ -542,7 +559,7 @@ body.presenting .slide-credit { display: none !important; }
 .chart-bar { fill: var(--chart-primary); }
 .chart-bar.secondary { fill: var(--chart-secondary); }
 .chart-bar.tertiary { fill: var(--chart-tertiary); }
-.chart-line { stroke: var(--chart-primary); stroke-width: 2.5; fill: none; stroke-linecap: round; stroke-linejoin: round; }
+.chart-line { stroke: var(--chart-primary); stroke-width: 3.2; fill: none; stroke-linecap: round; stroke-linejoin: round; }
 .chart-label, .chart-val { fill: var(--text-muted); font-size: 10px; font-family: inherit; font-variant-numeric: tabular-nums; }
 .chart-val { fill: var(--text); }
 
@@ -551,6 +568,28 @@ body.presenting .slide-credit { display: none !important; }
     border: 1px solid var(--border);
     border-radius: 8px;
     padding: 18px;
+}
+
+.ds-chart-insight .ds-heading,
+.ds-workflow .ds-heading,
+.ds-grid .ds-heading,
+.ds-kpi-chart .ds-heading {
+    max-width: min(1040px, 94%);
+}
+
+.ds-chart-insight .ds-chart-card {
+    padding: 12px 14px;
+}
+
+.ds-chart-insight .ds-chart-svg {
+    display: block;
+    max-height: 188px;
+    min-height: 176px;
+    margin: 0 auto;
+}
+
+.ds-chart-insight .ds-insight {
+    margin-top: 16px;
 }
 
 .ds-stage-grid {
@@ -604,15 +643,15 @@ body.presenting .slide-credit { display: none !important; }
 }
 </style>
 </head>
-<body data-export-progress="true" data-preset="Data Story">
-<span id="brand-mark">AI 原生工作中枢设计推演</span>
+<body data-export-progress="true" data-preset="Data Story" data-generator="kai-slide-creator" data-generator-version="2.24.2" data-render-path="brief-canonical" data-brief-hash="sha256:7e92cc99581efcd358f7676d7bcc39356f78f2fee47dce8589950dd2cd919429" data-runtime-path="shared-js-engine" data-validate-strict="pass">
+<span id="brand-mark">从Salesforce演进看软件行业…</span>
 <div class="progress-bar"></div>
 <nav class="nav-dots" aria-label="Slide navigation"></nav>
 <div class="edit-hotzone"></div>
 <button class="edit-toggle" id="editToggle" title="Edit mode (E)">Edit</button>
 <div id="notes-panel">
     <div id="notes-panel-header">
-        <div id="notes-panel-label">SPEAKER NOTES - SLIDE 1 / 10</div>
+        <div id="notes-panel-label">SPEAKER NOTES - SLIDE 1 / 9</div>
         <div id="notes-drag-hint"></div>
         <button id="notes-collapse-btn" title="Collapse / expand">▾</button>
     </div>
@@ -620,336 +659,276 @@ body.presenting .slide-credit { display: none !important; }
         <textarea id="notes-textarea" placeholder="Add speaker notes..."></textarea>
     </div>
 </div>
-<section class="slide ds-hero-number" id="slide-1" data-notes="cover: 90% Agent 自动执行、9% 用户确认、1% 用户配置，意味着首页应从对话框切到执行报告。" aria-label="cover" data-export-role="hero_number">
+<section class="slide ds-hero-number" id="slide-1" data-notes="cover: 从规则自动化到自主 Agent，龙头产品节奏已经把行业下一步的投入顺序暴露出来。" aria-label="cover" data-export-role="hero_number">
         <div class="slide-content ds-hero-slide">
             <div class="ds-shell">
                 <div class="ds-subhead reveal">AI industry landscape</div>
-                <div class="ds-kpi positive reveal">90</div>
-                <div class="ds-kpi-label reveal">90% Agent 自动执行</div>
-                <h1 class="ds-heading reveal title-balance"><span class="title-line">90/9/1 已经预告 A 形</span><span class="title-line">态是终局，不是可选项</span></h1>
-                <p style="max-width:42rem;margin:0 auto;color:var(--text);line-height:1.6;" class="reveal">90% Agent 自动执行、9% 用户确认、1% 用户配置，意味着首页应从对话框切到执行报告。</p>
+                <div class="ds-kpi positive reveal">1</div>
+                <div class="ds-kpi-label reveal">从规则自动化到自主 Agent</div>
+                <h1 class="ds-heading reveal title-balance"><span class="title-line">Salesforce 的四次 AI 演进，基本</span><span class="title-line">写出了软件行业的确定性路径</span></h1>
+                <p style="max-width:42rem;margin:0 auto;color:var(--text);line-height:1.6;" class="reveal">从规则自动化到自主 Agent，龙头产品节奏已经把行业下一步的投入顺序暴露出来。</p>
             </div>
         </div>
-        <span class="slide-num-label">01 / 10</span>
+        <span class="slide-num-label">01 / 09</span>
     </section>
 
-<section class="slide ds-grid" id="slide-2" data-notes="baseline: 90/9/1 定义形态，18 个月定义过渡窗口，3 项优先动作定义现在的资源投放次序。" aria-label="baseline" data-export-role="kpi_grid">
+<section class="slide ds-grid" id="slide-2" data-notes="baseline: 规则自动化、模型增强、工作流嵌入和自主 Agent，分别对应不同能力密度和产品形态。" aria-label="baseline" data-export-role="kpi_grid">
         <div class="slide-content">
             <div class="ds-shell">
                 <div class="ds-subhead reveal">kpi grid</div>
-                <h2 class="ds-heading reveal title-balance"><span class="title-line">三个数字决定当前</span><span class="title-line">节奏：90/9/1、18 个</span><span class="title-line">月、3 项优先动作</span></h2>
+                <h2 class="ds-heading reveal title-balance"><span class="title-line">软件行业 AI 不是跳跃式革</span><span class="title-line">命，而是四阶段连续演进</span></h2>
                 <div class="ds-divider reveal"></div>
                 <div class="ds-kpi-grid">
             <div class="ds-kpi-card reveal">
-                <div class="ds-kpi positive">90/9/1</div>
-                <div class="ds-kpi-label">90/9/1 定义形态</div>
+                <div class="ds-kpi positive">规则自动化</div>
+                <div class="ds-kpi-label">规则自动化</div>
                 <div class="ds-trend up">▲ baseline</div>
             </div>
             
             <div class="ds-kpi-card reveal">
-                <div class="ds-kpi neutral">90/9/1</div>
-                <div class="ds-kpi-label">三个数字决定当前节奏：90/9/1</div>
+                <div class="ds-kpi neutral">软件行业AI</div>
+                <div class="ds-kpi-label">软件行业 AI 不是跳跃式革命</div>
                 <div class="ds-trend up">▲ baseline</div>
             </div>
             
             <div class="ds-kpi-card reveal">
-                <div class="ds-kpi negative">90/9/1</div>
-                <div class="ds-kpi-label">90/9/1</div>
+                <div class="ds-kpi negative">软件行业</div>
+                <div class="ds-kpi-label">软件行业 AI 演进分为四个阶段</div>
                 <div class="ds-trend down">▼ baseline</div>
             </div>
             
             <div class="ds-kpi-card reveal">
-                <div class="ds-kpi neutral">18</div>
-                <div class="ds-kpi-label">18 个月</div>
+                <div class="ds-kpi neutral">2023</div>
+                <div class="ds-kpi-label">2023–2025：AI 助手原生嵌入工作流</div>
                 <div class="ds-trend up">▲ baseline</div>
             </div>
             </div>
             </div>
         </div>
-        <span class="slide-num-label">02 / 10</span>
+        <span class="slide-num-label">02 / 09</span>
     </section>
 
-<section class="slide ds-comparison" id="slide-3" data-notes="comparison: IM 更适合异常触发与审批回流，Workspace 更适合承载已完成工作、上下文与业务态势。" aria-label="comparison" data-export-role="comparison_matrix">
+<section class="slide ds-chart-insight" id="slide-3" data-notes="comparison: Einstein 1.0、Einstein GPT、Einstein Copilot 和 Einstein Agents，对应了行业从自动化到闭环 Agent 的四次跨越。" aria-label="comparison" data-export-role="chart_insight">
         <div class="slide-content">
             <div class="ds-shell">
-                <div class="ds-subhead reveal">comparison</div>
-                <h2 class="ds-heading reveal title-balance"><span class="title-line">IM 与 Workspace 的职</span><span class="title-line">责边界必须被重写</span></h2>
+                <div class="ds-subhead reveal">trend</div>
+                <h2 class="ds-heading reveal title-balance"><span class="title-line">Salesforce 的产品里程碑几</span><span class="title-line">乎逐点映射了行业分水岭</span></h2>
                 <div class="ds-divider reveal"></div>
-                <div class="ds-matrix">
-        <div class="ds-matrix-cell reveal">
-            <div class="ds-subhead">IM 更适合异常触发与审批回流</div>
-            <h3 style="margin:8px 0;color:var(--text);font-size:1.1rem;">IM 更适合异常触发与审批回流</h3>
-            <p style="margin:0;color:var(--text);line-height:1.5;">IM 更适合异常触发与审批回流，Workspace 更适合承载已完成工作、上下文与业务态势。</p>
-        </div>
-        
-        <div class="ds-matrix-cell reveal">
-            <div class="ds-subhead">Workspace 是容器</div>
-            <h3 style="margin:8px 0;color:var(--text);font-size:1.1rem;">Workspace 是容器</h3>
-            <p style="margin:0;color:var(--text);line-height:1.5;">IM 更适合异常触发与审批回流</p>
-        </div>
-        
-        <div class="ds-matrix-cell reveal">
-            <div class="ds-subhead">90/9/1</div>
-            <h3 style="margin:8px 0;color:var(--text);font-size:1.1rem;">90/9/1</h3>
-            <p style="margin:0;color:var(--text);line-height:1.5;">Workspace 是容器</p>
-        </div>
-        
-        <div class="ds-matrix-cell reveal">
-            <div class="ds-subhead">18 个月</div>
-            <h3 style="margin:8px 0;color:var(--text);font-size:1.1rem;">18 个月</h3>
-            <p style="margin:0;color:var(--text);line-height:1.5;">90/9/1</p>
-        </div>
-        </div>
+                <div class="ds-chart-card reveal"><svg viewBox="0 0 320 188" class="ds-chart-svg" role="img" aria-label="line chart"><line x1="22" y1="16" x2="22" y2="150" class="chart-axis"></line><line x1="22" y1="150" x2="302" y2="150" class="chart-axis"></line><line x1="22" y1="44" x2="302" y2="44" class="chart-grid"></line><line x1="22" y1="98" x2="302" y2="98" class="chart-grid"></line><polyline points="28,19 117,19 206,19 296,18" class="chart-line"></polyline><circle cx="28" cy="19" r="5.5" class="ds-dot"></circle><text x="28" y="174" text-anchor="middle" class="chart-label">Signal 01</text><text x="28" y="9" text-anchor="middle" class="chart-val">2016</text><circle cx="117" cy="19" r="5.5" class="ds-dot"></circle><text x="117" y="174" text-anchor="middle" class="chart-label">Signal 02</text><text x="117" y="9" text-anchor="middle" class="chart-val">2023</text><circle cx="206" cy="19" r="5.5" class="ds-dot"></circle><text x="206" y="174" text-anchor="middle" class="chart-label">EinsteinGPT</text><text x="206" y="9" text-anchor="middle" class="chart-val">2024</text><circle cx="296" cy="18" r="5.5" class="ds-dot"></circle><text x="296" y="174" text-anchor="middle" class="chart-label">路线图</text><text x="296" y="8" text-anchor="middle" class="chart-val">2025</text></svg></div>
+                <div class="ds-insight reveal"><strong>Insight:</strong> Einstein 1.0、Einstein GPT、Einstein Copilot 和 Einstein Agents，对应了行业从自动化到闭环 Agent 的四次跨越。</div>
             </div>
         </div>
-        <span class="slide-num-label">03 / 10</span>
+        <span class="slide-num-label">03 / 09</span>
     </section>
 
-<section class="slide ds-workflow" id="slide-4" data-notes="driver: 没有 ERP 数据与业务链路的深连通，Workspace 无法成为真正的工作中枢，小 K 也无法自然退居任务入口。" aria-label="driver" data-export-role="workflow_chart">
+<section class="slide ds-workflow" id="slide-4" data-notes="workflow: 阶段 2 主要增强单点功能，阶段 3 才把 AI 从“人找工具”变成“工具随流程工作”，使用门槛因此显著下降。" aria-label="workflow" data-export-role="workflow_chart">
         <div class="slide-content">
             <div class="ds-shell">
                 <div class="ds-subhead reveal">workflow</div>
-                <h2 class="ds-heading reveal title-balance"><span class="title-line">ERP 连通深度是 B</span><span class="title-line">到 A 切换的硬开关</span></h2>
+                <h2 class="ds-heading reveal title-balance"><span class="title-line">真正的价值拐点发生在 AI</span><span class="title-line">开始原生嵌入工作流之后</span></h2>
                 <div class="ds-divider reveal"></div>
                 <div class="ds-split-layout">
                     <div class="ds-chart-card reveal">
-                        <div class="ds-insight"><strong>Flow:</strong> 没有 ERP 数据与业务链路的深连通，Workspace 无法成为真正的工作中枢，小 K 也无法自然退居任务入口。</div>
+                        <div class="ds-insight"><strong>Flow:</strong> 阶段 2 主要增强单点功能，阶段 3 才把 AI 从“人找工具”变成“工具随流程工作”，使用门槛因此显著下降。</div>
                     </div>
                     <div class="ds-chart-card reveal"><div class="ds-stage-grid">
             <div class="ds-stage-card reveal">
                 <div class="ds-stage-index">phase 01</div>
-                <h3 class="ds-stage-title">没有 ERP 数据与业务链路的深连通</h3>
-                <p class="ds-stage-copy">没有 ERP 数据与业务链路的深连通，Workspace 无法成为真正的工作中枢，小 K 也无法自然退居任务入口。</p>
+                <h3 class="ds-stage-title">阶段 2 主要增强单点功能</h3>
+                <p class="ds-stage-copy">阶段 2 主要增强单点功能，阶段 3 才把 AI 从“人找工具”变成“工具随流程工作”，使用门槛因此显著下降。</p>
             </div>
             
             <div class="ds-stage-card reveal">
                 <div class="ds-stage-index">phase 02</div>
-                <h3 class="ds-stage-title">Workspace 是容器</h3>
-                <p class="ds-stage-copy">没有 ERP 数据与业务链路的深连通</p>
+                <h3 class="ds-stage-title">真正的价值拐点发生在 AI 开始原生嵌入工作流之后</h3>
+                <p class="ds-stage-copy">阶段 2 主要增强单点功能</p>
             </div>
             
             <div class="ds-stage-card reveal">
                 <div class="ds-stage-index">phase 03</div>
-                <h3 class="ds-stage-title">90/9/1</h3>
-                <p class="ds-stage-copy">Workspace 是容器</p>
+                <h3 class="ds-stage-title">阶段 2：自动写邮件、生成记录、总结会话</h3>
+                <p class="ds-stage-copy">真正的价值拐点发生在 AI 开始原生嵌入工作流之后</p>
             </div>
             
             <div class="ds-stage-card reveal">
                 <div class="ds-stage-index">phase 04</div>
-                <h3 class="ds-stage-title">18 个月</h3>
-                <p class="ds-stage-copy">90/9/1</p>
+                <h3 class="ds-stage-title">阶段 3：跟随用户操作自动给建议、补动作、预警风险</h3>
+                <p class="ds-stage-copy">阶段 2：自动写邮件、生成记录、总结会话</p>
             </div>
             </div></div>
                 </div>
             </div>
         </div>
-        <span class="slide-num-label">04 / 10</span>
+        <span class="slide-num-label">04 / 09</span>
     </section>
 
-<section class="slide ds-chart-insight" id="slide-5" data-notes="discovery: 理论层、对象层、实例层、技能层与 L1 到 L4 完全同构，因此模块重构不需要重新发明框架，只需要重新落位。" aria-label="discovery" data-export-role="chart_insight">
+<section class="slide ds-chart-insight" id="slide-5" data-notes="evidence: 前两阶段主要减少重复劳动，后两阶段开始改写入口、协作方式和人机分工边界。" aria-label="evidence" data-export-role="chart_insight">
         <div class="slide-content">
             <div class="ds-shell">
                 <div class="ds-subhead reveal">trend</div>
-                <h2 class="ds-heading reveal title-balance"><span class="title-line">TOIS 乘以 L1-L4 映</span><span class="title-line">射，让九大模块有了</span><span class="title-line">可执行的归位方式</span></h2>
+                <h2 class="ds-heading reveal title-balance"><span class="title-line">阶段 1 和阶段 2 解决的是提效，阶</span><span class="title-line">段 3 和阶段 4 开始重写产品形态</span></h2>
                 <div class="ds-divider reveal"></div>
                 <div class="ds-chart-card reveal"><div class="ds-stage-grid">
             <div class="ds-stage-card reveal">
                 <div class="ds-stage-index">evidence 01</div>
-                <h3 class="ds-stage-title">理论层</h3>
-                <p class="ds-stage-copy">理论层、对象层、实例层、技能层与 L1 到 L4 完全同构，因此模块重构不需要重新发明框架，只需要重新落位。</p>
+                <h3 class="ds-stage-title">前两阶段主要减少重复劳动</h3>
+                <p class="ds-stage-copy">前两阶段主要减少重复劳动，后两阶段开始改写入口、协作方式和人机分工边界。</p>
             </div>
             
             <div class="ds-stage-card reveal">
                 <div class="ds-stage-index">evidence 02</div>
-                <h3 class="ds-stage-title">TOIS 乘以 L1-L4 映射</h3>
-                <p class="ds-stage-copy">18 个月</p>
+                <h3 class="ds-stage-title">阶段 1 和阶段 2 解决的是提效</h3>
+                <p class="ds-stage-copy">Copilot 开始主动跟随业务上下文</p>
             </div>
             
             <div class="ds-stage-card reveal">
                 <div class="ds-stage-index">evidence 03</div>
-                <h3 class="ds-stage-title">TOIS 与 L1-L4</h3>
-                <p class="ds-stage-copy">理论层</p>
+                <h3 class="ds-stage-title">规则自动化只处理确定性流程</h3>
+                <p class="ds-stage-copy">前两阶段主要减少重复劳动</p>
             </div>
             
             <div class="ds-stage-card reveal">
                 <div class="ds-stage-index">evidence 04</div>
-                <h3 class="ds-stage-title">90/9/1</h3>
-                <p class="ds-stage-copy">TOIS 乘以 L1-L4 映射</p>
+                <h3 class="ds-stage-title">大模型增强仍要求用户主动触发</h3>
+                <p class="ds-stage-copy">阶段 1 和阶段 2 解决的是提效</p>
             </div>
             </div></div>
-                <div class="ds-insight reveal"><strong>Insight:</strong> 理论层、对象层、实例层、技能层与 L1 到 L4 完全同构，因此模块重构不需要重新发明框架，只需要重新落位。</div>
+                <div class="ds-insight reveal"><strong>Insight:</strong> 前两阶段主要减少重复劳动，后两阶段开始改写入口、协作方式和人机分工边界。</div>
             </div>
         </div>
-        <span class="slide-num-label">05 / 10</span>
+        <span class="slide-num-label">05 / 09</span>
     </section>
 
-<section class="slide ds-comparison" id="slide-6" data-notes="solution: Workspace 是体，小 K 是用；上下文、记忆与结果应归 Workspace 数据模型，小 K 只作为使用者和触发器。" aria-label="solution" data-export-role="comparison_matrix">
-        <div class="slide-content">
-            <div class="ds-shell">
-                <div class="ds-subhead reveal">comparison</div>
-                <h2 class="ds-heading reveal title-balance"><span class="title-line">九大模块重构后，L1 容</span><span class="title-line">器应由 Workspace 承担</span></h2>
-                <div class="ds-divider reveal"></div>
-                <div class="ds-matrix">
-        <div class="ds-matrix-cell reveal">
-            <div class="ds-subhead">Workspace 是体</div>
-            <h3 style="margin:8px 0;color:var(--text);font-size:1.1rem;">Workspace 是体</h3>
-            <p style="margin:0;color:var(--text);line-height:1.5;">Workspace 是体，小 K 是用；上下文、记忆与结果应归 Workspace 数据模型，小 K 只作为使用者和触发器。</p>
-        </div>
-        
-        <div class="ds-matrix-cell reveal">
-            <div class="ds-subhead">九大模块重构后</div>
-            <h3 style="margin:8px 0;color:var(--text);font-size:1.1rem;">九大模块重构后</h3>
-            <p style="margin:0;color:var(--text);line-height:1.5;">Workspace 是容器</p>
-        </div>
-        
-        <div class="ds-matrix-cell reveal">
-            <div class="ds-subhead">90/9/1</div>
-            <h3 style="margin:8px 0;color:var(--text);font-size:1.1rem;">90/9/1</h3>
-            <p style="margin:0;color:var(--text);line-height:1.5;">Workspace 是体</p>
-        </div>
-        
-        <div class="ds-matrix-cell reveal">
-            <div class="ds-subhead">TOIS 与 L1-L4</div>
-            <h3 style="margin:8px 0;color:var(--text);font-size:1.1rem;">TOIS 与 L1-L4</h3>
-            <p style="margin:0;color:var(--text);line-height:1.5;">九大模块重构后</p>
-        </div>
-        </div>
-            </div>
-        </div>
-        <span class="slide-num-label">06 / 10</span>
-    </section>
-
-<section class="slide ds-chart-insight" id="slide-7" data-notes="risk: 入口跳转、历史记录和上下文所有权如果继续散落，未来切换会被历史契约反向锁死。" aria-label="risk" data-export-role="chart_insight">
+<section class="slide ds-chart-insight" id="slide-6" data-notes="risk: 自主执行能释放大量重复劳动，但最终审批、风险控制和例外处理仍然决定系统是否可用。" aria-label="risk" data-export-role="chart_insight">
         <div class="slide-content">
             <div class="ds-shell">
                 <div class="ds-subhead reveal">trend</div>
-                <h2 class="ds-heading reveal title-balance"><span class="title-line">如果入口协议和数</span><span class="title-line">据归属不统一，18</span><span class="title-line">个月后仍切不过去</span></h2>
+                <h2 class="ds-heading reveal title-balance"><span class="title-line">Agent 时代的关键不是替人点击</span><span class="title-line">，而是把审批和治理留在闭环里</span></h2>
                 <div class="ds-divider reveal"></div>
                 <div class="ds-chart-card reveal"><div class="ds-stage-grid">
             <div class="ds-stage-card reveal">
                 <div class="ds-stage-index">evidence 01</div>
-                <h3 class="ds-stage-title">入口跳转</h3>
-                <p class="ds-stage-copy">入口跳转、历史记录和上下文所有权如果继续散落，未来切换会被历史契约反向锁死。</p>
+                <h3 class="ds-stage-title">自主执行能释放大量重复劳动</h3>
+                <p class="ds-stage-copy">自主执行能释放大量重复劳动，但最终审批、风险控制和例外处理仍然决定系统是否可用。</p>
             </div>
             
             <div class="ds-stage-card reveal">
                 <div class="ds-stage-index">evidence 02</div>
-                <h3 class="ds-stage-title">如果入口协议和数据归属不统一</h3>
-                <p class="ds-stage-copy">3 项优先动作</p>
+                <h3 class="ds-stage-title">Agent 时代的关键不是替人点击</h3>
+                <p class="ds-stage-copy">人工应从重复操作转向最终审批和高价值判断</p>
             </div>
             
             <div class="ds-stage-card reveal">
                 <div class="ds-stage-index">evidence 03</div>
-                <h3 class="ds-stage-title">18 个月</h3>
-                <p class="ds-stage-copy">入口跳转</p>
+                <h3 class="ds-stage-title">Agent 具备目标理解、工具调用和流程执行能力</h3>
+                <p class="ds-stage-copy">自主执行能释放大量重复劳动</p>
             </div>
             
             <div class="ds-stage-card reveal">
                 <div class="ds-stage-index">evidence 04</div>
-                <h3 class="ds-stage-title">90/9/1</h3>
-                <p class="ds-stage-copy">如果入口协议和数据归属不统一</p>
+                <h3 class="ds-stage-title">没有治理闭环，Agent 只会放大流程风险</h3>
+                <p class="ds-stage-copy">Agent 时代的关键不是替人点击</p>
             </div>
             </div></div>
-                <div class="ds-insight reveal"><strong>Insight:</strong> 入口跳转、历史记录和上下文所有权如果继续散落，未来切换会被历史契约反向锁死。</div>
+                <div class="ds-insight reveal"><strong>Insight:</strong> 自主执行能释放大量重复劳动，但最终审批、风险控制和例外处理仍然决定系统是否可用。</div>
             </div>
         </div>
-        <span class="slide-num-label">07 / 10</span>
+        <span class="slide-num-label">06 / 09</span>
     </section>
 
-<section class="slide ds-workflow" id="slide-8" data-notes="timeline: 现实路径是先以小 K 为主落地，再用 ERP 连通样板、跨 Agent 协同和成熟度评分逐步切到 Workspace 中心。" aria-label="timeline" data-export-role="workflow_chart">
+<section class="slide ds-grid" id="slide-7" data-notes="feature: 短期叠加高价值单点能力，中期嵌入核心工作流，长期布局 Agent，投入顺序不能倒置。" aria-label="feature" data-export-role="kpi_grid">
+        <div class="slide-content">
+            <div class="ds-shell">
+                <div class="ds-subhead reveal">kpi grid</div>
+                <h2 class="ds-heading reveal title-balance"><span class="title-line">对国内 SaaS 最稳的路径仍然是分</span><span class="title-line">阶段落地，而不是一步追逐 Agent</span></h2>
+                <div class="ds-divider reveal"></div>
+                <div class="ds-kpi-grid">
+            <div class="ds-kpi-card reveal">
+                <div class="ds-kpi positive">短期叠加</div>
+                <div class="ds-kpi-label">短期叠加高价值单点能力</div>
+                <div class="ds-trend up">▲ feature</div>
+            </div>
+            
+            <div class="ds-kpi-card reveal">
+                <div class="ds-kpi neutral">SaaS</div>
+                <div class="ds-kpi-label">对国内 SaaS 最稳的路径仍然是分阶段落地</div>
+                <div class="ds-trend up">▲ feature</div>
+            </div>
+            
+            <div class="ds-kpi-card reveal">
+                <div class="ds-kpi negative">长期</div>
+                <div class="ds-kpi-label">长期：布局 Agent 能力，探索下一代产品形态</div>
+                <div class="ds-trend down">▼ feature</div>
+            </div>
+            
+            <div class="ds-kpi-card reveal">
+                <div class="ds-kpi neutral">SaaS</div>
+                <div class="ds-kpi-label">国内 SaaS 应采用分阶段落地策略</div>
+                <div class="ds-trend up">▲ feature</div>
+            </div>
+            </div>
+            </div>
+        </div>
+        <span class="slide-num-label">07 / 09</span>
+    </section>
+
+<section class="slide ds-workflow" id="slide-8" data-notes="checkpoint: 把 AI 深度融进用户最常执行的路径，才会同时提升体验、留存和长期数据壁垒。" aria-label="checkpoint" data-export-role="workflow_chart">
         <div class="slide-content">
             <div class="ds-shell">
                 <div class="ds-subhead reveal">workflow</div>
-                <h2 class="ds-heading reveal title-balance"><span class="title-line">B 形态现在可交付，但</span><span class="title-line">A 形态必须被提前设计</span></h2>
+                <h2 class="ds-heading reveal title-balance"><span class="title-line">今天最该投入的是高频工作流</span><span class="title-line">原生化，而不是更多零散 AI 按钮</span></h2>
                 <div class="ds-divider reveal"></div>
                 <div class="ds-split-layout">
                     <div class="ds-chart-card reveal">
-                        <div class="ds-insight"><strong>Flow:</strong> 现实路径是先以小 K 为主落地，再用 ERP 连通样板、跨 Agent 协同和成熟度评分逐步切到 Workspace 中心。</div>
+                        <div class="ds-insight"><strong>Flow:</strong> 把 AI 深度融进用户最常执行的路径，才会同时提升体验、留存和长期数据壁垒。</div>
                     </div>
                     <div class="ds-chart-card reveal"><div class="ds-stage-grid">
             <div class="ds-stage-card reveal">
                 <div class="ds-stage-index">phase 01</div>
-                <h3 class="ds-stage-title">现实路径是先以小 K 为主落地</h3>
-                <p class="ds-stage-copy">现实路径是先以小 K 为主落地，再用 ERP 连通样板、跨 Agent 协同和成熟度评分逐步切到 Workspace 中心。</p>
+                <h3 class="ds-stage-title">把 AI 深度融进用户最常执行的路径</h3>
+                <p class="ds-stage-copy">把 AI 深度融进用户最常执行的路径，才会同时提升体验、留存和长期数据壁垒。</p>
             </div>
             
             <div class="ds-stage-card reveal">
                 <div class="ds-stage-index">phase 02</div>
-                <h3 class="ds-stage-title">B 形态现在可交付</h3>
-                <p class="ds-stage-copy">18 个月</p>
+                <h3 class="ds-stage-title">今天最该投入的是高频工作流原生化</h3>
+                <p class="ds-stage-copy">真正的价值拐点发生在 AI 开始原生嵌入工作流之后</p>
             </div>
             
             <div class="ds-stage-card reveal">
                 <div class="ds-stage-index">phase 03</div>
-                <h3 class="ds-stage-title">Workspace 是容器</h3>
-                <p class="ds-stage-copy">现实路径是先以小 K 为主落地</p>
+                <h3 class="ds-stage-title">先围绕真实痛点做闭环，而不是为了 AI 而 AI</h3>
+                <p class="ds-stage-copy">把 AI 深度融进用户最常执行的路径</p>
             </div>
             
             <div class="ds-stage-card reveal">
                 <div class="ds-stage-index">phase 04</div>
-                <h3 class="ds-stage-title">90/9/1</h3>
-                <p class="ds-stage-copy">B 形态现在可交付</p>
+                <h3 class="ds-stage-title">软件行业 AI 演进分为四个阶段</h3>
+                <p class="ds-stage-copy">今天最该投入的是高频工作流原生化</p>
             </div>
             </div></div>
                 </div>
             </div>
         </div>
-        <span class="slide-num-label">08 / 10</span>
+        <span class="slide-num-label">08 / 09</span>
     </section>
 
-<section class="slide ds-chart-insight" id="slide-9" data-notes="metrics: 统一 AI 入口协议、按 A 规格搭建 Workspace 底层、推动九大模块按层归位，这三件事决定 18 个月后能否真正切换。" aria-label="metrics" data-export-role="chart_insight">
-        <div class="slide-content">
-            <div class="ds-shell">
-                <div class="ds-subhead reveal">trend</div>
-                <h2 class="ds-heading reveal title-balance"><span class="title-line">三个今天必须完成的动</span><span class="title-line">作，比更多新功能更关键</span></h2>
-                <div class="ds-divider reveal"></div>
-                <div class="ds-chart-card reveal"><div class="ds-stage-grid">
-            <div class="ds-stage-card reveal">
-                <div class="ds-stage-index">evidence 01</div>
-                <h3 class="ds-stage-title">统一 AI 入口协议</h3>
-                <p class="ds-stage-copy">统一 AI 入口协议、按 A 规格搭建 Workspace 底层、推动九大模块按层归位，这三件事决定 18 个月后能否真正切换。</p>
-            </div>
-            
-            <div class="ds-stage-card reveal">
-                <div class="ds-stage-index">evidence 02</div>
-                <h3 class="ds-stage-title">三个今天必须完成的动作</h3>
-                <p class="ds-stage-copy">Workspace 是容器</p>
-            </div>
-            
-            <div class="ds-stage-card reveal">
-                <div class="ds-stage-index">evidence 03</div>
-                <h3 class="ds-stage-title">18 个月</h3>
-                <p class="ds-stage-copy">统一 AI 入口协议</p>
-            </div>
-            
-            <div class="ds-stage-card reveal">
-                <div class="ds-stage-index">evidence 04</div>
-                <h3 class="ds-stage-title">90/9/1</h3>
-                <p class="ds-stage-copy">三个今天必须完成的动作</p>
-            </div>
-            </div></div>
-                <div class="ds-insight reveal"><strong>Insight:</strong> 统一 AI 入口协议、按 A 规格搭建 Workspace 底层、推动九大模块按层归位，这三件事决定 18 个月后能否真正切换。</div>
-            </div>
-        </div>
-        <span class="slide-num-label">09 / 10</span>
-    </section>
-
-<section class="slide ds-close" id="slide-10" data-notes="closing: 90/9/1、18 个月和 3 项优先动作共同说明，云之家现在最需要的不是更多功能，而是提前锁定终局结构。" aria-label="closing" data-export-role="cta_close">
+<section class="slide ds-close" id="slide-9" data-notes="closing: 四阶段路径已经被龙头验证，越早按正确顺序布局，越容易建立下一轮产品竞争壁垒。" aria-label="closing" data-export-role="cta_close">
         <div class="slide-content">
             <div class="ds-shell ds-cta-block">
                 <div>
                     <div class="ds-subhead reveal">closing readout</div>
-                    <h2 class="ds-heading reveal title-balance"><span class="title-line">这组数字已经足够支</span><span class="title-line">持 Workspace 中心路线</span></h2>
+                    <h2 class="ds-heading reveal title-balance"><span class="title-line">行业终局不是“加一</span><span class="title-line">个 AI 按钮”，而是软件</span><span class="title-line">逐步长出虚拟员工</span></h2>
                     <div class="ds-divider reveal"></div>
-                    <div class="ds-insight reveal"><strong>Decision:</strong> 90/9/1、18 个月和 3 项优先动作共同说明，云之家现在最需要的不是更多功能，而是提前锁定终局结构。</div>
+                    <div class="ds-insight reveal"><strong>Decision:</strong> 四阶段路径已经被龙头验证，越早按正确顺序布局，越容易建立下一轮产品竞争壁垒。</div>
                 </div>
                 <div class="ds-kpi-grid">
-                    <div class="ds-kpi-card reveal"><div class="ds-kpi positive">90/9/1</div><div class="ds-kpi-label">90/9/1</div></div>
-                    <div class="ds-kpi-card reveal"><div class="ds-kpi neutral">18</div><div class="ds-kpi-label">18 个月</div></div>
+                    <div class="ds-kpi-card reveal"><div class="ds-kpi positive">四阶段路</div><div class="ds-kpi-label">四阶段路径已经被龙头验证</div></div>
+                    <div class="ds-kpi-card reveal"><div class="ds-kpi neutral">行业终局</div><div class="ds-kpi-label">行业终局不是“加一个 AI 按钮”</div></div>
                 </div>
             </div>
         </div>
-        <span class="slide-num-label">10 / 10</span>
+        <span class="slide-num-label">09 / 09</span>
     </section>
 <script>
 class SlidePresentation {
@@ -977,8 +956,8 @@ class SlidePresentation {
         if (!nav) return;
         this.slides.forEach((_, i) => {
             const dot = document.createElement('button');
+            dot.type = 'button';
             dot.setAttribute('aria-label', 'Go to slide ' + (i + 1));
-            dot.style.cssText = 'width:8px;height:8px;border-radius:50%;border:none;cursor:pointer;background:rgba(255,255,255,0.3);transition:all 0.3s;';
             dot.addEventListener('click', () => this.goTo(i)); nav.appendChild(dot);
         });
         nav.style.cssText = 'position:fixed;right:1.5rem;top:50%;transform:translateY(-50%);display:flex;flex-direction:column;gap:8px;z-index:100;';
@@ -1108,8 +1087,10 @@ class SlidePresentation {
 
     updateDots() {
         document.querySelectorAll('.nav-dots button').forEach((dot, i) => {
-            dot.style.background = i === this.currentSlide ? 'var(--accent)' : 'rgba(255,255,255,0.3)';
-            dot.style.transform = i === this.currentSlide ? 'scale(1.3)' : 'scale(1)';
+            const active = i === this.currentSlide;
+            dot.classList.toggle('active', active);
+            if (active) dot.setAttribute('aria-current', 'true');
+            else dot.removeAttribute('aria-current');
         });
     }
 
@@ -1332,7 +1313,7 @@ new PresentMode(new SlidePresentation());
     var last = slides[slides.length - 1];
     var credit = document.createElement('div');
     credit.className = 'slide-credit';
-    credit.textContent = 'By kai-slide-creator v2.25.0 · Data Story';
+    credit.textContent = 'By kai-slide-creator v2.24.2 · Data Story';
     last.appendChild(credit);
 })();
 </script>
