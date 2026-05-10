@@ -55,6 +55,9 @@ Click any screenshot below to open the live demo (same content, different styles
 <td align="center"><a href="https://kaisersong.github.io/slide-creator/demos/modern-newspaper-en.html"><img src="demos/screenshots/modern-newspaper.png" width="240" alt="Modern Newspaper"/></a><br/><b>Modern Newspaper</b></td>
 <td align="center"><a href="https://kaisersong.github.io/slide-creator/demos/neo-retro-dev-en.html"><img src="demos/screenshots/neo-retro-dev.png" width="240" alt="Neo-Retro Dev Deck"/></a><br/><b>Neo-Retro Dev Deck</b></td>
 </tr>
+<tr>
+<td align="center"><a href="https://kaisersong.github.io/slide-creator/demos/strategy-consulting-en.html"><img src="demos/screenshots/strategy-consulting.png" width="240" alt="Strategy Consulting"/></a><br/><b>Strategy Consulting</b></td>
+</tr>
 </table>
 
 ---
@@ -187,7 +190,7 @@ This makes themes composable and reviewable. A theme is not just "use our brand 
 
 ### 9. Content-type routing is a quality feature
 
-21 presets are useful only if the system helps users start in the right neighborhood.
+22 presets are useful only if the system helps users start in the right neighborhood.
 
 That is why slide-creator routes by content type:
 
@@ -321,7 +324,7 @@ Tracked segments: `plan`, `generate`, `validate`, `polish`, `total`
 - **IR-first workflow** — `--plan` distills `BRIEF.json`, `--generate` renders from the IR
 - **Two planning depths** — Auto for speed, Polish for narrative and visual locking
 - **Content Review System** — 16 checkpoints: `--review` for on-demand diagnosis; Polish auto-runs review; three rule types (hard/context-aware/advisory)
-- **21 design presets** — each with named layout variations
+- **22 design presets** — each with named layout variations
 - **Content-type routing** — auto-suggests best style for pitch decks, dev tools, data reports
 - **Style discovery** — generate 3 visual previews before committing
 - **Inline SVG diagrams** — flowcharts, timelines, bar charts, comparison grids, org charts — no external libs
@@ -439,6 +442,8 @@ For PPTX/PNG export: `clawhub install kai-html-export` or `pip install playwrigh
 ---
 
 ## Version History
+
+**v2.25.0** — Strategy Consulting preset: new consulting-style design with 12 canonical layouts (exec summary, before/after, three things, funnel, framework matrix, quote + evidence, driver breakdown, etc.), white-background navy-accent visual language inspired by MBB slide decks. Preset count now 22.
 
 **v2.24.3** — Single-deck eval and production verification release: `--generate` / `render-from-brief` can now emit per-deck eval JSON via `--eval` or `--eval-out`, Data Story chart routing/label logic now fails closed on weak numeric signals instead of drawing fake charts, and production demo fixtures were revalidated and resynced to the current watermark version so core preset verification remains green.
 

@@ -1,7 +1,7 @@
 ---
 name: kai-slide-creator
-description: 生成HTML演示文稿/幻灯片 — 21 种风格模版，播放/演讲者模式。适用于路演、产品发布、技术分享、方案宣讲等场景。
-version: 2.24.3
+description: 生成HTML演示文稿/幻灯片 — 22 种风格模版，播放/演讲者模式。适用于路演、产品发布、技术分享、方案宣讲等场景。
+version: 2.25.0
 metadata: {"openclaw":{"emoji":"🎞","os":["darwin","linux","windows"],"homepage":"https://github.com/kaisersong/slide-creator","requires":{"bins":["python3"]},"install":[]}}
 ---
 
