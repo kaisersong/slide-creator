@@ -14,8 +14,28 @@ from title_profiles import profile_allows_explicit_line_control, resolve_title_p
 
 ROOT = Path(__file__).resolve().parent.parent
 REFERENCES_DIR = ROOT / "references"
+THEMES_DIR = ROOT / "themes"
 BRIEF_SCHEMA_PATH = ROOT / "schemas" / "generation-brief.schema.json"
 PRESET_USAGE_RULES_PATH = ROOT / "references" / "preset-usage-rules.json"
+
+
+def discover_custom_themes() -> dict[str, Path]:
+    """Scan themes/ for subdirs with reference.md. Returns {normalized_name: reference_md_path}."""
+    themes: dict[str, Path] = {}
+    if not THEMES_DIR.is_dir():
+        return themes
+    for d in sorted(THEMES_DIR.iterdir()):
+        if d.name.startswith("_") or not d.is_dir():
+            continue
+        ref = d / "reference.md"
+        if ref.exists():
+            themes[_normalize_preset_name(d.name)] = ref
+    return themes
+
+
+def _is_custom_theme(preset: str) -> bool:
+    key = _normalize_preset_name(preset).removeprefix("custom:").strip()
+    return key in discover_custom_themes()
 
 DEFAULT_SHELL_MARKERS = [
     "body[data-preset]",
@@ -709,9 +729,14 @@ def resolve_style_reference(preset_or_path: str | Path) -> Path:
     if candidate.exists():
         return candidate.resolve()
     key = _normalize_preset_name(str(preset_or_path))
-    if key not in PRESET_REFERENCE_MAP:
-        raise StyleContractError(f"Unknown preset or reference path: {preset_or_path}")
-    return (REFERENCES_DIR / PRESET_REFERENCE_MAP[key]).resolve()
+    if key in PRESET_REFERENCE_MAP:
+        return (REFERENCES_DIR / PRESET_REFERENCE_MAP[key]).resolve()
+    # Custom theme fallback: strip "custom: " prefix, check themes/ dir
+    clean_key = key.removeprefix("custom:").strip()
+    custom_themes = discover_custom_themes()
+    if clean_key in custom_themes:
+        return custom_themes[clean_key]
+    raise StyleContractError(f"Unknown preset or reference path: {preset_or_path}")
 
 
 def _relative_to_root(path: Path) -> str:
@@ -1000,8 +1025,14 @@ def compile_style_contract(preset_or_path: str | Path) -> dict[str, Any]:
     for entry in sections.get("Style Preview Checklist", []):
         preview_lines.extend(line.strip() for line in entry.splitlines() if line.strip().startswith("- "))
 
+    # Derive preset name: use theme folder name for custom themes, file stem for built-ins
+    if THEMES_DIR in path.parents:
+        contract_preset = path.parent.name.replace("-", " ").title()
+    else:
+        contract_preset = path.stem.replace("-", " ").title().replace("Neo Retro", "Neo-Retro").replace("Dev", "Dev")
+
     contract = {
-        "preset": path.stem.replace("-", " ").title().replace("Neo Retro", "Neo-Retro").replace("Dev", "Dev"),
+        "preset": contract_preset,
         "source_path": _relative_to_root(path),
         "tokens": _extract_css_vars(css_text),
         "font_urls": _extract_font_urls(css_text),
@@ -1229,6 +1260,13 @@ def _has_compact_anchor(text: str) -> bool:
     return bool(compact) and len(compact) <= 6
 
 
+def _safe_preset_tier(preset: str) -> str:
+    try:
+        return preset_support_tier(preset)
+    except KeyError:
+        return "custom"
+
+
 def build_render_packet(
     brief: dict[str, Any],
     *,
@@ -1285,7 +1323,7 @@ def build_render_packet(
         "generator_version": _skill_version(),
         "render_path": _canonical_render_path(preset),
         "preset": preset,
-        "preset_support_tier": preset_support_tier(preset),
+        "preset_support_tier": _safe_preset_tier(preset),
         "deck_type": deck_type,
         "page_count": page_count,
         "composition_source": composition_source,
@@ -2023,9 +2061,25 @@ def _assemble_shell_html(
 
 def _build_non_swiss_shell_css(style_contract: dict[str, Any], preset: str) -> str:
     contract_css = "\n\n".join(style_contract["css_blocks"])
-    slide_background = "transparent" if preset == "Enterprise Dark" else "var(--bg-primary, var(--bg, #0f1117))"
-    nav_dot_idle = "rgba(255,255,255,0.28)"
-    nav_dot_active = "var(--accent-blue, var(--chart-primary, #3b82f6))"
+    tokens = style_contract.get("tokens", {})
+    # Detect light vs dark theme from CSS vars
+    bg_token = tokens.get("--bg") or tokens.get("--bg-primary") or tokens.get("--bg-white")
+    is_dark = bg_token and not bg_token.strip().startswith(("#f", "#F", "#e", "#E", "#d", "#D", "#c", "#C", "#b", "#B", "white", "rgb(255", "rgba(255"))
+
+    if preset == "Enterprise Dark":
+        slide_background = "transparent"
+        nav_dot_idle = "rgba(255,255,255,0.28)"
+        nav_dot_active = "var(--accent-blue, var(--chart-primary, #3b82f6))"
+    elif is_dark:
+        slide_background = f"var(--bg-primary, var(--bg, {bg_token}))"
+        nav_dot_idle = "rgba(255,255,255,0.28)"
+        nav_dot_active = "var(--accent-blue, var(--chart-primary, #3b82f6))"
+    else:
+        # Light theme (including custom themes like Kingdee)
+        slide_background = f"var(--bg-white, var(--bg-primary, var(--bg, #FFFFFF)))"
+        nav_dot_idle = "rgba(0,0,0,0.18)"
+        nav_dot_active = "var(--kd-blue, var(--accent, #2971EB))"
+
     if preset == "Data Story":
         nav_dot_idle = "rgba(15, 23, 42, 0.22)"
         nav_dot_active = "var(--chart-primary, #2563eb)"
@@ -2061,6 +2115,9 @@ def _build_non_swiss_shell_css(style_contract: dict[str, Any], preset: str) -> s
     else:
         slide_overlay = ""
 
+    body_text = "var(--text-primary, var(--text, #f3f4f6))" if is_dark else "var(--text-primary, var(--text, #1A1A1A))"
+    body_bg = "var(--bg-primary, var(--bg, #0f1117))" if is_dark else "var(--bg-white, var(--bg-primary, var(--bg, #FFFFFF)))"
+
     return f"""
 {contract_css}
 
@@ -2078,8 +2135,8 @@ body {{
     overflow-x: hidden;
     overflow-y: auto;
     overscroll-behavior-y: contain;
-    color: var(--text-primary, var(--text, #f3f4f6));
-    background: var(--bg-primary, var(--bg, #0f1117));
+    color: {body_text};
+    background: {body_bg};
     --nav-dot-idle: {nav_dot_idle};
     --nav-dot-active: {nav_dot_active};
 }}
@@ -4903,6 +4960,272 @@ def render_chinese_chan_html(
     return _assemble_shell_html(brief["title"], brief["language"], "Chinese Chan", css, slides_html, total, packet)
 
 
+def _extract_starter_css(starter_path: Path) -> str:
+    """Extract <style> block content from a starter.html."""
+    content = _read_text(starter_path)
+    match = re.search(r"<style>(.*?)</style>", content, re.DOTALL)
+    return match.group(1).strip() if match else ""
+
+
+def _extract_starter_image_urls(starter_path: Path) -> dict[str, str]:
+    """Extract all image URLs (logos + backgrounds) from starter.html img tags."""
+    content = _read_text(starter_path)
+    images: dict[str, str] = {}
+    for match in re.finditer(r'<img[^>]+class="([^"]+)"[^>]+src="([^"]+)"', content):
+        cls = match.group(1)
+        url = match.group(2)
+        if "logo" in cls:
+            if "blue" in cls.lower() or "blue" in url.lower():
+                images["logo_blue"] = url
+            elif "white" in cls.lower() or "white" in url.lower():
+                images["logo_white"] = url
+            elif "logo" not in images:
+                images["logo_default"] = url
+        elif "hero" in cls:
+            images["hero"] = url
+        elif "section-image" in cls or "chapter" in cls:
+            images["chapter_bg"] = url
+        elif "toc-image" in cls or "catalogue" in cls:
+            images["catalogue_bg"] = url
+        elif "closing-image-left" in cls or "thanks" in cls:
+            images["closing_left"] = url
+        elif "closing-image" in cls or "endpage" in cls:
+            images["closing_right"] = url
+    return images
+
+
+def _render_custom_theme_slide(
+    spec: dict[str, Any],
+    total: int,
+    *,
+    style_contract: dict[str, Any],
+    images: dict[str, str],
+    role_index: int,
+) -> str:
+    """Render a slide using theme-specific component classes from the style contract."""
+    slide_number = spec["slide_number"]
+    role = spec["role"]
+    layout_id = spec["layout_id"]
+    items = spec.get("supporting_items", [])
+    evidence = spec.get("evidence_items", [])
+
+    logo_blue = images.get("logo_blue") or images.get("logo_default") or ""
+    logo_white = images.get("logo_white") or logo_blue
+    logo_url = logo_blue
+
+    # Title slide
+    if role == "title" or role_index == 0:
+        title_lines = spec["title"].split("\n", 1)
+        main_title = _escape(title_lines[0])
+        sub_title = _escape(title_lines[1]) if len(title_lines) > 1 else _escape(spec.get("key_point", ""))
+        title_logo = f'<img class="kd-logo-left" src="{logo_url}" alt="Logo">' if logo_url else ""
+        hero_img = f'<img class="kd-hero-image" src="{images["hero"]}" alt="首页右侧装饰">' if images.get("hero") else ""
+        return f"""
+    <section class="slide slide-title" id="slide-{slide_number}" data-notes="{_escape(spec['speaker_note'])}" aria-label="title" data-export-role="title">
+        {title_logo}
+        {hero_img}
+        <div class="title-content">
+            <h1 class="title-main kd-reveal">{main_title}</h1>
+            <p class="title-sub kd-reveal">{sub_title}</p>
+        </div>
+    </section>""".strip()
+
+    # CTA / closing slide
+    if role == "cta" or layout_id == "cta_close":
+        cta_logo = f'<img class="kd-logo-left" src="{logo_url}" alt="Logo">' if logo_url else ""
+        closing_left = f'<img class="kd-closing-image-left" src="{images["closing_left"]}" alt="感谢页面">' if images.get("closing_left") else ""
+        closing_right = f'<img class="kd-closing-image" src="{images["closing_right"]}" alt="尾页右侧装饰">' if images.get("closing_right") else ""
+        return f"""
+    <section class="slide slide-closing" id="slide-{slide_number}" data-notes="{_escape(spec['speaker_note'])}" aria-label="cta" data-export-role="cta_close">
+        {cta_logo}
+        {closing_left}
+        {closing_right}
+        <div class="section-content" style="left:80px;top:50%;transform:translateY(-50%);">
+            <h2 class="section-title kd-reveal" style="font-size:clamp(28pt,4vw,42pt);color:var(--kd-blue);">{_escape(spec["title"])}</h2>
+            <div class="section-divider kd-reveal" style="background:var(--kd-blue);"></div>
+            <p style="font-size:14pt;color:var(--text-secondary);line-height:1.6;">{_escape(spec.get("key_point", ""))}</p>
+        </div>
+    </section>""".strip()
+
+    # Section slide (blue background) — use for problem, solution, evidence roles
+    is_section_role = role in ("problem", "solution", "evidence", "core")
+    if is_section_role:
+        section_logo = f'<img class="kd-logo-right-section" src="{logo_white}" alt="Logo">' if logo_white else ""
+        section_bg = f'<img class="kd-section-image" src="{images["chapter_bg"]}" alt="章节背景">' if images.get("chapter_bg") else ""
+        section_num = f"{role_index:02d}"
+        return f"""
+    <section class="slide slide-section" id="slide-{slide_number}" data-notes="{_escape(spec['speaker_note'])}" aria-label="{_escape(role)}" data-export-role="{_escape(layout_id)}">
+        {section_bg}
+        {section_logo}
+        <div class="section-content">
+            <div class="section-number kd-reveal">{section_num}</div>
+            <div class="section-divider kd-reveal"></div>
+            <h2 class="section-title kd-reveal">{_escape(spec["title"])}</h2>
+            <p class="section-title kd-reveal" style="font-size:clamp(12pt,1.6vw,16pt);font-weight:400;margin-top:16px;line-height:1.6;">{_escape(spec.get("key_point", ""))}</p>
+        </div>
+    </section>""".strip()
+
+    # TOC slide
+    if role == "toc" or layout_id == "toc":
+        toc_logo = f'<img class="kd-logo-right-toc" src="{logo_blue}" alt="Logo">' if logo_blue else ""
+        toc_bg = f'<img class="kd-toc-image" src="{images["catalogue_bg"]}" alt="目录背景">' if images.get("catalogue_bg") else ""
+        toc_items_html = ""
+        for i, item in enumerate(items[:12], 1):
+            compact_cls = " compact" if len(items) > 5 else ""
+            num_compact = ""
+            if len(items) > 9:
+                num_compact = " ultra-compact"
+            elif len(items) > 5:
+                num_compact = " compact"
+            toc_items_html += f'<div class="toc-item{compact_cls}"><span class="toc-number{num_compact}">{i:02d}</span><span class="toc-text">{_escape(item)}</span><span class="toc-page">P {i + 1:02d}</span></div>\n'
+        return f"""
+    <section class="slide slide-toc" id="slide-{slide_number}" data-notes="{_escape(spec['speaker_note'])}" aria-label="toc" data-export-role="toc">
+        {toc_bg}
+        {toc_logo}
+        <h2 class="toc-title">目 录</h2>
+        <div class="toc-content">
+            {toc_items_html}
+        </div>
+    </section>""".strip()
+
+    # Content slide (default)
+    items_html = ""
+    for item in items[:5]:
+        items_html += f'<li class="kd-reveal">{_escape(item)}</li>\n'
+
+    cards_html = ""
+    for ev in evidence[:3]:
+        cards_html += f'<div class="kd-card kd-reveal"><p class="kd-card-body">{_escape(ev)}</p></div>\n'
+
+    cards_section = ""
+    if cards_html:
+        cards_section = f'<div class="cols-2">{cards_html}</div>'
+
+    logo_img = f'<img class="kd-logo-right" src="{logo_url}" alt="Logo">' if logo_url else ""
+
+    return f"""
+    <section class="slide slide-content" id="slide-{slide_number}" data-notes="{_escape(spec['speaker_note'])}" aria-label="{_escape(role)}" data-export-role="{_escape(layout_id)}">
+        {logo_img}
+        <div class="content-header">
+            <h2 class="content-title kd-reveal">{_escape(spec["title"])}</h2>
+            <p class="content-subtitle kd-reveal">{_escape(spec.get("key_point", ""))}</p>
+        </div>
+        <div class="content-body">
+            <ul>
+                {items_html}
+            </ul>
+            {cards_section}
+        </div>
+    </section>""".strip()
+
+
+def render_custom_theme_html(
+    brief: dict[str, Any],
+    *,
+    packet: dict[str, Any] | None = None,
+    style_contract: dict[str, Any] | None = None,
+) -> str:
+    """Renderer for custom themes. Uses starter.html CSS + theme component classes."""
+    packet = packet or build_render_packet(brief)
+    preset = brief["style"]["preset"]
+    style_contract = style_contract or compile_style_contract(preset)
+
+    # Discover theme directory
+    theme_key = _normalize_preset_name(preset).removeprefix("custom:").strip()
+    custom_themes = discover_custom_themes()
+    if theme_key not in custom_themes:
+        raise RenderError(f"Custom theme not found: {preset}")
+    theme_dir = custom_themes[theme_key].parent
+
+    # Extract starter.html CSS if available
+    starter_path = theme_dir / "starter.html"
+    if starter_path.exists():
+        starter_css = _extract_starter_css(starter_path)
+        images = _extract_starter_image_urls(starter_path)
+    else:
+        starter_css = "\n\n".join(style_contract["css_blocks"])
+        images = {}
+
+    specs = build_slide_spec(brief, packet=packet)
+    total = len(specs)
+    slides_html = "\n\n".join(
+        _render_custom_theme_slide(spec, total, style_contract=style_contract, images=images, role_index=i)
+        for i, spec in enumerate(specs)
+    )
+
+    # Use starter.html CSS directly, skip the generic shell CSS
+    js_engine = _extract_js_engine_blocks(preset=preset, version=_skill_version())
+    brand_mark = _brand_mark_text(brief["title"], preset)
+    provenance_attrs = _html_body_provenance_attrs(packet)
+
+    return f"""<!DOCTYPE html>
+<html lang="{_escape(brief['language'])}">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>{_escape(brief['title'])} - {_escape(preset)}</title>
+<style>
+{starter_css}
+
+/* Present mode */
+body.presenting {{
+    margin: 0; padding: 0;
+    background: #000;
+    overflow: hidden;
+    scroll-snap-type: none;
+}}
+body.presenting .slide {{
+    position: fixed; top: 0; left: 0;
+    width: 100vw; height: 100vh;
+    scroll-snap-align: none;
+    visibility: hidden;
+    pointer-events: none;
+}}
+body.presenting .slide.p-on {{
+    visibility: visible;
+    pointer-events: auto;
+    display: flex !important;
+}}
+body.presenting #present-btn {{ display: none !important; }}
+body.presenting #present-counter {{ display: block; }}
+body.presenting.presenting-black .slide {{ visibility: hidden !important; }}
+body.presenting .slide-credit {{ display: none !important; }}
+
+/* Edit hotzone */
+.edit-hotzone {{
+    position: fixed;
+    top: 0; left: 0;
+    width: 120px; height: 120px;
+    z-index: 9999;
+}}
+#editToggle, .edit-toggle {{
+    position: fixed;
+    top: 12px; left: 12px;
+    z-index: 10000;
+    padding: 6px 16px;
+    border-radius: 6px;
+    border: 1px solid #ddd;
+    background: #fff;
+    cursor: pointer;
+    font-size: 13px;
+    display: none;
+}}
+#editToggle.show, .edit-toggle.show {{ display: block; }}
+#editToggle.active, .edit-toggle.active {{ background: var(--kd-blue, #2971EB); color: #fff; border-color: var(--kd-blue, #2971EB); }}
+</style>
+</head>
+<body data-export-progress="true" data-preset="{_escape(preset)}" {provenance_attrs}>
+<span id="brand-mark">{_escape(brand_mark)}</span>
+{slides_html}
+<div class="edit-hotzone"></div>
+<button id="editToggle" class="edit-toggle" type="button">Edit</button>
+<script>
+{js_engine}
+</script>
+</body>
+</html>"""
+
+
 def render_from_brief(brief: dict[str, Any]) -> tuple[str, dict[str, Any], dict[str, Any]]:
     packet = build_render_packet(brief)
     style_contract = compile_style_contract(brief["style"]["preset"])
@@ -4915,6 +5238,8 @@ def render_from_brief(brief: dict[str, Any]) -> tuple[str, dict[str, Any], dict[
         html_text = render_data_story_html(brief, packet=packet, style_contract=style_contract)
     elif preset == "Chinese Chan":
         html_text = render_chinese_chan_html(brief, packet=packet, style_contract=style_contract)
+    elif _is_custom_theme(preset):
+        html_text = render_custom_theme_html(brief, packet=packet, style_contract=style_contract)
     else:
         raise RenderError(
             f"Deterministic low-context render is only implemented for Swiss Modern, Enterprise Dark, Data Story, and Chinese Chan right now; got {preset}"
