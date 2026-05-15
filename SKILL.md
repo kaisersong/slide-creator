@@ -42,7 +42,7 @@ metadata: {"openclaw":{"emoji":"🎞","os":["darwin","linux","windows"],"homepag
 
 | 命令 | 加载内容 | 行为 |
 |------|----------|------|
-| `--plan [prompt]` | `references/brief-template.json` | 创建 `BRIEF.json`；仅在用户明确要求时额外派生 `PLANNING.md` |
+| `--plan [prompt]` | `references/brief-template.json`；如用户指定了 custom theme，同步加载 `themes/<name>/reference.md` | 创建 `BRIEF.json`；仅在用户明确要求时额外派生 `PLANNING.md` |
 | `--generate` | SKILL.md + 已选风格文件（内置 `references/*.md` / `blue-sky-starter.html`；自定义 `themes/<name>/reference.md`）+ composition 源 + `references/title-quality.md` + `references/html-template.md` + `references/js-engine.md` + `references/base-css.md` + `references/impeccable-anti-patterns.md` | 从 `BRIEF.json` 生成 HTML，并执行写入前门禁；如用户显式要求 `eval`，同步产出单 deck 评测 JSON |
 | `--review [file.html]` | `references/review-checklist.md` + 目标 HTML | 执行 17 项检查点 → 确认窗口 → 修复/报告 |
 | 无 flag (交互式) | `references/workflow.md` + 其他按需 | 遵循 Phase 0-5 |
@@ -54,7 +54,8 @@ metadata: {"openclaw":{"emoji":"🎞","os":["darwin","linux","windows"],"homepag
 
 1. **风格强制**
    所有颜色、字体、组件、背景、动画、图表色、signature elements 都**必须且只能**来自选中的风格文件。模板里的 `[from style file]` 和示例值只是占位，禁止直接使用。  
-   默认推荐面第一阶段聚焦 4 个 production presets：`Swiss Modern / Enterprise Dark / Data Story / Blue Sky`；**但用户显式指定任意当前 preset 时，必须保留该选择**。support tier 只影响默认推荐优先级，不影响显式指定。  
+   默认推荐面第一阶段聚焦 4 个 production presets：`Swiss Modern / Enterprise Dark / Data Story / Blue Sky`；**但用户显式指定任意当前 preset 时，必须保留该选择**。support tier 只影响默认推荐优先级，不影响显式指定。
+   Custom theme（`themes/<name>/reference.md`）与内置 preset 同等对待。`BRIEF.json` 的 `style.preset` 支持三种值：内置 preset 名、custom theme 文件夹名、或 `themes/<name>/reference.md` 路径。代码层会自动归一化解析。  
    **Swiss Modern 额外要求 canonical export path**：面板保持 `.slide` direct child，token 保持 `--bg/--text/--red`，使用 canonical 类（`.left-panel/.right-panel/.stat-row/.cta-block`），并写入 `data-export-role`；不得生成 `.left-col/.right-col` 或 `--bg-primary/--accent` 这类兼容别名。
 
 2. **叙事弧线**
