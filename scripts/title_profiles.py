@@ -5,7 +5,15 @@ from pathlib import Path
 from typing import Any
 
 
-ROOT = Path(__file__).resolve().parent.parent
+def _discover_root() -> Path:
+    here = Path(__file__).resolve().parent
+    for candidate in [here, *here.parents]:
+        if (candidate / "references" / "title-profile-registry.json").exists():
+            return candidate
+    return here.parent
+
+
+ROOT = _discover_root()
 REGISTRY_PATH = ROOT / "references" / "title-profile-registry.json"
 
 STRUCTURAL_TITLE_PROFILES = {
@@ -216,4 +224,3 @@ def collect_title_candidate_nodes(slide: Any, preset: str | None) -> list[Any]:
                 seen.add(marker)
 
     return nodes
-

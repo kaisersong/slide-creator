@@ -260,8 +260,8 @@ Professional, tech-forward, enterprise-grade. Inspired by Kingdee's brand identi
 
 ```html
 <section class="slide slide-title">
-    <img class="kd-logo-left" src="https://kingdee-cdn.pages.dev/kingdee-blue.png" alt="金蝶AI Logo（蓝色）">
-    <img class="kd-hero-image" src="https://kingdee-cdn.pages.dev/homepage.png" alt="首页右侧装饰">
+    <img class="kd-logo-left" src="https://static.yunzhijia.com/home/download/png/kingdee-blue.png" alt="金蝶AI Logo（蓝色）">
+    <img class="kd-hero-image" src="https://static.yunzhijia.com/home/download/png/homepage.png" alt="首页右侧装饰">
     <div class="kd-title-content">
         <h1 class="kd-title-main kd-reveal">项目标题</h1>
     </div>
@@ -434,7 +434,7 @@ Professional, tech-forward, enterprise-grade. Inspired by Kingdee's brand identi
 
 ```html
 <section class="slide slide-content">
-    <img class="kd-logo-right" src="https://kingdee-cdn.pages.dev/kingdee-blue.png" alt="金蝶AI Logo（蓝色）">
+    <img class="kd-logo-right" src="https://static.yunzhijia.com/home/download/png/kingdee-blue.png" alt="金蝶AI Logo（蓝色）">
     <div class="kd-content-header">
         <h2 class="kd-content-title kd-reveal">页面标题</h2>
         <p class="kd-content-subtitle kd-reveal">副标题（可选）</p>
@@ -630,8 +630,8 @@ Professional, tech-forward, enterprise-grade. Inspired by Kingdee's brand identi
 
 ```html
 <section class="slide slide-toc">
-    <img class="kd-toc-image" src="https://kingdee-cdn.pages.dev/kingdee_catalogue.png" alt="目录页背景">
-    <img class="kd-logo-right-toc" src="kingdeeAI1.png" alt="金蝶AI Logo（白底用）">
+    <img class="kd-toc-image" src="https://static.yunzhijia.com/home/download/png/kingdee_catalogue.png" alt="目录页背景">
+    <img class="kd-logo-right-toc" src="https://static.yunzhijia.com/home/download/png/kingdee-blue.png" alt="金蝶AI Logo（蓝色）">
     <h2 class="kd-toc-title">目 录</h2>
     <div class="kd-toc-content">
         <div class="kd-toc-item">
@@ -745,8 +745,8 @@ Professional, tech-forward, enterprise-grade. Inspired by Kingdee's brand identi
 
 ```html
 <section class="slide slide-section">
-    <img class="kd-section-image" src="https://kingdee-cdn.pages.dev/kingdee_chapter.png" alt="章节背景">
-    <img class="kd-logo-right-section" src="https://kingdee-cdn.pages.dev/kingdee-white.png" alt="金蝶AI Logo（白色）">
+    <img class="kd-section-image" src="https://static.yunzhijia.com/home/download/png/kingdee_chapter.png" alt="章节背景">
+    <img class="kd-logo-right-section" src="https://static.yunzhijia.com/home/download/png/kingdee-white.png" alt="金蝶AI Logo（白色）">
     <div class="kd-section-content">
         <div class="kd-section-number kd-reveal">01</div>
         <div class="kd-section-divider kd-reveal"></div>
@@ -824,9 +824,9 @@ Professional, tech-forward, enterprise-grade. Inspired by Kingdee's brand identi
 
 ```html
 <section class="slide slide-closing">
-    <img class="kd-logo-left-closing" src="https://kingdee-cdn.pages.dev/kingdee-blue.png" alt="金蝶AI Logo（蓝色）">
-    <img class="kd-closing-image-left" src="https://kingdee-cdn.pages.dev/kingdee-thanks.png" alt="感谢页面">
-    <img class="kd-closing-image" src="https://kingdee-cdn.pages.dev/kingdee_endpage.png" alt="尾页右侧装饰">
+    <img class="kd-logo-left-closing" src="https://static.yunzhijia.com/home/download/png/kingdee-blue.png" alt="金蝶AI Logo（蓝色）">
+    <img class="kd-closing-image-left" src="https://static.yunzhijia.com/home/download/png/kingdee-thanks.png" alt="感谢页面">
+    <img class="kd-closing-image" src="https://static.yunzhijia.com/home/download/png/kingdee_endpage.png" alt="尾页右侧装饰">
     <!-- 左下角版权信息 - 灰色 -->
     <div class="kd-copyright-closing">版权所有©金蝶国际软件集团有限公司 始创于1993</div>
     <!-- 右下角保密标识 - 灰色 -->
@@ -955,10 +955,10 @@ alt="感谢页面"                <!-- kingdee-thanks.png -->
 
 | 文件 | CDN 链接 |
 |-----|---------|
-| kingdee-blue.png | https://kingdee-cdn.pages.dev/kingdee-blue.png |
-| kingdee-white.png | https://kingdee-cdn.pages.dev/kingdee-white.png |
-| kingdee-thanks.png | https://kingdee-cdn.pages.dev/kingdee-thanks.png |
-| homepage.png | https://kingdee-cdn.pages.dev/homepage.png |
-| kingdee_catalogue.png | https://kingdee-cdn.pages.dev/kingdee_catalogue.png |
-| kingdee_chapter.png | https://kingdee-cdn.pages.dev/kingdee_chapter.png |
-| kingdee_endpage.png | https://kingdee-cdn.pages.dev/kingdee_endpage.png |
+| kingdee-blue.png | https://static.yunzhijia.com/home/download/png/kingdee-blue.png |
+| kingdee-white.png | https://static.yunzhijia.com/home/download/png/kingdee-white.png |
+| kingdee-thanks.png | https://static.yunzhijia.com/home/download/png/kingdee-thanks.png |
+| homepage.png | https://static.yunzhijia.com/home/download/png/homepage.png |
+| kingdee_catalogue.png | https://static.yunzhijia.com/home/download/png/kingdee_catalogue.png |
+| kingdee_chapter.png | https://static.yunzhijia.com/home/download/png/kingdee_chapter.png |
+| kingdee_endpage.png | https://static.yunzhijia.com/home/download/png/kingdee_endpage.png |

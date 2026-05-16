@@ -12,7 +12,15 @@ from preset_support import preset_support_tier
 from title_profiles import profile_allows_explicit_line_control, resolve_title_profile
 
 
-ROOT = Path(__file__).resolve().parent.parent
+def _discover_root() -> Path:
+    here = Path(__file__).resolve().parent
+    for candidate in [here, *here.parents]:
+        if (candidate / "references").is_dir() and (candidate / "schemas").is_dir():
+            return candidate
+    return here.parent
+
+
+ROOT = _discover_root()
 REFERENCES_DIR = ROOT / "references"
 THEMES_DIR = ROOT / "themes"
 BRIEF_SCHEMA_PATH = ROOT / "schemas" / "generation-brief.schema.json"
@@ -105,6 +113,36 @@ DEFAULT_LAYOUTS = {
         "driver_breakdown",
         "closing",
     ],
+}
+
+BLUE_SKY_ROLE_LAYOUTS = {
+    "cover": "cover",
+    "hook": "cover",
+    "problem": "comparison",
+    "risk": "comparison",
+    "baseline": "comparison",
+    "definition": "comparison",
+    "solution": "chapter",
+    "discovery": "chapter",
+    "workflow": "workflow",
+    "process": "workflow",
+    "checkpoint": "workflow",
+    "timeline": "workflow",
+    "style-discovery": "bento",
+    "features": "bento",
+    "feature": "bento",
+    "recommendation": "bento",
+    "best-fit": "bento",
+    "decision": "bento",
+    "comparison": "comparison",
+    "dual": "comparison",
+    "output-contract": "table",
+    "evidence": "table",
+    "proof": "table",
+    "metrics": "table",
+    "data-proof": "table",
+    "closing": "closing",
+    "cta": "closing",
 }
 
 SWISS_ROLE_LAYOUTS = {
@@ -1147,6 +1185,8 @@ def _canonical_layout_for_role(role: str, allowed_layouts: list[str], preset: st
 
 def _layout_map_for_preset(preset: str) -> dict[str, str]:
     normalized = _normalize_preset_name(preset)
+    if normalized == "blue sky":
+        return BLUE_SKY_ROLE_LAYOUTS
     if normalized == "swiss modern":
         return SWISS_ROLE_LAYOUTS
     if normalized == "enterprise dark":
@@ -1689,11 +1729,14 @@ def build_slide_spec(brief: dict[str, Any], packet: dict[str, Any] | None = None
     packet = packet or build_render_packet(brief)
     quality_tier = packet["quality_tier"]
     preset = brief["style"]["preset"]
+    normalized_preset = _normalize_preset_name(preset)
     role_layouts = _layout_map_for_preset(preset)
     usage_rules = _preset_usage_rules(preset)
-    allowed_layouts = packet["allowed_layouts"] or DEFAULT_LAYOUTS.get(_normalize_preset_name(preset), [])
+    allowed_layouts = packet["allowed_layouts"] or DEFAULT_LAYOUTS.get(normalized_preset, [])
     layout_cycle = allowed_layouts or ["default"]
-    if quality_tier == "tier1":
+    if normalized_preset == "blue sky":
+        layout_cycle = allowed_layouts or layout_cycle
+    elif quality_tier == "tier1":
         layout_cycle = allowed_layouts[:4] or layout_cycle
     elif quality_tier == "tier2":
         preferred = [layout for layout in ("title_grid", "column_content", "contents_index", "pull_quote") if layout in allowed_layouts]
@@ -5001,6 +5044,36 @@ def _extract_blue_sky_js(starter_path: Path, total: int) -> str:
     return js
 
 
+def _blue_sky_watermark_script(*, preset: str, version: str) -> str:
+    watermark_text = json.dumps(
+        f"By kai-slide-creator v{version} · {preset}",
+        ensure_ascii=False,
+    )
+    return f"""
+(function() {{
+    var slides = document.querySelectorAll('#track .slide');
+    if (!slides.length) return;
+    var last = slides[slides.length - 1];
+    var credit = document.createElement('div');
+    credit.className = 'slide-credit';
+    credit.textContent = {watermark_text};
+    last.appendChild(credit);
+}})();
+""".strip()
+
+
+def _blue_sky_title_tag(tag: str, text: str, *, layout_id: str, extra_attrs: str = "") -> str:
+    return _title_tag(
+        tag,
+        "gt",
+        text,
+        preset="Blue Sky",
+        layout_id=layout_id,
+        force_balance=True,
+        extra_attrs=extra_attrs,
+    )
+
+
 def render_blue_sky_html(
     brief: dict[str, Any],
     *,
@@ -5039,6 +5112,7 @@ def render_blue_sky_html(
 
     # Extract Blue Sky presentation JS (includes PresentMode, keyboard nav, go())
     blue_sky_js = _extract_blue_sky_js(starter_path, total) if starter_path.exists() else ""
+    watermark_js = _blue_sky_watermark_script(preset=preset, version=_skill_version())
 
     return f"""<!DOCTYPE html>
 <html lang="{_escape(brief['language'])}">
@@ -5048,6 +5122,25 @@ def render_blue_sky_html(
 <title>{_escape(brief['title'])} - {preset}</title>
 <style>
 {starter_css}
+.title-balance {{
+  display: flex;
+  flex-direction: column;
+  gap: 0.02em;
+}}
+.title-line {{
+  display: block;
+}}
+.slide-credit {{
+  position: absolute;
+  right: 28px;
+  bottom: 18px;
+  z-index: 20;
+  font-size: 11px;
+  letter-spacing: 0.04em;
+  color: rgba(100, 116, 139, 0.72);
+  pointer-events: none;
+}}
+body.presenting .slide-credit {{ display: none !important; }}
 </style>
 </head>
 <body data-export-progress="true" data-preset="{preset}" {provenance_attrs}>
@@ -5082,6 +5175,7 @@ def render_blue_sky_html(
 
 <script>
 {blue_sky_js}
+{watermark_js}
 </script>
 </body>
 </html>"""
@@ -5096,10 +5190,19 @@ def _render_blue_sky_slide(
 ) -> str:
     """Render a single Blue Sky slide using starter.html component classes."""
     slide_number = spec["slide_number"]
-    role = spec["role"]
-    title = _escape(spec["title"])
+    role = str(spec["role"])
+    role_attr = _escape(role)
+    layout_id = str(spec.get("layout_id") or "bento")
+    title_text = str(spec["title"])
     key_point = _escape(spec.get("key_point", ""))
     speaker_note = _escape(spec.get("speaker_note", ""))
+    cover_title = _blue_sky_title_tag(
+        "h1",
+        title_text,
+        layout_id=layout_id,
+        extra_attrs='style="margin-bottom:14px;"',
+    )
+    section_title = _blue_sky_title_tag("h2", title_text, layout_id=layout_id)
 
     items = spec.get("supporting_items", [])
     evidence = spec.get("evidence_items", [])
@@ -5107,7 +5210,7 @@ def _render_blue_sky_slide(
     all_items = items or evidence or facts
 
     # Cover slide
-    if role == "cover" or role_index == 0:
+    if layout_id == "cover" or role_index == 0:
         # Cover uses supporting_facts for stat row (more complete)
         stat_items = []
         for item in (facts or all_items)[:4]:
@@ -5122,7 +5225,7 @@ def _render_blue_sky_slide(
         stats_html = f'<div style="display:flex;gap:14px;justify-content:center;flex-wrap:wrap;margin-top:28px;">{"".join(stat_items)}</div>' if stat_items else ""
         return f"""
     <!-- slide {slide_number}: {role} -->
-    <section class="slide cover" style="overflow:hidden;" id="slide-{slide_number}" data-notes="{speaker_note}" data-export-role="cover">
+    <section class="slide cover" style="overflow:hidden;" id="slide-{slide_number}" data-notes="{speaker_note}" aria-label="{role_attr}" data-export-role="cover">
 
       <svg width="0" height="0" style="position:absolute;pointer-events:none;">
         <defs>
@@ -5186,32 +5289,32 @@ def _render_blue_sky_slide(
 
       <div style="text-align:center;position:relative;z-index:10;">
         <span class="pill" style="margin-bottom:20px;display:inline-block;">{_escape(spec.get('subtitle', ''))}</span>
-        <h1 class="gt" style="margin-bottom:14px;">{title}</h1>
+        {cover_title}
         <p style="font-size:1.1rem;max-width:560px;margin:0 auto 28px;">{key_point}</p>
         {stats_html}
       </div>
     </section>""".strip()
 
     # Closing slide
-    if role == "closing" or role == "cta":
+    if layout_id == "closing":
         return f"""
     <!-- slide {slide_number}: {role} -->
-    <section class="slide" id="slide-{slide_number}" data-notes="{speaker_note}" data-export-role="{role}">
+    <section class="slide" id="slide-{slide_number}" data-notes="{speaker_note}" aria-label="{role_attr}" data-export-role="{role_attr}">
       <div style="text-align:center;max-width:640px;">
         <div class="divider" style="margin:0 auto 20px;"></div>
-        <h2 class="gt">{title}</h2>
+        {section_title}
         <p style="font-size:1rem;color:var(--text-secondary);margin-top:14px;">{key_point}</p>
       </div>
     </section>""".strip()
 
     # Chapter / section slide
-    if role in ("discovery", "solution"):
+    if layout_id == "chapter":
         return f"""
     <!-- slide {slide_number}: {role} -->
-    <section class="slide chapter" id="slide-{slide_number}" data-notes="{speaker_note}" data-export-role="{role}">
+    <section class="slide chapter" id="slide-{slide_number}" data-notes="{speaker_note}" aria-label="{role_attr}" data-export-role="{role_attr}">
       <div style="text-align:center;">
         <span class="pill" style="margin-bottom:14px;display:inline-block;">Chapter {role_index:02d}</span>
-        <h2 class="gt">{title}</h2>
+        {section_title}
         <div class="divider" style="margin:8px auto 14px;"></div>
         <p style="max-width:600px;margin:0 auto;color:var(--text-secondary);">{key_point}</p>
       </div>
@@ -5224,17 +5327,17 @@ def _render_blue_sky_slide(
         items_html = f'<ul class="bl">{item_list}</ul>'
 
     # Two-column comparison
-    if role in ("comparison", "dual"):
+    if layout_id == "comparison":
         left_items = all_items[:len(all_items)//2]
         right_items = all_items[len(all_items)//2:]
         left_html = "".join(f"<li>{_escape(i)}</li>" for i in left_items)
         right_html = "".join(f"<li>{_escape(i)}</li>" for i in right_items)
         return f"""
     <!-- slide {slide_number}: {role} -->
-    <section class="slide" id="slide-{slide_number}" data-notes="{speaker_note}" data-export-role="{role}">
+    <section class="slide" id="slide-{slide_number}" data-notes="{speaker_note}" aria-label="{role_attr}" data-export-role="{role_attr}">
       <div style="max-width:860px;width:100%;">
         <span class="pill" style="margin-bottom:14px;display:inline-block;">Chapter {role_index:02d}</span>
-        <h2 class="gt">{title}</h2>
+        {section_title}
         <div class="divider"></div>
         <div class="cols2">
           <div class="g" style="padding:22px 24px;"><ul class="bl">{left_html}</ul></div>
@@ -5245,7 +5348,7 @@ def _render_blue_sky_slide(
     </section>""".strip()
 
     # Process / workflow slide
-    if role in ("process", "checkpoint"):
+    if layout_id == "workflow":
         steps_html = ""
         for idx, item in enumerate(all_items[:6], 1):
             steps_html += f"""
@@ -5255,10 +5358,10 @@ def _render_blue_sky_slide(
         </div>"""
         return f"""
     <!-- slide {slide_number}: {role} -->
-    <section class="slide" id="slide-{slide_number}" data-notes="{speaker_note}" data-export-role="{role}">
+    <section class="slide" id="slide-{slide_number}" data-notes="{speaker_note}" aria-label="{role_attr}" data-export-role="{role_attr}">
       <div style="max-width:820px;width:100%;">
         <span class="pill" style="margin-bottom:14px;display:inline-block;">Chapter {role_index:02d}</span>
-        <h2 class="gt">{title}</h2>
+        {section_title}
         <div class="divider"></div>
         <div style="display:flex;flex-direction:column;gap:11px;">{steps_html}
         </div>
@@ -5267,16 +5370,16 @@ def _render_blue_sky_slide(
     </section>""".strip()
 
     # Bento / grid slide
-    if role in ("recommendation", "features"):
+    if layout_id == "bento":
         cards_html = ""
         for item in all_items[:6]:
             cards_html += f'<div class="g" style="padding:16px 18px;"><h4 style="margin-bottom:6px;">{_escape(item)}</h4></div>'
         return f"""
     <!-- slide {slide_number}: {role} -->
-    <section class="slide" id="slide-{slide_number}" data-notes="{speaker_note}" data-export-role="{role}">
+    <section class="slide" id="slide-{slide_number}" data-notes="{speaker_note}" aria-label="{role_attr}" data-export-role="{role_attr}">
       <div style="max-width:940px;width:100%;">
         <span class="pill" style="margin-bottom:14px;display:inline-block;">Chapter {role_index:02d}</span>
-        <h2 class="gt">{title}</h2>
+        {section_title}
         <div class="divider"></div>
         <div class="bento">{cards_html}</div>
         <p style="margin-top:14px;color:var(--text-secondary);font-size:0.9rem;">{key_point}</p>
@@ -5284,16 +5387,17 @@ def _render_blue_sky_slide(
     </section>""".strip()
 
     # Evidence / data slide
-    if role == "evidence":
+    if layout_id == "table":
         table_rows = ""
-        for idx, item in enumerate(all_items[:8], 1):
+        table_items = all_items or [spec["key_point"]]
+        for idx, item in enumerate(table_items[:8], 1):
             table_rows += f'<tr><td>{idx}</td><td>{_escape(item)}</td></tr>'
         return f"""
     <!-- slide {slide_number}: {role} -->
-    <section class="slide" id="slide-{slide_number}" data-notes="{speaker_note}" data-export-role="{role}">
+    <section class="slide" id="slide-{slide_number}" data-notes="{speaker_note}" aria-label="{role_attr}" data-export-role="{role_attr}">
       <div style="max-width:860px;width:100%;">
         <span class="pill" style="margin-bottom:14px;display:inline-block;">Chapter {role_index:02d}</span>
-        <h2 class="gt">{title}</h2>
+        {section_title}
         <div class="divider"></div>
         <table class="ctable"><thead><tr><th>#</th><th>证据</th></tr></thead><tbody>{table_rows}</tbody></table>
         <p style="margin-top:14px;color:var(--text-secondary);font-size:0.9rem;">{key_point}</p>
@@ -5303,10 +5407,10 @@ def _render_blue_sky_slide(
     # Default: generic content slide
     return f"""
     <!-- slide {slide_number}: {role} -->
-    <section class="slide" id="slide-{slide_number}" data-notes="{speaker_note}" data-export-role="{role}">
+    <section class="slide" id="slide-{slide_number}" data-notes="{speaker_note}" aria-label="{role_attr}" data-export-role="{role_attr}">
       <div style="max-width:860px;width:100%;">
         <span class="pill" style="margin-bottom:14px;display:inline-block;">Chapter {role_index:02d}</span>
-        <h2 class="gt">{title}</h2>
+        {section_title}
         <div class="divider"></div>
         <p style="color:var(--text-secondary);">{key_point}</p>
         {items_html}
