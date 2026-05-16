@@ -277,7 +277,7 @@ def test_phase1_suite_no_longer_depends_on_removed_generated_decks_assets():
 
     blue_sky = next(case for case in cases if case["case_id"] == "support-blue-sky-fixture")
     assert blue_sky["preset"] == "Blue Sky"
-    assert blue_sky["html_path"] == "../../demos/ai-native-work-hub-blue-sky-zh.html"
+    assert blue_sky["html_path"] == "../../demos/blue-sky-zh.html"
     assert "brief_path" not in blue_sky
 
 

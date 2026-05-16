@@ -50,10 +50,17 @@ Machine-readable source of truth: `references/preset-support-tiers.json`
 | Neo-Retro Dev Deck | Opinionated, technical, handmade | Dev tool launches, API docs, hackathon |
 | Strategy Consulting | Structured, authoritative, insight-driven | Strategy decks, board materials, due diligence |
 
+## Custom Themes
+
+If `themes/` contains subdirectories with `reference.md`, those are custom themes.
+Custom themes are first-class presets — they take **priority** over content-type routing and mood-mapping.
+The code layer auto-discovers them via directory scan; no manual registration needed.
+When a custom theme is selected, read `themes/<name>/reference.md` as the style reference.
+
 **Per-style detail files** (read only the chosen one):
 `references/aurora-mesh.md`, `references/chinese-chan.md`, `references/data-story.md`, `references/enterprise-dark.md`, `references/glassmorphism.md`, `references/neo-brutalism.md`, `references/strategy-consulting.md`
 
-For styles without a dedicated file, use the relevant section in `STYLE-DESC.md`.
+Blue Sky uses `references/blue-sky-starter.html` as its reference file.
 
 ---
 

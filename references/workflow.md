@@ -118,8 +118,9 @@ Ask via AskUserQuestion:
 - **"Show me options"** → ask mood question → generate 3 previews based on answer
 - **"I know what I want"** → show preset picker (`Swiss Modern` / `Enterprise Dark` / `Data Story` / `Blue Sky` — with "Other" option for all current presets)
 
-**Before showing presets, silently scan `<skill-path>/themes/` for subdirectories.**
+**MANDATORY: Before any preset selection or BRIEF writing, scan `<skill-path>/themes/` for custom themes.**
 Skip any directory whose name starts with `_`. Each remaining subdirectory with a `reference.md` is a custom theme — append as `Custom: <folder-name>` entries.
+If the user explicitly named a custom theme, it takes **absolute priority** over content-type routing tables and mood-mapping recommendations. Do not substitute with a built-in preset.
 
 Read [style-index.md](style-index.md) for the full 21-preset table and mood → preset mapping. Read [preset-support-tiers.json](preset-support-tiers.json) for the current default recommendation surface and support tiers.
 
@@ -140,6 +141,8 @@ Present the 3 files with a one-sentence description each, then ask via AskUserQu
 Generate the presentation based on content from Phase 1 and style from Phase 2. If `BRIEF.json` exists, it's the source of truth — skip Phases 1 and 2.
 
 In no-flag / interactive mode, and especially for "direct content + preset" requests, do **not** hand-compose final HTML from the conversation. First materialize `BRIEF.json`, then render through the same deterministic path as `--generate`, then run the same strict pre-write gate before writing the final file.
+
+If the user's style name matches a custom theme in `themes/`, set `style.preset` to the folder name (e.g., `"Kingdee"`, not `"Custom: Kingdee"`).
 
 Before writing HTML, tell the user the expected end-to-end time window based on planning depth:
 
@@ -176,6 +179,8 @@ The composition guide defines the layout category for each slide role:
 - Signature element CSS (grid overlay / orbs / scan-lines / geometric shapes / etc.)
 - Visual tokens (colors, fonts, component classes, background patterns)
 - Style Preview Checklist (all items MUST appear in generated HTML)
+
+Resolution order: (1) `themes/<preset>/reference.md` if exists, (2) `references/<PRESET_REFERENCE_MAP[preset]>`, (3) treat as path if file exists. Custom themes are resolved **first**, not as fallback.
 
 **Step 1c: Read html-template.md + base-css.md** → Get:
 - HTML architecture (scroll-snap, slide structure, present mode, edit mode)

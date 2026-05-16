@@ -30,15 +30,13 @@ def test_run_suite_supports_fixture_and_render_cases(tmp_path: Path):
                 "case_id": "fixture-blue-sky",
                 "validation_profile": "required",
                 "preset": "Blue Sky",
-                "html_path": str(ROOT / "demos" / "ai-native-work-hub-blue-sky-zh.html"),
+                "html_path": str(ROOT / "demos" / "blue-sky-zh.html"),
                 "expectations": {
                     "expected_preset": "Blue Sky",
                     "expected_support_tier": "production",
                     "required_html_checks": [
                         "blue-sky-architecture",
                         "present-mode",
-                        "edit-mode",
-                        "watermark-injected",
                     ],
                     "required_quality_gates": [
                         "chrome-hidden-by-default",

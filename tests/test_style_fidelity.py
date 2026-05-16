@@ -1,9 +1,7 @@
-"""Thin test wrapper around the skill's own style fidelity checker.
+"""Run style fidelity checks against all demo HTML files.
 
-The canonical implementation lives in the skill package:
-    ~/.claude/skills/slide-creator/scripts/check_style_fidelity.py
-
-This file only imports and runs it under pytest for CI regression.
+The checker is expected at scripts/check_style_fidelity.py within this repo.
+If not present, the entire test class is skipped.
 """
 import subprocess
 import sys
@@ -11,7 +9,7 @@ from pathlib import Path
 import pytest
 
 DEMOS_DIR = Path(__file__).parent.parent / "demos"
-CHECKER = Path.home() / ".claude" / "skills" / "slide-creator" / "scripts" / "check_style_fidelity.py"
+CHECKER = Path(__file__).parent.parent / "scripts" / "check_style_fidelity.py"
 
 ALL_DEMOS = sorted(DEMOS_DIR.glob("*.html"))
 
