@@ -5034,6 +5034,9 @@ def render_blue_sky_html(
     brand_mark = _brand_mark_text(brief["title"], preset)
     provenance_attrs = _html_body_provenance_attrs(packet)
 
+    # Pre-generate nav-dots
+    dots_html = "".join(f'<button class="dot" aria-label="Slide {i + 1}"></button>' for i in range(total))
+
     # Extract Blue Sky presentation JS (includes PresentMode, keyboard nav, go())
     blue_sky_js = _extract_blue_sky_js(starter_path, total) if starter_path.exists() else ""
 
@@ -5053,7 +5056,7 @@ def render_blue_sky_html(
 <div class="orb" id="orb2"></div>
 <div class="orb" id="orb3"></div>
 <div id="slide-counter">01 / {total:02d}</div>
-<div id="nav-dots"></div>
+<div id="nav-dots">{dots_html}</div>
 
 <div class="edit-hotzone"></div>
 <button class="edit-toggle" id="editToggle" title="Edit mode (E)">✏ Edit</button>
@@ -5112,6 +5115,67 @@ def _render_blue_sky_slide(
         return f"""
     <!-- slide {slide_number}: {role} -->
     <section class="slide cover" style="overflow:hidden;" id="slide-{slide_number}" data-notes="{speaker_note}" data-export-role="cover">
+
+      <svg width="0" height="0" style="position:absolute;pointer-events:none;">
+        <defs>
+          <filter id="cloud-filter">
+            <feTurbulence type="fractalNoise" baseFrequency="0.012" numOctaves="4" seed="5" result="noise"/>
+            <feDisplacementMap in="SourceGraphic" in2="noise" scale="60" xChannelSelector="R" yChannelSelector="G"/>
+          </filter>
+        </defs>
+      </svg>
+
+      <!-- Ambient orbs -->
+      <div style="position:absolute;width:50%;height:60%;top:5%;left:-10%;border-radius:50%;background:rgba(96,165,250,0.28);filter:blur(90px);pointer-events:none;z-index:1;"></div>
+      <div style="position:absolute;width:55%;height:65%;top:8%;right:-12%;border-radius:50%;background:rgba(14,165,233,0.22);filter:blur(100px);pointer-events:none;z-index:1;"></div>
+      <div style="position:absolute;width:35%;height:40%;bottom:32%;left:30%;border-radius:50%;background:rgba(99,102,241,0.18);filter:blur(80px);pointer-events:none;z-index:1;"></div>
+
+      <!-- Scrolling cloud bank -->
+      <div class="cloud-layer" style="filter:url(#cloud-filter);">
+        <div class="cloud-strip">
+          <div style="position:relative;width:1920px;height:100%;flex-shrink:0;">
+            <div class="cloud-group" style="left:192px;bottom:-54px;width:576px;height:216px;opacity:0.65;">
+              <div class="cloud-puff" style="bottom:0;left:10%;width:288px;height:288px;filter:blur(18px);"></div>
+              <div class="cloud-puff" style="bottom:22px;left:30%;width:384px;height:384px;filter:blur(22px);"></div>
+              <div class="cloud-puff" style="bottom:-22px;left:60%;width:346px;height:346px;filter:blur(18px);"></div>
+            </div>
+            <div class="cloud-group" style="left:1100px;bottom:-86px;width:480px;height:194px;opacity:0.5;">
+              <div class="cloud-puff" style="bottom:0;left:0%;width:230px;height:230px;filter:blur(14px);"></div>
+              <div class="cloud-puff" style="bottom:32px;left:40%;width:346px;height:346px;filter:blur(20px);"></div>
+              <div class="cloud-puff" style="bottom:11px;left:70%;width:288px;height:288px;filter:blur(16px);"></div>
+            </div>
+          </div>
+          <div style="position:relative;width:1920px;height:100%;flex-shrink:0;">
+            <div class="cloud-group" style="left:192px;bottom:-54px;width:576px;height:216px;opacity:0.65;">
+              <div class="cloud-puff" style="bottom:0;left:10%;width:288px;height:288px;filter:blur(18px);"></div>
+              <div class="cloud-puff" style="bottom:22px;left:30%;width:384px;height:384px;filter:blur(22px);"></div>
+              <div class="cloud-puff" style="bottom:-22px;left:60%;width:346px;height:346px;filter:blur(18px);"></div>
+            </div>
+            <div class="cloud-group" style="left:1100px;bottom:-86px;width:480px;height:194px;opacity:0.5;">
+              <div class="cloud-puff" style="bottom:0;left:0%;width:230px;height:230px;filter:blur(14px);"></div>
+              <div class="cloud-puff" style="bottom:32px;left:40%;width:346px;height:346px;filter:blur(20px);"></div>
+              <div class="cloud-puff" style="bottom:11px;left:70%;width:288px;height:288px;filter:blur(16px);"></div>
+            </div>
+          </div>
+        </div>
+        <div class="cloud-strip fast" style="z-index:2;">
+          <div style="position:relative;width:1920px;height:100%;flex-shrink:0;">
+            <div class="cloud-group" style="left:580px;bottom:-70px;width:420px;height:170px;opacity:0.42;">
+              <div class="cloud-puff" style="bottom:0;left:5%;width:200px;height:200px;filter:blur(12px);"></div>
+              <div class="cloud-puff" style="bottom:20px;left:35%;width:300px;height:300px;filter:blur(16px);"></div>
+              <div class="cloud-puff" style="bottom:-15px;left:65%;width:250px;height:250px;filter:blur(13px);"></div>
+            </div>
+          </div>
+          <div style="position:relative;width:1920px;height:100%;flex-shrink:0;">
+            <div class="cloud-group" style="left:580px;bottom:-70px;width:420px;height:170px;opacity:0.42;">
+              <div class="cloud-puff" style="bottom:0;left:5%;width:200px;height:200px;filter:blur(12px);"></div>
+              <div class="cloud-puff" style="bottom:20px;left:35%;width:300px;height:300px;filter:blur(16px);"></div>
+              <div class="cloud-puff" style="bottom:-15px;left:65%;width:250px;height:250px;filter:blur(13px);"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
       <div style="text-align:center;position:relative;z-index:10;">
         <span class="pill" style="margin-bottom:20px;display:inline-block;">{_escape(spec.get('subtitle', ''))}</span>
         <h1 class="gt" style="margin-bottom:14px;">{title}</h1>
