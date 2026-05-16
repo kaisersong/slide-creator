@@ -5111,7 +5111,7 @@ def _render_blue_sky_slide(
         stat_items = []
         for item in all_items[:4]:
             stat_items.append(f'<div class="g" style="padding:12px 20px;text-align:center;"><div class="stat" style="font-size:2.4rem;">{_escape(item)}</div></div>')
-        stats_html = "".join(stat_items) if stat_items else ""
+        stats_html = f'<div style="display:flex;gap:14px;justify-content:center;flex-wrap:wrap;">{"".join(stat_items)}</div>' if stat_items else ""
         return f"""
     <!-- slide {slide_number}: {role} -->
     <section class="slide cover" style="overflow:hidden;" id="slide-{slide_number}" data-notes="{speaker_note}" data-export-role="cover">
