@@ -136,6 +136,13 @@ SWISS_ROLE_LAYOUTS = {
     "tradeoff": "column_content",
     "closing": "pull_quote",
     "cta": "pull_quote",
+    # Fix 1 v2: fill unmapped canonical roles
+    "discovery": "contents_index",
+    "comparison": "column_content",
+    "dual": "column_content",
+    "process": "geometric_diagram",
+    "checkpoint": "geometric_diagram",
+    "recommendation": "contents_index",
 }
 
 ENTERPRISE_ROLE_LAYOUTS = {
@@ -165,6 +172,10 @@ ENTERPRISE_ROLE_LAYOUTS = {
     "decision": "cta_close",
     "closing": "cta_close",
     "cta": "cta_close",
+    # Fix 1 v2: fill unmapped canonical roles
+    "dual": "consulting_split",
+    "process": "consulting_split",
+    "recommendation": "comparison_matrix",
 }
 
 DATA_STORY_ROLE_LAYOUTS = {
@@ -190,6 +201,10 @@ DATA_STORY_ROLE_LAYOUTS = {
     "best-fit": "comparison_matrix",
     "closing": "cta_close",
     "cta": "cta_close",
+    # Fix 1 v2: fill unmapped canonical roles
+    "dual": "kpi_grid",
+    "process": "workflow_chart",
+    "recommendation": "kpi_grid",
 }
 
 CHINESE_CHAN_ROLE_LAYOUTS = {
@@ -216,6 +231,11 @@ CHINESE_CHAN_ROLE_LAYOUTS = {
     "decision": "zen_vertical",
     "closing": "zen_vertical",
     "cta": "zen_vertical",
+    # Fix 1 v2: fill unmapped canonical roles
+    "features": "zen_split",
+    "dual": "zen_stat",
+    "process": "zen_split",
+    "recommendation": "zen_split",
 }
 
 ENTERPRISE_ROLE_BADGES_ZH = {
@@ -4841,17 +4861,30 @@ def _render_chinese_chan_split(spec: dict[str, Any], total: int, *, language: st
     )
     items = _chinese_chan_copy_items(spec, count=3)
     list_html = "".join(f"<li>{_escape(item)}</li>" for item in items)
+    # Fix 2 v2: alternate ornament per slide (rule ↔ ghost ↔ vline)
+    _ornament_cycle = ("rule", "ghost", "vline")
+    _orn_type = _ornament_cycle[(slide_number - 1) % len(_ornament_cycle)]
+    if _orn_type == "ghost":
+        _ornament = f'\n        {_chinese_chan_ghost(spec)}'
+        _rule = ""
+    elif _orn_type == "vline":
+        _ornament = '<div class="reveal" style="margin-top:26px;"><div class="zen-vline"></div></div>'
+        _rule = ""
+    else:
+        _ornament = ""
+        _rule = '<div class="zen-rule reveal"><span class="zen-rule-line"></span></div>'
     return f"""
     <section class="slide" id="slide-{slide_number}" data-notes="{_escape(spec['speaker_note'])}" aria-label="{_escape(spec['role'])}" data-export-role="zen_split">
         <div class="zen-content">
             <span class="zen-caption reveal">{_escape(_chinese_chan_caption(spec, language))}</span>
             {title_tag}
-            <div class="zen-rule reveal"><span class="zen-rule-line"></span></div>
+            {_rule}
             <div class="zen-paragraph-stack">
                 <p class="zen-body zen-cn reveal">{_escape(spec['key_point'])}</p>
                 <ul class="zen-list zen-body zen-cn reveal">{list_html}</ul>
             </div>
         </div>
+        {_ornament}
         <span class="slide-num-label zen-caption">{slide_number:02d} / {total:02d}</span>
     </section>
     """.strip()
@@ -4884,17 +4917,30 @@ def _render_chinese_chan_stat(spec: dict[str, Any], total: int, *, language: str
             </div>
             """
         )
+    # Fix 2 v2: alternate ornament per slide (rule ↔ ghost ↔ vline)
+    _ornament_cycle = ("rule", "ghost", "vline")
+    _orn_type = _ornament_cycle[(slide_number - 1) % len(_ornament_cycle)]
+    if _orn_type == "ghost":
+        _ornament = f'\n        {_chinese_chan_ghost(spec)}'
+        _rule = ""
+    elif _orn_type == "vline":
+        _ornament = '<div class="reveal" style="margin-top:26px;"><div class="zen-vline"></div></div>'
+        _rule = ""
+    else:
+        _ornament = ""
+        _rule = '<div class="zen-rule reveal"><span class="zen-rule-line"></span></div>'
     return f"""
     <section class="slide" id="slide-{slide_number}" data-notes="{_escape(spec['speaker_note'])}" aria-label="{_escape(spec['role'])}" data-export-role="zen_stat">
         <div class="zen-content">
             <span class="zen-caption reveal">{_escape(_chinese_chan_caption(spec, language))}</span>
             {title_tag}
-            <div class="zen-rule reveal"><span class="zen-rule-line"></span></div>
+            {_rule}
             <div class="zen-stat-row">
                 {''.join(cards)}
             </div>
             <p class="zen-body zen-cn reveal" style="text-align:center;">{_escape(spec['key_point'])}</p>
         </div>
+        {_ornament}
         <span class="slide-num-label zen-caption">{slide_number:02d} / {total:02d}</span>
     </section>
     """.strip()
