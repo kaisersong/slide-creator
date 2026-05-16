@@ -5056,7 +5056,7 @@ def render_blue_sky_html(
 <div class="orb" id="orb2"></div>
 <div class="orb" id="orb3"></div>
 <div id="slide-counter">01 / {total:02d}</div>
-<div id="nav-dots">{dots_html}</div>
+<div id="nav-dots"></div>
 
 <div class="edit-hotzone"></div>
 <button class="edit-toggle" id="editToggle" title="Edit mode (E)">✏ Edit</button>
@@ -5108,10 +5108,18 @@ def _render_blue_sky_slide(
 
     # Cover slide
     if role == "cover" or role_index == 0:
+        # Cover uses supporting_facts for stat row (more complete)
         stat_items = []
-        for item in all_items[:4]:
-            stat_items.append(f'<div class="g" style="padding:12px 20px;text-align:center;"><div class="stat" style="font-size:2.4rem;">{_escape(item)}</div></div>')
-        stats_html = f'<div style="display:flex;gap:14px;justify-content:center;flex-wrap:wrap;">{"".join(stat_items)}</div>' if stat_items else ""
+        for item in (facts or all_items)[:4]:
+            # Split into stat value + label if possible (format: "value - label" or "value label")
+            parts = item.split(" ", 1)
+            stat_val = _escape(parts[0])
+            stat_label = _escape(parts[1]) if len(parts) > 1 else ""
+            label_html = f'<p style="font-size:0.78rem;margin-top:2px;">{stat_label}</p>' if stat_label else ""
+            stat_items.append(f'<div class="g" style="padding:16px 28px;text-align:center;">'
+                              f'<div class="stat" style="font-size:2.8rem;">{stat_val}</div>'
+                              f'{label_html}</div>')
+        stats_html = f'<div style="display:flex;gap:14px;justify-content:center;flex-wrap:wrap;margin-top:28px;">{"".join(stat_items)}</div>' if stat_items else ""
         return f"""
     <!-- slide {slide_number}: {role} -->
     <section class="slide cover" style="overflow:hidden;" id="slide-{slide_number}" data-notes="{speaker_note}" data-export-role="cover">
