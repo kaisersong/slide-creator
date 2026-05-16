@@ -4989,6 +4989,259 @@ def _render_chinese_chan_slide(spec: dict[str, Any], total: int, *, language: st
     return _render_chinese_chan_split(spec, total, language=language)
 
 
+def _extract_blue_sky_js(starter_path: Path, total: int) -> str:
+    """Extract the <script> block from blue-sky-starter.html, updating TOTAL."""
+    content = _read_text(starter_path)
+    match = re.search(r"<script>(.*?)</script>", content, re.DOTALL)
+    if not match:
+        return ""
+    js = match.group(1).strip()
+    # Update TOTAL to match actual slide count
+    js = re.sub(r'const TOTAL\s*=\s*\d+', f'const TOTAL = {total}', js)
+    return js
+
+
+def render_blue_sky_html(
+    brief: dict[str, Any],
+    *,
+    packet: dict[str, Any] | None = None,
+    style_contract: dict[str, Any] | None = None,
+) -> str:
+    """Renderer for Blue Sky preset.
+
+    Blue Sky uses its own #stage/#track architecture (not shared js-engine shell).
+    Extracts starter CSS + JS from blue-sky-starter.html and assembles with generated slides.
+    """
+    packet = packet or build_render_packet(brief)
+    preset = "Blue Sky"
+    style_contract = style_contract or compile_style_contract(preset)
+    starter_path = ROOT / "references" / "blue-sky-starter.html"
+
+    # Extract starter CSS
+    if starter_path.exists():
+        starter_css = _extract_starter_css(starter_path)
+    else:
+        starter_css = "\n\n".join(style_contract["css_blocks"])
+
+    # Build slides
+    specs = build_slide_spec(brief, packet=packet)
+    total = len(specs)
+    slides_html = "\n\n".join(
+        _render_blue_sky_slide(spec, total, language=brief["language"], role_index=i)
+        for i, spec in enumerate(specs)
+    )
+
+    brand_mark = _brand_mark_text(brief["title"], preset)
+    provenance_attrs = _html_body_provenance_attrs(packet)
+
+    # Extract Blue Sky presentation JS (includes PresentMode, keyboard nav, go())
+    blue_sky_js = _extract_blue_sky_js(starter_path, total) if starter_path.exists() else ""
+
+    return f"""<!DOCTYPE html>
+<html lang="{_escape(brief['language'])}">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>{_escape(brief['title'])} - {preset}</title>
+<style>
+{starter_css}
+</style>
+</head>
+<body data-export-progress="true" data-preset="{preset}" {provenance_attrs}>
+
+<div class="orb" id="orb1"></div>
+<div class="orb" id="orb2"></div>
+<div class="orb" id="orb3"></div>
+<div id="slide-counter">01 / {total:02d}</div>
+<div id="nav-dots"></div>
+
+<div class="edit-hotzone"></div>
+<button class="edit-toggle" id="editToggle" title="Edit mode (E)">✏ Edit</button>
+
+<div id="notes-panel">
+  <div id="notes-panel-header">
+    <div id="notes-panel-label">SPEAKER NOTES — SLIDE 1 / {total}</div>
+    <div id="notes-drag-hint"></div>
+    <button id="notes-collapse-btn" title="Collapse / expand">▾</button>
+  </div>
+  <div id="notes-body">
+    <textarea id="notes-textarea" placeholder="Add speaker notes for this slide…"></textarea>
+  </div>
+</div>
+
+<span id="brand-mark">{_escape(brand_mark)}</span>
+
+<div id="stage">
+<div id="track">
+{slides_html}
+</div>
+</div>
+
+<script>
+{blue_sky_js}
+</script>
+</body>
+</html>"""
+
+
+def _render_blue_sky_slide(
+    spec: dict[str, Any],
+    total: int,
+    *,
+    language: str,
+    role_index: int,
+) -> str:
+    """Render a single Blue Sky slide using starter.html component classes."""
+    slide_number = spec["slide_number"]
+    role = spec["role"]
+    title = _escape(spec["title"])
+    key_point = _escape(spec.get("key_point", ""))
+    speaker_note = _escape(spec.get("speaker_note", ""))
+
+    items = spec.get("supporting_items", [])
+    evidence = spec.get("evidence_items", [])
+    facts = spec.get("supporting_facts", [])
+    all_items = items or evidence or facts
+
+    # Cover slide
+    if role == "cover" or role_index == 0:
+        stat_items = []
+        for item in all_items[:4]:
+            stat_items.append(f'<div class="g" style="padding:12px 20px;text-align:center;"><div class="stat" style="font-size:2.4rem;">{_escape(item)}</div></div>')
+        stats_html = "".join(stat_items) if stat_items else ""
+        return f"""
+    <!-- slide {slide_number}: {role} -->
+    <section class="slide cover" style="overflow:hidden;" id="slide-{slide_number}" data-notes="{speaker_note}" data-export-role="cover">
+      <div style="text-align:center;position:relative;z-index:10;">
+        <span class="pill" style="margin-bottom:20px;display:inline-block;">{_escape(spec.get('subtitle', ''))}</span>
+        <h1 class="gt" style="margin-bottom:14px;">{title}</h1>
+        <p style="font-size:1.1rem;max-width:560px;margin:0 auto 28px;">{key_point}</p>
+        {stats_html}
+      </div>
+    </section>""".strip()
+
+    # Closing slide
+    if role == "closing" or role == "cta":
+        return f"""
+    <!-- slide {slide_number}: {role} -->
+    <section class="slide" id="slide-{slide_number}" data-notes="{speaker_note}" data-export-role="{role}">
+      <div style="text-align:center;max-width:640px;">
+        <div class="divider" style="margin:0 auto 20px;"></div>
+        <h2 class="gt">{title}</h2>
+        <p style="font-size:1rem;color:var(--text-secondary);margin-top:14px;">{key_point}</p>
+      </div>
+    </section>""".strip()
+
+    # Chapter / section slide
+    if role in ("discovery", "solution"):
+        return f"""
+    <!-- slide {slide_number}: {role} -->
+    <section class="slide chapter" id="slide-{slide_number}" data-notes="{speaker_note}" data-export-role="{role}">
+      <div style="text-align:center;">
+        <span class="pill" style="margin-bottom:14px;display:inline-block;">Chapter {role_index:02d}</span>
+        <h2 class="gt">{title}</h2>
+        <div class="divider" style="margin:8px auto 14px;"></div>
+        <p style="max-width:600px;margin:0 auto;color:var(--text-secondary);">{key_point}</p>
+      </div>
+    </section>""".strip()
+
+    # Default content slide
+    items_html = ""
+    if all_items:
+        item_list = "".join(f"<li>{_escape(item)}</li>" for item in all_items)
+        items_html = f'<ul class="bl">{item_list}</ul>'
+
+    # Two-column comparison
+    if role in ("comparison", "dual"):
+        left_items = all_items[:len(all_items)//2]
+        right_items = all_items[len(all_items)//2:]
+        left_html = "".join(f"<li>{_escape(i)}</li>" for i in left_items)
+        right_html = "".join(f"<li>{_escape(i)}</li>" for i in right_items)
+        return f"""
+    <!-- slide {slide_number}: {role} -->
+    <section class="slide" id="slide-{slide_number}" data-notes="{speaker_note}" data-export-role="{role}">
+      <div style="max-width:860px;width:100%;">
+        <span class="pill" style="margin-bottom:14px;display:inline-block;">Chapter {role_index:02d}</span>
+        <h2 class="gt">{title}</h2>
+        <div class="divider"></div>
+        <div class="cols2">
+          <div class="g" style="padding:22px 24px;"><ul class="bl">{left_html}</ul></div>
+          <div class="g" style="padding:22px 24px;"><ul class="bl">{right_html}</ul></div>
+        </div>
+        <p style="margin-top:14px;color:var(--text-secondary);font-size:0.9rem;">{key_point}</p>
+      </div>
+    </section>""".strip()
+
+    # Process / workflow slide
+    if role in ("process", "checkpoint"):
+        steps_html = ""
+        for idx, item in enumerate(all_items[:6], 1):
+            steps_html += f"""
+        <div class="layer">
+          <div class="step">{idx}</div>
+          <div><h4 style="margin-bottom:4px;">{_escape(item)}</h4></div>
+        </div>"""
+        return f"""
+    <!-- slide {slide_number}: {role} -->
+    <section class="slide" id="slide-{slide_number}" data-notes="{speaker_note}" data-export-role="{role}">
+      <div style="max-width:820px;width:100%;">
+        <span class="pill" style="margin-bottom:14px;display:inline-block;">Chapter {role_index:02d}</span>
+        <h2 class="gt">{title}</h2>
+        <div class="divider"></div>
+        <div style="display:flex;flex-direction:column;gap:11px;">{steps_html}
+        </div>
+        <p style="margin-top:14px;color:var(--text-secondary);font-size:0.9rem;">{key_point}</p>
+      </div>
+    </section>""".strip()
+
+    # Bento / grid slide
+    if role in ("recommendation", "features"):
+        cards_html = ""
+        for item in all_items[:6]:
+            cards_html += f'<div class="g" style="padding:16px 18px;"><h4 style="margin-bottom:6px;">{_escape(item)}</h4></div>'
+        return f"""
+    <!-- slide {slide_number}: {role} -->
+    <section class="slide" id="slide-{slide_number}" data-notes="{speaker_note}" data-export-role="{role}">
+      <div style="max-width:940px;width:100%;">
+        <span class="pill" style="margin-bottom:14px;display:inline-block;">Chapter {role_index:02d}</span>
+        <h2 class="gt">{title}</h2>
+        <div class="divider"></div>
+        <div class="bento">{cards_html}</div>
+        <p style="margin-top:14px;color:var(--text-secondary);font-size:0.9rem;">{key_point}</p>
+      </div>
+    </section>""".strip()
+
+    # Evidence / data slide
+    if role == "evidence":
+        table_rows = ""
+        for idx, item in enumerate(all_items[:8], 1):
+            table_rows += f'<tr><td>{idx}</td><td>{_escape(item)}</td></tr>'
+        return f"""
+    <!-- slide {slide_number}: {role} -->
+    <section class="slide" id="slide-{slide_number}" data-notes="{speaker_note}" data-export-role="{role}">
+      <div style="max-width:860px;width:100%;">
+        <span class="pill" style="margin-bottom:14px;display:inline-block;">Chapter {role_index:02d}</span>
+        <h2 class="gt">{title}</h2>
+        <div class="divider"></div>
+        <table class="ctable"><thead><tr><th>#</th><th>证据</th></tr></thead><tbody>{table_rows}</tbody></table>
+        <p style="margin-top:14px;color:var(--text-secondary);font-size:0.9rem;">{key_point}</p>
+      </div>
+    </section>""".strip()
+
+    # Default: generic content slide
+    return f"""
+    <!-- slide {slide_number}: {role} -->
+    <section class="slide" id="slide-{slide_number}" data-notes="{speaker_note}" data-export-role="{role}">
+      <div style="max-width:860px;width:100%;">
+        <span class="pill" style="margin-bottom:14px;display:inline-block;">Chapter {role_index:02d}</span>
+        <h2 class="gt">{title}</h2>
+        <div class="divider"></div>
+        <p style="color:var(--text-secondary);">{key_point}</p>
+        {items_html}
+      </div>
+    </section>""".strip()
+
+
 def render_chinese_chan_html(
     brief: dict[str, Any],
     *,
@@ -5284,11 +5537,13 @@ def render_from_brief(brief: dict[str, Any]) -> tuple[str, dict[str, Any], dict[
         html_text = render_data_story_html(brief, packet=packet, style_contract=style_contract)
     elif preset == "Chinese Chan":
         html_text = render_chinese_chan_html(brief, packet=packet, style_contract=style_contract)
+    elif preset == "Blue Sky":
+        html_text = render_blue_sky_html(brief, packet=packet, style_contract=style_contract)
     elif _is_custom_theme(preset):
         html_text = render_custom_theme_html(brief, packet=packet, style_contract=style_contract)
     else:
         raise RenderError(
-            f"Deterministic low-context render is only implemented for Swiss Modern, Enterprise Dark, Data Story, and Chinese Chan right now; got {preset}"
+            f"Deterministic low-context render is only implemented for Swiss Modern, Enterprise Dark, Data Story, Chinese Chan, and Blue Sky right now; got {preset}"
         )
     return html_text, packet, style_contract
 
