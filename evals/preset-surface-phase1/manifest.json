@@ -20,7 +20,7 @@
       "validation_profile": "required",
       "quality_eval_use_brief": false,
       "preset": "Blue Sky",
-      "html_path": "../../demos/ai-native-work-hub-blue-sky-zh.html",
+      "html_path": "../../demos/blue-sky-zh.html",
       "expectations": {
         "expected_preset": "Blue Sky",
         "expected_support_tier": "production",

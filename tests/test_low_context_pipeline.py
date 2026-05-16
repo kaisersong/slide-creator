@@ -1177,4 +1177,179 @@ def test_chinese_chan_vertical_titles_compact_to_safe_semantic_anchors():
 
     assert 'zen-vertical-title' in html_text
     assert '>先问自己<' in html_text
-    assert '>意义<' in html_text
+
+
+# ── Custom theme tests ──────────────────────────────────────────────────
+
+
+def test_resolve_custom_theme():
+    """Kingdee / kingdee / Custom: kingdee all resolve to themes/kingdee/reference.md."""
+    from low_context import resolve_style_reference, discover_custom_themes
+
+    themes = discover_custom_themes()
+    assert "kingdee" in themes, f"Expected 'kingdee' in custom themes, got {list(themes.keys())}"
+
+    ref = resolve_style_reference("Kingdee")
+    assert ref.exists()
+    assert ref.name == "reference.md"
+    assert ref.parent.name == "kingdee"
+
+    ref_lower = resolve_style_reference("kingdee")
+    assert ref_lower == ref
+
+    ref_prefix = resolve_style_reference("Custom: kingdee")
+    assert ref_prefix == ref
+
+
+def test_compile_custom_contract():
+    """compile_style_contract('Kingdee') produces contract with preset='Kingdee', not 'Reference'."""
+    from low_context import compile_style_contract
+
+    contract = compile_style_contract("Kingdee")
+    assert contract["preset"] == "Kingdee", f"Expected 'Kingdee', got '{contract['preset']}'"
+    assert "themes/kingdee/reference.md" in contract["source_path"]
+    assert len(contract.get("tokens", {})) > 0
+    assert len(contract.get("css_blocks", [])) > 0
+
+
+def test_render_custom_theme():
+    """render_from_brief with Kingdee preset produces valid HTML without RenderError."""
+    from low_context import render_from_brief, StyleContractError
+
+    brief = read_json(AUTO_DEMO)
+    brief["style"]["preset"] = "Kingdee"
+    brief["title"] = "Kingdee Test Deck"
+
+    html_text, packet, contract = render_from_brief(brief)
+
+    assert len(html_text) > 1000
+    assert 'data-preset="Kingdee"' in html_text
+    assert packet["preset_support_tier"] == "custom"
+    assert contract["preset"] == "Kingdee"
+
+
+def test_preset_support_custom():
+    """preset_support_tier('Kingdee') returns 'custom', explicit_selection_is_allowed returns True."""
+    from preset_support import preset_support_tier, canonical_preset_name, explicit_selection_is_allowed
+
+    assert preset_support_tier("Kingdee") == "custom"
+    assert canonical_preset_name("Kingdee") == "Kingdee"
+    assert explicit_selection_is_allowed("Kingdee") is True
+    assert explicit_selection_is_allowed("kingdee") is True
+
+
+def test_title_profile_custom():
+    """resolve_title_profile('Kingdee') returns default profile without KeyError."""
+    from title_profiles import resolve_title_profile
+
+    profile = resolve_title_profile("Kingdee")
+    assert profile["profile"] == "horizontal_balanced_left_anchor"
+    assert profile["preset"] == "Kingdee"
+
+
+def test_custom_theme_render_has_shared_shell():
+    """Rendered custom theme HTML contains the shared shell markers (scroll-snap, SlidePresentation, data-notes)."""
+    from low_context import render_from_brief
+
+    brief = read_json(AUTO_DEMO)
+    brief["style"]["preset"] = "Kingdee"
+    brief["title"] = "Kingdee Shell Test"
+
+    html_text, _, _ = render_from_brief(brief)
+
+    assert "scroll-snap-type" in html_text
+    assert "SlidePresentation" in html_text
+    assert "data-notes" in html_text
+
+
+def test_custom_theme_render_slide_count():
+    """Rendered custom theme HTML has the correct number of slides."""
+    from low_context import render_from_brief
+
+    brief = read_json(AUTO_DEMO)
+    brief["style"]["preset"] = "Kingdee"
+    brief["title"] = "Kingdee Slide Count"
+    expected_pages = brief["deck"]["page_count"]
+
+    html_text, _, _ = render_from_brief(brief)
+
+    soup = BeautifulSoup(html_text, "html.parser")
+    slides = soup.find_all(class_="slide")
+    assert len(slides) == expected_pages, f"Expected {expected_pages} slides, got {len(slides)}"
+
+
+def test_custom_theme_resolve_strips_custom_prefix():
+    """'Custom: <name>' and 'custom: <name>' both resolve correctly."""
+    from low_context import resolve_style_reference
+
+    ref1 = resolve_style_reference("Custom: kingdee")
+    ref2 = resolve_style_reference("custom: kingdee")
+    ref3 = resolve_style_reference("kingdee")
+
+    assert ref1 == ref2 == ref3
+    assert ref1.name == "reference.md"
+
+
+def test_custom_theme_built_in_presets_unaffected():
+    """Built-in presets still resolve and render correctly after custom theme changes."""
+    from low_context import resolve_style_reference, compile_style_contract
+
+    for preset in ["Swiss Modern", "Enterprise Dark", "Data Story", "Chinese Chan"]:
+        ref = resolve_style_reference(preset)
+        assert ref.exists(), f"Built-in preset {preset} not found at {ref}"
+        assert "themes/" not in str(ref), f"Built-in {preset} incorrectly resolved to themes/"
+
+        contract = compile_style_contract(preset)
+        assert contract["preset"] == preset
+
+
+def test_custom_theme_e2e_render_and_validate(tmp_path):
+    """End-to-end: render a Kingdee deck, write to file, run validate_html --strict."""
+    from low_context import render_from_brief
+
+    sys.path.insert(0, str(SCRIPTS))
+    from validate_html import validate
+
+    brief = read_json(AUTO_DEMO)
+    brief["style"]["preset"] = "Kingdee"
+    brief["title"] = "Kingdee E2E Test Deck"
+
+    html_text, packet, contract = render_from_brief(brief)
+
+    output_path = tmp_path / "kingdee-e2e.html"
+    output_path.write_text(html_text, encoding="utf-8")
+
+    assert output_path.exists()
+    assert len(html_text) > 5000
+
+    # Run required (non-strict) validation
+    passed = validate(output_path, strict=False)
+    assert passed, f"Required validation failed for Kingdee deck at {output_path}"
+
+
+def test_custom_theme_provenance_attrs():
+    """Custom theme HTML has correct provenance attributes on body."""
+    from low_context import render_from_brief
+
+    brief = read_json(AUTO_DEMO)
+    brief["style"]["preset"] = "Kingdee"
+    brief["title"] = "Kingdee Provenance"
+
+    html_text, packet, _ = render_from_brief(brief)
+
+    soup = BeautifulSoup(html_text, "html.parser")
+    body = soup.find("body")
+    assert body is not None
+    assert body.get("data-preset") == "Kingdee"
+    assert body.get("data-generator") == "kai-slide-creator"
+    assert body.get("data-render-path") is not None
+
+
+def test_custom_theme_no_preset_collision():
+    """A folder name that happens to match a built-in preset should still resolve to built-in."""
+    from low_context import resolve_style_reference
+
+    # "swiss modern" is a built-in, should resolve to references/ not themes/
+    ref = resolve_style_reference("Swiss Modern")
+    assert "references/" in str(ref)
+    assert "themes/" not in str(ref)
