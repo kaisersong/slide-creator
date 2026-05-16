@@ -445,6 +445,8 @@ For PPTX/PNG export: `clawhub install kai-html-export` or `pip install playwrigh
 
 ## Version History
 
+**v2.26.0** — Blue Sky deterministic renderer and custom theme release: Blue Sky now renders through the canonical BRIEF pipeline with strict validation coverage, custom themes resolve correctly in both source and plugin layouts, and private Kingdee / Cloudhub theme assets were cleaned up, compressed, and locked with regression tests.
+
 **v2.25.0** — Strategy Consulting preset: new consulting-style design with 12 canonical layouts (exec summary, before/after, three things, funnel, framework matrix, quote + evidence, driver breakdown, etc.), white-background navy-accent visual language inspired by MBB slide decks. Preset count now 22.
 
 **v2.24.3** — Single-deck eval and production verification release: `--generate` / `render-from-brief` can now emit per-deck eval JSON via `--eval` or `--eval-out`, Data Story chart routing/label logic now fails closed on weak numeric signals instead of drawing fake charts, and production demo fixtures were revalidated and resynced to the current watermark version so core preset verification remains green.

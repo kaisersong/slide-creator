@@ -56,17 +56,15 @@ except ImportError:
 def _discover_root() -> Path:
     file_value = globals().get("__file__")
     if file_value:
-        return Path(file_value).resolve().parent.parent
+        here = Path(file_value).resolve().parent
+        for candidate in [here, *here.parents]:
+            if (candidate / "references" / "html-template.md").exists():
+                return candidate
+        return here.parent
 
     cwd = Path.cwd().resolve()
-    candidates = [cwd, *cwd.parents]
-    required = (
-        ("scripts", "title_profiles.py"),
-        ("references", "html-template.md"),
-        ("tests", "validate.py"),
-    )
-    for candidate in candidates:
-        if all((candidate / folder / leaf).exists() for folder, leaf in required):
+    for candidate in [cwd, *cwd.parents]:
+        if (candidate / "references" / "html-template.md").exists():
             return candidate
     return cwd
 
@@ -1277,8 +1275,8 @@ def check_watermark_injection(soup, content, warnings) -> tuple[bool, str]:
     if has_js_injection:
         return True, "Watermark appears JS-injected (heuristic)"
 
-    # If no watermark found at all, that's OK for minimal decks
-    return True, "Watermark not detected (heuristic)"
+    warnings.append("Watermark not detected; generated decks should inject slide-credit on the last slide")
+    return True, "Watermark not detected (warning)"
 
 
 # ─── Runner ───────────────────────────────────────────────────────────────────

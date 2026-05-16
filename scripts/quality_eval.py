@@ -28,7 +28,7 @@ CHART_NUMBER_SELECTOR = ",".join(
     ]
 )
 COMPONENT_KIND_SELECTORS: dict[str, str] = {
-    "heading": "h1,h2,h3",
+    "heading": "h1,h2,h3,h4",
     "paragraph": "p",
     "list": "ul li,ol li",
     "table": "table",
@@ -36,8 +36,8 @@ COMPONENT_KIND_SELECTORS: dict[str, str] = {
     "quote": "blockquote,[class*='quote'],[class*='pull']",
     "metric_card": "[class*='kpi'],[class*='metric'],[class*='stat']",
     "timeline": "[class*='timeline']",
-    "matrix": "[class*='matrix'],[class*='comparison']",
-    "diagram": "[class*='diagram'],[class*='workflow'],[class*='arch']",
+    "matrix": "[class*='matrix'],[class*='comparison'],.cols2,.cols3,.cols4,.bento",
+    "diagram": "[class*='diagram'],[class*='workflow'],[class*='arch'],.layer",
     "code": "pre,code",
     "image": "img,picture,figure",
 }

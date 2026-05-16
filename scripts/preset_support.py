@@ -4,7 +4,15 @@ import json
 from pathlib import Path
 
 
-ROOT = Path(__file__).resolve().parent.parent
+def _discover_root() -> Path:
+    here = Path(__file__).resolve().parent
+    for candidate in [here, *here.parents]:
+        if (candidate / "references" / "preset-support-tiers.json").exists():
+            return candidate
+    return here.parent
+
+
+ROOT = _discover_root()
 PRESET_SUPPORT_PATH = ROOT / "references" / "preset-support-tiers.json"
 THEMES_DIR = ROOT / "themes"
 

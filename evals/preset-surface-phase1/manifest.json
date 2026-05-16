@@ -43,8 +43,48 @@
         }
       },
       "notes": [
-        "Blue Sky remains a fixture-eval path until it has a deterministic BRIEF renderer."
+        "Blue Sky fixture remains as a support-surface guard for starter architecture parity."
       ]
+    },
+    {
+      "case_id": "core-blue-sky-render",
+      "validation_profile": "strict",
+      "brief_path": "../../demos/mode-paths/auto-BRIEF.json",
+      "expectations": {
+        "expected_mode": "auto",
+        "expected_preset": "Blue Sky",
+        "expected_support_tier": "production",
+        "required_brief_fields": [
+          "style.preset",
+          "deck.page_count",
+          "narrative.thesis"
+        ],
+        "expected_quality_tier": "tier0",
+        "required_html_checks": [
+          "blue-sky-architecture",
+          "style-signature",
+          "present-mode",
+          "edit-mode",
+          "watermark-injected"
+        ],
+        "required_quality_gates": [
+          "chrome-hidden-by-default",
+          "no-content-occlusion-risk",
+          "narrative-role-coverage",
+          "minimal-slide-run"
+        ],
+        "non_regression_metrics": [
+          "layout-variety",
+          "component-diversity",
+          "style-signature-coverage",
+          "minimal-slide-ratio"
+        ],
+        "quality_thresholds": {
+          "narrative_role_coverage": 1.0,
+          "max_minimal_slide_run": 2,
+          "style_signature_coverage_min": 0.5
+        }
+      }
     },
     {
       "case_id": "support-paper-ink-fixture",
