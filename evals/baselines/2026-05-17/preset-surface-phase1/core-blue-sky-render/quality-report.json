@@ -1,0 +1,51 @@
+{
+  "preset": "Blue Sky",
+  "slide_count": 8,
+  "hard_failures": [],
+  "quality_gates": {
+    "chrome-hidden-by-default": true,
+    "no-content-occlusion-risk": true,
+    "numeric-faithfulness": true,
+    "source-fact-coverage": false,
+    "chart-local-signal": true,
+    "narrative-role-coverage": true,
+    "minimal-slide-run": true,
+    "browser-title-composition": true
+  },
+  "diagnostics": {
+    "quality_tier": "tier0",
+    "chrome_leak": false,
+    "default_visible_chrome": [],
+    "content_occlusion_risk": false,
+    "layout_variety": 1.0,
+    "avg_component_kinds_per_slide": 3.0,
+    "style_signature_coverage": 0.8182,
+    "numeric_faithfulness": 1.0,
+    "hallucinated_numeric_tokens": [],
+    "source_fact_coverage": 0.6667,
+    "chart_signal_mismatch_count": 0,
+    "chart_signal_mismatch_rate": 0.0,
+    "global_fact_overuse_count": 2,
+    "narrative_role_coverage": 1.0,
+    "role_sequence_match": true,
+    "minimal_slide_ratio": 0.25,
+    "max_minimal_slide_run": 1,
+    "browser_title_target_count": 8,
+    "title_hard_fail_rate": 0.0,
+    "orphan_line_rate": 0.0,
+    "collapsed_middle_line_rate": 0.0,
+    "profile_mismatch_rate": 0.0,
+    "structural_preset_break_rate": 0.0,
+    "title_clipping_rate": 0.0,
+    "title_occlusion_rate": 0.0,
+    "strict_pass_first_try": true,
+    "repair_rounds": 0,
+    "route_drift": false,
+    "latency_ms": {
+      "packet": 1.16,
+      "render": 17.16,
+      "assemble": 0.0,
+      "validate": 8.1
+    }
+  }
+}

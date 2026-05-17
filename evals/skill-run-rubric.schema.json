@@ -1,0 +1,38 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "kai-slide-creator captured-run style rubric",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["case_id", "overall_pass", "score", "checks", "summary"],
+  "properties": {
+    "case_id": {"type": "string", "minLength": 1},
+    "overall_pass": {"type": "boolean"},
+    "score": {"type": "integer", "minimum": 0, "maximum": 100},
+    "checks": {
+      "type": "array",
+      "minItems": 4,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "pass", "score", "notes"],
+        "properties": {
+          "id": {
+            "type": "string",
+            "enum": [
+              "narrative_arc",
+              "visual_rhythm",
+              "evidence_fidelity",
+              "no_ai_slop",
+              "preset_appropriateness",
+              "speaker_support"
+            ]
+          },
+          "pass": {"type": "boolean"},
+          "score": {"type": "integer", "minimum": 1, "maximum": 5},
+          "notes": {"type": "string", "minLength": 1}
+        }
+      }
+    },
+    "summary": {"type": "string", "minLength": 1}
+  }
+}

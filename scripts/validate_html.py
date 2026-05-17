@@ -132,6 +132,10 @@ def _normalize_ws(value: str) -> str:
     return re.sub(r"\s+", "", value)
 
 
+def _has_numeric_signal(value: str) -> bool:
+    return bool(re.search(r"\d", value or ""))
+
+
 def _extract_rule_blocks(css_text: str, selector: str) -> list[str]:
     pattern = re.compile(rf"{re.escape(selector)}\s*\{{(.*?)\}}", re.DOTALL)
     return [match.group(1) for match in pattern.finditer(css_text)]
@@ -881,6 +885,16 @@ def check_data_story_contract(soup, content, warnings) -> tuple[bool, str]:
         warnings,
         "Data Story",
     ))
+
+    for index, slide in enumerate(slides, start=1):
+        export_role = str(slide.get("data-export-role", "")).strip()
+        if export_role not in {"kpi_chart", "kpi_grid"}:
+            continue
+        for kpi in slide.select(".ds-kpi-card .ds-kpi"):
+            value = kpi.get_text(" ", strip=True)
+            if value and not _has_numeric_signal(value):
+                issues.append(f"slide {index}: Data Story KPI value must be numeric, got '{value[:18]}'")
+                break
 
     if issues:
         sample = "; ".join(issues[:3])

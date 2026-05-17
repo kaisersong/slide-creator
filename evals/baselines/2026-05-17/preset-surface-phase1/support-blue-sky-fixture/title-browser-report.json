@@ -1,0 +1,385 @@
+{
+  "preset": "Blue Sky",
+  "registry_version": 1,
+  "pass": true,
+  "hard_failures": [],
+  "diagnostics": {
+    "browser_title_target_count": 13,
+    "title_hard_fail_rate": 0.0,
+    "orphan_line_rate": 0.0,
+    "collapsed_middle_line_rate": 0.0,
+    "profile_mismatch_rate": 0.0,
+    "structural_preset_break_rate": 0.0,
+    "title_clipping_rate": 0.0,
+    "title_occlusion_rate": 0.0
+  },
+  "targets": [
+    {
+      "qa_id": "slide-1-title-1",
+      "slide_index": 1,
+      "layout_id": "cover",
+      "profile": "horizontal_balanced_centered",
+      "node_type": "ordinary_heading",
+      "max_lines": 3,
+      "required_companion_selectors": [],
+      "required_attributes": [],
+      "text": "kai-slide-creator",
+      "tag_name": "h1",
+      "missing": false,
+      "line_count": 1,
+      "line_widths": [
+        544.17
+      ],
+      "clipped": false,
+      "occluded": false,
+      "occluded_by": [],
+      "writing_mode": "horizontal-tb",
+      "classes": [
+        "gt"
+      ],
+      "attrs_present": true,
+      "companions_present": true,
+      "profile_mismatch": false,
+      "hard_failures": []
+    },
+    {
+      "qa_id": "slide-2-title-2",
+      "slide_index": 2,
+      "layout_id": "chapter",
+      "profile": "horizontal_balanced_centered",
+      "node_type": "ordinary_heading",
+      "max_lines": 3,
+      "required_companion_selectors": [],
+      "required_attributes": [],
+      "text": "为什么需要另一种演示工具",
+      "tag_name": "h2",
+      "missing": false,
+      "line_count": 1,
+      "line_widths": [
+        494.22
+      ],
+      "clipped": false,
+      "occluded": false,
+      "occluded_by": [],
+      "writing_mode": "horizontal-tb",
+      "classes": [
+        "gt"
+      ],
+      "attrs_present": true,
+      "companions_present": true,
+      "profile_mismatch": false,
+      "hard_failures": []
+    },
+    {
+      "qa_id": "slide-3-title-3",
+      "slide_index": 3,
+      "layout_id": null,
+      "profile": "horizontal_balanced_centered",
+      "node_type": "ordinary_heading",
+      "max_lines": 3,
+      "required_companion_selectors": [],
+      "required_attributes": [],
+      "text": "为什么需要另一种演示工具",
+      "tag_name": "h2",
+      "missing": false,
+      "line_count": 1,
+      "line_widths": [
+        494.22
+      ],
+      "clipped": false,
+      "occluded": false,
+      "occluded_by": [],
+      "writing_mode": "horizontal-tb",
+      "classes": [
+        "gt"
+      ],
+      "attrs_present": true,
+      "companions_present": true,
+      "profile_mismatch": false,
+      "hard_failures": []
+    },
+    {
+      "qa_id": "slide-4-title-4",
+      "slide_index": 4,
+      "layout_id": null,
+      "profile": "horizontal_balanced_centered",
+      "node_type": "ordinary_heading",
+      "max_lines": 3,
+      "required_companion_selectors": [],
+      "required_attributes": [],
+      "text": "21 种设计预设 每种都有签名视觉语言",
+      "tag_name": "h2",
+      "missing": false,
+      "line_count": 2,
+      "line_widths": [
+        940,
+        940
+      ],
+      "clipped": false,
+      "occluded": false,
+      "occluded_by": [],
+      "writing_mode": "horizontal-tb",
+      "classes": [
+        "gt"
+      ],
+      "attrs_present": true,
+      "companions_present": true,
+      "profile_mismatch": false,
+      "hard_failures": []
+    },
+    {
+      "qa_id": "slide-5-title-5",
+      "slide_index": 5,
+      "layout_id": "chapter",
+      "profile": "horizontal_balanced_centered",
+      "node_type": "ordinary_heading",
+      "max_lines": 3,
+      "required_companion_selectors": [],
+      "required_attributes": [],
+      "text": "三个核心模块，支撑全流程演示",
+      "tag_name": "h2",
+      "missing": false,
+      "line_count": 1,
+      "line_widths": [
+        576.58
+      ],
+      "clipped": false,
+      "occluded": false,
+      "occluded_by": [],
+      "writing_mode": "horizontal-tb",
+      "classes": [
+        "gt"
+      ],
+      "attrs_present": true,
+      "companions_present": true,
+      "profile_mismatch": false,
+      "hard_failures": []
+    },
+    {
+      "qa_id": "slide-6-title-6",
+      "slide_index": 6,
+      "layout_id": null,
+      "profile": "horizontal_balanced_centered",
+      "node_type": "ordinary_heading",
+      "max_lines": 3,
+      "required_companion_selectors": [],
+      "required_attributes": [],
+      "text": "播放模式 — 按 F5 即全屏",
+      "tag_name": "h2",
+      "missing": false,
+      "line_count": 1,
+      "line_widths": [
+        446.7
+      ],
+      "clipped": false,
+      "occluded": false,
+      "occluded_by": [],
+      "writing_mode": "horizontal-tb",
+      "classes": [
+        "gt"
+      ],
+      "attrs_present": true,
+      "companions_present": true,
+      "profile_mismatch": false,
+      "hard_failures": []
+    },
+    {
+      "qa_id": "slide-7-title-7",
+      "slide_index": 7,
+      "layout_id": null,
+      "profile": "horizontal_balanced_centered",
+      "node_type": "ordinary_heading",
+      "max_lines": 3,
+      "required_companion_selectors": [],
+      "required_attributes": [],
+      "text": "演讲者模式 — P 键打开同步窗口",
+      "tag_name": "h2",
+      "missing": false,
+      "line_count": 1,
+      "line_widths": [
+        580.19
+      ],
+      "clipped": false,
+      "occluded": false,
+      "occluded_by": [],
+      "writing_mode": "horizontal-tb",
+      "classes": [
+        "gt"
+      ],
+      "attrs_present": true,
+      "companions_present": true,
+      "profile_mismatch": false,
+      "hard_failures": []
+    },
+    {
+      "qa_id": "slide-8-title-8",
+      "slide_index": 8,
+      "layout_id": null,
+      "profile": "horizontal_balanced_centered",
+      "node_type": "ordinary_heading",
+      "max_lines": 3,
+      "required_companion_selectors": [],
+      "required_attributes": [],
+      "text": "浏览器内编辑 — 所见即所改",
+      "tag_name": "h2",
+      "missing": false,
+      "line_count": 1,
+      "line_widths": [
+        505.17
+      ],
+      "clipped": false,
+      "occluded": false,
+      "occluded_by": [],
+      "writing_mode": "horizontal-tb",
+      "classes": [
+        "gt"
+      ],
+      "attrs_present": true,
+      "companions_present": true,
+      "profile_mismatch": false,
+      "hard_failures": []
+    },
+    {
+      "qa_id": "slide-9-title-9",
+      "slide_index": 9,
+      "layout_id": "chapter",
+      "profile": "horizontal_balanced_centered",
+      "node_type": "ordinary_heading",
+      "max_lines": 3,
+      "required_companion_selectors": [],
+      "required_attributes": [],
+      "text": "一条命令，三分钟出稿",
+      "tag_name": "h2",
+      "missing": false,
+      "line_count": 1,
+      "line_widths": [
+        411.84
+      ],
+      "clipped": false,
+      "occluded": false,
+      "occluded_by": [],
+      "writing_mode": "horizontal-tb",
+      "classes": [
+        "gt"
+      ],
+      "attrs_present": true,
+      "companions_present": true,
+      "profile_mismatch": false,
+      "hard_failures": []
+    },
+    {
+      "qa_id": "slide-11-title-10",
+      "slide_index": 11,
+      "layout_id": null,
+      "profile": "horizontal_balanced_centered",
+      "node_type": "ordinary_heading",
+      "max_lines": 3,
+      "required_companion_selectors": [],
+      "required_attributes": [],
+      "text": "什么内容配什么风格，一眼匹配",
+      "tag_name": "h2",
+      "missing": false,
+      "line_count": 1,
+      "line_widths": [
+        576.58
+      ],
+      "clipped": false,
+      "occluded": false,
+      "occluded_by": [],
+      "writing_mode": "horizontal-tb",
+      "classes": [
+        "gt"
+      ],
+      "attrs_present": true,
+      "companions_present": true,
+      "profile_mismatch": false,
+      "hard_failures": []
+    },
+    {
+      "qa_id": "slide-12-title-11",
+      "slide_index": 12,
+      "layout_id": null,
+      "profile": "horizontal_balanced_centered",
+      "node_type": "ordinary_heading",
+      "max_lines": 3,
+      "required_companion_selectors": [],
+      "required_attributes": [],
+      "text": "零依赖，纯浏览器运行",
+      "tag_name": "h2",
+      "missing": false,
+      "line_count": 1,
+      "line_widths": [
+        411.84
+      ],
+      "clipped": false,
+      "occluded": false,
+      "occluded_by": [],
+      "writing_mode": "horizontal-tb",
+      "classes": [
+        "gt"
+      ],
+      "attrs_present": true,
+      "companions_present": true,
+      "profile_mismatch": false,
+      "hard_failures": []
+    },
+    {
+      "qa_id": "slide-13-title-12",
+      "slide_index": 13,
+      "layout_id": null,
+      "profile": "horizontal_balanced_centered",
+      "node_type": "ordinary_heading",
+      "max_lines": 3,
+      "required_companion_selectors": [],
+      "required_attributes": [],
+      "text": "持续迭代，每周都在变强",
+      "tag_name": "h2",
+      "missing": false,
+      "line_count": 1,
+      "line_widths": [
+        453.03
+      ],
+      "clipped": false,
+      "occluded": false,
+      "occluded_by": [],
+      "writing_mode": "horizontal-tb",
+      "classes": [
+        "gt"
+      ],
+      "attrs_present": true,
+      "companions_present": true,
+      "profile_mismatch": false,
+      "hard_failures": []
+    },
+    {
+      "qa_id": "slide-14-title-13",
+      "slide_index": 14,
+      "layout_id": "cover",
+      "profile": "horizontal_balanced_centered",
+      "node_type": "ordinary_heading",
+      "max_lines": 3,
+      "required_companion_selectors": [],
+      "required_attributes": [],
+      "text": "从设计预设开始 让内容自己说话",
+      "tag_name": "h2",
+      "missing": false,
+      "line_count": 2,
+      "line_widths": [
+        472.27,
+        472.27
+      ],
+      "clipped": false,
+      "occluded": false,
+      "occluded_by": [],
+      "writing_mode": "horizontal-tb",
+      "classes": [
+        "gt"
+      ],
+      "attrs_present": true,
+      "companions_present": true,
+      "profile_mismatch": false,
+      "hard_failures": []
+    }
+  ],
+  "html_path": "/private/tmp/slide-preset-release-gate/support-blue-sky-fixture/deck.html"
+}

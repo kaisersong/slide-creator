@@ -1,0 +1,54 @@
+{
+  "brief_hash": "sha256:35c877edf2268eb389e499b9d12c5f10111aa66605966e8452d96f18e110eef3",
+  "generator": "kai-slide-creator",
+  "generator_version": "2.26.0",
+  "render_path": "brief-canonical",
+  "preset": "Swiss Modern",
+  "preset_support_tier": "production",
+  "deck_type": "user-content",
+  "page_count": 8,
+  "composition_source": "references/composition-guide.md",
+  "runtime_path": "shared-js-engine",
+  "validate_strict": "pending",
+  "required_refs": [
+    "references/composition-guide.md",
+    "references/html-template.md",
+    "references/js-engine.md",
+    "references/base-css.md",
+    "references/swiss-modern.md"
+  ],
+  "required_contracts": [
+    "preset-metadata",
+    "shared-runtime",
+    "style-signature",
+    "shell-ui-markers"
+  ],
+  "required_shell_markers": [
+    "body[data-preset]",
+    "#brand-mark",
+    ".progress-bar",
+    ".nav-dots",
+    ".edit-hotzone",
+    "#editToggle",
+    "#notes-panel"
+  ],
+  "style_contract_digest": "sha256:405894bf1d71b496a8b551a7253bc52a4880f5bf2793ca3e491e7b0ec2f82c69",
+  "allowed_layouts": [
+    "title_grid",
+    "column_content",
+    "stat_block",
+    "pull_quote",
+    "geometric_diagram",
+    "data_table",
+    "contents_index",
+    "user_content_12_page_route",
+    "canonical_export_contract"
+  ],
+  "quality_tier": "tier0",
+  "fallback_policy": "full-preset-contract",
+  "latency_ms": {
+    "packet": 1.95,
+    "render": 60.51,
+    "assemble": 0.0
+  }
+}

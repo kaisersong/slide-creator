@@ -1,0 +1,262 @@
+{
+  "preset": "Enterprise Dark",
+  "registry_version": 1,
+  "pass": true,
+  "hard_failures": [],
+  "diagnostics": {
+    "browser_title_target_count": 8,
+    "title_hard_fail_rate": 0.0,
+    "orphan_line_rate": 0.0,
+    "collapsed_middle_line_rate": 0.0,
+    "profile_mismatch_rate": 0.0,
+    "structural_preset_break_rate": 0.0,
+    "title_clipping_rate": 0.0,
+    "title_occlusion_rate": 0.0
+  },
+  "targets": [
+    {
+      "qa_id": "slide-1-title-1",
+      "slide_index": 1,
+      "layout_id": "kpi_dashboard",
+      "profile": "horizontal_balanced_left_anchor",
+      "node_type": "ordinary_heading",
+      "max_lines": 3,
+      "required_companion_selectors": [],
+      "required_attributes": [],
+      "text": "Intent Broker",
+      "tag_name": "h1",
+      "missing": false,
+      "line_count": 1,
+      "line_widths": [
+        325.42
+      ],
+      "clipped": false,
+      "occluded": false,
+      "occluded_by": [],
+      "writing_mode": "horizontal-tb",
+      "classes": [
+        "ent-hero-title",
+        "reveal",
+        "visible"
+      ],
+      "attrs_present": true,
+      "companions_present": true,
+      "profile_mismatch": false,
+      "hard_failures": []
+    },
+    {
+      "qa_id": "slide-2-title-2",
+      "slide_index": 2,
+      "layout_id": "consulting_split",
+      "profile": "horizontal_balanced_left_anchor",
+      "node_type": "ordinary_heading",
+      "max_lines": 3,
+      "required_companion_selectors": [],
+      "required_attributes": [],
+      "text": "现有协作方式缺少稳定任务语义",
+      "tag_name": "h2",
+      "missing": false,
+      "line_count": 2,
+      "line_widths": [
+        192.09,
+        192.09
+      ],
+      "clipped": false,
+      "occluded": false,
+      "occluded_by": [],
+      "writing_mode": "horizontal-tb",
+      "classes": [
+        "ent-title",
+        "reveal",
+        "visible"
+      ],
+      "attrs_present": true,
+      "companions_present": true,
+      "profile_mismatch": false,
+      "hard_failures": []
+    },
+    {
+      "qa_id": "slide-3-title-3",
+      "slide_index": 3,
+      "layout_id": "consulting_split",
+      "profile": "horizontal_balanced_left_anchor",
+      "node_type": "ordinary_heading",
+      "max_lines": 3,
+      "required_companion_selectors": [],
+      "required_attributes": [],
+      "text": "Broker 只负责协议与可靠投递",
+      "tag_name": "h2",
+      "missing": false,
+      "line_count": 2,
+      "line_widths": [
+        203.59,
+        164.64
+      ],
+      "clipped": false,
+      "occluded": false,
+      "occluded_by": [],
+      "writing_mode": "horizontal-tb",
+      "classes": [
+        "ent-title",
+        "reveal",
+        "visible"
+      ],
+      "attrs_present": true,
+      "companions_present": true,
+      "profile_mismatch": false,
+      "hard_failures": []
+    },
+    {
+      "qa_id": "slide-4-title-4",
+      "slide_index": 4,
+      "layout_id": "architecture_map",
+      "profile": "horizontal_balanced_left_anchor",
+      "node_type": "ordinary_heading",
+      "max_lines": 3,
+      "required_companion_selectors": [],
+      "required_attributes": [],
+      "text": "系统围绕五个对象组织",
+      "tag_name": "h2",
+      "missing": false,
+      "line_count": 1,
+      "line_widths": [
+        431.2
+      ],
+      "clipped": false,
+      "occluded": false,
+      "occluded_by": [],
+      "writing_mode": "horizontal-tb",
+      "classes": [
+        "ent-title",
+        "reveal",
+        "visible"
+      ],
+      "attrs_present": true,
+      "companions_present": true,
+      "profile_mismatch": false,
+      "hard_failures": []
+    },
+    {
+      "qa_id": "slide-5-title-5",
+      "slide_index": 5,
+      "layout_id": "kpi_dashboard",
+      "profile": "horizontal_balanced_left_anchor",
+      "node_type": "ordinary_heading",
+      "max_lines": 3,
+      "required_companion_selectors": [],
+      "required_attributes": [],
+      "text": "状态由 intent 事件推进",
+      "tag_name": "h1",
+      "missing": false,
+      "line_count": 1,
+      "line_widths": [
+        556.88
+      ],
+      "clipped": false,
+      "occluded": false,
+      "occluded_by": [],
+      "writing_mode": "horizontal-tb",
+      "classes": [
+        "ent-hero-title",
+        "reveal",
+        "visible"
+      ],
+      "attrs_present": true,
+      "companions_present": true,
+      "profile_mismatch": false,
+      "hard_failures": []
+    },
+    {
+      "qa_id": "slide-6-title-6",
+      "slide_index": 6,
+      "layout_id": "kpi_dashboard",
+      "profile": "horizontal_balanced_left_anchor",
+      "node_type": "ordinary_heading",
+      "max_lines": 3,
+      "required_companion_selectors": [],
+      "required_attributes": [],
+      "text": "先写事件，再投递 inbox",
+      "tag_name": "h1",
+      "missing": false,
+      "line_count": 1,
+      "line_widths": [
+        588.45
+      ],
+      "clipped": false,
+      "occluded": false,
+      "occluded_by": [],
+      "writing_mode": "horizontal-tb",
+      "classes": [
+        "ent-hero-title",
+        "reveal"
+      ],
+      "attrs_present": true,
+      "companions_present": true,
+      "profile_mismatch": false,
+      "hard_failures": []
+    },
+    {
+      "qa_id": "slide-7-title-7",
+      "slide_index": 7,
+      "layout_id": "architecture_map",
+      "profile": "horizontal_balanced_left_anchor",
+      "node_type": "ordinary_heading",
+      "max_lines": 3,
+      "required_companion_selectors": [],
+      "required_attributes": [],
+      "text": "六个核心组件围绕 event store 工作",
+      "tag_name": "h2",
+      "missing": false,
+      "line_count": 2,
+      "line_widths": [
+        1120,
+        1120
+      ],
+      "clipped": false,
+      "occluded": false,
+      "occluded_by": [],
+      "writing_mode": "horizontal-tb",
+      "classes": [
+        "ent-title",
+        "reveal",
+        "title-balance",
+        "visible"
+      ],
+      "attrs_present": true,
+      "companions_present": true,
+      "profile_mismatch": false,
+      "hard_failures": []
+    },
+    {
+      "qa_id": "slide-8-title-8",
+      "slide_index": 8,
+      "layout_id": "kpi_dashboard",
+      "profile": "horizontal_balanced_left_anchor",
+      "node_type": "ordinary_heading",
+      "max_lines": 3,
+      "required_companion_selectors": [],
+      "required_attributes": [],
+      "text": "先验证闭环，再考虑远程化和 UI",
+      "tag_name": "h1",
+      "missing": false,
+      "line_count": 1,
+      "line_widths": [
+        775.27
+      ],
+      "clipped": false,
+      "occluded": false,
+      "occluded_by": [],
+      "writing_mode": "horizontal-tb",
+      "classes": [
+        "ent-hero-title",
+        "reveal",
+        "visible"
+      ],
+      "attrs_present": true,
+      "companions_present": true,
+      "profile_mismatch": false,
+      "hard_failures": []
+    }
+  ],
+  "html_path": "/private/tmp/slide-preset-release-gate/core-enterprise-dark-render/deck.html"
+}

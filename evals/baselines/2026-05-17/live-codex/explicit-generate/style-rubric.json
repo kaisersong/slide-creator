@@ -1,0 +1,44 @@
+{
+  "case_id": "explicit-generate",
+  "overall_pass": true,
+  "score": 88,
+  "checks": [
+    {
+      "id": "narrative_arc",
+      "pass": true,
+      "score": 5,
+      "notes": "The deck moves from KPI momentum to rollout proof, residency risk, and the next-week expansion decision."
+    },
+    {
+      "id": "visual_rhythm",
+      "pass": true,
+      "score": 4,
+      "notes": "The Data Story structure is varied enough, though two adjacent slides share a similar insight-card rhythm."
+    },
+    {
+      "id": "evidence_fidelity",
+      "pass": true,
+      "score": 5,
+      "notes": "Activation, latency, staged cohorts, incidents, residency risk, and decision facts are preserved without invented values."
+    },
+    {
+      "id": "no_ai_slop",
+      "pass": true,
+      "score": 4,
+      "notes": "No placeholders or raw IR appear; minor polish issues remain in a chart label and one title line break."
+    },
+    {
+      "id": "preset_appropriateness",
+      "pass": true,
+      "score": 5,
+      "notes": "Data Story is a good fit for this KPI-heavy rollout decision."
+    },
+    {
+      "id": "speaker_support",
+      "pass": true,
+      "score": 4,
+      "notes": "All slides include useful speaker notes, but the notes are concise rather than fully speaker-ready."
+    }
+  ],
+  "summary": "Live deck is complete and faithful, with minor polish and visual rhythm issues that should remain visible in the baseline."
+}

@@ -544,7 +544,10 @@ body.presenting #notes-panel { display: none !important; }
   <section class="slide" data-notes="21 个主题跨越 4 个类别 — 内容类型路由自动建议最适合的。Blue Sky 对业务内容最通用。">
     <div style="max-width:940px;width:100%;">
       <span class="pill" style="margin-bottom:14px;display:inline-block;">设计预设</span>
-      <h2 class="gt">21 种设计预设，每种都有签名视觉语言</h2>
+      <h2 class="gt">
+        <span class="title-line" style="display:block;">21 种设计预设</span>
+        <span class="title-line" style="display:block;">每种都有签名视觉语言</span>
+      </h2>
       <div class="divider"></div>
       <div class="bento" style="grid-template-columns:repeat(2,1fr);grid-auto-rows:120px;">
         <div class="g span2" style="padding:20px;">
@@ -915,7 +918,10 @@ body.presenting #notes-panel { display: none !important; }
 
     <div style="text-align:center;position:relative;z-index:10;max-width:680px;">
       <span class="pill" style="margin-bottom:20px;display:inline-block;">开始使用</span>
-      <h2 class="gt" style="margin-bottom:16px;">从设计预设开始，让内容自己说话</h2>
+      <h2 class="gt" style="margin-bottom:16px;">
+        <span class="title-line" style="display:block;">从设计预设开始</span>
+        <span class="title-line" style="display:block;">让内容自己说话</span>
+      </h2>
       <div class="g" style="padding:28px 36px;">
         <p style="margin-bottom:18px;font-size:0.95rem;">打开 Claude Code 并输入：</p>
         <div class="cmd" style="text-align:left;margin-bottom:12px;">/slide-creator "你的主题" Blue Sky</div>
@@ -1182,6 +1188,16 @@ function setupEditor() {
   const panel = document.getElementById('notes-panel');
   let editing = false;
 
+  function saveFile() {
+    const html = document.documentElement.outerHTML;
+    const blob = new Blob([html], { type: 'text/html' });
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = document.title + '.html';
+    a.click();
+    URL.revokeObjectURL(a.href);
+  }
+
   hotzone.addEventListener('click', () => {
     editing = !editing;
     btn.classList.toggle('active', editing);
@@ -1207,12 +1223,7 @@ function setupEditor() {
     if ((e.ctrlKey || e.metaKey) && e.key === 's') {
       if (editing) {
         e.preventDefault();
-        const html = document.documentElement.outerHTML;
-        const blob = new Blob([html], { type: 'text/html' });
-        const a = document.createElement('a');
-        a.href = URL.createObjectURL(blob);
-        a.download = document.title + '.html';
-        a.click();
+        saveFile();
       }
     }
   });
@@ -1310,7 +1321,7 @@ var lastSlide = slides[slides.length - 1];
 if (lastSlide) {
   var credit = document.createElement('div');
   credit.className = 'slide-credit';
-  credit.textContent = 'By kai-slide-creator v2.16.0 · Blue Sky';
+  credit.textContent = 'By kai-slide-creator v2.27.0 · Blue Sky';
   lastSlide.appendChild(credit);
 }
 

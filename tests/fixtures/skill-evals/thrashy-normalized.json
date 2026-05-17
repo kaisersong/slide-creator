@@ -1,0 +1,30 @@
+{
+  "runner": "fixture",
+  "trace_format_version": "normalized-v1",
+  "tool_calls": [],
+  "shell_commands": [
+    "python3 scripts/validate_html.py missing.html --strict",
+    "python3 scripts/validate_html.py missing.html --strict",
+    "python3 scripts/validate_html.py missing.html --strict",
+    "python3 scripts/validate_html.py missing.html --strict"
+  ],
+  "failed_shell_commands": [
+    "python3 scripts/validate_html.py missing.html --strict",
+    "python3 scripts/validate_html.py missing.html --strict",
+    "python3 scripts/validate_html.py missing.html --strict",
+    "python3 scripts/validate_html.py missing.html --strict"
+  ],
+  "read_paths": [],
+  "write_paths": [],
+  "artifact_paths": [],
+  "input_tokens": 95000,
+  "output_tokens": 26000,
+  "wall_ms": 45000,
+  "skill_evidence": {
+    "skill_contract_read": false,
+    "slide_flow_observed": false,
+    "brief_observed": false,
+    "strict_validate_observed": true
+  },
+  "runner_warnings": []
+}

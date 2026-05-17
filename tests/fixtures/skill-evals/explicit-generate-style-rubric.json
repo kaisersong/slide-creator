@@ -1,0 +1,44 @@
+{
+  "case_id": "explicit-generate",
+  "overall_pass": true,
+  "score": 96,
+  "checks": [
+    {
+      "id": "narrative_arc",
+      "pass": true,
+      "score": 5,
+      "notes": "The deck moves from rollout decision to operating metrics to the gating decision."
+    },
+    {
+      "id": "visual_rhythm",
+      "pass": true,
+      "score": 5,
+      "notes": "The fixture uses distinct cover, KPI, and decision roles instead of repeating one layout."
+    },
+    {
+      "id": "evidence_fidelity",
+      "pass": true,
+      "score": 5,
+      "notes": "The stated activation, latency, and cohort facts match the prompt evidence."
+    },
+    {
+      "id": "no_ai_slop",
+      "pass": true,
+      "score": 5,
+      "notes": "No placeholder headings, lorem ipsum text, or raw authoring syntax remain."
+    },
+    {
+      "id": "preset_appropriateness",
+      "pass": true,
+      "score": 5,
+      "notes": "Data Story is appropriate for metric-led rollout decision material."
+    },
+    {
+      "id": "speaker_support",
+      "pass": true,
+      "score": 4,
+      "notes": "Speaker notes are present for each slide and support the decision path."
+    }
+  ],
+  "summary": "High-quality captured-run fixture with a clear data-backed decision narrative."
+}

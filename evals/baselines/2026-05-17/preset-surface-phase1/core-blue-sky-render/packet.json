@@ -1,0 +1,48 @@
+{
+  "brief_hash": "sha256:64ff618f0258c2254443cc98d8baf4aec5f88077320a89993a0476b20ae69197",
+  "generator": "kai-slide-creator",
+  "generator_version": "2.26.0",
+  "render_path": "blue-sky-starter-canonical",
+  "preset": "Blue Sky",
+  "preset_support_tier": "production",
+  "deck_type": "product-demo",
+  "page_count": 8,
+  "composition_source": "references/composition-8.md",
+  "runtime_path": "blue-sky-starter",
+  "validate_strict": "pending",
+  "required_refs": [
+    "references/blue-sky-starter.html",
+    "references/composition-8.md"
+  ],
+  "required_contracts": [
+    "preset-metadata",
+    "blue-sky-architecture",
+    "shell-ui-markers"
+  ],
+  "required_shell_markers": [
+    "body[data-preset]",
+    "#brand-mark",
+    ".progress-bar",
+    ".nav-dots",
+    ".edit-hotzone",
+    "#editToggle",
+    "#notes-panel"
+  ],
+  "style_contract_digest": "sha256:0b7fbe3012de6481bc514ee337ce2e3738a16a82a0687f95f8eaa63ecdf563e2",
+  "allowed_layouts": [
+    "cover",
+    "chapter",
+    "comparison",
+    "workflow",
+    "table",
+    "bento",
+    "closing"
+  ],
+  "quality_tier": "tier0",
+  "fallback_policy": "full-preset-contract",
+  "latency_ms": {
+    "packet": 1.16,
+    "render": 17.16,
+    "assemble": 0.0
+  }
+}

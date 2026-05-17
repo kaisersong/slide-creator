@@ -1,0 +1,196 @@
+{
+  "schema_version": 1,
+  "brief_id": "explicit-generate-product-kpi-update",
+  "mode": "auto",
+  "language": "en",
+  "title": "Enterprise Rollout KPI Update",
+  "audience": "Enterprise product, engineering, and go-to-market leaders deciding rollout scope",
+  "desired_action": "Decide whether to expand the new model rollout to all enterprise tenants next week",
+  "deck": {
+    "deck_type": "user-content",
+    "page_count": 5,
+    "output_format": "html-slides"
+  },
+  "style": {
+    "preset": "Data Story",
+    "tone": "data-heavy, precise, executive product update",
+    "visual_density": "high"
+  },
+  "content": {
+    "source_policy": "distill-only",
+    "must_include": [
+      "ChatGPT enterprise activation: 52.5%, up 7.1 points month over month",
+      "API latency p95: 310 ms, down 18%",
+      "New model rollout: 3 staged cohorts, no critical incidents",
+      "Main risk: two regulated customers still need data residency review",
+      "Required decision: whether to expand the rollout to all enterprise tenants next week"
+    ],
+    "must_avoid": [
+      "inventing missing denominators or tenant counts",
+      "fabricating customer names, review dates, or cohort names",
+      "adding metrics not present in the source notes"
+    ],
+    "global_facts": [
+      "Enterprise activation is 52.5%",
+      "Activation is up 7.1 points month over month",
+      "API latency p95 is 310 ms",
+      "API latency p95 is down 18%",
+      "The model rollout used 3 staged cohorts",
+      "The rollout had no critical incidents",
+      "Two regulated customers still need data residency review",
+      "The decision is whether to expand to all enterprise tenants next week"
+    ],
+    "optional_support": [
+      "Use the supplied facts as decision evidence",
+      "Show risk as a launch gate, not as a new metric"
+    ]
+  },
+  "narrative": {
+    "thesis": "Activation and latency are moving in the right direction, but all-tenant expansion still depends on the regulated-customer residency review.",
+    "page_roles": [
+      "cover",
+      "metrics",
+      "rollout",
+      "risk",
+      "decision"
+    ],
+    "slides": [
+      {
+        "slide_number": 1,
+        "role": "cover",
+        "title": "Enterprise activation has traction, but rollout has one gate",
+        "key_point": "52.5% activation is up 7.1 points month over month, while the all-tenant decision still depends on data residency review.",
+        "visual": "hero activation KPI with rollout gate",
+        "claim": "Activation momentum is real, but the expansion decision is not fully cleared.",
+        "explanation": "52.5% activation is up 7.1 points month over month, and the remaining decision gate is data residency review for two regulated customers.",
+        "visual_intent": "hero number with one risk gate note",
+        "preferred_layout_family": "hero",
+        "numeric_facts": [
+          "52.5% enterprise activation",
+          "7.1 points month over month",
+          "two regulated customers need data residency review"
+        ],
+        "supporting_facts": [
+          "52.5% enterprise activation",
+          "Up 7.1 points month over month",
+          "Two regulated customers still need data residency review"
+        ]
+      },
+      {
+        "slide_number": 2,
+        "role": "metrics",
+        "title": "Activation rose while API p95 latency fell",
+        "key_point": "Activation reached 52.5% and latency p95 reached 310 ms, with activation up 7.1 points and latency down 18%.",
+        "visual": "KPI row plus bar chart",
+        "claim": "The core usage and performance signals both improved.",
+        "explanation": "Activation reached 52.5%, up 7.1 points month over month; API latency p95 reached 310 ms, down 18%.",
+        "visual_intent": "three KPI cards with charted numeric evidence",
+        "preferred_layout_family": "chart",
+        "chart_policy": "required",
+        "numeric_facts": [
+          "52.5% enterprise activation",
+          "7.1 points month over month",
+          "310 ms API latency p95",
+          "18% latency reduction"
+        ],
+        "supporting_facts": [
+          "52.5% enterprise activation",
+          "Up 7.1 points month over month",
+          "310 ms API latency p95",
+          "Latency down 18%"
+        ]
+      },
+      {
+        "slide_number": 3,
+        "role": "rollout",
+        "title": "Three staged cohorts shipped without critical incidents",
+        "key_point": "The new model rollout has passed through 3 staged cohorts with no critical incidents.",
+        "visual": "staged rollout evidence grid",
+        "claim": "Operational readiness is supported by the staged rollout record.",
+        "explanation": "The rollout moved through 3 staged cohorts and reported no critical incidents.",
+        "visual_intent": "rollout evidence cards",
+        "preferred_layout_family": "evidence",
+        "chart_policy": "avoid",
+        "numeric_facts": [
+          "3 staged cohorts"
+        ],
+        "supporting_facts": [
+          "3 staged cohorts",
+          "No critical incidents",
+          "New model rollout completed staged cohorts",
+          "Operational evidence supports expansion consideration"
+        ]
+      },
+      {
+        "slide_number": 4,
+        "role": "risk",
+        "title": "Two regulated customers keep residency review on the path",
+        "key_point": "The main risk is that two regulated customers still need data residency review before a broader rollout decision.",
+        "visual": "risk evidence grid",
+        "claim": "The outstanding risk is narrow, but it sits on the expansion path.",
+        "explanation": "Two regulated customers still need data residency review, so the expansion decision should explicitly account for that gate.",
+        "visual_intent": "risk gate with evidence cards",
+        "preferred_layout_family": "insight",
+        "chart_policy": "avoid",
+        "numeric_facts": [
+          "two regulated customers need data residency review"
+        ],
+        "supporting_facts": [
+          "Two regulated customers need data residency review",
+          "Risk is tied to regulated customer requirements",
+          "No critical incidents were reported in staged rollout",
+          "Expansion decision depends on the review gate"
+        ]
+      },
+      {
+        "slide_number": 5,
+        "role": "decision",
+        "title": "All-tenant expansion needs a next-week decision",
+        "key_point": "Decide whether to expand the rollout to all enterprise tenants next week, with the residency review risk called out.",
+        "visual": "decision close with KPI proof",
+        "claim": "The data supports a decision discussion, while the residency review remains the explicit constraint.",
+        "explanation": "The decision is whether to expand the rollout to all enterprise tenants next week after weighing improved KPIs against the regulated-customer review.",
+        "visual_intent": "stat-led decision close",
+        "preferred_layout_family": "close",
+        "numeric_facts": [
+          "52.5% enterprise activation",
+          "3 staged cohorts",
+          "two regulated customers need data residency review"
+        ],
+        "supporting_facts": [
+          "52.5% enterprise activation",
+          "3 staged cohorts with no critical incidents",
+          "Two regulated customers still need data residency review",
+          "Decision is all enterprise tenants next week"
+        ]
+      }
+    ]
+  },
+  "runtime": {
+    "editing_mode": true,
+    "presenter_mode": true,
+    "watermark_mode": "injected-last-slide",
+    "export_intent": "none"
+  },
+  "plan_view": {
+    "emit_planning_view": false,
+    "planning_view_path": "PLANNING.md"
+  },
+  "timing": {
+    "estimate": {
+      "plan": "1-2 min",
+      "generate": "1-3 min",
+      "validate": "<1 min",
+      "polish": "0-2 min",
+      "total": "3-6 min"
+    },
+    "actual": {
+      "plan": "0m 00s",
+      "generate": "0m 00s",
+      "validate": "0m 00s",
+      "polish": "0m 00s",
+      "total": "0m 00s"
+    }
+  },
+  "notes": "Generated for the explicit-generate skill eval from the supplied KPI notes only."
+}

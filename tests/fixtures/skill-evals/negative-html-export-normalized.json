@@ -1,0 +1,20 @@
+{
+  "runner": "fixture",
+  "trace_format_version": "normalized-v1",
+  "tool_calls": [],
+  "shell_commands": [],
+  "failed_shell_commands": [],
+  "read_paths": ["SKILL.md"],
+  "write_paths": [],
+  "artifact_paths": [],
+  "input_tokens": 5200,
+  "output_tokens": 850,
+  "wall_ms": 14000,
+  "skill_evidence": {
+    "skill_contract_read": true,
+    "slide_flow_observed": false,
+    "brief_observed": false,
+    "strict_validate_observed": false
+  },
+  "runner_warnings": ["routing_check_only"]
+}

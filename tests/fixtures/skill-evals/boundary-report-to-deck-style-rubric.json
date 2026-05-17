@@ -1,0 +1,44 @@
+{
+  "case_id": "boundary-report-to-deck",
+  "overall_pass": true,
+  "score": 95,
+  "checks": [
+    {
+      "id": "narrative_arc",
+      "pass": true,
+      "score": 5,
+      "notes": "The fixture converts report-like input into a decision-oriented deck arc."
+    },
+    {
+      "id": "visual_rhythm",
+      "pass": true,
+      "score": 5,
+      "notes": "The slides use varied roles appropriate for a consulting-style recommendation."
+    },
+    {
+      "id": "evidence_fidelity",
+      "pass": true,
+      "score": 5,
+      "notes": "Source claims are carried into the deck without inventing new report findings."
+    },
+    {
+      "id": "no_ai_slop",
+      "pass": true,
+      "score": 5,
+      "notes": "No raw report syntax, placeholder copy, or generic section titles remain."
+    },
+    {
+      "id": "preset_appropriateness",
+      "pass": true,
+      "score": 5,
+      "notes": "Strategy Consulting is appropriate for a boundary case that asks for a deck rather than a report."
+    },
+    {
+      "id": "speaker_support",
+      "pass": true,
+      "score": 4,
+      "notes": "Speaker notes support the recommendation flow without over-explaining each slide."
+    }
+  ],
+  "summary": "Strong boundary fixture that verifies report-like input is transformed into a presentation artifact."
+}

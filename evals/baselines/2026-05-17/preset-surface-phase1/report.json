@@ -1,0 +1,3748 @@
+{
+  "suite_id": "preset-surface-phase1",
+  "generated_at": "2026-05-17T14:31:31",
+  "manifest_path": "/Users/song/projects/slide-creator/evals/preset-surface-phase1/manifest.json",
+  "output_dir": "/private/tmp/slide-preset-release-gate",
+  "baseline_dir": null,
+  "workflow": [
+    "BRIEF.json",
+    "HTML or fixture HTML",
+    "validate",
+    "quality eval",
+    "optional baseline comparison"
+  ],
+  "weights": {
+    "route": 0.15,
+    "compression": 0.25,
+    "render": 0.45,
+    "efficiency": 0.15
+  },
+  "cases": [
+    {
+      "case_id": "support-blue-sky-fixture",
+      "mode": "html-fixture",
+      "validation_profile": "required",
+      "pass": true,
+      "preset": "Blue Sky",
+      "support_tier": "production",
+      "brief_path": null,
+      "source_path": null,
+      "html_path": "/private/tmp/slide-preset-release-gate/support-blue-sky-fixture/deck.html",
+      "fixture_html_path": "/Users/song/projects/slide-creator/demos/blue-sky-zh.html",
+      "packet_path": "/private/tmp/slide-preset-release-gate/support-blue-sky-fixture/packet.json",
+      "quality_report_path": "/private/tmp/slide-preset-release-gate/support-blue-sky-fixture/quality-report.json",
+      "baseline_html_path": null,
+      "hard_failures": [],
+      "validations": {
+        "brief": {
+          "passed": null,
+          "errors": []
+        },
+        "html_validate": {
+          "strict": false,
+          "passed": true,
+          "failed_checks": [],
+          "warnings": [],
+          "checks": {
+            "slide_count": {
+              "passed": true,
+              "message": "14 slides found"
+            },
+            "100vh": {
+              "passed": true,
+              "message": "height: 100vh present"
+            },
+            "overflow_hidden": {
+              "passed": true,
+              "message": "overflow: hidden present"
+            },
+            "self_contained": {
+              "passed": true,
+              "message": "Self-contained (no external dependencies)"
+            },
+            "file_size": {
+              "passed": true,
+              "message": "File size: 62KB"
+            },
+            "html_structure": {
+              "passed": true,
+              "message": "HTML structure valid"
+            },
+            "no_markdown": {
+              "passed": true,
+              "message": "No raw markdown in slide text"
+            }
+          }
+        },
+        "title_browser": {
+          "preset": "Blue Sky",
+          "registry_version": 1,
+          "pass": true,
+          "hard_failures": [],
+          "diagnostics": {
+            "browser_title_target_count": 13,
+            "title_hard_fail_rate": 0.0,
+            "orphan_line_rate": 0.0,
+            "collapsed_middle_line_rate": 0.0,
+            "profile_mismatch_rate": 0.0,
+            "structural_preset_break_rate": 0.0,
+            "title_clipping_rate": 0.0,
+            "title_occlusion_rate": 0.0
+          },
+          "targets": [
+            {
+              "qa_id": "slide-1-title-1",
+              "slide_index": 1,
+              "layout_id": "cover",
+              "profile": "horizontal_balanced_centered",
+              "node_type": "ordinary_heading",
+              "max_lines": 3,
+              "required_companion_selectors": [],
+              "required_attributes": [],
+              "text": "kai-slide-creator",
+              "tag_name": "h1",
+              "missing": false,
+              "line_count": 1,
+              "line_widths": [
+                544.17
+              ],
+              "clipped": false,
+              "occluded": false,
+              "occluded_by": [],
+              "writing_mode": "horizontal-tb",
+              "classes": [
+                "gt"
+              ],
+              "attrs_present": true,
+              "companions_present": true,
+              "profile_mismatch": false,
+              "hard_failures": []
+            },
+            {
+              "qa_id": "slide-2-title-2",
+              "slide_index": 2,
+              "layout_id": "chapter",
+              "profile": "horizontal_balanced_centered",
+              "node_type": "ordinary_heading",
+              "max_lines": 3,
+              "required_companion_selectors": [],
+              "required_attributes": [],
+              "text": "为什么需要另一种演示工具",
+              "tag_name": "h2",
+              "missing": false,
+              "line_count": 1,
+              "line_widths": [
+                494.22
+              ],
+              "clipped": false,
+              "occluded": false,
+              "occluded_by": [],
+              "writing_mode": "horizontal-tb",
+              "classes": [
+                "gt"
+              ],
+              "attrs_present": true,
+              "companions_present": true,
+              "profile_mismatch": false,
+              "hard_failures": []
+            },
+            {
+              "qa_id": "slide-3-title-3",
+              "slide_index": 3,
+              "layout_id": null,
+              "profile": "horizontal_balanced_centered",
+              "node_type": "ordinary_heading",
+              "max_lines": 3,
+              "required_companion_selectors": [],
+              "required_attributes": [],
+              "text": "为什么需要另一种演示工具",
+              "tag_name": "h2",
+              "missing": false,
+              "line_count": 1,
+              "line_widths": [
+                494.22
+              ],
+              "clipped": false,
+              "occluded": false,
+              "occluded_by": [],
+              "writing_mode": "horizontal-tb",
+              "classes": [
+                "gt"
+              ],
+              "attrs_present": true,
+              "companions_present": true,
+              "profile_mismatch": false,
+              "hard_failures": []
+            },
+            {
+              "qa_id": "slide-4-title-4",
+              "slide_index": 4,
+              "layout_id": null,
+              "profile": "horizontal_balanced_centered",
+              "node_type": "ordinary_heading",
+              "max_lines": 3,
+              "required_companion_selectors": [],
+              "required_attributes": [],
+              "text": "21 种设计预设 每种都有签名视觉语言",
+              "tag_name": "h2",
+              "missing": false,
+              "line_count": 2,
+              "line_widths": [
+                940,
+                940
+              ],
+              "clipped": false,
+              "occluded": false,
+              "occluded_by": [],
+              "writing_mode": "horizontal-tb",
+              "classes": [
+                "gt"
+              ],
+              "attrs_present": true,
+              "companions_present": true,
+              "profile_mismatch": false,
+              "hard_failures": []
+            },
+            {
+              "qa_id": "slide-5-title-5",
+              "slide_index": 5,
+              "layout_id": "chapter",
+              "profile": "horizontal_balanced_centered",
+              "node_type": "ordinary_heading",
+              "max_lines": 3,
+              "required_companion_selectors": [],
+              "required_attributes": [],
+              "text": "三个核心模块，支撑全流程演示",
+              "tag_name": "h2",
+              "missing": false,
+              "line_count": 1,
+              "line_widths": [
+                576.58
+              ],
+              "clipped": false,
+              "occluded": false,
+              "occluded_by": [],
+              "writing_mode": "horizontal-tb",
+              "classes": [
+                "gt"
+              ],
+              "attrs_present": true,
+              "companions_present": true,
+              "profile_mismatch": false,
+              "hard_failures": []
+            },
+            {
+              "qa_id": "slide-6-title-6",
+              "slide_index": 6,
+              "layout_id": null,
+              "profile": "horizontal_balanced_centered",
+              "node_type": "ordinary_heading",
+              "max_lines": 3,
+              "required_companion_selectors": [],
+              "required_attributes": [],
+              "text": "播放模式 — 按 F5 即全屏",
+              "tag_name": "h2",
+              "missing": false,
+              "line_count": 1,
+              "line_widths": [
+                446.7
+              ],
+              "clipped": false,
+              "occluded": false,
+              "occluded_by": [],
+              "writing_mode": "horizontal-tb",
+              "classes": [
+                "gt"
+              ],
+              "attrs_present": true,
+              "companions_present": true,
+              "profile_mismatch": false,
+              "hard_failures": []
+            },
+            {
+              "qa_id": "slide-7-title-7",
+              "slide_index": 7,
+              "layout_id": null,
+              "profile": "horizontal_balanced_centered",
+              "node_type": "ordinary_heading",
+              "max_lines": 3,
+              "required_companion_selectors": [],
+              "required_attributes": [],
+              "text": "演讲者模式 — P 键打开同步窗口",
+              "tag_name": "h2",
+              "missing": false,
+              "line_count": 1,
+              "line_widths": [
+                580.19
+              ],
+              "clipped": false,
+              "occluded": false,
+              "occluded_by": [],
+              "writing_mode": "horizontal-tb",
+              "classes": [
+                "gt"
+              ],
+              "attrs_present": true,
+              "companions_present": true,
+              "profile_mismatch": false,
+              "hard_failures": []
+            },
+            {
+              "qa_id": "slide-8-title-8",
+              "slide_index": 8,
+              "layout_id": null,
+              "profile": "horizontal_balanced_centered",
+              "node_type": "ordinary_heading",
+              "max_lines": 3,
+              "required_companion_selectors": [],
+              "required_attributes": [],
+              "text": "浏览器内编辑 — 所见即所改",
+              "tag_name": "h2",
+              "missing": false,
+              "line_count": 1,
+              "line_widths": [
+                505.17
+              ],
+              "clipped": false,
+              "occluded": false,
+              "occluded_by": [],
+              "writing_mode": "horizontal-tb",
+              "classes": [
+                "gt"
+              ],
+              "attrs_present": true,
+              "companions_present": true,
+              "profile_mismatch": false,
+              "hard_failures": []
+            },
+            {
+              "qa_id": "slide-9-title-9",
+              "slide_index": 9,
+              "layout_id": "chapter",
+              "profile": "horizontal_balanced_centered",
+              "node_type": "ordinary_heading",
+              "max_lines": 3,
+              "required_companion_selectors": [],
+              "required_attributes": [],
+              "text": "一条命令，三分钟出稿",
+              "tag_name": "h2",
+              "missing": false,
+              "line_count": 1,
+              "line_widths": [
+                411.84
+              ],
+              "clipped": false,
+              "occluded": false,
+              "occluded_by": [],
+              "writing_mode": "horizontal-tb",
+              "classes": [
+                "gt"
+              ],
+              "attrs_present": true,
+              "companions_present": true,
+              "profile_mismatch": false,
+              "hard_failures": []
+            },
+            {
+              "qa_id": "slide-11-title-10",
+              "slide_index": 11,
+              "layout_id": null,
+              "profile": "horizontal_balanced_centered",
+              "node_type": "ordinary_heading",
+              "max_lines": 3,
+              "required_companion_selectors": [],
+              "required_attributes": [],
+              "text": "什么内容配什么风格，一眼匹配",
+              "tag_name": "h2",
+              "missing": false,
+              "line_count": 1,
+              "line_widths": [
+                576.58
+              ],
+              "clipped": false,
+              "occluded": false,
+              "occluded_by": [],
+              "writing_mode": "horizontal-tb",
+              "classes": [
+                "gt"
+              ],
+              "attrs_present": true,
+              "companions_present": true,
+              "profile_mismatch": false,
+              "hard_failures": []
+            },
+            {
+              "qa_id": "slide-12-title-11",
+              "slide_index": 12,
+              "layout_id": null,
+              "profile": "horizontal_balanced_centered",
+              "node_type": "ordinary_heading",
+              "max_lines": 3,
+              "required_companion_selectors": [],
+              "required_attributes": [],
+              "text": "零依赖，纯浏览器运行",
+              "tag_name": "h2",
+              "missing": false,
+              "line_count": 1,
+              "line_widths": [
+                411.84
+              ],
+              "clipped": false,
+              "occluded": false,
+              "occluded_by": [],
+              "writing_mode": "horizontal-tb",
+              "classes": [
+                "gt"
+              ],
+              "attrs_present": true,
+              "companions_present": true,
+              "profile_mismatch": false,
+              "hard_failures": []
+            },
+            {
+              "qa_id": "slide-13-title-12",
+              "slide_index": 13,
+              "layout_id": null,
+              "profile": "horizontal_balanced_centered",
+              "node_type": "ordinary_heading",
+              "max_lines": 3,
+              "required_companion_selectors": [],
+              "required_attributes": [],
+              "text": "持续迭代，每周都在变强",
+              "tag_name": "h2",
+              "missing": false,
+              "line_count": 1,
+              "line_widths": [
+                453.03
+              ],
+              "clipped": false,
+              "occluded": false,
+              "occluded_by": [],
+              "writing_mode": "horizontal-tb",
+              "classes": [
+                "gt"
+              ],
+              "attrs_present": true,
+              "companions_present": true,
+              "profile_mismatch": false,
+              "hard_failures": []
+            },
+            {
+              "qa_id": "slide-14-title-13",
+              "slide_index": 14,
+              "layout_id": "cover",
+              "profile": "horizontal_balanced_centered",
+              "node_type": "ordinary_heading",
+              "max_lines": 3,
+              "required_companion_selectors": [],
+              "required_attributes": [],
+              "text": "从设计预设开始 让内容自己说话",
+              "tag_name": "h2",
+              "missing": false,
+              "line_count": 2,
+              "line_widths": [
+                472.27,
+                472.27
+              ],
+              "clipped": false,
+              "occluded": false,
+              "occluded_by": [],
+              "writing_mode": "horizontal-tb",
+              "classes": [
+                "gt"
+              ],
+              "attrs_present": true,
+              "companions_present": true,
+              "profile_mismatch": false,
+              "hard_failures": []
+            }
+          ],
+          "html_path": "/private/tmp/slide-preset-release-gate/support-blue-sky-fixture/deck.html"
+        }
+      },
+      "expectations": {
+        "checks": [
+          {
+            "name": "expected_preset",
+            "passed": true,
+            "expected": "Blue Sky",
+            "actual": "Blue Sky"
+          },
+          {
+            "name": "expected_support_tier",
+            "passed": true,
+            "expected": "production",
+            "actual": "production"
+          },
+          {
+            "name": "required_html_check:blue-sky-architecture",
+            "passed": true,
+            "message": "Blue Sky starter markers present"
+          },
+          {
+            "name": "required_html_check:style-signature",
+            "passed": true,
+            "message": "style signature coverage=0.9545"
+          },
+          {
+            "name": "required_html_check:present-mode",
+            "passed": true,
+            "message": "Present mode present (F5 + body.presenting CSS + PresentMode)"
+          },
+          {
+            "name": "required_html_check:edit-mode",
+            "passed": true,
+            "message": "Edit mode present (edit-hotzone + contenteditable + saveFile)"
+          },
+          {
+            "name": "required_html_check:watermark-injected",
+            "passed": true,
+            "message": "Watermark appears JS-injected (heuristic)"
+          },
+          {
+            "name": "required_quality_gate:chrome-hidden-by-default",
+            "passed": true,
+            "actual": true
+          },
+          {
+            "name": "required_quality_gate:no-content-occlusion-risk",
+            "passed": true,
+            "actual": true
+          },
+          {
+            "name": "required_title_gate:browser-title-composition",
+            "passed": true,
+            "actual": true
+          },
+          {
+            "name": "style_signature_coverage_min",
+            "passed": true,
+            "expected": 0.5,
+            "actual": 0.9545,
+            "message": "style_signature_coverage >= 0.5"
+          }
+        ],
+        "failures": [],
+        "passed": true
+      },
+      "scores": {
+        "route": {
+          "weight": 0.15,
+          "score": 1.0
+        },
+        "compression": {
+          "weight": 0.25,
+          "score": 1.0
+        },
+        "render": {
+          "weight": 0.45,
+          "score": 1.0
+        },
+        "efficiency": {
+          "weight": 0.15,
+          "score": 1.0
+        }
+      },
+      "diagnostics": {
+        "low_context": {
+          "quality_tier": null,
+          "chrome_leak": false,
+          "default_visible_chrome": [],
+          "content_occlusion_risk": false,
+          "layout_variety": 0.0,
+          "avg_component_kinds_per_slide": 3.0,
+          "style_signature_coverage": 0.9545,
+          "numeric_faithfulness": 1.0,
+          "hallucinated_numeric_tokens": [],
+          "source_fact_coverage": null,
+          "chart_signal_mismatch_count": null,
+          "chart_signal_mismatch_rate": null,
+          "global_fact_overuse_count": null,
+          "narrative_role_coverage": null,
+          "role_sequence_match": null,
+          "minimal_slide_ratio": 0.2143,
+          "max_minimal_slide_run": 1,
+          "browser_title_target_count": 13,
+          "title_hard_fail_rate": 0.0,
+          "orphan_line_rate": 0.0,
+          "collapsed_middle_line_rate": 0.0,
+          "profile_mismatch_rate": 0.0,
+          "structural_preset_break_rate": 0.0,
+          "title_clipping_rate": 0.0,
+          "title_occlusion_rate": 0.0,
+          "strict_pass_first_try": true,
+          "repair_rounds": 0,
+          "route_drift": false,
+          "latency_ms": {
+            "packet": 0.0,
+            "render": 0.0,
+            "assemble": 0.0,
+            "validate": 7.95
+          }
+        }
+      },
+      "overall": 1.0,
+      "notes": [
+        "Blue Sky fixture remains as a support-surface guard for starter architecture parity."
+      ]
+    },
+    {
+      "case_id": "core-blue-sky-render",
+      "mode": "render",
+      "validation_profile": "strict",
+      "pass": true,
+      "preset": "Blue Sky",
+      "support_tier": "production",
+      "brief_path": "/Users/song/projects/slide-creator/demos/mode-paths/auto-BRIEF.json",
+      "source_path": null,
+      "html_path": "/private/tmp/slide-preset-release-gate/core-blue-sky-render/deck.html",
+      "fixture_html_path": null,
+      "packet_path": "/private/tmp/slide-preset-release-gate/core-blue-sky-render/packet.json",
+      "quality_report_path": "/private/tmp/slide-preset-release-gate/core-blue-sky-render/quality-report.json",
+      "baseline_html_path": null,
+      "hard_failures": [],
+      "validations": {
+        "brief": {
+          "passed": true,
+          "errors": []
+        },
+        "html_validate": {
+          "strict": true,
+          "passed": true,
+          "failed_checks": [],
+          "warnings": [],
+          "checks": {
+            "slide_count": {
+              "passed": true,
+              "message": "8 slides found"
+            },
+            "100vh": {
+              "passed": true,
+              "message": "height: 100vh present"
+            },
+            "overflow_hidden": {
+              "passed": true,
+              "message": "overflow: hidden present"
+            },
+            "self_contained": {
+              "passed": true,
+              "message": "Self-contained (no external dependencies)"
+            },
+            "file_size": {
+              "passed": true,
+              "message": "File size: 49KB"
+            },
+            "html_structure": {
+              "passed": true,
+              "message": "HTML structure valid"
+            },
+            "no_markdown": {
+              "passed": true,
+              "message": "No raw markdown in slide text"
+            },
+            "keyboard_nav": {
+              "passed": true,
+              "message": "Keyboard navigation present"
+            },
+            "edit_mode": {
+              "passed": true,
+              "message": "Edit mode present (edit-hotzone + contenteditable + saveFile)"
+            },
+            "default_hidden_chrome": {
+              "passed": true,
+              "message": "Editing chrome hidden by default"
+            },
+            "preset_metadata": {
+              "passed": true,
+              "message": "Preset metadata present (Blue Sky)"
+            },
+            "shared_js_engine_contract": {
+              "passed": true,
+              "message": "Shared js-engine contract not applicable (Blue Sky)"
+            },
+            "data_notes": {
+              "passed": true,
+              "message": "data-notes present on 8/8 slides"
+            },
+            "swiss_modern_contract": {
+              "passed": true,
+              "message": "Swiss Modern contract not applicable"
+            },
+            "enterprise_dark_contract": {
+              "passed": true,
+              "message": "Enterprise Dark contract not applicable"
+            },
+            "data_story_contract": {
+              "passed": true,
+              "message": "Data Story contract not applicable"
+            },
+            "glassmorphism_contract": {
+              "passed": true,
+              "message": "Glassmorphism contract not applicable"
+            },
+            "chinese_chan_contract": {
+              "passed": true,
+              "message": "Chinese Chan contract not applicable"
+            },
+            "title_balance": {
+              "passed": true,
+              "message": "Title balance OK (2 controlled multi-line titles)"
+            },
+            "visual_variety": {
+              "passed": true,
+              "message": "Visual variety OK (max run: 1)"
+            },
+            "css_vars_defined": {
+              "passed": true,
+              "message": "All CSS variables resolved (22 defined)"
+            },
+            "present_mode": {
+              "passed": true,
+              "message": "Present mode present (F5 + body.presenting CSS + PresentMode)"
+            },
+            "unicode_fe0f": {
+              "passed": true,
+              "message": "No U+FE0F variant selectors"
+            },
+            "watermark_injection": {
+              "passed": true,
+              "message": "Watermark appears JS-injected (heuristic)"
+            },
+            "hero_rhythm": {
+              "passed": true,
+              "message": "Hero rhythm OK (no ≥3 consecutive hero pages)"
+            },
+            "emoji_usage": {
+              "passed": true,
+              "message": "No pictorial emoji detected"
+            }
+          }
+        },
+        "title_browser": {
+          "preset": "Blue Sky",
+          "registry_version": 1,
+          "pass": true,
+          "hard_failures": [],
+          "diagnostics": {
+            "browser_title_target_count": 8,
+            "title_hard_fail_rate": 0.0,
+            "orphan_line_rate": 0.0,
+            "collapsed_middle_line_rate": 0.0,
+            "profile_mismatch_rate": 0.0,
+            "structural_preset_break_rate": 0.0,
+            "title_clipping_rate": 0.0,
+            "title_occlusion_rate": 0.0
+          },
+          "targets": [
+            {
+              "qa_id": "slide-1-title-1",
+              "slide_index": 1,
+              "layout_id": "cover",
+              "profile": "horizontal_balanced_centered",
+              "node_type": "ordinary_heading",
+              "max_lines": 3,
+              "required_companion_selectors": [],
+              "required_attributes": [],
+              "text": "Slide Creator",
+              "tag_name": "h1",
+              "missing": false,
+              "line_count": 1,
+              "line_widths": [
+                420.8
+              ],
+              "clipped": false,
+              "occluded": false,
+              "occluded_by": [],
+              "writing_mode": "horizontal-tb",
+              "classes": [
+                "gt",
+                "reveal"
+              ],
+              "attrs_present": true,
+              "companions_present": true,
+              "profile_mismatch": false,
+              "hard_failures": []
+            },
+            {
+              "qa_id": "slide-2-title-2",
+              "slide_index": 2,
+              "layout_id": "problem",
+              "profile": "horizontal_balanced_centered",
+              "node_type": "ordinary_heading",
+              "max_lines": 3,
+              "required_companion_selectors": [],
+              "required_attributes": [],
+              "text": "好内容经常被糟 糕的演示稿拖累",
+              "tag_name": "h2",
+              "missing": false,
+              "line_count": 2,
+              "line_widths": [
+                860,
+                860
+              ],
+              "clipped": false,
+              "occluded": false,
+              "occluded_by": [],
+              "writing_mode": "horizontal-tb",
+              "classes": [
+                "gt",
+                "reveal",
+                "title-balance"
+              ],
+              "attrs_present": true,
+              "companions_present": true,
+              "profile_mismatch": false,
+              "hard_failures": []
+            },
+            {
+              "qa_id": "slide-3-title-3",
+              "slide_index": 3,
+              "layout_id": "solution",
+              "profile": "horizontal_balanced_centered",
+              "node_type": "ordinary_heading",
+              "max_lines": 3,
+              "required_companion_selectors": [],
+              "required_attributes": [],
+              "text": "slide-creator 让 deck 生 成更稳定",
+              "tag_name": "h2",
+              "missing": false,
+              "line_count": 3,
+              "line_widths": [
+                243.52,
+                243.52,
+                243.52
+              ],
+              "clipped": false,
+              "occluded": false,
+              "occluded_by": [],
+              "writing_mode": "horizontal-tb",
+              "classes": [
+                "gt",
+                "reveal",
+                "title-balance"
+              ],
+              "attrs_present": true,
+              "companions_present": true,
+              "profile_mismatch": false,
+              "hard_failures": []
+            },
+            {
+              "qa_id": "slide-4-title-4",
+              "slide_index": 4,
+              "layout_id": "workflow",
+              "profile": "horizontal_balanced_centered",
+              "node_type": "ordinary_heading",
+              "max_lines": 3,
+              "required_companion_selectors": [],
+              "required_attributes": [],
+              "text": "典型路径足够短",
+              "tag_name": "h2",
+              "missing": false,
+              "line_count": 1,
+              "line_widths": [
+                288.3
+              ],
+              "clipped": false,
+              "occluded": false,
+              "occluded_by": [],
+              "writing_mode": "horizontal-tb",
+              "classes": [
+                "gt",
+                "reveal"
+              ],
+              "attrs_present": true,
+              "companions_present": true,
+              "profile_mismatch": false,
+              "hard_failures": []
+            },
+            {
+              "qa_id": "slide-5-title-5",
+              "slide_index": 5,
+              "layout_id": "style-discovery",
+              "profile": "horizontal_balanced_centered",
+              "node_type": "ordinary_heading",
+              "max_lines": 3,
+              "required_companion_selectors": [],
+              "required_attributes": [],
+              "text": "风格选择是 wow moment",
+              "tag_name": "h2",
+              "missing": false,
+              "line_count": 1,
+              "line_widths": [
+                468.42
+              ],
+              "clipped": false,
+              "occluded": false,
+              "occluded_by": [],
+              "writing_mode": "horizontal-tb",
+              "classes": [
+                "gt",
+                "reveal"
+              ],
+              "attrs_present": true,
+              "companions_present": true,
+              "profile_mismatch": false,
+              "hard_failures": []
+            },
+            {
+              "qa_id": "slide-6-title-6",
+              "slide_index": 6,
+              "layout_id": "output-contract",
+              "profile": "horizontal_balanced_centered",
+              "node_type": "ordinary_heading",
+              "max_lines": 3,
+              "required_companion_selectors": [],
+              "required_attributes": [],
+              "text": "输出不是一次性截图",
+              "tag_name": "h2",
+              "missing": false,
+              "line_count": 1,
+              "line_widths": [
+                370.66
+              ],
+              "clipped": false,
+              "occluded": false,
+              "occluded_by": [],
+              "writing_mode": "horizontal-tb",
+              "classes": [
+                "gt",
+                "reveal"
+              ],
+              "attrs_present": true,
+              "companions_present": true,
+              "profile_mismatch": false,
+              "hard_failures": []
+            },
+            {
+              "qa_id": "slide-7-title-7",
+              "slide_index": 7,
+              "layout_id": "best-fit",
+              "profile": "horizontal_balanced_centered",
+              "node_type": "ordinary_heading",
+              "max_lines": 3,
+              "required_companion_selectors": [],
+              "required_attributes": [],
+              "text": "适合高质量日常演示场景",
+              "tag_name": "h2",
+              "missing": false,
+              "line_count": 1,
+              "line_widths": [
+                453.03
+              ],
+              "clipped": false,
+              "occluded": false,
+              "occluded_by": [],
+              "writing_mode": "horizontal-tb",
+              "classes": [
+                "gt",
+                "reveal"
+              ],
+              "attrs_present": true,
+              "companions_present": true,
+              "profile_mismatch": false,
+              "hard_failures": []
+            },
+            {
+              "qa_id": "slide-8-title-8",
+              "slide_index": 8,
+              "layout_id": "closing",
+              "profile": "horizontal_balanced_centered",
+              "node_type": "ordinary_heading",
+              "max_lines": 3,
+              "required_companion_selectors": [],
+              "required_attributes": [],
+              "text": "先出一版，再精修",
+              "tag_name": "h2",
+              "missing": false,
+              "line_count": 1,
+              "line_widths": [
+                329.48
+              ],
+              "clipped": false,
+              "occluded": false,
+              "occluded_by": [],
+              "writing_mode": "horizontal-tb",
+              "classes": [
+                "gt",
+                "reveal"
+              ],
+              "attrs_present": true,
+              "companions_present": true,
+              "profile_mismatch": false,
+              "hard_failures": []
+            }
+          ],
+          "html_path": "/private/tmp/slide-preset-release-gate/core-blue-sky-render/deck.html"
+        }
+      },
+      "expectations": {
+        "checks": [
+          {
+            "name": "expected_mode",
+            "passed": true,
+            "expected": "auto",
+            "actual": "auto"
+          },
+          {
+            "name": "expected_preset",
+            "passed": true,
+            "expected": "Blue Sky",
+            "actual": "Blue Sky"
+          },
+          {
+            "name": "expected_support_tier",
+            "passed": true,
+            "expected": "production",
+            "actual": "production"
+          },
+          {
+            "name": "required_brief_field:style.preset",
+            "passed": true,
+            "actual": "Blue Sky"
+          },
+          {
+            "name": "required_brief_field:deck.page_count",
+            "passed": true,
+            "actual": 8
+          },
+          {
+            "name": "required_brief_field:narrative.thesis",
+            "passed": true,
+            "actual": "slide-creator 把从 prompt 到演示 deck 的关键步骤压缩成一个轻量可复用工作流。"
+          },
+          {
+            "name": "expected_quality_tier",
+            "passed": true,
+            "expected": "tier0",
+            "actual": "tier0"
+          },
+          {
+            "name": "required_html_check:blue-sky-architecture",
+            "passed": true,
+            "message": "Blue Sky starter markers present"
+          },
+          {
+            "name": "required_html_check:style-signature",
+            "passed": true,
+            "message": "style signature coverage=0.8182"
+          },
+          {
+            "name": "required_html_check:present-mode",
+            "passed": true,
+            "message": "Present mode present (F5 + body.presenting CSS + PresentMode)"
+          },
+          {
+            "name": "required_html_check:edit-mode",
+            "passed": true,
+            "message": "Edit mode present (edit-hotzone + contenteditable + saveFile)"
+          },
+          {
+            "name": "required_html_check:watermark-injected",
+            "passed": true,
+            "message": "Watermark appears JS-injected (heuristic)"
+          },
+          {
+            "name": "required_quality_gate:chrome-hidden-by-default",
+            "passed": true,
+            "actual": true
+          },
+          {
+            "name": "required_quality_gate:no-content-occlusion-risk",
+            "passed": true,
+            "actual": true
+          },
+          {
+            "name": "required_quality_gate:narrative-role-coverage",
+            "passed": true,
+            "actual": true
+          },
+          {
+            "name": "required_quality_gate:minimal-slide-run",
+            "passed": true,
+            "actual": true
+          },
+          {
+            "name": "required_title_gate:browser-title-composition",
+            "passed": true,
+            "actual": true
+          },
+          {
+            "name": "narrative_role_coverage",
+            "passed": true,
+            "expected": 1.0,
+            "actual": 1.0,
+            "message": "narrative_role_coverage == 1.0"
+          },
+          {
+            "name": "max_minimal_slide_run",
+            "passed": true,
+            "expected": 2,
+            "actual": 1,
+            "message": "max_minimal_slide_run <= 2"
+          },
+          {
+            "name": "style_signature_coverage_min",
+            "passed": true,
+            "expected": 0.5,
+            "actual": 0.8182,
+            "message": "style_signature_coverage >= 0.5"
+          },
+          {
+            "name": "non_regression:layout-variety",
+            "passed": true,
+            "actual": null,
+            "message": "baseline not provided; skipped"
+          },
+          {
+            "name": "non_regression:component-diversity",
+            "passed": true,
+            "actual": null,
+            "message": "baseline not provided; skipped"
+          },
+          {
+            "name": "non_regression:style-signature-coverage",
+            "passed": true,
+            "actual": null,
+            "message": "baseline not provided; skipped"
+          },
+          {
+            "name": "non_regression:minimal-slide-ratio",
+            "passed": true,
+            "actual": null,
+            "message": "baseline not provided; skipped"
+          }
+        ],
+        "failures": [],
+        "passed": true
+      },
+      "scores": {
+        "route": {
+          "weight": 0.15,
+          "score": 1.0
+        },
+        "compression": {
+          "weight": 0.25,
+          "score": 1.0
+        },
+        "render": {
+          "weight": 0.45,
+          "score": 1.0
+        },
+        "efficiency": {
+          "weight": 0.15,
+          "score": 1.0
+        }
+      },
+      "diagnostics": {
+        "low_context": {
+          "quality_tier": "tier0",
+          "chrome_leak": false,
+          "default_visible_chrome": [],
+          "content_occlusion_risk": false,
+          "layout_variety": 1.0,
+          "avg_component_kinds_per_slide": 3.0,
+          "style_signature_coverage": 0.8182,
+          "numeric_faithfulness": 1.0,
+          "hallucinated_numeric_tokens": [],
+          "source_fact_coverage": 0.6667,
+          "chart_signal_mismatch_count": 0,
+          "chart_signal_mismatch_rate": 0.0,
+          "global_fact_overuse_count": 2,
+          "narrative_role_coverage": 1.0,
+          "role_sequence_match": true,
+          "minimal_slide_ratio": 0.25,
+          "max_minimal_slide_run": 1,
+          "browser_title_target_count": 8,
+          "title_hard_fail_rate": 0.0,
+          "orphan_line_rate": 0.0,
+          "collapsed_middle_line_rate": 0.0,
+          "profile_mismatch_rate": 0.0,
+          "structural_preset_break_rate": 0.0,
+          "title_clipping_rate": 0.0,
+          "title_occlusion_rate": 0.0,
+          "strict_pass_first_try": true,
+          "repair_rounds": 0,
+          "route_drift": false,
+          "latency_ms": {
+            "packet": 1.16,
+            "render": 17.16,
+            "assemble": 0.0,
+            "validate": 8.1
+          }
+        }
+      },
+      "overall": 1.0,
+      "notes": []
+    },
+    {
+      "case_id": "support-paper-ink-fixture",
+      "mode": "html-fixture",
+      "validation_profile": "strict",
+      "pass": true,
+      "preset": "Paper & Ink",
+      "support_tier": "supported",
+      "brief_path": null,
+      "source_path": null,
+      "html_path": "/private/tmp/slide-preset-release-gate/support-paper-ink-fixture/deck.html",
+      "fixture_html_path": "/Users/song/projects/slide-creator/demos/paper-ink-zh.html",
+      "packet_path": "/private/tmp/slide-preset-release-gate/support-paper-ink-fixture/packet.json",
+      "quality_report_path": "/private/tmp/slide-preset-release-gate/support-paper-ink-fixture/quality-report.json",
+      "baseline_html_path": null,
+      "hard_failures": [],
+      "validations": {
+        "brief": {
+          "passed": null,
+          "errors": []
+        },
+        "html_validate": {
+          "strict": true,
+          "passed": true,
+          "failed_checks": [],
+          "warnings": [],
+          "checks": {
+            "slide_count": {
+              "passed": true,
+              "message": "8 slides found"
+            },
+            "100vh": {
+              "passed": true,
+              "message": "height: 100vh present"
+            },
+            "overflow_hidden": {
+              "passed": true,
+              "message": "overflow: hidden present"
+            },
+            "self_contained": {
+              "passed": true,
+              "message": "Self-contained (2 Google Fonts links allowed)"
+            },
+            "file_size": {
+              "passed": true,
+              "message": "File size: 54KB"
+            },
+            "html_structure": {
+              "passed": true,
+              "message": "HTML structure valid"
+            },
+            "no_markdown": {
+              "passed": true,
+              "message": "No raw markdown in slide text"
+            },
+            "keyboard_nav": {
+              "passed": true,
+              "message": "Keyboard navigation present"
+            },
+            "edit_mode": {
+              "passed": true,
+              "message": "Edit mode present (edit-hotzone + contenteditable + saveFile)"
+            },
+            "default_hidden_chrome": {
+              "passed": true,
+              "message": "Editing chrome hidden by default"
+            },
+            "preset_metadata": {
+              "passed": true,
+              "message": "Preset metadata present (Paper & Ink)"
+            },
+            "shared_js_engine_contract": {
+              "passed": true,
+              "message": "Shared js-engine runtime present"
+            },
+            "data_notes": {
+              "passed": true,
+              "message": "data-notes present on 8/8 slides"
+            },
+            "swiss_modern_contract": {
+              "passed": true,
+              "message": "Swiss Modern contract not applicable"
+            },
+            "enterprise_dark_contract": {
+              "passed": true,
+              "message": "Enterprise Dark contract not applicable"
+            },
+            "data_story_contract": {
+              "passed": true,
+              "message": "Data Story contract not applicable"
+            },
+            "glassmorphism_contract": {
+              "passed": true,
+              "message": "Glassmorphism contract not applicable"
+            },
+            "chinese_chan_contract": {
+              "passed": true,
+              "message": "Chinese Chan contract not applicable"
+            },
+            "title_balance": {
+              "passed": true,
+              "message": "Title balance OK (5 controlled multi-line titles)"
+            },
+            "visual_variety": {
+              "passed": true,
+              "message": "Visual variety OK (max run: 1)"
+            },
+            "css_vars_defined": {
+              "passed": true,
+              "message": "All CSS variables resolved (14 defined)"
+            },
+            "present_mode": {
+              "passed": true,
+              "message": "Present mode present (F5 + body.presenting CSS + PresentMode)"
+            },
+            "unicode_fe0f": {
+              "passed": true,
+              "message": "No U+FE0F variant selectors"
+            },
+            "watermark_injection": {
+              "passed": true,
+              "message": "Watermark appears JS-injected (heuristic)"
+            },
+            "hero_rhythm": {
+              "passed": true,
+              "message": "Hero rhythm OK (no ≥3 consecutive hero pages)"
+            },
+            "emoji_usage": {
+              "passed": true,
+              "message": "No pictorial emoji detected"
+            }
+          }
+        },
+        "title_browser": {
+          "preset": "Paper & Ink",
+          "registry_version": 1,
+          "pass": true,
+          "hard_failures": [],
+          "diagnostics": {
+            "browser_title_target_count": 6,
+            "title_hard_fail_rate": 0.0,
+            "orphan_line_rate": 0.0,
+            "collapsed_middle_line_rate": 0.0,
+            "profile_mismatch_rate": 0.0,
+            "structural_preset_break_rate": 0.0,
+            "title_clipping_rate": 0.0,
+            "title_occlusion_rate": 0.0
+          },
+          "targets": [
+            {
+              "qa_id": "slide-1-title-1",
+              "slide_index": 1,
+              "layout_id": null,
+              "profile": "horizontal_balanced_centered",
+              "node_type": "ordinary_heading",
+              "max_lines": 3,
+              "required_companion_selectors": [],
+              "required_attributes": [],
+              "text": "slide- creator",
+              "tag_name": "h1",
+              "missing": false,
+              "line_count": 1,
+              "line_widths": [
+                301.63
+              ],
+              "clipped": false,
+              "occluded": false,
+              "occluded_by": [],
+              "writing_mode": "horizontal-tb",
+              "classes": [
+                "reveal",
+                "visible"
+              ],
+              "attrs_present": true,
+              "companions_present": true,
+              "profile_mismatch": false,
+              "hard_failures": []
+            },
+            {
+              "qa_id": "slide-2-title-2",
+              "slide_index": 2,
+              "layout_id": null,
+              "profile": "horizontal_balanced_centered",
+              "node_type": "ordinary_heading",
+              "max_lines": 3,
+              "required_companion_selectors": [],
+              "required_attributes": [],
+              "text": "演示文稿不应该 需要 构建系统。",
+              "tag_name": "h2",
+              "missing": false,
+              "line_count": 2,
+              "line_widths": [
+                1324.81,
+                1324.81
+              ],
+              "clipped": false,
+              "occluded": false,
+              "occluded_by": [],
+              "writing_mode": "horizontal-tb",
+              "classes": [
+                "reveal",
+                "title-balance",
+                "visible"
+              ],
+              "attrs_present": true,
+              "companions_present": true,
+              "profile_mismatch": false,
+              "hard_failures": []
+            },
+            {
+              "qa_id": "slide-3-title-3",
+              "slide_index": 3,
+              "layout_id": null,
+              "profile": "horizontal_balanced_centered",
+              "node_type": "ordinary_heading",
+              "max_lines": 3,
+              "required_companion_selectors": [],
+              "required_attributes": [],
+              "text": "风格探索 真正有效。",
+              "tag_name": "h2",
+              "missing": false,
+              "line_count": 2,
+              "line_widths": [
+                240.78,
+                300.97
+              ],
+              "clipped": false,
+              "occluded": false,
+              "occluded_by": [],
+              "writing_mode": "horizontal-tb",
+              "classes": [
+                "reveal",
+                "visible"
+              ],
+              "attrs_present": true,
+              "companions_present": true,
+              "profile_mismatch": false,
+              "hard_failures": []
+            },
+            {
+              "qa_id": "slide-4-title-4",
+              "slide_index": 4,
+              "layout_id": null,
+              "profile": "horizontal_balanced_centered",
+              "node_type": "ordinary_heading",
+              "max_lines": 3,
+              "required_companion_selectors": [],
+              "required_attributes": [],
+              "text": "十九种精心设计的风格； 拒绝 平庸的 AI 美学。",
+              "tag_name": "h2",
+              "missing": false,
+              "line_count": 2,
+              "line_widths": [
+                1324.81,
+                1324.81
+              ],
+              "clipped": false,
+              "occluded": false,
+              "occluded_by": [],
+              "writing_mode": "horizontal-tb",
+              "classes": [
+                "reveal",
+                "title-balance",
+                "visible"
+              ],
+              "attrs_present": true,
+              "companions_present": true,
+              "profile_mismatch": false,
+              "hard_failures": []
+            },
+            {
+              "qa_id": "slide-6-title-5",
+              "slide_index": 6,
+              "layout_id": null,
+              "profile": "horizontal_balanced_centered",
+              "node_type": "ordinary_heading",
+              "max_lines": 3,
+              "required_companion_selectors": [],
+              "required_attributes": [],
+              "text": "为真实使用 而设计。",
+              "tag_name": "h2",
+              "missing": false,
+              "line_count": 2,
+              "line_widths": [
+                1324.81,
+                1324.81
+              ],
+              "clipped": false,
+              "occluded": false,
+              "occluded_by": [],
+              "writing_mode": "horizontal-tb",
+              "classes": [
+                "reveal",
+                "title-balance",
+                "visible"
+              ],
+              "attrs_present": true,
+              "companions_present": true,
+              "profile_mismatch": false,
+              "hard_failures": []
+            },
+            {
+              "qa_id": "slide-7-title-6",
+              "slide_index": 7,
+              "layout_id": null,
+              "profile": "horizontal_balanced_centered",
+              "node_type": "ordinary_heading",
+              "max_lines": 3,
+              "required_companion_selectors": [],
+              "required_attributes": [],
+              "text": "两条命令； 零仪式。",
+              "tag_name": "h2",
+              "missing": false,
+              "line_count": 2,
+              "line_widths": [
+                300.97,
+                240.78
+              ],
+              "clipped": false,
+              "occluded": false,
+              "occluded_by": [],
+              "writing_mode": "horizontal-tb",
+              "classes": [
+                "reveal"
+              ],
+              "attrs_present": true,
+              "companions_present": true,
+              "profile_mismatch": false,
+              "hard_failures": []
+            }
+          ],
+          "html_path": "/private/tmp/slide-preset-release-gate/support-paper-ink-fixture/deck.html"
+        }
+      },
+      "expectations": {
+        "checks": [
+          {
+            "name": "expected_preset",
+            "passed": true,
+            "expected": "Paper & Ink",
+            "actual": "Paper & Ink"
+          },
+          {
+            "name": "expected_support_tier",
+            "passed": true,
+            "expected": "supported",
+            "actual": "supported"
+          },
+          {
+            "name": "required_html_check:shared-runtime",
+            "passed": true,
+            "message": "Shared js-engine runtime present"
+          },
+          {
+            "name": "required_html_check:style-signature",
+            "passed": true,
+            "message": "style signature coverage=0.8684"
+          },
+          {
+            "name": "required_html_check:present-mode",
+            "passed": true,
+            "message": "Present mode present (F5 + body.presenting CSS + PresentMode)"
+          },
+          {
+            "name": "required_html_check:edit-mode",
+            "passed": true,
+            "message": "Edit mode present (edit-hotzone + contenteditable + saveFile)"
+          },
+          {
+            "name": "required_html_check:watermark-injected",
+            "passed": true,
+            "message": "Watermark appears JS-injected (heuristic)"
+          },
+          {
+            "name": "required_quality_gate:chrome-hidden-by-default",
+            "passed": true,
+            "actual": true
+          },
+          {
+            "name": "required_quality_gate:no-content-occlusion-risk",
+            "passed": true,
+            "actual": true
+          },
+          {
+            "name": "required_title_gate:browser-title-composition",
+            "passed": true,
+            "actual": true
+          },
+          {
+            "name": "style_signature_coverage_min",
+            "passed": true,
+            "expected": 0.8,
+            "actual": 0.8684,
+            "message": "style_signature_coverage >= 0.8"
+          }
+        ],
+        "failures": [],
+        "passed": true
+      },
+      "scores": {
+        "route": {
+          "weight": 0.15,
+          "score": 1.0
+        },
+        "compression": {
+          "weight": 0.25,
+          "score": 1.0
+        },
+        "render": {
+          "weight": 0.45,
+          "score": 1.0
+        },
+        "efficiency": {
+          "weight": 0.15,
+          "score": 1.0
+        }
+      },
+      "diagnostics": {
+        "low_context": {
+          "quality_tier": null,
+          "chrome_leak": false,
+          "default_visible_chrome": [],
+          "content_occlusion_risk": false,
+          "layout_variety": 0.0,
+          "avg_component_kinds_per_slide": 1.5,
+          "style_signature_coverage": 0.8684,
+          "numeric_faithfulness": 1.0,
+          "hallucinated_numeric_tokens": [],
+          "source_fact_coverage": null,
+          "chart_signal_mismatch_count": null,
+          "chart_signal_mismatch_rate": null,
+          "global_fact_overuse_count": null,
+          "narrative_role_coverage": null,
+          "role_sequence_match": null,
+          "minimal_slide_ratio": 0.625,
+          "max_minimal_slide_run": 5,
+          "browser_title_target_count": 6,
+          "title_hard_fail_rate": 0.0,
+          "orphan_line_rate": 0.0,
+          "collapsed_middle_line_rate": 0.0,
+          "profile_mismatch_rate": 0.0,
+          "structural_preset_break_rate": 0.0,
+          "title_clipping_rate": 0.0,
+          "title_occlusion_rate": 0.0,
+          "strict_pass_first_try": true,
+          "repair_rounds": 0,
+          "route_drift": false,
+          "latency_ms": {
+            "packet": 0.0,
+            "render": 0.0,
+            "assemble": 0.0,
+            "validate": 12.59
+          }
+        }
+      },
+      "overall": 1.0,
+      "notes": [
+        "Representative editorial support-surface fixture after runtime/title cleanup.",
+        "Paper & Ink remains fixture-eval only until it has a deterministic BRIEF renderer."
+      ]
+    },
+    {
+      "case_id": "core-enterprise-dark-render",
+      "mode": "render",
+      "validation_profile": "strict",
+      "pass": true,
+      "preset": "Enterprise Dark",
+      "support_tier": "production",
+      "brief_path": "/Users/song/projects/slide-creator/demos/mode-paths/intent-broker-auto-BRIEF.json",
+      "source_path": null,
+      "html_path": "/private/tmp/slide-preset-release-gate/core-enterprise-dark-render/deck.html",
+      "fixture_html_path": null,
+      "packet_path": "/private/tmp/slide-preset-release-gate/core-enterprise-dark-render/packet.json",
+      "quality_report_path": "/private/tmp/slide-preset-release-gate/core-enterprise-dark-render/quality-report.json",
+      "baseline_html_path": null,
+      "hard_failures": [],
+      "validations": {
+        "brief": {
+          "passed": true,
+          "errors": []
+        },
+        "html_validate": {
+          "strict": true,
+          "passed": true,
+          "failed_checks": [],
+          "warnings": [
+            "2 consecutive slides with same layout signature"
+          ],
+          "checks": {
+            "slide_count": {
+              "passed": true,
+              "message": "8 slides found"
+            },
+            "100vh": {
+              "passed": true,
+              "message": "height: 100vh present"
+            },
+            "overflow_hidden": {
+              "passed": true,
+              "message": "overflow: hidden present"
+            },
+            "self_contained": {
+              "passed": true,
+              "message": "Self-contained (no external dependencies)"
+            },
+            "file_size": {
+              "passed": true,
+              "message": "File size: 56KB"
+            },
+            "html_structure": {
+              "passed": true,
+              "message": "HTML structure valid"
+            },
+            "no_markdown": {
+              "passed": true,
+              "message": "No raw markdown in slide text"
+            },
+            "keyboard_nav": {
+              "passed": true,
+              "message": "Keyboard navigation present"
+            },
+            "edit_mode": {
+              "passed": true,
+              "message": "Edit mode present (edit-hotzone + contenteditable + saveFile)"
+            },
+            "default_hidden_chrome": {
+              "passed": true,
+              "message": "Editing chrome hidden by default"
+            },
+            "preset_metadata": {
+              "passed": true,
+              "message": "Preset metadata present (Enterprise Dark)"
+            },
+            "shared_js_engine_contract": {
+              "passed": true,
+              "message": "Shared js-engine runtime present"
+            },
+            "data_notes": {
+              "passed": true,
+              "message": "data-notes present on 8/8 slides"
+            },
+            "swiss_modern_contract": {
+              "passed": true,
+              "message": "Swiss Modern contract not applicable"
+            },
+            "enterprise_dark_contract": {
+              "passed": true,
+              "message": "Enterprise Dark contract OK"
+            },
+            "data_story_contract": {
+              "passed": true,
+              "message": "Data Story contract not applicable"
+            },
+            "glassmorphism_contract": {
+              "passed": true,
+              "message": "Glassmorphism contract not applicable"
+            },
+            "chinese_chan_contract": {
+              "passed": true,
+              "message": "Chinese Chan contract not applicable"
+            },
+            "title_balance": {
+              "passed": true,
+              "message": "Title balance OK (1 controlled multi-line titles)"
+            },
+            "visual_variety": {
+              "passed": true,
+              "message": "Visual variety OK (max run: 2)"
+            },
+            "css_vars_defined": {
+              "passed": true,
+              "message": "All CSS variables resolved (13 defined)"
+            },
+            "present_mode": {
+              "passed": true,
+              "message": "Present mode present (F5 + body.presenting CSS + PresentMode)"
+            },
+            "unicode_fe0f": {
+              "passed": true,
+              "message": "No U+FE0F variant selectors"
+            },
+            "watermark_injection": {
+              "passed": true,
+              "message": "Watermark appears JS-injected (heuristic)"
+            },
+            "hero_rhythm": {
+              "passed": true,
+              "message": "Hero rhythm OK (no ≥3 consecutive hero pages)"
+            },
+            "emoji_usage": {
+              "passed": true,
+              "message": "No pictorial emoji detected"
+            }
+          }
+        },
+        "title_browser": {
+          "preset": "Enterprise Dark",
+          "registry_version": 1,
+          "pass": true,
+          "hard_failures": [],
+          "diagnostics": {
+            "browser_title_target_count": 8,
+            "title_hard_fail_rate": 0.0,
+            "orphan_line_rate": 0.0,
+            "collapsed_middle_line_rate": 0.0,
+            "profile_mismatch_rate": 0.0,
+            "structural_preset_break_rate": 0.0,
+            "title_clipping_rate": 0.0,
+            "title_occlusion_rate": 0.0
+          },
+          "targets": [
+            {
+              "qa_id": "slide-1-title-1",
+              "slide_index": 1,
+              "layout_id": "kpi_dashboard",
+              "profile": "horizontal_balanced_left_anchor",
+              "node_type": "ordinary_heading",
+              "max_lines": 3,
+              "required_companion_selectors": [],
+              "required_attributes": [],
+              "text": "Intent Broker",
+              "tag_name": "h1",
+              "missing": false,
+              "line_count": 1,
+              "line_widths": [
+                325.42
+              ],
+              "clipped": false,
+              "occluded": false,
+              "occluded_by": [],
+              "writing_mode": "horizontal-tb",
+              "classes": [
+                "ent-hero-title",
+                "reveal",
+                "visible"
+              ],
+              "attrs_present": true,
+              "companions_present": true,
+              "profile_mismatch": false,
+              "hard_failures": []
+            },
+            {
+              "qa_id": "slide-2-title-2",
+              "slide_index": 2,
+              "layout_id": "consulting_split",
+              "profile": "horizontal_balanced_left_anchor",
+              "node_type": "ordinary_heading",
+              "max_lines": 3,
+              "required_companion_selectors": [],
+              "required_attributes": [],
+              "text": "现有协作方式缺少稳定任务语义",
+              "tag_name": "h2",
+              "missing": false,
+              "line_count": 2,
+              "line_widths": [
+                192.09,
+                192.09
+              ],
+              "clipped": false,
+              "occluded": false,
+              "occluded_by": [],
+              "writing_mode": "horizontal-tb",
+              "classes": [
+                "ent-title",
+                "reveal",
+                "visible"
+              ],
+              "attrs_present": true,
+              "companions_present": true,
+              "profile_mismatch": false,
+              "hard_failures": []
+            },
+            {
+              "qa_id": "slide-3-title-3",
+              "slide_index": 3,
+              "layout_id": "consulting_split",
+              "profile": "horizontal_balanced_left_anchor",
+              "node_type": "ordinary_heading",
+              "max_lines": 3,
+              "required_companion_selectors": [],
+              "required_attributes": [],
+              "text": "Broker 只负责协议与可靠投递",
+              "tag_name": "h2",
+              "missing": false,
+              "line_count": 2,
+              "line_widths": [
+                203.59,
+                164.64
+              ],
+              "clipped": false,
+              "occluded": false,
+              "occluded_by": [],
+              "writing_mode": "horizontal-tb",
+              "classes": [
+                "ent-title",
+                "reveal",
+                "visible"
+              ],
+              "attrs_present": true,
+              "companions_present": true,
+              "profile_mismatch": false,
+              "hard_failures": []
+            },
+            {
+              "qa_id": "slide-4-title-4",
+              "slide_index": 4,
+              "layout_id": "architecture_map",
+              "profile": "horizontal_balanced_left_anchor",
+              "node_type": "ordinary_heading",
+              "max_lines": 3,
+              "required_companion_selectors": [],
+              "required_attributes": [],
+              "text": "系统围绕五个对象组织",
+              "tag_name": "h2",
+              "missing": false,
+              "line_count": 1,
+              "line_widths": [
+                431.2
+              ],
+              "clipped": false,
+              "occluded": false,
+              "occluded_by": [],
+              "writing_mode": "horizontal-tb",
+              "classes": [
+                "ent-title",
+                "reveal",
+                "visible"
+              ],
+              "attrs_present": true,
+              "companions_present": true,
+              "profile_mismatch": false,
+              "hard_failures": []
+            },
+            {
+              "qa_id": "slide-5-title-5",
+              "slide_index": 5,
+              "layout_id": "kpi_dashboard",
+              "profile": "horizontal_balanced_left_anchor",
+              "node_type": "ordinary_heading",
+              "max_lines": 3,
+              "required_companion_selectors": [],
+              "required_attributes": [],
+              "text": "状态由 intent 事件推进",
+              "tag_name": "h1",
+              "missing": false,
+              "line_count": 1,
+              "line_widths": [
+                556.88
+              ],
+              "clipped": false,
+              "occluded": false,
+              "occluded_by": [],
+              "writing_mode": "horizontal-tb",
+              "classes": [
+                "ent-hero-title",
+                "reveal",
+                "visible"
+              ],
+              "attrs_present": true,
+              "companions_present": true,
+              "profile_mismatch": false,
+              "hard_failures": []
+            },
+            {
+              "qa_id": "slide-6-title-6",
+              "slide_index": 6,
+              "layout_id": "kpi_dashboard",
+              "profile": "horizontal_balanced_left_anchor",
+              "node_type": "ordinary_heading",
+              "max_lines": 3,
+              "required_companion_selectors": [],
+              "required_attributes": [],
+              "text": "先写事件，再投递 inbox",
+              "tag_name": "h1",
+              "missing": false,
+              "line_count": 1,
+              "line_widths": [
+                588.45
+              ],
+              "clipped": false,
+              "occluded": false,
+              "occluded_by": [],
+              "writing_mode": "horizontal-tb",
+              "classes": [
+                "ent-hero-title",
+                "reveal"
+              ],
+              "attrs_present": true,
+              "companions_present": true,
+              "profile_mismatch": false,
+              "hard_failures": []
+            },
+            {
+              "qa_id": "slide-7-title-7",
+              "slide_index": 7,
+              "layout_id": "architecture_map",
+              "profile": "horizontal_balanced_left_anchor",
+              "node_type": "ordinary_heading",
+              "max_lines": 3,
+              "required_companion_selectors": [],
+              "required_attributes": [],
+              "text": "六个核心组件围绕 event store 工作",
+              "tag_name": "h2",
+              "missing": false,
+              "line_count": 2,
+              "line_widths": [
+                1120,
+                1120
+              ],
+              "clipped": false,
+              "occluded": false,
+              "occluded_by": [],
+              "writing_mode": "horizontal-tb",
+              "classes": [
+                "ent-title",
+                "reveal",
+                "title-balance",
+                "visible"
+              ],
+              "attrs_present": true,
+              "companions_present": true,
+              "profile_mismatch": false,
+              "hard_failures": []
+            },
+            {
+              "qa_id": "slide-8-title-8",
+              "slide_index": 8,
+              "layout_id": "kpi_dashboard",
+              "profile": "horizontal_balanced_left_anchor",
+              "node_type": "ordinary_heading",
+              "max_lines": 3,
+              "required_companion_selectors": [],
+              "required_attributes": [],
+              "text": "先验证闭环，再考虑远程化和 UI",
+              "tag_name": "h1",
+              "missing": false,
+              "line_count": 1,
+              "line_widths": [
+                775.27
+              ],
+              "clipped": false,
+              "occluded": false,
+              "occluded_by": [],
+              "writing_mode": "horizontal-tb",
+              "classes": [
+                "ent-hero-title",
+                "reveal",
+                "visible"
+              ],
+              "attrs_present": true,
+              "companions_present": true,
+              "profile_mismatch": false,
+              "hard_failures": []
+            }
+          ],
+          "html_path": "/private/tmp/slide-preset-release-gate/core-enterprise-dark-render/deck.html"
+        }
+      },
+      "expectations": {
+        "checks": [
+          {
+            "name": "expected_mode",
+            "passed": true,
+            "expected": "auto",
+            "actual": "auto"
+          },
+          {
+            "name": "expected_preset",
+            "passed": true,
+            "expected": "Enterprise Dark",
+            "actual": "Enterprise Dark"
+          },
+          {
+            "name": "expected_support_tier",
+            "passed": true,
+            "expected": "production",
+            "actual": "production"
+          },
+          {
+            "name": "required_brief_field:style.preset",
+            "passed": true,
+            "actual": "Enterprise Dark"
+          },
+          {
+            "name": "required_brief_field:deck.page_count",
+            "passed": true,
+            "actual": 8
+          },
+          {
+            "name": "required_brief_field:narrative.thesis",
+            "passed": true,
+            "actual": "Intent Broker 通过本地优先的协议中间层，把多 agent 协作变成可审计、可恢复、可扩展的任务语义系统。"
+          },
+          {
+            "name": "required_html_check:shared-runtime",
+            "passed": true,
+            "message": "Shared js-engine runtime present"
+          },
+          {
+            "name": "required_html_check:style-signature",
+            "passed": true,
+            "message": "style signature coverage=1.0"
+          },
+          {
+            "name": "required_html_check:background-signature",
+            "passed": true,
+            "message": "background signature coverage=0.4667"
+          },
+          {
+            "name": "required_html_check:present-mode",
+            "passed": true,
+            "message": "Present mode present (F5 + body.presenting CSS + PresentMode)"
+          },
+          {
+            "name": "required_html_check:edit-mode",
+            "passed": true,
+            "message": "Edit mode present (edit-hotzone + contenteditable + saveFile)"
+          },
+          {
+            "name": "required_html_check:watermark-injected",
+            "passed": true,
+            "message": "Watermark appears JS-injected (heuristic)"
+          },
+          {
+            "name": "required_quality_gate:chrome-hidden-by-default",
+            "passed": true,
+            "actual": true
+          },
+          {
+            "name": "required_quality_gate:no-content-occlusion-risk",
+            "passed": true,
+            "actual": true
+          },
+          {
+            "name": "required_quality_gate:narrative-role-coverage",
+            "passed": true,
+            "actual": true
+          },
+          {
+            "name": "required_quality_gate:minimal-slide-run",
+            "passed": true,
+            "actual": true
+          },
+          {
+            "name": "required_title_gate:browser-title-composition",
+            "passed": true,
+            "actual": true
+          },
+          {
+            "name": "source_fact_coverage_min",
+            "passed": true,
+            "expected": 0.66,
+            "actual": 0.6667,
+            "message": "source_fact_coverage >= 0.66"
+          },
+          {
+            "name": "max_minimal_slide_run",
+            "passed": true,
+            "expected": 2,
+            "actual": 0,
+            "message": "max_minimal_slide_run <= 2"
+          },
+          {
+            "name": "style_signature_coverage_min",
+            "passed": true,
+            "expected": 0.55,
+            "actual": 1.0,
+            "message": "style_signature_coverage >= 0.55"
+          },
+          {
+            "name": "non_regression:layout-variety",
+            "passed": true,
+            "actual": null,
+            "message": "baseline not provided; skipped"
+          },
+          {
+            "name": "non_regression:component-diversity",
+            "passed": true,
+            "actual": null,
+            "message": "baseline not provided; skipped"
+          },
+          {
+            "name": "non_regression:style-signature-coverage",
+            "passed": true,
+            "actual": null,
+            "message": "baseline not provided; skipped"
+          },
+          {
+            "name": "non_regression:minimal-slide-ratio",
+            "passed": true,
+            "actual": null,
+            "message": "baseline not provided; skipped"
+          }
+        ],
+        "failures": [],
+        "passed": true
+      },
+      "scores": {
+        "route": {
+          "weight": 0.15,
+          "score": 1.0
+        },
+        "compression": {
+          "weight": 0.25,
+          "score": 1.0
+        },
+        "render": {
+          "weight": 0.45,
+          "score": 1.0
+        },
+        "efficiency": {
+          "weight": 0.15,
+          "score": 1.0
+        }
+      },
+      "diagnostics": {
+        "low_context": {
+          "quality_tier": "tier1",
+          "chrome_leak": false,
+          "default_visible_chrome": [],
+          "content_occlusion_risk": false,
+          "layout_variety": 0.375,
+          "avg_component_kinds_per_slide": 3.0,
+          "style_signature_coverage": 1.0,
+          "numeric_faithfulness": 1.0,
+          "hallucinated_numeric_tokens": [],
+          "source_fact_coverage": 0.6667,
+          "chart_signal_mismatch_count": 0,
+          "chart_signal_mismatch_rate": 0.0,
+          "global_fact_overuse_count": 2,
+          "narrative_role_coverage": 1.0,
+          "role_sequence_match": true,
+          "minimal_slide_ratio": 0.0,
+          "max_minimal_slide_run": 0,
+          "browser_title_target_count": 8,
+          "title_hard_fail_rate": 0.0,
+          "orphan_line_rate": 0.0,
+          "collapsed_middle_line_rate": 0.0,
+          "profile_mismatch_rate": 0.0,
+          "structural_preset_break_rate": 0.0,
+          "title_clipping_rate": 0.0,
+          "title_occlusion_rate": 0.0,
+          "strict_pass_first_try": true,
+          "repair_rounds": 0,
+          "route_drift": false,
+          "latency_ms": {
+            "packet": 1.82,
+            "render": 13.77,
+            "assemble": 0.0,
+            "validate": 20.69
+          }
+        }
+      },
+      "overall": 1.0,
+      "notes": []
+    },
+    {
+      "case_id": "core-swiss-modern-render",
+      "mode": "render",
+      "validation_profile": "strict",
+      "pass": true,
+      "preset": "Swiss Modern",
+      "support_tier": "production",
+      "brief_path": "/Users/song/projects/slide-creator/evals/preset-surface-phase1/cases/core-swiss-modern-brief.json",
+      "source_path": null,
+      "html_path": "/private/tmp/slide-preset-release-gate/core-swiss-modern-render/deck.html",
+      "fixture_html_path": null,
+      "packet_path": "/private/tmp/slide-preset-release-gate/core-swiss-modern-render/packet.json",
+      "quality_report_path": "/private/tmp/slide-preset-release-gate/core-swiss-modern-render/quality-report.json",
+      "baseline_html_path": null,
+      "hard_failures": [],
+      "validations": {
+        "brief": {
+          "passed": true,
+          "errors": []
+        },
+        "html_validate": {
+          "strict": true,
+          "passed": true,
+          "failed_checks": [],
+          "warnings": [],
+          "checks": {
+            "slide_count": {
+              "passed": true,
+              "message": "8 slides found"
+            },
+            "100vh": {
+              "passed": true,
+              "message": "height: 100vh present"
+            },
+            "overflow_hidden": {
+              "passed": true,
+              "message": "overflow: hidden present"
+            },
+            "self_contained": {
+              "passed": true,
+              "message": "Self-contained (no external dependencies)"
+            },
+            "file_size": {
+              "passed": true,
+              "message": "File size: 50KB"
+            },
+            "html_structure": {
+              "passed": true,
+              "message": "HTML structure valid"
+            },
+            "no_markdown": {
+              "passed": true,
+              "message": "No raw markdown in slide text"
+            },
+            "keyboard_nav": {
+              "passed": true,
+              "message": "Keyboard navigation present"
+            },
+            "edit_mode": {
+              "passed": true,
+              "message": "Edit mode present (edit-hotzone + contenteditable + saveFile)"
+            },
+            "default_hidden_chrome": {
+              "passed": true,
+              "message": "Editing chrome hidden by default"
+            },
+            "preset_metadata": {
+              "passed": true,
+              "message": "Preset metadata present (Swiss Modern)"
+            },
+            "shared_js_engine_contract": {
+              "passed": true,
+              "message": "Shared js-engine runtime present"
+            },
+            "data_notes": {
+              "passed": true,
+              "message": "data-notes present on 8/8 slides"
+            },
+            "swiss_modern_contract": {
+              "passed": true,
+              "message": "Swiss Modern contract OK"
+            },
+            "enterprise_dark_contract": {
+              "passed": true,
+              "message": "Enterprise Dark contract not applicable"
+            },
+            "data_story_contract": {
+              "passed": true,
+              "message": "Data Story contract not applicable"
+            },
+            "glassmorphism_contract": {
+              "passed": true,
+              "message": "Glassmorphism contract not applicable"
+            },
+            "chinese_chan_contract": {
+              "passed": true,
+              "message": "Chinese Chan contract not applicable"
+            },
+            "title_balance": {
+              "passed": true,
+              "message": "Title balance OK (6 controlled multi-line titles)"
+            },
+            "visual_variety": {
+              "passed": true,
+              "message": "Visual variety OK (max run: 1)"
+            },
+            "css_vars_defined": {
+              "passed": true,
+              "message": "All CSS variables resolved (9 defined)"
+            },
+            "present_mode": {
+              "passed": true,
+              "message": "Present mode present (F5 + body.presenting CSS + PresentMode)"
+            },
+            "unicode_fe0f": {
+              "passed": true,
+              "message": "No U+FE0F variant selectors"
+            },
+            "watermark_injection": {
+              "passed": true,
+              "message": "Watermark appears JS-injected (heuristic)"
+            },
+            "hero_rhythm": {
+              "passed": true,
+              "message": "Hero rhythm OK (no ≥3 consecutive hero pages)"
+            },
+            "emoji_usage": {
+              "passed": true,
+              "message": "No pictorial emoji detected"
+            }
+          }
+        },
+        "title_browser": {
+          "preset": "Swiss Modern",
+          "registry_version": 1,
+          "pass": true,
+          "hard_failures": [],
+          "diagnostics": {
+            "browser_title_target_count": 7,
+            "title_hard_fail_rate": 0.0,
+            "orphan_line_rate": 0.0,
+            "collapsed_middle_line_rate": 0.0,
+            "profile_mismatch_rate": 0.0,
+            "structural_preset_break_rate": 0.0,
+            "title_clipping_rate": 0.0,
+            "title_occlusion_rate": 0.0
+          },
+          "targets": [
+            {
+              "qa_id": "slide-1-title-1",
+              "slide_index": 1,
+              "layout_id": "title_grid",
+              "profile": "horizontal_balanced_left_anchor",
+              "node_type": "ordinary_heading",
+              "max_lines": 3,
+              "required_companion_selectors": [],
+              "required_attributes": [],
+              "text": "交付提速来自链路重排 ，不只是多一个 agent",
+              "tag_name": "h1",
+              "missing": false,
+              "line_count": 2,
+              "line_widths": [
+                1324.81,
+                1324.81
+              ],
+              "clipped": false,
+              "occluded": false,
+              "occluded_by": [],
+              "writing_mode": "horizontal-tb",
+              "classes": [
+                "swiss-title",
+                "reveal",
+                "title-balance",
+                "visible"
+              ],
+              "attrs_present": true,
+              "companions_present": true,
+              "profile_mismatch": false,
+              "hard_failures": []
+            },
+            {
+              "qa_id": "slide-2-title-2",
+              "slide_index": 2,
+              "layout_id": "column_content",
+              "profile": "horizontal_balanced_left_anchor",
+              "node_type": "ordinary_heading",
+              "max_lines": 3,
+              "required_companion_selectors": [],
+              "required_attributes": [],
+              "text": "如果任务边界不 清，agent 只会 把返工提得更快",
+              "tag_name": "h2",
+              "missing": false,
+              "line_count": 3,
+              "line_widths": [
+                320,
+                320,
+                320
+              ],
+              "clipped": false,
+              "occluded": false,
+              "occluded_by": [],
+              "writing_mode": "horizontal-tb",
+              "classes": [
+                "swiss-title",
+                "reveal",
+                "title-balance",
+                "visible"
+              ],
+              "attrs_present": true,
+              "companions_present": true,
+              "profile_mismatch": false,
+              "hard_failures": []
+            },
+            {
+              "qa_id": "slide-4-title-3",
+              "slide_index": 4,
+              "layout_id": "geometric_diagram",
+              "profile": "horizontal_balanced_left_anchor",
+              "node_type": "ordinary_heading",
+              "max_lines": 3,
+              "required_companion_selectors": [],
+              "required_attributes": [],
+              "text": "一个可复用链路至少包含四段",
+              "tag_name": "h2",
+              "missing": false,
+              "line_count": 1,
+              "line_widths": [
+                917.28
+              ],
+              "clipped": false,
+              "occluded": false,
+              "occluded_by": [],
+              "writing_mode": "horizontal-tb",
+              "classes": [
+                "swiss-title",
+                "reveal",
+                "visible"
+              ],
+              "attrs_present": true,
+              "companions_present": true,
+              "profile_mismatch": false,
+              "hard_failures": []
+            },
+            {
+              "qa_id": "slide-5-title-4",
+              "slide_index": 5,
+              "layout_id": "data_table",
+              "profile": "horizontal_balanced_left_anchor",
+              "node_type": "ordinary_heading",
+              "max_lines": 3,
+              "required_companion_selectors": [],
+              "required_attributes": [],
+              "text": "稳定场景先做深，比同 时铺开多个实验更有效",
+              "tag_name": "h2",
+              "missing": false,
+              "line_count": 2,
+              "line_widths": [
+                1324.81,
+                1324.81
+              ],
+              "clipped": false,
+              "occluded": false,
+              "occluded_by": [],
+              "writing_mode": "horizontal-tb",
+              "classes": [
+                "swiss-title",
+                "reveal",
+                "title-balance",
+                "visible"
+              ],
+              "attrs_present": true,
+              "companions_present": true,
+              "profile_mismatch": false,
+              "hard_failures": []
+            },
+            {
+              "qa_id": "slide-6-title-5",
+              "slide_index": 6,
+              "layout_id": "column_content",
+              "profile": "horizontal_balanced_left_anchor",
+              "node_type": "ordinary_heading",
+              "max_lines": 3,
+              "required_companion_selectors": [],
+              "required_attributes": [],
+              "text": "速度提升必须换来更强的 验收，而不是更弱的判断",
+              "tag_name": "h2",
+              "missing": false,
+              "line_count": 2,
+              "line_widths": [
+                320,
+                320
+              ],
+              "clipped": false,
+              "occluded": false,
+              "occluded_by": [],
+              "writing_mode": "horizontal-tb",
+              "classes": [
+                "swiss-title",
+                "reveal",
+                "title-balance",
+                "visible"
+              ],
+              "attrs_present": true,
+              "companions_present": true,
+              "profile_mismatch": false,
+              "hard_failures": []
+            },
+            {
+              "qa_id": "slide-7-title-6",
+              "slide_index": 7,
+              "layout_id": "contents_index",
+              "profile": "horizontal_balanced_left_anchor",
+              "node_type": "ordinary_heading",
+              "max_lines": 3,
+              "required_companion_selectors": [],
+              "required_attributes": [],
+              "text": "下一阶段应 优先复制高 频稳定场景",
+              "tag_name": "h2",
+              "missing": false,
+              "line_count": 3,
+              "line_widths": [
+                1324.81,
+                1324.81,
+                1324.81
+              ],
+              "clipped": false,
+              "occluded": false,
+              "occluded_by": [],
+              "writing_mode": "horizontal-tb",
+              "classes": [
+                "swiss-title",
+                "reveal",
+                "title-balance"
+              ],
+              "attrs_present": true,
+              "companions_present": true,
+              "profile_mismatch": false,
+              "hard_failures": []
+            },
+            {
+              "qa_id": "slide-8-title-7",
+              "slide_index": 8,
+              "layout_id": "pull_quote",
+              "profile": "single_statement_display",
+              "node_type": "ordinary_heading",
+              "max_lines": 3,
+              "required_companion_selectors": [],
+              "required_attributes": [],
+              "text": "团队应该把复利押在可 复用工作流和门禁，而不 是押在更多即兴自动化",
+              "tag_name": "h2",
+              "missing": false,
+              "line_count": 3,
+              "line_widths": [
+                776.17,
+                776.17,
+                776.17
+              ],
+              "clipped": false,
+              "occluded": false,
+              "occluded_by": [],
+              "writing_mode": "horizontal-tb",
+              "classes": [
+                "swiss-title",
+                "reveal",
+                "title-balance",
+                "visible"
+              ],
+              "attrs_present": true,
+              "companions_present": true,
+              "profile_mismatch": false,
+              "hard_failures": []
+            }
+          ],
+          "html_path": "/private/tmp/slide-preset-release-gate/core-swiss-modern-render/deck.html"
+        }
+      },
+      "expectations": {
+        "checks": [
+          {
+            "name": "expected_mode",
+            "passed": true,
+            "expected": "auto",
+            "actual": "auto"
+          },
+          {
+            "name": "expected_preset",
+            "passed": true,
+            "expected": "Swiss Modern",
+            "actual": "Swiss Modern"
+          },
+          {
+            "name": "expected_support_tier",
+            "passed": true,
+            "expected": "production",
+            "actual": "production"
+          },
+          {
+            "name": "required_brief_field:style.preset",
+            "passed": true,
+            "actual": "Swiss Modern"
+          },
+          {
+            "name": "required_brief_field:deck.page_count",
+            "passed": true,
+            "actual": 8
+          },
+          {
+            "name": "required_brief_field:narrative.thesis",
+            "passed": true,
+            "actual": "agent 交付的价值不在更多自动化角色，而在把需求澄清、实现、验收和复盘压缩成一个更短、更可验证的默认链路。"
+          },
+          {
+            "name": "expected_quality_tier",
+            "passed": true,
+            "expected": "tier0",
+            "actual": "tier0"
+          },
+          {
+            "name": "required_html_check:shared-runtime",
+            "passed": true,
+            "message": "Shared js-engine runtime present"
+          },
+          {
+            "name": "required_html_check:style-signature",
+            "passed": true,
+            "message": "style signature coverage=0.7143"
+          },
+          {
+            "name": "required_html_check:present-mode",
+            "passed": true,
+            "message": "Present mode present (F5 + body.presenting CSS + PresentMode)"
+          },
+          {
+            "name": "required_html_check:edit-mode",
+            "passed": true,
+            "message": "Edit mode present (edit-hotzone + contenteditable + saveFile)"
+          },
+          {
+            "name": "required_html_check:watermark-injected",
+            "passed": true,
+            "message": "Watermark appears JS-injected (heuristic)"
+          },
+          {
+            "name": "required_quality_gate:chrome-hidden-by-default",
+            "passed": true,
+            "actual": true
+          },
+          {
+            "name": "required_quality_gate:no-content-occlusion-risk",
+            "passed": true,
+            "actual": true
+          },
+          {
+            "name": "required_quality_gate:narrative-role-coverage",
+            "passed": true,
+            "actual": true
+          },
+          {
+            "name": "required_quality_gate:minimal-slide-run",
+            "passed": true,
+            "actual": true
+          },
+          {
+            "name": "required_title_gate:browser-title-composition",
+            "passed": true,
+            "actual": true
+          },
+          {
+            "name": "narrative_role_coverage",
+            "passed": true,
+            "expected": 1.0,
+            "actual": 1.0,
+            "message": "narrative_role_coverage == 1.0"
+          },
+          {
+            "name": "max_minimal_slide_run",
+            "passed": true,
+            "expected": 2,
+            "actual": 1,
+            "message": "max_minimal_slide_run <= 2"
+          },
+          {
+            "name": "style_signature_coverage_min",
+            "passed": true,
+            "expected": 0.7,
+            "actual": 0.7143,
+            "message": "style_signature_coverage >= 0.7"
+          },
+          {
+            "name": "non_regression:layout-variety",
+            "passed": true,
+            "actual": null,
+            "message": "baseline not provided; skipped"
+          },
+          {
+            "name": "non_regression:component-diversity",
+            "passed": true,
+            "actual": null,
+            "message": "baseline not provided; skipped"
+          },
+          {
+            "name": "non_regression:style-signature-coverage",
+            "passed": true,
+            "actual": null,
+            "message": "baseline not provided; skipped"
+          },
+          {
+            "name": "non_regression:minimal-slide-ratio",
+            "passed": true,
+            "actual": null,
+            "message": "baseline not provided; skipped"
+          }
+        ],
+        "failures": [],
+        "passed": true
+      },
+      "scores": {
+        "route": {
+          "weight": 0.15,
+          "score": 1.0
+        },
+        "compression": {
+          "weight": 0.25,
+          "score": 1.0
+        },
+        "render": {
+          "weight": 0.45,
+          "score": 1.0
+        },
+        "efficiency": {
+          "weight": 0.15,
+          "score": 1.0
+        }
+      },
+      "diagnostics": {
+        "low_context": {
+          "quality_tier": "tier0",
+          "chrome_leak": false,
+          "default_visible_chrome": [],
+          "content_occlusion_risk": false,
+          "layout_variety": 0.875,
+          "avg_component_kinds_per_slide": 2.125,
+          "style_signature_coverage": 0.7143,
+          "numeric_faithfulness": 1.0,
+          "hallucinated_numeric_tokens": [],
+          "source_fact_coverage": 1.0,
+          "chart_signal_mismatch_count": 0,
+          "chart_signal_mismatch_rate": 0.0,
+          "global_fact_overuse_count": 3,
+          "narrative_role_coverage": 1.0,
+          "role_sequence_match": true,
+          "minimal_slide_ratio": 0.375,
+          "max_minimal_slide_run": 1,
+          "browser_title_target_count": 7,
+          "title_hard_fail_rate": 0.0,
+          "orphan_line_rate": 0.0,
+          "collapsed_middle_line_rate": 0.0,
+          "profile_mismatch_rate": 0.0,
+          "structural_preset_break_rate": 0.0,
+          "title_clipping_rate": 0.0,
+          "title_occlusion_rate": 0.0,
+          "strict_pass_first_try": true,
+          "repair_rounds": 0,
+          "route_drift": false,
+          "latency_ms": {
+            "packet": 1.95,
+            "render": 60.51,
+            "assemble": 0.0,
+            "validate": 16.35
+          }
+        }
+      },
+      "overall": 1.0,
+      "notes": []
+    },
+    {
+      "case_id": "core-data-story-render",
+      "mode": "render",
+      "validation_profile": "strict",
+      "pass": true,
+      "preset": "Data Story",
+      "support_tier": "production",
+      "brief_path": "/Users/song/projects/slide-creator/evals/preset-surface-phase1/cases/core-data-story-brief.json",
+      "source_path": "/Users/song/projects/slide-creator/evals/preset-surface-phase1/cases/core-data-story-source.md",
+      "html_path": "/private/tmp/slide-preset-release-gate/core-data-story-render/deck.html",
+      "fixture_html_path": null,
+      "packet_path": "/private/tmp/slide-preset-release-gate/core-data-story-render/packet.json",
+      "quality_report_path": "/private/tmp/slide-preset-release-gate/core-data-story-render/quality-report.json",
+      "baseline_html_path": null,
+      "hard_failures": [],
+      "validations": {
+        "brief": {
+          "passed": true,
+          "errors": []
+        },
+        "html_validate": {
+          "strict": true,
+          "passed": true,
+          "failed_checks": [],
+          "warnings": [
+            "2 consecutive slides with same layout signature"
+          ],
+          "checks": {
+            "slide_count": {
+              "passed": true,
+              "message": "8 slides found"
+            },
+            "100vh": {
+              "passed": true,
+              "message": "height: 100vh present"
+            },
+            "overflow_hidden": {
+              "passed": true,
+              "message": "overflow: hidden present"
+            },
+            "self_contained": {
+              "passed": true,
+              "message": "Self-contained (no external dependencies)"
+            },
+            "file_size": {
+              "passed": true,
+              "message": "File size: 49KB"
+            },
+            "html_structure": {
+              "passed": true,
+              "message": "HTML structure valid"
+            },
+            "no_markdown": {
+              "passed": true,
+              "message": "No raw markdown in slide text"
+            },
+            "keyboard_nav": {
+              "passed": true,
+              "message": "Keyboard navigation present"
+            },
+            "edit_mode": {
+              "passed": true,
+              "message": "Edit mode present (edit-hotzone + contenteditable + saveFile)"
+            },
+            "default_hidden_chrome": {
+              "passed": true,
+              "message": "Editing chrome hidden by default"
+            },
+            "preset_metadata": {
+              "passed": true,
+              "message": "Preset metadata present (Data Story)"
+            },
+            "shared_js_engine_contract": {
+              "passed": true,
+              "message": "Shared js-engine runtime present"
+            },
+            "data_notes": {
+              "passed": true,
+              "message": "data-notes present on 8/8 slides"
+            },
+            "swiss_modern_contract": {
+              "passed": true,
+              "message": "Swiss Modern contract not applicable"
+            },
+            "enterprise_dark_contract": {
+              "passed": true,
+              "message": "Enterprise Dark contract not applicable"
+            },
+            "data_story_contract": {
+              "passed": true,
+              "message": "Data Story contract OK"
+            },
+            "glassmorphism_contract": {
+              "passed": true,
+              "message": "Glassmorphism contract not applicable"
+            },
+            "chinese_chan_contract": {
+              "passed": true,
+              "message": "Chinese Chan contract not applicable"
+            },
+            "title_balance": {
+              "passed": true,
+              "message": "Title balance OK (7 controlled multi-line titles)"
+            },
+            "visual_variety": {
+              "passed": true,
+              "message": "Visual variety OK (max run: 2)"
+            },
+            "css_vars_defined": {
+              "passed": true,
+              "message": "All CSS variables resolved (15 defined)"
+            },
+            "present_mode": {
+              "passed": true,
+              "message": "Present mode present (F5 + body.presenting CSS + PresentMode)"
+            },
+            "unicode_fe0f": {
+              "passed": true,
+              "message": "No U+FE0F variant selectors"
+            },
+            "watermark_injection": {
+              "passed": true,
+              "message": "Watermark appears JS-injected (heuristic)"
+            },
+            "hero_rhythm": {
+              "passed": true,
+              "message": "Hero rhythm OK (no ≥3 consecutive hero pages)"
+            },
+            "emoji_usage": {
+              "passed": true,
+              "message": "No pictorial emoji detected"
+            }
+          }
+        },
+        "title_browser": {
+          "preset": "Data Story",
+          "registry_version": 1,
+          "pass": true,
+          "hard_failures": [],
+          "diagnostics": {
+            "browser_title_target_count": 8,
+            "title_hard_fail_rate": 0.0,
+            "orphan_line_rate": 0.0,
+            "collapsed_middle_line_rate": 0.0,
+            "profile_mismatch_rate": 0.0,
+            "structural_preset_break_rate": 0.0,
+            "title_clipping_rate": 0.0,
+            "title_occlusion_rate": 0.0
+          },
+          "targets": [
+            {
+              "qa_id": "slide-1-title-1",
+              "slide_index": 1,
+              "layout_id": "hero_number",
+              "profile": "horizontal_balanced_left_anchor_compact",
+              "node_type": "ordinary_heading",
+              "max_lines": 2,
+              "required_companion_selectors": [],
+              "required_attributes": [],
+              "text": "试点价值已经显性化， 但收益结构需要被看清",
+              "tag_name": "h1",
+              "missing": false,
+              "line_count": 2,
+              "line_widths": [
+                1120,
+                1120
+              ],
+              "clipped": false,
+              "occluded": false,
+              "occluded_by": [],
+              "writing_mode": "horizontal-tb",
+              "classes": [
+                "ds-heading",
+                "reveal",
+                "title-balance",
+                "visible"
+              ],
+              "attrs_present": true,
+              "companions_present": true,
+              "profile_mismatch": false,
+              "hard_failures": []
+            },
+            {
+              "qa_id": "slide-2-title-2",
+              "slide_index": 2,
+              "layout_id": "kpi_grid",
+              "profile": "horizontal_balanced_left_anchor_compact",
+              "node_type": "ordinary_heading",
+              "max_lines": 2,
+              "required_companion_selectors": [],
+              "required_attributes": [],
+              "text": "四个核心指标同时改善 ，说明变化不是偶然波动",
+              "tag_name": "h2",
+              "missing": false,
+              "line_count": 2,
+              "line_widths": [
+                1040,
+                1040
+              ],
+              "clipped": false,
+              "occluded": false,
+              "occluded_by": [],
+              "writing_mode": "horizontal-tb",
+              "classes": [
+                "ds-heading",
+                "reveal",
+                "title-balance",
+                "visible"
+              ],
+              "attrs_present": true,
+              "companions_present": true,
+              "profile_mismatch": false,
+              "hard_failures": []
+            },
+            {
+              "qa_id": "slide-3-title-3",
+              "slide_index": 3,
+              "layout_id": "chart_insight",
+              "profile": "horizontal_balanced_left_anchor_compact",
+              "node_type": "ordinary_heading",
+              "max_lines": 2,
+              "required_companion_selectors": [],
+              "required_attributes": [],
+              "text": "最大的收益出现在 验收前移和返工减少",
+              "tag_name": "h2",
+              "missing": false,
+              "line_count": 2,
+              "line_widths": [
+                1040,
+                1040
+              ],
+              "clipped": false,
+              "occluded": false,
+              "occluded_by": [],
+              "writing_mode": "horizontal-tb",
+              "classes": [
+                "ds-heading",
+                "reveal",
+                "title-balance",
+                "visible"
+              ],
+              "attrs_present": true,
+              "companions_present": true,
+              "profile_mismatch": false,
+              "hard_failures": []
+            },
+            {
+              "qa_id": "slide-4-title-4",
+              "slide_index": 4,
+              "layout_id": "workflow_chart",
+              "profile": "horizontal_balanced_left_anchor_compact",
+              "node_type": "ordinary_heading",
+              "max_lines": 2,
+              "required_companion_selectors": [],
+              "required_attributes": [],
+              "text": "指标改善主要来自三类动作叠加",
+              "tag_name": "h2",
+              "missing": false,
+              "line_count": 1,
+              "line_widths": [
+                624.69
+              ],
+              "clipped": false,
+              "occluded": false,
+              "occluded_by": [],
+              "writing_mode": "horizontal-tb",
+              "classes": [
+                "ds-heading",
+                "reveal",
+                "visible"
+              ],
+              "attrs_present": true,
+              "companions_present": true,
+              "profile_mismatch": false,
+              "hard_failures": []
+            },
+            {
+              "qa_id": "slide-5-title-5",
+              "slide_index": 5,
+              "layout_id": "chart_insight",
+              "profile": "horizontal_balanced_left_anchor_compact",
+              "node_type": "ordinary_heading",
+              "max_lines": 2,
+              "required_companion_selectors": [],
+              "required_attributes": [],
+              "text": "缺陷逃逸率下降证明 质量没有被速度换掉",
+              "tag_name": "h2",
+              "missing": false,
+              "line_count": 2,
+              "line_widths": [
+                1040,
+                1040
+              ],
+              "clipped": false,
+              "occluded": false,
+              "occluded_by": [],
+              "writing_mode": "horizontal-tb",
+              "classes": [
+                "ds-heading",
+                "reveal",
+                "title-balance",
+                "visible"
+              ],
+              "attrs_present": true,
+              "companions_present": true,
+              "profile_mismatch": false,
+              "hard_failures": []
+            },
+            {
+              "qa_id": "slide-6-title-6",
+              "slide_index": 6,
+              "layout_id": "chart_insight",
+              "profile": "horizontal_balanced_left_anchor_compact",
+              "node_type": "ordinary_heading",
+              "max_lines": 2,
+              "required_companion_selectors": [],
+              "required_attributes": [],
+              "text": "如果直接扩面到低频复 杂场景，收益会先被稀释",
+              "tag_name": "h2",
+              "missing": false,
+              "line_count": 2,
+              "line_widths": [
+                1040,
+                1040
+              ],
+              "clipped": false,
+              "occluded": false,
+              "occluded_by": [],
+              "writing_mode": "horizontal-tb",
+              "classes": [
+                "ds-heading",
+                "reveal",
+                "title-balance",
+                "visible"
+              ],
+              "attrs_present": true,
+              "companions_present": true,
+              "profile_mismatch": false,
+              "hard_failures": []
+            },
+            {
+              "qa_id": "slide-7-title-7",
+              "slide_index": 7,
+              "layout_id": "cta_close",
+              "profile": "single_statement_display",
+              "node_type": "ordinary_heading",
+              "max_lines": 3,
+              "required_companion_selectors": [],
+              "required_attributes": [],
+              "text": "下一阶段应复制流 程，而不是复制热情",
+              "tag_name": "h2",
+              "missing": false,
+              "line_count": 2,
+              "line_widths": [
+                600,
+                600
+              ],
+              "clipped": false,
+              "occluded": false,
+              "occluded_by": [],
+              "writing_mode": "horizontal-tb",
+              "classes": [
+                "ds-heading",
+                "reveal",
+                "title-balance",
+                "visible"
+              ],
+              "attrs_present": true,
+              "companions_present": true,
+              "profile_mismatch": false,
+              "hard_failures": []
+            },
+            {
+              "qa_id": "slide-8-title-8",
+              "slide_index": 8,
+              "layout_id": "cta_close",
+              "profile": "single_statement_display",
+              "node_type": "ordinary_heading",
+              "max_lines": 3,
+              "required_companion_selectors": [],
+              "required_attributes": [],
+              "text": "这轮数据已经足 够支持谨慎扩面",
+              "tag_name": "h2",
+              "missing": false,
+              "line_count": 2,
+              "line_widths": [
+                600,
+                600
+              ],
+              "clipped": false,
+              "occluded": false,
+              "occluded_by": [],
+              "writing_mode": "horizontal-tb",
+              "classes": [
+                "ds-heading",
+                "reveal",
+                "title-balance",
+                "visible"
+              ],
+              "attrs_present": true,
+              "companions_present": true,
+              "profile_mismatch": false,
+              "hard_failures": []
+            }
+          ],
+          "html_path": "/private/tmp/slide-preset-release-gate/core-data-story-render/deck.html"
+        }
+      },
+      "expectations": {
+        "checks": [
+          {
+            "name": "expected_mode",
+            "passed": true,
+            "expected": "polish",
+            "actual": "polish"
+          },
+          {
+            "name": "expected_preset",
+            "passed": true,
+            "expected": "Data Story",
+            "actual": "Data Story"
+          },
+          {
+            "name": "expected_support_tier",
+            "passed": true,
+            "expected": "production",
+            "actual": "production"
+          },
+          {
+            "name": "required_brief_field:style.preset",
+            "passed": true,
+            "actual": "Data Story"
+          },
+          {
+            "name": "required_brief_field:deck.page_count",
+            "passed": true,
+            "actual": 8
+          },
+          {
+            "name": "required_brief_field:narrative.thesis",
+            "passed": true,
+            "actual": "试点成效已经足够证明，收益来自更短的澄清到验收闭环，而不是来自单点自动化炫技。"
+          },
+          {
+            "name": "expected_quality_tier",
+            "passed": true,
+            "expected": "tier0",
+            "actual": "tier0"
+          },
+          {
+            "name": "required_html_check:shared-runtime",
+            "passed": true,
+            "message": "Shared js-engine runtime present"
+          },
+          {
+            "name": "required_html_check:style-signature",
+            "passed": true,
+            "message": "style signature coverage=1.0"
+          },
+          {
+            "name": "required_html_check:present-mode",
+            "passed": true,
+            "message": "Present mode present (F5 + body.presenting CSS + PresentMode)"
+          },
+          {
+            "name": "required_html_check:edit-mode",
+            "passed": true,
+            "message": "Edit mode present (edit-hotzone + contenteditable + saveFile)"
+          },
+          {
+            "name": "required_html_check:watermark-injected",
+            "passed": true,
+            "message": "Watermark appears JS-injected (heuristic)"
+          },
+          {
+            "name": "required_quality_gate:chrome-hidden-by-default",
+            "passed": true,
+            "actual": true
+          },
+          {
+            "name": "required_quality_gate:numeric-faithfulness",
+            "passed": true,
+            "actual": true
+          },
+          {
+            "name": "required_quality_gate:source-fact-coverage",
+            "passed": true,
+            "actual": true
+          },
+          {
+            "name": "required_quality_gate:narrative-role-coverage",
+            "passed": true,
+            "actual": true
+          },
+          {
+            "name": "required_quality_gate:minimal-slide-run",
+            "passed": true,
+            "actual": true
+          },
+          {
+            "name": "required_title_gate:browser-title-composition",
+            "passed": true,
+            "actual": true
+          },
+          {
+            "name": "numeric_faithfulness_min",
+            "passed": true,
+            "expected": 0.95,
+            "actual": 1.0,
+            "message": "numeric_faithfulness >= 0.95"
+          },
+          {
+            "name": "source_fact_coverage_min",
+            "passed": true,
+            "expected": 0.75,
+            "actual": 1.0,
+            "message": "source_fact_coverage >= 0.75"
+          },
+          {
+            "name": "narrative_role_coverage",
+            "passed": true,
+            "expected": 1.0,
+            "actual": 1.0,
+            "message": "narrative_role_coverage == 1.0"
+          },
+          {
+            "name": "max_minimal_slide_run",
+            "passed": true,
+            "expected": 2,
+            "actual": 0,
+            "message": "max_minimal_slide_run <= 2"
+          },
+          {
+            "name": "style_signature_coverage_min",
+            "passed": true,
+            "expected": 0.5,
+            "actual": 1.0,
+            "message": "style_signature_coverage >= 0.5"
+          },
+          {
+            "name": "non_regression:layout-variety",
+            "passed": true,
+            "actual": null,
+            "message": "baseline not provided; skipped"
+          },
+          {
+            "name": "non_regression:component-diversity",
+            "passed": true,
+            "actual": null,
+            "message": "baseline not provided; skipped"
+          },
+          {
+            "name": "non_regression:style-signature-coverage",
+            "passed": true,
+            "actual": null,
+            "message": "baseline not provided; skipped"
+          },
+          {
+            "name": "non_regression:minimal-slide-ratio",
+            "passed": true,
+            "actual": null,
+            "message": "baseline not provided; skipped"
+          }
+        ],
+        "failures": [],
+        "passed": true
+      },
+      "scores": {
+        "route": {
+          "weight": 0.15,
+          "score": 1.0
+        },
+        "compression": {
+          "weight": 0.25,
+          "score": 1.0
+        },
+        "render": {
+          "weight": 0.45,
+          "score": 1.0
+        },
+        "efficiency": {
+          "weight": 0.15,
+          "score": 1.0
+        }
+      },
+      "diagnostics": {
+        "low_context": {
+          "quality_tier": "tier0",
+          "chrome_leak": false,
+          "default_visible_chrome": [],
+          "content_occlusion_risk": false,
+          "layout_variety": 0.625,
+          "avg_component_kinds_per_slide": 2.125,
+          "style_signature_coverage": 1.0,
+          "numeric_faithfulness": 1.0,
+          "hallucinated_numeric_tokens": [],
+          "source_fact_coverage": 1.0,
+          "chart_signal_mismatch_count": 0,
+          "chart_signal_mismatch_rate": 0.0,
+          "global_fact_overuse_count": 2,
+          "narrative_role_coverage": 1.0,
+          "role_sequence_match": true,
+          "minimal_slide_ratio": 0.0,
+          "max_minimal_slide_run": 0,
+          "browser_title_target_count": 8,
+          "title_hard_fail_rate": 0.0,
+          "orphan_line_rate": 0.0,
+          "collapsed_middle_line_rate": 0.0,
+          "profile_mismatch_rate": 0.0,
+          "structural_preset_break_rate": 0.0,
+          "title_clipping_rate": 0.0,
+          "title_occlusion_rate": 0.0,
+          "strict_pass_first_try": true,
+          "repair_rounds": 0,
+          "route_drift": false,
+          "latency_ms": {
+            "packet": 1.57,
+            "render": 13.62,
+            "assemble": 0.0,
+            "validate": 17.29
+          }
+        }
+      },
+      "overall": 1.0,
+      "notes": []
+    }
+  ],
+  "summary": {
+    "pass_count": 6,
+    "fail_count": 0,
+    "best_case": "support-blue-sky-fixture",
+    "best_overall": 1.0,
+    "baseline_comparison_enabled": false,
+    "non_regression_ready_cases": 0,
+    "buckets": {
+      "html-fixture": {
+        "pass": 2,
+        "fail": 0
+      },
+      "render": {
+        "pass": 4,
+        "fail": 0
+      }
+    }
+  },
+  "skill_evals": {
+    "command": "/Library/Frameworks/Python.framework/Versions/3.11/bin/python3 /Users/song/projects/slide-creator/scripts/run-skill-evals.py --root /Users/song/projects/slide-creator --runner fixture --format json --artifact-dir /private/tmp/slide-preset-release-gate/skill-runs --json-out /private/tmp/slide-preset-release-gate/skill-evals.json",
+    "json_out": "/private/tmp/slide-preset-release-gate/skill-evals.json",
+    "returncode": 0,
+    "stdout": "{\n  \"cases\": [\n    {\n      \"case_id\": \"explicit-generate\",\n      \"total_score\": 90,\n      \"passed\": true,\n      \"scores\": {\n        \"outcome\": 25,\n        \"process\": 25,\n        \"style\": 15,\n        \"efficiency\": 25\n      },\n      \"failures\": [\n        \"style.rubric_missing\"\n      ],\n      \"metrics\": {\n        \"runner\": \"fixture\",\n        \"trace_format_version\": \"normalized-v1\",\n        \"tool_calls\": [],\n        \"shell_commands\": [\n          \"python3 scripts/render-from-brief.py evals/artifacts/current/skill-runs/explicit-generate/brief.json --output evals/artifacts/current/skill-runs/explicit-generate/deck.html\",\n          \"python3 scripts/validate_html.py evals/artifacts/current/skill-runs/explicit-generate/deck.html --strict\"\n        ],\n        \"failed_shell_commands\": [],\n        \"read_paths\": [\n          \"SKILL.md\",\n          \"references/html-template.md\",\n          \"references/title-quality.md\",\n          \"references/base-css.md\",\n          \"references/js-engine.md\",\n          \"references/data-story.md\"\n        ],\n        \"write_paths\": [\n          \"evals/artifacts/current/skill-runs/explicit-generate/deck.html\"\n        ],\n        \"artifact_paths\": [\n          \"tests/fixtures/skill_eval_explicit_generate.html\"\n        ],\n        \"input_tokens\": 12000,\n        \"output_tokens\": 3400,\n        \"wall_ms\": 45000,\n        \"skill_evidence\": {\n          \"skill_contract_read\": true,\n          \"slide_flow_observed\": true,\n          \"brief_observed\": true,\n          \"strict_validate_observed\": true\n        },\n        \"runner_warnings\": []\n      },\n      \"artifact_dir\": \"/private/tmp/slide-preset-release-gate/skill-runs/explicit-generate\"\n    },\n    {\n      \"case_id\": \"implicit-exec-update\",\n      \"total_score\": 90,\n      \"passed\": true,\n      \"scores\": {\n        \"outcome\": 25,\n        \"process\": 25,\n        \"style\": 15,\n        \"efficiency\": 25\n      },\n      \"failures\": [\n        \"style.rubric_missing\"\n      ],\n      \"metrics\": {\n        \"runner\": \"fixture\",\n        \"trace_format_version\": \"normalized-v1\",\n        \"tool_calls\": [],\n        \"shell_commands\": [\n          \"python3 scripts/render-from-brief.py evals/artifacts/current/skill-runs/implicit-exec-update/brief.json --output evals/artifacts/current/skill-runs/implicit-exec-update/deck.html\",\n          \"python3 scripts/validate_html.py evals/artifacts/current/skill-runs/implicit-exec-update/deck.html --strict\"\n        ],\n        \"failed_shell_commands\": [],\n        \"read_paths\": [\n          \"SKILL.md\",\n          \"references/html-template.md\",\n          \"references/title-quality.md\",\n          \"references/base-css.md\",\n          \"references/js-engine.md\",\n          \"references/swiss-modern.md\"\n        ],\n        \"write_paths\": [\n          \"evals/artifacts/current/skill-runs/implicit-exec-update/deck.html\"\n        ],\n        \"artifact_paths\": [\n          \"tests/fixtures/skill_eval_implicit_exec_update.html\"\n        ],\n        \"input_tokens\": 13000,\n        \"output_tokens\": 3200,\n        \"wall_ms\": 46000,\n        \"skill_evidence\": {\n          \"skill_contract_read\": true,\n          \"slide_flow_observed\": true,\n          \"brief_observed\": true,\n          \"strict_validate_observed\": true\n        },\n        \"runner_warnings\": []\n      },\n      \"artifact_dir\": \"/private/tmp/slide-preset-release-gate/skill-runs/implicit-exec-update\"\n    },\n    {\n      \"case_id\": \"contextual-product-launch\",\n      \"total_score\": 90,\n      \"passed\": true,\n      \"scores\": {\n        \"outcome\": 25,\n        \"process\": 25,\n        \"style\": 15,\n        \"efficiency\": 25\n      },\n      \"failures\": [\n        \"style.rubric_missing\"\n      ],\n      \"metrics\": {\n        \"runner\": \"fixture\",\n        \"trace_format_version\": \"normalized-v1\",\n        \"tool_calls\": [],\n        \"shell_commands\": [\n          \"python3 scripts/render-from-brief.py evals/artifacts/current/skill-runs/contextual-product-launch/brief.json --output evals/artifacts/current/skill-runs/contextual-product-launch/deck.html\",\n          \"python3 scripts/validate_html.py evals/artifacts/current/skill-runs/contextual-product-launch/deck.html --strict\"\n        ],\n        \"failed_shell_commands\": [],\n        \"read_paths\": [\n          \"SKILL.md\",\n          \"references/html-template.md\",\n          \"references/title-quality.md\",\n          \"references/base-css.md\",\n          \"references/js-engine.md\",\n          \"references/blue-sky-starter.html\"\n        ],\n        \"write_paths\": [\n          \"evals/artifacts/current/skill-runs/contextual-product-launch/deck.html\"\n        ],\n        \"artifact_paths\": [\n          \"tests/fixtures/skill_eval_contextual_product_launch.html\"\n        ],\n        \"input_tokens\": 12500,\n        \"output_tokens\": 3000,\n        \"wall_ms\": 44000,\n        \"skill_evidence\": {\n          \"skill_contract_read\": true,\n          \"slide_flow_observed\": true,\n          \"brief_observed\": true,\n          \"strict_validate_observed\": true\n        },\n        \"runner_warnings\": []\n      },\n      \"artifact_dir\": \"/private/tmp/slide-preset-release-gate/skill-runs/contextual-product-launch\"\n    },\n    {\n      \"case_id\": \"boundary-report-to-deck\",\n      \"total_score\": 90,\n      \"passed\": true,\n      \"scores\": {\n        \"outcome\": 25,\n        \"process\": 25,\n        \"style\": 15,\n        \"efficiency\": 25\n      },\n      \"failures\": [\n        \"style.rubric_missing\"\n      ],\n      \"metrics\": {\n        \"runner\": \"fixture\",\n        \"trace_format_version\": \"normalized-v1\",\n        \"tool_calls\": [],\n        \"shell_commands\": [\n          \"python3 scripts/render-from-brief.py evals/artifacts/current/skill-runs/boundary-report-to-deck/brief.json --output evals/artifacts/current/skill-runs/boundary-report-to-deck/deck.html\",\n          \"python3 scripts/validate_html.py evals/artifacts/current/skill-runs/boundary-report-to-deck/deck.html --strict\"\n        ],\n        \"failed_shell_commands\": [],\n        \"read_paths\": [\n          \"SKILL.md\",\n          \"references/html-template.md\",\n          \"references/title-quality.md\",\n          \"references/base-css.md\",\n          \"references/js-engine.md\",\n          \"references/strategy-consulting.md\"\n        ],\n        \"write_paths\": [\n          \"evals/artifacts/current/skill-runs/boundary-report-to-deck/deck.html\"\n        ],\n        \"artifact_paths\": [\n          \"tests/fixtures/skill_eval_boundary_report_to_deck.html\"\n        ],\n        \"input_tokens\": 14000,\n        \"output_tokens\": 3600,\n        \"wall_ms\": 52000,\n        \"skill_evidence\": {\n          \"skill_contract_read\": true,\n          \"slide_flow_observed\": true,\n          \"brief_observed\": true,\n          \"strict_validate_observed\": true\n        },\n        \"runner_warnings\": []\n      },\n      \"artifact_dir\": \"/private/tmp/slide-preset-release-gate/skill-runs/boundary-report-to-deck\"\n    },\n    {\n      \"case_id\": \"negative-report\",\n      \"total_score\": 100,\n      \"passed\": true,\n      \"scores\": {\n        \"outcome\": 25,\n        \"process\": 25,\n        \"style\": 25,\n        \"efficiency\": 25\n      },\n      \"failures\": [],\n      \"metrics\": {\n        \"runner\": \"fixture\",\n        \"trace_format_version\": \"normalized-v1\",\n        \"tool_calls\": [],\n        \"shell_commands\": [],\n        \"failed_shell_commands\": [],\n        \"read_paths\": [\n          \"SKILL.md\"\n        ],\n        \"write_paths\": [],\n        \"artifact_paths\": [],\n        \"input_tokens\": 5000,\n        \"output_tokens\": 900,\n        \"wall_ms\": 15000,\n        \"skill_evidence\": {\n          \"skill_contract_read\": true,\n          \"slide_flow_observed\": false,\n          \"brief_observed\": false,\n          \"strict_validate_observed\": false\n        },\n        \"runner_warnings\": [\n          \"routing_check_only\"\n        ]\n      },\n      \"artifact_dir\": \"/private/tmp/slide-preset-release-gate/skill-runs/negative-report\"\n    },\n    {\n      \"case_id\": \"negative-html-export\",\n      \"total_score\": 100,\n      \"passed\": true,\n      \"scores\": {\n        \"outcome\": 25,\n        \"process\": 25,\n        \"style\": 25,\n        \"efficiency\": 25\n      },\n      \"failures\": [],\n      \"metrics\": {\n        \"runner\": \"fixture\",\n        \"trace_format_version\": \"normalized-v1\",\n        \"tool_calls\": [],\n        \"shell_commands\": [],\n        \"failed_shell_commands\": [],\n        \"read_paths\": [\n          \"SKILL.md\"\n        ],\n        \"write_paths\": [],\n        \"artifact_paths\": [],\n        \"input_tokens\": 5200,\n        \"output_tokens\": 850,\n        \"wall_ms\": 14000,\n        \"skill_evidence\": {\n          \"skill_contract_read\": true,\n          \"slide_flow_observed\": false,\n          \"brief_observed\": false,\n          \"strict_validate_observed\": false\n        },\n        \"runner_warnings\": [\n          \"routing_check_only\"\n        ]\n      },\n      \"artifact_dir\": \"/private/tmp/slide-preset-release-gate/skill-runs/negative-html-export\"\n    }\n  ],\n  \"summary\": {\n    \"total\": 6,\n    \"passed\": 6,\n    \"failed\": 0,\n    \"average_score\": 93.33,\n    \"average_category_scores\": {\n      \"outcome\": 25.0,\n      \"process\": 25.0,\n      \"style\": 18.33,\n      \"efficiency\": 25.0\n    }\n  }\n}\n",
+    "stderr": "",
+    "cases": [
+      {
+        "case_id": "explicit-generate",
+        "total_score": 90,
+        "passed": true,
+        "scores": {
+          "outcome": 25,
+          "process": 25,
+          "style": 15,
+          "efficiency": 25
+        },
+        "failures": [
+          "style.rubric_missing"
+        ],
+        "metrics": {
+          "runner": "fixture",
+          "trace_format_version": "normalized-v1",
+          "tool_calls": [],
+          "shell_commands": [
+            "python3 scripts/render-from-brief.py evals/artifacts/current/skill-runs/explicit-generate/brief.json --output evals/artifacts/current/skill-runs/explicit-generate/deck.html",
+            "python3 scripts/validate_html.py evals/artifacts/current/skill-runs/explicit-generate/deck.html --strict"
+          ],
+          "failed_shell_commands": [],
+          "read_paths": [
+            "SKILL.md",
+            "references/html-template.md",
+            "references/title-quality.md",
+            "references/base-css.md",
+            "references/js-engine.md",
+            "references/data-story.md"
+          ],
+          "write_paths": [
+            "evals/artifacts/current/skill-runs/explicit-generate/deck.html"
+          ],
+          "artifact_paths": [
+            "tests/fixtures/skill_eval_explicit_generate.html"
+          ],
+          "input_tokens": 12000,
+          "output_tokens": 3400,
+          "wall_ms": 45000,
+          "skill_evidence": {
+            "skill_contract_read": true,
+            "slide_flow_observed": true,
+            "brief_observed": true,
+            "strict_validate_observed": true
+          },
+          "runner_warnings": []
+        },
+        "artifact_dir": "/private/tmp/slide-preset-release-gate/skill-runs/explicit-generate"
+      },
+      {
+        "case_id": "implicit-exec-update",
+        "total_score": 90,
+        "passed": true,
+        "scores": {
+          "outcome": 25,
+          "process": 25,
+          "style": 15,
+          "efficiency": 25
+        },
+        "failures": [
+          "style.rubric_missing"
+        ],
+        "metrics": {
+          "runner": "fixture",
+          "trace_format_version": "normalized-v1",
+          "tool_calls": [],
+          "shell_commands": [
+            "python3 scripts/render-from-brief.py evals/artifacts/current/skill-runs/implicit-exec-update/brief.json --output evals/artifacts/current/skill-runs/implicit-exec-update/deck.html",
+            "python3 scripts/validate_html.py evals/artifacts/current/skill-runs/implicit-exec-update/deck.html --strict"
+          ],
+          "failed_shell_commands": [],
+          "read_paths": [
+            "SKILL.md",
+            "references/html-template.md",
+            "references/title-quality.md",
+            "references/base-css.md",
+            "references/js-engine.md",
+            "references/swiss-modern.md"
+          ],
+          "write_paths": [
+            "evals/artifacts/current/skill-runs/implicit-exec-update/deck.html"
+          ],
+          "artifact_paths": [
+            "tests/fixtures/skill_eval_implicit_exec_update.html"
+          ],
+          "input_tokens": 13000,
+          "output_tokens": 3200,
+          "wall_ms": 46000,
+          "skill_evidence": {
+            "skill_contract_read": true,
+            "slide_flow_observed": true,
+            "brief_observed": true,
+            "strict_validate_observed": true
+          },
+          "runner_warnings": []
+        },
+        "artifact_dir": "/private/tmp/slide-preset-release-gate/skill-runs/implicit-exec-update"
+      },
+      {
+        "case_id": "contextual-product-launch",
+        "total_score": 90,
+        "passed": true,
+        "scores": {
+          "outcome": 25,
+          "process": 25,
+          "style": 15,
+          "efficiency": 25
+        },
+        "failures": [
+          "style.rubric_missing"
+        ],
+        "metrics": {
+          "runner": "fixture",
+          "trace_format_version": "normalized-v1",
+          "tool_calls": [],
+          "shell_commands": [
+            "python3 scripts/render-from-brief.py evals/artifacts/current/skill-runs/contextual-product-launch/brief.json --output evals/artifacts/current/skill-runs/contextual-product-launch/deck.html",
+            "python3 scripts/validate_html.py evals/artifacts/current/skill-runs/contextual-product-launch/deck.html --strict"
+          ],
+          "failed_shell_commands": [],
+          "read_paths": [
+            "SKILL.md",
+            "references/html-template.md",
+            "references/title-quality.md",
+            "references/base-css.md",
+            "references/js-engine.md",
+            "references/blue-sky-starter.html"
+          ],
+          "write_paths": [
+            "evals/artifacts/current/skill-runs/contextual-product-launch/deck.html"
+          ],
+          "artifact_paths": [
+            "tests/fixtures/skill_eval_contextual_product_launch.html"
+          ],
+          "input_tokens": 12500,
+          "output_tokens": 3000,
+          "wall_ms": 44000,
+          "skill_evidence": {
+            "skill_contract_read": true,
+            "slide_flow_observed": true,
+            "brief_observed": true,
+            "strict_validate_observed": true
+          },
+          "runner_warnings": []
+        },
+        "artifact_dir": "/private/tmp/slide-preset-release-gate/skill-runs/contextual-product-launch"
+      },
+      {
+        "case_id": "boundary-report-to-deck",
+        "total_score": 90,
+        "passed": true,
+        "scores": {
+          "outcome": 25,
+          "process": 25,
+          "style": 15,
+          "efficiency": 25
+        },
+        "failures": [
+          "style.rubric_missing"
+        ],
+        "metrics": {
+          "runner": "fixture",
+          "trace_format_version": "normalized-v1",
+          "tool_calls": [],
+          "shell_commands": [
+            "python3 scripts/render-from-brief.py evals/artifacts/current/skill-runs/boundary-report-to-deck/brief.json --output evals/artifacts/current/skill-runs/boundary-report-to-deck/deck.html",
+            "python3 scripts/validate_html.py evals/artifacts/current/skill-runs/boundary-report-to-deck/deck.html --strict"
+          ],
+          "failed_shell_commands": [],
+          "read_paths": [
+            "SKILL.md",
+            "references/html-template.md",
+            "references/title-quality.md",
+            "references/base-css.md",
+            "references/js-engine.md",
+            "references/strategy-consulting.md"
+          ],
+          "write_paths": [
+            "evals/artifacts/current/skill-runs/boundary-report-to-deck/deck.html"
+          ],
+          "artifact_paths": [
+            "tests/fixtures/skill_eval_boundary_report_to_deck.html"
+          ],
+          "input_tokens": 14000,
+          "output_tokens": 3600,
+          "wall_ms": 52000,
+          "skill_evidence": {
+            "skill_contract_read": true,
+            "slide_flow_observed": true,
+            "brief_observed": true,
+            "strict_validate_observed": true
+          },
+          "runner_warnings": []
+        },
+        "artifact_dir": "/private/tmp/slide-preset-release-gate/skill-runs/boundary-report-to-deck"
+      },
+      {
+        "case_id": "negative-report",
+        "total_score": 100,
+        "passed": true,
+        "scores": {
+          "outcome": 25,
+          "process": 25,
+          "style": 25,
+          "efficiency": 25
+        },
+        "failures": [],
+        "metrics": {
+          "runner": "fixture",
+          "trace_format_version": "normalized-v1",
+          "tool_calls": [],
+          "shell_commands": [],
+          "failed_shell_commands": [],
+          "read_paths": [
+            "SKILL.md"
+          ],
+          "write_paths": [],
+          "artifact_paths": [],
+          "input_tokens": 5000,
+          "output_tokens": 900,
+          "wall_ms": 15000,
+          "skill_evidence": {
+            "skill_contract_read": true,
+            "slide_flow_observed": false,
+            "brief_observed": false,
+            "strict_validate_observed": false
+          },
+          "runner_warnings": [
+            "routing_check_only"
+          ]
+        },
+        "artifact_dir": "/private/tmp/slide-preset-release-gate/skill-runs/negative-report"
+      },
+      {
+        "case_id": "negative-html-export",
+        "total_score": 100,
+        "passed": true,
+        "scores": {
+          "outcome": 25,
+          "process": 25,
+          "style": 25,
+          "efficiency": 25
+        },
+        "failures": [],
+        "metrics": {
+          "runner": "fixture",
+          "trace_format_version": "normalized-v1",
+          "tool_calls": [],
+          "shell_commands": [],
+          "failed_shell_commands": [],
+          "read_paths": [
+            "SKILL.md"
+          ],
+          "write_paths": [],
+          "artifact_paths": [],
+          "input_tokens": 5200,
+          "output_tokens": 850,
+          "wall_ms": 14000,
+          "skill_evidence": {
+            "skill_contract_read": true,
+            "slide_flow_observed": false,
+            "brief_observed": false,
+            "strict_validate_observed": false
+          },
+          "runner_warnings": [
+            "routing_check_only"
+          ]
+        },
+        "artifact_dir": "/private/tmp/slide-preset-release-gate/skill-runs/negative-html-export"
+      }
+    ],
+    "summary": {
+      "total": 6,
+      "passed": 6,
+      "failed": 0,
+      "average_score": 93.33,
+      "average_category_scores": {
+        "outcome": 25.0,
+        "process": 25.0,
+        "style": 18.33,
+        "efficiency": 25.0
+      }
+    }
+  },
+  "gate": {
+    "passed": true,
+    "require_baseline": false,
+    "failures": []
+  }
+}

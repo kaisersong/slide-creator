@@ -2480,6 +2480,15 @@ def _spec_explicit_numbers(spec: dict[str, Any]) -> list[str]:
     )
 
 
+def _primary_numbers_from_numeric_facts(spec: dict[str, Any]) -> list[str]:
+    values: list[str] = []
+    for fact in spec.get("numeric_facts", []):
+        numbers = _extract_numbers(str(fact))
+        if numbers:
+            values.append(numbers[0])
+    return _dedupe_preserve(values)
+
+
 def _metric_values_from_spec(spec: dict[str, Any], fallback: list[str]) -> list[str]:
     values = _spec_explicit_numbers(spec)
     if not values:
@@ -2757,6 +2766,7 @@ def _compact_display_token(
 def _spec_display_items(spec: dict[str, Any], *, limit: int = 4) -> list[str]:
     items = _dedupe_preserve(
         [
+            *spec.get("supporting_facts", []),
             *spec["supporting_items"],
             *spec["evidence_items"],
             *_split_supporting_phrases(spec["title"], minimum=1),
@@ -2775,6 +2785,7 @@ def _spec_detail_pairs(spec: dict[str, Any], *, count: int = 4) -> list[tuple[st
         [
             *_split_supporting_phrases(spec["key_point"], minimum=1),
             spec["key_point"],
+            *spec.get("supporting_facts", []),
             *spec["supporting_items"],
             *spec["evidence_items"],
         ]
@@ -2809,7 +2820,16 @@ def _metric_value_for_item(
     *,
     index: int = 0,
     used_tokens: set[str] | None = None,
+    numeric_only: bool = False,
 ) -> str:
+    numeric_fact_numbers = _primary_numbers_from_numeric_facts(spec)
+    if numeric_only and numeric_fact_numbers:
+        return numeric_fact_numbers[min(index, len(numeric_fact_numbers) - 1)]
+
+    explicit_numbers = _spec_explicit_numbers(spec)
+    if numeric_only and explicit_numbers:
+        return explicit_numbers[min(index, len(explicit_numbers) - 1)]
+
     direct_numbers = _extract_numbers(item)
     if direct_numbers:
         if "90/9/1" in item:
@@ -2817,7 +2837,6 @@ def _metric_value_for_item(
         return direct_numbers[0]
 
     compact = _compact_display_token(item, fallback=str(index + 1), used_tokens=used_tokens)
-    explicit_numbers = _spec_explicit_numbers(spec)
     if compact not in {"关键", str(index + 1)}:
         return compact
     if explicit_numbers:
@@ -2825,6 +2844,8 @@ def _metric_value_for_item(
     evidence_numbers = _dedupe_preserve(_extract_numbers(" ".join(spec["evidence_items"])))
     if evidence_numbers:
         return evidence_numbers[min(index, len(evidence_numbers) - 1)]
+    if numeric_only:
+        return str(index + 1)
     return compact
 
 
@@ -4257,6 +4278,64 @@ def _data_story_extra_css() -> str:
     padding: 18px;
 }
 
+body[data-preset="Data Story"] .ds-kpi-chart .slide-content {
+    justify-content: flex-start;
+}
+
+body[data-preset="Data Story"] .ds-kpi-chart .ds-shell,
+body[data-preset="Data Story"] .ds-grid .ds-shell {
+    min-height: 0;
+    max-height: calc(100vh - clamp(48px, 8vw, 104px));
+    display: flex;
+    flex-direction: column;
+}
+
+body[data-preset="Data Story"] .ds-kpi-chart .ds-split-layout {
+    flex: 1 1 auto;
+    min-height: 0;
+    height: auto;
+    padding: clamp(12px, 2vw, 28px);
+    align-items: stretch;
+}
+
+body[data-preset="Data Story"] .ds-kpi-chart .ds-kpi-grid,
+body[data-preset="Data Story"] .ds-grid .ds-kpi-grid {
+    min-height: 0;
+}
+
+body[data-preset="Data Story"] .ds-kpi-chart .ds-kpi-card,
+body[data-preset="Data Story"] .ds-grid .ds-kpi-card {
+    min-height: 0;
+    padding: clamp(12px, 1.6vw, 18px);
+}
+
+body[data-preset="Data Story"] .ds-kpi-chart .ds-kpi,
+body[data-preset="Data Story"] .ds-grid .ds-kpi {
+    font-size: clamp(2.1rem, 5vw, 4.6rem);
+    overflow-wrap: normal;
+}
+
+body[data-preset="Data Story"] .ds-kpi-chart .ds-kpi-label,
+body[data-preset="Data Story"] .ds-grid .ds-kpi-label {
+    line-height: 1.42;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+body[data-preset="Data Story"] .ds-kpi-chart .ds-chart-card {
+    min-width: 0;
+    min-height: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+body[data-preset="Data Story"] .ds-kpi-chart .ds-chart-svg {
+    max-height: min(42vh, 360px);
+}
+
 .ds-chart-insight .ds-heading,
 .ds-workflow .ds-heading,
 .ds-grid .ds-heading,
@@ -4374,7 +4453,7 @@ def _render_data_story_kpi_chart(spec: dict[str, Any], total: int) -> str:
     used_tokens: set[str] = set()
     metric_values = []
     for index, item in enumerate(labels):
-        value = _metric_value_for_item(item, spec, index=index, used_tokens=used_tokens)
+        value = _metric_value_for_item(item, spec, index=index, used_tokens=used_tokens, numeric_only=True)
         used_tokens.add(value)
         metric_values.append(value)
     chart_values = _chart_metric_values_from_spec(spec, ["1", "2", "3"])
@@ -4417,7 +4496,7 @@ def _render_data_story_chart_insight(spec: dict[str, Any], total: int) -> str:
     chart_values = _chart_metric_values_from_spec(spec, ["1", "2", "3", "4"])
     insight_body = (
         _svg_line_chart(_chart_labels_from_spec(spec, count=4), chart_values)
-        if chart_values
+        if chart_values and spec.get("chart_policy") != "avoid"
         else _render_data_story_stage_grid(spec, count=4, prefix="evidence")
     )
     return f"""
@@ -4468,11 +4547,13 @@ def _render_data_story_comparison_matrix(spec: dict[str, Any], total: int) -> st
 def _render_data_story_kpi_grid(spec: dict[str, Any], total: int) -> str:
     slide_number = spec["slide_number"]
     title_tag = _title_tag("h2", "ds-heading", spec["title"], preset="Data Story", layout_id=spec["layout_id"])
-    items = _spec_display_items(spec, limit=4)
+    numeric_fact_count = len(_primary_numbers_from_numeric_facts(spec))
+    card_count = numeric_fact_count if 3 <= numeric_fact_count < 4 else 4
+    items = _spec_display_items(spec, limit=card_count)
     cards = []
-    for index, item in enumerate(items[:4]):
+    for index, item in enumerate(items[:card_count]):
         tone = "positive" if index == 0 else ("negative" if index == 2 else "neutral")
-        value = _metric_value_for_item(item, spec, index=index)
+        value = _metric_value_for_item(item, spec, index=index, numeric_only=True)
         cards.append(
             f"""
             <div class="ds-kpi-card reveal">
@@ -4503,7 +4584,7 @@ def _render_data_story_workflow_chart(spec: dict[str, Any], total: int) -> str:
     chart_values = _chart_metric_values_from_spec(spec, ["1", "2", "3", "4"])
     chart = (
         _svg_line_chart(_chart_labels_from_spec(spec, count=4, family="workflow"), chart_values)
-        if chart_values
+        if chart_values and spec.get("chart_policy") != "avoid"
         else _render_data_story_stage_grid(spec, count=4, prefix="phase")
     )
     return f"""
