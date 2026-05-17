@@ -1,0 +1,533 @@
+{
+  "cases": [
+    {
+      "case_id": "explicit-generate",
+      "total_score": 89,
+      "passed": true,
+      "eval_complete": true,
+      "scores": {
+        "outcome": 25,
+        "process": 25,
+        "style": 24,
+        "efficiency": 15
+      },
+      "failures": [
+        "efficiency.shell_command_count_over_budget",
+        "efficiency.input_tokens_over_budget"
+      ],
+      "metrics": {
+        "runner": "codex",
+        "trace_format_version": "codex-jsonl-v1",
+        "tool_calls": [
+          {
+            "type": "command_execution",
+            "command": "/bin/zsh -lc \"sed -n '1,220p' SKILL.md\"",
+            "exit_code": null,
+            "status": "in_progress"
+          },
+          {
+            "type": "command_execution",
+            "command": "/bin/zsh -lc \"sed -n '1,220p' SKILL.md\"",
+            "exit_code": 0,
+            "status": "completed"
+          },
+          {
+            "type": "command_execution",
+            "command": "/bin/zsh -lc 'find .tmp-run/skill-live-codex/explicit-generate evals/artifacts/current/skill-runs/explicit-generate -maxdepth 1 -type f 2>/dev/null | sort'",
+            "exit_code": null,
+            "status": "in_progress"
+          },
+          {
+            "type": "command_execution",
+            "command": "/bin/zsh -lc \"ls references | sed -n '1,120p'\"",
+            "exit_code": null,
+            "status": "in_progress"
+          },
+          {
+            "type": "command_execution",
+            "command": "/bin/zsh -lc \"ls references | sed -n '1,120p'\"",
+            "exit_code": 0,
+            "status": "completed"
+          },
+          {
+            "type": "command_execution",
+            "command": "/bin/zsh -lc 'find .tmp-run/skill-live-codex/explicit-generate evals/artifacts/current/skill-runs/explicit-generate -maxdepth 1 -type f 2>/dev/null | sort'",
+            "exit_code": 0,
+            "status": "completed"
+          },
+          {
+            "type": "command_execution",
+            "command": "/bin/zsh -lc \"sed -n '1,260p' references/data-story.md\"",
+            "exit_code": null,
+            "status": "in_progress"
+          },
+          {
+            "type": "command_execution",
+            "command": "/bin/zsh -lc \"sed -n '1,220p' references/title-quality.md\"",
+            "exit_code": null,
+            "status": "in_progress"
+          },
+          {
+            "type": "command_execution",
+            "command": "/bin/zsh -lc \"sed -n '1,220p' references/title-quality.md\"",
+            "exit_code": 0,
+            "status": "completed"
+          },
+          {
+            "type": "command_execution",
+            "command": "/bin/zsh -lc \"sed -n '1,260p' references/data-story.md\"",
+            "exit_code": 0,
+            "status": "completed"
+          },
+          {
+            "type": "command_execution",
+            "command": "/bin/zsh -lc \"sed -n '1,220p' references/base-css.md\"",
+            "exit_code": null,
+            "status": "in_progress"
+          },
+          {
+            "type": "command_execution",
+            "command": "/bin/zsh -lc \"sed -n '1,260p' references/html-template.md\"",
+            "exit_code": null,
+            "status": "in_progress"
+          },
+          {
+            "type": "command_execution",
+            "command": "/bin/zsh -lc \"sed -n '1,220p' references/base-css.md\"",
+            "exit_code": 0,
+            "status": "completed"
+          },
+          {
+            "type": "command_execution",
+            "command": "/bin/zsh -lc \"sed -n '1,260p' references/html-template.md\"",
+            "exit_code": 0,
+            "status": "completed"
+          },
+          {
+            "type": "command_execution",
+            "command": "/bin/zsh -lc \"sed -n '221,520p' references/base-css.md\"",
+            "exit_code": null,
+            "status": "in_progress"
+          },
+          {
+            "type": "command_execution",
+            "command": "/bin/zsh -lc \"sed -n '1,260p' references/impeccable-anti-patterns.md\"",
+            "exit_code": null,
+            "status": "in_progress"
+          },
+          {
+            "type": "command_execution",
+            "command": "/bin/zsh -lc \"sed -n '1,340p' references/js-engine.md\"",
+            "exit_code": null,
+            "status": "in_progress"
+          },
+          {
+            "type": "command_execution",
+            "command": "/bin/zsh -lc \"sed -n '221,520p' references/base-css.md\"",
+            "exit_code": 0,
+            "status": "completed"
+          },
+          {
+            "type": "command_execution",
+            "command": "/bin/zsh -lc \"sed -n '1,260p' references/impeccable-anti-patterns.md\"",
+            "exit_code": 0,
+            "status": "completed"
+          },
+          {
+            "type": "command_execution",
+            "command": "/bin/zsh -lc \"sed -n '1,340p' references/js-engine.md\"",
+            "exit_code": 0,
+            "status": "completed"
+          },
+          {
+            "type": "command_execution",
+            "command": "/bin/zsh -lc \"rg -n \\\"render_from_brief|BRIEF.json|--generate|validate_html\\\" -S . --glob '\"'!node_modules'\"' --glob '\"'!evals/**'\"' --glob '\"'!*__pycache__*'\"'\"",
+            "exit_code": null,
+            "status": "in_progress"
+          },
+          {
+            "type": "command_execution",
+            "command": "/bin/zsh -lc \"rg -n \\\"render_from_brief|BRIEF.json|--generate|validate_html\\\" -S . --glob '\"'!node_modules'\"' --glob '\"'!evals/**'\"' --glob '\"'!*__pycache__*'\"'\"",
+            "exit_code": 0,
+            "status": "completed"
+          },
+          {
+            "type": "command_execution",
+            "command": "/bin/zsh -lc \"sed -n '340,620p' references/js-engine.md\"",
+            "exit_code": null,
+            "status": "in_progress"
+          },
+          {
+            "type": "command_execution",
+            "command": "/bin/zsh -lc \"sed -n '340,620p' references/js-engine.md\"",
+            "exit_code": 0,
+            "status": "completed"
+          },
+          {
+            "type": "command_execution",
+            "command": "/bin/zsh -lc \"sed -n '260,430p' references/data-story.md\"",
+            "exit_code": null,
+            "status": "in_progress"
+          },
+          {
+            "type": "command_execution",
+            "command": "/bin/zsh -lc \"sed -n '260,430p' references/data-story.md\"",
+            "exit_code": 0,
+            "status": "completed"
+          },
+          {
+            "type": "command_execution",
+            "command": "/bin/zsh -lc \"sed -n '1,220p' references/brief-template.json\"",
+            "exit_code": null,
+            "status": "in_progress"
+          },
+          {
+            "type": "command_execution",
+            "command": "/bin/zsh -lc \"sed -n '1,220p' references/brief-template.json\"",
+            "exit_code": 0,
+            "status": "completed"
+          },
+          {
+            "type": "command_execution",
+            "command": "/bin/zsh -lc \"sed -n '1,180p' scripts/render-from-brief.py && sed -n '1,250p' main.py\"",
+            "exit_code": null,
+            "status": "in_progress"
+          },
+          {
+            "type": "command_execution",
+            "command": "/bin/zsh -lc \"sed -n '1,180p' scripts/render-from-brief.py && sed -n '1,250p' main.py\"",
+            "exit_code": 0,
+            "status": "completed"
+          },
+          {
+            "type": "command_execution",
+            "command": "/bin/zsh -lc 'rg -n \"def validate_brief|validate_brief_path|BriefValidationError|page_count|narrative\" scripts/low_context.py'",
+            "exit_code": null,
+            "status": "in_progress"
+          },
+          {
+            "type": "command_execution",
+            "command": "/bin/zsh -lc 'rg -n \"def validate_brief|validate_brief_path|BriefValidationError|page_count|narrative\" scripts/low_context.py'",
+            "exit_code": 0,
+            "status": "completed"
+          },
+          {
+            "type": "command_execution",
+            "command": "/bin/zsh -lc 'rg -n \"Data Story|data-story|data_story|hero_number|kpi_chart|chart_insight|comparison_matrix|cta_close|workflow_chart|kpi_grid\" scripts/low_context.py tests/test_low_context_pipeline.py tests/test_renderer_layout_coverage.py'",
+            "exit_code": null,
+            "status": "in_progress"
+          },
+          {
+            "type": "command_execution",
+            "command": "/bin/zsh -lc 'rg -n \"Data Story|data-story|data_story|hero_number|kpi_chart|chart_insight|comparison_matrix|cta_close|workflow_chart|kpi_grid\" scripts/low_context.py tests/test_low_context_pipeline.py tests/test_renderer_layout_coverage.py'",
+            "exit_code": 0,
+            "status": "completed"
+          },
+          {
+            "type": "command_execution",
+            "command": "/bin/zsh -lc \"sed -n '1,240p' tests/fixtures/skill-evals/explicit-generate-normalized.json\"",
+            "exit_code": null,
+            "status": "in_progress"
+          },
+          {
+            "type": "command_execution",
+            "command": "/bin/zsh -lc \"sed -n '1,240p' tests/fixtures/skill-evals/explicit-generate-normalized.json\"",
+            "exit_code": 0,
+            "status": "completed"
+          },
+          {
+            "type": "command_execution",
+            "command": "/bin/zsh -lc \"find demos/mode-paths -maxdepth 1 -name '*BRIEF.json' -print | sort | sed -n '1,80p'\"",
+            "exit_code": null,
+            "status": "in_progress"
+          },
+          {
+            "type": "command_execution",
+            "command": "/bin/zsh -lc \"find demos/mode-paths -maxdepth 1 -name '*BRIEF.json' -print | sort | sed -n '1,80p'\"",
+            "exit_code": 0,
+            "status": "completed"
+          },
+          {
+            "type": "command_execution",
+            "command": "/bin/zsh -lc \"sed -n '1700,1825p' scripts/low_context.py\"",
+            "exit_code": null,
+            "status": "in_progress"
+          },
+          {
+            "type": "command_execution",
+            "command": "/bin/zsh -lc \"sed -n '1700,1825p' scripts/low_context.py\"",
+            "exit_code": 0,
+            "status": "completed"
+          },
+          {
+            "type": "command_execution",
+            "command": "/bin/zsh -lc \"sed -n '431,690p' scripts/low_context.py\"",
+            "exit_code": null,
+            "status": "in_progress"
+          },
+          {
+            "type": "command_execution",
+            "command": "/bin/zsh -lc \"sed -n '431,690p' scripts/low_context.py\"",
+            "exit_code": 0,
+            "status": "completed"
+          },
+          {
+            "type": "command_execution",
+            "command": "/bin/zsh -lc \"sed -n '1,220p' evals/preset-surface-phase1/cases/core-data-story-brief.json\"",
+            "exit_code": null,
+            "status": "in_progress"
+          },
+          {
+            "type": "command_execution",
+            "command": "/bin/zsh -lc \"sed -n '4236,4685p' scripts/low_context.py\"",
+            "exit_code": null,
+            "status": "in_progress"
+          },
+          {
+            "type": "command_execution",
+            "command": "/bin/zsh -lc \"sed -n '1,220p' evals/preset-surface-phase1/cases/core-data-story-brief.json\"",
+            "exit_code": 0,
+            "status": "completed"
+          },
+          {
+            "type": "command_execution",
+            "command": "/bin/zsh -lc \"sed -n '4236,4685p' scripts/low_context.py\"",
+            "exit_code": 0,
+            "status": "completed"
+          },
+          {
+            "type": "command_execution",
+            "command": "/bin/zsh -lc \"sed -n '1825,1785p' scripts/low_context.py\"",
+            "exit_code": null,
+            "status": "in_progress"
+          },
+          {
+            "type": "command_execution",
+            "command": "/bin/zsh -lc \"sed -n '1825,1785p' scripts/low_context.py\"",
+            "exit_code": 0,
+            "status": "completed"
+          },
+          {
+            "type": "command_execution",
+            "command": "/bin/zsh -lc \"sed -n '1785,1865p' scripts/low_context.py\"",
+            "exit_code": null,
+            "status": "in_progress"
+          },
+          {
+            "type": "command_execution",
+            "command": "/bin/zsh -lc \"sed -n '1785,1865p' scripts/low_context.py\"",
+            "exit_code": 0,
+            "status": "completed"
+          },
+          {
+            "type": "command_execution",
+            "command": "/bin/zsh -lc \"sed -n '1,220p' references/preset-usage-rules.json\"",
+            "exit_code": null,
+            "status": "in_progress"
+          },
+          {
+            "type": "command_execution",
+            "command": "/bin/zsh -lc \"sed -n '1,220p' references/preset-usage-rules.json\"",
+            "exit_code": 0,
+            "status": "completed"
+          },
+          {
+            "type": "command_execution",
+            "command": "/bin/zsh -lc 'rg -n \"def _metric_values_from_spec|def _metric_value_for_item|def _chart_metric_values_from_spec|def _primary_numbers_from_numeric_facts|def _chart_labels_from_spec|def _spec_display_items|def _spec_detail_pairs\" scripts/low_context.py'",
+            "exit_code": null,
+            "status": "in_progress"
+          },
+          {
+            "type": "command_execution",
+            "command": "/bin/zsh -lc 'rg -n \"def _metric_values_from_spec|def _metric_value_for_item|def _chart_metric_values_from_spec|def _primary_numbers_from_numeric_facts|def _chart_labels_from_spec|def _spec_display_items|def _spec_detail_pairs\" scripts/low_context.py'",
+            "exit_code": 0,
+            "status": "completed"
+          },
+          {
+            "type": "command_execution",
+            "command": "/bin/zsh -lc \"sed -n '2460,2535p' scripts/low_context.py && sed -n '2760,2895p' scripts/low_context.py\"",
+            "exit_code": null,
+            "status": "in_progress"
+          },
+          {
+            "type": "command_execution",
+            "command": "/bin/zsh -lc \"sed -n '2460,2535p' scripts/low_context.py && sed -n '2760,2895p' scripts/low_context.py\"",
+            "exit_code": 0,
+            "status": "completed"
+          },
+          {
+            "type": "command_execution",
+            "command": "/bin/zsh -lc \"sed -n '2500,2585p' scripts/low_context.py && sed -n '2895,2945p' scripts/low_context.py\"",
+            "exit_code": null,
+            "status": "in_progress"
+          },
+          {
+            "type": "command_execution",
+            "command": "/bin/zsh -lc \"sed -n '2500,2585p' scripts/low_context.py && sed -n '2895,2945p' scripts/low_context.py\"",
+            "exit_code": 0,
+            "status": "completed"
+          },
+          {
+            "type": "command_execution",
+            "command": "/bin/zsh -lc \"find .tmp-run/skill-live-codex/explicit-generate -maxdepth 1 -name '*.html' -type f -print | sort\"",
+            "exit_code": null,
+            "status": "in_progress"
+          },
+          {
+            "type": "command_execution",
+            "command": "/bin/zsh -lc \"find .tmp-run/skill-live-codex/explicit-generate -maxdepth 1 -name '*.html' -type f -print | sort\"",
+            "exit_code": 0,
+            "status": "completed"
+          },
+          {
+            "type": "command_execution",
+            "command": "/bin/zsh -lc 'python3 main.py --validate-brief --brief .tmp-run/skill-live-codex/explicit-generate/brief.json'",
+            "exit_code": null,
+            "status": "in_progress"
+          },
+          {
+            "type": "command_execution",
+            "command": "/bin/zsh -lc 'python3 main.py --validate-brief --brief .tmp-run/skill-live-codex/explicit-generate/brief.json'",
+            "exit_code": 0,
+            "status": "completed"
+          },
+          {
+            "type": "command_execution",
+            "command": "/bin/zsh -lc 'python3 main.py --generate --brief .tmp-run/skill-live-codex/explicit-generate/brief.json --output .tmp-run/skill-live-codex/explicit-generate/deck.html'",
+            "exit_code": null,
+            "status": "in_progress"
+          },
+          {
+            "type": "command_execution",
+            "command": "/bin/zsh -lc 'python3 main.py --generate --brief .tmp-run/skill-live-codex/explicit-generate/brief.json --output .tmp-run/skill-live-codex/explicit-generate/deck.html'",
+            "exit_code": 0,
+            "status": "completed"
+          },
+          {
+            "type": "command_execution",
+            "command": "/bin/zsh -lc \"find .tmp-run/skill-live-codex/explicit-generate -maxdepth 1 -name '*.html' -type f -print | sort\"",
+            "exit_code": null,
+            "status": "in_progress"
+          },
+          {
+            "type": "command_execution",
+            "command": "/bin/zsh -lc \"find .tmp-run/skill-live-codex/explicit-generate -maxdepth 1 -name '*.html' -type f -print | sort\"",
+            "exit_code": 0,
+            "status": "completed"
+          },
+          {
+            "type": "command_execution",
+            "command": "/bin/zsh -lc \"rg -n \\\"52\\\\.5|7\\\\.1|310|18%|critical|regulated|residency|all enterprise|next week|tenant\\\" .tmp-run/skill-live-codex/explicit-generate/deck.html\"",
+            "exit_code": null,
+            "status": "in_progress"
+          },
+          {
+            "type": "command_execution",
+            "command": "/bin/zsh -lc \"rg -n \\\"52\\\\.5|7\\\\.1|310|18%|critical|regulated|residency|all enterprise|next week|tenant\\\" .tmp-run/skill-live-codex/explicit-generate/deck.html\"",
+            "exit_code": 0,
+            "status": "completed"
+          },
+          {
+            "type": "command_execution",
+            "command": "/bin/zsh -lc 'python3 scripts/validate_html.py .tmp-run/skill-live-codex/explicit-generate/deck.html --strict'",
+            "exit_code": null,
+            "status": "in_progress"
+          },
+          {
+            "type": "command_execution",
+            "command": "/bin/zsh -lc 'python3 scripts/validate_html.py .tmp-run/skill-live-codex/explicit-generate/deck.html --strict'",
+            "exit_code": 0,
+            "status": "completed"
+          }
+        ],
+        "shell_commands": [
+          "/bin/zsh -lc \"sed -n '1,220p' SKILL.md\"",
+          "/bin/zsh -lc \"ls references | sed -n '1,120p'\"",
+          "/bin/zsh -lc 'find .tmp-run/skill-live-codex/explicit-generate evals/artifacts/current/skill-runs/explicit-generate -maxdepth 1 -type f 2>/dev/null | sort'",
+          "/bin/zsh -lc \"sed -n '1,220p' references/title-quality.md\"",
+          "/bin/zsh -lc \"sed -n '1,260p' references/data-story.md\"",
+          "/bin/zsh -lc \"sed -n '1,220p' references/base-css.md\"",
+          "/bin/zsh -lc \"sed -n '1,260p' references/html-template.md\"",
+          "/bin/zsh -lc \"sed -n '221,520p' references/base-css.md\"",
+          "/bin/zsh -lc \"sed -n '1,260p' references/impeccable-anti-patterns.md\"",
+          "/bin/zsh -lc \"sed -n '1,340p' references/js-engine.md\"",
+          "/bin/zsh -lc \"rg -n \\\"render_from_brief|BRIEF.json|--generate|validate_html\\\" -S . --glob '\"'!node_modules'\"' --glob '\"'!evals/**'\"' --glob '\"'!*__pycache__*'\"'\"",
+          "/bin/zsh -lc \"sed -n '340,620p' references/js-engine.md\"",
+          "/bin/zsh -lc \"sed -n '260,430p' references/data-story.md\"",
+          "/bin/zsh -lc \"sed -n '1,220p' references/brief-template.json\"",
+          "/bin/zsh -lc \"sed -n '1,180p' scripts/render-from-brief.py && sed -n '1,250p' main.py\"",
+          "/bin/zsh -lc 'rg -n \"def validate_brief|validate_brief_path|BriefValidationError|page_count|narrative\" scripts/low_context.py'",
+          "/bin/zsh -lc 'rg -n \"Data Story|data-story|data_story|hero_number|kpi_chart|chart_insight|comparison_matrix|cta_close|workflow_chart|kpi_grid\" scripts/low_context.py tests/test_low_context_pipeline.py tests/test_renderer_layout_coverage.py'",
+          "/bin/zsh -lc \"sed -n '1,240p' tests/fixtures/skill-evals/explicit-generate-normalized.json\"",
+          "/bin/zsh -lc \"find demos/mode-paths -maxdepth 1 -name '*BRIEF.json' -print | sort | sed -n '1,80p'\"",
+          "/bin/zsh -lc \"sed -n '1700,1825p' scripts/low_context.py\"",
+          "/bin/zsh -lc \"sed -n '431,690p' scripts/low_context.py\"",
+          "/bin/zsh -lc \"sed -n '1,220p' evals/preset-surface-phase1/cases/core-data-story-brief.json\"",
+          "/bin/zsh -lc \"sed -n '4236,4685p' scripts/low_context.py\"",
+          "/bin/zsh -lc \"sed -n '1825,1785p' scripts/low_context.py\"",
+          "/bin/zsh -lc \"sed -n '1785,1865p' scripts/low_context.py\"",
+          "/bin/zsh -lc \"sed -n '1,220p' references/preset-usage-rules.json\"",
+          "/bin/zsh -lc 'rg -n \"def _metric_values_from_spec|def _metric_value_for_item|def _chart_metric_values_from_spec|def _primary_numbers_from_numeric_facts|def _chart_labels_from_spec|def _spec_display_items|def _spec_detail_pairs\" scripts/low_context.py'",
+          "/bin/zsh -lc \"sed -n '2460,2535p' scripts/low_context.py && sed -n '2760,2895p' scripts/low_context.py\"",
+          "/bin/zsh -lc \"sed -n '2500,2585p' scripts/low_context.py && sed -n '2895,2945p' scripts/low_context.py\"",
+          "/bin/zsh -lc \"find .tmp-run/skill-live-codex/explicit-generate -maxdepth 1 -name '*.html' -type f -print | sort\"",
+          "/bin/zsh -lc 'python3 main.py --validate-brief --brief .tmp-run/skill-live-codex/explicit-generate/brief.json'",
+          "/bin/zsh -lc 'python3 main.py --generate --brief .tmp-run/skill-live-codex/explicit-generate/brief.json --output .tmp-run/skill-live-codex/explicit-generate/deck.html'",
+          "/bin/zsh -lc \"find .tmp-run/skill-live-codex/explicit-generate -maxdepth 1 -name '*.html' -type f -print | sort\"",
+          "/bin/zsh -lc \"rg -n \\\"52\\\\.5|7\\\\.1|310|18%|critical|regulated|residency|all enterprise|next week|tenant\\\" .tmp-run/skill-live-codex/explicit-generate/deck.html\"",
+          "/bin/zsh -lc 'python3 scripts/validate_html.py .tmp-run/skill-live-codex/explicit-generate/deck.html --strict'"
+        ],
+        "failed_shell_commands": [],
+        "read_paths": [
+          "BRIEF.json",
+          "SKILL.md",
+          "brief.json",
+          "main.py",
+          "references/base-css.md",
+          "references/data-story.md",
+          "references/html-template.md",
+          "references/impeccable-anti-patterns.md",
+          "references/js-engine.md",
+          "references/title-quality.md",
+          "scripts/low_context.py",
+          "scripts/render-from-brief.py",
+          "scripts/validate_html.py"
+        ],
+        "write_paths": [],
+        "artifact_paths": [],
+        "input_tokens": 1216207,
+        "output_tokens": 10285,
+        "wall_ms": 221990,
+        "skill_evidence": {
+          "skill_contract_read": true,
+          "slide_flow_observed": true,
+          "brief_observed": true,
+          "strict_validate_observed": true
+        },
+        "runner_warnings": [
+          "codex.event_error:`[features].codex_hooks` is deprecated. Use `[features].hooks` instead. (Enable it with `--enable hooks` or `[features]."
+        ]
+      },
+      "artifact_dir": "/Users/song/projects/slide-creator/.tmp-run/skill-live-codex/explicit-generate",
+      "style_rubric": {
+        "source": "artifact",
+        "path": "evals/baselines/2026-05-17/live-codex/explicit-generate/style-rubric.json",
+        "score": 88,
+        "overall_pass": true
+      }
+    }
+  ],
+  "summary": {
+    "total": 1,
+    "passed": 1,
+    "failed": 0,
+    "incomplete": 0,
+    "average_score": 89.0,
+    "average_category_scores": {
+      "outcome": 25.0,
+      "process": 25.0,
+      "style": 24.0,
+      "efficiency": 15.0
+    }
+  }
+}

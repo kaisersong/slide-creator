@@ -1,0 +1,30 @@
+{
+  "runner": "fixture",
+  "trace_format_version": "normalized-v1",
+  "tool_calls": [],
+  "shell_commands": [
+    "python3 scripts/render-from-brief.py evals/artifacts/current/skill-runs/contextual-product-launch/brief.json --output evals/artifacts/current/skill-runs/contextual-product-launch/deck.html",
+    "python3 scripts/validate_html.py evals/artifacts/current/skill-runs/contextual-product-launch/deck.html --strict"
+  ],
+  "failed_shell_commands": [],
+  "read_paths": [
+    "SKILL.md",
+    "references/html-template.md",
+    "references/title-quality.md",
+    "references/base-css.md",
+    "references/js-engine.md",
+    "references/blue-sky-starter.html"
+  ],
+  "write_paths": ["evals/artifacts/current/skill-runs/contextual-product-launch/deck.html"],
+  "artifact_paths": ["tests/fixtures/skill_eval_contextual_product_launch.html"],
+  "input_tokens": 12500,
+  "output_tokens": 3000,
+  "wall_ms": 44000,
+  "skill_evidence": {
+    "skill_contract_read": true,
+    "slide_flow_observed": true,
+    "brief_observed": true,
+    "strict_validate_observed": true
+  },
+  "runner_warnings": []
+}

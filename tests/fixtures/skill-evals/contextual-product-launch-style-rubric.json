@@ -1,0 +1,44 @@
+{
+  "case_id": "contextual-product-launch",
+  "overall_pass": true,
+  "score": 96,
+  "checks": [
+    {
+      "id": "narrative_arc",
+      "pass": true,
+      "score": 5,
+      "notes": "The product launch story connects market context, product promise, and launch motion."
+    },
+    {
+      "id": "visual_rhythm",
+      "pass": true,
+      "score": 5,
+      "notes": "Blue Sky gives the fixture a lighter, narrative-forward rhythm."
+    },
+    {
+      "id": "evidence_fidelity",
+      "pass": true,
+      "score": 5,
+      "notes": "Contextual details are reflected without drifting into unsupported claims."
+    },
+    {
+      "id": "no_ai_slop",
+      "pass": true,
+      "score": 5,
+      "notes": "The fixture avoids generic Overview or Introduction slides."
+    },
+    {
+      "id": "preset_appropriateness",
+      "pass": true,
+      "score": 5,
+      "notes": "Blue Sky is suitable for an optimistic product launch narrative."
+    },
+    {
+      "id": "speaker_support",
+      "pass": true,
+      "score": 4,
+      "notes": "Slide notes give the presenter enough intent to carry the launch sequence."
+    }
+  ],
+  "summary": "High-quality contextual fixture that exercises both routing and qualitative presentation judgment."
+}

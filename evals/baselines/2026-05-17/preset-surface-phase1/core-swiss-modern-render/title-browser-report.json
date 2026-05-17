@@ -1,0 +1,243 @@
+{
+  "preset": "Swiss Modern",
+  "registry_version": 1,
+  "pass": true,
+  "hard_failures": [],
+  "diagnostics": {
+    "browser_title_target_count": 7,
+    "title_hard_fail_rate": 0.0,
+    "orphan_line_rate": 0.0,
+    "collapsed_middle_line_rate": 0.0,
+    "profile_mismatch_rate": 0.0,
+    "structural_preset_break_rate": 0.0,
+    "title_clipping_rate": 0.0,
+    "title_occlusion_rate": 0.0
+  },
+  "targets": [
+    {
+      "qa_id": "slide-1-title-1",
+      "slide_index": 1,
+      "layout_id": "title_grid",
+      "profile": "horizontal_balanced_left_anchor",
+      "node_type": "ordinary_heading",
+      "max_lines": 3,
+      "required_companion_selectors": [],
+      "required_attributes": [],
+      "text": "交付提速来自链路重排 ，不只是多一个 agent",
+      "tag_name": "h1",
+      "missing": false,
+      "line_count": 2,
+      "line_widths": [
+        1324.81,
+        1324.81
+      ],
+      "clipped": false,
+      "occluded": false,
+      "occluded_by": [],
+      "writing_mode": "horizontal-tb",
+      "classes": [
+        "swiss-title",
+        "reveal",
+        "title-balance",
+        "visible"
+      ],
+      "attrs_present": true,
+      "companions_present": true,
+      "profile_mismatch": false,
+      "hard_failures": []
+    },
+    {
+      "qa_id": "slide-2-title-2",
+      "slide_index": 2,
+      "layout_id": "column_content",
+      "profile": "horizontal_balanced_left_anchor",
+      "node_type": "ordinary_heading",
+      "max_lines": 3,
+      "required_companion_selectors": [],
+      "required_attributes": [],
+      "text": "如果任务边界不 清，agent 只会 把返工提得更快",
+      "tag_name": "h2",
+      "missing": false,
+      "line_count": 3,
+      "line_widths": [
+        320,
+        320,
+        320
+      ],
+      "clipped": false,
+      "occluded": false,
+      "occluded_by": [],
+      "writing_mode": "horizontal-tb",
+      "classes": [
+        "swiss-title",
+        "reveal",
+        "title-balance",
+        "visible"
+      ],
+      "attrs_present": true,
+      "companions_present": true,
+      "profile_mismatch": false,
+      "hard_failures": []
+    },
+    {
+      "qa_id": "slide-4-title-3",
+      "slide_index": 4,
+      "layout_id": "geometric_diagram",
+      "profile": "horizontal_balanced_left_anchor",
+      "node_type": "ordinary_heading",
+      "max_lines": 3,
+      "required_companion_selectors": [],
+      "required_attributes": [],
+      "text": "一个可复用链路至少包含四段",
+      "tag_name": "h2",
+      "missing": false,
+      "line_count": 1,
+      "line_widths": [
+        917.28
+      ],
+      "clipped": false,
+      "occluded": false,
+      "occluded_by": [],
+      "writing_mode": "horizontal-tb",
+      "classes": [
+        "swiss-title",
+        "reveal",
+        "visible"
+      ],
+      "attrs_present": true,
+      "companions_present": true,
+      "profile_mismatch": false,
+      "hard_failures": []
+    },
+    {
+      "qa_id": "slide-5-title-4",
+      "slide_index": 5,
+      "layout_id": "data_table",
+      "profile": "horizontal_balanced_left_anchor",
+      "node_type": "ordinary_heading",
+      "max_lines": 3,
+      "required_companion_selectors": [],
+      "required_attributes": [],
+      "text": "稳定场景先做深，比同 时铺开多个实验更有效",
+      "tag_name": "h2",
+      "missing": false,
+      "line_count": 2,
+      "line_widths": [
+        1324.81,
+        1324.81
+      ],
+      "clipped": false,
+      "occluded": false,
+      "occluded_by": [],
+      "writing_mode": "horizontal-tb",
+      "classes": [
+        "swiss-title",
+        "reveal",
+        "title-balance",
+        "visible"
+      ],
+      "attrs_present": true,
+      "companions_present": true,
+      "profile_mismatch": false,
+      "hard_failures": []
+    },
+    {
+      "qa_id": "slide-6-title-5",
+      "slide_index": 6,
+      "layout_id": "column_content",
+      "profile": "horizontal_balanced_left_anchor",
+      "node_type": "ordinary_heading",
+      "max_lines": 3,
+      "required_companion_selectors": [],
+      "required_attributes": [],
+      "text": "速度提升必须换来更强的 验收，而不是更弱的判断",
+      "tag_name": "h2",
+      "missing": false,
+      "line_count": 2,
+      "line_widths": [
+        320,
+        320
+      ],
+      "clipped": false,
+      "occluded": false,
+      "occluded_by": [],
+      "writing_mode": "horizontal-tb",
+      "classes": [
+        "swiss-title",
+        "reveal",
+        "title-balance",
+        "visible"
+      ],
+      "attrs_present": true,
+      "companions_present": true,
+      "profile_mismatch": false,
+      "hard_failures": []
+    },
+    {
+      "qa_id": "slide-7-title-6",
+      "slide_index": 7,
+      "layout_id": "contents_index",
+      "profile": "horizontal_balanced_left_anchor",
+      "node_type": "ordinary_heading",
+      "max_lines": 3,
+      "required_companion_selectors": [],
+      "required_attributes": [],
+      "text": "下一阶段应 优先复制高 频稳定场景",
+      "tag_name": "h2",
+      "missing": false,
+      "line_count": 3,
+      "line_widths": [
+        1324.81,
+        1324.81,
+        1324.81
+      ],
+      "clipped": false,
+      "occluded": false,
+      "occluded_by": [],
+      "writing_mode": "horizontal-tb",
+      "classes": [
+        "swiss-title",
+        "reveal",
+        "title-balance"
+      ],
+      "attrs_present": true,
+      "companions_present": true,
+      "profile_mismatch": false,
+      "hard_failures": []
+    },
+    {
+      "qa_id": "slide-8-title-7",
+      "slide_index": 8,
+      "layout_id": "pull_quote",
+      "profile": "single_statement_display",
+      "node_type": "ordinary_heading",
+      "max_lines": 3,
+      "required_companion_selectors": [],
+      "required_attributes": [],
+      "text": "团队应该把复利押在可 复用工作流和门禁，而不 是押在更多即兴自动化",
+      "tag_name": "h2",
+      "missing": false,
+      "line_count": 3,
+      "line_widths": [
+        776.17,
+        776.17,
+        776.17
+      ],
+      "clipped": false,
+      "occluded": false,
+      "occluded_by": [],
+      "writing_mode": "horizontal-tb",
+      "classes": [
+        "swiss-title",
+        "reveal",
+        "title-balance",
+        "visible"
+      ],
+      "attrs_present": true,
+      "companions_present": true,
+      "profile_mismatch": false,
+      "hard_failures": []
+    }
+  ],
+  "html_path": "/private/tmp/slide-preset-release-gate/core-swiss-modern-render/deck.html"
+}

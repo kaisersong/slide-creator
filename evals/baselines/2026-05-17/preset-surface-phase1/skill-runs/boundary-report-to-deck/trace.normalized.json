@@ -1,0 +1,34 @@
+{
+  "runner": "fixture",
+  "trace_format_version": "normalized-v1",
+  "tool_calls": [],
+  "shell_commands": [
+    "python3 scripts/render-from-brief.py evals/artifacts/current/skill-runs/boundary-report-to-deck/brief.json --output evals/artifacts/current/skill-runs/boundary-report-to-deck/deck.html",
+    "python3 scripts/validate_html.py evals/artifacts/current/skill-runs/boundary-report-to-deck/deck.html --strict"
+  ],
+  "failed_shell_commands": [],
+  "read_paths": [
+    "SKILL.md",
+    "references/html-template.md",
+    "references/title-quality.md",
+    "references/base-css.md",
+    "references/js-engine.md",
+    "references/strategy-consulting.md"
+  ],
+  "write_paths": [
+    "evals/artifacts/current/skill-runs/boundary-report-to-deck/deck.html"
+  ],
+  "artifact_paths": [
+    "tests/fixtures/skill_eval_boundary_report_to_deck.html"
+  ],
+  "input_tokens": 14000,
+  "output_tokens": 3600,
+  "wall_ms": 52000,
+  "skill_evidence": {
+    "skill_contract_read": true,
+    "slide_flow_observed": true,
+    "brief_observed": true,
+    "strict_validate_observed": true
+  },
+  "runner_warnings": []
+}

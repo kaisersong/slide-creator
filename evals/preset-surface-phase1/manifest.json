@@ -73,6 +73,9 @@
           "narrative-role-coverage",
           "minimal-slide-run"
         ],
+        "required_title_gates": [
+          "browser-title-composition"
+        ],
         "non_regression_metrics": [
           "layout-variety",
           "component-diversity",

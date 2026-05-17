@@ -1,0 +1,10 @@
+{
+  "preset": "Paper & Ink",
+  "preset_support_tier": "supported",
+  "quality_tier": null,
+  "latency_ms": {
+    "packet": 0.0,
+    "render": 0.0,
+    "assemble": 0.0
+  }
+}

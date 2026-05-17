@@ -152,6 +152,48 @@ This keeps validation out of planning and composition, but inside delivery:
 - Hard failures stop bad output before handoff
 - Warnings can still feed polish / retry policy without pretending the deck is already valid
 
+**Captured-run skill evals**
+
+`scripts/run_evals.py` checks committed BRIEF/HTML artifacts and deterministic renderer behavior. It is a regression gate, not a full skill eval.
+
+For OpenAI-style captured-run skill evals, use:
+
+```bash
+python3 scripts/run-skill-evals.py --runner codex --run-live --format json --json-out .tmp-run/skill-evals/results.json
+```
+
+This runs the prompt set in `evals/slide-skill-prompts.csv` through the selected runner, stores raw and normalized traces under `evals/artifacts/current/skill-runs/`, and scores each case across four categories:
+
+- Outcome: deck task completion and valid HTML artifacts.
+- Process: skill routing, BRIEF/materialization evidence, reference loading, and strict validation evidence from normalized runner metrics.
+- Style: preset fit, slide rhythm, content fidelity, and structured rubric grading for positive captured-run cases.
+- Efficiency: command count, repeated failures, token budgets, and wall-clock budget.
+
+The live eval architecture is deliberately split into three roles:
+
+- Supervisor: selects cases, launches isolated workers, captures traces, writes baselines, and compares regressions.
+- Generate Worker: one fresh isolated worker per case; reads `SKILL.md`, a small reference set, writes `BRIEF.json`, renders HTML, and runs strict validation.
+- Style Judge: a separate grader that produces `style-rubric.json`; the generator does not self-grade style.
+
+All generation-worker shell commands and tokens count toward Efficiency. Subagents/fresh workers are for context isolation, not for hiding cost. The live worker prompt forbids broad repo searches, previous eval traces, existing decks, `tests/`, `demos/`, `evals/baselines/`, CLI discovery, Python introspection, symlinks, and writes outside the per-case artifact directory.
+
+Use fixture mode for deterministic local tests:
+
+```bash
+python3 scripts/run-skill-evals.py --runner fixture --case-id explicit-generate --normalized-trace tests/fixtures/skill-evals/explicit-generate-normalized.json --format json
+```
+
+`scripts/preset_release_gate.py` keeps captured-run evals optional. Add `--include-skill-evals` for deterministic release checks, or let `--runner codex --run-live` run only during a manual evaluation pass. Positive fixture cases use checked-in `tests/fixtures/skill-evals/*-style-rubric.json`; if a positive case has no rubric, the harness marks it `eval_complete: false` and fails the eval instead of hiding the gap behind a green score.
+
+When `--baseline-dir` contains `skill-evals.json`, the release gate automatically compares the new captured-run result against that baseline and fails on pass, completeness, total score, or category regressions. You can also run the comparator directly:
+
+```bash
+python3 scripts/compare-skill-eval-baseline.py \
+  --old evals/baselines/2026-05-17/skill-evals/skill-evals.json \
+  --new /path/to/candidate/skill-evals.json \
+  --format json
+```
+
 Before adding any new check, verify: does this check belong in the deterministic runtime gate? If it requires subjective taste judgment rather than contract validation, it should stay in review/eval instead of strict validate.
 
 **Contract alignment: validators must match generation contracts**
@@ -444,6 +486,8 @@ For PPTX/PNG export: `clawhub install kai-html-export` or `pip install playwrigh
 ---
 
 ## Version History
+
+**v2.27.0** — Captured-run eval architecture release: added OpenAI-style skill eval prompts, normalized trace scoring, fixture style rubrics, live Codex baselines, regression comparison, and optional release-gate integration. README and design docs now document the Supervisor / Generate Worker / Style Judge split, context isolation rules, and token accounting policy so live eval cost remains visible instead of hidden by subagents.
 
 **v2.26.0** — Blue Sky deterministic renderer and custom theme release: Blue Sky now renders through the canonical BRIEF pipeline with strict validation coverage, custom themes resolve correctly in both source and plugin layouts, and private Kingdee / Cloudhub theme assets were cleaned up, compressed, and locked with regression tests.
 

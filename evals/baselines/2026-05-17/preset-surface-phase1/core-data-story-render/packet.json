@@ -1,0 +1,56 @@
+{
+  "brief_hash": "sha256:b748a99c9f5ea2ffd06f5d06306b3cccc7c525f1b48980af7e38f485e4192734",
+  "generator": "kai-slide-creator",
+  "generator_version": "2.26.0",
+  "render_path": "brief-canonical",
+  "preset": "Data Story",
+  "preset_support_tier": "production",
+  "deck_type": "user-content",
+  "page_count": 8,
+  "composition_source": "references/composition-guide.md",
+  "runtime_path": "shared-js-engine",
+  "validate_strict": "pending",
+  "required_refs": [
+    "references/composition-guide.md",
+    "references/html-template.md",
+    "references/js-engine.md",
+    "references/base-css.md",
+    "references/data-story.md"
+  ],
+  "required_contracts": [
+    "preset-metadata",
+    "shared-runtime",
+    "style-signature",
+    "shell-ui-markers"
+  ],
+  "required_shell_markers": [
+    "body[data-preset]",
+    "#brand-mark",
+    ".progress-bar",
+    ".nav-dots",
+    ".edit-hotzone",
+    "#editToggle",
+    "#notes-panel"
+  ],
+  "style_contract_digest": "sha256:ff0d928890af9475c6dd6109a7d086efa67584b69460b71614d6a9cfa4289733",
+  "allowed_layouts": [
+    "hero_number",
+    "kpi_chart",
+    "chart_insight",
+    "comparison_matrix",
+    "kpi_grid",
+    "workflow_chart",
+    "cta_close",
+    "hero_number_full_screen_single_kpi",
+    "kpi_row_chart_two_columns",
+    "full_screen_bar_chart_insight",
+    "2_2_comparison_matrix"
+  ],
+  "quality_tier": "tier0",
+  "fallback_policy": "full-preset-contract",
+  "latency_ms": {
+    "packet": 1.57,
+    "render": 13.62,
+    "assemble": 0.0
+  }
+}

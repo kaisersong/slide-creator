@@ -1,0 +1,4 @@
+{"type":"thread.started","thread_id":"fixture-smoke"}
+{"type":"turn.started"}
+{"type":"item.completed","item":{"id":"item_1","type":"agent_message","text":"ok"}}
+{"type":"turn.completed","usage":{"input_tokens":500,"output_tokens":20}}

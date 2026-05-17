@@ -545,6 +545,84 @@ def test_render_data_story_cta_close_uses_balanced_title_markup():
     assert "够支持谨慎扩面" in html
 
 
+def test_data_story_kpi_grid_alias_resolves_to_compact_numeric_kpis():
+    brief = _load_core_data_story_brief()
+    slide = brief["narrative"]["slides"][2]
+    brief["narrative"]["page_roles"][2] = "consumer-model"
+    slide.update(
+        {
+            "role": "consumer-model",
+            "title": "GPT-5.5 Instant 把默认体验推向更可靠的日常助手",
+            "key_point": "OpenAI 将 ChatGPT 默认模型升级到 GPT-5.5 Instant，并强化个性化与 memory sources。",
+            "claim": "默认模型升级的意义，是让更高可靠性直接进入每个普通 ChatGPT 会话。",
+            "explanation": "官方称 GPT-5.5 Instant 面向所有 ChatGPT 用户滚动发布，并在 API 中以 chat-latest 提供。",
+            "visual_intent": "three KPI cards with compact evidence",
+            "preferred_layout_family": "kpi-grid",
+            "chart_policy": "required",
+            "supporting_facts": [
+                "默认模型从 GPT-5.3 Instant 迁移到 GPT-5.5 Instant",
+                "面向所有 ChatGPT 用户滚动发布",
+                "Memory sources 帮助用户查看个性化响应使用了哪些上下文",
+            ],
+            "numeric_facts": [
+                "52.5% fewer hallucinated claims on high-stakes prompts vs GPT-5.3 Instant",
+                "37.3% fewer inaccurate claims on especially challenging flagged conversations",
+                "3 months paid-user access window for GPT-5.3 Instant",
+            ],
+        }
+    )
+
+    specs = build_slide_spec(brief, packet=build_render_packet(brief))
+    assert specs[2]["layout_id"] == "kpi_grid"
+
+    html, packet, _ = render_from_brief(brief)
+    soup = BeautifulSoup(html, "html.parser")
+    rendered_slide = soup.find(id="slide-3")
+    kpi_values = [node.get_text(" ", strip=True) for node in rendered_slide.select(".ds-kpi-card .ds-kpi")]
+
+    assert packet["preset"] == "Data Story"
+    assert kpi_values[:3] == ["52.5%", "37.3%", "3"]
+    assert "默认模型</div>" not in str(rendered_slide)
+    assert 'body[data-preset="Data Story"] .ds-kpi-chart .ds-split-layout' in html
+
+
+def test_data_story_chart_policy_avoid_keeps_url_sources_as_evidence_cards():
+    brief = _load_core_data_story_brief()
+    slide = brief["narrative"]["slides"][-1]
+    slide.update(
+        {
+            "role": "source-boundary",
+            "title": "这份简报只使用 OpenAI 官方信息",
+            "key_point": "事实边界截至 2026-05-17；后续发布需要重新核对官方页面。",
+            "claim": "快速变化的产品线必须保留来源、日期和可用性边界。",
+            "explanation": "本 deck 的判断来自 OpenAI product release pages 与 Help Center release notes。",
+            "visual_intent": "source ledger grouped by product line",
+            "preferred_layout_family": "evidence",
+            "chart_policy": "avoid",
+            "supporting_facts": [
+                "Product releases: https://openai.com/news/product-releases/",
+                "GPT-5.5 Instant: https://openai.com/index/gpt-5-5-instant/",
+                "ChatGPT release notes: https://help.openai.com/en/articles/6825453-release-notes",
+                "Enterprise release notes: https://help.openai.com/en/articles/10128477-chatgpt-enterprise-edu-release-notes",
+            ],
+            "numeric_facts": ["Checked on 2026-05-17"],
+        }
+    )
+    brief["narrative"]["page_roles"][-1] = "source-boundary"
+
+    specs = build_slide_spec(brief, packet=build_render_packet(brief))
+    assert specs[-1]["layout_id"] == "chart_insight"
+    assert specs[-1]["chart_policy"] == "avoid"
+
+    html, _packet, _ = render_from_brief(brief)
+    soup = BeautifulSoup(html, "html.parser")
+    rendered_slide = soup.find(id=f"slide-{slide['slide_number']}")
+
+    assert rendered_slide.find(class_="ds-stage-grid") is not None
+    assert rendered_slide.find(class_="ds-chart-svg") is None
+    assert "https://openai.com/news/product-releases/" in rendered_slide.get_text(" ")
+
+
 def test_render_from_brief_emits_pending_canonical_provenance_markers():
     brief = read_json(POLISH_DEMO)
     brief["style"]["preset"] = "Enterprise Dark"

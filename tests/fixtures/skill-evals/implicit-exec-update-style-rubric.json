@@ -1,0 +1,44 @@
+{
+  "case_id": "implicit-exec-update",
+  "overall_pass": true,
+  "score": 95,
+  "checks": [
+    {
+      "id": "narrative_arc",
+      "pass": true,
+      "score": 5,
+      "notes": "The deck frames the execution update around what changed, why it matters, and what follows."
+    },
+    {
+      "id": "visual_rhythm",
+      "pass": true,
+      "score": 5,
+      "notes": "Swiss Modern restraint is reflected through focused slide roles and compact hierarchy."
+    },
+    {
+      "id": "evidence_fidelity",
+      "pass": true,
+      "score": 5,
+      "notes": "The fixture preserves the operational update facts without inventing unsupported metrics."
+    },
+    {
+      "id": "no_ai_slop",
+      "pass": true,
+      "score": 5,
+      "notes": "The output avoids generic intro language and unresolved placeholders."
+    },
+    {
+      "id": "preset_appropriateness",
+      "pass": true,
+      "score": 5,
+      "notes": "Swiss Modern fits an execution update that should read precise and structured."
+    },
+    {
+      "id": "speaker_support",
+      "pass": true,
+      "score": 4,
+      "notes": "Notes give enough delivery intent for an evaluator to verify presenter flow."
+    }
+  ],
+  "summary": "Strong implicit-generation fixture with enough style evidence to grade beyond deterministic checks."
+}

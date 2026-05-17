@@ -116,6 +116,7 @@
         "insight": "chart_insight",
         "comparison": "comparison_matrix",
         "kpi": "kpi_grid",
+        "kpi-grid": "kpi_grid",
         "flow": "workflow_chart",
         "evidence": "chart_insight",
         "close": "cta_close"

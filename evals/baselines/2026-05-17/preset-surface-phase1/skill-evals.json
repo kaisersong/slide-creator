@@ -1,0 +1,311 @@
+{
+  "cases": [
+    {
+      "case_id": "explicit-generate",
+      "total_score": 100,
+      "passed": true,
+      "eval_complete": true,
+      "scores": {
+        "outcome": 25,
+        "process": 25,
+        "style": 25,
+        "efficiency": 25
+      },
+      "failures": [],
+      "metrics": {
+        "runner": "fixture",
+        "trace_format_version": "normalized-v1",
+        "tool_calls": [],
+        "shell_commands": [
+          "python3 scripts/render-from-brief.py evals/artifacts/current/skill-runs/explicit-generate/brief.json --output evals/artifacts/current/skill-runs/explicit-generate/deck.html",
+          "python3 scripts/validate_html.py evals/artifacts/current/skill-runs/explicit-generate/deck.html --strict"
+        ],
+        "failed_shell_commands": [],
+        "read_paths": [
+          "SKILL.md",
+          "references/html-template.md",
+          "references/title-quality.md",
+          "references/base-css.md",
+          "references/js-engine.md",
+          "references/data-story.md"
+        ],
+        "write_paths": [
+          "evals/artifacts/current/skill-runs/explicit-generate/deck.html"
+        ],
+        "artifact_paths": [
+          "tests/fixtures/skill_eval_explicit_generate.html"
+        ],
+        "input_tokens": 12000,
+        "output_tokens": 3400,
+        "wall_ms": 45000,
+        "skill_evidence": {
+          "skill_contract_read": true,
+          "slide_flow_observed": true,
+          "brief_observed": true,
+          "strict_validate_observed": true
+        },
+        "runner_warnings": []
+      },
+      "artifact_dir": "/private/tmp/slide-preset-release-gate/skill-runs/explicit-generate",
+      "style_rubric": {
+        "source": "fixture",
+        "path": "tests/fixtures/skill-evals/explicit-generate-style-rubric.json",
+        "score": 96,
+        "overall_pass": true
+      }
+    },
+    {
+      "case_id": "implicit-exec-update",
+      "total_score": 100,
+      "passed": true,
+      "eval_complete": true,
+      "scores": {
+        "outcome": 25,
+        "process": 25,
+        "style": 25,
+        "efficiency": 25
+      },
+      "failures": [],
+      "metrics": {
+        "runner": "fixture",
+        "trace_format_version": "normalized-v1",
+        "tool_calls": [],
+        "shell_commands": [
+          "python3 scripts/render-from-brief.py evals/artifacts/current/skill-runs/implicit-exec-update/brief.json --output evals/artifacts/current/skill-runs/implicit-exec-update/deck.html",
+          "python3 scripts/validate_html.py evals/artifacts/current/skill-runs/implicit-exec-update/deck.html --strict"
+        ],
+        "failed_shell_commands": [],
+        "read_paths": [
+          "SKILL.md",
+          "references/html-template.md",
+          "references/title-quality.md",
+          "references/base-css.md",
+          "references/js-engine.md",
+          "references/swiss-modern.md"
+        ],
+        "write_paths": [
+          "evals/artifacts/current/skill-runs/implicit-exec-update/deck.html"
+        ],
+        "artifact_paths": [
+          "tests/fixtures/skill_eval_implicit_exec_update.html"
+        ],
+        "input_tokens": 13000,
+        "output_tokens": 3200,
+        "wall_ms": 46000,
+        "skill_evidence": {
+          "skill_contract_read": true,
+          "slide_flow_observed": true,
+          "brief_observed": true,
+          "strict_validate_observed": true
+        },
+        "runner_warnings": []
+      },
+      "artifact_dir": "/private/tmp/slide-preset-release-gate/skill-runs/implicit-exec-update",
+      "style_rubric": {
+        "source": "fixture",
+        "path": "tests/fixtures/skill-evals/implicit-exec-update-style-rubric.json",
+        "score": 95,
+        "overall_pass": true
+      }
+    },
+    {
+      "case_id": "contextual-product-launch",
+      "total_score": 100,
+      "passed": true,
+      "eval_complete": true,
+      "scores": {
+        "outcome": 25,
+        "process": 25,
+        "style": 25,
+        "efficiency": 25
+      },
+      "failures": [],
+      "metrics": {
+        "runner": "fixture",
+        "trace_format_version": "normalized-v1",
+        "tool_calls": [],
+        "shell_commands": [
+          "python3 scripts/render-from-brief.py evals/artifacts/current/skill-runs/contextual-product-launch/brief.json --output evals/artifacts/current/skill-runs/contextual-product-launch/deck.html",
+          "python3 scripts/validate_html.py evals/artifacts/current/skill-runs/contextual-product-launch/deck.html --strict"
+        ],
+        "failed_shell_commands": [],
+        "read_paths": [
+          "SKILL.md",
+          "references/html-template.md",
+          "references/title-quality.md",
+          "references/base-css.md",
+          "references/js-engine.md",
+          "references/blue-sky-starter.html"
+        ],
+        "write_paths": [
+          "evals/artifacts/current/skill-runs/contextual-product-launch/deck.html"
+        ],
+        "artifact_paths": [
+          "tests/fixtures/skill_eval_contextual_product_launch.html"
+        ],
+        "input_tokens": 12500,
+        "output_tokens": 3000,
+        "wall_ms": 44000,
+        "skill_evidence": {
+          "skill_contract_read": true,
+          "slide_flow_observed": true,
+          "brief_observed": true,
+          "strict_validate_observed": true
+        },
+        "runner_warnings": []
+      },
+      "artifact_dir": "/private/tmp/slide-preset-release-gate/skill-runs/contextual-product-launch",
+      "style_rubric": {
+        "source": "fixture",
+        "path": "tests/fixtures/skill-evals/contextual-product-launch-style-rubric.json",
+        "score": 96,
+        "overall_pass": true
+      }
+    },
+    {
+      "case_id": "boundary-report-to-deck",
+      "total_score": 100,
+      "passed": true,
+      "eval_complete": true,
+      "scores": {
+        "outcome": 25,
+        "process": 25,
+        "style": 25,
+        "efficiency": 25
+      },
+      "failures": [],
+      "metrics": {
+        "runner": "fixture",
+        "trace_format_version": "normalized-v1",
+        "tool_calls": [],
+        "shell_commands": [
+          "python3 scripts/render-from-brief.py evals/artifacts/current/skill-runs/boundary-report-to-deck/brief.json --output evals/artifacts/current/skill-runs/boundary-report-to-deck/deck.html",
+          "python3 scripts/validate_html.py evals/artifacts/current/skill-runs/boundary-report-to-deck/deck.html --strict"
+        ],
+        "failed_shell_commands": [],
+        "read_paths": [
+          "SKILL.md",
+          "references/html-template.md",
+          "references/title-quality.md",
+          "references/base-css.md",
+          "references/js-engine.md",
+          "references/strategy-consulting.md"
+        ],
+        "write_paths": [
+          "evals/artifacts/current/skill-runs/boundary-report-to-deck/deck.html"
+        ],
+        "artifact_paths": [
+          "tests/fixtures/skill_eval_boundary_report_to_deck.html"
+        ],
+        "input_tokens": 14000,
+        "output_tokens": 3600,
+        "wall_ms": 52000,
+        "skill_evidence": {
+          "skill_contract_read": true,
+          "slide_flow_observed": true,
+          "brief_observed": true,
+          "strict_validate_observed": true
+        },
+        "runner_warnings": []
+      },
+      "artifact_dir": "/private/tmp/slide-preset-release-gate/skill-runs/boundary-report-to-deck",
+      "style_rubric": {
+        "source": "fixture",
+        "path": "tests/fixtures/skill-evals/boundary-report-to-deck-style-rubric.json",
+        "score": 95,
+        "overall_pass": true
+      }
+    },
+    {
+      "case_id": "negative-report",
+      "total_score": 100,
+      "passed": true,
+      "eval_complete": true,
+      "scores": {
+        "outcome": 25,
+        "process": 25,
+        "style": 25,
+        "efficiency": 25
+      },
+      "failures": [],
+      "metrics": {
+        "runner": "fixture",
+        "trace_format_version": "normalized-v1",
+        "tool_calls": [],
+        "shell_commands": [],
+        "failed_shell_commands": [],
+        "read_paths": [
+          "SKILL.md"
+        ],
+        "write_paths": [],
+        "artifact_paths": [],
+        "input_tokens": 5000,
+        "output_tokens": 900,
+        "wall_ms": 15000,
+        "skill_evidence": {
+          "skill_contract_read": true,
+          "slide_flow_observed": false,
+          "brief_observed": false,
+          "strict_validate_observed": false
+        },
+        "runner_warnings": [
+          "routing_check_only"
+        ]
+      },
+      "artifact_dir": "/private/tmp/slide-preset-release-gate/skill-runs/negative-report",
+      "style_rubric": null
+    },
+    {
+      "case_id": "negative-html-export",
+      "total_score": 100,
+      "passed": true,
+      "eval_complete": true,
+      "scores": {
+        "outcome": 25,
+        "process": 25,
+        "style": 25,
+        "efficiency": 25
+      },
+      "failures": [],
+      "metrics": {
+        "runner": "fixture",
+        "trace_format_version": "normalized-v1",
+        "tool_calls": [],
+        "shell_commands": [],
+        "failed_shell_commands": [],
+        "read_paths": [
+          "SKILL.md"
+        ],
+        "write_paths": [],
+        "artifact_paths": [],
+        "input_tokens": 5200,
+        "output_tokens": 850,
+        "wall_ms": 14000,
+        "skill_evidence": {
+          "skill_contract_read": true,
+          "slide_flow_observed": false,
+          "brief_observed": false,
+          "strict_validate_observed": false
+        },
+        "runner_warnings": [
+          "routing_check_only"
+        ]
+      },
+      "artifact_dir": "/private/tmp/slide-preset-release-gate/skill-runs/negative-html-export",
+      "style_rubric": null
+    }
+  ],
+  "summary": {
+    "total": 6,
+    "passed": 6,
+    "failed": 0,
+    "incomplete": 0,
+    "average_score": 100.0,
+    "average_category_scores": {
+      "outcome": 25.0,
+      "process": 25.0,
+      "style": 25.0,
+      "efficiency": 25.0
+    }
+  }
+}

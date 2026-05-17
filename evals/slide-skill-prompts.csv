@@ -1,0 +1,7 @@
+id,kind,should_trigger,prompt_path,expected_preset,expected_deck_class,expected_artifact,max_shell_commands,max_input_tokens,max_output_tokens,max_wall_ms
+explicit-generate,explicit,true,evals/skill-prompts/explicit-generate.md,Data Story,data,html,12,90000,25000,240000
+implicit-exec-update,implicit,true,evals/skill-prompts/implicit-exec-update.md,Swiss Modern,mixed,html,12,90000,25000,240000
+contextual-product-launch,contextual,true,evals/skill-prompts/contextual-product-launch.md,Blue Sky,narrative,html,12,90000,25000,240000
+boundary-report-to-deck,boundary,true,evals/skill-prompts/boundary-report-to-deck.md,Strategy Consulting,mixed,html,14,100000,28000,300000
+negative-report,negative,false,evals/skill-prompts/negative-report.md,,,none,6,60000,12000,120000
+negative-html-export,negative,false,evals/skill-prompts/negative-html-export.md,,,none,6,60000,12000,120000

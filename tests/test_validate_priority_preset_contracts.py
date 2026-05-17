@@ -133,6 +133,36 @@ def test_data_story_contract_requires_svg_css_path_not_chart_library():
     assert "external chart libs" in message
 
 
+def test_data_story_contract_rejects_text_only_kpi_values():
+    validate = load_validate_module()
+    html = """
+    <!DOCTYPE html>
+    <html>
+      <head>
+        <style>
+          :root {
+            --bg:#0f1117; --bg-card:#1a1f2e; --border:#2d3748; --text:#e2e8f0; --text-muted:#64748b;
+            --positive:#00d4aa; --negative:#ff6b6b; --neutral:#e2e8f0;
+            --chart-primary:#3b82f6; --chart-secondary:#8b5cf6; --chart-tertiary:#10b981;
+            --grid-line:#1e293b; --axis-line:#334155;
+          }
+          .slide::before { content:''; }
+          body { font-variant-numeric: tabular-nums; }
+        </style>
+      </head>
+      <body data-preset="Data Story">
+        <section class="slide" data-export-role="kpi_grid">
+          <div class="ds-kpi-card"><div class="ds-kpi">默认模型</div></div>
+        </section>
+      </body>
+    </html>
+    """
+    soup = BeautifulSoup(html, "html.parser")
+    ok, message = validate.check_data_story_contract(soup, html, [])
+    assert not ok
+    assert "Data Story KPI value must be numeric" in message
+
+
 def test_glassmorphism_contract_requires_orbs_and_glass_cards():
     validate = load_validate_module()
     html = """

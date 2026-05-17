@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import subprocess
 import sys
 from datetime import datetime
 from pathlib import Path
@@ -17,6 +18,7 @@ from run_evals import run_suite  # noqa: E402
 
 
 DEFAULT_SUITE = ROOT / "evals" / "preset-surface-phase1" / "manifest.json"
+SKILL_EVAL_CATEGORIES = ["outcome", "process", "style", "efficiency"]
 
 
 def _suite_requires_browser_titles(suite_path: Path) -> bool:
@@ -43,7 +45,159 @@ def _collect_gate_failures(report: dict, *, require_baseline: bool) -> list[str]
             if not case.get("baseline_html_path"):
                 failures.append(f"{case['case_id']}: missing baseline compare artifact")
 
+    skill_evals = report.get("skill_evals")
+    if skill_evals:
+        if skill_evals.get("returncode") != 0:
+            failures.append("skill-evals: captured-run eval command failed")
+        summary = skill_evals.get("summary") or {}
+        if summary.get("failed"):
+            failures.append(f"skill-evals: {summary['failed']} captured-run case(s) failed")
+        if summary.get("incomplete"):
+            failures.append(f"skill-evals: {summary['incomplete']} captured-run case(s) incomplete")
+        baseline_compare = skill_evals.get("baseline_compare") or {}
+        for regression in baseline_compare.get("regressions") or []:
+            failures.append(f"skill-evals: baseline regression {regression}")
+
     return failures
+
+
+def _resolve_root_path(path_text: str) -> Path:
+    path = Path(path_text)
+    return path if path.is_absolute() else ROOT / path
+
+
+def _numeric_delta(new_value: object, old_value: object) -> int | float:
+    return round(float(new_value or 0) - float(old_value or 0), 2)
+
+
+def _cases_by_id(payload: dict) -> dict[str, dict]:
+    return {str(case["case_id"]): case for case in payload.get("cases", [])}
+
+
+def _compare_skill_eval_payloads(old: dict, new: dict) -> dict:
+    old_summary = old.get("summary", {})
+    new_summary = new.get("summary", {})
+    old_categories = old_summary.get("average_category_scores", {})
+    new_categories = new_summary.get("average_category_scores", {})
+    summary_delta = {
+        "total": _numeric_delta(new_summary.get("total"), old_summary.get("total")),
+        "passed": _numeric_delta(new_summary.get("passed"), old_summary.get("passed")),
+        "failed": _numeric_delta(new_summary.get("failed"), old_summary.get("failed")),
+        "incomplete": _numeric_delta(new_summary.get("incomplete"), old_summary.get("incomplete")),
+        "average_score": _numeric_delta(new_summary.get("average_score"), old_summary.get("average_score")),
+        "average_category_scores": {
+            category: _numeric_delta(new_categories.get(category), old_categories.get(category))
+            for category in SKILL_EVAL_CATEGORIES
+        },
+    }
+
+    old_cases = _cases_by_id(old)
+    new_cases = _cases_by_id(new)
+    case_deltas: list[dict] = []
+    regressions: list[str] = []
+    for case_id in sorted(set(old_cases) | set(new_cases)):
+        old_case = old_cases.get(case_id)
+        new_case = new_cases.get(case_id)
+        if old_case is None:
+            case_deltas.append({"case_id": case_id, "status": "added"})
+            continue
+        if new_case is None:
+            case_deltas.append({"case_id": case_id, "status": "removed"})
+            regressions.append(f"case.{case_id}.removed")
+            continue
+
+        old_scores = old_case.get("scores", {})
+        new_scores = new_case.get("scores", {})
+        category_deltas = {
+            category: _numeric_delta(new_scores.get(category), old_scores.get(category))
+            for category in SKILL_EVAL_CATEGORIES
+        }
+        total_delta = _numeric_delta(new_case.get("total_score"), old_case.get("total_score"))
+        pass_delta = int(bool(new_case.get("passed"))) - int(bool(old_case.get("passed")))
+        complete_delta = int(bool(new_case.get("eval_complete", True))) - int(bool(old_case.get("eval_complete", True)))
+        case_deltas.append(
+            {
+                "case_id": case_id,
+                "status": "compared",
+                "total_score": total_delta,
+                "passed": pass_delta,
+                "eval_complete": complete_delta,
+                "scores": category_deltas,
+                "old_failures": old_case.get("failures", []),
+                "new_failures": new_case.get("failures", []),
+            }
+        )
+
+        if old_case.get("passed") and not new_case.get("passed"):
+            regressions.append(f"case.{case_id}.pass_regressed")
+        if old_case.get("eval_complete", True) and not new_case.get("eval_complete", True):
+            regressions.append(f"case.{case_id}.completeness_regressed")
+        if total_delta < 0:
+            regressions.append(f"case.{case_id}.score_regressed")
+        for category, delta in category_deltas.items():
+            if delta < 0:
+                regressions.append(f"case.{case_id}.{category}_regressed")
+
+    return {
+        "summary_delta": summary_delta,
+        "case_deltas": case_deltas,
+        "regressions": regressions,
+    }
+
+
+def _skill_eval_baseline_path(args: argparse.Namespace, baseline_dir: Path | None) -> Path | None:
+    if args.skill_evals_baseline_json:
+        return _resolve_root_path(args.skill_evals_baseline_json)
+    if baseline_dir:
+        candidate = baseline_dir / "skill-evals.json"
+        if candidate.exists():
+            return candidate
+    return None
+
+
+def _run_skill_evals(args: argparse.Namespace, output_dir: Path, baseline_dir: Path | None) -> dict:
+    json_out = _resolve_root_path(args.skill_evals_json_out) if args.skill_evals_json_out else output_dir / "skill-evals.json"
+    command = [
+        sys.executable,
+        str(ROOT / "scripts" / "run-skill-evals.py"),
+        "--root",
+        str(ROOT),
+        "--runner",
+        args.skill_evals_runner,
+        "--format",
+        "json",
+        "--artifact-dir",
+        str(output_dir / "skill-runs"),
+        "--json-out",
+        str(json_out),
+    ]
+    if args.skill_evals_case_id:
+        command.extend(["--case-id", args.skill_evals_case_id])
+    if args.skill_evals_normalized_trace:
+        command.extend(["--normalized-trace", str(_resolve_root_path(args.skill_evals_normalized_trace))])
+    elif args.skill_evals_runner != "fixture":
+        command.append("--run-live")
+
+    completed = subprocess.run(command, cwd=ROOT, capture_output=True, text=True, timeout=900)
+    payload: dict = {}
+    if json_out.exists():
+        payload = json.loads(json_out.read_text(encoding="utf-8"))
+    result = {
+        "command": subprocess.list2cmdline(command),
+        "json_out": str(json_out),
+        "returncode": completed.returncode,
+        "stdout": completed.stdout,
+        "stderr": completed.stderr,
+        **payload,
+    }
+    baseline_path = _skill_eval_baseline_path(args, baseline_dir)
+    if baseline_path and baseline_path.exists() and payload:
+        result["baseline_compare"] = _compare_skill_eval_payloads(
+            json.loads(baseline_path.read_text(encoding="utf-8")),
+            payload,
+        )
+        result["baseline_json"] = str(baseline_path)
+    return result
 
 
 def _build_summary_markdown(
@@ -119,6 +273,31 @@ def _build_summary_markdown(
     else:
         lines.append("- `PASS`")
 
+    skill_evals = report.get("skill_evals")
+    if skill_evals:
+        summary = skill_evals.get("summary") or {}
+        lines.extend(
+            [
+                "",
+                "## Captured-Run Skill Evals",
+                "",
+                f"- Command: `{skill_evals.get('command')}`",
+                f"- Return code: `{skill_evals.get('returncode')}`",
+                f"- Total: `{summary.get('total', 0)}`",
+                f"- Passed: `{summary.get('passed', 0)}`",
+                f"- Failed: `{summary.get('failed', 0)}`",
+                f"- Incomplete: `{summary.get('incomplete', 0)}`",
+            ]
+        )
+        baseline_compare = skill_evals.get("baseline_compare")
+        if baseline_compare:
+            lines.extend(
+                [
+                    f"- Baseline JSON: `{skill_evals.get('baseline_json')}`",
+                    f"- Baseline regressions: `{len(baseline_compare.get('regressions') or [])}`",
+                ]
+            )
+
     return "\n".join(lines) + "\n"
 
 
@@ -133,6 +312,15 @@ def main() -> int:
     parser.add_argument("--require-baseline", action="store_true", help="Fail if render cases have no baseline artifact")
     parser.add_argument("--report-path", help="Optional explicit JSON report path")
     parser.add_argument("--summary-md", help="Optional markdown summary output path")
+    parser.add_argument("--include-skill-evals", action="store_true", help="Run optional captured-run skill evals.")
+    parser.add_argument("--skill-evals-runner", default="codex", choices=["fixture", "codex"], help="Skill eval runner.")
+    parser.add_argument("--skill-evals-normalized-trace", help="Use one normalized trace fixture for selected skill eval case.")
+    parser.add_argument("--skill-evals-case-id", help="Run one captured-run skill eval case.")
+    parser.add_argument("--skill-evals-json-out", help="Output path for captured-run skill eval JSON.")
+    parser.add_argument(
+        "--skill-evals-baseline-json",
+        help="Optional captured-run baseline JSON. Defaults to <baseline-dir>/skill-evals.json when present.",
+    )
     args = parser.parse_args()
 
     suite_path = Path(args.suite).resolve()
@@ -147,6 +335,9 @@ def main() -> int:
         baseline_dir=baseline_dir,
         run_browser_titles=browser_titles_enabled,
     )
+
+    if args.include_skill_evals:
+        report["skill_evals"] = _run_skill_evals(args, output_dir, baseline_dir)
 
     gate_failures = _collect_gate_failures(report, require_baseline=args.require_baseline)
     report["gate"] = {

@@ -1,0 +1,273 @@
+{
+  "preset": "Data Story",
+  "registry_version": 1,
+  "pass": true,
+  "hard_failures": [],
+  "diagnostics": {
+    "browser_title_target_count": 8,
+    "title_hard_fail_rate": 0.0,
+    "orphan_line_rate": 0.0,
+    "collapsed_middle_line_rate": 0.0,
+    "profile_mismatch_rate": 0.0,
+    "structural_preset_break_rate": 0.0,
+    "title_clipping_rate": 0.0,
+    "title_occlusion_rate": 0.0
+  },
+  "targets": [
+    {
+      "qa_id": "slide-1-title-1",
+      "slide_index": 1,
+      "layout_id": "hero_number",
+      "profile": "horizontal_balanced_left_anchor_compact",
+      "node_type": "ordinary_heading",
+      "max_lines": 2,
+      "required_companion_selectors": [],
+      "required_attributes": [],
+      "text": "试点价值已经显性化， 但收益结构需要被看清",
+      "tag_name": "h1",
+      "missing": false,
+      "line_count": 2,
+      "line_widths": [
+        1120,
+        1120
+      ],
+      "clipped": false,
+      "occluded": false,
+      "occluded_by": [],
+      "writing_mode": "horizontal-tb",
+      "classes": [
+        "ds-heading",
+        "reveal",
+        "title-balance",
+        "visible"
+      ],
+      "attrs_present": true,
+      "companions_present": true,
+      "profile_mismatch": false,
+      "hard_failures": []
+    },
+    {
+      "qa_id": "slide-2-title-2",
+      "slide_index": 2,
+      "layout_id": "kpi_grid",
+      "profile": "horizontal_balanced_left_anchor_compact",
+      "node_type": "ordinary_heading",
+      "max_lines": 2,
+      "required_companion_selectors": [],
+      "required_attributes": [],
+      "text": "四个核心指标同时改善 ，说明变化不是偶然波动",
+      "tag_name": "h2",
+      "missing": false,
+      "line_count": 2,
+      "line_widths": [
+        1040,
+        1040
+      ],
+      "clipped": false,
+      "occluded": false,
+      "occluded_by": [],
+      "writing_mode": "horizontal-tb",
+      "classes": [
+        "ds-heading",
+        "reveal",
+        "title-balance",
+        "visible"
+      ],
+      "attrs_present": true,
+      "companions_present": true,
+      "profile_mismatch": false,
+      "hard_failures": []
+    },
+    {
+      "qa_id": "slide-3-title-3",
+      "slide_index": 3,
+      "layout_id": "chart_insight",
+      "profile": "horizontal_balanced_left_anchor_compact",
+      "node_type": "ordinary_heading",
+      "max_lines": 2,
+      "required_companion_selectors": [],
+      "required_attributes": [],
+      "text": "最大的收益出现在 验收前移和返工减少",
+      "tag_name": "h2",
+      "missing": false,
+      "line_count": 2,
+      "line_widths": [
+        1040,
+        1040
+      ],
+      "clipped": false,
+      "occluded": false,
+      "occluded_by": [],
+      "writing_mode": "horizontal-tb",
+      "classes": [
+        "ds-heading",
+        "reveal",
+        "title-balance",
+        "visible"
+      ],
+      "attrs_present": true,
+      "companions_present": true,
+      "profile_mismatch": false,
+      "hard_failures": []
+    },
+    {
+      "qa_id": "slide-4-title-4",
+      "slide_index": 4,
+      "layout_id": "workflow_chart",
+      "profile": "horizontal_balanced_left_anchor_compact",
+      "node_type": "ordinary_heading",
+      "max_lines": 2,
+      "required_companion_selectors": [],
+      "required_attributes": [],
+      "text": "指标改善主要来自三类动作叠加",
+      "tag_name": "h2",
+      "missing": false,
+      "line_count": 1,
+      "line_widths": [
+        624.69
+      ],
+      "clipped": false,
+      "occluded": false,
+      "occluded_by": [],
+      "writing_mode": "horizontal-tb",
+      "classes": [
+        "ds-heading",
+        "reveal",
+        "visible"
+      ],
+      "attrs_present": true,
+      "companions_present": true,
+      "profile_mismatch": false,
+      "hard_failures": []
+    },
+    {
+      "qa_id": "slide-5-title-5",
+      "slide_index": 5,
+      "layout_id": "chart_insight",
+      "profile": "horizontal_balanced_left_anchor_compact",
+      "node_type": "ordinary_heading",
+      "max_lines": 2,
+      "required_companion_selectors": [],
+      "required_attributes": [],
+      "text": "缺陷逃逸率下降证明 质量没有被速度换掉",
+      "tag_name": "h2",
+      "missing": false,
+      "line_count": 2,
+      "line_widths": [
+        1040,
+        1040
+      ],
+      "clipped": false,
+      "occluded": false,
+      "occluded_by": [],
+      "writing_mode": "horizontal-tb",
+      "classes": [
+        "ds-heading",
+        "reveal",
+        "title-balance",
+        "visible"
+      ],
+      "attrs_present": true,
+      "companions_present": true,
+      "profile_mismatch": false,
+      "hard_failures": []
+    },
+    {
+      "qa_id": "slide-6-title-6",
+      "slide_index": 6,
+      "layout_id": "chart_insight",
+      "profile": "horizontal_balanced_left_anchor_compact",
+      "node_type": "ordinary_heading",
+      "max_lines": 2,
+      "required_companion_selectors": [],
+      "required_attributes": [],
+      "text": "如果直接扩面到低频复 杂场景，收益会先被稀释",
+      "tag_name": "h2",
+      "missing": false,
+      "line_count": 2,
+      "line_widths": [
+        1040,
+        1040
+      ],
+      "clipped": false,
+      "occluded": false,
+      "occluded_by": [],
+      "writing_mode": "horizontal-tb",
+      "classes": [
+        "ds-heading",
+        "reveal",
+        "title-balance",
+        "visible"
+      ],
+      "attrs_present": true,
+      "companions_present": true,
+      "profile_mismatch": false,
+      "hard_failures": []
+    },
+    {
+      "qa_id": "slide-7-title-7",
+      "slide_index": 7,
+      "layout_id": "cta_close",
+      "profile": "single_statement_display",
+      "node_type": "ordinary_heading",
+      "max_lines": 3,
+      "required_companion_selectors": [],
+      "required_attributes": [],
+      "text": "下一阶段应复制流 程，而不是复制热情",
+      "tag_name": "h2",
+      "missing": false,
+      "line_count": 2,
+      "line_widths": [
+        600,
+        600
+      ],
+      "clipped": false,
+      "occluded": false,
+      "occluded_by": [],
+      "writing_mode": "horizontal-tb",
+      "classes": [
+        "ds-heading",
+        "reveal",
+        "title-balance",
+        "visible"
+      ],
+      "attrs_present": true,
+      "companions_present": true,
+      "profile_mismatch": false,
+      "hard_failures": []
+    },
+    {
+      "qa_id": "slide-8-title-8",
+      "slide_index": 8,
+      "layout_id": "cta_close",
+      "profile": "single_statement_display",
+      "node_type": "ordinary_heading",
+      "max_lines": 3,
+      "required_companion_selectors": [],
+      "required_attributes": [],
+      "text": "这轮数据已经足 够支持谨慎扩面",
+      "tag_name": "h2",
+      "missing": false,
+      "line_count": 2,
+      "line_widths": [
+        600,
+        600
+      ],
+      "clipped": false,
+      "occluded": false,
+      "occluded_by": [],
+      "writing_mode": "horizontal-tb",
+      "classes": [
+        "ds-heading",
+        "reveal",
+        "title-balance",
+        "visible"
+      ],
+      "attrs_present": true,
+      "companions_present": true,
+      "profile_mismatch": false,
+      "hard_failures": []
+    }
+  ],
+  "html_path": "/private/tmp/slide-preset-release-gate/core-data-story-render/deck.html"
+}
