@@ -110,19 +110,19 @@ If the deck is in `精修` / `Polish`, add a short design-lock step before gener
 
 If the user already approved a preset or `BRIEF.json` already names one, skip fresh preset routing and keep that preset. Do not reinterpret the same deck into a different theme just because the planning depth changed.
 
-Support tier only affects default recommendation priority. If the user explicitly names any current preset, honor it unless that preset is formally archived.
+Use a deterministic renderer or reference-driven preset for HTML generation. Default previews should stay on generator-ready presets and custom themes; explicit requests for reference-backed presets should route through reference-driven generation plus strict validation. Unknown, archived, or unfixably invalid presets fail closed with structured generator-ready alternatives.
 
 ### Style Path
 
 Ask via AskUserQuestion:
 - **"Show me options"** → ask mood question → generate 3 previews based on answer
-- **"I know what I want"** → show preset picker (`Swiss Modern` / `Enterprise Dark` / `Data Story` / `Blue Sky` — with "Other" option for all current presets)
+- **"I know what I want"** → show generator-ready preset picker (`Swiss Modern` / `Enterprise Dark` / `Data Story` / `Blue Sky` / contextual `Chinese Chan`) plus discovered custom themes; if the user names another built-in reference preset, honor it as reference-driven rather than putting it in default recommendations
 
 **MANDATORY: Before any preset selection or BRIEF writing, scan `<skill-path>/themes/` for custom themes.**
 Skip any directory whose name starts with `_`. Each remaining subdirectory with a `reference.md` is a custom theme — append as `Custom: <folder-name>` entries.
 If the user explicitly named a custom theme, it takes **absolute priority** over content-type routing tables and mood-mapping recommendations. Do not substitute with a built-in preset.
 
-Read [style-index.md](style-index.md) for the full 21-preset table and mood → preset mapping. Read [preset-support-tiers.json](preset-support-tiers.json) for the current default recommendation surface and support tiers.
+Read [style-index.md](style-index.md) for the full 22-direction table, generator-ready recommendation surface, and mood → preset mapping. Read [preset-support-tiers.json](preset-support-tiers.json) for the current support tiers and render capability policy.
 
 ### Generate Previews
 
@@ -180,7 +180,7 @@ The composition guide defines the layout category for each slide role:
 - Visual tokens (colors, fonts, component classes, background patterns)
 - Style Preview Checklist (all items MUST appear in generated HTML)
 
-Resolution order: (1) `themes/<preset>/reference.md` if exists, (2) `references/<PRESET_REFERENCE_MAP[preset]>`, (3) treat as path if file exists. Custom themes are resolved **first**, not as fallback.
+Resolution order: (1) explicit existing path, (2) `custom:<name>` as custom theme only, (3) built-in canonical preset name, (4) naked custom theme folder name. Built-in canonical names resolve to built-ins first; custom themes are not a fallback for unsupported built-in generation.
 
 **Step 1c: Read html-template.md + base-css.md** → Get:
 - HTML architecture (scroll-snap, slide structure, present mode, edit mode)
@@ -205,11 +205,13 @@ For each of the 12 slides:
 
 **Architecture note:** Signature elements ARE layout constraints, not a separate injection step. The `.bold-ghost` positioned at the bottom-right, the `.slide-num` at the top-left — these define the spatial composition that all other content responds to.
 
-**Swiss Modern native-export guard:** Swiss Modern must stay on the canonical path used by the reference demo. Panels are direct children of `.slide`; `.bg-num` and `.slide-num-label` stay as direct children of `.slide`; tokens stay on `--bg/--bg-dark/--text/--red`; and each slide should emit `data-export-role` matching the chosen named layout (`title_grid`, `column_content`, `stat_block`, `pull_quote`, `geometric_diagram`, `data_table`, `contents_index`). Compatible aliases like `.left-col`, `.right-col`, `.stat-block`, `.content-block`, `.quote-block`, `--bg-primary`, or `--accent` are legacy inputs only and must not be emitted by `--generate`. Swiss Modern title handling still follows the global title-balance rule, but keeps Swiss-specific asymmetric anchoring (left / bottom-left, never centered).
+**Swiss Modern native-export guard:** Swiss Modern must stay on the canonical path used by the reference demo. Panels are direct children of `.slide`; `.slide-num-label` stays as a direct child of `.slide`; `.bg-num` appears only on selected rhythm-anchor pages and stays behind content; tokens stay on `--bg/--bg-dark/--text/--red`; and each slide should emit `data-export-role` matching the chosen named layout (`title_grid`, `column_content`, `stat_block`, `pull_quote`, `geometric_diagram`, `data_table`, `contents_index`). Compatible aliases like `.left-col`, `.right-col`, `.stat-block`, `.content-block`, `.quote-block`, `--bg-primary`, or `--accent` are legacy inputs only and must not be emitted by `--generate`. Swiss Modern title handling still follows the global title-balance rule, but keeps Swiss-specific asymmetric anchoring (left / bottom-left, never centered).
 
-**High-risk preset guards:** Enterprise Dark, Data Story, Glassmorphism, and Chinese Chan also have canonical export paths now. Honor each reference file's `## Canonical Export Contract`: emit `data-export-role`, keep canonical token names, and do not emit shorthand alias classes when the reference marks them as input-only. Data Story keeps chart rendering pure SVG/CSS, Glassmorphism keeps orb layers behind blurred cards, and Chinese Chan keeps decorative elements outside `.slide-content`.
+**High-risk preset guards:** Enterprise Dark, Data Story, Glassmorphism, and Chinese Chan also have canonical export paths now. Honor each reference file's `## Canonical Export Contract`: emit `data-export-role`, keep canonical token names, and do not emit shorthand alias classes when the reference marks them as input-only. Data Story keeps chart rendering pure SVG/CSS and schedules by visible component signature, Glassmorphism keeps orb layers behind blurred cards, and Chinese Chan keeps decorative elements outside `.slide-content`.
 
 **CRITICAL: Use the style's full component palette.** Every style provides multiple component patterns. Do NOT put every piece of content inside a generic card with bullets. Each slide should use 2-3 distinct component types. If every slide looks like "card + bullet list," redesign at least half before writing HTML.
+
+**CRITICAL: Rhythm is not a hard-coded sequence.** Choose layouts from the slide role, content signal, selected preset contract, and preceding visual signatures. No 3 consecutive slides may share the same visible component signature. A repeated `data-export-role` is acceptable only when the rendered signature changes; different export roles are still a failure if they look like the same card/list pattern. See [design-quality.md](design-quality.md) for the visual signature rhythm rule.
 
 **Exception for minimalist styles:** Chinese Chan, Paper & Ink, and similar minimalist styles may repeat the core narrow-column layout. For these styles, diversity comes from content treatment (different decorative elements, typography scale) rather than layout structure.
 
@@ -220,13 +222,13 @@ For each of the 12 slides:
 **Before writing any CSS**, extract ALL theme values from the style reference file:
 
 1. **Colors** — background, text, accent, semantic colors (success/error/etc.)
-2. **Fonts** — display font, body font, CDN URL (combine into SINGLE Google Fonts link with `&display=swap`)
+2. **Fonts** — display font, body font, optional Google Fonts URL when the preset requires hosted fonts (combine into SINGLE Google Fonts link with `&display=swap`)
 3. **Typography** — title/body sizes, line-heights, letter-spacing
 4. **Components** — any style-specific classes (e.g. Data Story's `.ds-kpi`, `.ds-kpi-card`)
 5. **Background pattern** — grid / gradient / orbs / scan-lines / halftone (MUST be present in generated HTML)
 6. **Checklist** — each style file has a "Style Preview Checklist" section; these items MUST appear in the generated HTML
 
-**Font loading rule:** Combine ALL font families into a SINGLE `<link>` tag with `&display=swap`. Add `body { background-color: [style's bg color]; }` as the first rule inside `<style>` so the page never flashes white while fonts load.
+**Font loading rule:** When Google Fonts are required, combine all hosted font families into a SINGLE `<link>` tag with `&display=swap`. Add `body { background-color: [style's bg color]; }` as the first rule inside `<style>` so the page never flashes white while fonts load.
 
 **Critical:** The template `html-template.md` uses placeholder values (`[from style file]`). **Never emit these placeholders into the final HTML.** Every color, font, and token must resolve to an actual value from the style reference file.
 
@@ -234,7 +236,7 @@ For each of the 12 slides:
 
 ### Architectural Firewall — Read Before Generating
 
-Blue Sky is the **only** style that uses `#stage` (fixed container) + `#track` (flex row) + `translateX` navigation. This architecture is **exclusive** to `blue-sky-starter.html`. All other 20 styles **MUST** use `html-template.md`'s architecture:
+Blue Sky is the **only** style that uses `#stage` (fixed container) + `#track` (flex row) + `translateX` navigation. This architecture is **exclusive** to `blue-sky-starter.html`. All other built-in styles and custom themes **MUST** use `html-template.md`'s architecture:
 - `<html>` with `scroll-snap-type: y mandatory`
 - `<section class="slide">` elements with `scroll-snap-align: start`
 - `.slide-content` wrapper inside each slide

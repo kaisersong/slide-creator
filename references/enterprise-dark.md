@@ -19,6 +19,8 @@ Authoritative, data-driven, trustworthy — McKinsey dark deck meets Bloomberg T
     --accent-green: #3fb950;   /* positive / up */
     --accent-red:   #f85149;   /* negative / down */
     --accent-amber: #d29922;   /* warning / neutral */
+    --accent-cyan:  #18b5b5;   /* parallel distinction: arch middle layers, timeline secondary */
+    --accent-violet:#a371f7;   /* parallel distinction: arch core layers, deep annotations */
 }
 ```
 
@@ -60,7 +62,7 @@ body {
 
 /* Section label */
 .ent-label {
-    font-size: clamp(10px, 1.1vw, 12px);
+    font-size: clamp(11px, 1.2vw, 14px);
     font-weight: 600;
     text-transform: uppercase;
     letter-spacing: 0.12em;
@@ -78,10 +80,11 @@ body {
 
 /* KPI number */
 .ent-kpi-number {
-    font-size: clamp(36px, 5vw, 56px);
+    font-size: clamp(3rem, 8vw, 6rem);
     font-weight: 800;
     font-feature-settings: "tnum";
     line-height: 1;
+    letter-spacing: -0.02em;
 }
 .ent-kpi-number.positive { color: var(--accent-green); }
 .ent-kpi-number.negative { color: var(--accent-red); }
@@ -89,7 +92,7 @@ body {
 
 /* KPI label */
 .ent-kpi-label {
-    font-size: clamp(10px, 1.1vw, 12px);
+    font-size: clamp(12px, 1.3vw, 15px);
     font-weight: 600;
     text-transform: uppercase;
     letter-spacing: 0.08em;
@@ -159,13 +162,13 @@ body {
 .ent-table {
     width: 100%;
     border-collapse: collapse;
-    font-size: clamp(12px, 1.3vw, 15px);
+    font-size: clamp(14px, 1.4vw, 16px);
     font-variant-numeric: tabular-nums;
 }
 .ent-table thead th {
     background: var(--bg-header);
     color: var(--text-muted);
-    font-size: clamp(10px, 1.1vw, 12px);
+    font-size: clamp(12px, 1.2vw, 14px);
     font-weight: 600;
     text-transform: uppercase;
     letter-spacing: 0.06em;
@@ -200,7 +203,8 @@ body {
     text-transform: uppercase;
     letter-spacing: 0.08em;
     padding: clamp(10px, 1.5vw, 14px) 0;
-    border-bottom: 1px solid var(--border);
+    border-right: 1px solid var(--border);
+    padding-right: 1.5rem;
 }
 ```
 
@@ -236,6 +240,10 @@ Single key sentence in 2rem `--text-primary`, left-aligned, top-left 55% of slid
 
 Thin `1px --border` horizontal track across slide center. Milestone circles `8px`, `--accent-blue` fill, `2px` glow. Date labels above in 0.7rem mono `--text-muted`. Event labels below in 0.85rem `--text-secondary`. Active milestone: larger circle with subtle glow.
 
+### 8. Contrast Split
+
+Before/after 大块对比。左右等宽色块，negative（红底 + ✗ 标记列表）vs positive（绿底 + ✓ 标记列表）。标题 h4 分别用 red/green。适用于痛点对比、方案对比、before/after。视觉冲击力强于表格行对比。Canonical classes: `.ent-contrast-split`, `.ent-contrast-block`, `.ent-contrast-block--negative`, `.ent-contrast-block--positive`, `.ent-contrast-item`, `.ent-contrast-marker`
+
 ---
 
 ## User-Content 12-Page Route
@@ -257,10 +265,11 @@ Thin `1px --border` horizontal track across slide center. Milestone circles `8px
 
 Enterprise Dark native export stays stable only when generated HTML follows the same canonical structure as the reference demo.
 
-- Use canonical layout roles: `kpi_dashboard`, `consulting_split`, `data_table`, `architecture_map`, `comparison_matrix`, `insight_pull`, `timeline`, `cta_close`
-- Keep canonical tokens: `--bg-primary`, `--bg-secondary`, `--bg-header`, `--border`, `--text-primary`, `--text-body`, `--text-muted`, `--accent-blue`, `--accent-green`, `--accent-red`, `--accent-amber`
+- Use canonical layout roles: `kpi_dashboard`, `consulting_split`, `data_table`, `architecture_map`, `comparison_matrix`, `insight_pull`, `timeline`, `cta_close`, `contrast_split`
+- Keep canonical tokens: `--bg-primary`, `--bg-secondary`, `--bg-header`, `--border`, `--text-primary`, `--text-body`, `--text-muted`, `--accent-blue`, `--accent-green`, `--accent-red`, `--accent-amber`, `--accent-cyan`, `--accent-violet`
 - Add `data-export-role` on every `<section class="slide">` matching the chosen layout slug
 - When a slide uses consulting split, keep `.ent-split` as a direct child of `.slide`
+- When a slide uses contrast split, keep `.ent-contrast-split` as a direct child of `.ent-shell`
 - Keep `.slide-num-label` as a direct child of `.slide`
 - Canonical emitted classes are `.ent-*`; shorthand aliases are input-only and must not be emitted by `--generate`: `.label-tag`, `.kpi`, `.kpi-value`, `.kpi-label`, `.card`, `.badge`, `.status-dot`, `.sep`, `.code`, `.accent-blue`, `.accent-green`, `.accent-red`, `.accent-orange`
 
@@ -314,8 +323,8 @@ Enterprise Dark native export stays stable only when generated HTML follows the 
     gap: 6px;
     background: var(--bg-secondary);
     border: 1px solid var(--border);
-    border-radius: 4px;
-    padding: 3px 10px;
+    border-radius: 999px;
+    padding: 4px 14px;
     font-size: clamp(10px, 1.1vw, 12px);
     font-weight: 600;
     color: var(--text-muted);
@@ -415,6 +424,24 @@ Enterprise Dark native export stays stable only when generated HTML follows the 
     padding: clamp(24px, 5vw, 60px);
 }
 
+/* ── Section label pill (rounded capsule) ── */
+.ent-pill {
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 4px 14px; border-radius: 999px;
+    font-size: 12px; font-weight: 600; letter-spacing: 0.05em;
+    background: rgba(56,139,253,0.12); color: var(--accent-blue);
+    border: 1px solid rgba(56,139,253,0.25);
+}
+
+/* ── CTA group for closing slides ── */
+.cta-group { display: flex; flex-direction: column; align-items: center; text-align: center; }
+.cta-pill {
+    font-family: monospace; font-size: clamp(13px, 1.5vw, 16px); font-weight: 700;
+    background: var(--bg-secondary); border: 1px solid var(--border);
+    border-radius: 6px; padding: clamp(12px, 2vw, 20px);
+    color: var(--accent-blue);
+}
+
 /* ── 2-column grid ── */
 .ent-grid-2 {
     display: grid;
@@ -506,6 +533,200 @@ Enterprise Dark native export stays stable only when generated HTML follows the 
     color: var(--accent-green);
     word-break: break-all;
 }
+
+/* ── Content shell (centered container) ── */
+.ent-shell {
+    width: 100%;
+    max-width: 1120px;
+    margin: 0 auto;
+}
+
+/* ── Hero title (dashboard cover) ── */
+.ent-hero-title {
+    font-size: clamp(28px, 4.8vw, 56px);
+    line-height: 1.04;
+    font-weight: 700;
+    color: var(--text-primary);
+    letter-spacing: -0.03em;
+    margin: 0;
+}
+
+/* ── KPI meta (source citation) ── */
+.ent-kpi-meta {
+    font-size: clamp(13px, 1.3vw, 15px);
+    color: var(--text-muted);
+}
+
+/* ── Split item replacements (no inline font-size) ── */
+.ent-split-item-title {
+    margin: 0 0 6px;
+    color: var(--text-primary);
+    font-size: clamp(14px, 1.4vw, 16px);
+}
+.ent-split-item-copy {
+    margin: 0;
+    color: var(--text-body);
+    font-size: clamp(13px, 1.2vw, 15px);
+    line-height: 1.5;
+}
+
+/* ── Split panel ── */
+.ent-split-panel {
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+/* ── Accent color variants ── */
+.ent-accent-cyan   { color: var(--accent-cyan, #18b5b5); }
+.ent-accent-violet { color: var(--accent-violet, #a371f7); }
+
+/* ── Architecture grid ── */
+.ent-arch-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 18px;
+    width: 100%;
+}
+.ent-arch-card {
+    background: var(--bg-secondary);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 18px;
+}
+
+/* ── Timeline ── */
+.ent-timeline {
+    position: relative;
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 20px;
+    margin-top: 24px;
+}
+.ent-timeline::before {
+    content: '';
+    position: absolute;
+    left: 0; right: 0; top: 15px;
+    height: 1px;
+    background: var(--border);
+}
+.ent-timeline-item { position: relative; padding-top: 28px; }
+.ent-timeline-dot {
+    position: absolute; top: 8px; left: 0;
+    width: 14px; height: 14px;
+    border-radius: 50%;
+    background: var(--accent-blue);
+    box-shadow: 0 0 0 4px rgba(56,139,253,0.14);
+}
+.ent-timeline-date {
+    font-size: clamp(12px, 1.2vw, 14px);
+    letter-spacing: 0.08em;
+    color: var(--text-muted);
+    text-transform: uppercase;
+}
+.ent-timeline-copy {
+    font-size: clamp(14px, 1.4vw, 16px);
+    color: var(--text-body);
+    line-height: 1.5;
+}
+
+/* ── Comparison matrix ── */
+.ent-matrix {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 16px;
+}
+
+/* ── Feature grid ── */
+.ent-feature-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 16px;
+}
+.ent-feature-card {
+    background: var(--bg-secondary);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 18px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+.ent-feature-card-head {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 12px;
+}
+.ent-feature-card-copy {
+    margin: 0;
+    font-size: clamp(14px, 1.4vw, 16px);
+    line-height: 1.55;
+    color: var(--text-body);
+}
+
+/* ── Insight pull ── */
+.ent-pull {
+    max-width: 16ch;
+    font-size: clamp(28px, 4vw, 52px);
+    line-height: 1.08;
+    color: var(--text-primary);
+    letter-spacing: -0.03em;
+    font-weight: 650;
+}
+
+/* ── Story dashboard (narrative cover variant) ── */
+.ent-dashboard-story .ent-kpi-meta {
+    font-size: 14px;
+    line-height: 1.6;
+    color: var(--text-body);
+    max-width: 62rem;
+}
+.ent-kpi-row.ent-kpi-row-story { align-items: stretch; }
+.ent-kpi-card.ent-kpi-card-story {
+    gap: 14px;
+    min-height: 208px;
+    justify-content: flex-start;
+}
+.ent-kpi-story-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+}
+.ent-kpi-story-index {
+    font-size: clamp(24px, 3vw, 36px);
+    font-weight: 700;
+    color: var(--accent-blue);
+    line-height: 1;
+    letter-spacing: -0.04em;
+}
+.ent-kpi-story-badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 4px 10px;
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    font-size: clamp(11px, 1.1vw, 13px);
+    line-height: 1;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    background: rgba(56, 139, 253, 0.08);
+}
+.ent-kpi-story-title {
+    font-size: clamp(18px, 1.8vw, 25px);
+    line-height: 1.28;
+    color: var(--text-primary);
+    font-weight: 620;
+}
+.ent-kpi-story-copy {
+    margin: 0;
+    font-size: clamp(13px, 1.12vw, 15px);
+    line-height: 1.6;
+    color: var(--text-body);
+}
 ```
 
 ### Slide Composition Guide
@@ -560,7 +781,8 @@ Every Enterprise Dark presentation should use these patterns per slide type:
 ### Style-Specific Rules
 - 所有数值内容必须使用 `font-variant-numeric: tabular-nums`
 - 内容始终左对齐，从不居中（consulting 风格信号）
--  accent 色仅用于数据强调：blue=中性，green=正向，red=负向，amber=警告
+- accent 色仅用于数据强调：blue=中性，green=正向，red=负向，amber=警告
+- accent-cyan 和 accent-violet 仅用于平行项目区分（多层架构的不同层、时间线的次级节点、eval-card 的不同维度），不用于数据正负含义
 - 卡片 border-radius 最大 6px，不使用圆角装饰
 - 网格间距固定 24px，`rgba(48,54,61,0.5)` 线条色
 - 不使用渐变、明亮装饰色、或纯黑色 `#000` 背景

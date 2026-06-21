@@ -14,7 +14,17 @@
       "Data Story",
       "Blue Sky"
     ],
-    "explicit_user_selection": "Honor any current preset when explicitly requested unless it has been formally archived.",
+    "explicit_user_selection": "Use deterministic renderers when available; otherwise route reference-backed presets through reference-driven generation with strict validation. Unknown, archived, or unfixably invalid presets fail closed with structured alternatives.",
+    "generator_ready_presets": [
+      "Swiss Modern",
+      "Enterprise Dark",
+      "Data Story",
+      "Blue Sky",
+      "Chinese Chan"
+    ],
+    "contextual_recommendation_presets": [
+      "Chinese Chan"
+    ],
     "next_editorial_candidate": "Paper & Ink"
   },
   "tiers": {

@@ -1,0 +1,591 @@
+<!DOCTYPE html>
+<!--
+  ASCII Stream — Starter Template
+  字符流 — 起始模板
+
+  Live typographic streams + monospace minimalism. Drop content into the
+  slides below; the rain canvas + scramble JS handle the signature effects.
+-->
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ASCII Stream — Demo</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --bg:           #07090C;
+            --bg-secondary: #0E1218;
+            --text:         #E6EDF3;
+            --text-muted:   #6B7785;
+            --accent:       #5BFF8E;
+            --accent-warm:  #FFB347;
+            --accent-dim:   rgba(91,255,142,0.15);
+            --rule:         rgba(230,237,243,0.08);
+            --slide-count:  6;
+        }
+
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+        html {
+            scroll-snap-type: y mandatory;
+            overflow-y: scroll;
+            height: 100%;
+        }
+
+        body {
+            background: var(--bg);
+            color: var(--text);
+            font-family: "JetBrains Mono", "Menlo", monospace;
+            height: 100%;
+        }
+        body[data-export-progress="false"] .progress-bar,
+        body[data-export-progress="false"] .nav-dots { display: none !important; }
+
+        /* ─── Character rain canvas ─────────────────────────── */
+        #ascii-rain {
+            position: fixed;
+            inset: 0;
+            z-index: 0;
+            pointer-events: none;
+            opacity: 0.22;
+            mix-blend-mode: screen;
+        }
+
+        /* ─── Slide base ────────────────────────────────────── */
+        .slide {
+            position: relative;
+            z-index: 1;
+            height: 100dvh;
+            scroll-snap-align: start;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            background: transparent;
+            padding: clamp(2rem, 6vw, 6rem) clamp(2rem, 7vw, 8rem);
+            overflow: hidden;
+        }
+
+        /* ─── Typography ────────────────────────────────────── */
+        .as-title {
+            font-weight: 700;
+            font-size: clamp(2rem, 5.5vw, 4.8rem);
+            line-height: 1.1;
+            letter-spacing: -0.01em;
+        }
+        .as-heading {
+            font-weight: 700;
+            font-size: clamp(1.4rem, 3.2vw, 2.6rem);
+            line-height: 1.2;
+        }
+        .as-body {
+            font-size: clamp(0.9rem, 1.4vw, 1.05rem);
+            line-height: 1.75;
+        }
+        .as-muted { color: var(--text-muted); }
+        .as-label {
+            font-size: clamp(0.65rem, 1vw, 0.75rem);
+            font-weight: 500;
+            letter-spacing: 0.18em;
+            text-transform: uppercase;
+            color: var(--accent);
+            margin-bottom: 0.6rem;
+        }
+        .as-stat {
+            font-weight: 700;
+            font-size: clamp(2.5rem, 6.5vw, 5.5rem);
+            color: var(--accent);
+            line-height: 1;
+            font-variant-numeric: tabular-nums;
+        }
+        .as-stat-label {
+            color: var(--text-muted);
+            font-size: clamp(0.75rem, 1.1vw, 0.9rem);
+            margin-top: 0.4rem;
+        }
+
+        /* ─── Frames + cards ─────────────────────────────────── */
+        .as-frame {
+            border: 1px solid var(--rule);
+            background: rgba(7,9,12,0.55);
+            backdrop-filter: blur(2px);
+            -webkit-backdrop-filter: blur(2px);
+            padding: clamp(1.25rem, 2.5vw, 2rem);
+            position: relative;
+        }
+        .as-frame::before, .as-frame::after {
+            position: absolute;
+            color: var(--accent);
+            font-size: 0.85rem;
+        }
+        .as-frame::before { content: '┌─'; top: -0.55rem; left: -0.4rem; }
+        .as-frame::after  { content: '─┘'; bottom: -0.55rem; right: -0.4rem; }
+
+        .as-card {
+            background: rgba(14,18,24,0.7);
+            border: 1px solid var(--rule);
+            padding: clamp(1rem, 2vw, 1.6rem);
+        }
+        .as-stat-card {
+            border: 1px solid var(--rule);
+            padding: clamp(1rem, 2vw, 1.5rem);
+            background: rgba(7,9,12,0.55);
+        }
+
+        /* ─── Grids ─────────────────────────────────────────── */
+        .as-cols2 { display: grid; grid-template-columns: 1fr 1fr; gap: clamp(1rem, 2vw, 2rem); }
+        .as-cols3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: clamp(0.75rem, 1.5vw, 1.5rem); }
+
+        /* ─── List ──────────────────────────────────────────── */
+        .as-list { list-style: none; display: flex; flex-direction: column; gap: 0.85rem; }
+        .as-list li {
+            display: flex;
+            align-items: flex-start;
+            gap: 0.75rem;
+            font-size: clamp(0.95rem, 1.5vw, 1.05rem);
+            line-height: 1.65;
+        }
+        .as-list li::before {
+            content: '▶';
+            color: var(--accent);
+            flex-shrink: 0;
+            margin-top: 0.05em;
+        }
+
+        /* ─── Divider ───────────────────────────────────────── */
+        .as-divider {
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+            color: var(--rule);
+            margin: clamp(0.8rem, 2vh, 1.6rem) 0;
+        }
+        .as-divider::before, .as-divider::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: currentColor;
+        }
+        .as-divider-tag {
+            color: var(--accent);
+            font-size: 0.7rem;
+            letter-spacing: 0.18em;
+        }
+
+        /* ─── Animations ────────────────────────────────────── */
+        .as-typewriter {
+            display: inline-block;
+            overflow: hidden;
+            white-space: nowrap;
+            border-right: 0.6ch solid var(--accent);
+            width: 0;
+            max-width: 100%;
+        }
+        .slide.visible .as-typewriter {
+            animation:
+                as-type 1.4s steps(40, end) 0.2s forwards,
+                as-blink 0.7s steps(2, start) infinite;
+        }
+        @keyframes as-type  { to { width: 100%; } }
+        @keyframes as-blink { 50% { border-color: transparent; } }
+
+        .as-reveal {
+            opacity: 0;
+            transform: translateY(14px);
+            transition: opacity 0.55s ease, transform 0.55s ease;
+        }
+        .slide.visible .as-reveal              { opacity: 1; transform: translateY(0); }
+        .slide.visible .as-reveal:nth-child(1) { transition-delay: 0.1s; }
+        .slide.visible .as-reveal:nth-child(2) { transition-delay: 0.25s; }
+        .slide.visible .as-reveal:nth-child(3) { transition-delay: 0.40s; }
+        .slide.visible .as-reveal:nth-child(4) { transition-delay: 0.55s; }
+        .slide.visible .as-reveal:nth-child(5) { transition-delay: 0.70s; }
+
+        .as-scramble { font-variant-numeric: tabular-nums; }
+
+        @media (prefers-reduced-motion: reduce) {
+            #ascii-rain { display: none; }
+            .as-typewriter { animation: none; width: 100%; border-right: none; }
+            .as-reveal { transition: none; opacity: 1; transform: none; }
+        }
+
+        /* ─── Progress bar + nav dots ───────────────────────── */
+        .progress-bar {
+            position: fixed;
+            top: 0; left: 0;
+            height: 2px;
+            background: var(--accent);
+            width: 0%;
+            z-index: 200;
+            transition: width 0.3s ease;
+            box-shadow: 0 0 8px var(--accent);
+        }
+        .nav-dots {
+            position: fixed;
+            right: 1.5rem;
+            top: 50%;
+            transform: translateY(-50%);
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            z-index: 100;
+        }
+
+        /* ─── Brand mark ────────────────────────────────────── */
+        #brand-mark {
+            position: fixed;
+            bottom: 1.2rem;
+            left: 1.4rem;
+            font-size: 0.65rem;
+            letter-spacing: 0.22em;
+            color: var(--text-muted);
+            z-index: 100;
+            pointer-events: none;
+        }
+
+        /* ─── Edit hotzone (preserved from Coral Dawn shell) ── */
+        .edit-hotzone {
+            position: fixed; top: 0; left: 0; width: 80px; height: 80px;
+            z-index: 10000; cursor: pointer;
+        }
+        .edit-toggle {
+            position: fixed; top: 16px; left: 16px;
+            background: rgba(91,255,142,0.08); border: 1px solid rgba(91,255,142,0.25);
+            color: var(--accent); border-radius: 4px; padding: 6px 12px; font-size: 0.78rem;
+            font-family: "JetBrains Mono", monospace;
+            opacity: 0; pointer-events: none; cursor: pointer;
+            transition: opacity 0.2s ease; z-index: 10001;
+        }
+        .edit-toggle.show { opacity: 1; pointer-events: auto; }
+        .edit-toggle.active { background: var(--accent); color: var(--bg); }
+
+        @media print {
+            #ascii-rain, .progress-bar, .nav-dots, .edit-toggle, .edit-hotzone { display: none; }
+        }
+    </style>
+</head>
+<body data-export-progress="true">
+
+    <canvas id="ascii-rain" aria-hidden="true"></canvas>
+
+    <div class="progress-bar"></div>
+    <nav class="nav-dots" aria-label="Slide navigation"></nav>
+    <div id="brand-mark">// ASCII-STREAM</div>
+
+    <div class="edit-hotzone"></div>
+    <button class="edit-toggle" id="editToggle" title="Edit (E)">[ EDIT ]</button>
+
+    <!-- ═══════════════════════════════════════════════════════
+         SLIDE 1 — TITLE
+         ═══════════════════════════════════════════════════════ -->
+    <section class="slide"
+             data-notes="Open with the deck name. Let the rain settle for a beat before speaking."
+             aria-label="Title">
+
+        <div class="as-label as-reveal">// transmission · 0001</div>
+        <h1 class="as-title as-reveal">
+            <span class="as-typewriter">ASCII STREAM</span>
+        </h1>
+        <div class="as-divider as-reveal">
+            <span class="as-divider-tag">[ DECK · v1 ]</span>
+        </div>
+        <p class="as-body as-muted as-reveal">
+            A monospace deck where every surface breathes characters.<br>
+            Built for terminal-native talks · Demo · 2026
+        </p>
+
+    </section>
+
+    <!-- ═══════════════════════════════════════════════════════
+         SLIDE 2 — CONTENT (bullet list inside frame)
+         ═══════════════════════════════════════════════════════ -->
+    <section class="slide"
+             data-notes="Walk through each principle. Pause on item 3 — it's the philosophical core."
+             aria-label="Principles">
+
+        <div class="as-label as-reveal">§ 02 · principles</div>
+        <h2 class="as-heading as-reveal">
+            <span class="as-typewriter">Three rules of the stream</span>
+        </h2>
+        <div class="as-divider as-reveal"><span class="as-divider-tag">[ RULES ]</span></div>
+
+        <div class="as-frame as-reveal">
+            <ul class="as-list">
+                <li>Every glyph earns its place — no decoration, no filler characters.</li>
+                <li>Motion stays on the back layer; foreground content holds still.</li>
+                <li>One accent color. One. The phosphor green is sacred.</li>
+            </ul>
+        </div>
+
+    </section>
+
+    <!-- ═══════════════════════════════════════════════════════
+         SLIDE 3 — STATS (scramble effect)
+         ═══════════════════════════════════════════════════════ -->
+    <section class="slide"
+             data-notes="Read the numbers slowly. The scramble lands a beat after each card appears."
+             aria-label="Stats">
+
+        <div class="as-label as-reveal">§ 03 · telemetry</div>
+        <h2 class="as-heading as-reveal">Numbers worth printing</h2>
+        <div class="as-divider as-reveal"><span class="as-divider-tag">[ DATA ]</span></div>
+
+        <div class="as-cols3 as-reveal">
+            <div class="as-stat-card">
+                <div class="as-stat as-scramble">87.4%</div>
+                <div class="as-stat-label">UPTIME · LAST 90D</div>
+            </div>
+            <div class="as-stat-card">
+                <div class="as-stat as-scramble">12ms</div>
+                <div class="as-stat-label">P50 LATENCY</div>
+            </div>
+            <div class="as-stat-card">
+                <div class="as-stat as-scramble">3.2K</div>
+                <div class="as-stat-label">DAILY ACTIVE</div>
+            </div>
+        </div>
+
+    </section>
+
+    <!-- ═══════════════════════════════════════════════════════
+         SLIDE 4 — FEATURE GRID
+         ═══════════════════════════════════════════════════════ -->
+    <section class="slide"
+             data-notes="Brief on each module. Don't read the body text verbatim."
+             aria-label="Features">
+
+        <div class="as-label as-reveal">§ 04 · modules</div>
+        <h2 class="as-heading as-reveal">
+            <span class="as-typewriter">What ships</span>
+        </h2>
+        <div class="as-divider as-reveal"><span class="as-divider-tag">[ MODULES ]</span></div>
+
+        <div class="as-cols3 as-reveal">
+            <div class="as-card">
+                <div class="as-label" style="margin-bottom:0.5rem">[ 01 ]</div>
+                <div style="font-weight:700; font-size:clamp(1rem,1.6vw,1.2rem); margin-bottom:0.5rem">Rain canvas</div>
+                <p class="as-body as-muted" style="font-size:0.9rem">A pure-JS character rain backdrop. Zero dependencies, throttled to ~16fps.</p>
+            </div>
+            <div class="as-card">
+                <div class="as-label" style="margin-bottom:0.5rem">[ 02 ]</div>
+                <div style="font-weight:700; font-size:clamp(1rem,1.6vw,1.2rem); margin-bottom:0.5rem">Typewriter</div>
+                <p class="as-body as-muted" style="font-size:0.9rem">CSS steps() animation prints headings character by character with a blinking cursor.</p>
+            </div>
+            <div class="as-card">
+                <div class="as-label" style="margin-bottom:0.5rem">[ 03 ]</div>
+                <div style="font-weight:700; font-size:clamp(1rem,1.6vw,1.2rem); margin-bottom:0.5rem">Scramble</div>
+                <p class="as-body as-muted" style="font-size:0.9rem">Numbers flicker through random glyphs before resolving — payoff for stat slides.</p>
+            </div>
+        </div>
+
+    </section>
+
+    <!-- ═══════════════════════════════════════════════════════
+         SLIDE 5 — QUOTE
+         ═══════════════════════════════════════════════════════ -->
+    <section class="slide"
+             style="text-align:center; align-items:center;"
+             data-notes="Read slow. Three-second pause after the last word."
+             aria-label="Quote">
+
+        <div class="as-reveal" style="font-size:4rem; line-height:0.5; color:var(--accent); opacity:0.5; margin-bottom:1.5rem">"</div>
+        <blockquote class="as-heading as-reveal" style="max-width:760px; font-weight:500">
+            The terminal never went away. It just learned to hide<br>behind everything we still ship.
+        </blockquote>
+        <div class="as-divider as-reveal" style="max-width:200px; margin:1.5rem auto">
+            <span class="as-divider-tag">[ — ]</span>
+        </div>
+        <p class="as-body as-muted as-reveal">
+            // anonymous · sysadmin · 2026
+        </p>
+
+    </section>
+
+    <!-- ═══════════════════════════════════════════════════════
+         SLIDE 6 — CLOSING
+         ═══════════════════════════════════════════════════════ -->
+    <section class="slide"
+             data-notes="Thanks. Drop the call to action. Leave the rain running for Q&A."
+             aria-label="Closing">
+
+        <div class="as-label as-reveal">// END OF TRANSMISSION</div>
+        <h2 class="as-title as-reveal">
+            <span class="as-typewriter">Run it locally.</span>
+        </h2>
+        <div class="as-divider as-reveal"><span class="as-divider-tag">[ EOF ]</span></div>
+        <p class="as-body as-muted as-reveal">
+            $ ./slide-creator --theme ascii-stream<br>
+            github.com/yourname/slide-creator
+        </p>
+
+    </section>
+
+    <!-- ═══════════════════════════════════════════════════════
+         SCRIPTS — rain + scramble + presentation controller
+         ═══════════════════════════════════════════════════════ -->
+    <script>
+        /* ─── Character rain ─────────────────────────────────── */
+        (function asciiRain() {
+            if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+            const canvas = document.getElementById('ascii-rain');
+            if (!canvas) return;
+            const ctx = canvas.getContext('2d');
+            const glyphs = '01░▒▓█▌▐■▪╳╱╲┃━┓┛┏┗01<>{}[];=+/\\#@$%&'.split('');
+            const fontSize = 14;
+            let cols = 0, drops = [];
+
+            function resize() {
+                const dpr = Math.min(window.devicePixelRatio || 1, 2);
+                canvas.width  = innerWidth * dpr;
+                canvas.height = innerHeight * dpr;
+                canvas.style.width  = innerWidth  + 'px';
+                canvas.style.height = innerHeight + 'px';
+                ctx.scale(dpr, dpr);
+                cols = Math.ceil(innerWidth / fontSize);
+                drops = Array.from({ length: cols }, () => Math.random() * innerHeight / fontSize);
+            }
+            resize();
+            addEventListener('resize', resize);
+
+            let last = 0;
+            function frame(t) {
+                if (t - last > 60) {
+                    ctx.fillStyle = 'rgba(7,9,12,0.18)';
+                    ctx.fillRect(0, 0, innerWidth, innerHeight);
+                    ctx.fillStyle = '#5BFF8E';
+                    ctx.font = fontSize + 'px JetBrains Mono, monospace';
+                    for (let i = 0; i < cols; i++) {
+                        const ch = glyphs[(Math.random() * glyphs.length) | 0];
+                        ctx.fillText(ch, i * fontSize, drops[i] * fontSize);
+                        if (drops[i] * fontSize > innerHeight && Math.random() > 0.975) drops[i] = 0;
+                        drops[i]++;
+                    }
+                    last = t;
+                }
+                requestAnimationFrame(frame);
+            }
+            requestAnimationFrame(frame);
+        })();
+
+        /* ─── Glyph scramble ────────────────────────────────── */
+        (function scrambleSetup() {
+            const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+            const glyphs = '!<>-_\\/[]{}—=+*^?#01';
+            document.querySelectorAll('.slide').forEach(slide => {
+                const targets = slide.querySelectorAll('.as-scramble');
+                if (!targets.length) return;
+                targets.forEach(el => { el.dataset.text = el.textContent.trim(); });
+                if (reduced) return;
+                const observer = new IntersectionObserver(es => es.forEach(e => {
+                    if (!e.isIntersecting) return;
+                    targets.forEach(el => {
+                        const final = el.dataset.text;
+                        let frame = 0;
+                        const total = 18;
+                        const tick = () => {
+                            let out = '';
+                            const cutoff = (frame / total) * final.length;
+                            for (let i = 0; i < final.length; i++) {
+                                out += i < cutoff
+                                    ? final[i]
+                                    : (final[i] === ' ' ? ' ' : glyphs[(Math.random() * glyphs.length) | 0]);
+                            }
+                            el.textContent = out;
+                            if (frame++ < total) requestAnimationFrame(tick);
+                            else el.textContent = final;
+                        };
+                        tick();
+                    });
+                }), { threshold: 0.5 });
+                observer.observe(slide);
+            });
+        })();
+
+        /* ─── Presentation controller (trimmed from shared engine) ─── */
+        class SlidePresentation {
+            constructor() {
+                this.slides = document.querySelectorAll('.slide');
+                this.currentSlide = 0;
+                this.setupNavDots();
+                this.setupObserver();
+                this.setupKeyboard();
+                this.setupTouch();
+                this.setupWheel();
+                this.updateProgress();
+            }
+            setupNavDots() {
+                const nav = document.querySelector('.nav-dots');
+                if (!nav) return;
+                this.slides.forEach((_, i) => {
+                    const dot = document.createElement('button');
+                    dot.setAttribute('aria-label', `Slide ${i + 1}`);
+                    dot.style.cssText = 'width:8px;height:8px;border-radius:0;border:1px solid rgba(230,237,243,0.3);background:transparent;cursor:pointer;transition:all 0.2s;';
+                    dot.addEventListener('click', () => this.goTo(i));
+                    nav.appendChild(dot);
+                });
+            }
+            setupObserver() {
+                const observer = new IntersectionObserver((entries) => {
+                    entries.forEach(entry => {
+                        if (entry.isIntersecting) {
+                            entry.target.classList.add('visible');
+                            this.currentSlide = [...this.slides].indexOf(entry.target);
+                            this.updateProgress();
+                            this.updateDots();
+                        }
+                    });
+                }, { threshold: 0.5 });
+                this.slides.forEach(s => observer.observe(s));
+            }
+            setupKeyboard() {
+                document.addEventListener('keydown', (e) => {
+                    if (e.target.tagName === 'TEXTAREA' || e.target.getAttribute('contenteditable')) return;
+                    if (e.key === 'ArrowDown' || e.key === 'ArrowRight' || e.key === ' ') { e.preventDefault(); this.next(); }
+                    else if (e.key === 'ArrowUp' || e.key === 'ArrowLeft') { e.preventDefault(); this.prev(); }
+                });
+            }
+            setupTouch() {
+                let startY = 0;
+                document.addEventListener('touchstart', e => { startY = e.touches[0].clientY; }, { passive: true });
+                document.addEventListener('touchend', e => {
+                    const delta = startY - e.changedTouches[0].clientY;
+                    if (Math.abs(delta) > 50) delta > 0 ? this.next() : this.prev();
+                });
+            }
+            setupWheel() {
+                let locked = false, timer = null;
+                document.addEventListener('wheel', e => {
+                    clearTimeout(timer);
+                    if (!locked) { locked = true; e.deltaY > 0 ? this.next() : this.prev(); }
+                    timer = setTimeout(() => { locked = false; }, 180);
+                }, { passive: true });
+            }
+            goTo(index) { this.slides[index]?.scrollIntoView({ behavior: 'smooth' }); }
+            next() { this.goTo(Math.min(this.currentSlide + 1, this.slides.length - 1)); }
+            prev() { this.goTo(Math.max(this.currentSlide - 1, 0)); }
+            updateProgress() {
+                const pct = (this.currentSlide / (this.slides.length - 1)) * 100;
+                const bar = document.querySelector('.progress-bar');
+                if (bar) bar.style.width = pct + '%';
+            }
+            updateDots() {
+                document.querySelectorAll('.nav-dots button').forEach((dot, i) => {
+                    if (i === this.currentSlide) {
+                        dot.style.background = 'var(--accent)';
+                        dot.style.borderColor = 'var(--accent)';
+                    } else {
+                        dot.style.background = 'transparent';
+                        dot.style.borderColor = 'rgba(230,237,243,0.3)';
+                    }
+                });
+            }
+        }
+        new SlidePresentation();
+    </script>
+
+</body>
+</html>

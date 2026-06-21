@@ -5,15 +5,25 @@ __pycache__/
 .tmp-run/
 .tmp-test-doc-sync/
 .gstack/
+.governance-claims/
+.governance-log/
+.qoder/
+.xiaok/
 .worktrees/
 
 # Product docs & scratchpads
 PRODUCT.md
 TODO.md
 PLANNING.md
+/BRIEF.json
+/ENTERPRISE-DARK-DIVERSITY-FIX.md
+/PRESET-STYLE-PROGRAM-OPTIMIZATION-PLAN.md
+/preload.cjs
 plans/
 evals/generated-decks/
 *-test.html
+/slide-creator-intro-*.html
+/slide-creator-intro-*.eval.json
 scripts/
 docs/
 !scripts/
@@ -26,6 +36,7 @@ scripts/*
 !scripts/title_browser_qa.py
 !scripts/title_profiles.py
 !scripts/validate-brief.py
+!scripts/preset_capabilities.py
 !scripts/preset_support.py
 !scripts/run_evals.py
 !scripts/run-skill-evals.py

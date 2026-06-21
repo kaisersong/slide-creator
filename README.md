@@ -80,7 +80,7 @@ user prompt → BRIEF.json → HTML → validate → eval
 
 This matters because the generator should not carry the full chat history into the render step. `--generate` should execute against a small, hard truth source, not against a messy, late-stage conversation.
 
-The same rule applies to direct prompt generation. "Give content + preset and generate now" is still an IR-first path: materialize `BRIEF.json`, render through the deterministic renderer, then pass the strict pre-write validator before writing the final HTML.
+The same rule applies to direct prompt generation. "Give content + preset and generate now" is still an IR-first path: materialize `BRIEF.json`, route deterministic presets through `render_from_brief()` or reference-backed presets through the reference-driven worker, then pass the strict pre-write validator before writing the final HTML.
 
 ### 2. Public modes stay simple, internal pipeline stays strict
 
@@ -234,13 +234,13 @@ This makes themes composable and reviewable. A theme is not just "use our brand 
 
 22 presets are useful only if the system helps users start in the right neighborhood.
 
-That is why slide-creator routes by content type:
+That is why slide-creator routes by content type, using the current generator-ready surface rather than the full design-reference library:
 
 ```
 Data report / KPI dashboard → Data Story, Enterprise Dark, Swiss Modern
-Business pitch / VC deck    → Bold Signal, Aurora Mesh, Enterprise Dark
-Developer tool / API docs   → Terminal Green, Neon Cyber, Neo-Retro Dev Deck
-Consulting / strategy       → Strategy Consulting, Enterprise Dark, Swiss Modern
+Business pitch / VC deck    → Enterprise Dark, Blue Sky, Swiss Modern
+Developer tool / API docs   → Data Story, Blue Sky, Enterprise Dark
+Consulting / strategy       → Enterprise Dark, Swiss Modern, Data Story
 ```
 
 Good defaults reduce rework. In practice, that means fewer bad first drafts, fewer style resets, and less wasted context.
@@ -252,7 +252,7 @@ Phase 1 recommendation surface is intentionally narrower than the full preset li
 - `Data Story`
 - `Blue Sky`
 
-This does **not** remove the other presets. Explicit preset selection still wins; the narrower surface only affects defaults and recommendation priority.
+`Chinese Chan` is generator-ready for contextual philosophy, culture, and brand decks. Reference-driven presets remain opt-in generation paths: explicit requests can generate through the selected style reference and strict validation, but they are not promised to match the deterministic stability of the core renderer surface.
 
 ---
 
@@ -308,6 +308,7 @@ python3 main.py --generate --brief BRIEF.json --output presentation.html --eval
 ```
 
 Built-in presets still load from `references/` / `references/style-index.md`; `themes/<name>/reference.md` is only for custom themes.
+The raw CLI renderer covers deterministic built-ins and custom themes. Reference-driven built-ins use the slash-skill agent worker, then the same strict validator before final output.
 
 ### Planning Depths
 

@@ -16,6 +16,7 @@ def main() -> int:
     parser.add_argument("--source", dest="source_path", help="Original source document path")
     parser.add_argument("--preset", dest="preset", help="Override preset name")
     parser.add_argument("--baseline-html", dest="baseline_html_path", help="Baseline/control HTML for non-regression comparison")
+    parser.add_argument("--baseline-report", dest="baseline_report_path", help="Prior quality eval JSON for non-regression comparison")
     parser.add_argument("--title-browser-report", dest="title_browser_report_path", help="Precomputed browser title QA JSON report")
     parser.add_argument("--browser-titles", dest="run_browser_titles", action="store_true", help="Run browser-level title QA and merge the result")
     parser.add_argument("--output", dest="output_path", help="Optional output path for JSON report")
@@ -27,6 +28,7 @@ def main() -> int:
         source_path=args.source_path,
         preset=args.preset,
         baseline_html_path=args.baseline_html_path,
+        baseline_report_path=args.baseline_report_path,
         title_browser_report_path=args.title_browser_report_path,
         run_browser_titles=args.run_browser_titles,
     )

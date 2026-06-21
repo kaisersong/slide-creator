@@ -4,7 +4,7 @@ Read this file when the user is choosing a style preset (Phase 2).
 
 ---
 
-## Core Recommendation Surface (Phase 1)
+## Generator-Ready Recommendation Surface
 
 Use these 4 presets as the default recommendation surface when the user did not explicitly name a style:
 
@@ -13,11 +13,11 @@ Use these 4 presets as the default recommendation surface when the user did not 
 - `Data Story`
 - `Blue Sky`
 
-This is a recommendation surface, not a hard capability boundary.
+These presets have stable deterministic renderers and are safe first-line recommendations.
 
-- If the user explicitly names any current preset, honor that selection.
-- Support tier affects default recommendation priority only.
-- Current editorial next-shortlist candidate: `Paper & Ink`
+- `Chinese Chan` is also generator-ready, but route it contextually for philosophy, culture, brand, and contemplative decks instead of putting it in the default shortlist.
+- Reference-driven presets are design references with an agent generation path, not deterministic render targets. If explicitly requested for generation, load the selected reference plus shared HTML/CSS/JS references, generate through the reference-driven worker, and require strict validation before output.
+- Current editorial next renderer candidate: `Paper & Ink`
 
 Machine-readable source of truth: `references/preset-support-tiers.json`
 
@@ -56,9 +56,16 @@ If `themes/` contains subdirectories with `reference.md`, those are custom theme
 Custom themes are first-class presets — they take **priority** over content-type routing and mood-mapping.
 The code layer auto-discovers them via directory scan; no manual registration needed.
 When a custom theme is selected, read `themes/<name>/reference.md` as the style reference.
+Built-in canonical names still resolve to built-ins first. Use `custom:<name>` when the user explicitly wants a custom theme whose folder name collides with a built-in preset.
 
 **Per-style detail files** (read only the chosen one):
-`references/aurora-mesh.md`, `references/chinese-chan.md`, `references/data-story.md`, `references/enterprise-dark.md`, `references/glassmorphism.md`, `references/neo-brutalism.md`, `references/strategy-consulting.md`
+`references/aurora-mesh.md`, `references/bold-signal.md`, `references/chinese-chan.md`,
+`references/creative-voltage.md`, `references/dark-botanical.md`, `references/data-story.md`,
+`references/electric-studio.md`, `references/enterprise-dark.md`, `references/glassmorphism.md`,
+`references/modern-newspaper.md`, `references/neo-brutalism.md`, `references/neo-retro-dev.md`,
+`references/neon-cyber.md`, `references/notebook-tabs.md`, `references/paper-ink.md`,
+`references/pastel-geometry.md`, `references/split-pastel.md`, `references/strategy-consulting.md`,
+`references/swiss-modern.md`, `references/terminal-green.md`, `references/vintage-editorial.md`
 
 Blue Sky uses `references/blue-sky-starter.html` as its reference file.
 
@@ -68,9 +75,9 @@ Blue Sky uses `references/blue-sky-starter.html` as its reference file.
 
 | Tier | Current Presets | Notes |
 |------|-----------------|-------|
-| Production | Swiss Modern, Enterprise Dark, Data Story, Blue Sky | Phase 1 default recommendation surface |
-| Supported | Paper & Ink, Glassmorphism, Chinese Chan, Bold Signal, Aurora Mesh, Terminal Green, Strategy Consulting | Still selectable directly; not first-line defaults |
-| Experimental | Electric Studio, Creative Voltage, Dark Botanical, Modern Newspaper, Neon Cyber, Notebook Tabs, Pastel Geometry, Split Pastel, Vintage Editorial, Neo-Brutalism, Neo-Retro Dev Deck | Keep available when explicitly requested |
+| Production | Swiss Modern, Enterprise Dark, Data Story, Blue Sky | Default generator-ready recommendation surface |
+| Supported | Paper & Ink, Glassmorphism, Chinese Chan, Bold Signal, Aurora Mesh, Terminal Green, Strategy Consulting | `Chinese Chan` is generator-ready contextual; the rest are reference-driven until native renderers are added |
+| Experimental | Electric Studio, Creative Voltage, Dark Botanical, Modern Newspaper, Neon Cyber, Notebook Tabs, Pastel Geometry, Split Pastel, Vintage Editorial, Neo-Brutalism, Neo-Retro Dev Deck | Reference-driven opt-in generation only; do not add to default recommendations until promoted |
 | Archive Candidate | None yet | Do not archive before usage evidence exists |
 
 ---
@@ -81,15 +88,15 @@ Use when the user answers the mood question in Phase 2.
 
 | Mood | Style Options |
 |------|---------------|
-| Impressed/Confident | Bold Signal, Enterprise Dark, Neo-Brutalism |
-| Excited/Energized | Creative Voltage, Neon Cyber, Aurora Mesh |
-| Calm/Focused | Paper & Ink, Chinese Chan, Notebook Tabs |
-| Inspired/Moved | Dark Botanical, Vintage Editorial, Glassmorphism |
-| Clean/Enterprise | Blue Sky, Electric Studio, Enterprise Dark, Strategy Consulting |
-| Data-Driven | Data Story, Enterprise Dark, Swiss Modern, Strategy Consulting |
-| Playful/Creative | Split Pastel, Pastel Geometry, Neo-Brutalism |
-| Developer-Focused | Terminal Green, Neon Cyber, Neo-Retro Dev Deck |
-| Editorial/Organized | Paper & Ink, Notebook Tabs, Modern Newspaper |
+| Impressed/Confident | Enterprise Dark, Swiss Modern, Blue Sky |
+| Excited/Energized | Blue Sky, Data Story, Enterprise Dark |
+| Calm/Focused | Chinese Chan, Swiss Modern, Data Story |
+| Inspired/Moved | Chinese Chan, Blue Sky, Swiss Modern |
+| Clean/Enterprise | Blue Sky, Enterprise Dark, Data Story |
+| Data-Driven | Data Story, Enterprise Dark, Swiss Modern |
+| Playful/Creative | Blue Sky, Chinese Chan, Swiss Modern |
+| Developer-Focused | Data Story, Blue Sky, Enterprise Dark |
+| Editorial/Organized | Swiss Modern, Data Story, Chinese Chan |
 
 ---
 

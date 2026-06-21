@@ -7,9 +7,17 @@
         "statement": "pull_quote",
         "evidence": "data_table",
         "comparison": "column_content",
+        "comparison-matrix": "contents_index",
+        "feature-grid": "contents_index",
+        "grid": "contents_index",
         "stat": "stat_block",
+        "baseline-cards": "stat_block",
         "flow": "geometric_diagram",
-        "index": "contents_index"
+        "timeline": "geometric_diagram",
+        "three-things": "stat_block",
+        "architecture-map": "contents_index",
+        "index": "contents_index",
+        "close": "pull_quote"
       },
       "layout_fallbacks": {
         "stat_block": "column_content",
@@ -33,6 +41,29 @@
           "fallback": "contents_index"
         }
       }
+    },
+    "Blue Sky": {
+      "layout_family_map": {
+        "hero": "cover",
+        "statement": "chapter",
+        "evidence": "table",
+        "comparison": "comparison",
+        "comparison-matrix": "comparison",
+        "before-after": "comparison",
+        "flow": "workflow",
+        "workflow": "workflow",
+        "timeline": "workflow",
+        "three-things": "workflow",
+        "feature-grid": "bento",
+        "grid": "bento",
+        "architecture-map": "bento",
+        "close": "closing"
+      },
+      "layout_fallbacks": {
+        "workflow": "bento",
+        "table": "bento"
+      },
+      "layout_requirements": {}
     },
     "Enterprise Dark": {
       "coverage_signature": {
@@ -62,7 +93,13 @@
         "flow": "consulting_split",
         "timeline": "timeline",
         "architecture": "architecture_map",
-        "close": "cta_close"
+        "close": "cta_close",
+        "before-after": "contrast_split",
+        "three-things": "consulting_split",
+        "feature-grid": "comparison_matrix",
+        "comparison-matrix": "comparison_matrix",
+        "architecture-map": "architecture_map",
+        "grid": "comparison_matrix"
       },
       "layout_fallbacks": {
         "kpi_dashboard": "insight_pull",
@@ -78,7 +115,8 @@
       },
       "layout_requirements": {
         "kpi_dashboard": {
-          "fallback": "insight_pull"
+          "fallback": "insight_pull",
+          "require_numeric_signal": true
         },
         "timeline": {
           "require_progression_signal": true,
@@ -87,6 +125,10 @@
         "comparison_matrix": {
           "require_comparison_signal": true,
           "fallback": "consulting_split"
+        },
+        "contrast_split": {
+          "require_before_after_signal": true,
+          "fallback": "comparison_matrix"
         }
       }
     },
@@ -114,7 +156,12 @@
         "hero": "hero_number",
         "chart": "kpi_chart",
         "insight": "chart_insight",
-        "comparison": "comparison_matrix",
+        "comparison": "chart_insight",
+        "comparison-matrix": "comparison_matrix",
+        "feature-grid": "kpi_chart",
+        "architecture-map": "chart_insight",
+        "three-things": "comparison_matrix",
+        "timeline": "workflow_chart",
         "kpi": "kpi_grid",
         "kpi-grid": "kpi_grid",
         "flow": "workflow_chart",
@@ -123,6 +170,7 @@
       },
       "layout_fallbacks": {
         "kpi_chart": "chart_insight",
+        "kpi_grid": "chart_insight",
         "comparison_matrix": "chart_insight"
       },
       "role_forbidden_layouts": {
@@ -130,8 +178,28 @@
           "comparison_matrix"
         ]
       },
+      "comparison_signal_exempt_roles": [
+        "design-philosophy",
+        "presets",
+        "validation",
+        "interaction",
+        "pain-solution",
+        "solution"
+      ],
+      "comparison_signal_exempt_preferred_families": [
+        "comparison",
+        "comparison-matrix",
+        "feature-grid",
+        "architecture-map"
+      ],
       "layout_requirements": {
         "kpi_chart": {
+          "disallow_chart_policy_avoid": true,
+          "require_local_numeric_signal": true,
+          "minimum_numeric_count": 3,
+          "fallback": "chart_insight"
+        },
+        "kpi_grid": {
           "disallow_chart_policy_avoid": true,
           "require_local_numeric_signal": true,
           "minimum_numeric_count": 3,

@@ -547,6 +547,12 @@ Swiss Modern native PPT export only stays high-fidelity when the generated HTML 
   Correct: `.slide > .left-panel > .slide-content`, `.slide > .right-panel > .slide-content`
   Wrong: `.slide > .slide-content > .left-panel`, `.slide > .slide-content > .left-col/.right-col`
 - Anchored chrome stays at slide root: `.bg-num` and `.slide-num-label` are direct children of `.slide`, not nested in `.slide-content`
+- `.bg-num` is not mandatory on every slide. Use it on rhythm-anchor pages such
+  as cover, problem / pain-solution, preset/index, routing/process, use-cases,
+  and CTA. Do not stamp a background number behind every content slide.
+- `.bg-num` must stay behind content (`z-index: 0`), with `.slide-content`,
+  `.left-panel`, and `.right-panel` above it (`z-index: 2` or equivalent). It is
+  a background anchor, never a foreground headline.
 - Keep canonical tokens: `--bg`, `--bg-dark`, `--text`, `--text-light`, `--text-muted`, `--red`, `--grid-line`
 - Add `data-export-role` on every `<section class="slide">` matching the chosen named layout slug
 - Compatible aliases are input-only and must not be emitted by `--generate`: `.left-col`, `.right-col`, `.stat-block`, `.content-block`, `.quote-block`, `--bg-primary`, `--bg-secondary`, `--text-primary`, `--text-secondary`, `--accent`
@@ -589,6 +595,7 @@ Swiss Modern native PPT export only stays high-fidelity when the generated HTML 
 - 使用 Archivo Black (900) + Nunito (400/600) 字体组合
 - 硬水平分隔线 `2px solid #0a0a0a`，无装饰曲线或虚线
 - Token 名称必须保持为 `--bg` `--bg-dark` `--text` `--text-light` `--text-muted` `--red` `--grid-line`；不要改写成 `--bg-primary` `--text-primary` `--accent`
+- `.bg-num` 只用于节奏锚点页，不是每页默认装饰；必须位于内容底层，不能覆盖标题、证据块、表格或 CTA
 - `user-content` 12 页 deck 的 P8-P10 必须是步骤 / 网格 / 证据页，不能退化成 3 页连续的单卡 callout 或 pull quote
 - CTA 页允许一个局部深色 `.cta-block`，但标题锚点仍然保持左或左下；禁止居中收尾
 - CTA 页长标题不得依赖浏览器自然换行；必须符合全局 title-balance 规则，必要时使用 `.cta-line` 显式控行
@@ -596,7 +603,7 @@ Swiss Modern native PPT export only stays high-fidelity when the generated HTML 
 ### Signature Checklist
 - [ ] body::before 12 列网格叠加（3% 不透明度）
 - [ ] @keyframes fadeIn（staggered delays）
-- [ ] .bg-num 背景大序号（25vw Archivo Black 900）
+- [ ] .bg-num 背景大序号（25vw Archivo Black 900）只在节奏锚点页出现，且位于内容层后方
 - [ ] CTA 长标题符合全局 title-balance 规则；必要时使用 `.cta-line` 显式控行
 - [ ] .content 内容层（z-index: 1）
 - [ ] .eyebrow 小标签（uppercase, 0.2em 字间距）
@@ -605,7 +612,7 @@ Swiss Modern native PPT export only stays high-fidelity when the generated HTML 
 - [ ] .swiss-rule.red 红色分隔线（#ff3300）
 - [ ] Token 名称保持为 `--bg` / `--text` / `--red` / `--text-muted`（无别名变量）
 - [ ] Swiss panels are direct children of `.slide`（无 `.slide > .slide-content > .left-col/.right-col`）
-- [ ] `.bg-num` 和 `.slide-num-label` 作为 `.slide` 直接子元素存在
+- [ ] `.bg-num`（如果该页使用）和 `.slide-num-label` 作为 `.slide` 直接子元素存在
 - [ ] 每页带有 `data-export-role`，值属于 `title_grid / column_content / stat_block / pull_quote / geometric_diagram / data_table / contents_index`
 - [ ] 每页最多一个红色强调元素
 - [ ] 标题非对称锚定（左或左下）

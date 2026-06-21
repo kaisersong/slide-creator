@@ -150,6 +150,42 @@ This isn't decoration — it's cognitive pacing. Dense bullet slides fatigue att
 
 ---
 
+## 6.5 Visual Signature Rhythm
+
+`layout_variety` should measure visual rhythm, not just different layout IDs.
+A deck can still feel repetitive when three slides use different export roles but
+the same visible component pattern. A deck can also be acceptable when the export
+role repeats but the component signature changes.
+
+Evaluate rhythm at three levels:
+
+| Level | What changes | Example |
+|-------|--------------|---------|
+| Layout role | `data-export-role` / named layout changes | `workflow_chart` → `chart_insight` → `comparison_matrix` |
+| Visual family | broad component family changes | chart → matrix → workflow → CTA |
+| Visual signature | actual visible component changes | signal bars → evidence ladder → interaction panel |
+
+**Hard design rule:** no 3 consecutive slides may share the same visual signature.
+When these levels disagree, trust the visual signature.
+
+Style-specific examples:
+
+- Data Story may use `chart_insight` on multiple pages only if the actual SVG or
+  control surface rotates, such as `.ds-signal-bars`, `.ds-signal-map`,
+  `.ds-evidence-ladder`, `.ds-key-strip`, and `.ds-phase-timeline`.
+- Blue Sky bento pages must rotate placement variants by role. Two bento pages
+  in a deck should not reuse identical `grid-column` / `grid-row` coordinates
+  unless the intervening slide creates a strong rhythm break.
+- Swiss Modern `.bg-num` is a background anchor, not a universal page template.
+  Use it on selected rhythm-anchor pages and keep all content layers above it.
+- Enterprise Dark should not hard-code a fixed sequence. Use the role and content
+  signal to alternate dashboard, contrast, split, feature/matrix, timeline,
+  architecture, table, and CTA components.
+- Minimalist styles such as Chinese Chan may repeat a narrow layout skeleton, but
+  they still need ornament and scale variation.
+
+---
+
 ## 7. Anti-Slop Patterns
 
 These patterns make slides look instantly AI-generated:
@@ -209,6 +245,7 @@ Run this before writing the final HTML:
 □ In multi-column layouts, is any column less than 60% of the tallest column's height?
 □ Is the accent color used on more than 3 distinct element types simultaneously?
 □ Are there 3+ consecutive bullet-list slides without a layout break?
+□ Are there 3+ consecutive slides with the same visual signature, even if their export roles differ?
 □ Does any title/heading sound like a template ("Overview", "Summary", "Conclusion")?
 □ Does any title wrap to 4+ lines on desktop? If yes, shorten it or widen the measure.
 □ Does any 2-3 line horizontal title have an orphan line or an obviously collapsed middle line?

@@ -63,12 +63,22 @@ def evaluate(root: Path) -> list[RuleResult]:
             "--generate",
             "BRIEF.json",
             "themes/<name>/reference.md",
-            "用户显式指定任意当前 preset 时，必须保留该选择",
-            "禁止手拼最终 HTML",
+            "当前稳定生成器覆盖",
+            "reference-driven",
+            "fail closed",
+            "禁止绕过 BRIEF",
         ],
     )
     if ok:
-        ok, detail = contains_none(skill, ["Every generated HTML file MUST include both of these", "shareable URL"])
+        ok, detail = contains_none(
+            skill,
+            [
+                "Every generated HTML file MUST include both of these",
+                "shareable URL",
+                "用户显式指定任意当前 preset",
+                "Blud Sky",
+            ],
+        )
     results.append(RuleResult("skill-contract", ok, detail))
 
     ok, detail = contains_all(
@@ -81,12 +91,15 @@ def evaluate(root: Path) -> list[RuleResult]:
             "Default-on",
             "themes/your-theme/",
             "reference.md",
-            "Explicit preset selection still wins",
+            "Reference-driven presets remain opt-in generation paths",
             "The same rule applies to direct prompt generation",
         ],
     )
     if ok:
-        ok, detail = contains_none(readme, ["Vercel", "shareable URL", "Share to URL"])
+        ok, detail = contains_none(
+            readme,
+            ["Vercel", "shareable URL", "Share to URL", "Explicit preset selection still wins"],
+        )
     results.append(RuleResult("readme-contract", ok, detail))
 
     ok, detail = contains_all(
@@ -96,10 +109,12 @@ def evaluate(root: Path) -> list[RuleResult]:
             "If `BRIEF.json` exists, it's the source of truth",
             "single AskUserQuestion call with all 5 questions at once",
             "1280x720",
-            "Support tier only affects default recommendation priority",
+            "deterministic renderer or reference-driven preset",
             "do **not** hand-compose final HTML",
         ],
     )
+    if ok:
+        ok, detail = contains_none(workflow, ["Support tier only affects default recommendation priority"])
     results.append(RuleResult("workflow-contract", ok, detail))
 
     share_violations = []

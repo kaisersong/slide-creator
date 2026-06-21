@@ -43,8 +43,8 @@ def test_doc_sync_checker_passes_for_valid_fixture():
             "IR-first workflow: --plan creates BRIEF.json, --generate reads BRIEF.json\n"
             "PLANNING.md only on explicit request\n"
             "Custom theme: themes/<name>/reference.md\n"
-            "用户显式指定任意当前 preset 时，必须保留该选择\n"
-            "禁止手拼最终 HTML\n"
+            "当前稳定生成器覆盖，reference-driven preset 需要 strict validation，unsupported preset fail closed\n"
+            "禁止绕过 BRIEF 手拼最终 HTML\n"
         ),
         readme=(
             "IR-first workflow with BRIEF.json and optional PLANNING.md view.\n"
@@ -52,7 +52,7 @@ def test_doc_sync_checker_passes_for_valid_fixture():
             "--generate\n"
             "Inline editing is Default-on, optional.\n"
             "Custom theme system via themes/your-theme/reference.md.\n"
-            "Explicit preset selection still wins.\n"
+            "Reference-driven presets remain opt-in generation paths.\n"
             "The same rule applies to direct prompt generation.\n"
         ),
         workflow=(
@@ -60,7 +60,7 @@ def test_doc_sync_checker_passes_for_valid_fixture():
             "Enhancement Mode (existing HTML)\n"
             "If `BRIEF.json` exists, it's the source of truth\n"
             "Validate the edited deck at a practical presentation size such as 1280x720 before handing it back.\n"
-            "Support tier only affects default recommendation priority.\n"
+            "Use a deterministic renderer or reference-driven preset for HTML generation.\n"
             "do **not** hand-compose final HTML\n"
         ),
     )
@@ -94,8 +94,8 @@ def test_doc_sync_checker_dry_run_does_not_modify_files():
             "IR-first workflow: --plan creates BRIEF.json, --generate reads BRIEF.json\n"
             "PLANNING.md only on explicit request\n"
             "Custom theme: themes/<name>/reference.md\n"
-            "用户显式指定任意当前 preset 时，必须保留该选择\n"
-            "禁止手拼最终 HTML\n"
+            "当前稳定生成器覆盖，reference-driven preset 需要 strict validation，unsupported preset fail closed\n"
+            "禁止绕过 BRIEF 手拼最终 HTML\n"
         ),
         readme=(
             "IR-first workflow with BRIEF.json and optional PLANNING.md view.\n"
@@ -103,7 +103,7 @@ def test_doc_sync_checker_dry_run_does_not_modify_files():
             "--generate\n"
             "Inline editing is Default-on, optional.\n"
             "Custom theme system via themes/your-theme/reference.md.\n"
-            "Explicit preset selection still wins.\n"
+            "Reference-driven presets remain opt-in generation paths.\n"
             "The same rule applies to direct prompt generation.\n"
         ),
         workflow=(
@@ -111,7 +111,7 @@ def test_doc_sync_checker_dry_run_does_not_modify_files():
             "Enhancement Mode (existing HTML)\n"
             "If `BRIEF.json` exists, it's the source of truth\n"
             "Validate the edited deck at a practical presentation size such as 1280x720 before handing it back.\n"
-            "Support tier only affects default recommendation priority.\n"
+            "Use a deterministic renderer or reference-driven preset for HTML generation.\n"
             "do **not** hand-compose final HTML\n"
         ),
     )
