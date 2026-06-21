@@ -126,13 +126,14 @@ Every generated HTML must include all of the following:
 
         /* PRESENTATION MODE — button outside .slide, never in PPTX screenshots */
         #present-btn { position: fixed; bottom: 1.5rem; right: 1.5rem; z-index: 9997; width: 44px; height: 44px; border-radius: 50%; background: rgba(0,0,0,0.5); color: rgba(255,255,255,0.8); border: 1.5px solid rgba(255,255,255,0.2); font-size: 1rem; cursor: pointer; backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); display: flex; align-items: center; justify-content: center; opacity: 0; transition: opacity 0.2s; pointer-events: none; }
+        .slide-num-label { right: 84px; } /* keep bottom status clear of #present-btn */
         body:hover #present-btn { opacity: 1; pointer-events: auto; }
         #present-btn:hover { background: rgba(0,0,0,0.78); }
 
         #present-counter { display: none; position: fixed; bottom: 1.4rem; left: 50%; transform: translateX(-50%); z-index: 9997; font-size: 0.65rem; letter-spacing: 0.14em; font-family: system-ui, sans-serif; color: rgba(255,255,255,0.28); }
 
         body.presenting { background: #000 !important; overflow: hidden !important; }
-        body.presenting .slide { position: fixed !important; inset: 0; width: 100vw !important; height: 100vh !important; transform-origin: center center; scroll-snap-align: none !important; display: none !important; }
+        body.presenting .slide { position: fixed !important; top: 0; left: 0; width: 1440px !important; height: 900px !important; transform-origin: top left; scroll-snap-align: none !important; display: none !important; }
         body.presenting .slide.p-on { display: flex !important; }
         body.presenting #present-btn { display: none !important; }
         body.presenting #present-counter { display: block; }

@@ -206,7 +206,7 @@ Page indicator, bottom-right of each slide. Two variants for light/dark backgrou
 .slide-num-label {
     position: absolute;
     bottom: 28px;
-    right: 36px;
+    right: 84px;
     font-size: 11px;
     font-weight: 500;
     color: rgba(0,0,0,0.18);

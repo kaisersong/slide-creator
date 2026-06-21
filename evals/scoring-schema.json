@@ -96,15 +96,48 @@
               "type": "string",
               "minLength": 1
             },
-            "layout_variety": {
-              "type": "number",
-              "minimum": 0,
-              "maximum": 1
-            },
-            "avg_component_kinds_per_slide": {
-              "type": "number",
-              "minimum": 0
-            },
+          "layout_variety": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 1
+          },
+          "layout_role_variety": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 1
+          },
+          "visual_family_variety": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 1
+          },
+          "visual_signature_variety": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 1
+          },
+          "max_layout_role_run": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "max_visual_family_run": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "max_visual_signature_run": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "visual_families": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "avg_component_kinds_per_slide": {
+            "type": "number",
+            "minimum": 0
+          },
             "style_signature_coverage": {
               "type": "number",
               "minimum": 0,

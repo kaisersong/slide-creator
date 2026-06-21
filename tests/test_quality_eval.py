@@ -76,6 +76,63 @@ def test_numeric_faithfulness_catches_hallucinated_chart_values():
     assert "hallucinated-numeric-chart-values" in report["hard_failures"]
 
 
+def test_numeric_faithfulness_keeps_decimal_tokens_separated_from_words():
+    brief = {
+        "content": {"must_include": ["Phase 3.5 Content Review"]},
+        "narrative": {
+            "slides": [
+                {
+                    "role": "workflow",
+                    "title": "Deterministic workflow",
+                    "key_point": "Phase 3.5 Content Review sits between render and export.",
+                    "explanation": "Phase 3.5 Content Review（Polish mode） → 16 checkpoints → 修复",
+                    "supporting_facts": ["Phase 3.5 — Content Review（Polish mode）"],
+                }
+            ]
+        },
+    }
+    html = """
+    <html>
+    <body data-preset="Enterprise Dark">
+      <section class="slide" aria-label="workflow" data-export-role="timeline">
+        <div class="ent-timeline-date">3.5</div>
+        <div class="ent-timeline-copy">Phase 3.5 Content Review</div>
+      </section>
+    </body>
+    </html>
+    """
+
+    report = analyze_html_quality(html, brief=brief, preset="Enterprise Dark")
+
+    assert report["diagnostics"]["hallucinated_numeric_tokens"] == []
+    assert report["quality_gates"]["numeric-faithfulness"] is True
+    assert "hallucinated-numeric-chart-values" not in report["hard_failures"]
+
+
+def test_numeric_faithfulness_ignores_generated_zero_padded_ordinals():
+    source = "PR 首次通过率 68% -> 84%，回归测试耗时 9.5 小时 -> 4.1 小时。"
+    html = """
+    <html>
+    <body data-preset="Data Story">
+      <section class="slide" aria-label="comparison" data-export-role="kpi_chart">
+        <svg aria-label="line chart">
+          <text>01</text><text class="chart-val">68%</text>
+          <text class="chart-label">Signal 02</text><text class="chart-val">84%</text>
+          <text class="chart-label">Signal 03</text><text class="chart-val">9.5</text>
+          <text class="chart-label">Phase 04</text>
+          <text class="chart-val">4.1</text>
+        </svg>
+      </section>
+    </body>
+    </html>
+    """
+
+    report = analyze_html_quality(html, source_text=source, preset="Data Story")
+
+    assert report["diagnostics"]["hallucinated_numeric_tokens"] == []
+    assert report["quality_gates"]["numeric-faithfulness"] is True
+
+
 def test_tracks_narrative_role_coverage_and_minimal_slide_ratio():
     brief = {
         "content": {"must_include": ["Salesforce 四阶段", "Tesla 76% / 14% / 10%"]},
@@ -106,6 +163,163 @@ def test_tracks_narrative_role_coverage_and_minimal_slide_ratio():
     assert report["quality_gates"]["minimal-slide-run"] is True
 
 
+def test_quality_eval_counts_swiss_signature_blocks_as_components():
+    html = """
+    <html>
+    <body data-preset="Swiss Modern">
+      <section class="slide" aria-label="presets" data-export-role="contents_index">
+        <h2>Preset surface</h2>
+        <div class="feat-grid">
+          <div class="feat-card"><div class="feat-name">A</div></div>
+          <div class="feat-card"><div class="feat-name">B</div></div>
+        </div>
+      </section>
+      <section class="slide" aria-label="validation" data-export-role="data_table">
+        <h2>Validation</h2>
+        <div class="inst-blocks"><div class="inst-block"><div class="inst-label">Strict</div></div></div>
+      </section>
+      <section class="slide" aria-label="cta_close" data-export-role="pull_quote">
+        <h2>Close</h2>
+        <div class="cta-block"><span class="cta-line">Ship the gallery</span></div>
+      </section>
+    </body>
+    </html>
+    """
+
+    report = analyze_html_quality(html, preset="Swiss Modern")
+
+    assert report["diagnostics"]["minimal_slide_ratio"] == 0.0
+    assert report["diagnostics"]["max_minimal_slide_run"] == 0
+    assert report["quality_gates"]["minimal-slide-run"] is True
+
+
+def test_quality_eval_counts_enterprise_visual_blocks_as_components():
+    html = """
+    <html>
+    <body data-preset="Enterprise Dark">
+      <section class="slide enterprise-contrast" aria-label="problem" data-export-role="contrast_split">
+        <h2>Before and after</h2>
+        <div class="ent-contrast-split">
+          <div class="ent-contrast-block ent-contrast-block--negative">
+            <h4>Before</h4>
+            <div class="ent-contrast-item"><span class="ent-contrast-marker">x</span>Manual handoff</div>
+          </div>
+          <div class="ent-contrast-block ent-contrast-block--positive">
+            <h4>After</h4>
+            <div class="ent-contrast-item"><span class="ent-contrast-marker">v</span>Deterministic pipeline</div>
+          </div>
+        </div>
+      </section>
+      <section class="slide enterprise-timeline" aria-label="workflow" data-export-role="timeline">
+        <h2>Workflow</h2>
+        <div class="ent-timeline">
+          <div class="ent-timeline-item"><div class="ent-timeline-date">Now</div><div class="ent-timeline-copy">Brief</div></div>
+          <div class="ent-timeline-item"><div class="ent-timeline-date">Next</div><div class="ent-timeline-copy">Render</div></div>
+        </div>
+      </section>
+    </body>
+    </html>
+    """
+
+    report = analyze_html_quality(html, preset="Enterprise Dark")
+
+    assert report["diagnostics"]["avg_component_kinds_per_slide"] == 3.0
+    assert report["diagnostics"]["visual_families"] == ["contrast", "timeline"]
+    assert report["diagnostics"]["visual_family_variety"] == 1.0
+    assert report["diagnostics"]["layout_variety"] == 1.0
+
+
+def test_layout_variety_uses_visual_rhythm_beyond_export_role_count():
+    mixed_html = """
+    <html>
+    <body data-preset="Enterprise Dark">
+      <section class="slide" data-export-role="comparison_matrix"><h2>A</h2><div class="ent-feature-grid"><div class="ent-feature-card">A</div></div></section>
+      <section class="slide" data-export-role="comparison_matrix"><h2>B</h2><div class="ent-matrix"><div class="ent-kpi-card">B</div></div></section>
+      <section class="slide" data-export-role="comparison_matrix"><h2>C</h2><div class="ent-feature-grid"><div class="ent-feature-card">C</div></div></section>
+      <section class="slide" data-export-role="comparison_matrix"><h2>D</h2><div class="ent-matrix"><div class="ent-kpi-card">D</div></div></section>
+    </body>
+    </html>
+    """
+    repeated_html = """
+    <html>
+    <body data-preset="Enterprise Dark">
+      <section class="slide" data-export-role="comparison_matrix"><h2>A</h2><div class="ent-feature-grid"><div class="ent-feature-card">A</div></div></section>
+      <section class="slide" data-export-role="comparison_matrix"><h2>B</h2><div class="ent-feature-grid"><div class="ent-feature-card">B</div></div></section>
+      <section class="slide" data-export-role="comparison_matrix"><h2>C</h2><div class="ent-feature-grid"><div class="ent-feature-card">C</div></div></section>
+      <section class="slide" data-export-role="comparison_matrix"><h2>D</h2><div class="ent-feature-grid"><div class="ent-feature-card">D</div></div></section>
+    </body>
+    </html>
+    """
+
+    mixed = analyze_html_quality(mixed_html, preset="Enterprise Dark")["diagnostics"]
+    repeated = analyze_html_quality(repeated_html, preset="Enterprise Dark")["diagnostics"]
+
+    assert mixed["layout_role_variety"] == 0.25
+    assert mixed["visual_family_variety"] == 0.5
+    assert mixed["layout_variety"] > mixed["layout_role_variety"]
+    assert mixed["layout_variety"] > repeated["layout_variety"]
+    assert repeated["max_visual_family_run"] == 4
+
+
+def test_data_story_visual_family_uses_specific_components_before_generic_chart():
+    html = """
+    <html>
+    <body data-preset="Data Story">
+      <section class="slide ds-workflow" data-export-role="workflow_chart">
+        <h2>Workflow</h2>
+        <div class="ds-workflow-layout">
+          <div class="ds-chart-visual ds-workflow-visual">
+            <svg class="ds-chart-svg ds-phase-timeline"></svg>
+          </div>
+        </div>
+      </section>
+      <section class="slide ds-chart-insight" data-export-role="chart_insight">
+        <h2>Signal</h2>
+        <div class="ds-chart-visual"><svg class="ds-chart-svg ds-signal-bars"></svg></div>
+      </section>
+      <section class="slide ds-chart-insight" data-export-role="chart_insight">
+        <h2>Interaction</h2>
+        <div class="ds-interaction-layout"><div class="ds-key-strip"><div class="ds-key-card">K</div></div></div>
+      </section>
+    </body>
+    </html>
+    """
+
+    diagnostics = analyze_html_quality(html, preset="Data Story")["diagnostics"]
+
+    assert diagnostics["visual_families"] == ["workflow", "bar-chart", "interaction"]
+    assert diagnostics["visual_family_variety"] == 1.0
+
+
+def test_blue_sky_visual_family_uses_layout_primitives_not_role_names():
+    html = """
+    <html>
+    <body data-preset="Blue Sky">
+      <section class="slide" data-export-role="pain-solution">
+        <div class="layer"><div class="step">A</div></div>
+      </section>
+      <section class="slide" data-export-role="workflow">
+        <div class="layer"><div class="step">B</div></div>
+      </section>
+      <section class="slide" data-export-role="features">
+        <div class="bento"><div class="g"><div class="stat">42</div></div></div>
+      </section>
+      <section class="slide" data-export-role="validation">
+        <div class="cols2"><div class="g">A</div><div class="bl">B</div></div>
+      </section>
+    </body>
+    </html>
+    """
+
+    diagnostics = analyze_html_quality(html, preset="Blue Sky")["diagnostics"]
+
+    assert diagnostics["visual_families"] == ["layer-flow", "layer-flow", "bento-stat", "list-split"]
+    assert diagnostics["layout_role_variety"] == 1.0
+    assert diagnostics["visual_family_variety"] == 0.75
+    assert diagnostics["max_visual_family_run"] == 2
+    assert diagnostics["layout_variety"] < diagnostics["layout_role_variety"]
+
+
 def test_non_regression_comparison_flags_flatter_candidate():
     baseline_html = """
     <html><body data-preset="Swiss Modern">
@@ -133,6 +347,8 @@ def test_non_regression_comparison_flags_flatter_candidate():
     assert comparison["component_diversity_delta"] < 0
     assert comparison["minimal_slide_ratio_delta"] > 0
     assert comparison["pass"] is False
+    assert report["quality_gates"]["baseline-non-regression"] is False
+    assert "baseline-regression" in report["hard_failures"]
 
 
 def test_quality_eval_cli_emits_json_report(tmp_path: Path):
@@ -271,6 +487,64 @@ def test_quality_eval_cli_accepts_precomputed_title_browser_report(tmp_path: Pat
     assert report["quality_gates"]["browser-title-composition"] is False
     assert report["diagnostics"]["title_hard_fail_rate"] == 1.0
     assert "browser-title-too-many-lines" in report["hard_failures"]
+
+
+def test_quality_eval_cli_accepts_prior_eval_report_for_non_regression(tmp_path: Path):
+    html_path = tmp_path / "deck.html"
+    baseline_report_path = tmp_path / "baseline-quality.json"
+    output_path = tmp_path / "quality.json"
+
+    html_path.write_text(
+        """
+        <html><body data-preset="Enterprise Dark">
+          <section class="slide" aria-label="problem" data-export-role="contrast_split">
+            <h1>Problem</h1><p>Only text.</p>
+          </section>
+          <section class="slide" aria-label="solution" data-export-role="contrast_split">
+            <h2>Solution</h2><p>Still only text.</p>
+          </section>
+        </body></html>
+        """,
+        encoding="utf-8",
+    )
+    baseline_report_path.write_text(
+        json.dumps(
+            {
+                "diagnostics": {
+                    "layout_variety": 0.5,
+                    "avg_component_kinds_per_slide": 3.0,
+                    "style_signature_coverage": None,
+                    "minimal_slide_ratio": 1.0,
+                }
+            },
+            ensure_ascii=False,
+        ),
+        encoding="utf-8",
+    )
+
+    result = subprocess.run(
+        [
+            sys.executable,
+            str(QUALITY_EVAL_CLI),
+            str(html_path),
+            "--preset",
+            "Enterprise Dark",
+            "--baseline-report",
+            str(baseline_report_path),
+            "--output",
+            str(output_path),
+        ],
+        capture_output=True,
+        text=True,
+        timeout=20,
+    )
+
+    assert result.returncode == 0, result.stdout + result.stderr
+    report = json.loads(output_path.read_text(encoding="utf-8"))
+    assert report["comparison"]["non_regression"]["component_diversity_delta"] < -0.05
+    assert report["comparison"]["non_regression"]["pass"] is False
+    assert report["quality_gates"]["baseline-non-regression"] is False
+    assert "baseline-regression" in report["hard_failures"]
 
 
 def test_quality_eval_flags_chart_without_slide_local_numeric_signal():

@@ -8,6 +8,13 @@ from functools import lru_cache
 from pathlib import Path
 from typing import Any
 
+from preset_capabilities import (
+    PRESET_REFERENCE_MAP,
+    canonical_preset_name as canonical_preset_display_name,
+    discover_custom_themes,
+    get_preset_render_capability,
+    resolve_style_reference_path,
+)
 from preset_support import preset_support_tier
 from title_profiles import profile_allows_explicit_line_control, resolve_title_profile
 
@@ -27,23 +34,9 @@ BRIEF_SCHEMA_PATH = ROOT / "schemas" / "generation-brief.schema.json"
 PRESET_USAGE_RULES_PATH = ROOT / "references" / "preset-usage-rules.json"
 
 
-def discover_custom_themes() -> dict[str, Path]:
-    """Scan themes/ for subdirs with reference.md. Returns {normalized_name: reference_md_path}."""
-    themes: dict[str, Path] = {}
-    if not THEMES_DIR.is_dir():
-        return themes
-    for d in sorted(THEMES_DIR.iterdir()):
-        if d.name.startswith("_") or not d.is_dir():
-            continue
-        ref = d / "reference.md"
-        if ref.exists():
-            themes[_normalize_preset_name(d.name)] = ref
-    return themes
-
-
 def _is_custom_theme(preset: str) -> bool:
-    key = _normalize_preset_name(preset).removeprefix("custom:").strip()
-    return key in discover_custom_themes()
+    capability = get_preset_render_capability(preset)
+    return capability.renderer_strategy == "custom_theme"
 
 DEFAULT_SHELL_MARKERS = [
     "body[data-preset]",
@@ -54,31 +47,6 @@ DEFAULT_SHELL_MARKERS = [
     "#editToggle",
     "#notes-panel",
 ]
-
-PRESET_REFERENCE_MAP = {
-    "aurora mesh": "aurora-mesh.md",
-    "blue sky": "blue-sky-starter.html",
-    "bold signal": "bold-signal.md",
-    "chinese chan": "chinese-chan.md",
-    "creative voltage": "creative-voltage.md",
-    "dark botanical": "dark-botanical.md",
-    "data story": "data-story.md",
-    "electric studio": "electric-studio.md",
-    "enterprise dark": "enterprise-dark.md",
-    "glassmorphism": "glassmorphism.md",
-    "modern newspaper": "modern-newspaper.md",
-    "neo-brutalism": "neo-brutalism.md",
-    "neo-retro dev deck": "neo-retro-dev.md",
-    "neon cyber": "neon-cyber.md",
-    "notebook tabs": "notebook-tabs.md",
-    "paper & ink": "paper-ink.md",
-    "pastel geometry": "pastel-geometry.md",
-    "split pastel": "split-pastel.md",
-    "strategy consulting": "strategy-consulting.md",
-    "swiss modern": "swiss-modern.md",
-    "terminal green": "terminal-green.md",
-    "vintage editorial": "vintage-editorial.md",
-}
 
 DEFAULT_LAYOUTS = {
     "blue sky": ["cover", "chapter", "comparison", "workflow", "table", "bento", "closing"],
@@ -115,6 +83,25 @@ DEFAULT_LAYOUTS = {
     ],
 }
 
+BLUE_SKY_ROLE_LOCKED_LAYOUTS = {
+    "presets": "bento",
+    "interaction": "bento",
+    "use-cases": "bento",
+}
+
+SWISS_ROLE_LOCKED_LAYOUTS = {
+    "baseline": "stat_block",
+    "solution": "stat_block",
+    "presets": "contents_index",
+    "features": "data_table",
+    "content-routing": "contents_index",
+    "validation": "data_table",
+    "proof": "data_table",
+    "evidence": "data_table",
+    "interaction": "data_table",
+    "use-cases": "column_content",
+}
+
 BLUE_SKY_ROLE_LAYOUTS = {
     "cover": "cover",
     "hook": "cover",
@@ -131,18 +118,27 @@ BLUE_SKY_ROLE_LAYOUTS = {
     "style-discovery": "bento",
     "features": "bento",
     "feature": "bento",
+    "design-philosophy": "bento",
+    "presets": "bento",
+    "interaction": "bento",
+    "use-cases": "bento",
     "recommendation": "bento",
     "best-fit": "bento",
     "decision": "bento",
     "comparison": "comparison",
     "dual": "comparison",
+    "pain-solution": "comparison",
     "output-contract": "table",
+    "content-routing": "table",
+    "validation": "workflow",
     "evidence": "table",
     "proof": "table",
     "metrics": "table",
     "data-proof": "table",
     "closing": "closing",
     "cta": "closing",
+    "cta_close": "closing",
+    "getting-started": "closing",
 }
 
 SWISS_ROLE_LAYOUTS = {
@@ -153,18 +149,25 @@ SWISS_ROLE_LAYOUTS = {
     "two-depths": "column_content",
     "definition": "column_content",
     "boundary": "column_content",
+    "pain-solution": "column_content",
     "baseline": "stat_block",
     "principles": "contents_index",
     "workflow": "geometric_diagram",
+    "design-philosophy": "contents_index",
     "style-discovery": "contents_index",
     "driver": "contents_index",
     "solution": "stat_block",
     "signals": "contents_index",
+    "presets": "contents_index",
+    "interaction": "data_table",
+    "use-cases": "column_content",
     "feature": "data_table",
     "features": "data_table",
     "data-proof": "data_table",
     "proof": "data_table",
     "evidence": "data_table",
+    "content-routing": "contents_index",
+    "validation": "data_table",
     "reliability": "geometric_diagram",
     "state-machines": "geometric_diagram",
     "architecture": "geometric_diagram",
@@ -174,6 +177,8 @@ SWISS_ROLE_LAYOUTS = {
     "tradeoff": "column_content",
     "closing": "pull_quote",
     "cta": "pull_quote",
+    "cta_close": "pull_quote",
+    "getting-started": "pull_quote",
     # Fix 1 v2: fill unmapped canonical roles
     "discovery": "contents_index",
     "comparison": "column_content",
@@ -194,7 +199,7 @@ ENTERPRISE_ROLE_LAYOUTS = {
     "discovery": "architecture_map",
     "core-concepts": "architecture_map",
     "architecture": "architecture_map",
-    "solution": "insight_pull",
+    "solution": "kpi_dashboard",
     "principles": "insight_pull",
     "tradeoff": "comparison_matrix",
     "feature": "comparison_matrix",
@@ -214,6 +219,18 @@ ENTERPRISE_ROLE_LAYOUTS = {
     "dual": "consulting_split",
     "process": "consulting_split",
     "recommendation": "comparison_matrix",
+    # Contrast split role mappings
+    "before-after": "contrast_split",
+    "pain-solution": "contrast_split",
+    # Fix B: additional role mappings for BRIEF AI-generated roles
+    "design-philosophy": "architecture_map",
+    "presets": "data_table",
+    "content-routing": "consulting_split",
+    "validation": "data_table",
+    "interaction": "comparison_matrix",
+    "use-cases": "consulting_split",
+    "cta_close": "cta_close",
+    "getting-started": "cta_close",
 }
 
 DATA_STORY_ROLE_LAYOUTS = {
@@ -226,8 +243,8 @@ DATA_STORY_ROLE_LAYOUTS = {
     "driver": "workflow_chart",
     "discovery": "chart_insight",
     "solution": "comparison_matrix",
-    "feature": "kpi_grid",
-    "features": "kpi_grid",
+    "feature": "kpi_chart",
+    "features": "kpi_chart",
     "evidence": "chart_insight",
     "proof": "chart_insight",
     "metrics": "kpi_chart",
@@ -243,6 +260,15 @@ DATA_STORY_ROLE_LAYOUTS = {
     "dual": "kpi_grid",
     "process": "workflow_chart",
     "recommendation": "kpi_grid",
+    "pain-solution": "chart_insight",
+    "design-philosophy": "chart_insight",
+    "presets": "comparison_matrix",
+    "content-routing": "workflow_chart",
+    "validation": "kpi_chart",
+    "interaction": "chart_insight",
+    "use-cases": "workflow_chart",
+    "cta_close": "cta_close",
+    "getting-started": "cta_close",
 }
 
 CHINESE_CHAN_ROLE_LAYOUTS = {
@@ -333,6 +359,10 @@ class StyleContractError(ValueError):
 
 class RenderError(RuntimeError):
     """Raised when deterministic rendering cannot proceed safely."""
+
+    def __init__(self, message: str, *, payload: dict[str, Any] | None = None):
+        super().__init__(message)
+        self.payload = payload or {}
 
 
 def _read_text(path: Path) -> str:
@@ -680,6 +710,42 @@ def validate_brief_data(brief: Any) -> list[str]:
     return errors
 
 
+def _render_capability_validation_errors(brief: Any) -> list[str]:
+    if not isinstance(brief, dict):
+        return []
+    style = brief.get("style")
+    if not isinstance(style, dict):
+        return []
+    preset = style.get("preset")
+    if not isinstance(preset, str):
+        return []
+
+    capability = get_preset_render_capability(preset)
+    if capability.can_render:
+        return []
+
+    payload = capability.render_error_payload()
+    alternatives = ", ".join(payload["alternatives"])
+    return [
+        "brief.style.preset is not generator-ready: "
+        f"code={payload['code']}; "
+        f"preset={payload['preset']}; "
+        f"generation_status={payload['generation_status']}; "
+        f"renderer_strategy={payload['renderer_strategy']}; "
+        f"reason={payload['reason']}; "
+        f"alternatives={alternatives}; "
+        "do_not_retry=true"
+    ]
+
+
+def validate_generation_brief_data(brief: Any) -> list[str]:
+    """Validate BRIEF schema plus generation capability for HTML output."""
+    errors = validate_brief_data(brief)
+    if errors:
+        return errors
+    return _render_capability_validation_errors(brief)
+
+
 def load_brief(path: str | Path) -> dict[str, Any]:
     source = Path(path)
     data = json.loads(_read_text(source))
@@ -698,7 +764,7 @@ def validate_brief_path(path: str | Path) -> tuple[bool, list[str], dict[str, An
     except json.JSONDecodeError as exc:
         return False, [f"invalid JSON: {exc}"], None
 
-    errors = validate_brief_data(data)
+    errors = validate_generation_brief_data(data)
     return not errors, errors, data if not errors else None
 
 
@@ -783,18 +849,10 @@ def extract_brief_from_source_path(path: str | Path) -> dict[str, Any]:
 
 
 def resolve_style_reference(preset_or_path: str | Path) -> Path:
-    candidate = Path(preset_or_path)
-    if candidate.exists():
-        return candidate.resolve()
-    key = _normalize_preset_name(str(preset_or_path))
-    if key in PRESET_REFERENCE_MAP:
-        return (REFERENCES_DIR / PRESET_REFERENCE_MAP[key]).resolve()
-    # Custom theme fallback: strip "custom: " prefix, check themes/ dir
-    clean_key = key.removeprefix("custom:").strip()
-    custom_themes = discover_custom_themes()
-    if clean_key in custom_themes:
-        return custom_themes[clean_key]
-    raise StyleContractError(f"Unknown preset or reference path: {preset_or_path}")
+    try:
+        return resolve_style_reference_path(preset_or_path)
+    except (FileNotFoundError, KeyError) as exc:
+        raise StyleContractError(f"Unknown preset or reference path: {preset_or_path}") from exc
 
 
 def _relative_to_root(path: Path) -> str:
@@ -1083,8 +1141,17 @@ def compile_style_contract(preset_or_path: str | Path) -> dict[str, Any]:
     for entry in sections.get("Style Preview Checklist", []):
         preview_lines.extend(line.strip() for line in entry.splitlines() if line.strip().startswith("- "))
 
-    # Derive preset name: use theme folder name for custom themes, file stem for built-ins
-    if THEMES_DIR in path.parents:
+    builtin_preset = next(
+        (
+            key
+            for key, relative_path in PRESET_REFERENCE_MAP.items()
+            if (REFERENCES_DIR / relative_path).resolve() == path.resolve()
+        ),
+        None,
+    )
+    if builtin_preset:
+        contract_preset = canonical_preset_display_name(builtin_preset)
+    elif THEMES_DIR in path.parents:
         contract_preset = path.parent.name.replace("-", " ").title()
     else:
         contract_preset = path.stem.replace("-", " ").title().replace("Neo Retro", "Neo-Retro").replace("Dev", "Dev")
@@ -1207,6 +1274,443 @@ def _avoid_long_layout_runs(layout_id: str, previous_layouts: list[str], layout_
     return layout_id
 
 
+def _avoid_data_story_long_layout_runs(
+    spec: dict[str, Any],
+    layout_id: str,
+    previous_layouts: list[str],
+    layout_cycle: list[str],
+) -> str:
+    adjusted = _avoid_long_layout_runs(layout_id, previous_layouts, layout_cycle)
+    if adjusted != "hero_number" or spec["role"] in {"cover", "hook"}:
+        return adjusted
+
+    # hero_number treats the anchor as a KPI; keep text-heavy generated roles in
+    # card/chart layouts when diversity rotation would otherwise promote them.
+    for candidate in ("workflow_chart", "chart_insight"):
+        if candidate in layout_cycle and candidate != layout_id:
+            return candidate
+    return layout_id
+
+
+def _avoid_data_story_component_runs(
+    spec: dict[str, Any],
+    layout_id: str,
+    previous_families: list[str],
+    layout_cycle: list[str],
+    previous_signatures: list[str] | None = None,
+) -> str:
+    family = _layout_component_family("Data Story", spec["role"], layout_id)
+    repeated_pair = (
+        len(previous_families) >= 2
+        and previous_families[-1] == previous_families[-2]
+        and previous_families[-1] == family
+    )
+    over_global_cap = family == "workflow" and previous_families.count(family) >= 2
+    if not repeated_pair and not over_global_cap:
+        return layout_id
+
+    for candidate in ("chart_insight", "comparison_matrix", "kpi_chart", "workflow_chart", "cta_close"):
+        if candidate not in layout_cycle or candidate == layout_id:
+            continue
+        if candidate in {"kpi_chart", "kpi_grid", "hero_number"} and not _spec_explicit_numbers(spec):
+            continue
+        candidate_family = _layout_component_family("Data Story", spec["role"], candidate)
+        if previous_signatures is not None and len(previous_signatures) >= 2:
+            candidate_signature = _data_story_visual_signature(spec, candidate)
+            creates_triplet = (
+                previous_signatures[-1] == previous_signatures[-2]
+                and previous_signatures[-1] == candidate_signature
+            )
+        else:
+            creates_triplet = (
+                len(previous_families) >= 2
+                and previous_families[-1] == previous_families[-2]
+                and previous_families[-1] == candidate_family
+            )
+        if creates_triplet:
+            continue
+        if candidate_family != family:
+            return candidate
+    return layout_id
+
+
+def _swiss_component_family(role: str, layout_id: str) -> str:
+    if layout_id == "contents_index":
+        if role in {"presets", "features", "feature", "recommendation", "best-fit"}:
+            return "feature-grid"
+        return "index"
+    if layout_id == "data_table":
+        if role in {"validation", "evidence", "proof"}:
+            return "evidence"
+        return "table"
+    return {
+        "title_grid": "hero",
+        "column_content": "split",
+        "stat_block": "stat",
+        "geometric_diagram": "diagram",
+        "pull_quote": "cta" if role in {"closing", "cta", "cta_close", "getting-started"} else "quote",
+    }.get(layout_id, layout_id)
+
+
+def _avoid_swiss_component_runs(
+    spec: dict[str, Any],
+    layout_id: str,
+    previous_families: list[str],
+    layout_cycle: list[str],
+) -> str:
+    family = _swiss_component_family(spec["role"], layout_id)
+    if len(previous_families) < 2 or previous_families[-1] != previous_families[-2] or previous_families[-1] != family:
+        return layout_id
+
+    valid_layouts = set(DEFAULT_LAYOUTS["swiss modern"])
+    for candidate in layout_cycle:
+        if candidate not in valid_layouts or candidate == layout_id:
+            continue
+        if _swiss_component_family(spec["role"], candidate) != family:
+            return candidate
+    return layout_id
+
+
+def _enterprise_component_family(role: str, layout_id: str) -> str:
+    if layout_id == "kpi_dashboard":
+        if role in {"cover", "hook"}:
+            return "cover-dashboard"
+        return "story-dashboard"
+    if layout_id == "comparison_matrix" and role in {"feature", "features", "interaction"}:
+        return "feature-grid"
+    return {
+        "consulting_split": "split",
+        "contrast_split": "contrast",
+        "data_table": "table",
+        "architecture_map": "architecture",
+        "comparison_matrix": "matrix",
+        "insight_pull": "insight",
+        "timeline": "timeline",
+        "cta_close": "cta",
+    }.get(layout_id, layout_id)
+
+
+def _layout_component_family(preset: str, role: str, layout_id: str) -> str:
+    normalized = _normalize_preset_name(preset)
+    if normalized == "swiss modern":
+        return _swiss_component_family(role, layout_id)
+    if normalized == "enterprise dark":
+        return _enterprise_component_family(role, layout_id)
+    if normalized == "data story":
+        if layout_id in {"kpi_chart", "kpi_grid", "hero_number"}:
+            return "stat"
+        if layout_id == "workflow_chart":
+            return "workflow"
+        if layout_id == "chart_insight":
+            return "chart"
+        if layout_id == "comparison_matrix":
+            return "matrix"
+        if layout_id == "cta_close":
+            return "cta"
+    if normalized == "blue sky":
+        return {
+            "cover": "hero",
+            "chapter": "chapter",
+            "comparison": "comparison",
+            "workflow": "workflow",
+            "table": "table",
+            "bento": "bento",
+            "closing": "cta",
+        }.get(layout_id, layout_id)
+    return layout_id
+
+
+def _data_story_visual_signature(spec: dict[str, Any], layout_id: str) -> str:
+    role = str(spec.get("role") or "").strip()
+    family = str(spec.get("preferred_layout_family") or spec.get("visual_intent") or spec.get("visual") or "").strip().lower()
+    if layout_id in {"hero_number", "kpi_chart", "kpi_grid"}:
+        return "stat"
+    if layout_id == "comparison_matrix":
+        return "matrix"
+    if layout_id == "cta_close":
+        return "cta"
+    if layout_id == "workflow_chart":
+        if role == "workflow" or family == "timeline":
+            return "workflow-timeline"
+        return "workflow-flow"
+    if layout_id == "chart_insight":
+        if role == "interaction":
+            return "interaction-panel"
+        if role in {"validation", "evidence", "proof"}:
+            return "evidence-ladder"
+        if role == "use-cases":
+            return "phase-timeline"
+        if role in {"content-routing", "solution"} or family in {"three-things", "flow"}:
+            return "flow-map"
+        if role in {"design-philosophy", "architecture"} or family in {"architecture-map"}:
+            return "signal-map"
+        if role in {"pain-solution", "problem", "risk"} or family in {"comparison"}:
+            return "signal-bars"
+        return "signal-bars"
+    return layout_id
+
+
+def _avoid_component_runs(
+    spec: dict[str, Any],
+    layout_id: str,
+    previous_families: list[str],
+    layout_cycle: list[str],
+    *,
+    preset: str,
+) -> str:
+    family = _layout_component_family(preset, spec["role"], layout_id)
+    if not previous_families or previous_families[-1] != family:
+        return layout_id
+
+    valid_layouts = set(layout_cycle)
+    for candidate in layout_cycle:
+        if candidate not in valid_layouts or candidate == layout_id:
+            continue
+        if _layout_component_family(preset, spec["role"], candidate) != family:
+            return candidate
+    return layout_id
+
+
+def _semantic_layout_candidates(
+    spec: dict[str, Any],
+    *,
+    usage_rules: dict[str, Any],
+    layout_cycle: list[str],
+) -> list[str]:
+    family_map = usage_rules.get("layout_family_map", {})
+    preferred_family = str(spec.get("preferred_layout_family") or "").strip().lower()
+    visual_family = str(spec.get("visual_intent") or spec.get("visual") or "").strip().lower()
+    role = str(spec.get("role") or "").strip().lower()
+    facts = [str(item).strip() for item in spec.get("supporting_facts", []) if str(item).strip()]
+    blob_values = [
+        role,
+        str(spec.get("title") or ""),
+        str(spec.get("claim") or ""),
+        str(spec.get("key_point") or ""),
+        visual_family,
+        *facts,
+    ]
+    blob = _semantic_blob(*blob_values)
+    header_blob = _semantic_blob(
+        role,
+        str(spec.get("title") or ""),
+        str(spec.get("claim") or ""),
+        str(spec.get("key_point") or ""),
+        preferred_family,
+        visual_family,
+    )
+    identity_blob = _semantic_blob(
+        role,
+        str(spec.get("title") or ""),
+        preferred_family,
+        visual_family,
+    )
+    hero_signal = role in {"cover", "hook", "hero"} or preferred_family in {"hero", "cover"} or visual_family in {"hero", "cover"}
+    family_key = lambda value: re.sub(r"[\s_]+", "-", str(value).strip().lower())
+    has_mapped_explicit_family = any(
+        family_map.get(family_key(value)) in layout_cycle
+        for value in (preferred_family, visual_family)
+        if value
+    )
+    feature_grid_signal = (
+        preferred_family in {"feature-grid", "grid"}
+        or visual_family in {"feature-grid", "feature grid", "grid"}
+        or re.search(r"feature grid|capabilities|功能|特性", header_blob, re.IGNORECASE)
+    )
+
+    keys: list[str] = []
+    if preferred_family:
+        keys.append(preferred_family)
+    if visual_family and visual_family != preferred_family:
+        keys.append(visual_family)
+
+    if hero_signal:
+        keys.insert(0, "hero")
+    if any(token in f"{role} {preferred_family} {visual_family}" for token in ("close", "closing", "cta", "getting-started")):
+        keys.insert(0, "close")
+    if _has_before_after_signal(*blob_values):
+        keys.insert(0, "before-after")
+    if _has_progression_signal(*blob_values):
+        keys.append("timeline")
+    if re.search(r"architecture|system|map|架构|系统|地图", blob, re.IGNORECASE):
+        keys.append("architecture-map")
+
+    structured_facts = [item for item in facts if any(sep in item for sep in (" — ", " – ", " - ", "：", ":"))]
+    catalog_signal = bool(
+        re.search(r"catalog|inventory|preset|matrix|目录|清单|预设|矩阵", header_blob, re.IGNORECASE)
+        or (len(facts) >= 5 and not re.search(r"feature|capabilit|功能|特性", header_blob, re.IGNORECASE))
+    )
+    explicit_evidence_signal = (
+        preferred_family in {"evidence", "table", "data", "proof"}
+        or visual_family in {"evidence", "table", "data", "proof"}
+        or bool(re.search(r"validation|evidence|proof|验证|校验|证据", identity_blob, re.IGNORECASE))
+    )
+    strong_evidence_signal = (
+        explicit_evidence_signal
+        or (catalog_signal and not hero_signal and not feature_grid_signal and not has_mapped_explicit_family)
+    )
+    evidence_signal = (
+        strong_evidence_signal
+        or catalog_signal
+        or re.search(r"validation|validate|evidence|proof|验证|校验|证据", blob, re.IGNORECASE)
+        or len(structured_facts) >= 3
+    )
+    if strong_evidence_signal:
+        if "before-after" in keys or "close" in keys or "hero" in keys:
+            keys.append("evidence")
+        else:
+            keys.insert(0, "evidence")
+    elif evidence_signal:
+        keys.append("evidence")
+    if feature_grid_signal:
+        keys.append("feature-grid")
+    flow_signal = (
+        preferred_family in {"flow", "workflow"}
+        or visual_family in {"flow", "workflow"}
+        or role in {"content-routing", "use-cases"}
+        or re.search(r"workflow|routing|use case|流程|路由", blob, re.IGNORECASE)
+    )
+    if flow_signal:
+        if (
+            not has_mapped_explicit_family
+            or preferred_family in {"three-things", "flow", "workflow"}
+            or visual_family in {"three-things", "three anchors", "flow", "workflow"}
+        ) and (role in {"content-routing", "use-cases"} or preferred_family in {"flow", "workflow"} or visual_family in {"flow", "workflow"}):
+            keys.insert(0, "flow")
+        else:
+            keys.append("flow")
+
+    candidates: list[str] = []
+    for key in keys:
+        normalized_key = family_key(key)
+        layout = family_map.get(normalized_key)
+        if layout in layout_cycle and layout not in candidates:
+            candidates.append(layout)
+    return candidates
+
+
+def _spec_for_candidate_layout(
+    spec: dict[str, Any],
+    layout_id: str,
+    *,
+    preset: str,
+    usage_rules: dict[str, Any],
+    language: str,
+) -> dict[str, Any]:
+    candidate = {**spec, "layout_id": layout_id}
+    visual_family = str(candidate.get("visual_intent") or candidate.get("visual") or "").strip().lower()
+    preferred_family = str(candidate.get("preferred_layout_family") or "").strip().lower()
+    if _normalize_preset_name(preset) == "enterprise dark":
+        if layout_id == "kpi_dashboard" and _should_use_enterprise_story_dashboard(candidate, preset=preset, language=language):
+            candidate["_skip_numeric_signal_check"] = True
+        if (
+            layout_id == "comparison_matrix"
+            and (
+                preferred_family in {"feature-grid", "grid"}
+                or visual_family in {"feature-grid", "feature grid", "grid"}
+                or re.search(r"feature grid|capabilities|功能|特性", _semantic_blob(candidate["role"], candidate["title"], candidate["key_point"], visual_family), re.IGNORECASE)
+            )
+        ):
+            candidate["_skip_comparison_signal_check"] = True
+    return candidate
+
+
+def _choose_rhythm_layout(
+    spec: dict[str, Any],
+    initial_layout: str,
+    *,
+    preset: str,
+    usage_rules: dict[str, Any],
+    layout_cycle: list[str],
+    previous_families: list[str],
+    language: str,
+) -> str:
+    semantic_candidates = _semantic_layout_candidates(spec, usage_rules=usage_rules, layout_cycle=layout_cycle)
+    candidates = list(semantic_candidates)
+    role_specific_layout = _layout_map_for_preset(preset).get(spec["role"])
+    if role_specific_layout in layout_cycle:
+        candidates.append(role_specific_layout)
+    if initial_layout in layout_cycle:
+        candidates.append(initial_layout)
+    candidates = _dedupe_preserve(candidates)
+    if not candidates:
+        candidates = [initial_layout]
+
+    family_key = lambda value: re.sub(r"[\s_]+", "-", str(value).strip().lower())
+    preferred_family = str(spec.get("preferred_layout_family") or "").strip().lower()
+    visual_family = str(spec.get("visual_intent") or spec.get("visual") or "").strip().lower()
+    has_mapped_explicit_family = any(
+        usage_rules.get("layout_family_map", {}).get(family_key(value)) in layout_cycle
+        for value in (preferred_family, visual_family)
+        if value
+    )
+    initial_is_role_specific = role_specific_layout == initial_layout
+    if (
+        _normalize_preset_name(preset) == "blue sky"
+        and role_specific_layout in layout_cycle
+        and not has_mapped_explicit_family
+    ):
+        candidates = _dedupe_preserve([role_specific_layout, *semantic_candidates, initial_layout])
+    if _normalize_preset_name(preset) == "blue sky":
+        locked_layout = BLUE_SKY_ROLE_LOCKED_LAYOUTS.get(spec["role"])
+        if locked_layout in layout_cycle:
+            return locked_layout
+    if _normalize_preset_name(preset) == "swiss modern":
+        locked_layout = SWISS_ROLE_LOCKED_LAYOUTS.get(spec["role"])
+        if locked_layout in layout_cycle:
+            return locked_layout
+
+    best_layout = initial_layout
+    best_spec = spec
+    best_score = -10_000
+    for rank, candidate_layout in enumerate(candidates):
+        candidate_spec = _spec_for_candidate_layout(
+            spec,
+            candidate_layout,
+            preset=preset,
+            usage_rules=usage_rules,
+            language=language,
+        )
+        resolved = _resolve_layout_with_usage_rules(
+            candidate_spec,
+            candidate_layout,
+            usage_rules=usage_rules,
+            allowed_layouts=layout_cycle,
+        )
+        resolved_spec = _spec_for_candidate_layout(
+            candidate_spec,
+            resolved,
+            preset=preset,
+            usage_rules=usage_rules,
+            language=language,
+        )
+        family = _layout_component_family(preset, spec["role"], resolved)
+        score = 40 - rank * 5
+        if resolved != candidate_layout:
+            score -= 10
+        if resolved == initial_layout and not semantic_candidates:
+            score += 2
+        elif candidate_layout == initial_layout and semantic_candidates and initial_layout not in semantic_candidates:
+            score -= 4
+        if resolved == initial_layout and initial_is_role_specific and not has_mapped_explicit_family:
+            score += 10
+        if previous_families and family == previous_families[-1]:
+            score -= 12
+        if family in previous_families[-2:]:
+            score -= 3
+        if score > best_score:
+            best_score = score
+            best_layout = resolved
+            best_spec = resolved_spec
+
+    for key in ("_skip_numeric_signal_check", "_skip_comparison_signal_check"):
+        if best_spec.get(key):
+            spec[key] = best_spec[key]
+        else:
+            spec.pop(key, None)
+    return best_layout
+
+
 def _slide_claim(slide: dict[str, Any]) -> str:
     return str(slide.get("claim") or slide.get("title") or "").strip()
 
@@ -1299,6 +1803,21 @@ def _has_comparison_signal(*values: str) -> bool:
     return any(re.search(pattern, blob, re.IGNORECASE) for pattern in patterns)
 
 
+def _has_before_after_signal(*values: str) -> bool:
+    """Detect before/after or pain/solution contrast signals in slide content."""
+    blob = _semantic_blob(*values)
+    patterns = [
+        r"before.*after",
+        r"之前.*之后",
+        r"痛点.*方案",
+        r"pain.*solution",
+        r"现状.*改变",
+        r"before.*comparison",
+        r"after.*comparison",
+    ]
+    return any(re.search(pattern, blob, re.IGNORECASE) for pattern in patterns)
+
+
 def _has_progression_signal(*values: str) -> bool:
     blob = _semantic_blob(*values)
     patterns = [
@@ -1306,7 +1825,6 @@ def _has_progression_signal(*values: str) -> bool:
         r"最后",
         r"阶段",
         r"里程碑",
-        r"路径",
         r"个月",
         r"周期",
         r"逐步",
@@ -1327,6 +1845,14 @@ def _safe_preset_tier(preset: str) -> str:
         return "custom"
 
 
+def _render_capability_or_raise(preset: str):
+    capability = get_preset_render_capability(preset)
+    if capability.can_render:
+        return capability
+    payload = capability.render_error_payload()
+    raise RenderError(capability.user_message, payload=payload)
+
+
 def build_render_packet(
     brief: dict[str, Any],
     *,
@@ -1336,8 +1862,9 @@ def build_render_packet(
     if errors:
         raise BriefValidationError("\n".join(errors))
 
-    style_contract = style_contract or compile_style_contract(brief["style"]["preset"])
     preset = brief["style"]["preset"]
+    capability = _render_capability_or_raise(preset)
+    style_contract = style_contract or compile_style_contract(preset)
     deck_type = brief["deck"]["deck_type"]
     page_count = brief["deck"]["page_count"]
     normalized = _normalize_preset_name(preset)
@@ -1370,6 +1897,8 @@ def build_render_packet(
             "style-signature",
             "shell-ui-markers",
         ]
+        if capability.renderer_strategy == "reference_driven":
+            required_contracts.append("reference-driven-generation")
 
     fallback_policy = {
         "tier0": "full-preset-contract",
@@ -1381,9 +1910,14 @@ def build_render_packet(
         "brief_hash": _sha256_text(_canonical_json(brief)),
         "generator": "kai-slide-creator",
         "generator_version": _skill_version(),
-        "render_path": _canonical_render_path(preset),
+        "render_path": "reference-driven-agent" if capability.renderer_strategy == "reference_driven" else _canonical_render_path(preset),
         "preset": preset,
         "preset_support_tier": _safe_preset_tier(preset),
+        "preset_generation_status": capability.generation_status,
+        "preset_recommendation_status": capability.recommendation_status,
+        "renderer_strategy": capability.renderer_strategy,
+        "can_render": capability.can_render,
+        "can_recommend": capability.can_recommend,
         "deck_type": deck_type,
         "page_count": page_count,
         "composition_source": composition_source,
@@ -1564,6 +2098,12 @@ def _brand_mark_text(title: str, preset: str) -> str:
     normalized_title = re.sub(r"\s+", " ", title or "").strip()
     if not normalized_title:
         return preset
+    prefix = re.split(r"[:：]", normalized_title, maxsplit=1)[0].strip()
+    if prefix and prefix != normalized_title:
+        compact_prefix = re.sub(r"\s+", "", prefix)
+        prefix_limit = 18 if re.search(r"[\u3400-\u9fff]", compact_prefix) else 28
+        if len(compact_prefix) <= prefix_limit:
+            return prefix
     compact = re.sub(r"\s+", "", normalized_title)
     limit = 18 if re.search(r"[\u3400-\u9fff]", compact) else 28
     if len(compact) <= limit:
@@ -1649,19 +2189,41 @@ def _layout_requirement_failure(
     if layout_rules.get("disallow_chart_policy_avoid") and spec.get("chart_policy") == "avoid":
         return "chart-policy-avoid"
 
+    # Fix C: check numeric signal for kpi_dashboard
+    if layout_rules.get("require_numeric_signal"):
+        # Skip check if story dashboard already determined this slide should use story cards
+        if not spec.get("_skip_numeric_signal_check"):
+            # Check if spec has any numbers, not using _metric_values_from_spec(fallback=[])
+            # which incorrectly returns empty when fallback=[]
+            if not _spec_explicit_numbers(spec):
+                return "missing-numeric-signal"
+
     minimum_numeric_count = int(layout_rules.get("minimum_numeric_count", 3))
     if layout_rules.get("require_local_numeric_signal"):
         if not _chart_metric_values_from_spec(spec, ["0"] * minimum_numeric_count):
             return "missing-local-numeric-signal"
 
     if layout_rules.get("require_comparison_signal"):
-        comparison_exempt_roles = {"feature", "features", "best-fit"}
-        if spec["role"] not in comparison_exempt_roles and not _has_comparison_signal(
-            spec["claim"],
-            spec["key_point"],
-            spec["visual_intent"],
-            *spec["supporting_facts"],
-            *spec["supporting_items"],
+        comparison_exempt_roles = {
+            "feature",
+            "features",
+            "best-fit",
+            *usage_rules.get("comparison_signal_exempt_roles", []),
+        }
+        comparison_exempt_families = set(usage_rules.get("comparison_signal_exempt_preferred_families", []))
+        preferred_family = str(spec.get("preferred_layout_family") or "").strip().lower()
+        if (
+            not spec.get("_skip_comparison_signal_check")
+            and
+            spec["role"] not in comparison_exempt_roles
+            and preferred_family not in comparison_exempt_families
+            and not _has_comparison_signal(
+                spec["claim"],
+                spec["key_point"],
+                spec["visual_intent"],
+                *spec["supporting_facts"],
+                *spec["supporting_items"],
+            )
         ):
             return "missing-comparison-signal"
 
@@ -1677,6 +2239,16 @@ def _layout_requirement_failure(
     if layout_rules.get("require_supporting_facts"):
         if not spec.get("supporting_facts") and not spec.get("evidence_items"):
             return "missing-supporting-facts"
+
+    if layout_rules.get("require_before_after_signal") and not _has_before_after_signal(
+        spec["role"],
+        spec["claim"],
+        spec["key_point"],
+        spec["visual_intent"],
+        *spec["supporting_facts"],
+        *spec["supporting_items"],
+    ):
+        return "missing-before-after-signal"
 
     if layout_rules.get("require_compact_anchor"):
         claim = spec["claim"].strip() or spec["title"]
@@ -1734,16 +2306,30 @@ def build_slide_spec(brief: dict[str, Any], packet: dict[str, Any] | None = None
     usage_rules = _preset_usage_rules(preset)
     allowed_layouts = packet["allowed_layouts"] or DEFAULT_LAYOUTS.get(normalized_preset, [])
     layout_cycle = allowed_layouts or ["default"]
+    rhythm_scheduler_enabled = bool(usage_rules.get("layout_family_map")) and normalized_preset in {
+        "blue sky",
+        "swiss modern",
+        "enterprise dark",
+        "data story",
+    }
     if normalized_preset == "blue sky":
         layout_cycle = allowed_layouts or layout_cycle
     elif quality_tier == "tier1":
-        layout_cycle = allowed_layouts[:4] or layout_cycle
+        # Production presets get full layout cycle; experimental presets stay conservative
+        support_tier = packet.get("preset_support_tier", "experimental")
+        if support_tier == "production":
+            layout_cycle = allowed_layouts or layout_cycle
+        else:
+            layout_cycle = allowed_layouts[:4] or layout_cycle
     elif quality_tier == "tier2":
         preferred = [layout for layout in ("title_grid", "column_content", "contents_index", "pull_quote") if layout in allowed_layouts]
         layout_cycle = preferred or (allowed_layouts[:3] or layout_cycle)
 
     specs: list[dict[str, Any]] = []
     previous_layouts: list[str] = []
+    previous_rhythm_families: list[str] = []
+    previous_data_story_signatures: list[str] = []
+    previous_swiss_families: list[str] = []
     evidence_usage: dict[str, int] = {}
     for index, slide in enumerate(brief["narrative"]["slides"], start=1):
         role = slide["role"]
@@ -1756,6 +2342,8 @@ def build_slide_spec(brief: dict[str, Any], packet: dict[str, Any] | None = None
         numeric_facts = _slide_numeric_facts(slide)
 
         preferred_layout = _preferred_layout_from_family(preferred_layout_family, usage_rules, layout_cycle)
+        if normalized_preset == "data story" and role == "solution":
+            preferred_layout = None
         layout_id = preferred_layout or role_layouts.get(role)
         if layout_id not in layout_cycle:
             layout_id = _canonical_layout_for_role(role, layout_cycle, preset)
@@ -1764,7 +2352,11 @@ def build_slide_spec(brief: dict[str, Any], packet: dict[str, Any] | None = None
         elif quality_tier == "tier2":
             layout_id = preferred_layout or role_layouts.get(role)
             if layout_id not in layout_cycle:
-                layout_id = _canonical_layout_for_role(role, layout_cycle, preset)
+                # For Enterprise Dark: allow role-mapped layouts from allowed_layouts
+                if preset == "Enterprise Dark" and layout_id in allowed_layouts:
+                    pass  # keep role-mapped layout
+                else:
+                    layout_id = _canonical_layout_for_role(role, layout_cycle, preset)
 
         evidence_limit = 3 if quality_tier == "tier0" else 2
         candidate_fact_pool = _build_candidate_fact_pool(slide, brief)
@@ -1815,26 +2407,88 @@ def build_slide_spec(brief: dict[str, Any], packet: dict[str, Any] | None = None
             "chart_policy": chart_policy,
             "quality_tier": quality_tier,
         }
+        if rhythm_scheduler_enabled:
+            spec["layout_id"] = _choose_rhythm_layout(
+                spec,
+                spec["layout_id"],
+                preset=preset,
+                usage_rules=usage_rules,
+                layout_cycle=layout_cycle,
+                previous_families=previous_rhythm_families,
+                language=brief["language"],
+            )
+            layout_id = spec["layout_id"]
+        # Fix C prerequisite: check story dashboard BEFORE layout requirement failure
+        # If story dashboard triggers, skip numeric signal requirement for kpi_dashboard
+        if normalized_preset == "enterprise dark" and spec["layout_id"] == "kpi_dashboard":
+            if _should_use_enterprise_story_dashboard(spec, preset=preset, language=brief["language"]):
+                spec["dashboard_mode"] = "story"
+                spec["_skip_numeric_signal_check"] = True  # marker for _layout_requirement_failure
+        if (
+            normalized_preset == "enterprise dark"
+            and spec["layout_id"] == "comparison_matrix"
+            and role in {"feature", "features", "interaction"}
+            and preferred_layout_family == "feature-grid"
+        ):
+            spec["_skip_comparison_signal_check"] = True
+
+        # Detect before/after contrast signal and route to contrast_split
+        if spec["layout_id"] in ("comparison_matrix", "consulting_split"):
+            if _has_before_after_signal(spec["role"], spec["title"], claim, explanation, visual_intent):
+                if "contrast_split" in layout_cycle:
+                    spec["layout_id"] = "contrast_split"
         spec["layout_id"] = _resolve_layout_with_usage_rules(
             spec,
             spec["layout_id"],
             usage_rules=usage_rules,
             allowed_layouts=layout_cycle,
         )
-        spec["layout_id"] = _avoid_long_layout_runs(spec["layout_id"], previous_layouts, layout_cycle)
-        spec["layout_id"] = _resolve_layout_with_usage_rules(
-            spec,
-            spec["layout_id"],
-            usage_rules=usage_rules,
-            allowed_layouts=layout_cycle,
-        )
+        if normalized_preset == "swiss modern":
+            spec["layout_id"] = _avoid_swiss_component_runs(
+                spec,
+                spec["layout_id"],
+                previous_swiss_families,
+                layout_cycle,
+            )
+        elif normalized_preset == "enterprise dark":
+            pass
+        elif normalized_preset == "data story":
+            spec["layout_id"] = _avoid_data_story_long_layout_runs(spec, spec["layout_id"], previous_layouts, layout_cycle)
+            spec["layout_id"] = _avoid_data_story_component_runs(
+                spec,
+                spec["layout_id"],
+                previous_rhythm_families,
+                layout_cycle,
+                previous_signatures=previous_data_story_signatures,
+            )
+        else:
+            spec["layout_id"] = _avoid_long_layout_runs(spec["layout_id"], previous_layouts, layout_cycle)
+        if normalized_preset == "enterprise dark":
+            spec.pop("_skip_comparison_signal_check", None)
+        # Removed second _resolve_layout_with_usage_rules call to prevent overriding diversity adjustment
+        # The first resolve + avoid_long_layout_runs already handles all constraints
         specs.append(spec)
         previous_layouts.append(spec["layout_id"])
+        if rhythm_scheduler_enabled:
+            previous_rhythm_families.append(_layout_component_family(preset, spec["role"], spec["layout_id"]))
+        if normalized_preset == "data story":
+            previous_data_story_signatures.append(_data_story_visual_signature(spec, spec["layout_id"]))
+        if normalized_preset == "swiss modern":
+            previous_swiss_families.append(_swiss_component_family(spec["role"], spec["layout_id"]))
 
     if _normalize_preset_name(brief["style"]["preset"]) == "enterprise dark":
         language = brief["language"]
         for index, spec in enumerate(specs):
-            if _should_use_enterprise_story_dashboard(spec, preset=brief["style"]["preset"], language=language):
+            # Skip if already determined in the main loop
+            if spec.get("dashboard_mode") == "story":
+                # Clean up internal marker
+                spec.pop("_skip_numeric_signal_check", None)
+                # Set remaining story dashboard fields
+                if "dashboard_label" not in spec:
+                    spec["dashboard_label"] = _enterprise_role_badge(spec["role"], language)
+                if "dashboard_items" not in spec:
+                    spec["dashboard_items"] = _build_enterprise_story_items(specs, index, language=language)
+            elif _should_use_enterprise_story_dashboard(spec, preset=brief["style"]["preset"], language=language):
                 spec["dashboard_mode"] = "story"
                 spec["dashboard_label"] = _enterprise_role_badge(spec["role"], language)
                 spec["dashboard_items"] = _build_enterprise_story_items(specs, index, language=language)
@@ -2404,10 +3058,11 @@ body.presenting {{
 
 body.presenting .slide {{
     position: fixed !important;
-    inset: 0;
-    width: 100vw !important;
-    height: 100vh !important;
-    transform-origin: center center;
+    top: 0;
+    left: 0;
+    width: 1440px !important;
+    height: 900px !important;
+    transform-origin: top left;
     scroll-snap-align: none !important;
     display: none !important;
 }}
@@ -2426,7 +3081,7 @@ body.presenting.presenting-black::after {{
 
 .slide-num-label {{
     position: absolute;
-    right: 28px;
+    right: 84px;
     bottom: 24px;
     font-size: 11px;
     letter-spacing: 0.12em;
@@ -2681,6 +3336,8 @@ def _compact_display_candidates(text: str, *, fallback: str) -> list[str]:
         _add("90/9/1")
 
     semantic_pairs = [
+        (r"\bBRIEF\.json\b", "BRIEF"),
+        (r"\bHTML\b", "HTML"),
         (r"\bTOIS\b", "TOIS"),
         (r"L1-L4", "L1-L4"),
         (r"\bERP\b", "ERP"),
@@ -2814,6 +3471,13 @@ def _spec_detail_pairs(spec: dict[str, Any], *, count: int = 4) -> list[tuple[st
     return pairs
 
 
+def _swiss_table_cell(value: str, *, max_chars: int = 72) -> str:
+    cleaned = re.sub(r"\s+", " ", value or "").strip()
+    if len(cleaned) <= max_chars:
+        return cleaned
+    return cleaned[: max_chars - 3].rstrip(" ,，、;；:：-—") + "..."
+
+
 def _metric_value_for_item(
     item: str,
     spec: dict[str, Any],
@@ -2836,16 +3500,19 @@ def _metric_value_for_item(
             return "90/9/1"
         return direct_numbers[0]
 
+    evidence_numbers = _dedupe_preserve(_extract_numbers(" ".join(spec["evidence_items"])))
+    if numeric_only:
+        if evidence_numbers:
+            return evidence_numbers[min(index, len(evidence_numbers) - 1)]
+        return str(index + 1)
+
     compact = _compact_display_token(item, fallback=str(index + 1), used_tokens=used_tokens)
     if compact not in {"关键", str(index + 1)}:
         return compact
     if explicit_numbers:
         return explicit_numbers[min(index, len(explicit_numbers) - 1)]
-    evidence_numbers = _dedupe_preserve(_extract_numbers(" ".join(spec["evidence_items"])))
     if evidence_numbers:
         return evidence_numbers[min(index, len(evidence_numbers) - 1)]
-    if numeric_only:
-        return str(index + 1)
     return compact
 
 
@@ -2871,6 +3538,22 @@ def _is_weak_chart_label(label: str) -> bool:
     return len(semantic_chars) < 2
 
 
+def _compact_chart_axis_label(item: str, candidate: str, *, fallback: str) -> str:
+    if _title_visual_units(candidate) <= 12 and not re.search(r"[→—–]", candidate):
+        return candidate
+
+    segments = re.split(r"\s*(?:→|—|–|->|:|：)\s*", item)
+    for segment in segments:
+        token = _compact_display_token(segment, fallback=fallback)
+        if not _is_weak_chart_label(token) and _title_visual_units(token) <= 12 and not re.search(r"[→—–]", token):
+            return token
+
+    token = _compact_display_token(candidate, fallback=fallback)
+    if not _is_weak_chart_label(token) and _title_visual_units(token) <= 12 and not re.search(r"[→—–]", token):
+        return token
+    return fallback
+
+
 def _chart_labels_from_spec(spec: dict[str, Any], *, count: int = 4, family: str = "alpha") -> list[str]:
     defaults = _sequence_labels(count, family=family)
     labels: list[str] = []
@@ -2881,6 +3564,7 @@ def _chart_labels_from_spec(spec: dict[str, Any], *, count: int = 4, family: str
             candidate = _compact_display_token(_strip_chart_label_prefix(item), fallback=fallback)
         if _is_weak_chart_label(candidate):
             candidate = fallback
+        candidate = _compact_chart_axis_label(item, candidate, fallback=fallback)
         labels.append(candidate)
     if len(labels) >= count:
         return labels[:count]
@@ -2968,6 +3652,202 @@ def _svg_line_chart(labels: list[str], values: list[str]) -> str:
     )
 
 
+def _svg_signal_map(spec: dict[str, Any], *, count: int = 4, family: str = "signal") -> str:
+    labels = _chart_labels_from_spec(spec, count=count, family=family)
+    positions = [(48, 112), (120, 58), (200, 58), (272, 112)]
+    positions = positions[:count]
+    if len(positions) < len(labels):
+        labels = labels[: len(positions)]
+    path = " ".join(f"{'M' if index == 0 else 'L'} {x} {y}" for index, (x, y) in enumerate(positions))
+    nodes = []
+    tone_classes = ["", "secondary", "tertiary", "secondary"]
+    for index, ((x, y), label) in enumerate(zip(positions, labels)):
+        tone = tone_classes[index] if index < len(tone_classes) else ""
+        nodes.append(
+            f'<circle cx="{x}" cy="{y}" r="28" class="ds-signal-node {tone}"></circle>'
+            f'<text x="{x}" y="{y}" class="ds-signal-label">{_escape(label)}</text>'
+        )
+    return (
+        '<svg viewBox="0 0 320 188" class="ds-chart-svg ds-signal-map" role="img" aria-label="signal map">'
+        '<line x1="24" y1="150" x2="296" y2="150" class="chart-axis"></line>'
+        '<line x1="24" y1="42" x2="296" y2="42" class="chart-grid"></line>'
+        '<line x1="24" y1="96" x2="296" y2="96" class="chart-grid"></line>'
+        f'<path d="{path}" class="ds-signal-link"></path>'
+        + "".join(nodes)
+        + "</svg>"
+    )
+
+
+def _svg_signal_bars(spec: dict[str, Any], *, count: int = 4) -> str:
+    labels = _chart_labels_from_spec(spec, count=count)
+    widths = [158, 134, 110, 88]
+    rows = []
+    for index, label in enumerate(labels):
+        y = 34 + index * 34
+        tone = "" if index == 0 else ("secondary" if index == 1 else ("tertiary" if index == 2 else ""))
+        rows.append(
+            f'<text x="32" y="{y + 8}" class="ds-svg-label">{_escape(label)}</text>'
+            f'<rect x="128" y="{y}" width="158" height="16" rx="8" class="ds-bar-track"></rect>'
+            f'<rect x="128" y="{y}" width="{widths[index]}" height="16" rx="8" class="ds-bar-fill {tone}"></rect>'
+        )
+    return (
+        '<svg viewBox="0 0 320 188" class="ds-chart-svg ds-signal-bars" role="img" aria-label="signal bars">'
+        '<line x1="118" y1="24" x2="118" y2="164" class="chart-axis"></line>'
+        '<line x1="128" y1="164" x2="288" y2="164" class="chart-axis"></line>'
+        + "".join(rows)
+        + "</svg>"
+    )
+
+
+def _svg_flow_map(spec: dict[str, Any], *, count: int = 4) -> str:
+    labels = _chart_labels_from_spec(spec, count=count, family="workflow")
+    positions = [(42, 104), (118, 62), (202, 104), (278, 62)]
+    positions = positions[: len(labels)]
+    path = " ".join(f"{'M' if index == 0 else 'L'} {x} {y}" for index, (x, y) in enumerate(positions))
+    nodes = []
+    tone_classes = ["", "secondary", "tertiary", ""]
+    for index, ((x, y), label) in enumerate(zip(positions, labels), start=1):
+        tone = tone_classes[index - 1] if index - 1 < len(tone_classes) else ""
+        nodes.append(
+            f'<circle cx="{x}" cy="{y}" r="24" class="ds-flow-node {tone}"></circle>'
+            f'<text x="{x}" y="{y}" class="ds-svg-label" text-anchor="middle">{index}</text>'
+            f'<text x="{x}" y="{y + 42}" class="ds-svg-muted" text-anchor="middle">{_escape(label)}</text>'
+        )
+    return (
+        '<svg viewBox="0 0 320 188" class="ds-chart-svg ds-flow-map" role="img" aria-label="flow map">'
+        '<line x1="24" y1="150" x2="296" y2="150" class="chart-axis"></line>'
+        '<line x1="24" y1="42" x2="296" y2="42" class="chart-grid"></line>'
+        f'<path d="{path}" class="ds-flow-path"></path>'
+        + "".join(nodes)
+        + "</svg>"
+    )
+
+
+def _svg_phase_timeline(spec: dict[str, Any], *, count: int = 4, aria_label: str = "phase timeline") -> str:
+    labels = _chart_labels_from_spec(spec, count=count, family="workflow")
+    positions = [(42, 98), (118, 98), (202, 98), (278, 98)]
+    positions = positions[: len(labels)]
+    nodes = []
+    tone_classes = ["", "secondary", "tertiary", ""]
+    for index, ((x, y), node_label) in enumerate(zip(positions, labels), start=1):
+        tone = tone_classes[index - 1] if index - 1 < len(tone_classes) else ""
+        nodes.append(
+            f'<line x1="{x}" y1="56" x2="{x}" y2="142" class="chart-grid"></line>'
+            f'<circle cx="{x}" cy="{y}" r="22" class="ds-flow-node {tone}"></circle>'
+            f'<text x="{x}" y="{y}" class="ds-svg-label" text-anchor="middle">{index}</text>'
+            f'<text x="{x}" y="154" class="ds-svg-muted" text-anchor="middle">{_escape(node_label)}</text>'
+        )
+    return (
+        f'<svg viewBox="0 0 320 188" class="ds-chart-svg ds-phase-timeline" role="img" aria-label="{_escape(aria_label)}">'
+        '<line x1="24" y1="98" x2="296" y2="98" class="chart-axis"></line>'
+        '<line x1="24" y1="42" x2="296" y2="42" class="chart-grid"></line>'
+        + "".join(nodes)
+        + "</svg>"
+    )
+
+
+def _svg_evidence_ladder(spec: dict[str, Any], *, count: int = 4) -> str:
+    labels = _chart_labels_from_spec(spec, count=count)
+    rows = []
+    rail_x = 44
+    label_x = 292
+    widths = [110, 96, 82, 68]
+    for index, label in enumerate(labels):
+        y = 40 + index * 32
+        tone = "" if index == 0 else ("secondary" if index == 1 else ("tertiary" if index == 2 else ""))
+        rows.append(
+            f'<line x1="{rail_x}" y1="{y}" x2="{rail_x + widths[index]}" y2="{y}" class="ds-ladder-rung {tone}"></line>'
+            f'<circle cx="{rail_x}" cy="{y}" r="6" class="ds-dot"></circle>'
+            f'<text x="{label_x}" y="{y}" class="ds-svg-label" text-anchor="end">{_escape(label)}</text>'
+        )
+    return (
+        '<svg viewBox="0 0 320 188" class="ds-chart-svg ds-evidence-ladder" role="img" aria-label="evidence ladder">'
+        f'<line x1="{rail_x}" y1="28" x2="{rail_x}" y2="150" class="ds-ladder-rail"></line>'
+        '<line x1="28" y1="150" x2="292" y2="150" class="chart-axis"></line>'
+        + "".join(rows)
+        + "</svg>"
+    )
+
+
+def _svg_state_grid(spec: dict[str, Any], *, count: int = 4) -> str:
+    labels = _chart_labels_from_spec(spec, count=count)
+    positions = [(52, 42), (174, 42), (52, 104), (174, 104)]
+    cells = []
+    for index, ((x, y), label) in enumerate(zip(positions, labels)):
+        cells.append(
+            f'<rect x="{x}" y="{y}" width="94" height="44" rx="8" class="ds-state-cell {"hot" if index in (0, 3) else ""}"></rect>'
+            f'<text x="{x + 47}" y="{y + 22}" class="ds-svg-label" text-anchor="middle">{_escape(label)}</text>'
+        )
+    return (
+        '<svg viewBox="0 0 320 188" class="ds-chart-svg ds-state-grid-svg" role="img" aria-label="state grid">'
+        '<line x1="24" y1="94" x2="296" y2="94" class="chart-grid"></line>'
+        '<line x1="160" y1="24" x2="160" y2="156" class="chart-grid"></line>'
+        + "".join(cells)
+        + "</svg>"
+    )
+
+
+def _data_story_non_numeric_svg(spec: dict[str, Any]) -> str:
+    role = spec["role"]
+    family = str(spec.get("preferred_layout_family") or spec.get("visual_intent") or "").strip().lower()
+    if role == "workflow":
+        return _svg_phase_timeline(spec, count=4, aria_label="workflow timeline")
+    if family == "timeline":
+        return _svg_phase_timeline(spec, count=4)
+    if role == "use-cases":
+        return _svg_phase_timeline(spec, count=4)
+    if spec.get("layout_id") == "workflow_chart" or role in {"content-routing", "solution"} or family in {"three-things", "flow"}:
+        return _svg_flow_map(spec, count=4)
+    if role in {"validation", "evidence", "proof"}:
+        return _svg_evidence_ladder(spec, count=4)
+    if role in {"interaction"}:
+        return _svg_state_grid(spec, count=4)
+    if role in {"pain-solution", "problem", "risk"} or family in {"comparison"}:
+        return _svg_signal_bars(spec, count=4)
+    if role in {"design-philosophy", "architecture"} or family in {"architecture-map"}:
+        return _svg_signal_map(spec, count=4)
+    return _svg_signal_bars(spec, count=4)
+
+
+SWISS_BG_NUM_ROLES = {"cover", "pain-solution", "presets", "content-routing", "use-cases", "cta_close", "closing", "cta", "getting-started"}
+
+
+def _swiss_bg_num(spec: dict[str, Any]) -> str:
+    if spec["role"] not in SWISS_BG_NUM_ROLES:
+        return ""
+    return f'<div class="bg-num reveal">{int(spec["slide_number"]):02d}</div>'
+
+
+def _swiss_left_title_lines(text: str) -> list[str]:
+    normalized = _normalize_title_text(text)
+    if not normalized:
+        return []
+
+    tokens = _tokenize_title(normalized)
+    first_cjk = next((index for index, token in enumerate(tokens) if re.fullmatch(r"[\u3400-\u9fff]", token)), None)
+    if first_cjk is not None and first_cjk >= 2:
+        latin_tokens = tokens[:first_cjk]
+        cjk_tail = _join_title_tokens(tokens[first_cjk:])
+        word_tokens = [token for token in latin_tokens if re.fullmatch(r"[A-Za-z0-9][A-Za-z0-9%&+/#._:-]*", token)]
+        if len(word_tokens) >= 2 and cjk_tail:
+            return [
+                _join_title_tokens(word_tokens[:-1]),
+                word_tokens[-1],
+                cjk_tail,
+            ]
+
+    return _balance_title_lines(normalized, max_lines=3, force_balance=True)
+
+
+def _swiss_left_title_tag(tag: str, text: str, *, layout_id: str) -> str:
+    lines = _swiss_left_title_lines(text)
+    if len(lines) <= 1:
+        return _title_tag(tag, "swiss-title", text, preset="Swiss Modern", layout_id=layout_id)
+
+    markup = "".join(f'<span class="title-line">{_escape(line)}</span>' for line in lines)
+    return f'<{tag} class="swiss-title reveal title-balance">{markup}</{tag}>'
+
+
 def _render_swiss_title_grid(spec: dict[str, Any], total: int) -> str:
     slide_number = spec["slide_number"]
     title_tag = _title_tag("h1", "swiss-title", spec["title"], preset="Swiss Modern", layout_id=spec["layout_id"])
@@ -2990,7 +3870,7 @@ def _render_swiss_title_grid(spec: dict[str, Any], total: int) -> str:
         hero_stats = f'<div class="hero-stats">{"".join(stat_blocks)}</div>'
     return f"""
     <section class="slide title_grid" id="slide-{slide_number}" data-notes="{_escape(spec['speaker_note'])}" aria-label="{_escape(spec['role'])}" data-export-role="title_grid">
-        <div class="bg-num reveal">{slide_number:02d}</div>
+        {_swiss_bg_num(spec)}
         <div class="slide-content content">
             <div class="eyebrow swiss-label reveal">{_escape(spec['role'])}</div>
             <div class="hero-rule reveal"></div>
@@ -3005,12 +3885,12 @@ def _render_swiss_title_grid(spec: dict[str, Any], total: int) -> str:
 
 def _render_swiss_column_content(spec: dict[str, Any], total: int) -> str:
     slide_number = spec["slide_number"]
-    title_tag = _title_tag("h2", "swiss-title", spec["title"], preset="Swiss Modern", layout_id=spec["layout_id"])
+    title_tag = _swiss_left_title_tag("h2", spec["title"], layout_id=spec["layout_id"])
     pairs = _spec_detail_pairs(spec, count=3)
     items = "".join(
         f"""
         <div class="pain-item{' accent-border' if index == 0 else ''} reveal">
-            <div class="pain-num">{slide_number}.{index + 1}</div>
+            <div class="pain-num">{index + 1:02d}</div>
             <div class="pain-title">{_escape(title)}</div>
             <div class="pain-desc">{_escape(body)}</div>
         </div>
@@ -3019,7 +3899,7 @@ def _render_swiss_column_content(spec: dict[str, Any], total: int) -> str:
     )
     return f"""
     <section class="slide column_content" id="slide-{slide_number}" data-notes="{_escape(spec['speaker_note'])}" aria-label="{_escape(spec['role'])}" data-export-role="column_content">
-        <div class="bg-num reveal">{slide_number:02d}</div>
+        {_swiss_bg_num(spec)}
         <div class="left-panel">
             <div class="red-bar"></div>
             <div class="slide-content content">
@@ -3045,7 +3925,7 @@ def _render_swiss_stat_block(spec: dict[str, Any], total: int) -> str:
     value = emphasis.group(0) if emphasis else _compact_display_token(spec["title"], fallback="入口")
     return f"""
     <section class="slide stat_block" id="slide-{slide_number}" data-notes="{_escape(spec['speaker_note'])}" aria-label="{_escape(spec['role'])}" data-export-role="stat_block">
-        <div class="bg-num reveal">{slide_number:02d}</div>
+        {_swiss_bg_num(spec)}
         <div class="slide-content content">
             <div class="eyebrow swiss-label reveal">{_escape(spec['role'])}</div>
             <div class="stat-row reveal">
@@ -3084,7 +3964,7 @@ def _render_swiss_geometric_diagram(spec: dict[str, Any], total: int) -> str:
     diagram_labels = _chart_labels_from_spec(spec, count=3)
     return f"""
     <section class="slide geometric_diagram" id="slide-{slide_number}" data-notes="{_escape(spec['speaker_note'])}" aria-label="{_escape(spec['role'])}" data-export-role="geometric_diagram">
-        <div class="bg-num reveal">{slide_number:02d}</div>
+        {_swiss_bg_num(spec)}
         <div class="slide-content content disc-header">
             <div class="eyebrow swiss-label reveal">{_escape(spec['role'])}</div>
             {title_tag}
@@ -3116,16 +3996,45 @@ def _render_swiss_data_table(spec: dict[str, Any], total: int) -> str:
     slide_number = spec["slide_number"]
     title_tag = _title_tag("h2", "swiss-title", spec["title"], preset="Swiss Modern", layout_id=spec["layout_id"])
     pairs = _spec_detail_pairs(spec, count=3)
+    if spec["role"] in {"content-routing", "validation", "proof", "evidence"}:
+        blocks = []
+        for index, (label, body) in enumerate(pairs[:3], start=1):
+            blocks.append(
+                f"""
+                <div class="inst-block reveal">
+                    <div class="inst-label">{index:02d} / {_escape(label)}</div>
+                    <div class="inst-link">{_escape(spec['role'])}</div>
+                    <div class="swiss-body">{_escape(body)}</div>
+                </div>
+                """
+            )
+        return f"""
+    <section class="slide data_table" id="slide-{slide_number}" data-notes="{_escape(spec['speaker_note'])}" aria-label="{_escape(spec['role'])}" data-export-role="data_table">
+        {_swiss_bg_num(spec)}
+        <div class="slide-content content">
+            <div class="eyebrow swiss-label reveal">{_escape(spec['role'])}</div>
+            {title_tag}
+            <div class="inst-blocks">
+                {"".join(blocks)}
+            </div>
+        </div>
+        <span class="slide-num-label">{slide_number:02d} / {total:02d}</span>
+    </section>
+    """.strip()
+
     rows = []
     for index, (item, body) in enumerate(pairs[:3]):
         highlight = " class=\"highlight\"" if index == 0 else ""
+        signal = _swiss_table_cell(item, max_chars=58)
+        meaning = _swiss_table_cell(body, max_chars=72)
+        focus = _swiss_table_cell(_compact_display_token(item, fallback=spec["role"]), max_chars=24)
         rows.append(
-            f"<tr{highlight}><td>{_escape(item)}</td><td>{_escape(body)}</td><td>{_escape(_compact_display_token(item, fallback=spec['role']))}</td></tr>"
+            f"<tr{highlight}><td>{_escape(signal)}</td><td>{_escape(meaning)}</td><td>{_escape(focus)}</td></tr>"
         )
     rows_html = "\n".join(rows)
     return f"""
     <section class="slide data_table" id="slide-{slide_number}" data-notes="{_escape(spec['speaker_note'])}" aria-label="{_escape(spec['role'])}" data-export-role="data_table">
-        <div class="bg-num reveal">{slide_number:02d}</div>
+        {_swiss_bg_num(spec)}
         <div class="slide-content content">
             <div class="eyebrow swiss-label reveal">{_escape(spec['role'])}</div>
             {title_tag}
@@ -3156,12 +4065,33 @@ def _render_swiss_pull_quote(spec: dict[str, Any], total: int) -> str:
         layout_id=spec["layout_id"],
         extra_attrs='style="max-width:18ch;"',
     )
+    cta_html = ""
+    if spec["role"] in {"closing", "cta", "cta_close", "getting-started"}:
+        cta_lines = _balance_title_lines(spec["title"], max_lines=2, force_balance=True) or [spec["title"]]
+        cta_line_html = "".join(f'<span class="cta-line">{_escape(line)}</span>' for line in cta_lines[:2])
+        echo_items = _spec_display_items(spec, limit=2)
+        echo_html = "".join(
+            f"""
+            <div class="cta-echo">
+                <div class="cta-echo-num">{index:02d}</div>
+                <div class="cta-echo-label">{_escape(item)}</div>
+            </div>
+            """
+            for index, item in enumerate(echo_items[:2], start=1)
+        )
+        cta_html = f"""
+            <div class="cta-block reveal">
+                <div class="cta-title">{cta_line_html}</div>
+                {echo_html}
+            </div>
+        """
     return f"""
     <section class="slide pull_quote" id="slide-{slide_number}" data-notes="{_escape(spec['speaker_note'])}" aria-label="{_escape(spec['role'])}" data-export-role="pull_quote">
-        <div class="bg-num reveal">{slide_number:02d}</div>
+        {_swiss_bg_num(spec)}
         <div class="slide-content content" style="align-items:flex-start;justify-content:flex-start;padding-top:18vh;">
             <div class="eyebrow swiss-label reveal">{_escape(spec['role'])}</div>
             {quote_tag}
+            {cta_html}
             <div class="swiss-rule red reveal" style="width:120px;margin:18px 0 10px;"></div>
             <p class="swiss-body reveal">{_escape(spec['title'])}</p>
         </div>
@@ -3174,25 +4104,39 @@ def _render_swiss_contents_index(spec: dict[str, Any], total: int) -> str:
     slide_number = spec["slide_number"]
     title_tag = _title_tag("h2", "swiss-title", spec["title"], preset="Swiss Modern", layout_id=spec["layout_id"])
     pairs = _spec_detail_pairs(spec, count=3)
-    items = "".join(
-        f"""
-        <li class="index-item reveal">
-            <div class="index-num">{index + 1}</div>
-            <div>
-                <div class="index-title">{_escape(title)}</div>
-                <div class="index-desc">{_escape(body)}</div>
+    if spec["role"] in {"presets", "interaction", "use-cases", "features", "recommendation", "best-fit"}:
+        items = "".join(
+            f"""
+            <div class="feat-card reveal">
+                <div class="feat-key">{index + 1:02d}</div>
+                <div class="feat-name">{_escape(_swiss_table_cell(title, max_chars=36))}</div>
+                <div class="feat-desc">{_escape(_swiss_table_cell(body, max_chars=52))}</div>
             </div>
-        </li>
-        """
-        for index, (title, body) in enumerate(pairs[:3])
-    )
+            """
+            for index, (title, body) in enumerate(pairs[:3])
+        )
+        body_html = f'<div class="feat-grid">{items}</div>'
+    else:
+        items = "".join(
+            f"""
+            <li class="index-item reveal">
+                <div class="index-num">{index + 1}</div>
+                <div>
+                    <div class="index-title">{_escape(title)}</div>
+                    <div class="index-desc">{_escape(body)}</div>
+                </div>
+            </li>
+            """
+            for index, (title, body) in enumerate(pairs[:3])
+        )
+        body_html = f'<ul style="list-style:none;display:grid;gap:14px;padding:0;margin:0;">{items}</ul>'
     return f"""
     <section class="slide contents_index" id="slide-{slide_number}" data-notes="{_escape(spec['speaker_note'])}" aria-label="{_escape(spec['role'])}" data-export-role="contents_index">
-        <div class="bg-num reveal">{slide_number:02d}</div>
+        {_swiss_bg_num(spec)}
         <div class="slide-content content">
             <div class="eyebrow swiss-label reveal">{_escape(spec['role'])}</div>
             {title_tag}
-            <ul style="list-style:none;display:grid;gap:14px;padding:0;margin:0;">{items}</ul>
+            {body_html}
         </div>
         <span class="slide-num-label">{slide_number:02d} / {total:02d}</span>
     </section>
@@ -3222,7 +4166,7 @@ def _build_swiss_shell_css(style_contract: dict[str, Any]) -> str:
 {contract_css}
 
 .swiss-body {{
-    font-size: clamp(14px, 1.75vw, 18px);
+    font-size: clamp(17px, 1.9vw, 22px);
     line-height: 1.62;
 }}
 
@@ -3230,7 +4174,7 @@ def _build_swiss_shell_css(style_contract: dict[str, Any]) -> str:
 .stat-value,
 .disc-step-desc,
 .index-desc {{
-    font-size: clamp(14px, 1.7vw, 18px);
+    font-size: clamp(16px, 1.8vw, 21px);
     line-height: 1.62;
 }}
 
@@ -3240,11 +4184,29 @@ def _build_swiss_shell_css(style_contract: dict[str, Any]) -> str:
 .stat-label,
 .data-table td,
 .data-table th {{
-    font-size: clamp(14px, 1.6vw, 17px);
+    font-size: clamp(16px, 1.7vw, 20px);
 }}
 
 .pain-item {{
     padding-left: clamp(14px, 2.2vw, 24px);
+}}
+
+.left-panel .swiss-title {{
+    color: var(--text-light);
+    font-size: clamp(2rem, 3.4vw, 3.6rem);
+    line-height: 1.02;
+    overflow-wrap: normal;
+    word-break: normal;
+    hyphens: none;
+}}
+
+.left-panel .swiss-label {{
+    color: rgba(255, 255, 255, 0.34);
+}}
+
+.left-panel .title-line {{
+    white-space: nowrap;
+    overflow-wrap: normal;
 }}
 
 html {{
@@ -3297,6 +4259,35 @@ body::before {{
     max-height: 100%;
     overflow: hidden;
     padding: var(--slide-padding, clamp(1rem, 4vw, 4rem));
+}}
+
+.slide-content, .left-panel, .right-panel {{
+    position: relative;
+    z-index: 2;
+}}
+
+.contents_index .feat-grid {{
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: clamp(8px, 1.2vw, 14px);
+}}
+
+.contents_index .feat-card {{
+    padding: clamp(10px, 1.4vw, 18px);
+    min-height: 0;
+}}
+
+.contents_index .feat-key {{
+    font-size: clamp(18px, 2.4vw, 32px);
+}}
+
+.contents_index .feat-desc {{
+    line-height: 1.36;
+}}
+
+@media (max-width: 900px) {{
+    .contents_index .feat-grid {{
+        grid-template-columns: 1fr;
+    }}
 }}
 
 .title-balance {{
@@ -3354,12 +4345,12 @@ body::before {{
 
 .bg-num {{
     position: absolute;
-    right: clamp(2rem, 5vw, 5rem);
+    right: clamp(-3rem, -2vw, -1rem);
     top: 0;
     font-family: "Archivo Black", sans-serif;
     font-weight: 900;
-    font-size: clamp(8rem, 25vw, 18rem);
-    color: #f0f0f0;
+    font-size: clamp(10rem, 30vw, 30rem);
+    color: #f4f4f4;
     line-height: 0.85;
     pointer-events: none;
     user-select: none;
@@ -3502,10 +4493,11 @@ body.presenting {{
 
 body.presenting .slide {{
     position: fixed !important;
-    inset: 0;
-    width: 100vw !important;
-    height: 100vh !important;
-    transform-origin: center center;
+    top: 0;
+    left: 0;
+    width: 1440px !important;
+    height: 900px !important;
+    transform-origin: top left;
     scroll-snap-align: none !important;
     display: none !important;
 }}
@@ -3598,6 +4590,13 @@ def _enterprise_extra_css() -> str:
     display: none;
 }
 
+/* Center content on slide — matches demo golden standard */
+.slide {
+    align-items: center;
+    justify-content: center;
+    padding: var(--slide-padding, clamp(24px, 4vw, 52px));
+}
+
 .ent-shell {
     width: 100%;
     max-width: 1120px;
@@ -3614,7 +4613,7 @@ def _enterprise_extra_css() -> str:
 }
 
 .ent-kpi-meta {
-    font-size: 12px;
+    font-size: clamp(13px, 1.3vw, 15px);
     color: var(--text-muted);
 }
 
@@ -3633,6 +4632,46 @@ def _enterprise_extra_css() -> str:
     gap: 14px;
     min-height: 208px;
     justify-content: flex-start;
+}
+
+.ent-cover-metric-row {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: clamp(12px, 2vw, 20px);
+    margin-top: clamp(22px, 3vw, 34px);
+}
+
+.ent-kpi-card.ent-cover-metric-card {
+    min-height: clamp(110px, 15vw, 148px);
+    padding: clamp(16px, 2vw, 22px);
+    justify-content: space-between;
+    gap: 16px;
+    background: linear-gradient(180deg, rgba(56, 139, 253, 0.07), rgba(15, 23, 42, 0.42)), var(--bg-secondary);
+}
+
+.ent-cover-metric-index {
+    font-size: clamp(11px, 1.05vw, 13px);
+    line-height: 1;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+}
+
+.ent-cover-metric-title {
+    font-size: clamp(18px, 2vw, 24px);
+    line-height: 1.18;
+    font-weight: 650;
+    color: var(--text-primary);
+    letter-spacing: 0;
+}
+
+.ent-cover-metric-title .ent-kpi-number.ent-cover-inline-number {
+    display: inline;
+    font-size: inherit;
+    line-height: inherit;
+    font-weight: inherit;
+    color: inherit;
+    letter-spacing: inherit;
 }
 
 .ent-kpi-story-top {
@@ -3656,7 +4695,7 @@ def _enterprise_extra_css() -> str:
     padding: 4px 10px;
     border: 1px solid var(--border);
     border-radius: 999px;
-    font-size: 11px;
+    font-size: clamp(11px, 1.1vw, 13px);
     line-height: 1;
     letter-spacing: 0.08em;
     text-transform: uppercase;
@@ -3699,7 +4738,7 @@ def _enterprise_extra_css() -> str:
 }
 
 .enterprise-split .ent-title {
-    font-size: clamp(19px, 2.1vw, 28px);
+    font-size: clamp(20px, 2.2vw, 30px);
     line-height: 1.14;
     max-width: 13ch;
 }
@@ -3784,14 +4823,14 @@ body[data-preset="Enterprise Dark"] .slide::before {
 }
 
 .ent-timeline-date {
-    font-size: 11px;
+    font-size: clamp(12px, 1.2vw, 14px);
     letter-spacing: 0.08em;
     color: var(--text-muted);
     text-transform: uppercase;
 }
 
 .ent-timeline-copy {
-    font-size: 14px;
+    font-size: clamp(14px, 1.4vw, 16px);
     color: var(--text-body);
     line-height: 1.5;
 }
@@ -3827,7 +4866,7 @@ body[data-preset="Enterprise Dark"] .slide::before {
 
 .ent-feature-card-copy {
     margin: 0;
-    font-size: 14px;
+    font-size: clamp(14px, 1.4vw, 16px);
     line-height: 1.55;
     color: var(--text-body);
 }
@@ -3837,51 +4876,233 @@ body[data-preset="Enterprise Dark"] .slide::before {
     .ent-feature-grid,
     .ent-matrix,
     .ent-arch-grid,
-    .ent-timeline {
+    .ent-timeline,
+    .ent-contrast-split {
         grid-template-columns: 1fr;
     }
+}
+
+/* === Consulting split inline replacements === */
+.ent-split-item-title {
+    margin: 0 0 6px;
+    color: var(--text-primary);
+    font-size: clamp(14px, 1.4vw, 16px);
+}
+.ent-split-item-copy {
+    margin: 0;
+    color: var(--text-body);
+    font-size: clamp(13px, 1.2vw, 15px);
+    line-height: 1.5;
+}
+
+/* === Semantic accent variants === */
+.ent-accent-cyan { color: var(--accent-cyan, #18b5b5); }
+.ent-accent-violet { color: var(--accent-violet, #a371f7); }
+
+/* === Contrast Split (before/after comparison) === */
+.ent-contrast-split {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: clamp(14px, 2vw, 24px);
+    width: 100%;
+}
+.ent-contrast-block {
+    border-radius: 8px;
+    padding: clamp(18px, 2.4vw, 28px);
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+.ent-contrast-block--negative {
+    background: rgba(248, 81, 73, 0.06);
+    border: 1px solid rgba(248, 81, 73, 0.3);
+}
+.ent-contrast-block--positive {
+    background: rgba(63, 185, 80, 0.06);
+    border: 1px solid rgba(63, 185, 80, 0.4);
+}
+.ent-contrast-block h4 {
+    font-size: clamp(18px, 2vw, 22px);
+    font-weight: 700;
+    line-height: 1.3;
+}
+.ent-contrast-block--negative h4 { color: var(--accent-red); }
+.ent-contrast-block--positive h4 { color: var(--accent-green); }
+.ent-contrast-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 6px 0;
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+    font-size: clamp(14px, 1.4vw, 16px);
+    color: var(--text-body);
+    line-height: 1.5;
+}
+.ent-contrast-item:last-child { border-bottom: none; }
+.ent-contrast-marker {
+    flex-shrink: 0;
+    width: 18px;
+    height: 18px;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+    font-weight: 700;
+    font-family: var(--font-mono, monospace);
+}
+.ent-contrast-block--negative .ent-contrast-marker {
+    background: rgba(248,81,73,0.2);
+    color: var(--accent-red);
+}
+.ent-contrast-block--positive .ent-contrast-marker {
+    background: rgba(63,185,80,0.2);
+    color: var(--accent-green);
 }
 """.strip()
 
 
+def _enterprise_metric_value_for_label(
+    label: str,
+    metric_values: list[str],
+    used_values: set[str],
+    index: int,
+) -> str | None:
+    candidates = _extract_numbers(label)
+    if index < len(metric_values):
+        candidates.append(metric_values[index])
+    candidates.extend(metric_values)
+    for value in candidates:
+        if value not in used_values:
+            used_values.add(value)
+            return value
+    return None
+
+
+def _enterprise_table_items(spec: dict[str, Any], *, minimum: int = 3, limit: int = 4) -> list[str]:
+    pools = [
+        spec.get("supporting_facts") or [],
+        spec.get("evidence_items") or [],
+        spec.get("supporting_items") or [],
+    ]
+    items: list[str] = []
+    for pool in pools:
+        for value in pool:
+            item = str(value).strip()
+            if item and item not in items:
+                items.append(item)
+            if len(items) >= limit:
+                return items[:limit]
+
+    fallback = str(spec.get("key_point") or spec.get("visual") or "").strip()
+    while fallback and len(items) < minimum:
+        items.append(fallback)
+    return items[:limit]
+
+
+def _enterprise_table_cells(item: str, fallback_meaning: str) -> tuple[str, str]:
+    for separator in (" — ", " – ", " - ", "：", ":"):
+        if separator in item:
+            signal, meaning = item.split(separator, 1)
+            signal = signal.strip()
+            meaning = meaning.strip()
+            if signal and meaning:
+                return signal, meaning
+    return item, fallback_meaning
+
+
+def _render_enterprise_cover_metric_title(label: str) -> str:
+    numbers = _extract_numbers(label)
+    if not numbers:
+        return _escape(label)
+    value = numbers[0]
+    prefix, _separator, suffix = label.partition(value)
+    return (
+        f"{_escape(prefix)}"
+        f'<span class="ent-kpi-number ent-cover-inline-number">{_escape(value)}</span>'
+        f"{_escape(suffix)}"
+    )
+
+
 def _render_enterprise_kpi_dashboard(spec: dict[str, Any], total: int) -> str:
     slide_number = spec["slide_number"]
+    is_cover = spec["role"] in ("cover", "hook")
     title_tag = _title_tag(
-        "h1",
-        "ent-hero-title",
+        "h1" if is_cover else "h2",
+        "ent-hero-title" if is_cover else "ent-title",
         spec["title"],
         preset="Enterprise Dark",
         layout_id=spec["layout_id"],
         accent_class="ent-accent-blue",
     )
-    values = _metric_values_from_spec(spec, ["入口", "结构", "动作"])
-    cards = []
-    labels = _spec_display_items(spec, limit=3)
-    used_tokens: set[str] = set()
-    for index, label in enumerate(labels[:3]):
-        trend_class = "positive" if index == 0 else ("neutral" if index == 1 else "negative")
-        metric_value = _metric_value_for_item(label, spec, index=index, used_tokens=used_tokens) or values[index]
-        used_tokens.add(metric_value)
-        cards.append(
-            f"""
-            <div class="ent-kpi-card reveal">
-                <div class="ent-kpi-number {trend_class}">{_escape(metric_value)}</div>
-                <div class="ent-kpi-label">{_escape(label)}</div>
-                <div class="ent-trend {'up' if index != 2 else 'down'}">{'▲' if index != 2 else '▼'} {_escape(spec['key_point'])}</div>
-            </div>
-            """
-        )
+    # Extract real numbers from spec — use _spec_explicit_numbers to avoid fallback=[] bug
+    real_numbers = _spec_explicit_numbers(spec)[:3]  # Limit to 3 KPI cards
+    has_numbers = bool(real_numbers)
+
+    if is_cover:
+        labels = _spec_display_items(spec, limit=3)
+        cards = []
+        for index, label in enumerate(labels[:3], start=1):
+            cards.append(
+                f"""
+                <div class="ent-kpi-card ent-cover-metric-card reveal">
+                    <div class="ent-cover-metric-index">Signal {index:02d}</div>
+                    <div class="ent-cover-metric-title">{_render_enterprise_cover_metric_title(label)}</div>
+                </div>
+                """
+            )
+        kpi_row = f'<div class="ent-cover-metric-row">{"".join(cards)}</div>'
+    elif has_numbers:
+        labels = _spec_display_items(spec, limit=3)
+        used_metric_values: set[str] = set()
+        # Content area: card-based KPI row
+        cards = []
+        for index, label in enumerate(labels[:3]):
+            trend_class = "positive" if index == 0 else ("neutral" if index == 1 else "negative")
+            metric_value = _enterprise_metric_value_for_label(label, real_numbers, used_metric_values, index)
+            if metric_value is None:
+                cards.append(
+                    f"""
+                    <div class="ent-kpi-card reveal">
+                        <div class="ent-kpi-label" style="text-transform:none;font-size:clamp(13px,1.3vw,16px);letter-spacing:0;max-width:260px">{_escape(label)}</div>
+                    </div>
+                    """
+                )
+                continue
+            cards.append(
+                f"""
+                    <div class="ent-kpi-card reveal">
+                        <div class="ent-kpi-number {trend_class}">{_escape(metric_value)}</div>
+                        <div class="ent-kpi-label">{_escape(label)}</div>
+                    </div>
+                    """
+            )
+        kpi_row = f'<div class="ent-kpi-row">{"".join(cards)}</div>'
+    else:
+        # No real numbers: render as text cards instead of big-number KPIs
+        labels = _spec_display_items(spec, limit=3)
+        cards = []
+        for item in labels[:3]:
+            cards.append(
+                f"""
+                <div class="ent-kpi-card reveal">
+                    <div class="ent-kpi-label" style="text-transform:none;font-size:clamp(13px,1.3vw,16px);letter-spacing:0;max-width:260px">{_escape(item)}</div>
+                </div>"""
+            )
+        kpi_row = f'<div class="ent-kpi-row">{"".join(cards)}</div>'
+
+    subtitle_html = f'<p class="ent-kpi-meta reveal">{_escape(spec["key_point"])}</p>' if not is_cover else f'<p style="font-size:clamp(16px,2vw,22px);color:var(--text-muted);margin-top:clamp(8px,1.5vw,16px);margin-bottom:clamp(24px,3vw,40px);line-height:1.5;" class="reveal">{_escape(spec["key_point"])}</p>'
+    section_class = "enterprise-dashboard" if not is_cover else "enterprise-dashboard"
+
     return f"""
-    <section class="slide enterprise-dashboard" id="slide-{slide_number}" data-notes="{_escape(spec['speaker_note'])}" aria-label="{_escape(spec['role'])}" data-export-role="kpi_dashboard">
+    <section class="slide {section_class}" id="slide-{slide_number}" data-notes="{_escape(spec['speaker_note'])}" aria-label="{_escape(spec['role'])}" data-export-role="kpi_dashboard">
         <div class="slide-content">
             <div class="ent-shell">
                 <span class="ent-label-tag reveal">AI landscape</span>
                 {title_tag}
                 <div class="ent-sep reveal"></div>
-                <p class="ent-kpi-meta reveal">{_escape(spec['key_point'])}</p>
-                <div class="ent-kpi-row">
-                    {''.join(cards)}
-                </div>
+                {subtitle_html}
+{kpi_row}
             </div>
         </div>
         <span class="slide-num-label">{slide_number:02d} / {total:02d}</span>
@@ -3937,16 +5158,16 @@ def _render_enterprise_consulting_split(spec: dict[str, Any], total: int) -> str
     title_tag = _title_tag("h2", "ent-title", spec["title"], preset="Enterprise Dark", layout_id=spec["layout_id"])
     labels = "".join(f'<div class="ent-split-label">{_escape(item)}</div>' for item in _spec_display_items(spec, limit=3))
     pairs = _spec_detail_pairs(spec, count=3)
+    accent_colors = ["ent-accent-cyan", "ent-accent-blue", "ent-accent-violet"]
     rows = "".join(
         f"""
         <div class="ent-feature-row reveal">
-            <div class="ent-feature-icon">{index + 1}</div>
+            <div class="ent-feature-icon {accent_colors[index % len(accent_colors)]}">{index + 1}</div>
             <div style="flex:1;">
-                <h3 style="margin:0 0 6px;color:var(--text-primary);font-size:1rem;">{_escape(title)}</h3>
-                <p style="margin:0;color:var(--text-body);font-size:0.92rem;line-height:1.5;">{_escape(body)}</p>
+                <h3 class="ent-split-item-title">{_escape(title)}</h3>
+                <p class="ent-split-item-copy">{_escape(body)}</p>
                 <div class="ent-prog-bar" style="margin-top:10px;"><div class="ent-prog-fill" style="width:{70 - index * 15}%"></div></div>
             </div>
-            <span class="ent-badge ent-badge-blue">Flow</span>
         </div>
         """
         for index, (title, body) in enumerate(pairs[:3])
@@ -3976,23 +5197,27 @@ def _render_enterprise_data_table(spec: dict[str, Any], total: int) -> str:
     title_tag = _title_tag("h2", "ent-title", spec["title"], preset="Enterprise Dark", layout_id=spec["layout_id"])
     rows = []
     if spec["role"] == "checkpoint":
-        row_items = spec["supporting_items"][:4] or [spec["key_point"]]
+        row_items = _enterprise_table_items(spec, minimum=4, limit=4)
         while len(row_items) < 4:
             row_items.append(spec["visual"])
         for index, item in enumerate(row_items[:4]):
             badge = "weekly" if index < 2 else "monthly"
             dot = "ent-dot-blue" if index < 2 else "ent-dot-green"
-            meaning = "把 AI 使用率、模板复用率、评测通过率和场景 ROI 纳入固定治理节奏"
+            signal, meaning = _enterprise_table_cells(
+                item,
+                "把 AI 使用率、模板复用率、评测通过率和场景 ROI 纳入固定治理节奏",
+            )
             rows.append(
-                f"<tr><td><span class=\"ent-status-dot {dot}\"></span>{_escape(item)}</td><td>{_escape(meaning)}</td><td><span class=\"ent-badge {'ent-badge-green' if index >= 2 else 'ent-badge-blue'}\">{badge}</span></td></tr>"
+                f"<tr><td><span class=\"ent-status-dot {dot}\"></span>{_escape(signal)}</td><td>{_escape(meaning)}</td><td><span class=\"ent-badge {'ent-badge-green' if index >= 2 else 'ent-badge-blue'}\">{badge}</span></td></tr>"
             )
         headers = "<thead><tr><th>Ritual</th><th>Decision focus</th><th>Cadence</th></tr></thead>"
         label = "governance"
     else:
-        for index, item in enumerate((spec["evidence_items"] or spec["supporting_items"])[:3]):
+        for index, item in enumerate(_enterprise_table_items(spec, minimum=3, limit=4)[:4]):
             dot = "ent-dot-green" if index == 0 else ("ent-dot-blue" if index == 1 else "ent-dot-red")
+            signal, meaning = _enterprise_table_cells(item, spec["key_point"])
             rows.append(
-                f"<tr><td><span class=\"ent-status-dot {dot}\"></span>{_escape(item)}</td><td>{_escape(spec['key_point'])}</td><td><span class=\"ent-badge {'ent-badge-green' if index == 0 else 'ent-badge-blue'}\">{_escape(spec['role'])}</span></td></tr>"
+                f"<tr><td><span class=\"ent-status-dot {dot}\"></span>{_escape(signal)}</td><td>{_escape(meaning)}</td><td><span class=\"ent-badge {'ent-badge-green' if index == 0 else 'ent-badge-blue'}\">{_escape(spec['role'])}</span></td></tr>"
             )
         headers = "<thead><tr><th>Signal</th><th>Meaning</th><th>State</th></tr></thead>"
         label = "evidence"
@@ -4018,8 +5243,9 @@ def _render_enterprise_architecture_map(spec: dict[str, Any], total: int) -> str
     slide_number = spec["slide_number"]
     title_tag = _title_tag("h2", "ent-title", spec["title"], preset="Enterprise Dark", layout_id=spec["layout_id"])
     pairs = _spec_detail_pairs(spec, count=3)
+    arch_accents = ["var(--accent-cyan)", "var(--accent-blue)", "var(--accent-violet)"]
     cards = "".join(
-        f'<div class="ent-arch-card reveal"><div class="ent-label">{index + 1:02d}</div><h3 style="margin:6px 0;color:var(--text-primary);">{_escape(title)}</h3><p style="margin:0;color:var(--text-body);line-height:1.5;">{_escape(body)}</p></div>'
+        f'<div class="ent-arch-card reveal"><div class="ent-label" style="color:{arch_accents[index % len(arch_accents)]};">{index + 1:02d}</div><h3 style="margin:6px 0;color:var(--text-primary);">{_escape(title)}</h3><p style="margin:0;color:var(--text-body);line-height:1.5;">{_escape(body)}</p></div>'
         for index, (title, body) in enumerate(pairs[:3])
     )
     return f"""
@@ -4041,6 +5267,7 @@ def _render_enterprise_feature_grid(spec: dict[str, Any], total: int) -> str:
     slide_number = spec["slide_number"]
     title_tag = _title_tag("h2", "ent-title", spec["title"], preset="Enterprise Dark", layout_id=spec["layout_id"])
     pairs = _spec_detail_pairs(spec, count=4)
+    badge_classes = ["ent-badge-blue", "ent-badge-blue", "ent-badge-blue", "ent-badge-blue"]
     cards = []
     for index, (item, body) in enumerate(pairs[:4]):
         cards.append(
@@ -4048,10 +5275,9 @@ def _render_enterprise_feature_grid(spec: dict[str, Any], total: int) -> str:
             <div class="ent-feature-card reveal">
                 <div class="ent-feature-card-head">
                     <div>
-                        <div class="ent-label">{_escape(item)}</div>
+                        <div class="ent-label" style="color:var(--accent-cyan);">{_escape(item)}</div>
                         <h3 style="margin:8px 0 0;color:var(--text-primary);">{_escape(item)}</h3>
                     </div>
-                    <span class="ent-badge ent-badge-blue">AI default</span>
                 </div>
                 <p class="ent-feature-card-copy">{_escape(body)}</p>
                 <div class="ent-prog-bar"><div class="ent-prog-fill" style="width:{78 - index * 14}%"></div></div>
@@ -4077,15 +5303,16 @@ def _render_enterprise_comparison_matrix(spec: dict[str, Any], total: int) -> st
     slide_number = spec["slide_number"]
     title_tag = _title_tag("h2", "ent-title", spec["title"], preset="Enterprise Dark", layout_id=spec["layout_id"])
     pairs = _spec_detail_pairs(spec, count=4)
+    matrix_accents = ["var(--accent-blue)", "var(--accent-cyan)", "var(--accent-amber)", "var(--accent-violet)"]
     cells = "".join(
         f"""
         <div class="ent-kpi-card reveal">
-            <div class="ent-label">{_escape(title)}</div>
+            <div class="ent-label" style="color:{matrix_accents[index % len(matrix_accents)]};">{_escape(title)}</div>
             <h3 style="margin:8px 0;color:var(--text-primary);">{_escape(title)}</h3>
             <p style="margin:0;color:var(--text-body);line-height:1.5;">{_escape(body)}</p>
         </div>
         """
-        for title, body in pairs[:4]
+        for index, (title, body) in enumerate(pairs[:4])
     )
     return f"""
     <section class="slide enterprise-matrix" id="slide-{slide_number}" data-notes="{_escape(spec['speaker_note'])}" aria-label="{_escape(spec['role'])}" data-export-role="comparison_matrix">
@@ -4095,6 +5322,48 @@ def _render_enterprise_comparison_matrix(spec: dict[str, Any], total: int) -> st
                 {title_tag}
                 <div class="ent-sep reveal"></div>
                 <div class="ent-matrix">{cells}</div>
+            </div>
+        </div>
+        <span class="slide-num-label">{slide_number:02d} / {total:02d}</span>
+    </section>
+    """.strip()
+
+
+def _render_enterprise_contrast_split(spec: dict[str, Any], total: int) -> str:
+    slide_number = spec["slide_number"]
+    title_tag = _title_tag("h2", "ent-title", spec["title"], preset="Enterprise Dark", layout_id=spec["layout_id"])
+    items = _spec_display_items(spec, limit=4)
+    if len(items) >= 4:
+        neg_items = items[:len(items) // 2]
+        pos_items = items[len(items) // 2:]
+    else:
+        neg_items = items[:1] + [spec["key_point"]]
+        pos_items = items[1:] + [spec["key_point"]]
+    neg_rows = "".join(
+        f'<div class="ent-contrast-item"><span class="ent-contrast-marker">&#x2717;</span>{_escape(item)}</div>'
+        for item in neg_items
+    )
+    pos_rows = "".join(
+        f'<div class="ent-contrast-item"><span class="ent-contrast-marker">&#x2713;</span>{_escape(item)}</div>'
+        for item in pos_items
+    )
+    return f"""
+    <section class="slide enterprise-contrast" id="slide-{slide_number}" data-notes="{_escape(spec['speaker_note'])}" aria-label="{_escape(spec['role'])}" data-export-role="contrast_split">
+        <div class="slide-content">
+            <div class="ent-shell">
+                <span class="ent-label-tag reveal">对比</span>
+                {title_tag}
+                <div class="ent-sep reveal"></div>
+                <div class="ent-contrast-split reveal">
+                    <div class="ent-contrast-block ent-contrast-block--negative">
+                        <h4>Before</h4>
+                        {neg_rows}
+                    </div>
+                    <div class="ent-contrast-block ent-contrast-block--positive">
+                        <h4>After</h4>
+                        {pos_rows}
+                    </div>
+                </div>
             </div>
         </div>
         <span class="slide-num-label">{slide_number:02d} / {total:02d}</span>
@@ -4132,11 +5401,12 @@ def _render_enterprise_timeline(spec: dict[str, Any], total: int) -> str:
     labels = _spec_display_items(spec, limit=4)
     while len(labels) < 4:
         labels.append(spec["key_point"])
+    dot_accents = ["var(--accent-blue)", "var(--accent-cyan)", "var(--accent-amber)", "var(--accent-green)"]
     for idx in range(4):
         items.append(
             f"""
             <div class="ent-timeline-item reveal">
-                <div class="ent-timeline-dot"></div>
+                <div class="ent-timeline-dot" style="background:{dot_accents[idx]};"></div>
                 <div class="ent-timeline-date">{_escape(dates[idx])}</div>
                 <div class="ent-timeline-copy">{_escape(labels[idx])}</div>
             </div>
@@ -4168,12 +5438,20 @@ def _render_enterprise_cta_close(spec: dict[str, Any], total: int) -> str:
         accent_class="ent-accent-blue",
     )
     items = _spec_display_items(spec, limit=3)
-    used_tokens: set[str] = set()
-    value0 = _metric_value_for_item(items[0], spec, index=0, used_tokens=used_tokens)
-    used_tokens.add(value0)
-    value1 = _metric_value_for_item(items[1], spec, index=1, used_tokens=used_tokens)
-    used_tokens.add(value1)
-    value2 = _metric_value_for_item(items[2], spec, index=2, used_tokens=used_tokens)
+    metric_values = _spec_explicit_numbers(spec)[:3]
+    used_metric_values: set[str] = set()
+    card_html = []
+    for index, item in enumerate(items[:3]):
+        metric_value = _enterprise_metric_value_for_label(item, metric_values, used_metric_values, index)
+        trend_class = "positive" if index == 2 else "neutral"
+        if metric_value is None:
+            card_html.append(
+                f'<div class="ent-kpi-card reveal"><div class="ent-kpi-label" style="text-transform:none;font-size:clamp(13px,1.3vw,16px);letter-spacing:0;max-width:260px">{_escape(item)}</div></div>'
+            )
+        else:
+            card_html.append(
+                f'<div class="ent-kpi-card reveal"><div class="ent-kpi-number {trend_class}">{_escape(metric_value)}</div><div class="ent-kpi-label">{_escape(item)}</div></div>'
+            )
     return f"""
     <section class="slide enterprise-close" id="slide-{slide_number}" data-notes="{_escape(spec['speaker_note'])}" aria-label="{_escape(spec['role'])}" data-export-role="cta_close">
         <div class="slide-content">
@@ -4183,9 +5461,7 @@ def _render_enterprise_cta_close(spec: dict[str, Any], total: int) -> str:
                 <div class="ent-sep reveal"></div>
                 <div class="ent-code reveal"><span class="green">thesis</span> = {_escape(spec['key_point'])}</div>
                 <div class="ent-kpi-row" style="margin-top:18px;">
-                    <div class="ent-kpi-card reveal"><div class="ent-kpi-number neutral">{_escape(value0)}</div><div class="ent-kpi-label">{_escape(items[0])}</div></div>
-                    <div class="ent-kpi-card reveal"><div class="ent-kpi-number neutral">{_escape(value1)}</div><div class="ent-kpi-label">{_escape(items[1])}</div></div>
-                    <div class="ent-kpi-card reveal"><div class="ent-kpi-number positive">{_escape(value2)}</div><div class="ent-kpi-label">{_escape(items[2])}</div></div>
+                    {''.join(card_html)}
                 </div>
             </div>
         </div>
@@ -4201,12 +5477,14 @@ def _render_enterprise_slide(spec: dict[str, Any], total: int) -> str:
         return _render_enterprise_kpi_dashboard(spec, total)
     if spec["layout_id"] == "consulting_split":
         return _render_enterprise_consulting_split(spec, total)
+    if spec["layout_id"] == "contrast_split":
+        return _render_enterprise_contrast_split(spec, total)
     if spec["layout_id"] == "data_table":
         return _render_enterprise_data_table(spec, total)
     if spec["layout_id"] == "architecture_map":
         return _render_enterprise_architecture_map(spec, total)
     if spec["layout_id"] == "comparison_matrix":
-        if spec["role"] == "feature":
+        if spec["role"] in {"feature", "features", "interaction"}:
             return _render_enterprise_feature_grid(spec, total)
         return _render_enterprise_comparison_matrix(spec, total)
     if spec["layout_id"] == "timeline":
@@ -4270,12 +5548,57 @@ def _data_story_extra_css() -> str:
 .chart-line { stroke: var(--chart-primary); stroke-width: 3.2; fill: none; stroke-linecap: round; stroke-linejoin: round; }
 .chart-label, .chart-val { fill: var(--text-muted); font-size: 10px; font-family: inherit; font-variant-numeric: tabular-nums; }
 .chart-val { fill: var(--text); }
+.ds-signal-map { width: 100%; height: auto; max-height: 240px; }
+.ds-signal-link { stroke: var(--chart-primary); stroke-width: 2.4; fill: none; stroke-linecap: round; stroke-dasharray: 6 8; opacity: 0.72; }
+.ds-signal-node { fill: var(--bg-card); stroke: var(--chart-primary); stroke-width: 2.2; }
+.ds-signal-node.secondary { stroke: var(--chart-secondary); }
+.ds-signal-node.tertiary { stroke: var(--chart-tertiary); }
+.ds-signal-label { fill: var(--text); font-size: 12px; font-weight: 800; text-anchor: middle; dominant-baseline: middle; }
+.ds-signal-bars,
+.ds-flow-map,
+.ds-phase-timeline,
+.ds-evidence-ladder,
+.ds-state-grid-svg { width: 100%; height: auto; max-height: 240px; }
+.ds-bar-track { fill: rgba(148, 163, 184, 0.12); }
+.ds-bar-fill { fill: var(--chart-primary); }
+.ds-bar-fill.secondary { fill: var(--chart-secondary); }
+.ds-bar-fill.tertiary { fill: var(--chart-tertiary); }
+.ds-svg-label { fill: var(--text); font-size: 11px; font-weight: 800; dominant-baseline: middle; }
+.ds-svg-muted { fill: var(--text-muted); font-size: 10px; font-weight: 700; dominant-baseline: middle; }
+.ds-flow-path { stroke: var(--chart-primary); stroke-width: 2.8; fill: none; stroke-linecap: round; stroke-linejoin: round; }
+.ds-flow-node { fill: var(--bg-card); stroke: var(--chart-primary); stroke-width: 2.2; }
+.ds-flow-node.secondary { stroke: var(--chart-secondary); }
+.ds-flow-node.tertiary { stroke: var(--chart-tertiary); }
+.ds-ladder-rail { stroke: var(--axis-line); stroke-width: 2; }
+.ds-ladder-rung { stroke: var(--chart-primary); stroke-width: 3; stroke-linecap: round; }
+.ds-ladder-rung.secondary { stroke: var(--chart-secondary); }
+.ds-ladder-rung.tertiary { stroke: var(--chart-tertiary); }
+.ds-state-cell { fill: rgba(59, 130, 246, 0.09); stroke: var(--border); stroke-width: 1; }
+.ds-state-cell.hot { fill: rgba(59, 130, 246, 0.18); stroke: var(--chart-primary); }
 
 .ds-chart-card {
     background: var(--bg-card);
     border: 1px solid var(--border);
     border-radius: 8px;
     padding: 18px;
+}
+
+.ds-chart-visual {
+    min-height: min(44vh, 380px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: clamp(4px, 1vw, 12px);
+    overflow: visible;
+}
+
+.ds-chart-visual .ds-chart-svg {
+    display: block;
+    width: auto;
+    height: min(44vh, 380px);
+    max-width: 100%;
+    max-height: none;
+    margin: 0 auto;
 }
 
 body[data-preset="Data Story"] .ds-kpi-chart .slide-content {
@@ -4347,6 +5670,15 @@ body[data-preset="Data Story"] .ds-kpi-chart .ds-chart-svg {
     padding: 12px 14px;
 }
 
+.ds-chart-insight .ds-chart-visual {
+    min-height: min(42vh, 350px);
+}
+
+.ds-chart-insight .ds-chart-visual .ds-chart-svg {
+    height: min(42vh, 350px);
+    max-height: none;
+}
+
 .ds-chart-insight .ds-chart-svg {
     display: block;
     max-height: 188px;
@@ -4356,6 +5688,260 @@ body[data-preset="Data Story"] .ds-kpi-chart .ds-chart-svg {
 
 .ds-chart-insight .ds-insight {
     margin-top: 16px;
+}
+
+.ds-interaction-layout {
+    display: grid;
+    grid-template-columns: minmax(0, 1.08fr) minmax(260px, 0.92fr);
+    gap: clamp(14px, 2vw, 24px);
+    align-items: stretch;
+    min-height: 0;
+}
+
+.ds-key-strip {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: clamp(10px, 1.4vw, 16px);
+}
+
+.ds-key-card,
+.ds-mini-console {
+    min-width: 0;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: clamp(14px, 1.6vw, 20px);
+}
+
+.ds-key-card {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.ds-keycap {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: fit-content;
+    min-width: 44px;
+    height: 34px;
+    padding: 0 12px;
+    border: 1px solid var(--axis-line);
+    border-radius: 6px;
+    color: var(--text);
+    background: rgba(15, 17, 23, 0.58);
+    font-size: 13px;
+    font-weight: 800;
+    letter-spacing: 0;
+}
+
+.ds-key-title {
+    margin: 0;
+    color: var(--text);
+    font-size: clamp(0.96rem, 1.45vw, 1.15rem);
+    line-height: 1.28;
+}
+
+.ds-key-copy {
+    margin: 0;
+    color: var(--text-muted);
+    font-size: clamp(0.82rem, 1.1vw, 0.94rem);
+    line-height: 1.45;
+    overflow-wrap: anywhere;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.ds-mini-console {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 12px;
+}
+
+.ds-console-row {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 14px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid var(--border);
+}
+
+.ds-console-row:last-child {
+    border-bottom: 0;
+    padding-bottom: 0;
+}
+
+.ds-console-row span {
+    color: var(--text-muted);
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+}
+
+.ds-console-row strong {
+    min-width: 0;
+    color: var(--text);
+    font-size: clamp(0.92rem, 1.35vw, 1.08rem);
+    line-height: 1.3;
+    text-align: right;
+    overflow-wrap: anywhere;
+}
+
+body[data-preset="Data Story"] .ds-comparison .ds-matrix {
+    flex: 1 1 auto;
+    gap: 0;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    overflow: hidden;
+    background: rgba(26, 31, 46, 0.72);
+    height: min(52vh, 360px);
+    min-height: 0;
+}
+
+body[data-preset="Data Story"] .ds-comparison .ds-matrix-cell {
+    border: 0;
+    border-radius: 0;
+    background: transparent;
+    padding: clamp(16px, 2vw, 24px);
+    justify-content: flex-start;
+    gap: 12px;
+}
+
+body[data-preset="Data Story"] .ds-comparison .ds-matrix-cell:nth-child(odd) {
+    border-right: 1px solid var(--border);
+}
+
+body[data-preset="Data Story"] .ds-comparison .ds-matrix-cell:nth-child(-n+2) {
+    border-bottom: 1px solid var(--border);
+}
+
+body[data-preset="Data Story"] .ds-comparison .ds-matrix-index {
+    font-size: 11px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+}
+
+body[data-preset="Data Story"] .ds-comparison .ds-matrix-title {
+    margin: 0;
+    font-size: clamp(1.05rem, 1.65vw, 1.35rem);
+    line-height: 1.28;
+    color: var(--text);
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+body[data-preset="Data Story"] .ds-comparison .ds-matrix-copy {
+    margin: 0;
+    color: var(--text);
+    line-height: 1.5;
+    font-size: clamp(0.84rem, 1.25vw, 0.96rem);
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.ds-cover-hero .ds-heading {
+    font-size: clamp(3.6rem, 9vw, 7rem);
+    letter-spacing: 0;
+}
+
+.ds-cover-metric {
+    display: inline-flex;
+    align-items: baseline;
+    justify-content: center;
+    gap: 12px;
+    margin: 4px auto 0;
+}
+
+.ds-cover-metric .ds-kpi {
+    font-size: clamp(1.65rem, 4vw, 3.25rem);
+}
+
+.ds-cover-metric .ds-kpi-label {
+    margin-top: 0;
+    font-size: clamp(13px, 1.4vw, 16px);
+    line-height: 1.35;
+    letter-spacing: 0.02em;
+    text-transform: none;
+}
+
+body[data-preset="Data Story"] .ds-workflow .ds-shell {
+    min-height: 0;
+    max-height: calc(100vh - clamp(48px, 8vw, 104px));
+    display: flex;
+    flex-direction: column;
+}
+
+body[data-preset="Data Story"] .ds-workflow .ds-split-layout {
+    flex: 1 1 auto;
+    min-height: 0;
+    height: auto;
+    max-height: min(58vh, 456px);
+    padding: clamp(12px, 2vw, 24px);
+    align-items: stretch;
+}
+
+body[data-preset="Data Story"] .ds-workflow .ds-chart-card {
+    min-width: 0;
+    min-height: 0;
+    overflow: hidden;
+}
+
+body[data-preset="Data Story"] .ds-workflow .ds-workflow-layout {
+    flex: 1 1 auto;
+    min-height: 0;
+    display: grid;
+    grid-template-rows: minmax(0, 1fr) auto;
+    gap: clamp(10px, 1.8vw, 18px);
+    padding: clamp(6px, 1.2vw, 14px) clamp(8px, 2vw, 24px) 0;
+}
+
+body[data-preset="Data Story"] .ds-workflow .ds-workflow-visual {
+    min-height: min(46vh, 380px);
+}
+
+body[data-preset="Data Story"] .ds-workflow .ds-workflow-visual .ds-chart-svg {
+    height: min(46vh, 380px);
+}
+
+body[data-preset="Data Story"] .ds-workflow .ds-flow-note {
+    margin: 0;
+    max-width: none;
+}
+
+body[data-preset="Data Story"] .ds-workflow .ds-stage-grid {
+    height: 100%;
+    min-height: 0;
+    gap: clamp(10px, 1.5vw, 16px);
+}
+
+body[data-preset="Data Story"] .ds-workflow .ds-stage-card {
+    min-height: 0;
+    padding: clamp(12px, 1.4vw, 16px);
+    gap: 8px;
+}
+
+body[data-preset="Data Story"] .ds-workflow .ds-stage-title {
+    font-size: clamp(0.92rem, 1.45vw, 1.05rem);
+}
+
+body[data-preset="Data Story"] .ds-workflow .ds-stage-copy {
+    font-size: clamp(0.82rem, 1.25vw, 0.96rem);
+    line-height: 1.42;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
 }
 
 .ds-stage-grid {
@@ -4394,6 +5980,50 @@ body[data-preset="Data Story"] .ds-kpi-chart .ds-chart-svg {
     line-height: 1.58;
 }
 
+.ds-action-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: clamp(10px, 1.4vw, 16px);
+}
+
+.ds-action-card {
+    min-width: 0;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: clamp(16px, 2vw, 24px);
+}
+
+.ds-action-label {
+    color: var(--text-muted);
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+}
+
+.ds-action-title {
+    margin-top: 10px;
+    color: var(--text);
+    font-size: clamp(1.25rem, 2.4vw, 2rem);
+    font-weight: 800;
+    line-height: 1.12;
+    letter-spacing: 0;
+    overflow-wrap: anywhere;
+}
+
+.ds-action-copy {
+    margin: 10px 0 0;
+    color: var(--text-muted);
+    font-size: clamp(0.86rem, 1.18vw, 0.98rem);
+    line-height: 1.46;
+    overflow-wrap: anywhere;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
 .ds-cta-block {
     display: grid;
     grid-template-columns: 1.2fr 1fr;
@@ -4403,7 +6033,13 @@ body[data-preset="Data Story"] .ds-kpi-chart .ds-chart-svg {
 
 @media (max-width: 900px) {
     .ds-stage-grid,
-    .ds-cta-block {
+    .ds-cta-block,
+    .ds-interaction-layout {
+        grid-template-columns: 1fr;
+    }
+
+    .ds-key-strip,
+    .ds-action-grid {
         grid-template-columns: 1fr;
     }
 }
@@ -4425,11 +6061,133 @@ def _render_data_story_stage_grid(spec: dict[str, Any], *, count: int = 4, prefi
     return f'<div class="ds-stage-grid">{"".join(cards)}</div>'
 
 
+def _data_story_interaction_keycap(title: str, body: str, index: int) -> str:
+    title_blob = str(title or "").lower()
+    body_blob = str(body or "").lower()
+
+    if any(token in title_blob for token in ("present", "presenter", "演讲")):
+        return "P"
+    if any(token in title_blob for token in ("note", "notes", "speaker note", "笔记", "备注")):
+        return "Notes"
+    if re.search(r"\bf5\b", title_blob):
+        return "F5"
+    if any(token in title_blob for token in ("edit", "editing", "inline", "编辑")):
+        return "E"
+    if "play" in title_blob:
+        return "F5" if re.search(r"\bf5\b", body_blob) else "P"
+
+    blob = f"{title_blob} {body_blob}"
+    if any(token in blob for token in ("note", "notes", "speaker note", "笔记", "备注")):
+        return "Notes"
+    if re.search(r"\bf5\b", blob):
+        return "F5"
+    if any(token in blob for token in ("present", "presenter", "play", "演讲", "播放")):
+        return "P"
+    if any(token in blob for token in ("edit", "editing", "inline", "编辑")):
+        return "E"
+    return f"K{index}"
+
+
+def _render_data_story_interaction_panel(spec: dict[str, Any]) -> str:
+    pairs = _spec_detail_pairs(spec, count=4)
+    cards = []
+    for index, (title, body) in enumerate(pairs[:4], start=1):
+        keycap = _data_story_interaction_keycap(title, body, index)
+        cards.append(
+            f"""
+            <div class="ds-key-card reveal">
+                <div class="ds-keycap">{_escape(keycap)}</div>
+                <h3 class="ds-key-title">{_escape(title)}</h3>
+                <p class="ds-key-copy">{_escape(body)}</p>
+            </div>
+            """
+        )
+
+    mode = " / ".join(_dedupe_preserve([pairs[0][0], pairs[1][0]])[:2])
+    edit = " / ".join(_dedupe_preserve([pairs[2][0], pairs[3][0]])[:2])
+    loop = _compact_display_token(spec["key_point"], fallback="Live deck")
+    return f"""
+    <div class="ds-interaction-layout">
+        <div class="ds-key-strip">{"".join(cards)}</div>
+        <div class="ds-mini-console reveal">
+            <div class="ds-console-row"><span>Mode</span><strong>{_escape(mode)}</strong></div>
+            <div class="ds-console-row"><span>Edit</span><strong>{_escape(edit)}</strong></div>
+            <div class="ds-console-row"><span>Loop</span><strong>{_escape(loop)}</strong></div>
+        </div>
+    </div>
+    """.strip()
+
+
+def _data_story_has_numeric_cta_signal(spec: dict[str, Any], items: list[str]) -> bool:
+    return bool(
+        _primary_numbers_from_numeric_facts(spec)
+        or _spec_explicit_numbers(spec)
+        or _extract_numbers(" ".join(items))
+    )
+
+
+def _split_data_story_action_text(title: str, body: str) -> tuple[str, str]:
+    cleaned_title = re.sub(r"\s+", " ", str(title or "")).strip()
+    cleaned_body = re.sub(r"\s+", " ", str(body or "")).strip()
+    match = re.match(r"^([^:：]{1,36})[:：]\s*(.+)$", cleaned_title)
+    if match:
+        action_title = match.group(1).strip()
+        action_body = match.group(2).strip()
+        return action_title, action_body
+    return cleaned_title, cleaned_body
+
+
+def _render_data_story_action_grid(spec: dict[str, Any]) -> str:
+    cards = []
+    for index, (title, body) in enumerate(_spec_detail_pairs(spec, count=2)[:2], start=1):
+        action_title, action_body = _split_data_story_action_text(title, body)
+        cards.append(
+            f"""
+            <div class="ds-action-card reveal">
+                <div class="ds-action-label">action {index:02d}</div>
+                <div class="ds-action-title">{_escape(action_title)}</div>
+                <p class="ds-action-copy">{_escape(action_body)}</p>
+            </div>
+            """
+        )
+    return f'<div class="ds-action-grid">{"".join(cards)}</div>'
+
+
+def _cover_summary_without_metric_label(summary: str, label: str) -> str:
+    summary = re.sub(r"\s+", " ", summary or "").strip()
+    label = re.sub(r"\s+", " ", label or "").strip()
+    if not summary or not label:
+        return summary
+    if summary.startswith(label):
+        remainder = summary[len(label):]
+        remainder = re.sub(r"^[\s，。、；;,:：]+", "", remainder).strip()
+        return remainder or summary
+    return summary
+
+
 def _render_data_story_hero_number(spec: dict[str, Any], total: int) -> str:
     slide_number = spec["slide_number"]
     title_tag = _title_tag("h1", "ds-heading", spec["title"], preset="Data Story", layout_id=spec["layout_id"])
     value = _metric_values_from_spec(spec, [_compact_display_token(spec["title"], fallback="关键")])[0]
     label = _split_supporting_phrases(spec["key_point"], minimum=1)[0]
+    if spec["role"] == "cover":
+        summary = _cover_summary_without_metric_label(spec["key_point"], label)
+        return f"""
+    <section class="slide ds-hero-number ds-cover-hero" id="slide-{slide_number}" data-notes="{_escape(spec['speaker_note'])}" aria-label="{_escape(spec['role'])}" data-export-role="hero_number">
+        <div class="slide-content ds-hero-slide">
+            <div class="ds-shell">
+                <div class="ds-subhead reveal">AI industry landscape</div>
+                {title_tag}
+                <div class="ds-cover-metric reveal">
+                    <div class="ds-kpi positive">{_escape(value)}</div>
+                    <div class="ds-kpi-label">{_escape(label)}</div>
+                </div>
+                <p style="max-width:42rem;margin:0 auto;color:var(--text);line-height:1.6;" class="ds-cover-summary reveal">{_escape(summary)}</p>
+            </div>
+        </div>
+        <span class="slide-num-label">{slide_number:02d} / {total:02d}</span>
+    </section>
+    """.strip()
     return f"""
     <section class="slide ds-hero-number" id="slide-{slide_number}" data-notes="{_escape(spec['speaker_note'])}" aria-label="{_escape(spec['role'])}" data-export-role="hero_number">
         <div class="slide-content ds-hero-slide">
@@ -4490,15 +6248,28 @@ def _render_data_story_kpi_chart(spec: dict[str, Any], total: int) -> str:
     """.strip()
 
 
+def _render_data_story_visual_container(content: str, *, extra_class: str = "") -> str:
+    if "<svg" not in content:
+        return f'<div class="ds-chart-card reveal">{content}</div>'
+    classes = " ".join(part for part in ("ds-chart-visual", extra_class, "reveal") if part)
+    return f'<div class="{classes}">{content}</div>'
+
+
 def _render_data_story_chart_insight(spec: dict[str, Any], total: int) -> str:
     slide_number = spec["slide_number"]
     title_tag = _title_tag("h2", "ds-heading", spec["title"], preset="Data Story", layout_id=spec["layout_id"])
     chart_values = _chart_metric_values_from_spec(spec, ["1", "2", "3", "4"])
-    insight_body = (
-        _svg_line_chart(_chart_labels_from_spec(spec, count=4), chart_values)
-        if chart_values and spec.get("chart_policy") != "avoid"
-        else _render_data_story_stage_grid(spec, count=4, prefix="evidence")
-    )
+    if spec["role"] == "interaction" and not chart_values:
+        chart_container = _render_data_story_interaction_panel(spec)
+    elif chart_values and spec.get("chart_policy") != "avoid":
+        insight_body = _svg_line_chart(_chart_labels_from_spec(spec, count=4), chart_values)
+        chart_container = _render_data_story_visual_container(insight_body)
+    elif spec.get("chart_policy") == "avoid":
+        insight_body = _render_data_story_stage_grid(spec, count=4, prefix="evidence")
+        chart_container = _render_data_story_visual_container(insight_body)
+    else:
+        insight_body = _data_story_non_numeric_svg(spec)
+        chart_container = _render_data_story_visual_container(insight_body)
     return f"""
     <section class="slide ds-chart-insight" id="slide-{slide_number}" data-notes="{_escape(spec['speaker_note'])}" aria-label="{_escape(spec['role'])}" data-export-role="chart_insight">
         <div class="slide-content">
@@ -4506,7 +6277,7 @@ def _render_data_story_chart_insight(spec: dict[str, Any], total: int) -> str:
                 <div class="ds-subhead reveal">trend</div>
                 {title_tag}
                 <div class="ds-divider reveal"></div>
-                <div class="ds-chart-card reveal">{insight_body}</div>
+                {chart_container}
                 <div class="ds-insight reveal"><strong>Insight:</strong> {_escape(spec['key_point'])}</div>
             </div>
         </div>
@@ -4522,12 +6293,12 @@ def _render_data_story_comparison_matrix(spec: dict[str, Any], total: int) -> st
     cells = "".join(
         f"""
         <div class="ds-matrix-cell reveal">
-            <div class="ds-subhead">{_escape(title)}</div>
-            <h3 style="margin:8px 0;color:var(--text);font-size:1.1rem;">{_escape(title)}</h3>
-            <p style="margin:0;color:var(--text);line-height:1.5;">{_escape(body)}</p>
+            <div class="ds-matrix-index">Quadrant {index + 1:02d}</div>
+            <h3 class="ds-matrix-title">{_escape(title)}</h3>
+            <p class="ds-matrix-copy">{_escape(body)}</p>
         </div>
         """
-        for title, body in pairs[:4]
+        for index, (title, body) in enumerate(pairs[:4])
     )
     return f"""
     <section class="slide ds-comparison" id="slide-{slide_number}" data-notes="{_escape(spec['speaker_note'])}" aria-label="{_escape(spec['role'])}" data-export-role="comparison_matrix">
@@ -4582,11 +6353,13 @@ def _render_data_story_workflow_chart(spec: dict[str, Any], total: int) -> str:
     slide_number = spec["slide_number"]
     title_tag = _title_tag("h2", "ds-heading", spec["title"], preset="Data Story", layout_id=spec["layout_id"])
     chart_values = _chart_metric_values_from_spec(spec, ["1", "2", "3", "4"])
-    chart = (
-        _svg_line_chart(_chart_labels_from_spec(spec, count=4, family="workflow"), chart_values)
-        if chart_values and spec.get("chart_policy") != "avoid"
-        else _render_data_story_stage_grid(spec, count=4, prefix="phase")
-    )
+    if chart_values and spec.get("chart_policy") != "avoid":
+        chart = _svg_line_chart(_chart_labels_from_spec(spec, count=4, family="workflow"), chart_values)
+    elif spec.get("chart_policy") == "avoid":
+        chart = _render_data_story_stage_grid(spec, count=4, prefix="phase")
+    else:
+        chart = _data_story_non_numeric_svg(spec)
+    chart_container = _render_data_story_visual_container(chart, extra_class="ds-workflow-visual")
     return f"""
     <section class="slide ds-workflow" id="slide-{slide_number}" data-notes="{_escape(spec['speaker_note'])}" aria-label="{_escape(spec['role'])}" data-export-role="workflow_chart">
         <div class="slide-content">
@@ -4594,11 +6367,9 @@ def _render_data_story_workflow_chart(spec: dict[str, Any], total: int) -> str:
                 <div class="ds-subhead reveal">workflow</div>
                 {title_tag}
                 <div class="ds-divider reveal"></div>
-                <div class="ds-split-layout">
-                    <div class="ds-chart-card reveal">
-                        <div class="ds-insight"><strong>Flow:</strong> {_escape(spec['key_point'])}</div>
-                    </div>
-                    <div class="ds-chart-card reveal">{chart}</div>
+                <div class="ds-workflow-layout">
+                    {chart_container}
+                    <div class="ds-flow-note ds-insight reveal"><strong>Flow:</strong> {_escape(spec['key_point'])}</div>
                 </div>
             </div>
         </div>
@@ -4618,6 +6389,25 @@ def _render_data_story_cta_close(spec: dict[str, Any], total: int) -> str:
         force_balance=True,
     )
     items = _spec_display_items(spec, limit=2)
+    if not _data_story_has_numeric_cta_signal(spec, items):
+        action_grid = _render_data_story_action_grid(spec)
+        return f"""
+    <section class="slide ds-close" id="slide-{slide_number}" data-notes="{_escape(spec['speaker_note'])}" aria-label="{_escape(spec['role'])}" data-export-role="cta_close">
+        <div class="slide-content">
+            <div class="ds-shell ds-cta-block">
+                <div>
+                    <div class="ds-subhead reveal">closing readout</div>
+                    {title_tag}
+                    <div class="ds-divider reveal"></div>
+                    <div class="ds-insight reveal"><strong>Decision:</strong> {_escape(spec['key_point'])}</div>
+                </div>
+                {action_grid}
+            </div>
+        </div>
+        <span class="slide-num-label">{slide_number:02d} / {total:02d}</span>
+    </section>
+    """.strip()
+
     used_tokens: set[str] = set()
     value0 = _metric_value_for_item(items[0], spec, index=0, used_tokens=used_tokens)
     used_tokens.add(value0)
@@ -5155,6 +6945,271 @@ def _blue_sky_title_tag(tag: str, text: str, *, layout_id: str, extra_attrs: str
     )
 
 
+def _blue_sky_display_items(spec: dict[str, Any], *, limit: int | None = None) -> list[str]:
+    items = _dedupe_preserve(
+        [
+            *[str(item) for item in spec.get("supporting_facts", [])],
+            *[str(item) for item in spec.get("supporting_items", [])],
+            *[str(item) for item in spec.get("evidence_items", [])],
+        ]
+    )
+    if not items:
+        items = _split_supporting_phrases(spec.get("key_point", ""), minimum=1)
+    if not items:
+        items = [str(spec.get("key_point") or spec.get("title") or "")]
+    return items[:limit] if limit is not None else items
+
+
+def _blue_sky_item_parts(item: str) -> tuple[str, str]:
+    cleaned = re.sub(r"\s+", " ", str(item or "")).strip()
+    match = re.match(r"^(.{1,48}?)(?:\s+[—–-]\s+|[:：]\s*)(.+)$", cleaned)
+    if match:
+        return match.group(1).strip(), match.group(2).strip()
+    return cleaned, ""
+
+
+def _blue_sky_keycap(title: str, body: str, index: int) -> str:
+    blob = f"{title} {body}".lower()
+    if re.search(r"\bf5\b", blob):
+        return "F5"
+    if re.search(r"\bp\b", blob) or any(token in blob for token in ("presenter", "present", "演讲")):
+        return "P"
+    if re.search(r"\be\b", blob) or any(token in blob for token in ("edit", "inline", "编辑")):
+        return "E"
+    if any(token in blob for token in ("note", "notes", "笔记", "备注")):
+        return "Notes"
+    return f"{index}"
+
+
+def _blue_sky_metric_label(item: str, value: str) -> str:
+    label = _strip_chart_label_prefix(str(item or "")).strip()
+    if value:
+        label = re.sub(rf"^\s*{re.escape(value)}\s*[%％]?\s*", "", label).strip()
+    label = re.sub(r"^[种个项层类]\s*", "", label).strip()
+    return label or "指标"
+
+
+def _blue_sky_add_metric(metrics: list[tuple[str, str]], value: str, label: str) -> None:
+    pair = (value.strip(), label.strip())
+    if not pair[0] or not pair[1] or pair in metrics:
+        return
+    metrics.append(pair)
+
+
+def _blue_sky_cover_metrics(spec: dict[str, Any], items: list[str]) -> list[tuple[str, str]]:
+    metrics: list[tuple[str, str]] = []
+    for item in items:
+        numbers = _extract_numbers(str(item))
+        if numbers:
+            value = numbers[0]
+            _blue_sky_add_metric(metrics, value, _blue_sky_metric_label(str(item), value))
+
+    blob = " ".join([str(spec.get("title", "")), str(spec.get("key_point", "")), *items])
+    has_cjk = bool(re.search(r"[\u3400-\u9fff]", blob))
+    has_zero_dependency = bool(
+        re.search(r"零依赖|zero[- ]?dependency|zero dependencies|no dependencies", blob, re.IGNORECASE)
+    )
+    if has_zero_dependency:
+        _blue_sky_add_metric(metrics, "0", "依赖" if has_cjk else "Dependencies")
+    if has_zero_dependency or re.search(r"浏览器|browser|html", blob, re.IGNORECASE):
+        _blue_sky_add_metric(metrics, "100%", "浏览器运行" if has_cjk else "Browser-native")
+    if len(metrics) < 3 and re.search(r"单\s*HTML|single\s+html|html\s+file", blob, re.IGNORECASE):
+        _blue_sky_add_metric(metrics, "1", "HTML 文件" if has_cjk else "HTML file")
+
+    return metrics[:3]
+
+
+def _blue_sky_cover_pill_text(spec: dict[str, Any], items: list[str], metrics: list[tuple[str, str]]) -> str:
+    subtitle = str(spec.get("subtitle") or "").strip()
+    if subtitle:
+        return subtitle
+    for item in items:
+        if _extract_numbers(str(item)):
+            return str(item).strip()
+    if metrics:
+        value, label = metrics[0]
+        return f"{value} {label}".strip()
+    return "Blue Sky"
+
+
+def _blue_sky_bento_variant(spec: dict[str, Any]) -> int:
+    role = str(spec.get("role") or "").strip().lower()
+    role_variants = {
+        "features": 0,
+        "feature": 0,
+        "design-philosophy": 1,
+        "style-discovery": 1,
+        "recommendation": 1,
+        "best-fit": 1,
+    }
+    if role in role_variants:
+        return role_variants[role]
+    try:
+        return int(spec.get("slide_number") or 0)
+    except (TypeError, ValueError):
+        return 0
+
+
+def _blue_sky_bento_card_placement(index: int, total: int, *, variant: int = 0) -> tuple[str, str]:
+    if total >= 6:
+        placement_variants = [
+            [
+                ("g span2", "grid-column:1 / span 2;grid-row:1;"),
+                ("g span2", "grid-column:3 / span 2;grid-row:1;"),
+                ("g span2 row2", "grid-column:1 / span 2;grid-row:2 / span 2;"),
+                ("g", "grid-column:3;grid-row:2;"),
+                ("g", "grid-column:4;grid-row:2;"),
+                ("g span2", "grid-column:3 / span 2;grid-row:3;"),
+            ],
+            [
+                ("g span2 row2", "grid-column:3 / span 2;grid-row:1 / span 2;"),
+                ("g", "grid-column:1;grid-row:1;"),
+                ("g", "grid-column:2;grid-row:1;"),
+                ("g span2", "grid-column:1 / span 2;grid-row:2;"),
+                ("g span2", "grid-column:1 / span 2;grid-row:3;"),
+                ("g span2", "grid-column:3 / span 2;grid-row:3;"),
+            ],
+        ]
+    elif total == 5:
+        placement_variants = [
+            [
+                ("g span2", "grid-column:1 / span 2;grid-row:1;"),
+                ("g span2", "grid-column:3 / span 2;grid-row:1;"),
+                ("g span2", "grid-column:1 / span 2;grid-row:2;"),
+                ("g span2", "grid-column:3 / span 2;grid-row:2;"),
+                ("g", "grid-column:1 / span 4;grid-row:3;"),
+            ],
+            [
+                ("g span2 row2", "grid-column:1 / span 2;grid-row:1 / span 2;"),
+                ("g span2", "grid-column:3 / span 2;grid-row:1;"),
+                ("g", "grid-column:3;grid-row:2;"),
+                ("g", "grid-column:4;grid-row:2;"),
+                ("g", "grid-column:1 / span 4;grid-row:3;"),
+            ],
+        ]
+    else:
+        placement_variants = [
+            [
+                ("g span2", "grid-column:1 / span 2;grid-row:1;"),
+                ("g span2", "grid-column:3 / span 2;grid-row:1;"),
+                ("g span2", "grid-column:1 / span 2;grid-row:2;"),
+                ("g span2", "grid-column:3 / span 2;grid-row:2;"),
+            ],
+            [
+                ("g span2 row2", "grid-column:1 / span 2;grid-row:1 / span 2;"),
+                ("g span2", "grid-column:3 / span 2;grid-row:1;"),
+                ("g", "grid-column:3;grid-row:2;"),
+                ("g", "grid-column:4;grid-row:2;"),
+            ],
+        ]
+    placements = placement_variants[variant % len(placement_variants)]
+    return placements[index % len(placements)]
+
+
+def _render_blue_sky_bento_cards(spec: dict[str, Any], items: list[str]) -> str:
+    visible_items = items[:6]
+    placement_variant = _blue_sky_bento_variant(spec)
+    cards = []
+    for index, item in enumerate(visible_items):
+        title, body = _blue_sky_item_parts(item)
+        card_class, card_style = _blue_sky_bento_card_placement(index, len(visible_items), variant=placement_variant)
+        numbers = _extract_numbers(item)
+        stat_html = ""
+        display_title = title
+        if numbers and index < 3:
+            stat_html = f'<div class="stat" style="font-size:2.2rem;margin-bottom:6px;">{_escape(numbers[0])}</div>'
+            display_title = _blue_sky_metric_label(title, numbers[0])
+        body_html = f'<p style="font-size:0.82rem;margin-top:6px;">{_escape(body)}</p>' if body else ""
+        cards.append(
+            f"""
+            <div class="{card_class}" style="{card_style}">
+              {stat_html}
+              <h4 style="margin-bottom:6px;">{_escape(display_title)}</h4>
+              {body_html}
+            </div>
+            """
+        )
+    return "".join(cards)
+
+
+def _render_blue_sky_interaction_body(spec: dict[str, Any], items: list[str]) -> str:
+    key_cards = []
+    for index, item in enumerate(items[:4], start=1):
+        title, body = _blue_sky_item_parts(item)
+        key = _blue_sky_keycap(title, body, index)
+        copy = body or spec.get("key_point", "")
+        key_cards.append(
+            f"""
+            <div class="g" style="padding:15px 18px;">
+              <kbd>{_escape(key)}</kbd>
+              <h4 style="margin:9px 0 5px;font-size:1.02rem;line-height:1.18;">{_escape(title)}</h4>
+              <p style="font-size:0.78rem;line-height:1.45;">{_escape(copy)}</p>
+            </div>
+            """
+        )
+    return f"""
+      <div class="cols2" style="align-items:stretch;">
+        <div class="bento" style="grid-template-columns:repeat(2,1fr);grid-auto-rows:164px;">{"".join(key_cards)}</div>
+        <div style="display:flex;flex-direction:column;gap:12px;">
+          <div class="info"><strong>Live deck:</strong> {_escape(spec.get("key_point", ""))}</div>
+          <div class="cmd">F5 · P · E · Ctrl+S</div>
+          <div class="co"><strong>Browser-native</strong><br>Presenter Mode、Inline Editing、Notes Panel 都在单 HTML 内运行。</div>
+        </div>
+      </div>
+    """.strip()
+
+
+def _render_blue_sky_use_case_body(spec: dict[str, Any], items: list[str]) -> str:
+    layers = []
+    for index, item in enumerate(items[:4], start=1):
+        title, body = _blue_sky_item_parts(item)
+        layers.append(
+            f"""
+            <div class="layer">
+              <div class="step">{index}</div>
+              <div>
+                <h4 style="margin-bottom:4px;">{_escape(title)}</h4>
+                <p style="font-size:0.82rem;">{_escape(body or spec.get("key_point", ""))}</p>
+              </div>
+            </div>
+            """
+        )
+    return f'<div style="display:flex;flex-direction:column;gap:11px;">{"".join(layers)}</div>'
+
+
+def _render_blue_sky_preset_body(items: list[str]) -> str:
+    cards = []
+    for item in items[:6]:
+        title, body = _blue_sky_item_parts(item)
+        cards.append(
+            f"""
+            <div class="g" style="padding:18px 20px;">
+              <span class="pill green" style="margin-bottom:10px;">{_escape(title)}</span>
+              <p style="font-size:0.82rem;">{_escape(body or item)}</p>
+            </div>
+            """
+        )
+    return f'<div class="cols3">{"".join(cards)}</div>'
+
+
+def _render_blue_sky_action_cards(spec: dict[str, Any], items: list[str]) -> str:
+    cards = []
+    for item in items[:4]:
+        title, body = _blue_sky_item_parts(item)
+        body = body or item
+        is_command = bool(re.search(r"install|clawhub|https?://|/slide-creator", body, flags=re.IGNORECASE))
+        body_html = f'<div class="cmd" style="margin-top:10px;">{_escape(body)}</div>' if is_command else f'<p style="margin-top:8px;">{_escape(body)}</p>'
+        cards.append(
+            f"""
+            <div class="g" style="padding:18px 20px;text-align:left;">
+              <span class="pill green">{_escape(title)}</span>
+              {body_html}
+            </div>
+            """
+        )
+    return "".join(cards)
+
+
 def render_blue_sky_html(
     brief: dict[str, Any],
     *,
@@ -5288,21 +7343,28 @@ def _render_blue_sky_slide(
     items = spec.get("supporting_items", [])
     evidence = spec.get("evidence_items", [])
     facts = spec.get("supporting_facts", [])
-    all_items = items or evidence or facts
+    all_items = _blue_sky_display_items(spec)
 
     # Cover slide
     if layout_id == "cover" or role_index == 0:
-        # Cover uses supporting_facts for stat row (more complete)
+        cover_items = facts or all_items
+        cover_metrics = _blue_sky_cover_metrics(spec, cover_items)
+        cover_pill = _blue_sky_cover_pill_text(spec, cover_items, cover_metrics)
         stat_items = []
-        for item in (facts or all_items)[:4]:
-            # Split into stat value + label if possible (format: "value - label" or "value label")
-            parts = item.split(" ", 1)
-            stat_val = _escape(parts[0])
-            stat_label = _escape(parts[1]) if len(parts) > 1 else ""
-            label_html = f'<p style="font-size:0.78rem;margin-top:2px;">{stat_label}</p>' if stat_label else ""
-            stat_items.append(f'<div class="g" style="padding:16px 28px;text-align:center;">'
-                              f'<div class="stat" style="font-size:2.8rem;">{stat_val}</div>'
-                              f'{label_html}</div>')
+        for stat_val, stat_label in cover_metrics:
+            label_html = f'<p style="font-size:0.78rem;margin-top:2px;">{_escape(stat_label)}</p>' if stat_label else ""
+            stat_items.append(
+                f'<div class="g" style="padding:16px 28px;text-align:center;">'
+                f'<div class="stat" style="font-size:2.8rem;">{_escape(stat_val)}</div>'
+                f'{label_html}</div>'
+            )
+        if not stat_items:
+            for item in cover_items[:3]:
+                stat_items.append(
+                    f'<div class="g" style="padding:16px 22px;text-align:center;">'
+                    f'<h4 style="margin:0;font-size:0.98rem;line-height:1.3;">{_escape(str(item))}</h4>'
+                    f'</div>'
+                )
         stats_html = f'<div style="display:flex;gap:14px;justify-content:center;flex-wrap:wrap;margin-top:28px;">{"".join(stat_items)}</div>' if stat_items else ""
         return f"""
     <!-- slide {slide_number}: {role} -->
@@ -5369,7 +7431,7 @@ def _render_blue_sky_slide(
       </div>
 
       <div style="text-align:center;position:relative;z-index:10;">
-        <span class="pill" style="margin-bottom:20px;display:inline-block;">{_escape(spec.get('subtitle', ''))}</span>
+        <span class="pill" style="margin-bottom:20px;display:inline-block;">{_escape(cover_pill)}</span>
         {cover_title}
         <p style="font-size:1.1rem;max-width:560px;margin:0 auto 28px;">{key_point}</p>
         {stats_html}
@@ -5378,13 +7440,15 @@ def _render_blue_sky_slide(
 
     # Closing slide
     if layout_id == "closing":
+        action_cards = _render_blue_sky_action_cards(spec, all_items)
         return f"""
     <!-- slide {slide_number}: {role} -->
     <section class="slide" id="slide-{slide_number}" data-notes="{speaker_note}" aria-label="{role_attr}" data-export-role="{role_attr}">
-      <div style="text-align:center;max-width:640px;">
-        <div class="divider" style="margin:0 auto 20px;"></div>
+      <div style="text-align:center;max-width:900px;width:100%;">
+        <span class="pill" style="margin-bottom:14px;display:inline-block;">Start</span>
         {section_title}
-        <p style="font-size:1rem;color:var(--text-secondary);margin-top:14px;">{key_point}</p>
+        <p style="font-size:1rem;color:var(--text-secondary);margin:14px auto 22px;max-width:620px;">{key_point}</p>
+        <div class="cols2">{action_cards}</div>
       </div>
     </section>""".strip()
 
@@ -5452,9 +7516,15 @@ def _render_blue_sky_slide(
 
     # Bento / grid slide
     if layout_id == "bento":
-        cards_html = ""
-        for item in all_items[:6]:
-            cards_html += f'<div class="g" style="padding:16px 18px;"><h4 style="margin-bottom:6px;">{_escape(item)}</h4></div>'
+        if role == "interaction":
+            body_html = _render_blue_sky_interaction_body(spec, all_items)
+        elif role == "use-cases":
+            body_html = _render_blue_sky_use_case_body(spec, all_items)
+        elif role == "presets":
+            body_html = _render_blue_sky_preset_body(all_items)
+        else:
+            cards_html = _render_blue_sky_bento_cards(spec, all_items)
+            body_html = f'<div class="bento" style="grid-auto-rows:132px;">{cards_html}</div>'
         return f"""
     <!-- slide {slide_number}: {role} -->
     <section class="slide" id="slide-{slide_number}" data-notes="{speaker_note}" aria-label="{role_attr}" data-export-role="{role_attr}">
@@ -5462,8 +7532,7 @@ def _render_blue_sky_slide(
         <span class="pill" style="margin-bottom:14px;display:inline-block;">Chapter {role_index:02d}</span>
         {section_title}
         <div class="divider"></div>
-        <div class="bento">{cards_html}</div>
-        <p style="margin-top:14px;color:var(--text-secondary);font-size:0.9rem;">{key_point}</p>
+        {body_html}
       </div>
     </section>""".strip()
 
@@ -5684,14 +7753,17 @@ def render_custom_theme_html(
     """Renderer for custom themes. Uses starter.html CSS + theme component classes."""
     packet = packet or build_render_packet(brief)
     preset = brief["style"]["preset"]
-    style_contract = style_contract or compile_style_contract(preset)
-
-    # Discover theme directory
-    theme_key = _normalize_preset_name(preset).removeprefix("custom:").strip()
-    custom_themes = discover_custom_themes()
-    if theme_key not in custom_themes:
+    capability = get_preset_render_capability(preset)
+    if capability.renderer_strategy != "custom_theme" or not capability.reference_path:
         raise RenderError(f"Custom theme not found: {preset}")
-    theme_dir = custom_themes[theme_key].parent
+    style_contract = style_contract or compile_style_contract(preset)
+    display_preset = capability.canonical_preset or style_contract["preset"]
+
+    reference_path = Path(capability.reference_path)
+    if not reference_path.is_absolute():
+        reference_path = ROOT / reference_path
+    theme_dir = reference_path.resolve().parent
+    display_preset = display_preset or theme_dir.name.title()
 
     # Extract starter.html CSS if available
     starter_path = theme_dir / "starter.html"
@@ -5710,8 +7782,8 @@ def render_custom_theme_html(
     )
 
     # Use starter.html CSS directly, skip the generic shell CSS
-    js_engine = _extract_js_engine_blocks(preset=preset, version=_skill_version())
-    brand_mark = _brand_mark_text(brief["title"], preset)
+    js_engine = _extract_js_engine_blocks(preset=display_preset, version=_skill_version())
+    brand_mark = _brand_mark_text(brief["title"], display_preset)
     provenance_attrs = _html_body_provenance_attrs(packet)
 
     return f"""<!DOCTYPE html>
@@ -5719,7 +7791,7 @@ def render_custom_theme_html(
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>{_escape(brief['title'])} - {_escape(preset)}</title>
+<title>{_escape(brief['title'])} - {_escape(display_preset)}</title>
 <style>
 {starter_css}
 
@@ -5732,7 +7804,8 @@ body.presenting {{
 }}
 body.presenting .slide {{
     position: fixed; top: 0; left: 0;
-    width: 100vw; height: 100vh;
+    width: 1440px; height: 900px;
+    transform-origin: top left;
     scroll-snap-align: none;
     visibility: hidden;
     pointer-events: none;
@@ -5770,7 +7843,7 @@ body.presenting .slide-credit {{ display: none !important; }}
 #editToggle.active, .edit-toggle.active {{ background: var(--kd-blue, #2971EB); color: #fff; border-color: var(--kd-blue, #2971EB); }}
 </style>
 </head>
-<body data-export-progress="true" data-preset="{_escape(preset)}" {provenance_attrs}>
+<body data-export-progress="true" data-preset="{_escape(display_preset)}" {provenance_attrs}>
 <span id="brand-mark">{_escape(brand_mark)}</span>
 {slides_html}
 <div class="edit-hotzone"></div>
@@ -5799,6 +7872,18 @@ def render_from_brief(brief: dict[str, Any]) -> tuple[str, dict[str, Any], dict[
     elif _is_custom_theme(preset):
         html_text = render_custom_theme_html(brief, packet=packet, style_contract=style_contract)
     else:
+        if packet.get("renderer_strategy") == "reference_driven":
+            raise RenderError(
+                f"{preset} uses reference-driven generation; deterministic render_from_brief() is not the HTML writer for this preset.",
+                payload={
+                    "code": "reference_driven_generation_required",
+                    "preset": preset,
+                    "generation_status": packet.get("preset_generation_status"),
+                    "renderer_strategy": packet.get("renderer_strategy"),
+                    "required_refs": packet.get("required_refs", []),
+                    "required_contracts": packet.get("required_contracts", []),
+                },
+            )
         raise RenderError(
             f"Deterministic low-context render is only implemented for Swiss Modern, Enterprise Dark, Data Story, Chinese Chan, and Blue Sky right now; got {preset}"
         )

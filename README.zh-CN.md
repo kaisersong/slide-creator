@@ -80,7 +80,7 @@ user prompt → BRIEF.json → HTML → validate → eval
 
 原因很简单：真正生成 HTML 时，不应该继续背整段聊天记录，而应该只背一个短、硬、结构化的真相源。
 
-这条规则同样适用于“直接给内容 + 风格，立刻生成”。这类请求也必须先 materialize `BRIEF.json`，再走 deterministic renderer，最后通过 strict 写入前门禁，不能在交互路径里直接手拼最终 HTML。
+这条规则同样适用于“直接给内容 + 风格，立刻生成”。这类请求也必须先 materialize `BRIEF.json`，再按 preset 能力路由：deterministic preset 走 `render_from_brief()`，reference-backed preset 走 reference-driven worker，最后通过 strict 写入前门禁，不能在交互路径里绕过 BRIEF/style contract 手拼最终 HTML。
 
 ### 二、公开模式尽量简单，内部链路必须严格
 
@@ -234,15 +234,15 @@ theme 的约束是明确的：
 
 ### 九、内容类型路由，本质上是质量功能
 
-22 个预设只有在”系统能帮用户先站到对的位置”时才真正有价值。
+22 个风格方向只有在”系统能帮用户先站到对的位置”时才真正有价值。
 
-所以 slide-creator 会先按内容类型给出合理起点：
+所以 slide-creator 会先按内容类型给出合理起点，但运行时路由只使用当前可稳定生成的 surface，而不是把完整设计参考库都当成可生成目标：
 
 ```
 数据报告 / KPI 看板    → Data Story、Enterprise Dark、Swiss Modern
-商业路演 / VC Deck     → Bold Signal、Aurora Mesh、Enterprise Dark
-开发工具 / API 文档    → Terminal Green、Neon Cyber、Neo-Retro Dev Deck
-咨询报告 / 战略方案    → Strategy Consulting、Enterprise Dark、Swiss Modern
+商业路演 / VC Deck     → Enterprise Dark、Blue Sky、Swiss Modern
+开发工具 / API 文档    → Data Story、Blue Sky、Enterprise Dark
+咨询报告 / 战略方案    → Enterprise Dark、Swiss Modern、Data Story
 ```
 
 好的默认值会直接减少返工。结果就是更少的坏第一稿，更少的风格重置，也更少被上下文浪费掉的 token。
@@ -254,7 +254,7 @@ theme 的约束是明确的：
 - `Data Story`
 - `Blue Sky`
 
-这**不代表其他 preset 不可用**。用户只要明确指定任意当前 preset，系统仍应尊重该选择；收窄的只是默认推荐面和推荐优先级。
+这**不代表其他 preset 被删除**。`Chinese Chan` 已可在哲学、文化、品牌类语境中作为上下文可生成 preset。参考驱动型 preset 仍保留为显式选择的生成路径：用户明确要求时，可以通过选中风格 reference + strict validation 生成；但它们不承诺和核心 deterministic renderer 相同的稳定性。
 
 ---
 
@@ -310,6 +310,7 @@ python3 main.py --generate --brief BRIEF.json --output presentation.html --eval
 ```
 
 内置 preset 仍然从 `references/` / `references/style-index.md` 读取；`themes/<name>/reference.md` 只用于自定义主题。
+裸 CLI renderer 覆盖 deterministic 内置 preset 和 custom theme。reference-driven 内置 preset 走 slash-skill agent worker，再使用同一套 strict validator 后输出最终 HTML。
 
 ### 规划深度
 

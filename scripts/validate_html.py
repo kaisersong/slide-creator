@@ -818,7 +818,8 @@ def check_enterprise_dark_contract(soup, content, warnings) -> tuple[bool, str]:
         slides,
         {
             "kpi_dashboard", "consulting_split", "data_table",
-            "architecture_map", "comparison_matrix", "insight_pull", "timeline", "cta_close",
+            "architecture_map", "comparison_matrix", "insight_pull",
+            "timeline", "cta_close", "contrast_split",
         },
         warnings,
         "Enterprise Dark",

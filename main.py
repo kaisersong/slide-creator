@@ -144,6 +144,9 @@ def run_generate(
         return 1
     except RenderError as exc:
         print(f"RENDER ERROR: {exc}")
+        if exc.payload:
+            print("RENDER ERROR PAYLOAD:")
+            print(json.dumps(exc.payload, ensure_ascii=False, indent=2))
         return 1
 
     if not _has_canonical_provenance(html_text):

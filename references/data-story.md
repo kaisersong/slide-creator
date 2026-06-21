@@ -340,6 +340,28 @@ body {
 - P11 Summary -> `chart_insight`
 - P12 CTA -> `cta_close`, stat-led close, not a generic quote page
 
+When a slide has Data Story intent but does not contain enough slide-local numeric facts for a faithful bar/line chart, keep it chart-first with a pure SVG fallback (`.ds-signal-bars`, `.ds-flow-map`, `.ds-phase-timeline`, `.ds-signal-map`, `.ds-evidence-ladder`, or `.ds-state-grid-svg`) inside `chart_insight` or `workflow_chart`. SVG fallback visuals should render in an unframed `.ds-chart-visual` / `.ds-workflow-visual` area by default; do not put every SVG inside `.ds-chart-card`, because the frame shrinks the chart and creates repeated card rhythm. Do not collapse those slides into repeated quadrant text matrices, and do not reuse one SVG fallback across most of the deck.
+
+Interaction slides should render a control-surface rhythm (`.ds-key-strip` plus `.ds-mini-console`) instead of another state grid when the content is about keyboard shortcuts, presenter controls, editing, or runtime operation. CTA close slides may stay KPI-led when they contain real numeric facts; when the CTA is a set of tools, install targets, links, or next actions, render `.ds-action-grid` cards instead of putting text labels into `.ds-kpi`.
+
+### Data Story Rhythm Contract
+
+Data Story rhythm is checked by visible component signature, not only by
+`data-export-role`.
+
+- No 3 consecutive slides may use the same visual signature.
+- `workflow_chart` should not dominate the deck. After two workflow-family pages,
+  later flow-like content should switch to a different signature when possible.
+- `chart_insight` may repeat only when its visible component changes. Acceptable
+  rotations include `.ds-signal-bars`, `.ds-signal-map`, `.ds-evidence-ladder`,
+  `.ds-key-strip` / `.ds-mini-console`, and `.ds-phase-timeline`.
+- `comparison_matrix` is a contrast component, not the default fallback for every
+  non-numeric page. Avoid using it more than twice in a short 8-12 page deck
+  unless the content truly has separate comparison signals.
+- A CTA with install commands, links, or tool names is an action grid, not a KPI
+  strip. Long command text must remain inside the slide bounds at presentation
+  viewport sizes.
+
 ## Canonical Export Contract
 
 Data Story only exports cleanly when the deck stays on its chart-first path.
@@ -396,6 +418,10 @@ Data Story only exports cleanly when the deck stays on its chart-first path.
 - 情感颜色编码：`--positive: #00d4aa`（上升/好）、`--negative: #ff6b6b`（下降/差）
 - 背景网格 `opacity: 0.3`（深色）/ `opacity: 0.3`（浅色）
 - 不使用装饰性元素 — 数据是视觉焦点
+- 无足够数字时使用多种纯 SVG fallback 表达结构：`.ds-signal-bars`、`.ds-flow-map`、`.ds-phase-timeline`、`.ds-signal-map`、`.ds-evidence-ladder`、`.ds-state-grid-svg`；不伪造 chart values，不让多数页面复用同一图形
+- SVG fallback 默认使用无框 `.ds-chart-visual` / `.ds-workflow-visual` 大图区域；只让洞察条或阶段文本使用卡片，不让每个 SVG 都套 `.ds-chart-card`
+- 交互页使用 `.ds-key-strip` + `.ds-mini-console` 形成控制台节奏；非数字 CTA 使用 `.ds-action-grid`，不把工具名或链接名塞进 `.ds-kpi`
+- 节奏判断按视觉签名执行：连续 `chart_insight` 可以存在，但必须分别呈现不同签名组件；不得出现 3 页同一 SVG / 控制组件连续重复
 - 不使用大面积渐变
 - Insight 卡片必须使用左侧 3px 彩色边框 + 淡色背景
 
@@ -411,6 +437,8 @@ Data Story only exports cleanly when the deck stays on its chart-first path.
 - [ ] .chart-bar SVG 柱状图（主/次/第三色）
 - [ ] .chart-line SVG 折线（stroke-width: 2.5）
 - [ ] .chart-grid SVG 网格线（stroke-dasharray: 4 4）
+- [ ] .ds-signal-bars / .ds-flow-map / .ds-phase-timeline / .ds-signal-map / .ds-evidence-ladder / .ds-state-grid-svg（无足够本地数字时的多样化 chart-first fallback）
+- [ ] No 3 consecutive slides share the same Data Story visual signature
 - [ ] .ds-insight 洞察卡片（左侧 3px 彩色边框）
 - [ ] .divider 分隔线（1px solid var(--border)）
 - [ ] font-variant-numeric: tabular-nums

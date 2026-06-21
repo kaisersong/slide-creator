@@ -34,11 +34,12 @@ COMPONENT_KIND_SELECTORS: dict[str, str] = {
     "table": "table",
     "svg_chart": "svg",
     "quote": "blockquote,[class*='quote'],[class*='pull']",
+    "card": ".feat-card,.inst-block,.cta-block,.index-item,.disc-step,.pain-item,.hero-stat,.g,.bl,.step,.info,.co,.ds-kpi-card,.ds-matrix-cell,.ent-kpi-card,.ent-feature-card,.ent-feature-row,.ent-arch-card,.ent-contrast-block,.ent-timeline-item,[class*='card']",
     "metric_card": "[class*='kpi'],[class*='metric'],[class*='stat']",
     "timeline": "[class*='timeline']",
-    "matrix": "[class*='matrix'],[class*='comparison'],.cols2,.cols3,.cols4,.bento",
-    "diagram": "[class*='diagram'],[class*='workflow'],[class*='arch'],.layer",
-    "code": "pre,code",
+    "matrix": "[class*='matrix'],[class*='comparison'],.cols2,.cols3,.cols4,.bento,.ent-contrast-split,.ent-feature-grid",
+    "diagram": "[class*='diagram'],[class*='workflow'],[class*='arch'],.layer,.ent-arch-grid",
+    "code": "pre,code,.ent-code",
     "image": "img,picture,figure",
 }
 
@@ -101,7 +102,7 @@ def _has_hidden_overflow(css_text: str, selector: str) -> bool:
 
 
 def _meaningful_numeric_tokens(text: str) -> list[str]:
-    normalized = text.replace(",", "").replace(" ", "")
+    normalized = text.replace(",", "")
     tokens: list[str] = []
     for match in NUMERIC_TOKEN_RE.finditer(normalized):
         token = match.group(0).lstrip("$")
@@ -122,6 +123,11 @@ def _extract_html_numeric_tokens(soup: BeautifulSoup) -> list[str]:
         if any(marker in classes for marker in ("slide-num-label", "bg-num")):
             continue
         for token in _meaningful_numeric_tokens(text):
+            if re.fullmatch(r"0[1-9]", token) and (
+                re.fullmatch(r"0[1-9]", text)
+                or re.fullmatch(r"(?:signal|step|stage|phase|item|point)\s+0[1-9]", text, flags=re.IGNORECASE)
+            ):
+                continue
             if token not in tokens:
                 tokens.append(token)
     return tokens
@@ -292,6 +298,195 @@ def _layout_variety(slides: list[Any]) -> float:
     return round(len(roles) / len(slides), 4)
 
 
+def _max_sequence_run(values: list[str]) -> int:
+    longest = 0
+    current = 0
+    previous = None
+    for value in values:
+        if value == previous:
+            current += 1
+        else:
+            previous = value
+            current = 1
+        longest = max(longest, current)
+    return longest
+
+
+def _unique_ratio(values: list[str]) -> float:
+    if not values:
+        return 0.0
+    return round(len(set(values)) / len(values), 4)
+
+
+def _slide_visual_family(slide: Any) -> str:
+    role = str(slide.get("data-export-role") or "").strip()
+    classes = set(slide.get("class", []))
+
+    if slide.select_one(".ent-dashboard-story"):
+        return "story-dashboard"
+    if slide.select_one(".ent-cover-metric-row"):
+        return "cover-dashboard"
+    if slide.select_one(".ent-contrast-split"):
+        return "contrast"
+    if slide.select_one(".ent-feature-grid"):
+        return "feature-grid"
+    if slide.select_one(".ent-table"):
+        return "table"
+    if slide.select_one(".ent-timeline"):
+        return "timeline"
+    if slide.select_one(".ent-arch-grid"):
+        return "architecture"
+    if slide.select_one(".ent-split"):
+        return "split"
+    if slide.select_one(".ent-matrix"):
+        return "matrix"
+    if slide.select_one(".ent-code") or "enterprise-close" in classes:
+        return "cta"
+
+    if "cover" in classes or role == "cover":
+        return "hero"
+
+    if slide.select_one(".ds-action-grid"):
+        return "action-grid"
+    if slide.select_one(".ds-interaction-layout,.ds-key-strip,.ds-mini-console"):
+        return "interaction"
+    if slide.select_one(".ds-workflow-layout,.ds-workflow-visual,.ds-phase-timeline,.ds-flow-map"):
+        return "workflow"
+    if slide.select_one(".ds-matrix"):
+        return "matrix"
+    if slide.select_one(".ds-kpi-grid,.ds-kpi-card,.ds-cover-metric"):
+        return "stat"
+    if slide.select_one(".ds-signal-bars"):
+        return "bar-chart"
+    if slide.select_one(".ds-signal-map"):
+        return "signal-map"
+    if slide.select_one(".ds-evidence-ladder"):
+        return "evidence-ladder"
+    if slide.select_one(".ds-state-grid-svg"):
+        return "state-grid"
+    if slide.select_one(".ds-chart-visual,.ds-chart-svg"):
+        return "chart"
+
+    if "chapter" in classes or role == "chapter":
+        return "chapter"
+    if slide.select_one(".cloud-layer,.cloud-strip"):
+        return "hero"
+    if slide.select_one(".bento"):
+        if slide.select_one(".stat"):
+            return "bento-stat"
+        if slide.select_one(".cmd,.co,.info"):
+            return "bento-control"
+        return "bento"
+    if slide.select_one(".layer"):
+        return "layer-flow"
+    if slide.select_one(".cols2,.cols3,.cols4"):
+        if slide.select_one(".cmd,.co,.info"):
+            return "control-split"
+        if slide.select_one(".bl"):
+            return "list-split"
+        return "split"
+    if slide.select_one(".cmd"):
+        return "command"
+
+    if slide.select_one(".left-panel,.right-panel"):
+        if role in {"title_grid", "cover"}:
+            return "hero"
+        return "split"
+    if slide.select_one(".stat-row,.hero-stat"):
+        return "stat"
+    if slide.select_one(".feat-grid,.feat-card"):
+        return "feature-grid"
+    if slide.select_one(".inst-blocks,.inst-block"):
+        return "evidence"
+    if slide.select_one(".cta-block"):
+        return "cta"
+
+    role_map = {
+        "title_grid": "hero",
+        "cover": "hero",
+        "chapter": "chapter",
+        "kpi_dashboard": "dashboard",
+        "kpi_chart": "stat-chart",
+        "kpi_grid": "stat",
+        "hero_number": "stat",
+        "contrast_split": "contrast",
+        "consulting_split": "split",
+        "column_content": "split",
+        "comparison_matrix": "matrix",
+        "workflow_chart": "workflow",
+        "timeline": "timeline",
+        "architecture_map": "architecture",
+        "data_table": "table",
+        "contents_index": "index",
+        "bento": "bento",
+        "pull_quote": "quote",
+        "insight_pull": "insight",
+        "cta_close": "cta",
+        "closing": "cta",
+    }
+    return role_map.get(role, role or "unknown")
+
+
+def _density_bucket(kind_count: int) -> str:
+    if kind_count <= 1:
+        return "bare"
+    if kind_count <= 3:
+        return "standard"
+    return "rich"
+
+
+def _slide_visual_signature(slide: Any) -> str:
+    family = _slide_visual_family(slide)
+    role = str(slide.get("data-export-role") or "").strip() or "unknown"
+    kinds = sorted(kind for kind in _component_kinds(slide) if kind not in {"heading", "paragraph"})
+    kind_key = ",".join(kinds) if kinds else "text"
+    return f"{family}|{role}|{_density_bucket(len(kinds))}|{kind_key}"
+
+
+def _layout_rhythm_diagnostics(slides: list[Any]) -> dict[str, Any]:
+    if not slides:
+        return {
+            "layout_variety": 0.0,
+            "layout_role_variety": 0.0,
+            "visual_family_variety": 0.0,
+            "visual_signature_variety": 0.0,
+            "max_layout_role_run": 0,
+            "max_visual_family_run": 0,
+            "max_visual_signature_run": 0,
+            "visual_families": [],
+        }
+
+    roles = [str(slide.get("data-export-role") or "unknown").strip() or "unknown" for slide in slides]
+    families = [_slide_visual_family(slide) for slide in slides]
+    signatures = [_slide_visual_signature(slide) for slide in slides]
+
+    role_variety = _unique_ratio(roles)
+    family_variety = _unique_ratio(families)
+    signature_variety = _unique_ratio(signatures)
+    max_role_run = _max_sequence_run(roles)
+    max_family_run = _max_sequence_run(families)
+    max_signature_run = _max_sequence_run(signatures)
+
+    raw_score = 0.30 * role_variety + 0.35 * family_variety + 0.35 * signature_variety
+    run_penalty = min(
+        0.35,
+        0.06 * max(0, max_role_run - 2)
+        + 0.12 * max(0, max_family_run - 1)
+        + 0.10 * max(0, max_signature_run - 1),
+    )
+    visual_rhythm_score = round(max(0.0, min(1.0, raw_score - run_penalty)), 4)
+    return {
+        "layout_variety": visual_rhythm_score,
+        "layout_role_variety": role_variety,
+        "visual_family_variety": family_variety,
+        "visual_signature_variety": signature_variety,
+        "max_layout_role_run": max_role_run,
+        "max_visual_family_run": max_family_run,
+        "max_visual_signature_run": max_signature_run,
+        "visual_families": families,
+    }
+
+
 def _style_signature_coverage(soup: BeautifulSoup, preset: str | None) -> float | None:
     if not preset:
         return None
@@ -361,13 +556,26 @@ def _compare_non_regression(current: dict[str, Any], baseline: dict[str, Any] | 
         and style_ok
         and minimal_delta <= 0.1
     )
-    return {
+    comparison = {
         "layout_variety_delta": layout_delta,
         "component_diversity_delta": component_delta,
         "style_signature_coverage_delta": style_delta,
         "minimal_slide_ratio_delta": minimal_delta,
         "pass": passed,
     }
+    for key in (
+        "layout_role_variety",
+        "visual_family_variety",
+        "visual_signature_variety",
+        "max_layout_role_run",
+        "max_visual_family_run",
+        "max_visual_signature_run",
+    ):
+        current_value = current.get(key)
+        baseline_value = baseline.get(key)
+        if isinstance(current_value, (int, float)) and isinstance(baseline_value, (int, float)):
+            comparison[f"{key}_delta"] = round(current_value - baseline_value, 4)
+    return comparison
 
 
 def analyze_html_quality(
@@ -377,6 +585,7 @@ def analyze_html_quality(
     source_text: str | None = None,
     preset: str | None = None,
     baseline_html: str | None = None,
+    baseline_report: dict[str, Any] | None = None,
     title_browser_report: dict[str, Any] | None = None,
 ) -> dict[str, Any]:
     soup = BeautifulSoup(html_text, "html.parser")
@@ -412,7 +621,8 @@ def analyze_html_quality(
     else:
         numeric_faithfulness = 1.0
 
-    layout_variety = _layout_variety(slides)
+    rhythm_diagnostics = _layout_rhythm_diagnostics(slides)
+    layout_variety = rhythm_diagnostics["layout_variety"]
     avg_components = _avg_component_kinds_per_slide(slides)
     minimal_slide_ratio, max_minimal_run = _minimal_slide_ratio(slides)
     role_coverage, role_sequence_match = _narrative_role_coverage(brief, soup)
@@ -427,6 +637,13 @@ def analyze_html_quality(
         "default_visible_chrome": default_visible_chrome,
         "content_occlusion_risk": content_occlusion_risk,
         "layout_variety": layout_variety,
+        "layout_role_variety": rhythm_diagnostics["layout_role_variety"],
+        "visual_family_variety": rhythm_diagnostics["visual_family_variety"],
+        "visual_signature_variety": rhythm_diagnostics["visual_signature_variety"],
+        "max_layout_role_run": rhythm_diagnostics["max_layout_role_run"],
+        "max_visual_family_run": rhythm_diagnostics["max_visual_family_run"],
+        "max_visual_signature_run": rhythm_diagnostics["max_visual_signature_run"],
+        "visual_families": rhythm_diagnostics["visual_families"],
         "avg_component_kinds_per_slide": avg_components,
         "style_signature_coverage": style_signature_coverage,
         "numeric_faithfulness": numeric_faithfulness,
@@ -473,9 +690,9 @@ def analyze_html_quality(
             if code not in hard_failures:
                 hard_failures.append(code)
 
-    baseline_report = None
+    computed_baseline_report = baseline_report
     if baseline_html:
-        baseline_report = analyze_html_quality(
+        computed_baseline_report = analyze_html_quality(
             baseline_html,
             brief=brief,
             source_text=source_text,
@@ -489,9 +706,15 @@ def analyze_html_quality(
         "quality_gates": gates,
         "diagnostics": diagnostics,
     }
-    comparison = _compare_non_regression(diagnostics, baseline_report["diagnostics"] if baseline_report else None)
+    comparison = _compare_non_regression(
+        diagnostics,
+        computed_baseline_report["diagnostics"] if computed_baseline_report else None,
+    )
     if comparison is not None:
         report["comparison"] = {"non_regression": comparison}
+        gates["baseline-non-regression"] = bool(comparison["pass"])
+        if not comparison["pass"]:
+            hard_failures.append("baseline-regression")
     return report
 
 
@@ -502,6 +725,7 @@ def analyze_html_quality_paths(
     source_path: str | Path | None = None,
     preset: str | None = None,
     baseline_html_path: str | Path | None = None,
+    baseline_report_path: str | Path | None = None,
     title_browser_report_path: str | Path | None = None,
     run_browser_titles: bool = False,
 ) -> dict[str, Any]:
@@ -509,6 +733,7 @@ def analyze_html_quality_paths(
     brief = _load_optional_brief(brief_path)
     source_text = _read_text(source_path) if source_path else None
     baseline_html = _read_text(baseline_html_path) if baseline_html_path else None
+    baseline_report = json.loads(_read_text(baseline_report_path)) if baseline_report_path else None
     title_browser_report = None
     if title_browser_report_path:
         title_browser_report = json.loads(_read_text(title_browser_report_path))
@@ -521,6 +746,7 @@ def analyze_html_quality_paths(
         source_text=source_text,
         preset=preset,
         baseline_html=baseline_html,
+        baseline_report=baseline_report,
         title_browser_report=title_browser_report,
     )
     report["html_path"] = str(html_path)
@@ -530,6 +756,8 @@ def analyze_html_quality_paths(
         report["source_path"] = str(source_path)
     if baseline_html_path:
         report["baseline_html_path"] = str(baseline_html_path)
+    if baseline_report_path:
+        report["baseline_report_path"] = str(baseline_report_path)
     if title_browser_report_path:
         report["title_browser_report_path"] = str(title_browser_report_path)
     return report

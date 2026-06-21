@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+import re
 import subprocess
 import sys
 from pathlib import Path
@@ -159,6 +160,58 @@ def _make_enterprise_dark_rhythm_brief() -> dict:
     return brief
 
 
+def _make_slide_creator_intro_brief(*, preset: str) -> dict:
+    brief = _make_enterprise_dark_rhythm_brief()
+    brief["brief_id"] = f"slide-creator-intro-12p-{preset.lower().replace(' ', '-')}-regression"
+    brief["style"]["preset"] = preset
+    brief["style"]["tone"] = "清爽、产品化、可信"
+    brief["title"] = "slide-creator: Stable AI Slide Generation"
+    brief["audience"] = "评估 slide-creator 的产品经理、开发者、内容创作者"
+    brief["desired_action"] = "理解 slide-creator 的核心价值并试跑第一个 deck"
+    brief["content"]["must_include"] = [
+        "IR-first workflow（BRIEF.json → HTML）",
+        "零依赖 runtime（浏览器原生）",
+        "22 design presets 与内容型路由",
+        "Validate before trust（严格验证）",
+        "Presenter Mode、Inline Editing、Play Mode",
+    ]
+    slide_data = [
+        ("cover", "slide-creator", "AI 能生成幻灯片但质量不稳定，slide-creator 给你稳定、精致的输出", "22 种设计预设、零依赖运行、IR-first 工作流、内容型路由", "hero", ["22 种设计预设", "零依赖运行", "IR-first 工作流", "内容型路由"]),
+        ("pain-solution", "AI Slide Generation 的痛点", "同一提示词每次结果都不同，反复重试让人疲惫", "质量不稳定、风格混乱、Context 压力、依赖外部工具、无验证、视觉密度失控", "comparison", ["质量不稳定", "风格混乱", "Context 压力", "无验证"]),
+        ("solution", "slide-creator 解决方案", "通过 IR-first workflow、零依赖 runtime 和严格验证体系，解决 AI slide generation 的不稳定性问题", "BRIEF.json 作为硬真相源、单 HTML 文件浏览器原生、生成前严格验证", "three-things", ["IR-first Workflow", "零依赖 Runtime", "Validate Before Trust"]),
+        ("features", "核心功能", "六个核心功能覆盖从规划、渲染、验证到交互和自定义", "prompt → BRIEF.json → HTML → validate → eval、22 design presets 每预设 8-12 种布局变体、Content-type routing、Zero-dependency runtime、16 checkpoints review、Custom themes", "feature-grid", ["IR-first Workflow — prompt → BRIEF.json → HTML → validate → eval", "22 Design Presets — 每预设 8-12 种布局变体", "Content-type Routing — 数据报告 → Data Story / Enterprise Dark，VC pitch → Bold Signal / Aurora Mesh，Dev tool → Terminal Green / Neon Cyber", "Zero-dependency — Viewport-fitted slides、Presenter Mode、Inline Editing、自包含 runtime", "Content Review — 16 checkpoints: 6 auto-detect + 10 AI-advised", "Custom Themes — themes/your-theme/reference.md + starter.html"]),
+        ("workflow", "工作流", "五个阶段的确定性路径，从内容到 HTML deck 的稳定交付", "Phase 1 内容收集、Phase 2 BRIEF.json 生成、Phase 3 确定性渲染、Phase 3.5 Content Review、Phase 4 浏览器打开导出", "timeline", ["Phase 1 内容收集", "Phase 2 BRIEF.json", "Phase 3 渲染验证", "Phase 4 打开导出"]),
+        ("design-philosophy", "设计哲学", "四个设计哲学保护最后一步，减轻 context 压力，避免视觉 slop", "Progressive Disclosure、Show Don't Tell、Against Slide Slop、Contract Alignment", "architecture-map", ["Progressive Disclosure", "Show Don't Tell", "Against Slide Slop", "Contract Alignment"]),
+        ("presets", "设计预设", "22 design presets 按内容型分类，覆盖从 pitch deck 到数据报告到 dev tool 的所有场景", "企业级、创意类、开发者、数据/咨询、文艺/品牌、设计探索", "comparison-matrix", ["企业级", "创意类", "开发者", "数据/咨询", "文艺/品牌", "设计探索"]),
+        ("content-routing", "内容型路由", "Content-type routing 自动推荐最佳风格，减少返工", "数据报告 → Data Story / Enterprise Dark / Swiss Modern、Business Pitch / VC Deck → Bold Signal / Aurora Mesh / Enterprise Dark、Developer Tool / API Docs → Terminal Green / Neon Cyber", "three-things", ["数据报告", "Business Pitch", "Developer Tool"]),
+        ("validation", "验证体系", "四层验证体系确保从 IR 到运行时的契约一致性", "validate-brief.py 检查 BRIEF.json 契约、validate_html.py --strict 检查运行时契约、preset-usage-rules.json 定义路由规则、Captured-run Skill Evals 回归基线对比", "feature-grid", ["validate-brief.py", "validate_html.py --strict", "preset-usage-rules.json", "Captured-run Skill Evals"]),
+        ("interaction", "交互特性", "四个交互特性让 HTML deck 成为真正的演示工具，而非一次性截图", "F5 全屏、P 键演讲窗口、默认浏览器编辑、E 键笔记栏", "feature-grid", ["F5 全屏", "P 键演讲窗口", "默认浏览器编辑", "E 键笔记栏"]),
+        ("use-cases", "使用场景", "三种典型使用场景覆盖从零开始、复杂内容、PPT 转换", "Interactive Creation 从交互开始、IR-first Workflow 从 BRIEF 开始、PPT Conversion 从 .pptx 开始", "three-things", ["Interactive Creation", "IR-first Workflow", "PPT Conversion"]),
+        ("cta_close", "开始使用", "两个平台一句话安装，文档和 demo 在线可访问", "Claude Code: Install、OpenClaw: clawhub install、文档链接、Demo 链接", "close", ['Claude Code: "Install https://github.com/kaisersong/slide-creator"', "OpenClaw: clawhub install kai-slide-creator", "文档: https://kaisersong.github.io/slide-creator/", "Demo: https://kaisersong.github.io/slide-creator/demos/blue-sky-zh.html"]),
+    ]
+    brief["deck"]["page_count"] = len(slide_data)
+    brief["narrative"]["page_roles"] = [role for role, *_rest in slide_data]
+    brief["narrative"]["slides"] = []
+    for index, values in enumerate(slide_data, start=1):
+        role, title, claim, explanation, family, facts = values
+        brief["narrative"]["slides"].append(
+            {
+                "slide_number": index,
+                "role": role,
+                "title": title,
+                "claim": claim,
+                "key_point": explanation,
+                "explanation": explanation,
+                "visual": family,
+                "visual_intent": family,
+                "preferred_layout_family": family,
+                "chart_policy": "auto",
+                "supporting_facts": facts,
+            }
+        )
+    return brief
+
+
 def _make_anchor_regression_brief() -> dict:
     brief = _load_core_swiss_brief()
     brief["language"] = "zh-CN"
@@ -238,6 +291,23 @@ def test_validate_brief_cli_rejects_polish_without_polish_controls(tmp_path: Pat
     assert "polish_controls is required" in result.stdout
 
 
+def test_validate_brief_cli_accepts_reference_driven_preset(tmp_path: Path):
+    brief = read_json(AUTO_DEMO)
+    brief["style"]["preset"] = "Paper & Ink"
+    path = tmp_path / "paper-ink-brief.json"
+    write_json(path, brief)
+
+    result = subprocess.run(
+        [sys.executable, str(VALIDATE_BRIEF), str(path)],
+        capture_output=True,
+        text=True,
+        timeout=15,
+    )
+
+    assert result.returncode == 0
+    assert "VALID: paper-ink-brief.json" in result.stdout
+
+
 def test_extract_brief_from_noisy_context_preserves_render_packet():
     brief_text = POLISH_DEMO.read_text(encoding="utf-8")
 
@@ -253,6 +323,8 @@ def test_extract_brief_from_noisy_context_preserves_render_packet():
     noisy_brief = extract_brief_from_context(noisy)
 
     assert direct_brief == noisy_brief
+    direct_brief["style"]["preset"] = "Data Story"
+    noisy_brief["style"]["preset"] = "Data Story"
 
     direct_packet = build_render_packet(direct_brief)
     noisy_packet = build_render_packet(noisy_brief)
@@ -545,6 +617,48 @@ def test_render_data_story_cta_close_uses_balanced_title_markup():
     assert "够支持谨慎扩面" in html
 
 
+def test_data_story_cover_uses_title_as_primary_hero_not_metric():
+    brief = _load_core_data_story_brief()
+    brief["title"] = "slide-creator: Stable AI Slide Generation"
+    cover = brief["narrative"]["slides"][0]
+    cover.update(
+        {
+            "role": "cover",
+            "title": "slide-creator",
+            "key_point": "22 种设计预设、零依赖运行、IR-first 工作流、内容型路由",
+            "claim": "slide-creator",
+            "supporting_facts": ["22 种设计预设", "零依赖运行", "IR-first 工作流"],
+            "numeric_facts": ["22 种设计预设"],
+        }
+    )
+
+    html_text, _packet, _style_contract = render_from_brief(brief)
+    soup = BeautifulSoup(html_text, "html.parser")
+    cover_slide = soup.find(id="slide-1")
+    heading = cover_slide.select_one(".ds-heading")
+    kpi = cover_slide.select_one(".ds-kpi")
+    label = cover_slide.select_one(".ds-kpi-label")
+    summary = cover_slide.select_one(".ds-cover-summary")
+
+    assert cover_slide.get("data-export-role") == "hero_number"
+    assert heading is not None
+    assert heading.get_text(" ", strip=True) == "slide-creator"
+    assert heading.find_previous(class_="ds-kpi") is None
+    assert kpi is not None
+    assert kpi.get_text(" ", strip=True) == "22"
+    assert label is not None
+    assert label.get_text(" ", strip=True) == "22 种设计预设"
+    assert summary is not None
+    assert summary.get_text(" ", strip=True) == "零依赖运行、IR-first 工作流、内容型路由"
+    assert ".ds-cover-metric" in html_text
+
+
+def test_brand_mark_uses_complete_short_product_name_before_colon():
+    from low_context import _brand_mark_text
+
+    assert _brand_mark_text("slide-creator: Stable AI Slide Generation", "Data Story") == "slide-creator"
+
+
 def test_data_story_kpi_grid_alias_resolves_to_compact_numeric_kpis():
     brief = _load_core_data_story_brief()
     slide = brief["narrative"]["slides"][2]
@@ -584,6 +698,157 @@ def test_data_story_kpi_grid_alias_resolves_to_compact_numeric_kpis():
     assert kpi_values[:3] == ["52.5%", "37.3%", "3"]
     assert "默认模型</div>" not in str(rendered_slide)
     assert 'body[data-preset="Data Story"] .ds-kpi-chart .ds-split-layout' in html
+
+
+def test_data_story_numeric_only_metric_never_returns_text_tokens():
+    from low_context import _metric_value_for_item
+
+    spec = {
+        "title": "内容路由必须先让结构清晰",
+        "claim": "数据报告不能被当成 KPI 数字",
+        "key_point": "这页没有任何真实数字，视觉 KPI 只能降级为占位序号。",
+        "visual_intent": "kpi grid",
+        "supporting_items": ["数据报告", "模板选择", "字段路由"],
+        "supporting_facts": ["数据报告", "模板选择", "字段路由"],
+        "evidence_items": [],
+        "numeric_facts": [],
+    }
+
+    value = _metric_value_for_item("数据报告", spec, index=0, numeric_only=True)
+
+    assert value == "1"
+    assert any(char.isdigit() for char in value)
+
+
+def test_shared_runtime_keeps_slide_number_clear_of_present_button():
+    brief = _load_core_data_story_brief()
+    html, _packet, _ = render_from_brief(brief)
+
+    present_block = re.search(r"#present-btn\s*\{(?P<body>.*?)\}", html, re.DOTALL)
+    label_block = re.search(r"\.slide-num-label\s*\{(?P<body>.*?)\}", html, re.DOTALL)
+
+    assert present_block is not None
+    assert label_block is not None
+
+    present_right = int(re.search(r"right:\s*(\d+)px", present_block.group("body")).group(1))
+    present_width = int(re.search(r"width:\s*(\d+)px", present_block.group("body")).group(1))
+    label_right = int(re.search(r"right:\s*(\d+)px", label_block.group("body")).group(1))
+
+    assert label_right >= present_right + present_width + 12
+
+
+def test_data_story_generated_text_role_falls_back_from_kpi_grid_without_numbers(tmp_path: Path):
+    from validate_html import validate
+
+    brief = _load_core_data_story_brief()
+    brief["narrative"]["page_roles"][1] = "content-routing"
+    slide = brief["narrative"]["slides"][1]
+    slide.update(
+        {
+            "role": "content-routing",
+            "title": "内容路由先保证信息结构清晰",
+            "key_point": "这页只解释数据报告、模板选择和字段路由之间的关系，不提供数字证据。",
+            "claim": "没有数字证据的内容路由页不应被强行渲染成 KPI 网格。",
+            "explanation": "如果视觉上需要强调结构，应使用洞察卡片，而不是伪造数字感。",
+            "visual_intent": "kpi grid",
+            "preferred_layout_family": "kpi-grid",
+            "chart_policy": "auto",
+            "supporting_facts": ["数据报告", "模板选择", "字段路由"],
+        }
+    )
+    slide.pop("numeric_facts", None)
+
+    specs = build_slide_spec(brief, packet=build_render_packet(brief))
+    assert specs[1]["layout_id"] == "chart_insight"
+
+    html_text, _packet, _style_contract = render_from_brief(brief)
+    output_path = tmp_path / "data-story-content-routing.html"
+    output_path.write_text(html_text, encoding="utf-8")
+
+    assert validate(output_path, strict=True)
+
+
+def test_data_story_layout_run_avoidance_keeps_text_roles_out_of_hero_number():
+    def build_brief_for_target_role(target_role: str) -> dict:
+        brief = _load_core_data_story_brief()
+        roles = [
+            "cover",
+            "design-philosophy",
+            "validation",
+            target_role,
+            "interaction",
+            "decision",
+            "closing",
+            "cta_close",
+        ]
+        titles = [
+            "数据故事需要先建立上下文",
+            "设计原则让模板选择更稳定",
+            "校验链路保证输出可复查",
+            "内容型路由",
+            "交互状态让演示可被操作",
+            "下一步聚焦四类核心场景",
+            "输出已经可以进入复测",
+            "开始生成第一版演示文稿",
+        ]
+        points = [
+            "先说明目标用户和判断口径，再进入结构化演示。",
+            "用信息密度、视觉语气和内容类型共同决定风格。",
+            "生成前校验 brief，生成后检查版式合同和质量门禁。",
+            "数据报告、商业路演、开发者文档会进入不同推荐路径。",
+            "播放、导出、复测和修订状态需要保持一致。",
+            "先覆盖数据报告、路演、开发者文档和展厅说明四类入口。",
+            "复测结果显示关键版式已经具备稳定输出能力。",
+            "按用户流程重新生成并记录产物路径。",
+        ]
+        facts = [
+            ["目标用户", "判断口径", "结构化演示"],
+            ["信息密度", "视觉语气", "内容类型"],
+            ["brief 校验", "版式合同", "质量门禁"],
+            ["数据报告", "商业路演", "开发者文档"],
+            ["播放状态", "导出状态", "复测状态"],
+            ["数据报告", "路演", "开发者文档"],
+            ["版式稳定", "复测通过", "路径可追踪"],
+            ["用户流程", "产物路径", "评分记录"],
+        ]
+        brief["narrative"]["page_roles"] = roles
+        for slide, role, title, point, supporting_facts in zip(
+            brief["narrative"]["slides"],
+            roles,
+            titles,
+            points,
+            facts,
+            strict=True,
+        ):
+            slide.update(
+                {
+                    "role": role,
+                    "title": title,
+                    "claim": title,
+                    "key_point": point,
+                    "explanation": point,
+                    "visual_intent": "structured content cards",
+                    "chart_policy": "auto",
+                    "supporting_facts": supporting_facts,
+                }
+            )
+            slide.pop("preferred_layout_family", None)
+            slide.pop("numeric_facts", None)
+        return brief
+
+    for target_role in ("content-routing", "use-cases"):
+        brief = build_brief_for_target_role(target_role)
+        specs = build_slide_spec(brief, packet=build_render_packet(brief))
+        target_spec = next(spec for spec in specs if spec["role"] == target_role)
+
+        assert target_spec["layout_id"] != "hero_number", (target_role, [spec["layout_id"] for spec in specs])
+
+        html_text, _packet, _style_contract = render_from_brief(brief)
+        soup = BeautifulSoup(html_text, "html.parser")
+        rendered_slide = soup.find("section", attrs={"aria-label": target_role})
+
+        assert rendered_slide is not None
+        assert rendered_slide.get("data-export-role") != "hero_number"
 
 
 def test_data_story_chart_policy_avoid_keeps_url_sources_as_evidence_cards():
@@ -887,6 +1152,66 @@ def test_enterprise_dark_narrative_cover_uses_story_cards_instead_of_fake_kpi_tr
     assert "▼" not in first_slide
 
 
+def test_enterprise_dark_cover_uses_uniform_signal_cards_for_mixed_facts():
+    from low_context import _render_enterprise_kpi_dashboard
+
+    spec = {
+        "slide_number": 1,
+        "role": "cover",
+        "layout_id": "kpi_dashboard",
+        "title": "Slide Creator 展厅覆盖 22 种设计预设",
+        "claim": "22 种设计预设",
+        "key_point": "零依赖运行和 IR-first 工作流是能力说明，不是额外数字。",
+        "visual": "kpi dashboard",
+        "visual_intent": "kpi dashboard",
+        "supporting_items": ["22 种设计预设", "零依赖运行", "IR-first 工作流"],
+        "evidence_items": [],
+        "supporting_facts": ["22 种设计预设", "零依赖运行", "IR-first 工作流"],
+        "numeric_facts": [],
+        "speaker_note": "cover",
+    }
+
+    html_text = _render_enterprise_kpi_dashboard(spec, total=3)
+    soup = BeautifulSoup(html_text, "html.parser")
+    cards = soup.select(".ent-cover-metric-row .ent-cover-metric-card")
+    titles = [node.get_text(" ", strip=True) for node in soup.select(".ent-cover-metric-title")]
+    inline_numbers = soup.select(".ent-cover-metric-title .ent-kpi-number")
+
+    assert len(cards) == 3
+    assert all("ent-kpi-card" in card.get("class", []) for card in cards)
+    assert titles == ["22 种设计预设", "零依赖运行", "IR-first 工作流"]
+    assert [node.get_text(" ", strip=True) for node in inline_numbers] == ["22"]
+    assert all("ent-cover-inline-number" in node.get("class", []) for node in inline_numbers)
+
+
+def test_enterprise_dark_cta_close_uses_text_cards_when_no_numeric_values_exist():
+    from low_context import _render_enterprise_cta_close
+
+    spec = {
+        "slide_number": 12,
+        "role": "cta_close",
+        "layout_id": "cta_close",
+        "title": "下一步先开放展厅样例",
+        "claim": "开放展厅样例",
+        "key_point": "让 ClaudeCode、OpenClaw 和文档共同进入验证闭环。",
+        "visual": "cta",
+        "visual_intent": "cta",
+        "supporting_items": ["ClaudeCode", "OpenClaw", "文档"],
+        "evidence_items": [],
+        "supporting_facts": ["ClaudeCode", "OpenClaw", "文档"],
+        "numeric_facts": [],
+        "speaker_note": "close",
+    }
+
+    html_text = _render_enterprise_cta_close(spec, total=12)
+    soup = BeautifulSoup(html_text, "html.parser")
+
+    assert soup.select(".ent-kpi-number") == []
+    assert "ClaudeCode" in soup.get_text(" ", strip=True)
+    assert "OpenClaw" in soup.get_text(" ", strip=True)
+    assert "文档" in soup.get_text(" ", strip=True)
+
+
 def test_enterprise_dark_runtime_replaces_watermark_placeholders_and_hides_brand_mark():
     brief = read_json(POLISH_DEMO)
     brief["style"]["preset"] = "Enterprise Dark"
@@ -916,7 +1241,7 @@ def test_enterprise_dark_split_structure_and_layout_rhythm_match_preset_better()
     assert 'class="ent-split-labels slide-content"' not in html_text
     assert 'class="ent-split-panel"' in html_text
     assert 'grid-template-columns: clamp(380px, 38%, 470px) minmax(0, 1fr);' in html_text
-    assert 'font-size: clamp(19px, 2.1vw, 28px);' in html_text
+    assert 'font-size: clamp(20px, 2.2vw, 30px);' in html_text
     assert 'body[data-preset="Enterprise Dark"]::before {' in html_text
     assert 'opacity: 0.09;' in html_text
     assert 'opacity: 0.05;' in html_text
@@ -941,6 +1266,111 @@ def _max_run(values: list[str]) -> int:
             current = 1
         longest = max(longest, current)
     return longest
+
+
+def _enterprise_rendered_component_families(slides) -> list[str]:
+    families = []
+    for slide in slides:
+        if "ent-dashboard-story" in slide.get("class", []):
+            families.append("story-dashboard")
+        elif slide.select_one(".ent-cover-metric-row"):
+            families.append("cover-dashboard")
+        elif slide.select_one(".ent-contrast-split"):
+            families.append("contrast")
+        elif slide.select_one(".ent-feature-grid"):
+            families.append("feature-grid")
+        elif slide.select_one(".ent-table"):
+            families.append("table")
+        elif slide.select_one(".ent-timeline"):
+            families.append("timeline")
+        elif slide.select_one(".ent-arch-grid"):
+            families.append("architecture")
+        elif slide.select_one(".ent-split"):
+            families.append("split")
+        elif slide.select_one(".ent-matrix"):
+            families.append("matrix")
+        elif "enterprise-matrix" in slide.get("class", []):
+            families.append("matrix")
+        elif slide.select_one(".ent-code"):
+            families.append("cta")
+        elif "enterprise-close" in slide.get("class", []):
+            families.append("cta")
+    return families
+
+
+def test_enterprise_dark_rhythm_uses_semantics_not_exact_role_names():
+    brief = _make_slide_creator_intro_brief(preset="Enterprise Dark")
+    replacements = {
+        "pain-solution": ("instability-contrast", "before after comparison"),
+        "solution": ("stability-pillars", "three anchors"),
+        "presets": ("style-catalog", "structured evidence catalog"),
+        "validation": ("quality-evidence", "validation evidence table"),
+        "interaction": ("runtime-capabilities", "feature grid capabilities"),
+        "use-cases": ("scenario-flow", "workflow scenarios"),
+        "cta_close": ("action-close", "close action"),
+    }
+    for slide in brief["narrative"]["slides"]:
+        replacement = replacements.get(slide["role"])
+        if replacement:
+            role, visual = replacement
+            slide["role"] = role
+            slide["visual"] = visual
+            slide["visual_intent"] = visual
+            slide.pop("preferred_layout_family", None)
+    brief["narrative"]["page_roles"] = [slide["role"] for slide in brief["narrative"]["slides"]]
+
+    html_text, _packet, _style_contract = render_from_brief(brief)
+    soup = BeautifulSoup(html_text, "html.parser")
+    slides = soup.select("section.slide")
+    families = _enterprise_rendered_component_families(slides)
+    roles = [slide.get("data-export-role") for slide in slides]
+
+    assert len(slides) == 12
+    assert _max_run(families) <= 1
+    assert len(set(roles)) >= 6
+    assert {"contrast", "feature-grid", "table", "timeline", "architecture", "split", "cta"}.issubset(set(families))
+
+    contrast_slide = soup.select_one('section.slide[aria-label="instability-contrast"]')
+    assert contrast_slide is not None
+    assert contrast_slide.get("data-export-role") == "contrast_split"
+    assert contrast_slide.select_one(".ent-contrast-split") is not None
+
+    evidence_slide = soup.select_one('section.slide[aria-label="quality-evidence"]')
+    assert evidence_slide is not None
+    assert evidence_slide.get("data-export-role") == "data_table"
+    assert len(evidence_slide.select(".ent-table tbody tr")) >= 3
+
+    cta_slide = soup.select_one('section.slide[aria-label="action-close"]')
+    assert cta_slide is not None
+    assert cta_slide.get("data-export-role") == "cta_close"
+    assert cta_slide.select_one(".ent-code") is not None
+
+
+def test_enterprise_dark_scheduler_prioritizes_semantics_over_fallbacks():
+    from low_context import build_slide_spec, _preset_usage_rules, _semantic_layout_candidates
+
+    brief = _make_slide_creator_intro_brief(preset="Enterprise Dark")
+    packet = build_render_packet(brief)
+    usage_rules = _preset_usage_rules("Enterprise Dark")
+    specs = {spec["role"]: spec for spec in build_slide_spec(brief, packet)}
+    allowed_layouts = packet["allowed_layouts"]
+
+    assert specs["cover"]["layout_id"] == "kpi_dashboard"
+    assert specs["pain-solution"]["layout_id"] == "contrast_split"
+    assert specs["features"]["layout_id"] == "comparison_matrix"
+    assert specs["presets"]["layout_id"] == "data_table"
+    assert specs["validation"]["layout_id"] == "data_table"
+
+    assert _semantic_layout_candidates(
+        specs["pain-solution"],
+        usage_rules=usage_rules,
+        layout_cycle=allowed_layouts,
+    )[0] == "contrast_split"
+    assert _semantic_layout_candidates(
+        specs["validation"],
+        usage_rules=usage_rules,
+        layout_cycle=allowed_layouts,
+    )[0] == "data_table"
 
 
 def test_work_hub_production_presets_keep_style_signal_without_placeholder_leaks():
@@ -1051,7 +1481,7 @@ def test_shared_shell_nav_dots_are_preset_driven_and_swiss_chrome_is_positioned(
     assert "--nav-dot-active: var(--chart-primary, #2563eb);" in data_story_html
 
 
-def test_data_story_work_hub_falls_back_to_stage_grids_when_numbers_are_not_slide_local():
+def test_data_story_work_hub_uses_non_numeric_svgs_when_numbers_are_not_slide_local():
     brief = _load_core_data_story_brief()
     packet = build_render_packet(brief)
     specs = build_slide_spec(brief, packet)
@@ -1069,13 +1499,13 @@ def test_data_story_work_hub_falls_back_to_stage_grids_when_numbers_are_not_slid
     assert driver_slide is not None
     assert risk_slide is not None
     assert 'aria-label="line chart"' not in str(driver_slide)
-    assert 'class="ds-stage-grid"' in str(driver_slide)
+    assert 'aria-label="flow map"' in str(driver_slide)
     assert 'data-export-role="chart_insight"' in str(risk_slide)
-    assert 'class="ds-stage-grid"' in str(risk_slide)
+    assert 'aria-label="signal bars"' in str(risk_slide)
     metrics_slide = soup.select_one('section.slide[aria-label="metrics"]')
     if metrics_slide is not None:
         assert 'aria-label="bar chart"' not in str(metrics_slide)
-        assert 'class="ds-stage-grid"' in str(metrics_slide)
+        assert metrics_slide.select_one(".ds-chart-svg") is not None
 
 
 def test_validate_brief_accepts_richer_low_context_v2_fields():
@@ -1128,6 +1558,847 @@ def test_data_story_standard_headings_prefer_two_lines_outside_cta_close():
             assert line_count <= 2, (role, heading.get_text(" ", strip=True), line_count)
 
 
+def test_data_story_workflow_layout_has_bounded_split_css():
+    brief = _load_core_data_story_brief()
+    html_text, _packet, _style_contract = render_from_brief(brief)
+
+    assert 'body[data-preset="Data Story"] .ds-workflow .ds-split-layout' in html_text
+    assert "max-height: min(58vh, 456px)" in html_text
+    assert "-webkit-line-clamp: 3" in html_text
+
+
+def test_data_story_text_heavy_generated_families_preserve_layout_variety():
+    brief = _load_core_data_story_brief()
+    roles = [
+        "cover",
+        "design-philosophy",
+        "content-routing",
+        "presets",
+        "validation",
+        "use-cases",
+        "interaction",
+        "cta_close",
+    ]
+    families = [
+        "hero",
+        "architecture-map",
+        "three-things",
+        "comparison-matrix",
+        "feature-grid",
+        "three-things",
+        "feature-grid",
+        "close",
+    ]
+    titles = [
+        "Data Story text deck",
+        "设计哲学",
+        "内容型路由",
+        "设计预设",
+        "验证体系",
+        "使用场景",
+        "交互特性",
+        "开始使用",
+    ]
+    facts = [
+        ["22 种设计预设", "零依赖运行", "内容型路由"],
+        ["Progressive Disclosure", "Show Don't Tell", "Against Slide Slop", "Contract Alignment"],
+        ["数据报告", "商业路演", "开发者文档"],
+        ["企业级", "创意类", "开发者", "数据/咨询"],
+        ["validate-brief.py", "validate_html.py --strict", "preset-usage-rules.json", "Captured-run Skill Evals"],
+        ["Interactive Creation", "IR-first Workflow", "PPT Conversion"],
+        ["Play Mode", "Presenter Mode", "Inline Editing", "Notes Editing Panel"],
+        ["Claude Code", "OpenClaw", "文档", "Demo"],
+    ]
+    brief["narrative"]["page_roles"] = roles
+    for slide, role, family, title, supporting_facts in zip(
+        brief["narrative"]["slides"],
+        roles,
+        families,
+        titles,
+        facts,
+        strict=True,
+    ):
+        slide.update(
+            {
+                "role": role,
+                "title": title,
+                "claim": title,
+                "key_point": "、".join(supporting_facts),
+                "explanation": "、".join(supporting_facts),
+                "visual_intent": family,
+                "preferred_layout_family": family,
+                "chart_policy": "auto",
+                "supporting_facts": supporting_facts,
+            }
+        )
+        slide.pop("numeric_facts", None)
+
+    specs = build_slide_spec(brief, packet=build_render_packet(brief))
+    by_role = {spec["role"]: spec["layout_id"] for spec in specs}
+
+    assert by_role["design-philosophy"] == "chart_insight"
+    assert by_role["presets"] == "comparison_matrix"
+    assert by_role["validation"] == "chart_insight"
+    assert by_role["interaction"] == "chart_insight"
+    assert by_role["content-routing"] == "workflow_chart"
+    assert by_role["use-cases"] == "workflow_chart"
+
+    html_text, _packet, _style_contract = render_from_brief(brief)
+    soup = BeautifulSoup(html_text, "html.parser")
+    svg_labels_by_role = {
+        slide.get("aria-label"): slide.select_one(".ds-chart-svg").get("aria-label")
+        for slide in soup.select("section.slide")
+        if slide.select_one(".ds-chart-svg")
+    }
+
+    assert 'body[data-preset="Data Story"] .ds-comparison .ds-matrix' in html_text
+    assert 'body[data-preset="Data Story"] .ds-comparison .ds-matrix-cell' in html_text
+    assert ".ds-signal-map" in html_text
+    assert ".ds-flow-map" in html_text
+    assert ".ds-evidence-ladder" in html_text
+    assert ".ds-state-grid-svg" in html_text
+    assert "height: min(52vh, 360px)" in html_text
+    assert "-webkit-line-clamp: 3" in html_text
+    assert svg_labels_by_role["design-philosophy"] == "signal map"
+    assert svg_labels_by_role["content-routing"] == "flow map"
+    assert svg_labels_by_role["validation"] == "evidence ladder"
+    assert svg_labels_by_role["use-cases"] == "phase timeline"
+    interaction_slide = soup.select_one('section.slide[aria-label="interaction"]')
+    assert interaction_slide is not None
+    assert interaction_slide.select_one(".ds-key-strip") is not None
+    assert interaction_slide.select_one(".ds-state-grid-svg") is None
+    assert html_text.count('aria-label="state grid"') <= 1
+
+
+def test_data_story_workflow_global_cap_does_not_create_chart_family_triplet():
+    from low_context import _data_story_visual_signature
+
+    brief = read_json(POLISH_DEMO)
+    brief["style"]["preset"] = "Data Story"
+    brief["title"] = "Single Deck Eval"
+    brief["audience"] = "Operators"
+    brief["desired_action"] = "Verify eval wiring"
+
+    specs = build_slide_spec(brief, packet=build_render_packet(brief))
+    signatures = [
+        _data_story_visual_signature(spec, spec["layout_id"])
+        for spec in specs
+    ]
+
+    assert not any(
+        first == second == third
+        for first, second, third in zip(signatures, signatures[1:], signatures[2:])
+    )
+
+
+def test_data_story_slide_creator_intro_stays_chart_first():
+    brief = _make_enterprise_dark_rhythm_brief()
+    brief["brief_id"] = "slide-creator-intro-12p-data-story-regression"
+    brief["style"]["preset"] = "Data Story"
+    brief["style"]["tone"] = "分析、数据驱动、清晰"
+    brief["title"] = "slide-creator: Stable AI Slide Generation"
+    brief["audience"] = "评估 slide-creator 的产品经理、开发者、内容创作者"
+    brief["desired_action"] = "理解 slide-creator 的核心价值并试跑第一个 deck"
+    brief["content"]["must_include"] = [
+        "IR-first workflow（BRIEF.json → HTML）",
+        "零依赖 runtime（浏览器原生）",
+        "22 design presets 与内容型路由",
+        "Validate before trust（严格验证）",
+        "Presenter Mode、Inline Editing、Play Mode",
+    ]
+    brief["narrative"]["page_roles"] = [
+        "cover",
+        "pain-solution",
+        "solution",
+        "features",
+        "workflow",
+        "design-philosophy",
+        "presets",
+        "content-routing",
+        "validation",
+        "interaction",
+        "use-cases",
+        "cta_close",
+    ]
+    slide_data = [
+        (
+            "cover",
+            "slide-creator",
+            "AI 能生成幻灯片但质量不稳定，slide-creator 给你稳定、精致的输出",
+            "22 种设计预设、零依赖运行、IR-first 工作流、内容型路由",
+            "hero",
+            ["22 种设计预设", "零依赖运行", "IR-first 工作流", "内容型路由"],
+        ),
+        (
+            "pain-solution",
+            "AI Slide Generation 的痛点",
+            "同一提示词每次结果都不同，反复重试让人疲惫",
+            "质量不稳定、风格混乱、Context 压力、依赖外部工具、无验证、视觉密度失控",
+            "comparison",
+            ["质量不稳定", "风格混乱", "Context 压力", "无验证"],
+        ),
+        (
+            "solution",
+            "slide-creator 解决方案",
+            "通过 IR-first workflow、零依赖 runtime 和严格验证体系，解决 AI slide generation 的不稳定性问题",
+            "BRIEF.json 作为硬真相源、单 HTML 文件浏览器原生、生成前严格验证",
+            "three-things",
+            ["IR-first Workflow", "零依赖 Runtime", "Validate Before Trust"],
+        ),
+        (
+            "features",
+            "核心功能",
+            "六个核心功能覆盖从规划、渲染、验证到交互和自定义",
+            "prompt → BRIEF.json → HTML → validate → eval、22 design presets 每预设 8-12 种布局变体、Content-type routing、Zero-dependency runtime、16 checkpoints review、Custom themes",
+            "feature-grid",
+            ["22 Design Presets", "8-12 种布局变体", "16 checkpoints", "6 auto-detect + 10 AI-advised"],
+        ),
+        (
+            "workflow",
+            "工作流",
+            "五个阶段的确定性路径，从内容到 HTML deck 的稳定交付",
+            "Phase 1 内容收集、Phase 2 BRIEF.json 生成、Phase 3 确定性渲染、Phase 3.5 Content Review、Phase 4 浏览器打开导出",
+            "timeline",
+            ["Phase 1 内容收集", "Phase 2 BRIEF.json", "Phase 3 渲染验证", "Phase 4 打开导出"],
+        ),
+        (
+            "design-philosophy",
+            "设计哲学",
+            "四个设计哲学保护最后一步，减轻 context 压力，避免视觉 slop",
+            "Progressive Disclosure、Show Don't Tell、Against Slide Slop、Contract Alignment",
+            "architecture-map",
+            ["Progressive Disclosure", "Show Don't Tell", "Against Slide Slop", "Contract Alignment"],
+        ),
+        (
+            "presets",
+            "设计预设",
+            "22 design presets 按内容型分类，覆盖从 pitch deck 到数据报告到 dev tool 的所有场景",
+            "企业级、创意类、开发者、数据/咨询、文艺/品牌、设计探索",
+            "comparison-matrix",
+            ["企业级", "创意类", "开发者", "数据/咨询", "文艺/品牌", "设计探索"],
+        ),
+        (
+            "content-routing",
+            "内容型路由",
+            "Content-type routing 自动推荐最佳风格，减少返工",
+            "数据报告 → Data Story / Enterprise Dark / Swiss Modern、Business Pitch / VC Deck → Bold Signal / Aurora Mesh / Enterprise Dark、Developer Tool / API Docs → Terminal Green / Neon Cyber",
+            "three-things",
+            ["数据报告", "Business Pitch", "Developer Tool"],
+        ),
+        (
+            "validation",
+            "验证体系",
+            "四层验证体系确保从 IR 到运行时的契约一致性",
+            "validate-brief.py 检查 BRIEF.json 契约、validate_html.py --strict 检查运行时契约、preset-usage-rules.json 定义路由规则、Captured-run Skill Evals 回归基线对比",
+            "feature-grid",
+            ["validate-brief.py", "validate_html.py --strict", "preset-usage-rules.json", "Captured-run Skill Evals"],
+        ),
+        (
+            "interaction",
+            "交互特性",
+            "四个交互特性让 HTML deck 成为真正的演示工具，而非一次性截图",
+            "F5 全屏、P 键演讲窗口、默认浏览器编辑、E 键笔记栏",
+            "feature-grid",
+            ["F5 全屏", "P 键演讲窗口", "默认浏览器编辑", "E 键笔记栏"],
+        ),
+        (
+            "use-cases",
+            "使用场景",
+            "三种典型使用场景覆盖从零开始、复杂内容、PPT 转换",
+            "Interactive Creation 从交互开始、IR-first Workflow 从 BRIEF 开始、PPT Conversion 从 .pptx 开始",
+            "three-things",
+            ["Interactive Creation", "IR-first Workflow", "PPT Conversion"],
+        ),
+        (
+            "cta_close",
+            "开始使用",
+            "两个平台一句话安装，文档和 demo 在线可访问",
+            "Claude Code: Install、OpenClaw: clawhub install、文档链接、Demo 链接",
+            "close",
+            [
+                'Claude Code: "Install https://github.com/kaisersong/slide-creator"',
+                "OpenClaw: clawhub install kai-slide-creator",
+                "文档: https://kaisersong.github.io/slide-creator/",
+                "Demo: https://kaisersong.github.io/slide-creator/demos/enterprise-dark-en.html",
+            ],
+        ),
+    ]
+    brief["deck"]["page_count"] = len(slide_data)
+    brief["narrative"]["slides"] = [{} for _ in slide_data]
+    for index, (slide, values) in enumerate(zip(brief["narrative"]["slides"], slide_data, strict=True), start=1):
+        role, title, claim, explanation, family, facts = values
+        slide.update(
+            {
+                "slide_number": index,
+                "role": role,
+                "title": title,
+                "claim": claim,
+                "key_point": explanation,
+                "explanation": explanation,
+                "visual": family,
+                "visual_intent": family,
+                "preferred_layout_family": family,
+                "chart_policy": "auto",
+                "supporting_facts": facts,
+            }
+        )
+        slide.pop("numeric_facts", None)
+
+    html_text, _packet, _style_contract = render_from_brief(brief)
+    soup = BeautifulSoup(html_text, "html.parser")
+    export_roles = [slide.get("data-export-role") for slide in soup.select("section.slide")]
+    chart_slides = [
+        slide
+        for slide in soup.select("section.slide")
+        if slide.select_one(".ds-chart-svg")
+    ]
+    svg_labels = [
+        svg.get("aria-label")
+        for svg in soup.select("section.slide .ds-chart-svg")
+        if svg.get("aria-label")
+    ]
+    p2_slide = soup.select_one('section.slide[aria-label="pain-solution"]')
+
+    assert export_roles.count("comparison_matrix") <= 2
+    assert len(set(export_roles)) >= 6
+    assert len(chart_slides) >= 6
+    assert len(set(svg_labels)) >= 4
+    assert svg_labels.count("signal map") <= 3
+    assert p2_slide is not None
+    assert p2_slide.select_one('svg[aria-label="signal map"]') is None
+
+    solution_slide = soup.select_one('section.slide[aria-label="solution"]')
+    assert solution_slide is not None
+    assert solution_slide.get("data-export-role") == "comparison_matrix"
+    assert solution_slide.select_one(".ds-matrix") is not None
+
+    workflow_slides = [
+        soup.select_one(f'section.slide[aria-label="{role}"]')
+        for role in ("workflow", "content-routing", "use-cases")
+    ]
+    workflow_roles = {slide.get("aria-label"): slide.get("data-export-role") for slide in workflow_slides if slide}
+    assert workflow_roles["workflow"] == "workflow_chart"
+    assert workflow_roles["content-routing"] == "workflow_chart"
+    assert workflow_roles["use-cases"] == "chart_insight"
+    assert export_roles.count("workflow_chart") <= 2
+
+    for slide in workflow_slides[:2]:
+        assert slide is not None
+        assert slide.get("data-export-role") == "workflow_chart"
+        visual_svg = slide.select_one(".ds-chart-svg")
+        assert visual_svg is not None
+        assert "ds-chart-card" not in (visual_svg.parent.get("class") or [])
+        assert len(slide.select(".ds-chart-card")) <= 1
+        assert slide.select_one(".ds-workflow-visual") is not None
+
+    workflow_svg_labels = [
+        slide.select_one(".ds-chart-svg").get("aria-label")
+        for slide in workflow_slides
+        if slide and slide.select_one(".ds-chart-svg")
+    ]
+    assert len(set(workflow_svg_labels)) >= 3
+    assert workflow_svg_labels.count("flow map") <= 2
+    assert soup.select_one('section.slide[aria-label="workflow"] .ds-phase-timeline') is not None
+    assert soup.select_one('section.slide[aria-label="use-cases"] .ds-phase-timeline') is not None
+
+    cta_slide = soup.select_one('section.slide[aria-label="cta_close"]')
+    assert cta_slide is not None
+    assert cta_slide.select_one(".ds-action-grid") is not None
+    assert cta_slide.select_one(".ds-action-title") is not None
+    interaction_slide = soup.select_one('section.slide[aria-label="interaction"]')
+    assert interaction_slide is not None
+    keycaps = {node.get_text(" ", strip=True) for node in interaction_slide.select(".ds-keycap")}
+    assert {"F5", "P", "E", "Notes"}.issubset(keycaps)
+    action_titles = [node.get_text(" ", strip=True) for node in cta_slide.select(".ds-action-title")]
+    assert action_titles[:2] == ["Claude Code", "OpenClaw"]
+    assert "clawhub install kai-slide-creator" in cta_slide.get_text(" ", strip=True)
+    assert ".ds-action-copy" in html_text
+    assert "overflow-wrap: anywhere" in html_text
+    assert all(
+        not re.search(r"Claude|OpenClaw", kpi.get_text(" ", strip=True), flags=re.IGNORECASE)
+        for kpi in cta_slide.select(".ds-kpi")
+    )
+    from low_context import _compact_display_token
+
+    assert _compact_display_token("IR-first Workflow — BRIEF.json 作为硬真相源", fallback="Step") == "BRIEF"
+
+    validation_slide = soup.select_one('section.slide[aria-label="validation"]')
+    assert validation_slide is not None
+    ladder_svg = validation_slide.select_one(".ds-evidence-ladder")
+    assert ladder_svg is not None
+    assert "ds-chart-card" not in (ladder_svg.parent.get("class") or [])
+    assert validation_slide.select_one(".ds-chart-visual") is not None
+    ladder_labels = ladder_svg.select("text.ds-svg-label")
+    assert ladder_labels
+    assert all(label.get("text-anchor") == "end" for label in ladder_labels)
+    assert all(float(label.get("x")) <= 300 for label in ladder_labels)
+    ladder_rungs = ladder_svg.select("line.ds-ladder-rung")
+    assert ladder_rungs
+    assert all(float(rung.get("x2")) <= 160 for rung in ladder_rungs)
+
+
+def test_data_story_ai_generated_roles_have_explicit_safe_layouts():
+    from low_context import DATA_STORY_ROLE_LAYOUTS
+
+    expected = {
+        "pain-solution": "chart_insight",
+        "design-philosophy": "chart_insight",
+        "presets": "comparison_matrix",
+        "content-routing": "workflow_chart",
+        "validation": "kpi_chart",
+        "interaction": "chart_insight",
+        "use-cases": "workflow_chart",
+        "cta_close": "cta_close",
+        "getting-started": "cta_close",
+    }
+
+    for role, layout in expected.items():
+        assert DATA_STORY_ROLE_LAYOUTS.get(role) == layout
+
+
+def test_swiss_ai_generated_roles_have_explicit_reference_layouts():
+    from low_context import SWISS_ROLE_LAYOUTS
+
+    expected = {
+        "pain-solution": "column_content",
+        "design-philosophy": "contents_index",
+        "presets": "contents_index",
+        "content-routing": "contents_index",
+        "validation": "data_table",
+        "interaction": "data_table",
+        "use-cases": "column_content",
+        "cta_close": "pull_quote",
+        "getting-started": "pull_quote",
+    }
+
+    for role, layout in expected.items():
+        assert SWISS_ROLE_LAYOUTS.get(role) == layout
+
+
+def test_enterprise_dark_slide_creator_intro_uses_demo_level_component_rhythm():
+    brief = _make_slide_creator_intro_brief(preset="Enterprise Dark")
+
+    html_text, _packet, _style_contract = render_from_brief(brief)
+    soup = BeautifulSoup(html_text, "html.parser")
+    slides = soup.select("section.slide")
+    assert len(slides) == 12
+
+    roles = [slide.get("data-export-role") for slide in slides]
+    component_families = _enterprise_rendered_component_families(slides)
+    assert len(component_families) == len(slides)
+    assert _max_run(component_families) <= 1
+    assert len(set(roles)) >= 7
+    assert roles.count("data_table") >= 2
+    assert {
+        "cover-dashboard",
+        "contrast",
+        "split",
+        "feature-grid",
+        "timeline",
+        "architecture",
+        "table",
+        "cta",
+    }.issubset(set(component_families))
+
+    cover_slide = soup.select_one('section.slide[aria-label="cover"]')
+    assert cover_slide is not None
+    assert cover_slide.get("data-export-role") == "kpi_dashboard"
+    assert len(cover_slide.select(".ent-cover-metric-card")) == 3
+    assert cover_slide.select(".ent-kpi-number.ent-cover-inline-number")
+
+    pain_slide = soup.select_one('section.slide[aria-label="pain-solution"]')
+    assert pain_slide is not None
+    assert pain_slide.get("data-export-role") == "contrast_split"
+    assert pain_slide.select_one(".ent-contrast-split") is not None
+    assert len(pain_slide.select(".ent-contrast-block")) == 2
+
+    solution_slide = soup.select_one('section.slide[aria-label="solution"]')
+    assert solution_slide is not None
+    assert solution_slide.get("data-export-role") in {"kpi_dashboard", "consulting_split"}
+    if solution_slide.get("data-export-role") == "kpi_dashboard":
+        assert "ent-dashboard-story" in solution_slide.get("class", [])
+        assert len(solution_slide.select(".ent-kpi-card-story")) == 3
+        assert solution_slide.select(".ent-kpi-story-index")
+    else:
+        assert solution_slide.select_one(".ent-split") is not None
+        assert len(solution_slide.select(".ent-feature-row")) == 3
+    assert not solution_slide.select(".ent-kpi-number")
+
+    features_slide = soup.select_one('section.slide[aria-label="features"]')
+    assert features_slide is not None
+    assert features_slide.get("data-export-role") == "comparison_matrix"
+    assert "enterprise-feature-grid-slide" in features_slide.get("class", [])
+    assert len(features_slide.select(".ent-feature-card")) == 4
+    assert len(features_slide.select(".ent-prog-bar")) == 4
+
+    workflow_slide = soup.select_one('section.slide[aria-label="workflow"]')
+    assert workflow_slide is not None
+    assert workflow_slide.get("data-export-role") == "timeline"
+    assert len(workflow_slide.select(".ent-timeline-item")) == 4
+
+    design_slide = soup.select_one('section.slide[aria-label="design-philosophy"]')
+    assert design_slide is not None
+    assert design_slide.get("data-export-role") == "architecture_map"
+    assert len(design_slide.select(".ent-arch-card")) == 3
+
+    presets_slide = soup.select_one('section.slide[aria-label="presets"]')
+    assert presets_slide is not None
+    assert presets_slide.get("data-export-role") == "data_table"
+    assert presets_slide.select_one(".ent-table") is not None
+    assert len(presets_slide.select(".ent-status-dot")) >= 3
+    assert len(presets_slide.select(".ent-badge")) >= 3
+
+    routing_slide = soup.select_one('section.slide[aria-label="content-routing"]')
+    assert routing_slide is not None
+    assert routing_slide.get("data-export-role") == "consulting_split"
+    assert routing_slide.select_one(".ent-split") is not None
+    assert len(routing_slide.select(".ent-feature-row")) == 3
+
+    validation_slide = soup.select_one('section.slide[aria-label="validation"]')
+    assert validation_slide is not None
+    assert validation_slide.get("data-export-role") == "data_table"
+    assert validation_slide.select_one(".ent-table") is not None
+    assert len(validation_slide.select(".ent-status-dot")) >= 3
+    assert len(validation_slide.select(".ent-badge")) >= 3
+
+    interaction_slide = soup.select_one('section.slide[aria-label="interaction"]')
+    assert interaction_slide is not None
+    assert interaction_slide.get("data-export-role") == "comparison_matrix"
+    assert "enterprise-feature-grid-slide" in interaction_slide.get("class", [])
+    assert len(interaction_slide.select(".ent-feature-card")) == 4
+
+    use_cases_slide = soup.select_one('section.slide[aria-label="use-cases"]')
+    assert use_cases_slide is not None
+    assert use_cases_slide.get("data-export-role") == "consulting_split"
+    assert len(use_cases_slide.select(".ent-feature-row")) == 3
+
+    cta_slide = soup.select_one('section.slide[aria-label="cta_close"]')
+    assert cta_slide is not None
+    assert cta_slide.get("data-export-role") == "cta_close"
+    assert cta_slide.select_one(".ent-code") is not None
+    assert not cta_slide.select(".ent-kpi-number")
+
+    assert component_families == _enterprise_rendered_component_families(slides)
+
+
+def test_enterprise_dark_tier1_tables_keep_minimum_board_density():
+    brief = _make_slide_creator_intro_brief(preset="Enterprise Dark")
+    brief["content"]["must_avoid"] = ["不要生成浅色背景"]
+    brief["narrative"]["thesis"] = "AI slide generation needs a deterministic render path."
+    assert build_render_packet(brief)["quality_tier"] == "tier1"
+
+    html_text, _packet, _style_contract = render_from_brief(brief)
+    soup = BeautifulSoup(html_text, "html.parser")
+
+    for role in ("presets", "validation"):
+        slide = soup.select_one(f'section.slide[aria-label="{role}"]')
+        assert slide is not None
+        assert slide.get("data-export-role") == "data_table"
+        assert len(slide.select(".ent-table tbody tr")) >= 3
+        assert len(slide.select(".ent-status-dot")) >= 3
+        assert len(slide.select(".ent-badge")) >= 3
+
+
+def test_swiss_slide_creator_intro_uses_demo_level_component_rhythm():
+    brief = _make_slide_creator_intro_brief(preset="Swiss Modern")
+
+    html_text, _packet, _style_contract = render_from_brief(brief)
+    soup = BeautifulSoup(html_text, "html.parser")
+    slides = soup.select("section.slide")
+    assert len(slides) == 12
+
+    roles = [slide.get("data-export-role") for slide in slides]
+    assert roles[0] == "title_grid"
+    assert roles[-1] == "pull_quote"
+    assert len(set(roles)) >= 5
+    ghost_roles = [slide.get("aria-label") for slide in slides if slide.select_one(":scope > .bg-num")]
+    assert ghost_roles == ["cover", "pain-solution", "presets", "content-routing", "use-cases", "cta_close"]
+    assert len(ghost_roles) < len(slides)
+    assert ".slide-content, .left-panel, .right-panel" in html_text
+    assert "z-index: 2;" in html_text
+
+    cover_slide = soup.select_one('section.slide[aria-label="cover"]')
+    assert cover_slide is not None
+    assert len(cover_slide.select(".hero-stat")) >= 3
+
+    pain_slide = soup.select_one('section.slide[aria-label="pain-solution"]')
+    assert pain_slide is not None
+    left_title = pain_slide.select_one(".left-panel .swiss-title")
+    assert left_title is not None
+    assert left_title.get_text(" ", strip=True) == "AI Slide Generation 的痛点"
+    left_title_lines = [node.get_text(" ", strip=True) for node in left_title.select(".title-line")]
+    assert left_title_lines == ["AI Slide", "Generation", "的痛点"]
+    assert ".left-panel .swiss-title" in html_text
+    assert ".left-panel .swiss-label" in html_text
+    assert ".left-panel .title-line" in html_text
+    assert "overflow-wrap: normal;" in html_text
+    assert "word-break: normal;" in html_text
+    assert "hyphens: none;" in html_text
+    assert "white-space: nowrap;" in html_text
+    assert "font-size: clamp(2rem, 3.4vw, 3.6rem);" in html_text
+    assert "font-size: clamp(10rem, 30vw, 30rem);" in html_text
+    assert "right: clamp(-3rem, -2vw, -1rem);" in html_text
+    assert "font-size: clamp(17px, 1.9vw, 22px);" in html_text
+    assert "font-size: clamp(16px, 1.8vw, 21px);" in html_text
+    assert "font-size: clamp(16px, 1.7vw, 20px);" in html_text
+    assert [node.get_text(" ", strip=True) for node in pain_slide.select(".pain-num")] == ["01", "02", "03"]
+    assert not any("." in node.get_text(" ", strip=True) for node in pain_slide.select(".pain-num"))
+
+    features_slide = soup.select_one('section.slide[aria-label="features"]')
+    assert features_slide is not None
+    assert features_slide.select_one(".feat-grid, .data-table") is not None
+    feature_text_units = [
+        node.get_text(" ", strip=True)
+        for node in features_slide.select(".feat-card, .data-table td")
+    ]
+    assert feature_text_units
+    assert all(len(cell) <= 100 for cell in feature_text_units)
+    assert "IR-first Workflow — IR-first Workflow" not in features_slide.get_text(" ", strip=True)
+
+    design_slide = soup.select_one('section.slide[aria-label="design-philosophy"]')
+    assert design_slide is not None
+    assert design_slide.get("data-export-role") == "contents_index"
+    assert design_slide.select_one(".index-item") is not None
+    assert design_slide.select_one(".disc-diagram") is None
+
+    routing_slide = soup.select_one('section.slide[aria-label="content-routing"]')
+    assert routing_slide is not None
+    assert routing_slide.get("data-export-role") in {"contents_index", "geometric_diagram"}
+    assert routing_slide.select_one(".index-item, .disc-diagram") is not None
+    assert routing_slide.select_one(".inst-blocks") is None
+
+    validation_slide = soup.select_one('section.slide[aria-label="validation"]')
+    assert validation_slide is not None
+    assert validation_slide.get("data-export-role") == "data_table"
+    assert validation_slide.select_one(".inst-blocks") is not None
+    assert len(validation_slide.select(".inst-block")) >= 3
+
+    interaction_slide = soup.select_one('section.slide[aria-label="interaction"]')
+    assert interaction_slide is not None
+    assert interaction_slide.get("data-export-role") in {"contents_index", "data_table"}
+    assert interaction_slide.select_one(".feat-grid, .data-table") is not None
+
+    use_cases_slide = soup.select_one('section.slide[aria-label="use-cases"]')
+    assert use_cases_slide is not None
+    assert use_cases_slide.get("data-export-role") in {"column_content", "geometric_diagram"}
+    assert use_cases_slide.select_one(".left-panel, .disc-diagram") is not None
+
+    cta_slide = soup.select_one('section.slide[aria-label="cta_close"]')
+    assert cta_slide is not None
+    assert cta_slide.select_one(".cta-block") is not None
+    assert cta_slide.select_one(".cta-title") is not None
+    assert cta_slide.select_one(".cta-line") is not None
+    assert cta_slide.select_one(".cta-echo") is not None
+
+    component_families = []
+    for slide in slides:
+        if slide.select_one(".left-panel"):
+            component_families.append("split")
+        elif slide.select_one(".data-table"):
+            component_families.append("table")
+        elif slide.select_one(".disc-diagram"):
+            component_families.append("diagram")
+        elif slide.select_one(".inst-blocks"):
+            component_families.append("evidence")
+        elif slide.select_one(".feat-grid"):
+            component_families.append("feature-grid")
+        elif slide.select_one(".index-item"):
+            component_families.append("index")
+        elif slide.select_one(".stat-row"):
+            component_families.append("stat")
+        elif slide.select_one(".cta-block"):
+            component_families.append("cta")
+        else:
+            component_families.append("hero")
+
+    assert all(left != right for left, right in zip(component_families, component_families[1:]))
+    assert {"split", "stat", "diagram", "index", "evidence", "feature-grid", "cta"}.issubset(set(component_families))
+
+
+def test_swiss_generated_roles_emit_reference_signature_components():
+    brief = _load_core_swiss_brief()
+    brief["narrative"]["page_roles"][2] = "presets"
+    brief["narrative"]["page_roles"][4] = "validation"
+    brief["narrative"]["page_roles"][-1] = "cta_close"
+    presets_slide = brief["narrative"]["slides"][2]
+    validation_slide = brief["narrative"]["slides"][4]
+    cta_slide = brief["narrative"]["slides"][-1]
+    presets_slide.update(
+        {
+            "role": "presets",
+            "title": "预设选择必须成为可比较的能力面",
+            "key_point": "展厅里最关键的是让风格差异、适用场景和风险边界可以被横向比较。",
+            "claim": "预设不是皮肤，而是内容组织方式。",
+            "explanation": "Swiss Modern 应以功能卡片展示选择维度，而不是普通列表。",
+            "supporting_facts": ["风格差异", "适用场景", "风险边界"],
+            "visual": "feature cards",
+        }
+    )
+    validation_slide.update(
+        {
+            "role": "validation",
+            "title": "验证页需要显示证据块而不是泛列表",
+            "key_point": "严格校验、来源覆盖和组件签名共同决定这套展厅是否可信。",
+            "claim": "验证结果必须能被快速扫描。",
+            "explanation": "Swiss Modern 应输出 inst-block 证据块，保留参考组件签名。",
+            "supporting_facts": ["严格校验", "来源覆盖", "组件签名"],
+            "visual": "evidence blocks",
+        }
+    )
+    cta_slide.update(
+        {
+            "role": "cta_close",
+            "title": "先收敛关键风格，再扩大模板覆盖",
+            "key_point": "下一步应该围绕 Swiss、Data Story、Blue Sky 和 Enterprise Dark 建立稳定评测集。",
+            "claim": "先收敛关键风格。",
+            "explanation": "CTA 页需要输出 Swiss 原生 cta-block。",
+            "supporting_facts": ["稳定评测集", "关键风格", "模板覆盖"],
+            "visual": "cta block",
+        }
+    )
+
+    html_text, _packet, _style_contract = render_from_brief(brief)
+    soup = BeautifulSoup(html_text, "html.parser")
+    presets_rendered = soup.select_one('section[aria-label="presets"]')
+    validation_rendered = soup.select_one('section[aria-label="validation"]')
+    cta_rendered = soup.select_one('section[aria-label="cta_close"]')
+
+    assert presets_rendered is not None
+    assert validation_rendered is not None
+    assert cta_rendered is not None
+    assert presets_rendered.select_one(".feat-grid") is not None
+    assert len(presets_rendered.select(".feat-card")) >= 3
+    assert validation_rendered.select_one(".inst-blocks") is not None
+    assert len(validation_rendered.select(".inst-block")) >= 3
+    assert cta_rendered.select_one(".cta-block") is not None
+    assert cta_rendered.select_one(".cta-title") is not None
+    assert cta_rendered.select_one(".cta-line") is not None
+    assert cta_rendered.select_one(".cta-echo") is not None
+
+
+def test_blue_sky_ai_generated_roles_have_explicit_non_cover_layouts():
+    from low_context import BLUE_SKY_ROLE_LAYOUTS
+
+    expected = {
+        "pain-solution": "comparison",
+        "design-philosophy": "bento",
+        "presets": "bento",
+        "content-routing": "table",
+        "validation": "workflow",
+        "interaction": "bento",
+        "use-cases": "bento",
+        "cta_close": "closing",
+        "getting-started": "closing",
+    }
+
+    for role, layout in expected.items():
+        assert BLUE_SKY_ROLE_LAYOUTS.get(role) == layout
+        assert layout != "cover"
+
+
+def test_blue_sky_slide_creator_intro_uses_demo_level_component_rhythm():
+    brief = _make_slide_creator_intro_brief(preset="Blue Sky")
+
+    html_text, _packet, _style_contract = render_from_brief(brief)
+    soup = BeautifulSoup(html_text, "html.parser")
+    slides = soup.select("section.slide")
+    assert len(slides) == 12
+
+    cover_slide = soup.select_one('section.slide[aria-label="cover"]')
+    assert cover_slide is not None
+    cover_pill = cover_slide.select_one(".pill")
+    assert cover_pill is not None
+    assert cover_pill.get_text(" ", strip=True)
+    assert "22" in cover_pill.get_text(" ", strip=True)
+    cover_cards = cover_slide.select(".g")
+    cover_stats = cover_slide.select(".g .stat")
+    assert len(cover_cards) == len(cover_stats)
+    assert len(cover_stats) >= 3
+    assert not cover_slide.select(".g h4")
+    assert all(re.search(r"\d", node.get_text(" ", strip=True)) for node in cover_stats)
+
+    features_slide = soup.select_one('section.slide[aria-label="features"]')
+    assert features_slide is not None
+    feature_cards = features_slide.select(".bento > .g")
+    assert len(feature_cards) >= 4
+    assert features_slide.select_one(".bento .span2, .bento .span3, .bento .row2") is not None
+    assert all("grid-column" in card.get("style", "") for card in feature_cards[:6])
+    assert all("grid-row" in card.get("style", "") for card in feature_cards[:6])
+    feature_grid_style = features_slide.select_one(".bento").get("style", "")
+    assert "grid-auto-rows:132px" in feature_grid_style
+    assert features_slide.select_one(".bento + p") is None
+    assert "Content-type Routing" in features_slide.get_text(" ", strip=True)
+    assert "22 22 Design Presets" not in features_slide.get_text(" ", strip=True)
+
+    design_slide = soup.select_one('section.slide[aria-label="design-philosophy"]')
+    assert design_slide is not None
+    design_cards = design_slide.select(".bento > .g")
+    assert len(design_cards) >= 4
+    feature_card_styles = [card.get("style", "") for card in feature_cards[:6]]
+    design_card_styles = [card.get("style", "") for card in design_cards[:6]]
+    assert design_card_styles != feature_card_styles
+    assert any("grid-row:1 / span 2;" in style for style in design_card_styles)
+
+    interaction_slide = soup.select_one('section.slide[aria-label="interaction"]')
+    assert interaction_slide is not None
+    key_labels = {node.get_text(" ", strip=True) for node in interaction_slide.select("kbd")}
+    assert {"F5", "P", "E"}.issubset(key_labels)
+    assert interaction_slide.select_one(".info") is not None
+    assert interaction_slide.select_one(".co") is not None
+    interaction_grid_styles = " ".join(
+        node.get("style", "") for node in interaction_slide.select(".bento")
+    )
+    assert "grid-auto-rows:164px" in interaction_grid_styles
+
+    presets_slide = soup.select_one('section.slide[aria-label="presets"]')
+    assert presets_slide is not None
+    assert presets_slide.select_one(".cols3") is not None
+
+    use_cases_slide = soup.select_one('section.slide[aria-label="use-cases"]')
+    assert use_cases_slide is not None
+    assert len(use_cases_slide.select(".layer, .g")) >= 3
+
+    cta_slide = soup.select_one('section.slide[aria-label="cta_close"]')
+    assert cta_slide is not None
+    assert cta_slide.select_one(".cmd") is not None
+    assert cta_slide.select_one(".g") is not None
+    assert "clawhub install kai-slide-creator" in cta_slide.get_text(" ", strip=True)
+
+    component_classes = {
+        class_name
+        for node in soup.select(".g,.pill,.stat,.layer,.ctable,.info,.co,.cmd,kbd,.bento,.cols2,.cols3,.cols4")
+        for class_name in (node.get("class") or [node.name])
+    }
+    assert {"g", "pill", "stat", "layer", "ctable", "info", "cmd", "bento"}.issubset(component_classes)
+    assert {"co", "cols3"}.issubset(component_classes)
+
+
+def test_blue_sky_cover_does_not_render_text_facts_as_stat_values():
+    from low_context import _render_blue_sky_slide
+
+    spec = {
+        "slide_number": 1,
+        "role": "cover",
+        "layout_id": "cover",
+        "title": "展厅风格验证",
+        "key_point": "文本证据可以保留，但不能被放进大号统计数字槽。",
+        "speaker_note": "cover",
+        "subtitle": "Blue Sky",
+        "supporting_items": ["validate-brief.py", "数据报告", "模板选择"],
+        "evidence_items": [],
+        "supporting_facts": ["validate-brief.py", "数据报告", "模板选择"],
+    }
+
+    html_text = _render_blue_sky_slide(spec, total=1, language="zh-CN", role_index=0)
+    soup = BeautifulSoup(html_text, "html.parser")
+    stat_values = [node.get_text(" ", strip=True) for node in soup.select(".stat")]
+
+    assert "validate-brief.py" in soup.get_text(" ", strip=True)
+    assert "validate-brief.py" not in stat_values
+    assert "数据报告" not in stat_values
+    assert all(any(char.isdigit() for char in value) for value in stat_values)
+
+
 def test_compact_display_token_preserves_complete_mixed_language_terms():
     assert _compact_display_token("对国内 SaaS 最稳的路径仍然是分阶段落地") == "SaaS"
     assert _compact_display_token("国内 SaaS 应采用分阶段落地策略") == "SaaS"
@@ -1151,6 +2422,24 @@ def test_chart_labels_skip_numeric_prefixes_and_version_tokens():
 
     assert labels[0] != "1.0"
     assert all(label not in {"1.0", "2016", "2023", "2024", "2025"} for label in labels)
+
+
+def test_chart_labels_compact_long_arrow_workflow_items():
+    spec = {
+        "supporting_items": [
+            "IR-first Workflow — prompt → BRIEF.json → HTML → validate → eval",
+            "22 Design Presets — 每预设 8-12 种命名布局变体",
+            "Content-type Routing — 数据报告 → Data Story / Enterprise Dark",
+        ],
+        "evidence_items": [],
+        "title": "核心功能",
+        "key_point": "六个核心功能覆盖从规划、渲染、验证到交互和自定义",
+    }
+
+    labels = _chart_labels_from_spec(spec, count=3)
+
+    assert all(_title_visual_units(label) <= 12 for label in labels)
+    assert not any("→" in label or "—" in label for label in labels)
 
 
 def test_chart_metric_values_ignore_ordinal_stage_numbers_without_real_numeric_signal():
@@ -1368,6 +2657,21 @@ def test_custom_theme_resolve_strips_custom_prefix():
     assert ref1.name == "reference.md"
 
 
+def test_custom_theme_direct_reference_path_renders_with_canonical_theme_name():
+    from low_context import render_from_brief, resolve_style_reference
+
+    brief = read_json(AUTO_DEMO)
+    brief["style"]["preset"] = str(resolve_style_reference("Kingdee"))
+    brief["title"] = "Kingdee Direct Path"
+
+    html_text, packet, contract = render_from_brief(brief)
+
+    assert 'data-preset="Kingdee"' in html_text
+    assert packet["renderer_strategy"] == "custom_theme"
+    assert packet["preset_support_tier"] == "custom"
+    assert contract["preset"] == "Kingdee"
+
+
 def test_custom_theme_built_in_presets_unaffected():
     """Built-in presets still resolve and render correctly after custom theme changes."""
     from low_context import resolve_style_reference, compile_style_contract
@@ -1431,3 +2735,76 @@ def test_custom_theme_no_preset_collision():
     ref = resolve_style_reference("Swiss Modern")
     assert "references/" in str(ref)
     assert "themes/" not in str(ref)
+
+
+def test_enterprise_dark_contrast_split_signal_detection():
+    from low_context import _has_before_after_signal
+
+    # Strong signals should match
+    assert _has_before_after_signal("before and after comparison")
+    assert _has_before_after_signal("之前之后")
+    assert _has_before_after_signal("痛点与方案")
+    assert _has_before_after_signal("pain and solution")
+    assert _has_before_after_signal("before after comparison")
+
+    # Weak signals should NOT match
+    assert not _has_before_after_signal("Validate Before Trust")
+    assert not _has_before_after_signal("before the change")
+    assert not _has_before_after_signal("升级计划")
+    assert not _has_before_after_signal("改变策略")
+    assert not _has_before_after_signal("transform")
+    assert not _has_before_after_signal("从 POC 走到生产")  # common phrase, not contrast
+
+
+def test_enterprise_dark_contrast_split_render():
+    from low_context import _render_enterprise_contrast_split
+
+    spec = {
+        "slide_number": 1,
+        "role": "before-after",
+        "layout_id": "contrast_split",
+        "title": "Before vs After",
+        "claim": "对比",
+        "key_point": "关键点",
+        "supporting_items": ["工具调用错误率上升", "记忆失效", "统一翻译层解耦", "Harness 持久化"],
+        "evidence_items": [],
+        "supporting_facts": [],
+        "speaker_note": "note",
+        "visual": "before after comparison",
+        "visual_intent": "contrast",
+        "chart_policy": "auto",
+        "quality_tier": "tier0",
+    }
+    html = _render_enterprise_contrast_split(spec, 9)
+
+    assert 'data-export-role="contrast_split"' in html
+    assert "ent-contrast-split" in html
+    assert "ent-contrast-block--negative" in html
+    assert "ent-contrast-block--positive" in html
+    assert "Before" in html
+    assert "After" in html
+    assert "&#x2717;" in html  # ✗ mark
+    assert "&#x2713;" in html  # ✓ mark
+    assert 'class="ent-contrast-item"' in html
+
+
+def test_enterprise_dark_signal_detection_in_routing():
+    """Test that contrast_split signal detection triggers before resolver runs."""
+    from low_context import (
+        build_slide_spec, build_render_packet, _has_before_after_signal,
+        ENTERPRISE_ROLE_LAYOUTS, _resolve_layout_with_usage_rules, _preset_usage_rules,
+    )
+
+    # Verify role mapping exists
+    assert ENTERPRISE_ROLE_LAYOUTS.get("comparison") == "comparison_matrix"
+    assert ENTERPRISE_ROLE_LAYOUTS.get("before-after") == "contrast_split"
+    assert ENTERPRISE_ROLE_LAYOUTS.get("pain-solution") == "contrast_split"
+
+    # Verify signal detection works with realistic content
+    assert _has_before_after_signal("Before vs After", "痛点与方案对比", "之前之后的对比", "before after comparison")
+    assert _has_before_after_signal("痛点与方案")
+    assert _has_before_after_signal("之前之后")
+    assert _has_before_after_signal("before after comparison")
+    assert not _has_before_after_signal("从旧系统到新系统")  # "从...到" is no longer a signal
+    assert not _has_before_after_signal("升级计划")
+    assert not _has_before_after_signal("改变策略")
