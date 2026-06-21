@@ -31,6 +31,7 @@ scripts/*
 !scripts/generate.py
 !scripts/low_context.py
 !scripts/eval-quality.py
+!scripts/generation_eval.py
 !scripts/quality_eval.py
 !scripts/render-from-brief.py
 !scripts/title_browser_qa.py
