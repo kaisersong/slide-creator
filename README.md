@@ -80,7 +80,7 @@ user prompt → BRIEF.json → HTML → validate → eval
 
 This matters because the generator should not carry the full chat history into the render step. `--generate` should execute against a small, hard truth source, not against a messy, late-stage conversation.
 
-The same rule applies to direct prompt generation. "Give content + preset and generate now" is still an IR-first path: materialize `BRIEF.json`, route deterministic presets through `render_from_brief()` or reference-backed presets through the reference-driven worker, then pass the strict pre-write validator before writing the final HTML.
+The same rule applies to direct prompt generation. "Give content + preset and generate now" is still an IR-first path: materialize `BRIEF.json`, route native core presets, unified profile presets, and custom themes through `render_from_brief()`, then pass the strict pre-write validator before writing the final HTML.
 
 ### 2. Public modes stay simple, internal pipeline stays strict
 
@@ -196,6 +196,23 @@ python3 scripts/compare-skill-eval-baseline.py \
 
 Before adding any new check, verify: does this check belong in the deterministic runtime gate? If it requires subjective taste judgment rather than contract validation, it should stay in review/eval instead of strict validate.
 
+For the full 22-preset delivery gate, run the slow path:
+
+```bash
+python3 scripts/preset_release_gate.py \
+  --suite evals/preset-surface-all/manifest.json \
+  --output-dir /tmp/slide-quality-full-slow-gate \
+  --browser-geometry \
+  --contract \
+  --export-smoke \
+  --mobile-geometry \
+  --ai-advised \
+  --promotion-gate \
+  --pptx-export
+```
+
+This gate blocks desktop/mobile geometry failures, missing PresetContract components, empty export slots, AI-advised content/rhythm proxy failures, unsupported style-native promotion, and real PPTX export/page-count failures.
+
 **Contract alignment: validators must match generation contracts**
 
 validate.py checks must align with actual contracts in SKILL.md / html-template.md / js-engine.md. For example:
@@ -252,7 +269,7 @@ Phase 1 recommendation surface is intentionally narrower than the full preset li
 - `Data Story`
 - `Blue Sky`
 
-`Chinese Chan` is generator-ready for contextual philosophy, culture, and brand decks. Reference-driven presets remain opt-in generation paths: explicit requests can generate through the selected style reference and strict validation, but they are not promised to match the deterministic stability of the core renderer surface.
+All built-in presets are explicitly renderable. The five native deterministic core presets are the most stable generation surface; only Swiss Modern, Enterprise Dark, Data Story, and Blue Sky are in the default recommendation surface, while Chinese Chan is contextual only. The remaining reference-backed presets use the unified profile renderer with the same BRIEF, shared runtime, strict validation, and eval/release gates. Profile-rendered presets are renderable, and they are demo-parity gated against the historical checked-in demos before being described as restored to historical style fidelity, but they are still not presented as native deterministic core or default recommendations.
 
 ---
 
@@ -308,7 +325,7 @@ python3 main.py --generate --brief BRIEF.json --output presentation.html --eval
 ```
 
 Built-in presets still load from `references/` / `references/style-index.md`; `themes/<name>/reference.md` is only for custom themes.
-The raw CLI renderer covers deterministic built-ins and custom themes. Reference-driven built-ins use the slash-skill agent worker, then the same strict validator before final output.
+The raw CLI renderer covers native deterministic built-ins, unified profile built-ins, and custom themes through the same BRIEF-to-HTML path, then the same strict validator before final output.
 
 ### Planning Depths
 

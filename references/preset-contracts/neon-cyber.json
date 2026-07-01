@@ -1,0 +1,192 @@
+{
+  "contract_version": 1,
+  "preset": "Neon Cyber",
+  "support_state": "unified_profile_renderer",
+  "renderer_strategy": "unified_profile",
+  "renderer_version": "2026-06-29.contract-aware-v1",
+  "source_reference": "references/neon-cyber.md",
+  "fonts": [
+    "-apple-system",
+    "clash display",
+    "jetbrains mono",
+    "monospace",
+    "sans-serif",
+    "satoshi"
+  ],
+  "tokens": {
+    "css_vars": {
+      "--bg": "#000",
+      "--bg-panel": "#00ffcc",
+      "--body-size": "#0a0f1c",
+      "--border-glow": "#0e1525",
+      "--content-gap": "#e0f0ff",
+      "--cyan": "#ff00aa",
+      "--duration-normal": "rgba(0,0,0,0.5)",
+      "--ease-out-expo": "rgba(0,255,204,0.01)",
+      "--grid": "rgba(0,255,204,0.03)",
+      "--h2-size": "rgba(0,255,204,0.04)",
+      "--magenta": "rgba(0,255,204,0.06)",
+      "--slide-padding": "rgba(0,255,204,0.1)",
+      "--small-size": "rgba(0,255,204,0.15)",
+      "--text": "#000",
+      "--text-muted": "#00ffcc",
+      "--title-size": "#0a0f1c"
+    },
+    "colors": [
+      "#000",
+      "#00ffcc",
+      "#0a0f1c",
+      "#0e1525",
+      "#e0f0ff",
+      "#ff00aa",
+      "rgba(0,0,0,0.5)",
+      "rgba(0,255,204,0.01)",
+      "rgba(0,255,204,0.03)",
+      "rgba(0,255,204,0.04)",
+      "rgba(0,255,204,0.06)",
+      "rgba(0,255,204,0.1)",
+      "rgba(0,255,204,0.15)"
+    ]
+  },
+  "layout_families": [
+    "cyber_cover",
+    "cyber_grid",
+    "cyber_terminal",
+    "cyber_split",
+    "cyber_close"
+  ],
+  "signature_components": [
+    "cyber-card",
+    "cyber-heading",
+    "cyber-label",
+    "cyber-title",
+    "grid",
+    "neon-body",
+    "neon-divider",
+    "neon-mono"
+  ],
+  "required_visible_components": [
+    {
+      "name": "cyber-card",
+      "selectors": [
+        ".cyber-card"
+      ],
+      "min_count": 1
+    },
+    {
+      "name": "cyber-heading",
+      "selectors": [
+        ".cyber-heading"
+      ],
+      "min_count": 1
+    },
+    {
+      "name": "cyber-label",
+      "selectors": [
+        ".cyber-label"
+      ],
+      "min_count": 1
+    },
+    {
+      "name": "cyber-title",
+      "selectors": [
+        ".cyber-title"
+      ],
+      "min_count": 1
+    },
+    {
+      "name": "grid",
+      "selectors": [
+        ".grid"
+      ],
+      "min_count": 1
+    },
+    {
+      "name": "neon-body",
+      "selectors": [
+        ".neon-body"
+      ],
+      "min_count": 1
+    },
+    {
+      "name": "neon-divider",
+      "selectors": [
+        ".neon-divider"
+      ],
+      "min_count": 1
+    },
+    {
+      "name": "neon-mono",
+      "selectors": [
+        ".neon-mono"
+      ],
+      "min_count": 1
+    }
+  ],
+  "critical_selectors": [
+    "section.slide",
+    "h1, h2",
+    "[data-export-role]"
+  ],
+  "decorative_selectors": [],
+  "non_critical_selectors": [
+    ".slide-num-label",
+    ".progress-bar",
+    "#presenter-view"
+  ],
+  "allowed_overlaps": [
+    "decorative-background",
+    "slide-number-safe-area"
+  ],
+  "forbidden_substitutions": [
+    "generic-theme-shell",
+    "marker-only-style-signature",
+    "empty-component-shell"
+  ],
+  "typography_policy": {
+    "min_body_contrast": 4.5,
+    "max_negative_letter_spacing_px": -1.0,
+    "forbid_single_letter_word_break": true,
+    "require_title_not_clipped": true
+  },
+  "background_strategy": "neon_cyber",
+  "export_dom_mapping": {
+    "slide": "section.slide",
+    "title": "section.slide h1, section.slide h2, .title-balance",
+    "subtitle": "section.slide p, .subtitle, .hero-sub",
+    "body": "section.slide p, section.slide li, section.slide .content, section.slide .slide-content",
+    "list_items": "section.slide li",
+    "code": "section.slide code, section.slide pre, section.slide .code-block, section.slide .cmd-table",
+    "quote": "section.slide blockquote, section.slide .pullquote, section.slide .quote, section.slide .sc-quote-block",
+    "stat": "section.slide .stat, section.slide .stats, section.slide [class*=stat], section.slide .metric",
+    "image": "section.slide img, section.slide picture, section.slide svg",
+    "speaker_notes": "section.slide[data-notes]"
+  },
+  "browser_qa_policy": {
+    "desktop_viewports": [
+      {
+        "width": 1600,
+        "height": 900
+      },
+      {
+        "width": 1280,
+        "height": 720
+      }
+    ],
+    "mobile_viewports": [
+      {
+        "width": 390,
+        "height": 844
+      }
+    ],
+    "hard_failures": [
+      "browser-geometry-title-clipped",
+      "browser-geometry-text-overflow",
+      "browser-geometry-empty-component",
+      "browser-geometry-character-overlap",
+      "browser-geometry-low-contrast",
+      "browser-geometry-invisible-target"
+    ]
+  },
+  "demo_parity_minimum_score": 0.85
+}

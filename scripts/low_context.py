@@ -15,6 +15,7 @@ from preset_capabilities import (
     get_preset_render_capability,
     resolve_style_reference_path,
 )
+from preset_profile_renderer import build_preset_profile_payload, profile_auto_contrast_script
 from preset_support import preset_support_tier
 from title_profiles import profile_allows_explicit_line_control, resolve_title_profile
 
@@ -1865,9 +1866,10 @@ def build_render_packet(
     preset = brief["style"]["preset"]
     capability = _render_capability_or_raise(preset)
     style_contract = style_contract or compile_style_contract(preset)
+    canonical_preset = capability.canonical_preset or style_contract["preset"]
     deck_type = brief["deck"]["deck_type"]
     page_count = brief["deck"]["page_count"]
-    normalized = _normalize_preset_name(preset)
+    normalized = _normalize_preset_name(canonical_preset)
     quality_tier = assess_quality_tier(brief)
 
     composition_source = (
@@ -1889,7 +1891,7 @@ def build_render_packet(
             "references/html-template.md",
             "references/js-engine.md",
             "references/base-css.md",
-            style_contract["source_path"],
+            capability.reference_path or style_contract["source_path"],
         ]
         required_contracts = [
             "preset-metadata",
@@ -1897,8 +1899,8 @@ def build_render_packet(
             "style-signature",
             "shell-ui-markers",
         ]
-        if capability.renderer_strategy == "reference_driven":
-            required_contracts.append("reference-driven-generation")
+        if capability.renderer_strategy == "unified_profile":
+            required_contracts.append("unified-profile-renderer")
 
     fallback_policy = {
         "tier0": "full-preset-contract",
@@ -1910,8 +1912,10 @@ def build_render_packet(
         "brief_hash": _sha256_text(_canonical_json(brief)),
         "generator": "kai-slide-creator",
         "generator_version": _skill_version(),
-        "render_path": "reference-driven-agent" if capability.renderer_strategy == "reference_driven" else _canonical_render_path(preset),
-        "preset": preset,
+        "render_path": _canonical_render_path(canonical_preset, capability.renderer_strategy),
+        "preset": canonical_preset,
+        "canonical_preset": canonical_preset,
+        "reference_path": capability.reference_path or style_contract["source_path"],
         "preset_support_tier": _safe_preset_tier(preset),
         "preset_generation_status": capability.generation_status,
         "preset_recommendation_status": capability.recommendation_status,
@@ -1930,6 +1934,11 @@ def build_render_packet(
         "allowed_layouts": style_contract["allowed_layout_ids"] or DEFAULT_LAYOUTS.get(normalized, []),
         "quality_tier": quality_tier,
         "fallback_policy": fallback_policy,
+        "repair_rounds": 0,
+        "repair_status": "not_needed",
+        "original_failures": [],
+        "final_failures": [],
+        "style_signature_hash": style_contract["digest"],
     }
     return packet
 
@@ -2070,8 +2079,11 @@ def _skill_version() -> str:
     return match.group(1) if match else "unknown"
 
 
-def _canonical_render_path(preset: str) -> str:
-    return "blue-sky-starter-canonical" if _normalize_preset_name(preset) == "blue sky" else "brief-canonical"
+def _canonical_render_path(preset: str, renderer_strategy: str = "native") -> str:
+    normalized = _normalize_preset_name(preset)
+    if renderer_strategy == "unified_profile":
+        return "profile:" + re.sub(r"[^a-z0-9]+", "-", normalized).strip("-")
+    return "blue-sky-starter-canonical" if normalized == "blue sky" else "brief-canonical"
 
 
 def _html_body_provenance_attrs(packet: dict[str, Any]) -> str:
@@ -2082,7 +2094,10 @@ def _html_body_provenance_attrs(packet: dict[str, Any]) -> str:
         "data-brief-hash": packet.get("brief_hash", ""),
         "data-runtime-path": packet.get("runtime_path", ""),
         "data-validate-strict": packet.get("validate_strict", "pending"),
+        "data-preset-generation-status": packet.get("preset_generation_status", ""),
+        "data-renderer-strategy": packet.get("renderer_strategy", ""),
     }
+    attrs.update(packet.get("body_data_attrs", {}))
     return " ".join(f'{key}="{_escape(str(value))}"' for key, value in attrs.items() if value)
 
 
@@ -2739,8 +2754,10 @@ def _assemble_shell_html(
     packet: dict[str, Any],
 ) -> str:
     js_engine = _extract_js_engine_blocks(preset=preset, version=_skill_version())
-    brand_mark = _brand_mark_text(title, preset)
+    brand_mark = str(packet.get("brand_mark") or _brand_mark_text(title, preset))
     provenance_attrs = _html_body_provenance_attrs(packet)
+    body_classes = " ".join(str(item) for item in packet.get("body_classes", []) if item)
+    class_attr = f' class="{_escape(body_classes)}"' if body_classes else ""
     return f"""<!DOCTYPE html>
 <html lang="{_escape(language)}">
 <head>
@@ -2751,7 +2768,7 @@ def _assemble_shell_html(
 {css}
 </style>
 </head>
-<body data-export-progress="true" data-preset="{_escape(preset)}" {provenance_attrs}>
+<body data-export-progress="true" data-preset="{_escape(preset)}"{class_attr} {provenance_attrs}>
 <span id="brand-mark">{_escape(brand_mark)}</span>
 <div class="progress-bar"></div>
 <nav class="nav-dots" aria-label="Slide navigation"></nav>
@@ -4054,6 +4071,7 @@ def _render_swiss_data_table(spec: dict[str, Any], total: int) -> str:
 
 def _render_swiss_pull_quote(spec: dict[str, Any], total: int) -> str:
     slide_number = spec["slide_number"]
+    is_closing_role = spec["role"] in {"closing", "cta", "cta_close", "getting-started"}
     quote = spec["key_point"]
     if len(quote) > 88:
         quote = quote[:85].rstrip() + "..."
@@ -4066,7 +4084,7 @@ def _render_swiss_pull_quote(spec: dict[str, Any], total: int) -> str:
         extra_attrs='style="max-width:18ch;"',
     )
     cta_html = ""
-    if spec["role"] in {"closing", "cta", "cta_close", "getting-started"}:
+    if is_closing_role:
         cta_lines = _balance_title_lines(spec["title"], max_lines=2, force_balance=True) or [spec["title"]]
         cta_line_html = "".join(f'<span class="cta-line">{_escape(line)}</span>' for line in cta_lines[:2])
         echo_items = _spec_display_items(spec, limit=2)
@@ -4085,15 +4103,21 @@ def _render_swiss_pull_quote(spec: dict[str, Any], total: int) -> str:
                 {echo_html}
             </div>
         """
+    tail_html = ""
+    if not is_closing_role:
+        tail_html = f"""
+            <div class="swiss-rule red reveal" style="width:120px;margin:18px 0 10px;"></div>
+            <p class="swiss-body reveal">{_escape(spec['title'])}</p>
+        """
+    section_class = "slide pull_quote swiss-cta-close" if is_closing_role else "slide pull_quote"
     return f"""
-    <section class="slide pull_quote" id="slide-{slide_number}" data-notes="{_escape(spec['speaker_note'])}" aria-label="{_escape(spec['role'])}" data-export-role="pull_quote">
+    <section class="{section_class}" id="slide-{slide_number}" data-notes="{_escape(spec['speaker_note'])}" aria-label="{_escape(spec['role'])}" data-export-role="pull_quote">
         {_swiss_bg_num(spec)}
         <div class="slide-content content" style="align-items:flex-start;justify-content:flex-start;padding-top:18vh;">
             <div class="eyebrow swiss-label reveal">{_escape(spec['role'])}</div>
             {quote_tag}
             {cta_html}
-            <div class="swiss-rule red reveal" style="width:120px;margin:18px 0 10px;"></div>
-            <p class="swiss-body reveal">{_escape(spec['title'])}</p>
+            {tail_html}
         </div>
         <span class="slide-num-label">{slide_number:02d} / {total:02d}</span>
     </section>
@@ -4193,7 +4217,7 @@ def _build_swiss_shell_css(style_contract: dict[str, Any]) -> str:
 
 .left-panel .swiss-title {{
     color: var(--text-light);
-    font-size: clamp(2rem, 3.4vw, 3.6rem);
+    font-size: clamp(1.5rem, 1.9vw, 2.4rem);
     line-height: 1.02;
     overflow-wrap: normal;
     word-break: normal;
@@ -4284,9 +4308,76 @@ body::before {{
     line-height: 1.36;
 }}
 
+.swiss-cta-close .slide-content {{
+    gap: clamp(10px, 1.5vw, 16px);
+    padding-top: clamp(42px, 8vh, 80px) !important;
+}}
+
+.swiss-cta-close .swiss-title {{
+    font-size: clamp(2.4rem, 4.48vw, 4.28rem);
+    line-height: 0.98;
+    max-width: min(17ch, 760px) !important;
+}}
+
+.swiss-cta-close .cta-block {{
+    width: min(680px, 88vw);
+    max-width: 100%;
+}}
+
+.cta-echo-label {{
+    color: rgba(255, 255, 255, 0.74);
+}}
+
 @media (max-width: 900px) {{
     .contents_index .feat-grid {{
         grid-template-columns: 1fr;
+    }}
+}}
+
+@media (max-width: 520px) {{
+    .slide {{
+        padding-left: clamp(16px, 6vw, 28px) !important;
+        padding-right: clamp(16px, 6vw, 28px) !important;
+    }}
+    .slide-content,
+    .content,
+    .left-panel,
+    .right-panel {{
+        width: 100% !important;
+        max-width: 100% !important;
+        min-width: 0 !important;
+        position: relative !important;
+        left: auto !important;
+        right: auto !important;
+    }}
+    .column_content,
+    .pull_quote {{
+        flex-direction: column !important;
+    }}
+    .swiss-title,
+    .swiss-body,
+    .left-panel .swiss-title,
+    .swiss-cta-close .swiss-title {{
+        width: auto !important;
+        max-width: 100% !important;
+        min-width: 0 !important;
+        white-space: normal !important;
+        overflow: visible !important;
+        text-overflow: clip !important;
+        overflow-wrap: anywhere !important;
+        word-break: normal !important;
+        letter-spacing: 0 !important;
+    }}
+    .title-balance {{
+        display: block !important;
+        max-width: 100% !important;
+    }}
+    .title-line,
+    .left-panel .title-line {{
+        display: inline !important;
+        white-space: normal !important;
+        overflow-wrap: anywhere !important;
+        word-break: normal !important;
     }}
 }}
 
@@ -4740,7 +4831,7 @@ def _enterprise_extra_css() -> str:
 .enterprise-split .ent-title {
     font-size: clamp(20px, 2.2vw, 30px);
     line-height: 1.14;
-    max-width: 13ch;
+    max-width: min(100%, 20ch);
 }
 
 .ent-split-labels {
@@ -4890,7 +4981,7 @@ body[data-preset="Enterprise Dark"] .slide::before {
 }
 .ent-split-item-copy {
     margin: 0;
-    color: var(--text-body);
+    color: var(--text-primary);
     font-size: clamp(13px, 1.2vw, 15px);
     line-height: 1.5;
 }
@@ -5851,7 +5942,7 @@ body[data-preset="Data Story"] .ds-comparison .ds-matrix-copy {
 }
 
 .ds-cover-hero .ds-heading {
-    font-size: clamp(3.6rem, 9vw, 7rem);
+    font-size: clamp(3rem, 7.4vw, 6rem);
     letter-spacing: 0;
 }
 
@@ -6014,7 +6105,7 @@ body[data-preset="Data Story"] .ds-workflow .ds-stage-copy {
 
 .ds-action-copy {
     margin: 10px 0 0;
-    color: var(--text-muted);
+    color: var(--text);
     font-size: clamp(0.86rem, 1.18vw, 0.98rem);
     line-height: 1.46;
     overflow-wrap: anywhere;
@@ -6041,6 +6132,36 @@ body[data-preset="Data Story"] .ds-workflow .ds-stage-copy {
     .ds-key-strip,
     .ds-action-grid {
         grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 520px) {
+    body[data-preset="Data Story"] .slide {
+        padding-left: clamp(16px, 6vw, 28px) !important;
+        padding-right: clamp(16px, 6vw, 28px) !important;
+    }
+    body[data-preset="Data Story"] :is(.slide-content, .content, .ds-shell, .ds-cover-hero) {
+        width: 100% !important;
+        max-width: 100% !important;
+        min-width: 0 !important;
+    }
+    body[data-preset="Data Story"] :is(.ds-heading, .title-balance) {
+        display: block !important;
+        width: auto !important;
+        max-width: 100% !important;
+        min-width: 0 !important;
+        white-space: normal !important;
+        overflow: visible !important;
+        text-overflow: clip !important;
+        overflow-wrap: anywhere !important;
+        word-break: normal !important;
+        letter-spacing: 0 !important;
+    }
+    body[data-preset="Data Story"] .title-line {
+        display: inline !important;
+        white-space: normal !important;
+        overflow-wrap: anywhere !important;
+        word-break: normal !important;
     }
 }
 """.strip()
@@ -7585,6 +7706,44 @@ def render_chinese_chan_html(
     return _assemble_shell_html(brief["title"], brief["language"], "Chinese Chan", css, slides_html, total, packet)
 
 
+def render_unified_profile_html(
+    brief: dict[str, Any],
+    *,
+    packet: dict[str, Any],
+    style_contract: dict[str, Any],
+) -> str:
+    capability = get_preset_render_capability(brief["style"]["preset"])
+    specs = build_slide_spec(brief, packet)
+    payload = build_preset_profile_payload(
+        brief=brief,
+        packet=packet,
+        style_contract=style_contract,
+        capability=capability,
+        specs=specs,
+    )
+    packet["body_classes"] = list(payload.body_classes)
+    packet["body_data_attrs"] = payload.body_data_attrs
+    packet["style_family"] = payload.style_signature["family"]
+    packet["style_signature"] = payload.style_signature
+    packet["style_signature_hash"] = payload.style_signature["hash"]
+    packet["render_path"] = payload.render_path
+    packet["preset_generation_status"] = payload.generation_status
+    packet["renderer_strategy"] = payload.renderer_strategy
+    if payload.body_data_attrs.get("data-profile-renderer-source", "").startswith("demo-derived:"):
+        packet["brand_mark"] = "slide-creator"
+    css = _build_non_swiss_shell_css(style_contract, payload.canonical_preset) + "\n\n" + payload.css
+    sections_html = payload.sections_html + "\n\n" + profile_auto_contrast_script()
+    return _assemble_shell_html(
+        brief["title"],
+        brief["language"],
+        payload.canonical_preset,
+        css,
+        sections_html,
+        payload.slide_count,
+        packet,
+    )
+
+
 def _extract_starter_css(starter_path: Path) -> str:
     """Extract <style> block content from a starter.html."""
     content = _read_text(starter_path)
@@ -7855,37 +8014,30 @@ body.presenting .slide-credit {{ display: none !important; }}
 </html>"""
 
 
+NATIVE_RENDERER_REGISTRY = {
+    "Swiss Modern": render_swiss_modern_html,
+    "Enterprise Dark": render_enterprise_dark_html,
+    "Data Story": render_data_story_html,
+    "Chinese Chan": render_chinese_chan_html,
+    "Blue Sky": render_blue_sky_html,
+}
+
+
 def render_from_brief(brief: dict[str, Any]) -> tuple[str, dict[str, Any], dict[str, Any]]:
     packet = build_render_packet(brief)
     style_contract = compile_style_contract(brief["style"]["preset"])
-    preset = brief["style"]["preset"]
-    if preset == "Swiss Modern":
-        html_text = render_swiss_modern_html(brief, packet=packet, style_contract=style_contract)
-    elif preset == "Enterprise Dark":
-        html_text = render_enterprise_dark_html(brief, packet=packet, style_contract=style_contract)
-    elif preset == "Data Story":
-        html_text = render_data_story_html(brief, packet=packet, style_contract=style_contract)
-    elif preset == "Chinese Chan":
-        html_text = render_chinese_chan_html(brief, packet=packet, style_contract=style_contract)
-    elif preset == "Blue Sky":
-        html_text = render_blue_sky_html(brief, packet=packet, style_contract=style_contract)
-    elif _is_custom_theme(preset):
+    preset = packet["canonical_preset"]
+    renderer_strategy = packet.get("renderer_strategy")
+    renderer = NATIVE_RENDERER_REGISTRY.get(preset)
+    if renderer_strategy == "native" and renderer:
+        html_text = renderer(brief, packet=packet, style_contract=style_contract)
+    elif renderer_strategy == "unified_profile":
+        html_text = render_unified_profile_html(brief, packet=packet, style_contract=style_contract)
+    elif _is_custom_theme(brief["style"]["preset"]):
         html_text = render_custom_theme_html(brief, packet=packet, style_contract=style_contract)
     else:
-        if packet.get("renderer_strategy") == "reference_driven":
-            raise RenderError(
-                f"{preset} uses reference-driven generation; deterministic render_from_brief() is not the HTML writer for this preset.",
-                payload={
-                    "code": "reference_driven_generation_required",
-                    "preset": preset,
-                    "generation_status": packet.get("preset_generation_status"),
-                    "renderer_strategy": packet.get("renderer_strategy"),
-                    "required_refs": packet.get("required_refs", []),
-                    "required_contracts": packet.get("required_contracts", []),
-                },
-            )
         raise RenderError(
-            f"Deterministic low-context render is only implemented for Swiss Modern, Enterprise Dark, Data Story, Chinese Chan, and Blue Sky right now; got {preset}"
+            f"Low-context render does not have a valid strategy for {preset}; got {renderer_strategy}"
         )
     return html_text, packet, style_contract
 

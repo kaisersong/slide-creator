@@ -1,0 +1,62 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://slide-creator.local/schemas/preset-contract.schema.json",
+  "title": "Slide Creator Preset Contract",
+  "type": "object",
+  "required": [
+    "contract_version",
+    "preset",
+    "support_state",
+    "renderer_strategy",
+    "renderer_version",
+    "source_reference",
+    "fonts",
+    "tokens",
+    "layout_families",
+    "required_visible_components",
+    "critical_selectors",
+    "decorative_selectors",
+    "non_critical_selectors",
+    "allowed_overlaps",
+    "forbidden_substitutions",
+    "typography_policy",
+    "background_strategy",
+    "export_dom_mapping",
+    "browser_qa_policy",
+    "demo_parity_minimum_score"
+  ],
+  "properties": {
+    "contract_version": { "type": "integer", "minimum": 1 },
+    "preset": { "type": "string", "minLength": 1 },
+    "support_state": { "type": "string", "minLength": 1 },
+    "renderer_strategy": { "type": "string", "minLength": 1 },
+    "renderer_version": { "type": "string", "minLength": 1 },
+    "source_reference": { "type": "string", "minLength": 1 },
+    "fonts": { "type": "array", "items": { "type": "string" } },
+    "tokens": { "type": "object" },
+    "layout_families": { "type": "array", "items": { "type": "string" } },
+    "required_visible_components": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["name", "selectors", "min_count"],
+        "properties": {
+          "name": { "type": "string", "minLength": 1 },
+          "selectors": { "type": "array", "items": { "type": "string" }, "minItems": 1 },
+          "min_count": { "type": "integer", "minimum": 1 }
+        }
+      }
+    },
+    "critical_selectors": { "type": "array", "items": { "type": "string" } },
+    "decorative_selectors": { "type": "array", "items": { "type": "string" } },
+    "non_critical_selectors": { "type": "array", "items": { "type": "string" } },
+    "allowed_overlaps": { "type": "array", "items": { "type": "string" } },
+    "forbidden_substitutions": { "type": "array", "items": { "type": "string" } },
+    "typography_policy": { "type": "object" },
+    "background_strategy": { "type": "string" },
+    "export_dom_mapping": { "type": "object" },
+    "browser_qa_policy": { "type": "object" },
+    "demo_parity_minimum_score": { "type": "number", "minimum": 0, "maximum": 1 }
+  },
+  "additionalProperties": true
+}

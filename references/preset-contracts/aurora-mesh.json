@@ -1,0 +1,193 @@
+{
+  "contract_version": 1,
+  "preset": "Aurora Mesh",
+  "support_state": "unified_profile_renderer",
+  "renderer_strategy": "unified_profile",
+  "renderer_version": "2026-06-29.contract-aware-v1",
+  "source_reference": "references/aurora-mesh.md",
+  "fonts": [
+    "dm sans",
+    "monospace",
+    "noto sans sc",
+    "sans-serif",
+    "space grotesk",
+    "system-ui"
+  ],
+  "tokens": {
+    "css_vars": {
+      "--accent": "#000",
+      "--bg-primary": "#00b4ff",
+      "--body-size": "#00f5c4",
+      "--card-bg": "#0a0a1a",
+      "--card-border": "#999",
+      "--content-gap": "#fff",
+      "--divider": "#ffffff",
+      "--font-body": "rgba(0,0,0,0.5)",
+      "--font-display": "rgba(0,0,0,0.6)",
+      "--h2-size": "rgba(0,0,0,0.78)",
+      "--slide-padding": "rgba(0,180,255,0.30)",
+      "--subtitle-size": "rgba(0,245,196,0.12)",
+      "--text-body": "rgba(0,245,196,0.3)",
+      "--text-muted": "rgba(0,245,196,0.30)",
+      "--text-primary": "rgba(0,245,196,0.40)",
+      "--title-size": "rgba(0,255,180,0.20)"
+    },
+    "colors": [
+      "#000",
+      "#00b4ff",
+      "#00f5c4",
+      "#0a0a1a",
+      "#999",
+      "#fff",
+      "#ffffff",
+      "rgba(0,0,0,0.5)",
+      "rgba(0,0,0,0.6)",
+      "rgba(0,0,0,0.78)",
+      "rgba(0,180,255,0.30)",
+      "rgba(0,245,196,0.12)",
+      "rgba(0,245,196,0.3)",
+      "rgba(0,245,196,0.30)",
+      "rgba(0,245,196,0.40)",
+      "rgba(0,255,180,0.20)"
+    ]
+  },
+  "layout_families": [
+    "aurora_hero",
+    "aurora_card",
+    "aurora_stat",
+    "aurora_split",
+    "aurora_trio",
+    "aurora_timeline"
+  ],
+  "signature_components": [
+    "aurora-accent",
+    "aurora-badge",
+    "aurora-card",
+    "aurora-content",
+    "aurora-divider",
+    "aurora-slide",
+    "aurora-stat",
+    "aurora-subtitle",
+    "aurora-title",
+    "feat-grid"
+  ],
+  "required_visible_components": [
+    {
+      "name": "aurora-accent",
+      "selectors": [
+        ".aurora-accent"
+      ],
+      "min_count": 1
+    },
+    {
+      "name": "aurora-badge",
+      "selectors": [
+        ".aurora-badge"
+      ],
+      "min_count": 1
+    },
+    {
+      "name": "aurora-card",
+      "selectors": [
+        ".aurora-card"
+      ],
+      "min_count": 1
+    },
+    {
+      "name": "aurora-content",
+      "selectors": [
+        ".aurora-content"
+      ],
+      "min_count": 1
+    },
+    {
+      "name": "aurora-slide",
+      "selectors": [
+        ".aurora-slide"
+      ],
+      "min_count": 1
+    },
+    {
+      "name": "aurora-stat",
+      "selectors": [
+        ".aurora-stat"
+      ],
+      "min_count": 1
+    },
+    {
+      "name": "aurora-subtitle",
+      "selectors": [
+        ".aurora-subtitle"
+      ],
+      "min_count": 1
+    }
+  ],
+  "critical_selectors": [
+    "section.slide",
+    "h1, h2",
+    "[data-export-role]"
+  ],
+  "decorative_selectors": [
+    ".aurora-divider"
+  ],
+  "non_critical_selectors": [
+    ".slide-num-label",
+    ".progress-bar",
+    "#presenter-view"
+  ],
+  "allowed_overlaps": [
+    "decorative-background",
+    "slide-number-safe-area"
+  ],
+  "forbidden_substitutions": [
+    "generic-theme-shell",
+    "marker-only-style-signature",
+    "empty-component-shell"
+  ],
+  "typography_policy": {
+    "min_body_contrast": 4.5,
+    "max_negative_letter_spacing_px": -1.0,
+    "forbid_single_letter_word_break": true,
+    "require_title_not_clipped": true
+  },
+  "background_strategy": "aurora_mesh",
+  "export_dom_mapping": {
+    "slide": "section.slide",
+    "title": "section.slide h1, section.slide h2, .title-balance",
+    "subtitle": "section.slide p, .subtitle, .hero-sub",
+    "body": "section.slide p, section.slide li, section.slide .content, section.slide .slide-content",
+    "list_items": "section.slide li",
+    "code": "section.slide code, section.slide pre, section.slide .code-block, section.slide .cmd-table",
+    "quote": "section.slide blockquote, section.slide .pullquote, section.slide .quote, section.slide .sc-quote-block",
+    "stat": "section.slide .stat, section.slide .stats, section.slide [class*=stat], section.slide .metric",
+    "image": "section.slide img, section.slide picture, section.slide svg",
+    "speaker_notes": "section.slide[data-notes]"
+  },
+  "browser_qa_policy": {
+    "desktop_viewports": [
+      {
+        "width": 1600,
+        "height": 900
+      },
+      {
+        "width": 1280,
+        "height": 720
+      }
+    ],
+    "mobile_viewports": [
+      {
+        "width": 390,
+        "height": 844
+      }
+    ],
+    "hard_failures": [
+      "browser-geometry-title-clipped",
+      "browser-geometry-text-overflow",
+      "browser-geometry-empty-component",
+      "browser-geometry-character-overlap",
+      "browser-geometry-low-contrast",
+      "browser-geometry-invisible-target"
+    ]
+  },
+  "demo_parity_minimum_score": 0.85
+}

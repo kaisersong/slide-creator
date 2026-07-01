@@ -1,0 +1,121 @@
+{
+  "contract_version": 1,
+  "preset": "Blue Sky",
+  "support_state": "native_deterministic_core",
+  "renderer_strategy": "native",
+  "renderer_version": "2026-06-29.contract-aware-v1",
+  "source_reference": "references/blue-sky-starter.html",
+  "fonts": [
+    "system-ui",
+    "sans-serif"
+  ],
+  "tokens": {
+    "css_vars": {},
+    "colors": []
+  },
+  "layout_families": [
+    "native"
+  ],
+  "signature_components": [
+    "slide",
+    "title",
+    "content",
+    "export-role"
+  ],
+  "required_visible_components": [
+    {
+      "name": "slide",
+      "selectors": [
+        "section.slide"
+      ],
+      "min_count": 1
+    },
+    {
+      "name": "title",
+      "selectors": [
+        "h1, h2"
+      ],
+      "min_count": 1
+    },
+    {
+      "name": "content",
+      "selectors": [
+        ".slide-content, .content, section.slide"
+      ],
+      "min_count": 1
+    },
+    {
+      "name": "export-role",
+      "selectors": [
+        "section.slide[data-export-role]"
+      ],
+      "min_count": 1
+    }
+  ],
+  "critical_selectors": [
+    "section.slide",
+    "h1, h2",
+    "[data-export-role]"
+  ],
+  "decorative_selectors": [],
+  "non_critical_selectors": [
+    ".slide-num-label",
+    ".progress-bar",
+    "#presenter-view"
+  ],
+  "allowed_overlaps": [
+    "decorative-background",
+    "slide-number-safe-area"
+  ],
+  "forbidden_substitutions": [
+    "generic-theme-shell",
+    "marker-only-style-signature",
+    "empty-component-shell"
+  ],
+  "typography_policy": {
+    "min_body_contrast": 4.5,
+    "max_negative_letter_spacing_px": -1.0,
+    "forbid_single_letter_word_break": true,
+    "require_title_not_clipped": true
+  },
+  "background_strategy": "native",
+  "export_dom_mapping": {
+    "slide": "section.slide",
+    "title": "section.slide h1, section.slide h2, .title-balance",
+    "subtitle": "section.slide p, .subtitle, .hero-sub",
+    "body": "section.slide p, section.slide li, section.slide .content, section.slide .slide-content",
+    "list_items": "section.slide li",
+    "code": "section.slide code, section.slide pre, section.slide .code-block, section.slide .cmd-table",
+    "quote": "section.slide blockquote, section.slide .pullquote, section.slide .quote, section.slide .sc-quote-block",
+    "stat": "section.slide .stat, section.slide .stats, section.slide [class*=stat], section.slide .metric",
+    "image": "section.slide img, section.slide picture, section.slide svg",
+    "speaker_notes": "section.slide[data-notes]"
+  },
+  "browser_qa_policy": {
+    "desktop_viewports": [
+      {
+        "width": 1600,
+        "height": 900
+      },
+      {
+        "width": 1280,
+        "height": 720
+      }
+    ],
+    "mobile_viewports": [
+      {
+        "width": 390,
+        "height": 844
+      }
+    ],
+    "hard_failures": [
+      "browser-geometry-title-clipped",
+      "browser-geometry-text-overflow",
+      "browser-geometry-empty-component",
+      "browser-geometry-character-overlap",
+      "browser-geometry-low-contrast",
+      "browser-geometry-invisible-target"
+    ]
+  },
+  "demo_parity_minimum_score": 0.9
+}

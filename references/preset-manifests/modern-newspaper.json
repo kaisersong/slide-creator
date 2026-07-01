@@ -1,0 +1,97 @@
+{
+  "version": 1,
+  "preset": "Modern Newspaper",
+  "support_state": "unified_profile_renderer",
+  "renderer_strategy": "unified_profile",
+  "source_reference": "references/modern-newspaper.md",
+  "fonts": [
+    "playfair display",
+    "sans-serif",
+    "source sans 3",
+    "source sans pro",
+    "system-ui"
+  ],
+  "tokens": {
+    "css_vars": {
+      "--accent": "#000",
+      "--bg": "#111",
+      "--card-bg": "#1c1917",
+      "--card-border": "#44403c",
+      "--divider": "#999",
+      "--duration-normal": "#fafaf9",
+      "--ease-out-expo": "#fff",
+      "--slide-padding": "rgba(0,0,0,0.50)",
+      "--text-body": "rgba(0,0,0,0.78)",
+      "--text-muted": "rgba(0,0,0,0.85)",
+      "--text-primary": "rgba(16,185,129,0.80)",
+      "--text-secondary": "#000"
+    },
+    "colors": [
+      "#000",
+      "#111",
+      "#1c1917",
+      "#44403c",
+      "#999",
+      "#fafaf9",
+      "#fff",
+      "rgba(0,0,0,0.50)",
+      "rgba(0,0,0,0.78)",
+      "rgba(0,0,0,0.85)",
+      "rgba(16,185,129,0.80)"
+    ]
+  },
+  "layout_families": [
+    "newspaper_cover",
+    "newspaper_columns",
+    "newspaper_stats",
+    "newspaper_index",
+    "newspaper_close"
+  ],
+  "signature_components": [
+    "pill",
+    "stat",
+    "stats",
+    "np-rule"
+  ],
+  "required_visible_components": [
+    {
+      "name": "pill",
+      "selectors": [
+        ".pill"
+      ],
+      "min_count": 1
+    },
+    {
+      "name": "stat",
+      "selectors": [
+        ".stat"
+      ],
+      "min_count": 1
+    },
+    {
+      "name": "stats",
+      "selectors": [
+        ".stats"
+      ],
+      "min_count": 1
+    },
+    {
+      "name": "np-rule",
+      "selectors": [
+        ".np-rule"
+      ],
+      "min_count": 1
+    }
+  ],
+  "decorative_selectors": [],
+  "non_critical_selectors": [
+    ".slide-num-label",
+    ".progress-bar",
+    "#presenter-view"
+  ],
+  "forbidden_substitutions": [
+    "generic-theme-shell",
+    "marker-only-style-signature",
+    "empty-component-shell"
+  ]
+}

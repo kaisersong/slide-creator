@@ -1,0 +1,116 @@
+{
+  "version": 1,
+  "preset": "Vintage Editorial",
+  "support_state": "unified_profile_renderer",
+  "renderer_strategy": "unified_profile",
+  "source_reference": "references/vintage-editorial.md",
+  "fonts": [
+    "courier new",
+    "fraunces",
+    "monospace",
+    "noto sans sc",
+    "sans-serif",
+    "serif",
+    "system-ui",
+    "work sans"
+  ],
+  "tokens": {
+    "css_vars": {
+      "--accent-burgundy": "#000",
+      "--accent-warm": "#1a1a1a",
+      "--bg-cream": "#555",
+      "--pdh": "#555555",
+      "--pdw": "#5a2a1a",
+      "--pox": "#666",
+      "--poy": "#6a1c28",
+      "--ps": "#888",
+      "--text-primary": "#8b2635",
+      "--text-secondary": "#aaa"
+    },
+    "colors": [
+      "#000",
+      "#1a1a1a",
+      "#555",
+      "#555555",
+      "#5a2a1a",
+      "#666",
+      "#6a1c28",
+      "#888",
+      "#8b2635",
+      "#aaa",
+      "#e8d4c0",
+      "#f5f3ee",
+      "#fff"
+    ]
+  },
+  "layout_families": [
+    "vintage_masthead",
+    "vintage_columns",
+    "vintage_pullquote",
+    "vintage_index",
+    "vintage_close"
+  ],
+  "signature_components": [
+    "body-text",
+    "preset-grid",
+    "pullquote",
+    "rule",
+    "rule-thick",
+    "step-editorial",
+    "editorial-rule",
+    "drop-cap",
+    "vintage-masthead"
+  ],
+  "required_visible_components": [
+    {
+      "name": "body-text",
+      "selectors": [
+        ".body-text"
+      ],
+      "min_count": 1
+    },
+    {
+      "name": "preset-grid",
+      "selectors": [
+        ".preset-grid"
+      ],
+      "min_count": 1
+    },
+    {
+      "name": "pullquote",
+      "selectors": [
+        ".pullquote"
+      ],
+      "min_count": 1
+    },
+    {
+      "name": "step-editorial",
+      "selectors": [
+        ".step-editorial"
+      ],
+      "min_count": 1
+    },
+    {
+      "name": "drop-cap",
+      "selectors": [
+        ".drop-cap"
+      ],
+      "min_count": 1
+    }
+  ],
+  "decorative_selectors": [
+    ".editorial-rule",
+    ".rule",
+    ".rule-thick"
+  ],
+  "non_critical_selectors": [
+    ".slide-num-label",
+    ".progress-bar",
+    "#presenter-view"
+  ],
+  "forbidden_substitutions": [
+    "generic-theme-shell",
+    "marker-only-style-signature",
+    "empty-component-shell"
+  ]
+}

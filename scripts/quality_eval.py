@@ -8,6 +8,7 @@ from typing import Any
 from bs4 import BeautifulSoup
 
 from low_context import _preset_usage_rules, compile_style_contract, load_brief
+from style_signature_eval import collect_signature_presence
 from title_browser_qa import analyze_title_composition_path
 
 
@@ -490,48 +491,10 @@ def _layout_rhythm_diagnostics(slides: list[Any]) -> dict[str, Any]:
 def _style_signature_coverage(soup: BeautifulSoup, preset: str | None) -> float | None:
     if not preset:
         return None
-    required: set[str] = set()
     try:
-        usage_rules = _preset_usage_rules(preset)
+        return collect_signature_presence(str(soup), preset).coverage
     except Exception:
-        usage_rules = {}
-    coverage_signature = usage_rules.get("coverage_signature", {}) if isinstance(usage_rules, dict) else {}
-    if coverage_signature:
-        required = set(coverage_signature.get("required_classes", [])) | set(
-            coverage_signature.get("required_backgrounds", [])
-        )
-    if not required:
-        try:
-            contract = compile_style_contract(preset)
-        except Exception:
-            return None
-        required = set(contract["required_signature_classes"]) | set(contract["required_background_layers"])
-    if not required:
         return None
-
-    classes_present = {
-        f".{class_name}"
-        for tag in soup.select("[class]")
-        for class_name in tag.get("class", [])
-    }
-    ids_present = {
-        f"#{tag.get('id')}"
-        for tag in soup.select("[id]")
-        if tag.get("id")
-    }
-    pseudo_present: set[str] = set()
-    css_text = _extract_css_text(str(soup))
-    for pseudo in set(
-        re.findall(
-            r"(body::before|body::after|\.[A-Za-z][A-Za-z0-9_-]*::before|\.[A-Za-z][A-Za-z0-9_-]*::after)",
-            css_text,
-        )
-    ):
-        pseudo_present.add(pseudo)
-
-    present = classes_present | ids_present | pseudo_present
-    matched = len(required & present)
-    return round(matched / len(required), 4)
 
 
 def _compare_non_regression(current: dict[str, Any], baseline: dict[str, Any] | None) -> dict[str, Any] | None:
@@ -630,6 +593,7 @@ def analyze_html_quality(
     chart_signal_mismatch_count, chart_signal_mismatch_rate = _chart_signal_mismatch(brief, slides)
     global_fact_overuse_count = _global_fact_overuse(brief, slides)
     style_signature_coverage = _style_signature_coverage(soup, inferred_preset)
+    style_presence = collect_signature_presence(html_text, inferred_preset) if inferred_preset else None
 
     diagnostics = {
         "quality_tier": None,
@@ -646,6 +610,13 @@ def analyze_html_quality(
         "visual_families": rhythm_diagnostics["visual_families"],
         "avg_component_kinds_per_slide": avg_components,
         "style_signature_coverage": style_signature_coverage,
+        "style_signature_integrity": style_presence.integrity if style_presence else None,
+        "visible_signature_hits": list(style_presence.visible_class_hits + style_presence.visible_id_hits) if style_presence else [],
+        "background_signature_hits": list(style_presence.background_hits) if style_presence else [],
+        "ignored_marker_class_count": len(style_presence.ignored_marker_hits) if style_presence else 0,
+        "marker_only_signature_hits": list(style_presence.ignored_marker_hits) if style_presence else [],
+        "invisible_signature_hits": list(style_presence.invisible_hits) if style_presence else [],
+        "empty_shell_signature_hits": list(style_presence.empty_shell_hits) if style_presence else [],
         "numeric_faithfulness": numeric_faithfulness,
         "hallucinated_numeric_tokens": hallucinated_numeric_tokens,
         "source_fact_coverage": must_include_coverage,

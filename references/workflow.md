@@ -110,13 +110,13 @@ If the deck is in `精修` / `Polish`, add a short design-lock step before gener
 
 If the user already approved a preset or `BRIEF.json` already names one, skip fresh preset routing and keep that preset. Do not reinterpret the same deck into a different theme just because the planning depth changed.
 
-Use a deterministic renderer or reference-driven preset for HTML generation. Default previews should stay on generator-ready presets and custom themes; explicit requests for reference-backed presets should route through reference-driven generation plus strict validation. Unknown, archived, or unfixably invalid presets fail closed with structured generator-ready alternatives.
+Use a deterministic renderer or unified profile renderer for HTML generation. Default previews should stay on the four default recommendation presets and custom themes; explicit requests for any built-in preset should preserve that canonical preset through the shared BRIEF-to-HTML path plus strict validation. Profile-rendered presets must pass the historical demo parity gate before being described as restored to historical style fidelity. Unknown, archived, or invalid custom presets fail closed with structured alternatives.
 
 ### Style Path
 
 Ask via AskUserQuestion:
 - **"Show me options"** → ask mood question → generate 3 previews based on answer
-- **"I know what I want"** → show generator-ready preset picker (`Swiss Modern` / `Enterprise Dark` / `Data Story` / `Blue Sky` / contextual `Chinese Chan`) plus discovered custom themes; if the user names another built-in reference preset, honor it as reference-driven rather than putting it in default recommendations
+- **"I know what I want"** → show default preset picker (`Swiss Modern` / `Enterprise Dark` / `Data Story` / `Blue Sky` / contextual `Chinese Chan`) plus discovered custom themes; if the user names another built-in preset, honor it through the unified profile renderer rather than putting it in default recommendations
 
 **MANDATORY: Before any preset selection or BRIEF writing, scan `<skill-path>/themes/` for custom themes.**
 Skip any directory whose name starts with `_`. Each remaining subdirectory with a `reference.md` is a custom theme — append as `Custom: <folder-name>` entries.

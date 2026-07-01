@@ -1,0 +1,393 @@
+{
+  "version": 1,
+  "suite_id": "preset-surface-all",
+  "workflow": [
+    "BRIEF.json",
+    "capability packet",
+    "HTML",
+    "strict validate",
+    "quality eval"
+  ],
+  "weights": {
+    "route": 0.2,
+    "compression": 0.2,
+    "render": 0.5,
+    "efficiency": 0.1
+  },
+  "cases": [
+    {
+      "case_id": "aurora-mesh-profile-render",
+      "validation_profile": "strict",
+      "brief_path": "../preset-surface-phase1/cases/core-swiss-modern-brief.json",
+      "preset": "Aurora Mesh",
+      "expectations": {
+        "expected_preset": "Aurora Mesh",
+        "expected_canonical_preset": "Aurora Mesh",
+        "expected_support_tier": "supported",
+        "expected_generation_status": "profile",
+        "expected_renderer_strategy": "unified_profile",
+        "expected_render_path": "profile:aurora-mesh",
+        "expected_reference_path": "references/aurora-mesh.md",
+        "required_html_checks": ["shared-runtime", "style-signature", "present-mode", "edit-mode", "watermark-injected"],
+        "required_quality_gates": ["chrome-hidden-by-default", "no-content-occlusion-risk", "narrative-role-coverage", "minimal-slide-run"]
+      }
+    },
+    {
+      "case_id": "blue-sky-native-render",
+      "validation_profile": "strict",
+      "brief_path": "../preset-surface-phase1/cases/core-swiss-modern-brief.json",
+      "preset": "Blue Sky",
+      "expectations": {
+        "expected_preset": "Blue Sky",
+        "expected_canonical_preset": "Blue Sky",
+        "expected_support_tier": "production",
+        "expected_generation_status": "ready",
+        "expected_renderer_strategy": "native",
+        "expected_render_path": "blue-sky-starter-canonical",
+        "expected_reference_path": "references/blue-sky-starter.html",
+        "required_html_checks": ["blue-sky-architecture", "style-signature", "present-mode", "edit-mode", "watermark-injected"],
+        "required_quality_gates": ["chrome-hidden-by-default", "no-content-occlusion-risk", "narrative-role-coverage", "minimal-slide-run"]
+      }
+    },
+    {
+      "case_id": "bold-signal-profile-render",
+      "validation_profile": "strict",
+      "brief_path": "../preset-surface-phase1/cases/core-swiss-modern-brief.json",
+      "preset": "Bold Signal",
+      "expectations": {
+        "expected_preset": "Bold Signal",
+        "expected_canonical_preset": "Bold Signal",
+        "expected_support_tier": "supported",
+        "expected_generation_status": "profile",
+        "expected_renderer_strategy": "unified_profile",
+        "expected_render_path": "profile:bold-signal",
+        "expected_reference_path": "references/bold-signal.md",
+        "required_html_checks": ["shared-runtime", "style-signature", "present-mode", "edit-mode", "watermark-injected"],
+        "required_quality_gates": ["chrome-hidden-by-default", "no-content-occlusion-risk", "narrative-role-coverage", "minimal-slide-run"]
+      }
+    },
+    {
+      "case_id": "chinese-chan-native-render",
+      "validation_profile": "strict",
+      "brief_path": "../preset-surface-phase1/cases/core-swiss-modern-brief.json",
+      "preset": "Chinese Chan",
+      "expectations": {
+        "expected_preset": "Chinese Chan",
+        "expected_canonical_preset": "Chinese Chan",
+        "expected_support_tier": "supported",
+        "expected_generation_status": "ready",
+        "expected_renderer_strategy": "native",
+        "expected_render_path": "brief-canonical",
+        "expected_reference_path": "references/chinese-chan.md",
+        "required_html_checks": ["shared-runtime", "style-signature", "present-mode", "edit-mode", "watermark-injected"],
+        "required_quality_gates": ["chrome-hidden-by-default", "no-content-occlusion-risk", "narrative-role-coverage"]
+      }
+    },
+    {
+      "case_id": "creative-voltage-profile-render",
+      "validation_profile": "strict",
+      "brief_path": "../preset-surface-phase1/cases/core-swiss-modern-brief.json",
+      "preset": "Creative Voltage",
+      "expectations": {
+        "expected_preset": "Creative Voltage",
+        "expected_canonical_preset": "Creative Voltage",
+        "expected_support_tier": "supported",
+        "expected_generation_status": "profile",
+        "expected_renderer_strategy": "unified_profile",
+        "expected_render_path": "profile:creative-voltage",
+        "expected_reference_path": "references/creative-voltage.md",
+        "required_html_checks": ["shared-runtime", "style-signature", "present-mode", "edit-mode", "watermark-injected"],
+        "required_quality_gates": ["chrome-hidden-by-default", "no-content-occlusion-risk", "narrative-role-coverage", "minimal-slide-run"]
+      }
+    },
+    {
+      "case_id": "dark-botanical-profile-render",
+      "validation_profile": "strict",
+      "brief_path": "../preset-surface-phase1/cases/core-swiss-modern-brief.json",
+      "preset": "Dark Botanical",
+      "expectations": {
+        "expected_preset": "Dark Botanical",
+        "expected_canonical_preset": "Dark Botanical",
+        "expected_support_tier": "supported",
+        "expected_generation_status": "profile",
+        "expected_renderer_strategy": "unified_profile",
+        "expected_render_path": "profile:dark-botanical",
+        "expected_reference_path": "references/dark-botanical.md",
+        "required_html_checks": ["shared-runtime", "style-signature", "present-mode", "edit-mode", "watermark-injected"],
+        "required_quality_gates": ["chrome-hidden-by-default", "no-content-occlusion-risk", "narrative-role-coverage", "minimal-slide-run"]
+      }
+    },
+    {
+      "case_id": "data-story-native-render",
+      "validation_profile": "strict",
+      "brief_path": "../preset-surface-phase1/cases/core-swiss-modern-brief.json",
+      "preset": "Data Story",
+      "expectations": {
+        "expected_preset": "Data Story",
+        "expected_canonical_preset": "Data Story",
+        "expected_support_tier": "production",
+        "expected_generation_status": "ready",
+        "expected_renderer_strategy": "native",
+        "expected_render_path": "brief-canonical",
+        "expected_reference_path": "references/data-story.md",
+        "required_html_checks": ["shared-runtime", "style-signature", "present-mode", "edit-mode", "watermark-injected"],
+        "required_quality_gates": ["chrome-hidden-by-default", "no-content-occlusion-risk", "narrative-role-coverage", "minimal-slide-run"]
+      }
+    },
+    {
+      "case_id": "electric-studio-profile-render",
+      "validation_profile": "strict",
+      "brief_path": "../preset-surface-phase1/cases/core-swiss-modern-brief.json",
+      "preset": "Electric Studio",
+      "expectations": {
+        "expected_preset": "Electric Studio",
+        "expected_canonical_preset": "Electric Studio",
+        "expected_support_tier": "supported",
+        "expected_generation_status": "profile",
+        "expected_renderer_strategy": "unified_profile",
+        "expected_render_path": "profile:electric-studio",
+        "expected_reference_path": "references/electric-studio.md",
+        "required_html_checks": ["shared-runtime", "style-signature", "present-mode", "edit-mode", "watermark-injected"],
+        "required_quality_gates": ["chrome-hidden-by-default", "no-content-occlusion-risk", "narrative-role-coverage", "minimal-slide-run"]
+      }
+    },
+    {
+      "case_id": "enterprise-dark-native-render",
+      "validation_profile": "strict",
+      "brief_path": "../preset-surface-phase1/cases/core-swiss-modern-brief.json",
+      "preset": "Enterprise Dark",
+      "expectations": {
+        "expected_preset": "Enterprise Dark",
+        "expected_canonical_preset": "Enterprise Dark",
+        "expected_support_tier": "production",
+        "expected_generation_status": "ready",
+        "expected_renderer_strategy": "native",
+        "expected_render_path": "brief-canonical",
+        "expected_reference_path": "references/enterprise-dark.md",
+        "required_html_checks": ["shared-runtime", "style-signature", "present-mode", "edit-mode", "watermark-injected"],
+        "required_quality_gates": ["chrome-hidden-by-default", "no-content-occlusion-risk", "narrative-role-coverage", "minimal-slide-run"]
+      }
+    },
+    {
+      "case_id": "glassmorphism-profile-render",
+      "validation_profile": "strict",
+      "brief_path": "../preset-surface-phase1/cases/core-swiss-modern-brief.json",
+      "preset": "Glassmorphism",
+      "expectations": {
+        "expected_preset": "Glassmorphism",
+        "expected_canonical_preset": "Glassmorphism",
+        "expected_support_tier": "supported",
+        "expected_generation_status": "profile",
+        "expected_renderer_strategy": "unified_profile",
+        "expected_render_path": "profile:glassmorphism",
+        "expected_reference_path": "references/glassmorphism.md",
+        "required_html_checks": ["shared-runtime", "style-signature", "present-mode", "edit-mode", "watermark-injected"],
+        "required_quality_gates": ["chrome-hidden-by-default", "no-content-occlusion-risk", "narrative-role-coverage", "minimal-slide-run"]
+      }
+    },
+    {
+      "case_id": "modern-newspaper-profile-render",
+      "validation_profile": "strict",
+      "brief_path": "../preset-surface-phase1/cases/core-swiss-modern-brief.json",
+      "preset": "Modern Newspaper",
+      "expectations": {
+        "expected_preset": "Modern Newspaper",
+        "expected_canonical_preset": "Modern Newspaper",
+        "expected_support_tier": "supported",
+        "expected_generation_status": "profile",
+        "expected_renderer_strategy": "unified_profile",
+        "expected_render_path": "profile:modern-newspaper",
+        "expected_reference_path": "references/modern-newspaper.md",
+        "required_html_checks": ["shared-runtime", "style-signature", "present-mode", "edit-mode", "watermark-injected"],
+        "required_quality_gates": ["chrome-hidden-by-default", "no-content-occlusion-risk", "narrative-role-coverage", "minimal-slide-run"]
+      }
+    },
+    {
+      "case_id": "neo-brutalism-profile-render",
+      "validation_profile": "strict",
+      "brief_path": "../preset-surface-phase1/cases/core-swiss-modern-brief.json",
+      "preset": "Neo-Brutalism",
+      "expectations": {
+        "expected_preset": "Neo-Brutalism",
+        "expected_canonical_preset": "Neo-Brutalism",
+        "expected_support_tier": "supported",
+        "expected_generation_status": "profile",
+        "expected_renderer_strategy": "unified_profile",
+        "expected_render_path": "profile:neo-brutalism",
+        "expected_reference_path": "references/neo-brutalism.md",
+        "required_html_checks": ["shared-runtime", "style-signature", "present-mode", "edit-mode", "watermark-injected"],
+        "required_quality_gates": ["chrome-hidden-by-default", "no-content-occlusion-risk", "narrative-role-coverage", "minimal-slide-run"]
+      }
+    },
+    {
+      "case_id": "neo-retro-dev-deck-profile-render",
+      "validation_profile": "strict",
+      "brief_path": "../preset-surface-phase1/cases/core-swiss-modern-brief.json",
+      "preset": "Neo-Retro Dev Deck",
+      "expectations": {
+        "expected_preset": "Neo-Retro Dev Deck",
+        "expected_canonical_preset": "Neo-Retro Dev Deck",
+        "expected_support_tier": "supported",
+        "expected_generation_status": "profile",
+        "expected_renderer_strategy": "unified_profile",
+        "expected_render_path": "profile:neo-retro-dev-deck",
+        "expected_reference_path": "references/neo-retro-dev.md",
+        "required_html_checks": ["shared-runtime", "style-signature", "present-mode", "edit-mode", "watermark-injected"],
+        "required_quality_gates": ["chrome-hidden-by-default", "no-content-occlusion-risk", "narrative-role-coverage", "minimal-slide-run"]
+      }
+    },
+    {
+      "case_id": "neon-cyber-profile-render",
+      "validation_profile": "strict",
+      "brief_path": "../preset-surface-phase1/cases/core-swiss-modern-brief.json",
+      "preset": "Neon Cyber",
+      "expectations": {
+        "expected_preset": "Neon Cyber",
+        "expected_canonical_preset": "Neon Cyber",
+        "expected_support_tier": "supported",
+        "expected_generation_status": "profile",
+        "expected_renderer_strategy": "unified_profile",
+        "expected_render_path": "profile:neon-cyber",
+        "expected_reference_path": "references/neon-cyber.md",
+        "required_html_checks": ["shared-runtime", "style-signature", "present-mode", "edit-mode", "watermark-injected"],
+        "required_quality_gates": ["chrome-hidden-by-default", "no-content-occlusion-risk", "narrative-role-coverage", "minimal-slide-run"]
+      }
+    },
+    {
+      "case_id": "notebook-tabs-profile-render",
+      "validation_profile": "strict",
+      "brief_path": "../preset-surface-phase1/cases/core-swiss-modern-brief.json",
+      "preset": "Notebook Tabs",
+      "expectations": {
+        "expected_preset": "Notebook Tabs",
+        "expected_canonical_preset": "Notebook Tabs",
+        "expected_support_tier": "supported",
+        "expected_generation_status": "profile",
+        "expected_renderer_strategy": "unified_profile",
+        "expected_render_path": "profile:notebook-tabs",
+        "expected_reference_path": "references/notebook-tabs.md",
+        "required_html_checks": ["shared-runtime", "style-signature", "present-mode", "edit-mode", "watermark-injected"],
+        "required_quality_gates": ["chrome-hidden-by-default", "no-content-occlusion-risk", "narrative-role-coverage", "minimal-slide-run"]
+      }
+    },
+    {
+      "case_id": "paper-ink-profile-render",
+      "validation_profile": "strict",
+      "brief_path": "../preset-surface-phase1/cases/core-swiss-modern-brief.json",
+      "preset": "Paper & Ink",
+      "expectations": {
+        "expected_preset": "Paper & Ink",
+        "expected_canonical_preset": "Paper & Ink",
+        "expected_support_tier": "supported",
+        "expected_generation_status": "profile",
+        "expected_renderer_strategy": "unified_profile",
+        "expected_render_path": "profile:paper-ink",
+        "expected_reference_path": "references/paper-ink.md",
+        "required_html_checks": ["shared-runtime", "style-signature", "present-mode", "edit-mode", "watermark-injected"],
+        "required_quality_gates": ["chrome-hidden-by-default", "no-content-occlusion-risk", "narrative-role-coverage", "minimal-slide-run"]
+      }
+    },
+    {
+      "case_id": "pastel-geometry-profile-render",
+      "validation_profile": "strict",
+      "brief_path": "../preset-surface-phase1/cases/core-swiss-modern-brief.json",
+      "preset": "Pastel Geometry",
+      "expectations": {
+        "expected_preset": "Pastel Geometry",
+        "expected_canonical_preset": "Pastel Geometry",
+        "expected_support_tier": "supported",
+        "expected_generation_status": "profile",
+        "expected_renderer_strategy": "unified_profile",
+        "expected_render_path": "profile:pastel-geometry",
+        "expected_reference_path": "references/pastel-geometry.md",
+        "required_html_checks": ["shared-runtime", "style-signature", "present-mode", "edit-mode", "watermark-injected"],
+        "required_quality_gates": ["chrome-hidden-by-default", "no-content-occlusion-risk", "narrative-role-coverage", "minimal-slide-run"]
+      }
+    },
+    {
+      "case_id": "split-pastel-profile-render",
+      "validation_profile": "strict",
+      "brief_path": "../preset-surface-phase1/cases/core-swiss-modern-brief.json",
+      "preset": "Split Pastel",
+      "expectations": {
+        "expected_preset": "Split Pastel",
+        "expected_canonical_preset": "Split Pastel",
+        "expected_support_tier": "supported",
+        "expected_generation_status": "profile",
+        "expected_renderer_strategy": "unified_profile",
+        "expected_render_path": "profile:split-pastel",
+        "expected_reference_path": "references/split-pastel.md",
+        "required_html_checks": ["shared-runtime", "style-signature", "present-mode", "edit-mode", "watermark-injected"],
+        "required_quality_gates": ["chrome-hidden-by-default", "no-content-occlusion-risk", "narrative-role-coverage", "minimal-slide-run"]
+      }
+    },
+    {
+      "case_id": "strategy-consulting-profile-render",
+      "validation_profile": "strict",
+      "brief_path": "../preset-surface-phase1/cases/core-swiss-modern-brief.json",
+      "preset": "Strategy Consulting",
+      "expectations": {
+        "expected_preset": "Strategy Consulting",
+        "expected_canonical_preset": "Strategy Consulting",
+        "expected_support_tier": "supported",
+        "expected_generation_status": "profile",
+        "expected_renderer_strategy": "unified_profile",
+        "expected_render_path": "profile:strategy-consulting",
+        "expected_reference_path": "references/strategy-consulting.md",
+        "required_html_checks": ["shared-runtime", "style-signature", "present-mode", "edit-mode", "watermark-injected"],
+        "required_quality_gates": ["chrome-hidden-by-default", "no-content-occlusion-risk", "narrative-role-coverage", "minimal-slide-run"]
+      }
+    },
+    {
+      "case_id": "swiss-modern-native-render",
+      "validation_profile": "strict",
+      "brief_path": "../preset-surface-phase1/cases/core-swiss-modern-brief.json",
+      "preset": "Swiss Modern",
+      "expectations": {
+        "expected_preset": "Swiss Modern",
+        "expected_canonical_preset": "Swiss Modern",
+        "expected_support_tier": "production",
+        "expected_generation_status": "ready",
+        "expected_renderer_strategy": "native",
+        "expected_render_path": "brief-canonical",
+        "expected_reference_path": "references/swiss-modern.md",
+        "required_html_checks": ["shared-runtime", "style-signature", "present-mode", "edit-mode", "watermark-injected"],
+        "required_quality_gates": ["chrome-hidden-by-default", "no-content-occlusion-risk", "narrative-role-coverage", "minimal-slide-run"]
+      }
+    },
+    {
+      "case_id": "terminal-green-profile-render",
+      "validation_profile": "strict",
+      "brief_path": "../preset-surface-phase1/cases/core-swiss-modern-brief.json",
+      "preset": "Terminal Green",
+      "expectations": {
+        "expected_preset": "Terminal Green",
+        "expected_canonical_preset": "Terminal Green",
+        "expected_support_tier": "supported",
+        "expected_generation_status": "profile",
+        "expected_renderer_strategy": "unified_profile",
+        "expected_render_path": "profile:terminal-green",
+        "expected_reference_path": "references/terminal-green.md",
+        "required_html_checks": ["shared-runtime", "style-signature", "present-mode", "edit-mode", "watermark-injected"],
+        "required_quality_gates": ["chrome-hidden-by-default", "no-content-occlusion-risk", "narrative-role-coverage", "minimal-slide-run"]
+      }
+    },
+    {
+      "case_id": "vintage-editorial-profile-render",
+      "validation_profile": "strict",
+      "brief_path": "../preset-surface-phase1/cases/core-swiss-modern-brief.json",
+      "preset": "Vintage Editorial",
+      "expectations": {
+        "expected_preset": "Vintage Editorial",
+        "expected_canonical_preset": "Vintage Editorial",
+        "expected_support_tier": "supported",
+        "expected_generation_status": "profile",
+        "expected_renderer_strategy": "unified_profile",
+        "expected_render_path": "profile:vintage-editorial",
+        "expected_reference_path": "references/vintage-editorial.md",
+        "required_html_checks": ["shared-runtime", "style-signature", "present-mode", "edit-mode", "watermark-injected"],
+        "required_quality_gates": ["chrome-hidden-by-default", "no-content-occlusion-risk", "narrative-role-coverage", "minimal-slide-run"]
+      }
+    }
+  ]
+}

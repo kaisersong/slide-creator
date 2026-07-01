@@ -32,6 +32,7 @@ from low_context import (  # noqa: E402
     render_from_brief,
     RenderError,
 )
+from browser_geometry_qa import analyze_browser_geometry_html  # noqa: E402
 from quality_eval import analyze_html_quality  # noqa: E402
 
 
@@ -44,6 +45,7 @@ DATA_STORY_CASE = ROOT / "evals" / "preset-surface-phase1" / "cases" / "core-dat
 CORE_SWISS_BRIEF = ROOT / "evals" / "preset-surface-phase1" / "cases" / "core-swiss-modern-brief.json"
 CORE_DATA_STORY_BRIEF = ROOT / "evals" / "preset-surface-phase1" / "cases" / "core-data-story-brief.json"
 BLUE_SKY_DEMO = ROOT / "demos" / "blue-sky-zh.html"
+CORE_GEOMETRY_VIEWPORTS = [{"width": 1600, "height": 900}, {"width": 1280, "height": 720}]
 
 
 def read_json(path: Path) -> dict:
@@ -1408,6 +1410,19 @@ def test_work_hub_production_presets_keep_style_signal_without_placeholder_leaks
             assert needle not in visible_text
 
 
+def test_native_core_eval_briefs_pass_browser_geometry_gate():
+    failing: dict[str, list[str]] = {}
+    for preset in ["Swiss Modern", "Enterprise Dark", "Data Story"]:
+        brief = _load_core_swiss_brief()
+        brief["style"]["preset"] = preset
+        html_text, _packet, _style_contract = render_from_brief(brief)
+        report = analyze_browser_geometry_html(html_text, viewports=CORE_GEOMETRY_VIEWPORTS, stable_runs=1)
+        if report["hard_failures"]:
+            failing[preset] = report["hard_failures"]
+
+    assert failing == {}
+
+
 def test_production_presets_do_not_leak_chinese_chan_signatures():
     cases = [
         ("Swiss Modern", _load_core_swiss_brief()),
@@ -2135,7 +2150,7 @@ def test_swiss_slide_creator_intro_uses_demo_level_component_rhythm():
     assert "word-break: normal;" in html_text
     assert "hyphens: none;" in html_text
     assert "white-space: nowrap;" in html_text
-    assert "font-size: clamp(2rem, 3.4vw, 3.6rem);" in html_text
+    assert "font-size: clamp(1.5rem, 1.9vw, 2.4rem);" in html_text
     assert "font-size: clamp(10rem, 30vw, 30rem);" in html_text
     assert "right: clamp(-3rem, -2vw, -1rem);" in html_text
     assert "font-size: clamp(17px, 1.9vw, 22px);" in html_text

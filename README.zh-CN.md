@@ -80,7 +80,7 @@ user prompt → BRIEF.json → HTML → validate → eval
 
 原因很简单：真正生成 HTML 时，不应该继续背整段聊天记录，而应该只背一个短、硬、结构化的真相源。
 
-这条规则同样适用于“直接给内容 + 风格，立刻生成”。这类请求也必须先 materialize `BRIEF.json`，再按 preset 能力路由：deterministic preset 走 `render_from_brief()`，reference-backed preset 走 reference-driven worker，最后通过 strict 写入前门禁，不能在交互路径里绕过 BRIEF/style contract 手拼最终 HTML。
+这条规则同样适用于“直接给内容 + 风格，立刻生成”。这类请求也必须先 materialize `BRIEF.json`，再按 preset 能力路由：native core、统一 profile renderer、custom theme 都走 `render_from_brief()` 产品路径，最后通过 strict 写入前门禁，不能在交互路径里绕过 BRIEF/style contract 手拼最终 HTML。
 
 ### 二、公开模式尽量简单，内部链路必须严格
 
@@ -196,6 +196,23 @@ python3 scripts/compare-skill-eval-baseline.py \
 
 每次新增检查前，都要先判断：它是不是属于确定性的运行时门禁？如果本质上是主观审美判断，而不是契约校验，就应留在 review/eval，不要塞进 strict validate。
 
+完整的 22-preset 交付门禁使用 slow path：
+
+```bash
+python3 scripts/preset_release_gate.py \
+  --suite evals/preset-surface-all/manifest.json \
+  --output-dir /tmp/slide-quality-full-slow-gate \
+  --browser-geometry \
+  --contract \
+  --export-smoke \
+  --mobile-geometry \
+  --ai-advised \
+  --promotion-gate \
+  --pptx-export
+```
+
+该 gate 会阻断 desktop/mobile geometry hard failure、缺失 PresetContract 组件、空 export slot、AI-advised 内容/节奏 proxy failure、未满足前置条件的 style-native promotion，以及真实 PPTX 导出或页数不匹配失败。
+
 **契约对齐：验证脚本必须与生成契约一致**
 
 validate.py 的检查项必须与 SKILL.md / html-template.md / js-engine.md 的实际契约保持一致。例如：
@@ -254,7 +271,7 @@ theme 的约束是明确的：
 - `Data Story`
 - `Blue Sky`
 
-这**不代表其他 preset 被删除**。`Chinese Chan` 已可在哲学、文化、品牌类语境中作为上下文可生成 preset。参考驱动型 preset 仍保留为显式选择的生成路径：用户明确要求时，可以通过选中风格 reference + strict validation 生成；但它们不承诺和核心 deterministic renderer 相同的稳定性。
+这**不代表其他 preset 被删除**。所有内置风格在用户显式选择时都必须可生成。五个 native deterministic core 是最稳定生成面；默认推荐面只包含 `Swiss Modern / Enterprise Dark / Data Story / Blue Sky`，`Chinese Chan` 仅作为 contextual recommendation。其他完整 reference-backed 风格走统一 profile renderer，共享 `BRIEF.json`、shared runtime、strict validation 和 eval/release gate。非核心 profile 可生成，且需要通过 historical demo parity gate 后，才可以描述为恢复到历史风格保真；但它们仍不冒充 native deterministic core，也不进入默认推荐面。
 
 ---
 
@@ -310,7 +327,7 @@ python3 main.py --generate --brief BRIEF.json --output presentation.html --eval
 ```
 
 内置 preset 仍然从 `references/` / `references/style-index.md` 读取；`themes/<name>/reference.md` 只用于自定义主题。
-裸 CLI renderer 覆盖 deterministic 内置 preset 和 custom theme。reference-driven 内置 preset 走 slash-skill agent worker，再使用同一套 strict validator 后输出最终 HTML。
+裸 CLI renderer 覆盖 native deterministic 内置 preset、统一 profile 内置 preset 和 custom theme，全部走同一条 BRIEF-to-HTML 路径，再使用同一套 strict validator 后输出最终 HTML。
 
 ### 规划深度
 

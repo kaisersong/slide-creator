@@ -1,0 +1,65 @@
+{
+  "version": 1,
+  "preset": "Blue Sky",
+  "support_state": "native_deterministic_core",
+  "renderer_strategy": "native",
+  "source_reference": "references/blue-sky-starter.html",
+  "fonts": [
+    "system-ui",
+    "sans-serif"
+  ],
+  "tokens": {
+    "css_vars": {},
+    "colors": []
+  },
+  "layout_families": [
+    "native"
+  ],
+  "signature_components": [
+    "slide",
+    "title",
+    "content",
+    "export-role"
+  ],
+  "required_visible_components": [
+    {
+      "name": "slide",
+      "selectors": [
+        "section.slide"
+      ],
+      "min_count": 1
+    },
+    {
+      "name": "title",
+      "selectors": [
+        "h1, h2"
+      ],
+      "min_count": 1
+    },
+    {
+      "name": "content",
+      "selectors": [
+        ".slide-content, .content, section.slide"
+      ],
+      "min_count": 1
+    },
+    {
+      "name": "export-role",
+      "selectors": [
+        "section.slide[data-export-role]"
+      ],
+      "min_count": 1
+    }
+  ],
+  "decorative_selectors": [],
+  "non_critical_selectors": [
+    ".slide-num-label",
+    ".progress-bar",
+    "#presenter-view"
+  ],
+  "forbidden_substitutions": [
+    "generic-theme-shell",
+    "marker-only-style-signature",
+    "empty-component-shell"
+  ]
+}

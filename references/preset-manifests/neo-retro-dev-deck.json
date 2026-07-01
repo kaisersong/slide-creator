@@ -1,0 +1,143 @@
+{
+  "version": 1,
+  "preset": "Neo-Retro Dev Deck",
+  "support_state": "unified_profile_renderer",
+  "renderer_strategy": "unified_profile",
+  "source_reference": "references/neo-retro-dev.md",
+  "fonts": [
+    "-apple-system",
+    "barlow condensed",
+    "ibm plex mono",
+    "ibm plex sans",
+    "monospace",
+    "noto sans sc",
+    "sans-serif"
+  ],
+  "tokens": {
+    "css_vars": {
+      "--accent": "#000",
+      "--bg": "#00c8ff",
+      "--block-bg": "#111111",
+      "--block-dark": "#1a1a1a",
+      "--body-size": "#22c55e",
+      "--border": "#444",
+      "--content-gap": "#666",
+      "--cyan": "#888",
+      "--green": "#999",
+      "--grid": "#f5f2e8",
+      "--h2-size": "#f7f5f0",
+      "--pink": "#ff3c7e",
+      "--slide-padding": "#ffe14d",
+      "--small-size": "#fff",
+      "--text": "#ffffff",
+      "--title-size": "#000",
+      "--yellow": "#00c8ff"
+    },
+    "colors": [
+      "#000",
+      "#00c8ff",
+      "#111111",
+      "#1a1a1a",
+      "#22c55e",
+      "#444",
+      "#666",
+      "#888",
+      "#999",
+      "#f5f2e8",
+      "#f7f5f0",
+      "#ff3c7e",
+      "#ffe14d",
+      "#fff",
+      "#ffffff"
+    ]
+  },
+  "layout_families": [
+    "retro_cover",
+    "retro_cmd",
+    "retro_cards",
+    "retro_metrics",
+    "retro_close"
+  ],
+  "signature_components": [
+    "accent-pink",
+    "arch-tint-pink",
+    "ba-panel",
+    "badge-pink",
+    "body-text",
+    "cards-grid",
+    "cmd-pink",
+    "cmd-table",
+    "hl-pink",
+    "metric-num-pink",
+    "metrics-grid"
+  ],
+  "required_visible_components": [
+    {
+      "name": "accent-pink",
+      "selectors": [
+        ".accent-pink"
+      ],
+      "min_count": 1
+    },
+    {
+      "name": "arch-tint-pink",
+      "selectors": [
+        ".arch-tint-pink"
+      ],
+      "min_count": 1
+    },
+    {
+      "name": "ba-panel",
+      "selectors": [
+        ".ba-panel"
+      ],
+      "min_count": 1
+    },
+    {
+      "name": "badge-pink",
+      "selectors": [
+        ".badge-pink"
+      ],
+      "min_count": 1
+    },
+    {
+      "name": "body-text",
+      "selectors": [
+        ".body-text"
+      ],
+      "min_count": 1
+    },
+    {
+      "name": "cards-grid",
+      "selectors": [
+        ".cards-grid"
+      ],
+      "min_count": 1
+    },
+    {
+      "name": "cmd-pink",
+      "selectors": [
+        ".cmd-pink"
+      ],
+      "min_count": 1
+    },
+    {
+      "name": "cmd-table",
+      "selectors": [
+        ".cmd-table"
+      ],
+      "min_count": 1
+    }
+  ],
+  "decorative_selectors": [],
+  "non_critical_selectors": [
+    ".slide-num-label",
+    ".progress-bar",
+    "#presenter-view"
+  ],
+  "forbidden_substitutions": [
+    "generic-theme-shell",
+    "marker-only-style-signature",
+    "empty-component-shell"
+  ]
+}

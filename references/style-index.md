@@ -15,9 +15,9 @@ Use these 4 presets as the default recommendation surface when the user did not 
 
 These presets have stable deterministic renderers and are safe first-line recommendations.
 
-- `Chinese Chan` is also generator-ready, but route it contextually for philosophy, culture, brand, and contemplative decks instead of putting it in the default shortlist.
-- Reference-driven presets are design references with an agent generation path, not deterministic render targets. If explicitly requested for generation, load the selected reference plus shared HTML/CSS/JS references, generate through the reference-driven worker, and require strict validation before output.
-- Current editorial next renderer candidate: `Paper & Ink`
+- All built-in presets are explicitly renderable.
+- The five native deterministic core presets are the most stable generation surface: `Swiss Modern`, `Enterprise Dark`, `Data Story`, `Blue Sky`, and contextual `Chinese Chan`.
+- The remaining reference-backed presets use the unified profile renderer with the same `BRIEF.json`, shared runtime, strict validation, and eval/release gates. Profile-rendered presets are demo-parity gated against the historical checked-in demos before being described as restored to historical style fidelity, but they are not native deterministic core and they are not default recommendations.
 
 Machine-readable source of truth: `references/preset-support-tiers.json`
 
@@ -76,8 +76,8 @@ Blue Sky uses `references/blue-sky-starter.html` as its reference file.
 | Tier | Current Presets | Notes |
 |------|-----------------|-------|
 | Production | Swiss Modern, Enterprise Dark, Data Story, Blue Sky | Default generator-ready recommendation surface |
-| Supported | Paper & Ink, Glassmorphism, Chinese Chan, Bold Signal, Aurora Mesh, Terminal Green, Strategy Consulting | `Chinese Chan` is generator-ready contextual; the rest are reference-driven until native renderers are added |
-| Experimental | Electric Studio, Creative Voltage, Dark Botanical, Modern Newspaper, Neon Cyber, Notebook Tabs, Pastel Geometry, Split Pastel, Vintage Editorial, Neo-Brutalism, Neo-Retro Dev Deck | Reference-driven opt-in generation only; do not add to default recommendations until promoted |
+| Supported | Chinese Chan, Aurora Mesh, Bold Signal, Creative Voltage, Dark Botanical, Electric Studio, Glassmorphism, Modern Newspaper, Neo-Brutalism, Neo-Retro Dev Deck, Neon Cyber, Notebook Tabs, Paper & Ink, Pastel Geometry, Split Pastel, Strategy Consulting, Terminal Green, Vintage Editorial | `Chinese Chan` is contextual native core; the rest render through the unified profile renderer |
+| Experimental | None | Do not add profile-rendered presets to default recommendations until promoted |
 | Archive Candidate | None yet | Do not archive before usage evidence exists |
 
 ---

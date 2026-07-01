@@ -1,0 +1,153 @@
+{
+  "contract_version": 1,
+  "preset": "Modern Newspaper",
+  "support_state": "unified_profile_renderer",
+  "renderer_strategy": "unified_profile",
+  "renderer_version": "2026-06-29.contract-aware-v1",
+  "source_reference": "references/modern-newspaper.md",
+  "fonts": [
+    "playfair display",
+    "sans-serif",
+    "source sans 3",
+    "source sans pro",
+    "system-ui"
+  ],
+  "tokens": {
+    "css_vars": {
+      "--accent": "#000",
+      "--bg": "#111",
+      "--card-bg": "#1c1917",
+      "--card-border": "#44403c",
+      "--divider": "#999",
+      "--duration-normal": "#fafaf9",
+      "--ease-out-expo": "#fff",
+      "--slide-padding": "rgba(0,0,0,0.50)",
+      "--text-body": "rgba(0,0,0,0.78)",
+      "--text-muted": "rgba(0,0,0,0.85)",
+      "--text-primary": "rgba(16,185,129,0.80)",
+      "--text-secondary": "#000"
+    },
+    "colors": [
+      "#000",
+      "#111",
+      "#1c1917",
+      "#44403c",
+      "#999",
+      "#fafaf9",
+      "#fff",
+      "rgba(0,0,0,0.50)",
+      "rgba(0,0,0,0.78)",
+      "rgba(0,0,0,0.85)",
+      "rgba(16,185,129,0.80)"
+    ]
+  },
+  "layout_families": [
+    "newspaper_cover",
+    "newspaper_columns",
+    "newspaper_stats",
+    "newspaper_index",
+    "newspaper_close"
+  ],
+  "signature_components": [
+    "pill",
+    "stat",
+    "stats",
+    "np-rule"
+  ],
+  "required_visible_components": [
+    {
+      "name": "pill",
+      "selectors": [
+        ".pill"
+      ],
+      "min_count": 1
+    },
+    {
+      "name": "stat",
+      "selectors": [
+        ".stat"
+      ],
+      "min_count": 1
+    },
+    {
+      "name": "stats",
+      "selectors": [
+        ".stats"
+      ],
+      "min_count": 1
+    },
+    {
+      "name": "np-rule",
+      "selectors": [
+        ".np-rule"
+      ],
+      "min_count": 1
+    }
+  ],
+  "critical_selectors": [
+    "section.slide",
+    "h1, h2",
+    "[data-export-role]"
+  ],
+  "decorative_selectors": [],
+  "non_critical_selectors": [
+    ".slide-num-label",
+    ".progress-bar",
+    "#presenter-view"
+  ],
+  "allowed_overlaps": [
+    "decorative-background",
+    "slide-number-safe-area"
+  ],
+  "forbidden_substitutions": [
+    "generic-theme-shell",
+    "marker-only-style-signature",
+    "empty-component-shell"
+  ],
+  "typography_policy": {
+    "min_body_contrast": 4.5,
+    "max_negative_letter_spacing_px": -1.0,
+    "forbid_single_letter_word_break": true,
+    "require_title_not_clipped": true
+  },
+  "background_strategy": "modern_newspaper",
+  "export_dom_mapping": {
+    "slide": "section.slide",
+    "title": "section.slide h1, section.slide h2, .title-balance",
+    "subtitle": "section.slide p, .subtitle, .hero-sub",
+    "body": "section.slide p, section.slide li, section.slide .content, section.slide .slide-content",
+    "list_items": "section.slide li",
+    "code": "section.slide code, section.slide pre, section.slide .code-block, section.slide .cmd-table",
+    "quote": "section.slide blockquote, section.slide .pullquote, section.slide .quote, section.slide .sc-quote-block",
+    "stat": "section.slide .stat, section.slide .stats, section.slide [class*=stat], section.slide .metric",
+    "image": "section.slide img, section.slide picture, section.slide svg",
+    "speaker_notes": "section.slide[data-notes]"
+  },
+  "browser_qa_policy": {
+    "desktop_viewports": [
+      {
+        "width": 1600,
+        "height": 900
+      },
+      {
+        "width": 1280,
+        "height": 720
+      }
+    ],
+    "mobile_viewports": [
+      {
+        "width": 390,
+        "height": 844
+      }
+    ],
+    "hard_failures": [
+      "browser-geometry-title-clipped",
+      "browser-geometry-text-overflow",
+      "browser-geometry-empty-component",
+      "browser-geometry-character-overlap",
+      "browser-geometry-low-contrast",
+      "browser-geometry-invisible-target"
+    ]
+  },
+  "demo_parity_minimum_score": 0.85
+}

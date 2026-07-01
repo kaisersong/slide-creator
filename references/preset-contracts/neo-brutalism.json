@@ -1,0 +1,177 @@
+{
+  "contract_version": 1,
+  "preset": "Neo-Brutalism",
+  "support_state": "unified_profile_renderer",
+  "renderer_strategy": "unified_profile",
+  "renderer_version": "2026-06-29.contract-aware-v1",
+  "source_reference": "references/neo-brutalism.md",
+  "fonts": [
+    "-apple-system",
+    "courier new",
+    "monospace",
+    "noto sans sc",
+    "sans-serif",
+    "space grotesk",
+    "system-ui"
+  ],
+  "tokens": {
+    "css_vars": {
+      "--bg": "#000",
+      "--body-size": "#000000",
+      "--btn-bg": "#1a1a2e",
+      "--btn-text": "#e0e0e0",
+      "--content-gap": "#ffeb3b",
+      "--h2-size": "#fff",
+      "--slide-padding": "#ffffff",
+      "--small-size": "rgba(0,0,0,0.08)",
+      "--text": "rgba(0,0,0,0.18)",
+      "--title-size": "rgba(0,0,0,0.2)"
+    },
+    "colors": [
+      "#000",
+      "#000000",
+      "#1a1a2e",
+      "#e0e0e0",
+      "#ffeb3b",
+      "#fff",
+      "#ffffff",
+      "rgba(0,0,0,0.08)",
+      "rgba(0,0,0,0.18)",
+      "rgba(0,0,0,0.2)",
+      "rgba(0,0,0,0.28)"
+    ]
+  },
+  "layout_families": [
+    "brutalist_cover",
+    "brutalist_blocks",
+    "brutalist_split",
+    "brutalist_manifesto",
+    "brutalist_close"
+  ],
+  "signature_components": [
+    "cta-rule",
+    "feature-grid",
+    "heavy-rule",
+    "left-panel",
+    "right-panel",
+    "brutalist-block",
+    "brutalist-poster"
+  ],
+  "required_visible_components": [
+    {
+      "name": "cta-rule",
+      "selectors": [
+        ".cta-rule"
+      ],
+      "min_count": 1
+    },
+    {
+      "name": "feature-grid",
+      "selectors": [
+        ".feature-grid"
+      ],
+      "min_count": 1
+    },
+    {
+      "name": "heavy-rule",
+      "selectors": [
+        ".heavy-rule"
+      ],
+      "min_count": 1
+    },
+    {
+      "name": "left-panel",
+      "selectors": [
+        ".left-panel"
+      ],
+      "min_count": 1
+    },
+    {
+      "name": "right-panel",
+      "selectors": [
+        ".right-panel"
+      ],
+      "min_count": 1
+    },
+    {
+      "name": "brutalist-block",
+      "selectors": [
+        ".brutalist-block"
+      ],
+      "min_count": 1
+    },
+    {
+      "name": "brutalist-poster",
+      "selectors": [
+        ".brutalist-poster"
+      ],
+      "min_count": 1
+    }
+  ],
+  "critical_selectors": [
+    "section.slide",
+    "h1, h2",
+    "[data-export-role]"
+  ],
+  "decorative_selectors": [],
+  "non_critical_selectors": [
+    ".slide-num-label",
+    ".progress-bar",
+    "#presenter-view"
+  ],
+  "allowed_overlaps": [
+    "decorative-background",
+    "slide-number-safe-area"
+  ],
+  "forbidden_substitutions": [
+    "generic-theme-shell",
+    "marker-only-style-signature",
+    "empty-component-shell"
+  ],
+  "typography_policy": {
+    "min_body_contrast": 4.5,
+    "max_negative_letter_spacing_px": -1.0,
+    "forbid_single_letter_word_break": true,
+    "require_title_not_clipped": true
+  },
+  "background_strategy": "neo_brutalism",
+  "export_dom_mapping": {
+    "slide": "section.slide",
+    "title": "section.slide h1, section.slide h2, .title-balance",
+    "subtitle": "section.slide p, .subtitle, .hero-sub",
+    "body": "section.slide p, section.slide li, section.slide .content, section.slide .slide-content",
+    "list_items": "section.slide li",
+    "code": "section.slide code, section.slide pre, section.slide .code-block, section.slide .cmd-table",
+    "quote": "section.slide blockquote, section.slide .pullquote, section.slide .quote, section.slide .sc-quote-block",
+    "stat": "section.slide .stat, section.slide .stats, section.slide [class*=stat], section.slide .metric",
+    "image": "section.slide img, section.slide picture, section.slide svg",
+    "speaker_notes": "section.slide[data-notes]"
+  },
+  "browser_qa_policy": {
+    "desktop_viewports": [
+      {
+        "width": 1600,
+        "height": 900
+      },
+      {
+        "width": 1280,
+        "height": 720
+      }
+    ],
+    "mobile_viewports": [
+      {
+        "width": 390,
+        "height": 844
+      }
+    ],
+    "hard_failures": [
+      "browser-geometry-title-clipped",
+      "browser-geometry-text-overflow",
+      "browser-geometry-empty-component",
+      "browser-geometry-character-overlap",
+      "browser-geometry-low-contrast",
+      "browser-geometry-invisible-target"
+    ]
+  },
+  "demo_parity_minimum_score": 0.85
+}

@@ -1,0 +1,141 @@
+{
+  "version": 1,
+  "preset": "Creative Voltage",
+  "support_state": "unified_profile_renderer",
+  "renderer_strategy": "unified_profile",
+  "source_reference": "references/creative-voltage.md",
+  "fonts": [
+    "sans-serif",
+    "space mono",
+    "syne",
+    "system-ui"
+  ],
+  "tokens": {
+    "css_vars": {
+      "--accent-neon": "#000",
+      "--bg-blue": "#0066ff",
+      "--bg-primary": "#1a1a2e",
+      "--body-size": "#999",
+      "--content-gap": "#d4ff00",
+      "--duration-normal": "#ffffff",
+      "--ease-out-expo": "rgba(0,0,0,0.5)",
+      "--font-body": "rgba(0,0,0,0.78)",
+      "--font-display": "rgba(0,102,255,0.08)",
+      "--font-mono": "rgba(0,102,255,0.15)",
+      "--h2-size": "rgba(0,102,255,0.3)",
+      "--slide-padding": "rgba(212,255,0,0.05)",
+      "--small-size": "#000",
+      "--text-primary": "#0066ff",
+      "--text-secondary": "#1a1a2e",
+      "--title-size": "#999"
+    },
+    "colors": [
+      "#000",
+      "#0066ff",
+      "#1a1a2e",
+      "#999",
+      "#d4ff00",
+      "#ffffff",
+      "rgba(0,0,0,0.5)",
+      "rgba(0,0,0,0.78)",
+      "rgba(0,102,255,0.08)",
+      "rgba(0,102,255,0.15)",
+      "rgba(0,102,255,0.3)",
+      "rgba(212,255,0,0.05)"
+    ]
+  },
+  "layout_families": [
+    "voltage_cover",
+    "voltage_panel",
+    "voltage_split",
+    "voltage_cards",
+    "voltage_close"
+  ],
+  "signature_components": [
+    "pill",
+    "stat",
+    "voltage-blue-panel",
+    "voltage-body",
+    "voltage-callout",
+    "voltage-card",
+    "voltage-dark-panel",
+    "voltage-diamond",
+    "voltage-features",
+    "voltage-mono",
+    "voltage-neon-badge",
+    "voltage-split",
+    "voltage-title",
+    "voltage-halftone"
+  ],
+  "required_visible_components": [
+    {
+      "name": "pill",
+      "selectors": [
+        ".pill"
+      ],
+      "min_count": 1
+    },
+    {
+      "name": "stat",
+      "selectors": [
+        ".stat"
+      ],
+      "min_count": 1
+    },
+    {
+      "name": "voltage-blue-panel",
+      "selectors": [
+        ".voltage-blue-panel"
+      ],
+      "min_count": 1
+    },
+    {
+      "name": "voltage-body",
+      "selectors": [
+        ".voltage-body"
+      ],
+      "min_count": 1
+    },
+    {
+      "name": "voltage-callout",
+      "selectors": [
+        ".voltage-callout"
+      ],
+      "min_count": 1
+    },
+    {
+      "name": "voltage-card",
+      "selectors": [
+        ".voltage-card"
+      ],
+      "min_count": 1
+    },
+    {
+      "name": "voltage-dark-panel",
+      "selectors": [
+        ".voltage-dark-panel"
+      ],
+      "min_count": 1
+    },
+    {
+      "name": "voltage-diamond",
+      "selectors": [
+        ".voltage-diamond"
+      ],
+      "min_count": 1
+    }
+  ],
+  "decorative_selectors": [
+    ".voltage-halftone"
+  ],
+  "non_critical_selectors": [
+    ".slide-num-label",
+    ".progress-bar",
+    "#presenter-view"
+  ],
+  "forbidden_substitutions": [
+    "generic-theme-shell",
+    "marker-only-style-signature",
+    "empty-component-shell"
+  ]
+}

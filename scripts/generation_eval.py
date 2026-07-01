@@ -29,11 +29,20 @@ def build_generation_eval_report(
     report["html_path"] = str(html_path)
     report["render_packet"] = {
         "preset": packet.get("preset"),
+        "canonical_preset": packet.get("canonical_preset"),
+        "reference_path": packet.get("reference_path"),
+        "preset_generation_status": packet.get("preset_generation_status"),
         "preset_support_tier": packet.get("preset_support_tier"),
         "quality_tier": packet.get("quality_tier"),
         "runtime_path": packet.get("runtime_path"),
+        "renderer_strategy": packet.get("renderer_strategy"),
         "render_path": packet.get("render_path"),
         "brief_hash": packet.get("brief_hash"),
+        "repair_rounds": packet.get("repair_rounds"),
+        "repair_status": packet.get("repair_status"),
+        "original_failures": packet.get("original_failures", []),
+        "final_failures": packet.get("final_failures", []),
+        "style_signature_hash": packet.get("style_signature_hash"),
     }
     report["summary"] = {
         "style_score": diagnostics.get("style_signature_coverage"),
