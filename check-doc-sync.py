@@ -64,7 +64,7 @@ def evaluate(root: Path) -> list[RuleResult]:
             "BRIEF.json",
             "themes/<name>/reference.md",
             "当前稳定生成器覆盖",
-            "reference-driven",
+            "统一 profile renderer",
             "fail closed",
             "禁止绕过 BRIEF",
         ],
@@ -91,7 +91,7 @@ def evaluate(root: Path) -> list[RuleResult]:
             "Default-on",
             "themes/your-theme/",
             "reference.md",
-            "Reference-driven presets remain opt-in generation paths",
+            "Profile-rendered presets are renderable",
             "The same rule applies to direct prompt generation",
         ],
     )
@@ -109,7 +109,7 @@ def evaluate(root: Path) -> list[RuleResult]:
             "If `BRIEF.json` exists, it's the source of truth",
             "single AskUserQuestion call with all 5 questions at once",
             "1280x720",
-            "deterministic renderer or reference-driven preset",
+            "deterministic renderer or unified profile renderer",
             "do **not** hand-compose final HTML",
         ],
     )

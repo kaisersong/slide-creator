@@ -1,0 +1,123 @@
+{
+  "version": 1,
+  "preset": "Electric Studio",
+  "support_state": "unified_profile_renderer",
+  "renderer_strategy": "unified_profile",
+  "source_reference": "references/electric-studio.md",
+  "fonts": [
+    "manrope",
+    "monospace",
+    "noto sans sc",
+    "sans-serif",
+    "system-ui"
+  ],
+  "tokens": {
+    "css_vars": {
+      "--accent": "#000",
+      "--accent-blue": "#0a0a0a",
+      "--bg-dark": "#4361ee",
+      "--bg-light": "#999",
+      "--bg-white": "#f4f5f9",
+      "--body-size": "#f8f9ff",
+      "--content-gap": "#fff",
+      "--duration-normal": "#ffffff",
+      "--ease-out-expo": "rgba(0,0,0,0.18)",
+      "--font-body": "rgba(0,0,0,0.5)",
+      "--font-display": "rgba(0,0,0,0.6)",
+      "--h2-size": "rgba(0,0,0,0.78)",
+      "--slide-padding": "rgba(10,10,10,0.06)",
+      "--small-size": "rgba(10,10,10,0.4)",
+      "--subtitle-size": "#000",
+      "--text-dark": "#0a0a0a",
+      "--text-light": "#4361ee",
+      "--text-secondary": "#999",
+      "--title-size": "#f4f5f9"
+    },
+    "colors": [
+      "#000",
+      "#0a0a0a",
+      "#4361ee",
+      "#999",
+      "#f4f5f9",
+      "#f8f9ff",
+      "#fff",
+      "#ffffff",
+      "rgba(0,0,0,0.18)",
+      "rgba(0,0,0,0.5)",
+      "rgba(0,0,0,0.6)",
+      "rgba(0,0,0,0.78)",
+      "rgba(10,10,10,0.06)",
+      "rgba(10,10,10,0.4)"
+    ]
+  },
+  "layout_families": [
+    "electric_cover",
+    "electric_panels",
+    "electric_quote",
+    "electric_grid",
+    "electric_close"
+  ],
+  "signature_components": [
+    "elec-label",
+    "elec-title",
+    "elec-body",
+    "elec-stat-number",
+    "code-block",
+    "cta-pill"
+  ],
+  "required_visible_components": [
+    {
+      "name": "elec-label",
+      "selectors": [
+        ".elec-label"
+      ],
+      "min_count": 1
+    },
+    {
+      "name": "elec-title",
+      "selectors": [
+        ".elec-title"
+      ],
+      "min_count": 1
+    },
+    {
+      "name": "elec-body",
+      "selectors": [
+        ".elec-body"
+      ],
+      "min_count": 1
+    },
+    {
+      "name": "elec-stat-number",
+      "selectors": [
+        ".elec-stat-number"
+      ],
+      "min_count": 1
+    },
+    {
+      "name": "code-block",
+      "selectors": [
+        ".code-block"
+      ],
+      "min_count": 1
+    },
+    {
+      "name": "cta-pill",
+      "selectors": [
+        ".cta-pill"
+      ],
+      "min_count": 1
+    }
+  ],
+  "decorative_selectors": [],
+  "non_critical_selectors": [
+    ".slide-num-label",
+    ".progress-bar",
+    "#presenter-view"
+  ],
+  "forbidden_substitutions": [
+    "generic-theme-shell",
+    "marker-only-style-signature",
+    "empty-component-shell"
+  ]
+}

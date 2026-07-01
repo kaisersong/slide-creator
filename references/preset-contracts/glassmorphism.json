@@ -1,0 +1,205 @@
+{
+  "contract_version": 1,
+  "preset": "Glassmorphism",
+  "support_state": "unified_profile_renderer",
+  "renderer_strategy": "unified_profile",
+  "renderer_version": "2026-06-29.contract-aware-v1",
+  "source_reference": "references/glassmorphism.md",
+  "fonts": [
+    "-apple-system",
+    "blinkmacsystemfont",
+    "noto sans cjk sc",
+    "pingfang sc",
+    "sans-serif",
+    "segoe ui",
+    "sf pro display",
+    "system-ui"
+  ],
+  "tokens": {
+    "css_vars": {
+      "--bg-gradient-1": "#000",
+      "--bg-gradient-2": "#1a1a2e",
+      "--bg-gradient-3": "#1d6fa4",
+      "--body-size": "#667eea",
+      "--content-gap": "#764ba2",
+      "--duration-normal": "#999",
+      "--ease-out-expo": "#a6c1ee",
+      "--glass-bg": "#a8edea",
+      "--glass-border": "#f093fb",
+      "--glass-text-dark": "#f8cdda",
+      "--glass-text-light": "#fed6e3",
+      "--h2-size": "#fff",
+      "--orb-mint": "rgba(0,0,0,0.08)",
+      "--orb-pink": "rgba(0,0,0,0.10)",
+      "--orb-purple": "rgba(0,0,0,0.15)",
+      "--slide-padding": "rgba(0,0,0,0.5)",
+      "--small-size": "rgba(102,126,234,0.15)",
+      "--title-size": "rgba(102,126,234,0.3)"
+    },
+    "colors": [
+      "#000",
+      "#1a1a2e",
+      "#1d6fa4",
+      "#667eea",
+      "#764ba2",
+      "#999",
+      "#a6c1ee",
+      "#a8edea",
+      "#f093fb",
+      "#f8cdda",
+      "#fed6e3",
+      "#fff",
+      "rgba(0,0,0,0.08)",
+      "rgba(0,0,0,0.10)",
+      "rgba(0,0,0,0.15)",
+      "rgba(0,0,0,0.5)",
+      "rgba(102,126,234,0.15)",
+      "rgba(102,126,234,0.3)",
+      "rgba(102,126,234,0.5)",
+      "rgba(168,237,234,0.4)"
+    ]
+  },
+  "layout_families": [
+    "glass_hero",
+    "glass_card",
+    "glass_split",
+    "glass_trio",
+    "glass_stat"
+  ],
+  "signature_components": [
+    "glass-body",
+    "glass-card",
+    "glass-item",
+    "glass-title",
+    "grid",
+    "orb",
+    "orb1",
+    "orb2",
+    "orb3",
+    "pill"
+  ],
+  "required_visible_components": [
+    {
+      "name": "glass-body",
+      "selectors": [
+        ".glass-body"
+      ],
+      "min_count": 1
+    },
+    {
+      "name": "glass-card",
+      "selectors": [
+        ".glass-card"
+      ],
+      "min_count": 1
+    },
+    {
+      "name": "glass-item",
+      "selectors": [
+        ".glass-item"
+      ],
+      "min_count": 1
+    },
+    {
+      "name": "glass-title",
+      "selectors": [
+        ".glass-title"
+      ],
+      "min_count": 1
+    },
+    {
+      "name": "grid",
+      "selectors": [
+        ".grid"
+      ],
+      "min_count": 1
+    },
+    {
+      "name": "orb",
+      "selectors": [
+        ".orb"
+      ],
+      "min_count": 1
+    },
+    {
+      "name": "orb1",
+      "selectors": [
+        ".orb1"
+      ],
+      "min_count": 1
+    },
+    {
+      "name": "orb2",
+      "selectors": [
+        ".orb2"
+      ],
+      "min_count": 1
+    }
+  ],
+  "critical_selectors": [
+    "section.slide",
+    "h1, h2",
+    "[data-export-role]"
+  ],
+  "decorative_selectors": [],
+  "non_critical_selectors": [
+    ".slide-num-label",
+    ".progress-bar",
+    "#presenter-view"
+  ],
+  "allowed_overlaps": [
+    "decorative-background",
+    "slide-number-safe-area"
+  ],
+  "forbidden_substitutions": [
+    "generic-theme-shell",
+    "marker-only-style-signature",
+    "empty-component-shell"
+  ],
+  "typography_policy": {
+    "min_body_contrast": 4.5,
+    "max_negative_letter_spacing_px": -1.0,
+    "forbid_single_letter_word_break": true,
+    "require_title_not_clipped": true
+  },
+  "background_strategy": "glassmorphism",
+  "export_dom_mapping": {
+    "slide": "section.slide",
+    "title": "section.slide h1, section.slide h2, .title-balance",
+    "subtitle": "section.slide p, .subtitle, .hero-sub",
+    "body": "section.slide p, section.slide li, section.slide .content, section.slide .slide-content",
+    "list_items": "section.slide li",
+    "code": "section.slide code, section.slide pre, section.slide .code-block, section.slide .cmd-table",
+    "quote": "section.slide blockquote, section.slide .pullquote, section.slide .quote, section.slide .sc-quote-block",
+    "stat": "section.slide .stat, section.slide .stats, section.slide [class*=stat], section.slide .metric",
+    "image": "section.slide img, section.slide picture, section.slide svg",
+    "speaker_notes": "section.slide[data-notes]"
+  },
+  "browser_qa_policy": {
+    "desktop_viewports": [
+      {
+        "width": 1600,
+        "height": 900
+      },
+      {
+        "width": 1280,
+        "height": 720
+      }
+    ],
+    "mobile_viewports": [
+      {
+        "width": 390,
+        "height": 844
+      }
+    ],
+    "hard_failures": [
+      "browser-geometry-title-clipped",
+      "browser-geometry-text-overflow",
+      "browser-geometry-empty-component",
+      "browser-geometry-character-overlap",
+      "browser-geometry-low-contrast",
+      "browser-geometry-invisible-target"
+    ]
+  },
+  "demo_parity_minimum_score": 0.85
+}

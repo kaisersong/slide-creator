@@ -176,6 +176,25 @@ def _support_tier_for_builtin(normalized: str) -> str:
     raise KeyError(f"Unknown built-in preset in support matrix: {normalized}")
 
 
+def _normalized_policy_state_members(state: str) -> set[str]:
+    matrix = load_preset_support_matrix()
+    support_states = matrix.get("policy", {}).get("support_states", {})
+    return {
+        normalize_preset_name(candidate)
+        for candidate in support_states.get(state, [])
+    }
+
+
+def _generation_state_for_builtin(normalized: str) -> str:
+    if normalized in _normalized_policy_state_members("native_deterministic_core"):
+        return "native"
+    if normalized in _normalized_policy_state_members("unified_profile_renderer"):
+        return "profile"
+    if normalized in _normalized_policy_state_members("unsupported_archive"):
+        return "unsupported"
+    raise KeyError(f"Unknown built-in preset generation state: {normalized}")
+
+
 def support_tier_for_preset(preset: str) -> str:
     normalized = normalize_preset_name(preset)
     if normalized in PRESET_REFERENCE_MAP:
@@ -323,6 +342,44 @@ def _reference_driven_capability(normalized: str, *, support_tier: str) -> Prese
     )
 
 
+def _profile_requirements(normalized: str) -> tuple[str, ...]:
+    if normalized in {"terminal green", "neon cyber", "neo-retro dev deck", "notebook tabs"}:
+        return ("unified_profile", "technical_terminal")
+    if normalized in {"paper & ink", "modern newspaper", "vintage editorial", "dark botanical"}:
+        return ("unified_profile", "editorial_static")
+    if normalized in {"strategy consulting"}:
+        return ("unified_profile", "consulting_structured")
+    if normalized in {"glassmorphism"}:
+        return ("unified_profile", "glass_material")
+    if normalized in {"neo-brutalism"}:
+        return ("unified_profile", "brutalist_graphic")
+    return ("unified_profile", "signal_pitch")
+
+
+def _profile_capability(normalized: str, *, support_tier: str) -> PresetRenderCapability:
+    canonical = CANONICAL_PRESET_NAMES[normalized]
+    alternatives = READY_ALTERNATIVES.get(normalized, CUSTOM_THEME_ALTERNATIVES)
+    return PresetRenderCapability(
+        preset=canonical,
+        canonical_preset=canonical,
+        reference_path=_reference_path_for_builtin(normalized),
+        support_tier=support_tier,
+        generation_status="profile",
+        recommendation_status="opt_in",
+        renderer_strategy="unified_profile",
+        archetype_requirements=_profile_requirements(normalized),
+        can_render=True,
+        can_recommend=False,
+        explicit_request_behavior="render",
+        reason=None,
+        user_message=(
+            f"{canonical} is explicitly renderable through the unified profile renderer. "
+            "It is not part of the native deterministic core or the default recommendation surface."
+        ),
+        ready_alternatives=alternatives,
+    )
+
+
 def _unsupported_capability(label: str, reference_path: str | None = None) -> PresetRenderCapability:
     alternatives = CUSTOM_THEME_ALTERNATIVES
     return PresetRenderCapability(
@@ -357,9 +414,12 @@ def get_preset_render_capability(preset_or_path: str | Path) -> PresetRenderCapa
         builtin = _reference_path_matches_builtin(resolved)
         if builtin:
             support_tier = _support_tier_for_builtin(builtin)
-            if builtin in READY_NATIVE_PRESETS:
+            generation_state = _generation_state_for_builtin(builtin)
+            if generation_state == "native":
                 return _ready_capability(builtin, support_tier=support_tier)
-            return _reference_driven_capability(builtin, support_tier=support_tier)
+            if generation_state == "profile":
+                return _profile_capability(builtin, support_tier=support_tier)
+            return _unsupported_capability(raw, reference_path=str(resolved))
         return _unsupported_capability(raw, reference_path=str(resolved))
 
     normalized = normalize_preset_name(raw)
@@ -373,9 +433,12 @@ def get_preset_render_capability(preset_or_path: str | Path) -> PresetRenderCapa
 
     if normalized in PRESET_REFERENCE_MAP:
         support_tier = _support_tier_for_builtin(normalized)
-        if normalized in READY_NATIVE_PRESETS:
+        generation_state = _generation_state_for_builtin(normalized)
+        if generation_state == "native":
             return _ready_capability(normalized, support_tier=support_tier)
-        return _reference_driven_capability(normalized, support_tier=support_tier)
+        if generation_state == "profile":
+            return _profile_capability(normalized, support_tier=support_tier)
+        return _unsupported_capability(raw)
 
     if normalized in custom_themes:
         return _custom_capability(custom_themes[normalized])

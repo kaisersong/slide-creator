@@ -1,0 +1,110 @@
+{
+  "version": 1,
+  "preset": "Terminal Green",
+  "support_state": "unified_profile_renderer",
+  "renderer_strategy": "unified_profile",
+  "source_reference": "references/terminal-green.md",
+  "fonts": [
+    "jetbrains mono",
+    "sans-serif",
+    "system-ui"
+  ],
+  "tokens": {
+    "css_vars": {
+      "--bg": "#000",
+      "--bg-panel": "#0d1117",
+      "--blue": "#111",
+      "--body-size": "#161b22",
+      "--border": "#30363d",
+      "--comment": "#39d353",
+      "--content-gap": "#484f58",
+      "--duration-normal": "#58a6ff",
+      "--ease-out-expo": "#8b949e",
+      "--font-mono": "#c9d1d9",
+      "--green": "#e3b341",
+      "--green-muted": "#f85149",
+      "--h2-size": "rgba(0,0,0,0.5)",
+      "--red": "#000",
+      "--slide-padding": "#0d1117",
+      "--small-size": "#111",
+      "--text": "#161b22",
+      "--text-muted": "#30363d",
+      "--title-size": "#39d353",
+      "--yellow": "#484f58"
+    },
+    "colors": [
+      "#000",
+      "#0d1117",
+      "#111",
+      "#161b22",
+      "#30363d",
+      "#39d353",
+      "#484f58",
+      "#58a6ff",
+      "#8b949e",
+      "#c9d1d9",
+      "#e3b341",
+      "#f85149",
+      "rgba(0,0,0,0.5)"
+    ]
+  },
+  "layout_families": [
+    "terminal_boot",
+    "terminal_code",
+    "terminal_grid",
+    "terminal_timeline",
+    "terminal_close"
+  ],
+  "signature_components": [
+    "feature-grid",
+    "preset-grid",
+    "stat",
+    "terminal-block",
+    "rule",
+    "terminal-title"
+  ],
+  "required_visible_components": [
+    {
+      "name": "feature-grid",
+      "selectors": [
+        ".feature-grid"
+      ],
+      "min_count": 1
+    },
+    {
+      "name": "stat",
+      "selectors": [
+        ".stat"
+      ],
+      "min_count": 1
+    },
+    {
+      "name": "terminal-block",
+      "selectors": [
+        ".terminal-block"
+      ],
+      "min_count": 1
+    },
+    {
+      "name": "terminal-title",
+      "selectors": [
+        ".t-title, .t-h2, .a-title"
+      ],
+      "min_count": 1
+    }
+  ],
+  "decorative_selectors": [
+    ".preset-grid",
+    ".rule"
+  ],
+  "non_critical_selectors": [
+    ".slide-num-label",
+    ".progress-bar",
+    "#presenter-view"
+  ],
+  "forbidden_substitutions": [
+    "generic-theme-shell",
+    "marker-only-style-signature",
+    "empty-component-shell"
+  ]
+}

@@ -4,6 +4,9 @@ __pycache__/
 .pytest_cache/
 .tmp-run/
 .tmp-test-doc-sync/
+.tmp-preset-surface-all*/
+.tmp-preset-profile-parity/
+.tmp-demo-parity/
 .gstack/
 .governance-claims/
 .governance-log/
@@ -21,6 +24,8 @@ PLANNING.md
 /preload.cjs
 plans/
 evals/generated-decks/
+/generated/
+/docs/generated/
 *-test.html
 /slide-creator-intro-*.html
 /slide-creator-intro-*.eval.json
@@ -38,10 +43,16 @@ scripts/*
 !scripts/title_profiles.py
 !scripts/validate-brief.py
 !scripts/preset_capabilities.py
+!scripts/preset_profile_renderer.py
 !scripts/preset_support.py
 !scripts/run_evals.py
 !scripts/run-skill-evals.py
 !scripts/compare-skill-eval-baseline.py
+!scripts/compare_eval_reports.py
+!scripts/compare_demo_parity.py
+!scripts/preset_profile_specs.py
+!scripts/style_signature_eval.py
+!scripts/browser_geometry_qa.py
 !scripts/preset_release_gate.py
 !docs/
 docs/*

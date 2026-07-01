@@ -1,0 +1,93 @@
+{
+  "version": 1,
+  "preset": "Bold Signal",
+  "support_state": "unified_profile_renderer",
+  "renderer_strategy": "unified_profile",
+  "source_reference": "references/bold-signal.md",
+  "fonts": [
+    "-apple-system",
+    "archivo black",
+    "monospace",
+    "sans-serif",
+    "space grotesk",
+    "system-ui"
+  ],
+  "tokens": {
+    "css_vars": {
+      "--bg-gradient": "#000",
+      "--bg-primary": "#1a1a1a",
+      "--card-bg": "#222",
+      "--slide-count": "#2d2d2d",
+      "--text-body": "#ff5722",
+      "--text-muted": "#ffffff",
+      "--text-on-card": "rgba(255,255,255,0.03)",
+      "--text-primary": "rgba(255,255,255,0.05)"
+    },
+    "colors": [
+      "#000",
+      "#1a1a1a",
+      "#222",
+      "#2d2d2d",
+      "#ff5722",
+      "#ffffff",
+      "rgba(255,255,255,0.03)",
+      "rgba(255,255,255,0.05)",
+      "rgba(255,255,255,0.06)",
+      "rgba(255,255,255,0.08)"
+    ]
+  },
+  "layout_families": [
+    "signal_cover",
+    "signal_cards",
+    "signal_split",
+    "signal_timeline",
+    "signal_close"
+  ],
+  "signature_components": [
+    "bold-signal-card",
+    "bold-signal-title",
+    "signal-block",
+    "profile-slide"
+  ],
+  "required_visible_components": [
+    {
+      "name": "bold-signal-card",
+      "selectors": [
+        ".bold-signal-card"
+      ],
+      "min_count": 1
+    },
+    {
+      "name": "bold-signal-title",
+      "selectors": [
+        ".bold-signal-title"
+      ],
+      "min_count": 1
+    },
+    {
+      "name": "signal-block",
+      "selectors": [
+        ".signal-block"
+      ],
+      "min_count": 1
+    },
+    {
+      "name": "profile-slide",
+      "selectors": [
+        "section.profile-slide"
+      ],
+      "min_count": 1
+    }
+  ],
+  "decorative_selectors": [],
+  "non_critical_selectors": [
+    ".slide-num-label",
+    ".progress-bar",
+    "#presenter-view"
+  ],
+  "forbidden_substitutions": [
+    "generic-theme-shell",
+    "marker-only-style-signature",
+    "empty-component-shell"
+  ]
+}

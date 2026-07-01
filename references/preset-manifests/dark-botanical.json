@@ -1,0 +1,120 @@
+{
+  "version": 1,
+  "preset": "Dark Botanical",
+  "support_state": "unified_profile_renderer",
+  "renderer_strategy": "unified_profile",
+  "source_reference": "references/dark-botanical.md",
+  "fonts": [
+    "cormorant",
+    "ibm plex mono",
+    "ibm plex sans",
+    "monospace",
+    "noto sans sc",
+    "sans-serif",
+    "serif",
+    "system-ui"
+  ],
+  "tokens": {
+    "css_vars": {
+      "--accent-gold": "#000",
+      "--accent-pink": "#0a0a0a",
+      "--accent-warm": "#0f0f0f",
+      "--bg-primary": "#1e1e1e",
+      "--body-size": "#2a2520",
+      "--content-gap": "#9a9590",
+      "--font-body": "#c9b896",
+      "--font-display": "#d4a574",
+      "--h2-size": "#e8b4b8",
+      "--slide-padding": "#e8e4df",
+      "--small-size": "rgba(15,15,15,0.8)",
+      "--text-primary": "rgba(201,184,150,0.1)",
+      "--text-secondary": "rgba(201,184,150,0.15)",
+      "--title-size": "#000"
+    },
+    "colors": [
+      "#000",
+      "#0a0a0a",
+      "#0f0f0f",
+      "#1e1e1e",
+      "#2a2520",
+      "#9a9590",
+      "#c9b896",
+      "#d4a574",
+      "#e8b4b8",
+      "#e8e4df",
+      "rgba(15,15,15,0.8)",
+      "rgba(201,184,150,0.1)",
+      "rgba(201,184,150,0.15)"
+    ]
+  },
+  "layout_families": [
+    "botanical_cover",
+    "botanical_grid",
+    "botanical_split",
+    "botanical_quote",
+    "botanical_close"
+  ],
+  "signature_components": [
+    "feature-grid",
+    "orb",
+    "orb-gold",
+    "orb-pink",
+    "orb-terra",
+    "preset-grid"
+  ],
+  "required_visible_components": [
+    {
+      "name": "feature-grid",
+      "selectors": [
+        ".feature-grid"
+      ],
+      "min_count": 1
+    },
+    {
+      "name": "orb",
+      "selectors": [
+        ".orb"
+      ],
+      "min_count": 1
+    },
+    {
+      "name": "orb-gold",
+      "selectors": [
+        ".orb-gold"
+      ],
+      "min_count": 1
+    },
+    {
+      "name": "orb-pink",
+      "selectors": [
+        ".orb-pink"
+      ],
+      "min_count": 1
+    },
+    {
+      "name": "orb-terra",
+      "selectors": [
+        ".orb-terra"
+      ],
+      "min_count": 1
+    },
+    {
+      "name": "preset-grid",
+      "selectors": [
+        ".preset-grid"
+      ],
+      "min_count": 1
+    }
+  ],
+  "decorative_selectors": [],
+  "non_critical_selectors": [
+    ".slide-num-label",
+    ".progress-bar",
+    "#presenter-view"
+  ],
+  "forbidden_substitutions": [
+    "generic-theme-shell",
+    "marker-only-style-signature",
+    "empty-component-shell"
+  ]
+}

@@ -1,0 +1,142 @@
+{
+  "version": 1,
+  "preset": "Strategy Consulting",
+  "support_state": "unified_profile_renderer",
+  "renderer_strategy": "unified_profile",
+  "source_reference": "references/strategy-consulting.md",
+  "fonts": [
+    "inherit",
+    "inter",
+    "sans-serif",
+    "system-ui"
+  ],
+  "tokens": {
+    "css_vars": {
+      "--accent": "#000",
+      "--accent-light": "#1a2b4a",
+      "--bg": "#1b3a6b",
+      "--bg-accent": "#2e7d5b",
+      "--bg-card": "#3366a8",
+      "--border": "#6b7a90",
+      "--divider": "#c0392b",
+      "--driver-gap": "#c8d1dc",
+      "--highlight": "#d8dfe8",
+      "--negative": "#eef2f7",
+      "--neutral": "#f0c850",
+      "--positive": "#f7f8fa",
+      "--slide-count": "#fff",
+      "--text": "#ffffff",
+      "--text-muted": "rgba(27,58,107,0.04)"
+    },
+    "colors": [
+      "#000",
+      "#1a2b4a",
+      "#1b3a6b",
+      "#2e7d5b",
+      "#3366a8",
+      "#6b7a90",
+      "#c0392b",
+      "#c8d1dc",
+      "#d8dfe8",
+      "#eef2f7",
+      "#f0c850",
+      "#f7f8fa",
+      "#fff",
+      "#ffffff",
+      "rgba(27,58,107,0.04)"
+    ]
+  },
+  "layout_families": [
+    "consulting_exec",
+    "consulting_matrix",
+    "consulting_split",
+    "consulting_quote",
+    "consulting_close"
+  ],
+  "signature_components": [
+    "sc-action-title",
+    "sc-section-header",
+    "sc-evidence-card",
+    "sc-metric-label",
+    "sc-reco-box",
+    "sc-before-after",
+    "sc-before-panel",
+    "sc-after-panel",
+    "sc-panel-label",
+    "sc-three-things",
+    "sc-source",
+    "sc-quote-evidence",
+    "sc-quote-block",
+    "sc-quote-text",
+    "sc-quote-attribution"
+  ],
+  "required_visible_components": [
+    {
+      "name": "sc-action-title",
+      "selectors": [
+        ".sc-action-title"
+      ],
+      "min_count": 1
+    },
+    {
+      "name": "sc-section-header",
+      "selectors": [
+        ".sc-section-header"
+      ],
+      "min_count": 1
+    },
+    {
+      "name": "sc-evidence-card",
+      "selectors": [
+        ".sc-evidence-card"
+      ],
+      "min_count": 1
+    },
+    {
+      "name": "sc-metric-label",
+      "selectors": [
+        ".sc-metric-label"
+      ],
+      "min_count": 1
+    },
+    {
+      "name": "sc-reco-box",
+      "selectors": [
+        ".sc-reco-box"
+      ],
+      "min_count": 1
+    },
+    {
+      "name": "sc-before-after",
+      "selectors": [
+        ".sc-before-after"
+      ],
+      "min_count": 1
+    },
+    {
+      "name": "sc-before-panel",
+      "selectors": [
+        ".sc-before-panel"
+      ],
+      "min_count": 1
+    },
+    {
+      "name": "sc-after-panel",
+      "selectors": [
+        ".sc-after-panel"
+      ],
+      "min_count": 1
+    }
+  ],
+  "decorative_selectors": [],
+  "non_critical_selectors": [
+    ".slide-num-label",
+    ".progress-bar",
+    "#presenter-view"
+  ],
+  "forbidden_substitutions": [
+    "generic-theme-shell",
+    "marker-only-style-signature",
+    "empty-component-shell"
+  ]
+}

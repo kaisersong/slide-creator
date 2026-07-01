@@ -361,3 +361,238 @@ def test_preset_release_gate_compares_skill_evals_against_baseline(tmp_path: Pat
     assert report["gate"]["passed"] is False
     assert "case.explicit-generate.score_regressed" in report["skill_evals"]["baseline_compare"]["regressions"]
     assert "skill-evals: baseline regression case.explicit-generate.style_regressed" in report["gate"]["failures"]
+
+
+def test_preset_release_gate_passes_browser_geometry_option(tmp_path: Path, monkeypatch):
+    called: dict[str, object] = {}
+
+    def fake_run_suite(
+        suite_path,
+        *,
+        output_dir,
+        baseline_dir=None,
+        run_browser_titles=False,
+        run_browser_geometry=False,
+    ):
+        called["run_browser_geometry"] = run_browser_geometry
+        return {
+            "suite_id": "gate-browser-geometry-suite",
+            "output_dir": str(output_dir),
+            "baseline_dir": str(baseline_dir) if baseline_dir else None,
+            "cases": [],
+            "summary": {
+                "pass_count": 0,
+                "fail_count": 0,
+                "best_case": None,
+                "baseline_comparison_enabled": False,
+                "non_regression_ready_cases": 0,
+            },
+        }
+
+    monkeypatch.setattr(preset_release_gate, "run_suite", fake_run_suite)
+    monkeypatch.setattr(
+        sys,
+        "argv",
+        [
+            "preset_release_gate.py",
+            "--output-dir",
+            str(tmp_path / "out"),
+            "--browser-geometry",
+        ],
+    )
+
+    exit_code = preset_release_gate.main()
+
+    assert exit_code == 0
+    assert called["run_browser_geometry"] is True
+
+
+def test_preset_release_gate_passes_contract_export_mobile_ai_pptx_promotion_and_demo_parity_options(tmp_path: Path, monkeypatch):
+    called: dict[str, object] = {}
+
+    def fake_run_suite(
+        suite_path,
+        *,
+        output_dir,
+        baseline_dir=None,
+        run_browser_titles=False,
+        run_browser_geometry=False,
+        run_contract=False,
+        run_export_smoke=False,
+        run_mobile_geometry=False,
+        run_ai_advised=False,
+        run_pptx_export=False,
+        run_promotion_gate=False,
+        run_demo_parity=False,
+        demo_parity_require_visual=False,
+        demo_parity_viewports=None,
+    ):
+        called["run_contract"] = run_contract
+        called["run_export_smoke"] = run_export_smoke
+        called["run_mobile_geometry"] = run_mobile_geometry
+        called["run_ai_advised"] = run_ai_advised
+        called["run_pptx_export"] = run_pptx_export
+        called["run_promotion_gate"] = run_promotion_gate
+        called["run_demo_parity"] = run_demo_parity
+        called["demo_parity_require_visual"] = demo_parity_require_visual
+        called["demo_parity_viewports"] = demo_parity_viewports
+        return {
+            "suite_id": "gate-contract-export-mobile-suite",
+            "output_dir": str(output_dir),
+            "baseline_dir": str(baseline_dir) if baseline_dir else None,
+            "cases": [],
+            "summary": {
+                "pass_count": 0,
+                "fail_count": 0,
+                "best_case": None,
+                "baseline_comparison_enabled": False,
+                "non_regression_ready_cases": 0,
+            },
+        }
+
+    monkeypatch.setattr(preset_release_gate, "run_suite", fake_run_suite)
+    monkeypatch.setattr(
+        sys,
+        "argv",
+        [
+            "preset_release_gate.py",
+            "--output-dir",
+            str(tmp_path / "out"),
+            "--contract",
+            "--export-smoke",
+            "--mobile-geometry",
+            "--ai-advised",
+            "--pptx-export",
+            "--promotion-gate",
+            "--demo-parity",
+            "--demo-parity-require-visual",
+            "--demo-parity-viewport",
+            "desktop",
+            "--demo-parity-viewport",
+            "mobile",
+        ],
+    )
+
+    exit_code = preset_release_gate.main()
+
+    assert exit_code == 0
+    assert called["run_contract"] is True
+    assert called["run_export_smoke"] is True
+    assert called["run_mobile_geometry"] is True
+    assert called["run_ai_advised"] is True
+    assert called["run_pptx_export"] is True
+    assert called["run_promotion_gate"] is True
+    assert called["run_demo_parity"] is True
+    assert called["demo_parity_require_visual"] is True
+    assert called["demo_parity_viewports"] == ["desktop", "mobile"]
+
+
+def test_preset_release_gate_reports_browser_geometry_failures():
+    failures = preset_release_gate._collect_gate_failures(
+        {
+            "cases": [
+                {
+                    "case_id": "aurora-mesh-profile-render",
+                    "pass": False,
+                    "validations": {
+                        "browser_geometry": {
+                            "hard_failures": ["browser-geometry-character-overlap"],
+                            "diagnostics": {"hard_violation_count": 2},
+                        }
+                    },
+                }
+            ]
+        },
+        require_baseline=False,
+    )
+
+    assert "aurora-mesh-profile-render: eval case failed" in failures
+    assert "aurora-mesh-profile-render: browser geometry failed browser-geometry-character-overlap" in failures
+
+
+def test_preset_release_gate_reports_contract_export_mobile_ai_pptx_and_promotion_failures():
+    failures = preset_release_gate._collect_gate_failures(
+        {
+            "promotion_gate": {
+                "hard_failures": ["promotion-profile-renderer-claimed-native"],
+            },
+            "demo_parity": {
+                "pass": False,
+                "results": [
+                    {
+                        "preset": "Creative Voltage",
+                        "verdict": "FAIL",
+                        "main_issue": "visual parity diverges",
+                        "visual_gate": {
+                            "failures": [
+                                "desktop visual similarity 0.2074 below fail threshold 0.55"
+                            ]
+                        },
+                        "required_instance_failures": [],
+                    },
+                    {
+                        "preset": "Terminal Green",
+                        "verdict": "FAIL",
+                        "main_issue": "required component instance missing",
+                        "visual_gate": {"failures": []},
+                        "required_instance_failures": [
+                            "missing required component instance .terminal-scanlines"
+                        ],
+                    },
+                ],
+            },
+            "cases": [
+                {
+                    "case_id": "aurora-mesh-profile-render",
+                    "pass": False,
+                    "validations": {
+                        "preset_contract": {
+                            "hard_failures": ["contract-required-visible-component-missing"],
+                        },
+                        "export_smoke": {
+                            "hard_failures": ["export-smoke-missing-slot"],
+                        },
+                        "mobile_geometry": {
+                            "hard_failures": ["mobile-browser-geometry-text-overflow"],
+                        },
+                        "ai_advised": {
+                            "hard_failures": ["ai-advised-repeated-visual-signature"],
+                        },
+                        "pptx_export": {
+                            "hard_failures": ["pptx-export-slide-count-mismatch"],
+                        },
+                    },
+                }
+            ]
+        },
+        require_baseline=False,
+    )
+
+    assert "aurora-mesh-profile-render: eval case failed" in failures
+    assert (
+        "aurora-mesh-profile-render: preset contract failed "
+        "contract-required-visible-component-missing"
+    ) in failures
+    assert "aurora-mesh-profile-render: export smoke failed export-smoke-missing-slot" in failures
+    assert (
+        "aurora-mesh-profile-render: mobile geometry failed "
+        "mobile-browser-geometry-text-overflow"
+    ) in failures
+    assert (
+        "aurora-mesh-profile-render: ai-advised eval failed "
+        "ai-advised-repeated-visual-signature"
+    ) in failures
+    assert (
+        "aurora-mesh-profile-render: PPTX export failed "
+        "pptx-export-slide-count-mismatch"
+    ) in failures
+    assert "promotion-gate: promotion-profile-renderer-claimed-native" in failures
+    assert "demo-parity: Creative Voltage FAIL - visual parity diverges" in failures
+    assert (
+        "demo-parity: Creative Voltage visual failed "
+        "desktop visual similarity 0.2074 below fail threshold 0.55"
+    ) in failures
+    assert (
+        "demo-parity: Terminal Green instance failed "
+        "missing required component instance .terminal-scanlines"
+    ) in failures

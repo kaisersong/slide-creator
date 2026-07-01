@@ -1,0 +1,204 @@
+{
+  "contract_version": 1,
+  "preset": "Paper & Ink",
+  "support_state": "unified_profile_renderer",
+  "renderer_strategy": "unified_profile",
+  "renderer_version": "2026-06-29.contract-aware-v1",
+  "source_reference": "references/paper-ink.md",
+  "fonts": [
+    "crimson pro",
+    "georgia",
+    "sans-serif",
+    "serif",
+    "system-ui"
+  ],
+  "tokens": {
+    "css_vars": {
+      "--accent": "#000",
+      "--bg": "#111",
+      "--card-bg": "#1c1917",
+      "--card-border": "#999",
+      "--divider": "#fefdf8",
+      "--duration-normal": "#fff",
+      "--ease-out-expo": "rgba(0,0,0,0.50)",
+      "--slide-padding": "rgba(0,0,0,0.78)",
+      "--text-body": "rgba(0,0,0,0.85)",
+      "--text-muted": "rgba(16,185,129,0.80)",
+      "--text-primary": "rgba(255,255,255,0.10)",
+      "--text-secondary": "#000"
+    },
+    "colors": [
+      "#000",
+      "#111",
+      "#1c1917",
+      "#999",
+      "#fefdf8",
+      "#fff",
+      "rgba(0,0,0,0.50)",
+      "rgba(0,0,0,0.78)",
+      "rgba(0,0,0,0.85)",
+      "rgba(16,185,129,0.80)",
+      "rgba(255,255,255,0.10)"
+    ]
+  },
+  "layout_families": [
+    "paper_hero",
+    "paper_columns",
+    "paper_pullquote",
+    "paper_index",
+    "paper_close"
+  ],
+  "signature_components": [
+    "pill",
+    "stats",
+    "stat",
+    "body-text",
+    "drop-cap",
+    "pull-quote",
+    "stat-row",
+    "stat-label",
+    "steps",
+    "step",
+    "cta-layout",
+    "editing-layout",
+    "hero-layout",
+    "install-layout",
+    "present-mode-layout",
+    "preset-gallery-layout",
+    "problem-layout",
+    "workflow-layout"
+  ],
+  "required_visible_components": [
+    {
+      "name": "pill",
+      "selectors": [
+        ".pill"
+      ],
+      "min_count": 1
+    },
+    {
+      "name": "stats",
+      "selectors": [
+        ".stats"
+      ],
+      "min_count": 1
+    },
+    {
+      "name": "stat",
+      "selectors": [
+        ".stat"
+      ],
+      "min_count": 1
+    },
+    {
+      "name": "body-text",
+      "selectors": [
+        ".body-text"
+      ],
+      "min_count": 1
+    },
+    {
+      "name": "drop-cap",
+      "selectors": [
+        ".drop-cap"
+      ],
+      "min_count": 1
+    },
+    {
+      "name": "pull-quote",
+      "selectors": [
+        ".pull-quote"
+      ],
+      "min_count": 1
+    },
+    {
+      "name": "stat-row",
+      "selectors": [
+        ".stat-row"
+      ],
+      "min_count": 1
+    },
+    {
+      "name": "stat-label",
+      "selectors": [
+        ".stat-label"
+      ],
+      "min_count": 1
+    }
+  ],
+  "critical_selectors": [
+    "section.slide",
+    "h1, h2",
+    "[data-export-role]"
+  ],
+  "decorative_selectors": [
+    ".cta-layout",
+    ".editing-layout",
+    ".hero-layout",
+    ".install-layout",
+    ".present-mode-layout",
+    ".preset-gallery-layout",
+    ".problem-layout",
+    ".workflow-layout"
+  ],
+  "non_critical_selectors": [
+    ".slide-num-label",
+    ".progress-bar",
+    "#presenter-view"
+  ],
+  "allowed_overlaps": [
+    "decorative-background",
+    "slide-number-safe-area"
+  ],
+  "forbidden_substitutions": [
+    "generic-theme-shell",
+    "marker-only-style-signature",
+    "empty-component-shell"
+  ],
+  "typography_policy": {
+    "min_body_contrast": 4.5,
+    "max_negative_letter_spacing_px": -1.0,
+    "forbid_single_letter_word_break": true,
+    "require_title_not_clipped": true
+  },
+  "background_strategy": "paper_and_ink",
+  "export_dom_mapping": {
+    "slide": "section.slide",
+    "title": "section.slide h1, section.slide h2, .title-balance",
+    "subtitle": "section.slide p, .subtitle, .hero-sub",
+    "body": "section.slide p, section.slide li, section.slide .content, section.slide .slide-content",
+    "list_items": "section.slide li",
+    "code": "section.slide code, section.slide pre, section.slide .code-block, section.slide .cmd-table",
+    "quote": "section.slide blockquote, section.slide .pullquote, section.slide .quote, section.slide .sc-quote-block",
+    "stat": "section.slide .stat, section.slide .stats, section.slide [class*=stat], section.slide .metric",
+    "image": "section.slide img, section.slide picture, section.slide svg",
+    "speaker_notes": "section.slide[data-notes]"
+  },
+  "browser_qa_policy": {
+    "desktop_viewports": [
+      {
+        "width": 1600,
+        "height": 900
+      },
+      {
+        "width": 1280,
+        "height": 720
+      }
+    ],
+    "mobile_viewports": [
+      {
+        "width": 390,
+        "height": 844
+      }
+    ],
+    "hard_failures": [
+      "browser-geometry-title-clipped",
+      "browser-geometry-text-overflow",
+      "browser-geometry-empty-component",
+      "browser-geometry-character-overlap",
+      "browser-geometry-low-contrast",
+      "browser-geometry-invisible-target"
+    ]
+  },
+  "demo_parity_minimum_score": 0.85
+}

@@ -1,0 +1,143 @@
+{
+  "version": 1,
+  "preset": "Split Pastel",
+  "support_state": "unified_profile_renderer",
+  "renderer_strategy": "unified_profile",
+  "source_reference": "references/split-pastel.md",
+  "fonts": [
+    "fira code",
+    "monospace",
+    "noto sans sc",
+    "outfit",
+    "sans-serif",
+    "sf mono",
+    "system-ui"
+  ],
+  "tokens": {
+    "css_vars": {
+      "--accent": "#000",
+      "--badge-lavender": "#1a1a1a",
+      "--badge-mint": "#666666",
+      "--badge-peach": "#b0e0c0",
+      "--badge-pink": "#b8a08a",
+      "--badge-yellow": "#c8f0d8",
+      "--bg-lavender": "#d4cef5",
+      "--bg-peach": "#e4dff0",
+      "--body-size": "#f0d4c0",
+      "--content-gap": "#f0d4e0",
+      "--font-body": "#f0f0c8",
+      "--font-display": "#f5d4c4",
+      "--h2-size": "#f5e6dc",
+      "--slide-padding": "#fff",
+      "--small-size": "#000",
+      "--text-dark": "#1a1a1a",
+      "--text-secondary": "#666666",
+      "--title-size": "#b0e0c0"
+    },
+    "colors": [
+      "#000",
+      "#1a1a1a",
+      "#666666",
+      "#b0e0c0",
+      "#b8a08a",
+      "#c8f0d8",
+      "#d4cef5",
+      "#e4dff0",
+      "#f0d4c0",
+      "#f0d4e0",
+      "#f0f0c8",
+      "#f5d4c4",
+      "#f5e6dc",
+      "#fff"
+    ]
+  },
+  "layout_families": [
+    "split_cover",
+    "split_statement",
+    "split_cards",
+    "split_timeline",
+    "split_close"
+  ],
+  "signature_components": [
+    "badge-pink",
+    "card",
+    "feature-grid",
+    "left-panel",
+    "pink",
+    "preset-grid",
+    "right-panel",
+    "step-num-pink",
+    "split-panel",
+    "soft-orb",
+    "pastel-metric"
+  ],
+  "required_visible_components": [
+    {
+      "name": "badge-pink",
+      "selectors": [
+        ".badge-pink"
+      ],
+      "min_count": 1
+    },
+    {
+      "name": "card",
+      "selectors": [
+        ".card"
+      ],
+      "min_count": 1
+    },
+    {
+      "name": "feature-grid",
+      "selectors": [
+        ".feature-grid"
+      ],
+      "min_count": 1
+    },
+    {
+      "name": "left-panel",
+      "selectors": [
+        ".left-panel"
+      ],
+      "min_count": 1
+    },
+    {
+      "name": "pink",
+      "selectors": [
+        ".pink"
+      ],
+      "min_count": 1
+    },
+    {
+      "name": "preset-grid",
+      "selectors": [
+        ".preset-grid"
+      ],
+      "min_count": 1
+    },
+    {
+      "name": "right-panel",
+      "selectors": [
+        ".right-panel"
+      ],
+      "min_count": 1
+    },
+    {
+      "name": "step-num-pink",
+      "selectors": [
+        ".step-num-pink"
+      ],
+      "min_count": 1
+    }
+  ],
+  "decorative_selectors": [],
+  "non_critical_selectors": [
+    ".slide-num-label",
+    ".progress-bar",
+    "#presenter-view"
+  ],
+  "forbidden_substitutions": [
+    "generic-theme-shell",
+    "marker-only-style-signature",
+    "empty-component-shell"
+  ]
+}

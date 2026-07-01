@@ -3,9 +3,11 @@
 from __future__ import annotations
 
 import argparse
+import copy
 import importlib.util
 import json
 import math
+import subprocess
 import sys
 from datetime import datetime
 from pathlib import Path
@@ -28,7 +30,15 @@ from low_context import (  # noqa: E402
     validate_brief_path,
 )
 from preset_support import preset_support_tier  # noqa: E402
+from ai_advised_eval import analyze_ai_advised_path  # noqa: E402
+from browser_geometry_qa import analyze_browser_geometry_path  # noqa: E402
+from compare_demo_parity import run_demo_parity as run_demo_parity_gate  # noqa: E402
+from export_smoke import run_export_smoke  # noqa: E402
+from pptx_export_smoke import run_pptx_export_smoke  # noqa: E402
+from preset_contracts import check_preset_contract_path  # noqa: E402
+from promotion_gate import run_promotion_gate  # noqa: E402
 from quality_eval import analyze_html_quality  # noqa: E402
+from style_signature_eval import collect_signature_presence, requirement_for_preset  # noqa: E402
 from title_browser_qa import analyze_title_composition_path  # noqa: E402
 
 
@@ -57,6 +67,28 @@ NON_REGRESSION_KEYS = {
     "minimal-slide-ratio": "minimal_slide_ratio_delta",
 }
 
+KNOWN_EXPECTATION_KEYS = {
+    "artifact_status",
+    "should_fail_closed",
+    "expected_mode",
+    "expected_preset",
+    "expected_canonical_preset",
+    "expected_support_tier",
+    "expected_generation_status",
+    "expected_renderer_strategy",
+    "expected_render_path",
+    "expected_reference_path",
+    "required_brief_fields",
+    "expected_quality_tier",
+    "allowed_quality_tiers",
+    "required_html_checks",
+    "forbidden_html_checks",
+    "required_quality_gates",
+    "required_title_gates",
+    "quality_thresholds",
+    "non_regression_metrics",
+}
+
 
 def _read_json(path: Path) -> dict[str, Any]:
     return json.loads(path.read_text(encoding="utf-8"))
@@ -64,6 +96,38 @@ def _read_json(path: Path) -> dict[str, Any]:
 
 def _read_text(path: Path) -> str:
     return path.read_text(encoding="utf-8")
+
+
+def _git_head() -> str | None:
+    try:
+        completed = subprocess.run(
+            ["git", "rev-parse", "HEAD"],
+            cwd=ROOT,
+            capture_output=True,
+            text=True,
+            timeout=5,
+        )
+    except Exception:
+        return None
+    if completed.returncode != 0:
+        return None
+    return completed.stdout.strip()
+
+
+def _git_dirty() -> bool | None:
+    try:
+        completed = subprocess.run(
+            ["git", "status", "--porcelain"],
+            cwd=ROOT,
+            capture_output=True,
+            text=True,
+            timeout=5,
+        )
+    except Exception:
+        return None
+    if completed.returncode != 0:
+        return None
+    return bool(completed.stdout.strip())
 
 
 def _resolve_path(base: Path, value: str | None) -> Path | None:
@@ -127,42 +191,27 @@ def _collect_css_text(html_text: str) -> str:
 
 
 def _compute_style_signature_metrics(html_text: str, preset: str) -> dict[str, Any]:
-    contract = compile_style_contract(preset)
-    soup = BeautifulSoup(html_text, "html.parser")
-    css_text = _collect_css_text(html_text)
+    requirement = requirement_for_preset(preset)
+    presence = collect_signature_presence(html_text, preset)
 
-    classes_present = {
-        f".{class_name}"
-        for tag in soup.select("[class]")
-        for class_name in tag.get("class", [])
-    }
-    ids_present = {
-        f"#{tag.get('id')}"
-        for tag in soup.select("[id]")
-        if tag.get("id")
-    }
-    pseudo_present: set[str] = set()
-    for pseudo in ("body::before", "body::after"):
-        if pseudo in css_text:
-            pseudo_present.add(pseudo)
-
-    present = classes_present | ids_present | pseudo_present
-
-    signature_required = set(contract["required_signature_classes"]) | set(contract["required_background_layers"])
-    signature_hits = len(signature_required & present)
-    signature_total = len(signature_required)
-    signature_coverage = round(signature_hits / signature_total, 4) if signature_total else None
-
-    background_required = set(contract["required_background_layers"])
-    background_hits = len(background_required & present)
+    signature_required = set(requirement.classes) | set(requirement.ids) | set(requirement.backgrounds)
+    background_required = set(requirement.backgrounds)
+    background_hits = len(background_required & set(presence.background_hits))
     background_total = len(background_required)
     background_coverage = round(background_hits / background_total, 4) if background_total else None
 
     return {
         "signature_required": sorted(signature_required),
-        "signature_coverage": signature_coverage,
+        "signature_coverage": presence.coverage,
         "background_required": sorted(background_required),
         "background_coverage": background_coverage,
+        "visible_signature_hits": sorted(set(presence.visible_class_hits) | set(presence.visible_id_hits)),
+        "background_hits": list(presence.background_hits),
+        "ignored_marker_class_count": len(presence.ignored_marker_hits),
+        "marker_only_signature_hits": list(presence.ignored_marker_hits),
+        "invisible_signature_hits": list(presence.invisible_hits),
+        "empty_shell_signature_hits": list(presence.empty_shell_hits),
+        "style_signature_integrity": presence.integrity,
     }
 
 
@@ -314,6 +363,15 @@ def _evaluate_case(
     checks: list[dict[str, Any]] = []
     failures: list[str] = []
 
+    unknown_expectations = sorted(set(expectations) - KNOWN_EXPECTATION_KEYS)
+    for key in unknown_expectations:
+        checks.append({
+            "name": f"unknown_expectation:{key}",
+            "passed": False,
+            "message": f"unknown expectation key '{key}'",
+        })
+        failures.append(f"unknown_expectation:{key}")
+
     if expectations.get("expected_mode"):
         actual_mode = brief.get("mode") if brief else None
         passed = actual_mode == expectations["expected_mode"]
@@ -337,6 +395,27 @@ def _evaluate_case(
         })
         if not passed:
             failures.append("expected_preset")
+
+    packet_expectations = [
+        ("expected_canonical_preset", "canonical_preset"),
+        ("expected_generation_status", "preset_generation_status"),
+        ("expected_renderer_strategy", "renderer_strategy"),
+        ("expected_render_path", "render_path"),
+        ("expected_reference_path", "reference_path"),
+    ]
+    for expectation_key, packet_key in packet_expectations:
+        if expectation_key not in expectations:
+            continue
+        actual = packet.get(packet_key) if packet else None
+        passed = actual == expectations[expectation_key]
+        checks.append({
+            "name": expectation_key,
+            "passed": passed,
+            "expected": expectations[expectation_key],
+            "actual": actual,
+        })
+        if not passed:
+            failures.append(expectation_key)
 
     if expectations.get("expected_support_tier"):
         actual_tier = packet.get("preset_support_tier") if packet else preset_support_tier(preset or "")
@@ -550,6 +629,12 @@ def _evaluate_rendered_case(
     output_dir: Path,
     baseline_dir: Path | None,
     run_browser_titles: bool,
+    run_browser_geometry: bool,
+    run_contract: bool,
+    run_export_smoke: bool,
+    run_mobile_geometry: bool,
+    run_ai_advised: bool,
+    run_pptx_export: bool,
     weights: dict[str, float],
 ) -> dict[str, Any]:
     case_id = case["case_id"]
@@ -577,6 +662,10 @@ def _evaluate_rendered_case(
         brief_valid, brief_errors, _loaded = validate_brief_path(brief_path)
         if brief_valid:
             brief = load_brief(brief_path)
+            if case.get("preset"):
+                brief = copy.deepcopy(brief)
+                brief["style"]["preset"] = str(case["preset"])
+                brief["brief_id"] = f"{brief.get('brief_id', case_id)}-{_slugify_check_name(str(case['preset']).lower().replace(' ', '-'))}"
             preset = brief["style"]["preset"]
 
     artifact_status = expectations.get("artifact_status")
@@ -712,6 +801,158 @@ def _evaluate_rendered_case(
         )
         title_report_path = generated_title_report_path
 
+    browser_geometry_report = None
+    browser_geometry_report_path = None
+    if run_browser_geometry or case.get("run_browser_geometry"):
+        try:
+            browser_geometry_report = analyze_browser_geometry_path(
+                rendered_html_path,
+                preset=packet["preset"],
+                stable_runs=1,
+                artifact_dir=case_dir / "browser-geometry-evidence",
+            )
+        except Exception as exc:  # pragma: no cover - depends on local browser sandboxing
+            browser_geometry_report = {
+                "pass": False,
+                "unavailable": True,
+                "error": f"browser geometry QA unavailable: {exc}",
+                "hard_failures": ["browser-geometry-unavailable"],
+                "violations": [],
+                "diagnostics": {},
+            }
+        generated_geometry_report_path = case_dir / "browser-geometry-report.json"
+        generated_geometry_report_path.write_text(
+            json.dumps(browser_geometry_report, ensure_ascii=False, indent=2),
+            encoding="utf-8",
+        )
+        browser_geometry_report_path = generated_geometry_report_path
+
+    preset_contract_report = None
+    preset_contract_report_path = None
+    if run_contract or case.get("run_contract"):
+        try:
+            preset_contract_report = check_preset_contract_path(
+                rendered_html_path,
+                preset=packet["preset"],
+            )
+        except Exception as exc:  # pragma: no cover - defensive local file path
+            preset_contract_report = {
+                "pass": False,
+                "unavailable": True,
+                "error": f"preset contract check unavailable: {exc}",
+                "hard_failures": ["preset-contract-unavailable"],
+                "violations": [],
+                "diagnostics": {},
+            }
+        generated_contract_report_path = case_dir / "preset-contract-report.json"
+        generated_contract_report_path.write_text(
+            json.dumps(preset_contract_report, ensure_ascii=False, indent=2),
+            encoding="utf-8",
+        )
+        preset_contract_report_path = generated_contract_report_path
+
+    export_smoke_report = None
+    export_smoke_report_path = None
+    if run_export_smoke or case.get("run_export_smoke"):
+        try:
+            export_smoke_report = globals()["run_export_smoke"](
+                rendered_html_path,
+                preset=packet["preset"],
+                output_dir=case_dir / "export-smoke-evidence",
+            )
+        except Exception as exc:  # pragma: no cover - defensive local file path
+            export_smoke_report = {
+                "pass": False,
+                "unavailable": True,
+                "error": f"export smoke unavailable: {exc}",
+                "hard_failures": ["export-smoke-unavailable"],
+                "violations": [],
+                "diagnostics": {},
+            }
+        generated_export_smoke_path = case_dir / "export-smoke-report.json"
+        generated_export_smoke_path.write_text(
+            json.dumps(export_smoke_report, ensure_ascii=False, indent=2),
+            encoding="utf-8",
+        )
+        export_smoke_report_path = generated_export_smoke_path
+
+    mobile_geometry_report = None
+    mobile_geometry_report_path = None
+    if run_mobile_geometry or case.get("run_mobile_geometry"):
+        try:
+            mobile_geometry_report = analyze_browser_geometry_path(
+                rendered_html_path,
+                preset=packet["preset"],
+                viewports=[{"width": 390, "height": 844}],
+                stable_runs=1,
+                artifact_dir=case_dir / "mobile-geometry-evidence",
+            )
+            mobile_geometry_report["phase"] = "1.0-mobile-browser-geometry"
+        except Exception as exc:  # pragma: no cover - depends on local browser sandboxing
+            mobile_geometry_report = {
+                "pass": False,
+                "unavailable": True,
+                "error": f"mobile browser geometry QA unavailable: {exc}",
+                "hard_failures": ["mobile-browser-geometry-unavailable"],
+                "violations": [],
+                "diagnostics": {},
+            }
+        generated_mobile_geometry_path = case_dir / "mobile-geometry-report.json"
+        generated_mobile_geometry_path.write_text(
+            json.dumps(mobile_geometry_report, ensure_ascii=False, indent=2),
+            encoding="utf-8",
+        )
+        mobile_geometry_report_path = generated_mobile_geometry_path
+
+    ai_advised_report = None
+    ai_advised_report_path = None
+    if run_ai_advised or case.get("run_ai_advised"):
+        try:
+            ai_advised_report = analyze_ai_advised_path(
+                rendered_html_path,
+                preset=packet["preset"],
+            )
+        except Exception as exc:  # pragma: no cover - defensive local file path
+            ai_advised_report = {
+                "pass": False,
+                "unavailable": True,
+                "error": f"AI-advised eval unavailable: {exc}",
+                "hard_failures": ["ai-advised-unavailable"],
+                "violations": [],
+                "diagnostics": {},
+            }
+        generated_ai_path = case_dir / "ai-advised-report.json"
+        generated_ai_path.write_text(
+            json.dumps(ai_advised_report, ensure_ascii=False, indent=2),
+            encoding="utf-8",
+        )
+        ai_advised_report_path = generated_ai_path
+
+    pptx_export_report = None
+    pptx_export_report_path = None
+    if run_pptx_export or case.get("run_pptx_export"):
+        try:
+            pptx_export_report = globals()["run_pptx_export_smoke"](
+                rendered_html_path,
+                preset=packet["preset"],
+                output_dir=case_dir / "pptx-export-evidence",
+            )
+        except Exception as exc:  # pragma: no cover - depends on local browser/export environment
+            pptx_export_report = {
+                "pass": False,
+                "unavailable": True,
+                "error": f"PPTX export smoke unavailable: {exc}",
+                "hard_failures": ["pptx-export-unavailable"],
+                "violations": [],
+                "diagnostics": {},
+            }
+        generated_pptx_path = case_dir / "pptx-export-report.json"
+        generated_pptx_path.write_text(
+            json.dumps(pptx_export_report, ensure_ascii=False, indent=2),
+            encoding="utf-8",
+        )
+        pptx_export_report_path = generated_pptx_path
+
     quality_report = analyze_html_quality(
         html_text,
         brief=brief if quality_eval_use_brief else None,
@@ -752,7 +993,28 @@ def _evaluate_rendered_case(
     hard_failures = list(quality_report["hard_failures"])
     if strict_validate and not validate_report["passed"]:
         hard_failures.append("strict-validate-failed")
-    pass_status = expectations_report["passed"] and (validate_report["passed"] if strict_validate else True)
+    if browser_geometry_report and not browser_geometry_report.get("pass", False):
+        hard_failures.extend(str(code) for code in browser_geometry_report.get("hard_failures", []))
+    if preset_contract_report and not preset_contract_report.get("pass", False):
+        hard_failures.extend(str(code) for code in preset_contract_report.get("hard_failures", []))
+    if export_smoke_report and not export_smoke_report.get("pass", False):
+        hard_failures.extend(str(code) for code in export_smoke_report.get("hard_failures", []))
+    if mobile_geometry_report and not mobile_geometry_report.get("pass", False):
+        hard_failures.extend(str(code) for code in mobile_geometry_report.get("hard_failures", []))
+    if ai_advised_report and not ai_advised_report.get("pass", False):
+        hard_failures.extend(str(code) for code in ai_advised_report.get("hard_failures", []))
+    if pptx_export_report and not pptx_export_report.get("pass", False):
+        hard_failures.extend(str(code) for code in pptx_export_report.get("hard_failures", []))
+    pass_status = (
+        expectations_report["passed"]
+        and (validate_report["passed"] if strict_validate else True)
+        and (browser_geometry_report.get("pass", False) if browser_geometry_report else True)
+        and (preset_contract_report.get("pass", False) if preset_contract_report else True)
+        and (export_smoke_report.get("pass", False) if export_smoke_report else True)
+        and (mobile_geometry_report.get("pass", False) if mobile_geometry_report else True)
+        and (ai_advised_report.get("pass", False) if ai_advised_report else True)
+        and (pptx_export_report.get("pass", False) if pptx_export_report else True)
+    )
 
     quality_report_path = case_dir / "quality-report.json"
     quality_report_path.write_text(json.dumps(quality_report, ensure_ascii=False, indent=2), encoding="utf-8")
@@ -769,6 +1031,7 @@ def _evaluate_rendered_case(
         "html_path": str(rendered_html_path),
         "fixture_html_path": str(fixture_html_path) if fixture_html_path else None,
         "packet_path": str(packet_path),
+        "packet": packet,
         "quality_report_path": str(quality_report_path),
         "baseline_html_path": str(baseline_html_path) if baseline_html_path else None,
         "hard_failures": hard_failures,
@@ -779,6 +1042,18 @@ def _evaluate_rendered_case(
             },
             "html_validate": validate_report,
             "title_browser": title_browser_report,
+            "browser_geometry": browser_geometry_report,
+            "browser_geometry_report_path": str(browser_geometry_report_path) if browser_geometry_report_path else None,
+            "preset_contract": preset_contract_report,
+            "preset_contract_report_path": str(preset_contract_report_path) if preset_contract_report_path else None,
+            "export_smoke": export_smoke_report,
+            "export_smoke_report_path": str(export_smoke_report_path) if export_smoke_report_path else None,
+            "mobile_geometry": mobile_geometry_report,
+            "mobile_geometry_report_path": str(mobile_geometry_report_path) if mobile_geometry_report_path else None,
+            "ai_advised": ai_advised_report,
+            "ai_advised_report_path": str(ai_advised_report_path) if ai_advised_report_path else None,
+            "pptx_export": pptx_export_report,
+            "pptx_export_report_path": str(pptx_export_report_path) if pptx_export_report_path else None,
         },
         "expectations": expectations_report,
         "scores": scores,
@@ -828,6 +1103,16 @@ def run_suite(
     output_dir: Path,
     baseline_dir: Path | None = None,
     run_browser_titles: bool = False,
+    run_browser_geometry: bool = False,
+    run_contract: bool = False,
+    run_export_smoke: bool = False,
+    run_mobile_geometry: bool = False,
+    run_ai_advised: bool = False,
+    run_pptx_export: bool = False,
+    run_promotion_gate: bool = False,
+    run_demo_parity: bool = False,
+    demo_parity_require_visual: bool = False,
+    demo_parity_viewports: list[str] | None = None,
 ) -> dict[str, Any]:
     manifest = _read_json(manifest_path)
     suite_dir = manifest_path.parent
@@ -852,6 +1137,12 @@ def run_suite(
                 output_dir=output_dir,
                 baseline_dir=baseline_dir,
                 run_browser_titles=run_browser_titles,
+                run_browser_geometry=run_browser_geometry,
+                run_contract=run_contract,
+                run_export_smoke=run_export_smoke,
+                run_mobile_geometry=run_mobile_geometry,
+                run_ai_advised=run_ai_advised,
+                run_pptx_export=run_pptx_export,
                 weights=weights,
             )
         )
@@ -860,6 +1151,8 @@ def run_suite(
         "suite_id": manifest["suite_id"],
         "generated_at": datetime.now().isoformat(timespec="seconds"),
         "manifest_path": str(manifest_path),
+        "git_head": _git_head(),
+        "git_dirty": _git_dirty(),
         "output_dir": str(output_dir),
         "baseline_dir": str(baseline_dir) if baseline_dir else None,
         "workflow": manifest.get("workflow", ["BRIEF.json", "HTML", "validate", "eval"]),
@@ -867,6 +1160,51 @@ def run_suite(
         "cases": results,
         "summary": _summarize_cases(results, baseline_dir=baseline_dir),
     }
+    if run_promotion_gate:
+        try:
+            promotion_report = globals()["run_promotion_gate"](release_report=report)
+        except Exception as exc:  # pragma: no cover - defensive local file path
+            promotion_report = {
+                "pass": False,
+                "unavailable": True,
+                "error": f"promotion gate unavailable: {exc}",
+                "hard_failures": ["promotion-gate-unavailable"],
+                "violations": [],
+                "diagnostics": {},
+            }
+        promotion_report_path = output_dir / "promotion-gate-report.json"
+        promotion_report_path.write_text(
+            json.dumps(promotion_report, ensure_ascii=False, indent=2),
+            encoding="utf-8",
+        )
+        report["promotion_gate"] = promotion_report
+        report["promotion_gate_report_path"] = str(promotion_report_path)
+    if run_demo_parity:
+        demo_parity_output_dir = output_dir / "demo-parity"
+        try:
+            demo_parity_report = globals()["run_demo_parity_gate"](
+                candidate_dir=output_dir,
+                demo_dir=ROOT / "demos",
+                output_dir=demo_parity_output_dir,
+                viewports=demo_parity_viewports or ["desktop", "mobile"],
+                require_visual=demo_parity_require_visual,
+            )
+        except Exception as exc:  # pragma: no cover - defensive local file path
+            demo_parity_output_dir.mkdir(parents=True, exist_ok=True)
+            demo_parity_report = {
+                "pass": False,
+                "unavailable": True,
+                "error": f"demo parity gate unavailable: {exc}",
+                "hard_failures": ["demo-parity-unavailable"],
+                "summary": {"preset_count": 0, "verdicts": {"FAIL": 1}, "average_score": 0.0},
+                "results": [],
+            }
+            (demo_parity_output_dir / "demo-parity-report.json").write_text(
+                json.dumps(demo_parity_report, ensure_ascii=False, indent=2),
+                encoding="utf-8",
+            )
+        report["demo_parity"] = demo_parity_report
+        report["demo_parity_report_path"] = str(demo_parity_output_dir / "demo-parity-report.json")
     return report
 
 
@@ -878,6 +1216,16 @@ def main() -> int:
     parser.add_argument("--output-dir", required=True, help="Directory for generated artifacts and report")
     parser.add_argument("--baseline-dir", help="Optional directory from a prior eval run for non-regression comparison")
     parser.add_argument("--browser-titles", action="store_true", help="Run browser title QA for each case")
+    parser.add_argument("--browser-geometry", action="store_true", help="Run browser geometry QA for each case")
+    parser.add_argument("--contract", action="store_true", help="Run preset contract QA for each case")
+    parser.add_argument("--export-smoke", action="store_true", help="Run export DOM smoke QA for each case")
+    parser.add_argument("--mobile-geometry", action="store_true", help="Run mobile browser geometry QA for each case")
+    parser.add_argument("--ai-advised", action="store_true", help="Run AI-advised content/rhythm eval for each case")
+    parser.add_argument("--pptx-export", action="store_true", help="Run real HTML-to-PPTX export smoke for each case")
+    parser.add_argument("--promotion-gate", action="store_true", help="Run style-native promotion precondition gate")
+    parser.add_argument("--demo-parity", action="store_true", help="Run historical demo parity gate for the 17 profile presets")
+    parser.add_argument("--demo-parity-require-visual", action="store_true", help="Fail demo parity when screenshots cannot be captured")
+    parser.add_argument("--demo-parity-viewport", choices=("desktop", "mobile"), action="append", default=None)
     parser.add_argument("--report-path", help="Optional explicit path for the JSON report")
     args = parser.parse_args()
 
@@ -890,13 +1238,25 @@ def main() -> int:
         output_dir=output_dir,
         baseline_dir=baseline_dir,
         run_browser_titles=args.browser_titles,
+        run_browser_geometry=args.browser_geometry,
+        run_contract=args.contract,
+        run_export_smoke=args.export_smoke,
+        run_mobile_geometry=args.mobile_geometry,
+        run_ai_advised=args.ai_advised,
+        run_pptx_export=args.pptx_export,
+        run_promotion_gate=args.promotion_gate,
+        run_demo_parity=args.demo_parity,
+        demo_parity_require_visual=args.demo_parity_require_visual,
+        demo_parity_viewports=args.demo_parity_viewport,
     )
 
     report_path = Path(args.report_path).resolve() if args.report_path else output_dir / "eval-results.json"
     report_path.write_text(json.dumps(report, ensure_ascii=False, indent=2), encoding="utf-8")
     print(json.dumps(report["summary"], ensure_ascii=False, indent=2))
     print(f"REPORT: {report_path}")
-    return 0 if report["summary"]["fail_count"] == 0 else 1
+    promotion_ok = report.get("promotion_gate", {}).get("pass", True)
+    demo_parity_ok = report.get("demo_parity", {}).get("pass", True)
+    return 0 if report["summary"]["fail_count"] == 0 and promotion_ok and demo_parity_ok else 1
 
 
 if __name__ == "__main__":

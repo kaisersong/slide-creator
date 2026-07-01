@@ -1,0 +1,36 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://slide-creator.local/schemas/preset-manifest.schema.json",
+  "title": "Slide Creator Preset Manifest",
+  "type": "object",
+  "required": [
+    "version",
+    "preset",
+    "support_state",
+    "fonts",
+    "tokens",
+    "layout_families",
+    "signature_components",
+    "required_visible_components",
+    "decorative_selectors",
+    "non_critical_selectors",
+    "forbidden_substitutions"
+  ],
+  "properties": {
+    "version": { "type": "integer", "minimum": 1 },
+    "preset": { "type": "string", "minLength": 1 },
+    "support_state": { "type": "string", "minLength": 1 },
+    "fonts": { "type": "array", "items": { "type": "string" } },
+    "tokens": { "type": "object" },
+    "layout_families": { "type": "array", "items": { "type": "string" } },
+    "signature_components": { "type": "array", "items": { "type": "string" } },
+    "required_visible_components": {
+      "type": "array",
+      "items": { "type": "object" }
+    },
+    "decorative_selectors": { "type": "array", "items": { "type": "string" } },
+    "non_critical_selectors": { "type": "array", "items": { "type": "string" } },
+    "forbidden_substitutions": { "type": "array", "items": { "type": "string" } }
+  },
+  "additionalProperties": true
+}

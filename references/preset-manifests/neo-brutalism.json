@@ -1,0 +1,121 @@
+{
+  "version": 1,
+  "preset": "Neo-Brutalism",
+  "support_state": "unified_profile_renderer",
+  "renderer_strategy": "unified_profile",
+  "source_reference": "references/neo-brutalism.md",
+  "fonts": [
+    "-apple-system",
+    "courier new",
+    "monospace",
+    "noto sans sc",
+    "sans-serif",
+    "space grotesk",
+    "system-ui"
+  ],
+  "tokens": {
+    "css_vars": {
+      "--bg": "#000",
+      "--body-size": "#000000",
+      "--btn-bg": "#1a1a2e",
+      "--btn-text": "#e0e0e0",
+      "--content-gap": "#ffeb3b",
+      "--h2-size": "#fff",
+      "--slide-padding": "#ffffff",
+      "--small-size": "rgba(0,0,0,0.08)",
+      "--text": "rgba(0,0,0,0.18)",
+      "--title-size": "rgba(0,0,0,0.2)"
+    },
+    "colors": [
+      "#000",
+      "#000000",
+      "#1a1a2e",
+      "#e0e0e0",
+      "#ffeb3b",
+      "#fff",
+      "#ffffff",
+      "rgba(0,0,0,0.08)",
+      "rgba(0,0,0,0.18)",
+      "rgba(0,0,0,0.2)",
+      "rgba(0,0,0,0.28)"
+    ]
+  },
+  "layout_families": [
+    "brutalist_cover",
+    "brutalist_blocks",
+    "brutalist_split",
+    "brutalist_manifesto",
+    "brutalist_close"
+  ],
+  "signature_components": [
+    "cta-rule",
+    "feature-grid",
+    "heavy-rule",
+    "left-panel",
+    "right-panel",
+    "brutalist-block",
+    "brutalist-poster"
+  ],
+  "required_visible_components": [
+    {
+      "name": "cta-rule",
+      "selectors": [
+        ".cta-rule"
+      ],
+      "min_count": 1
+    },
+    {
+      "name": "feature-grid",
+      "selectors": [
+        ".feature-grid"
+      ],
+      "min_count": 1
+    },
+    {
+      "name": "heavy-rule",
+      "selectors": [
+        ".heavy-rule"
+      ],
+      "min_count": 1
+    },
+    {
+      "name": "left-panel",
+      "selectors": [
+        ".left-panel"
+      ],
+      "min_count": 1
+    },
+    {
+      "name": "right-panel",
+      "selectors": [
+        ".right-panel"
+      ],
+      "min_count": 1
+    },
+    {
+      "name": "brutalist-block",
+      "selectors": [
+        ".brutalist-block"
+      ],
+      "min_count": 1
+    },
+    {
+      "name": "brutalist-poster",
+      "selectors": [
+        ".brutalist-poster"
+      ],
+      "min_count": 1
+    }
+  ],
+  "decorative_selectors": [],
+  "non_critical_selectors": [
+    ".slide-num-label",
+    ".progress-bar",
+    "#presenter-view"
+  ],
+  "forbidden_substitutions": [
+    "generic-theme-shell",
+    "marker-only-style-signature",
+    "empty-component-shell"
+  ]
+}

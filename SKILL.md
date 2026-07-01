@@ -46,7 +46,7 @@ metadata: {"openclaw":{"emoji":"🎞","os":["darwin","linux","windows"],"homepag
 | `--generate` | SKILL.md + 已选风格文件（内置 `references/*.md` / `blue-sky-starter.html`；自定义 `themes/<name>/reference.md`）+ composition 源 + `references/title-quality.md` + `references/html-template.md` + `references/js-engine.md` + `references/base-css.md` + `references/impeccable-anti-patterns.md` | 从 `BRIEF.json` 生成 HTML，并执行写入前门禁；如用户显式要求 `eval`，同步产出单 deck 评测 JSON |
 | `--review [file.html]` | `references/review-checklist.md` + 目标 HTML | 执行 17 项检查点 → 确认窗口 → 修复/报告 |
 | 无 flag (交互式) | `references/workflow.md` + 其他按需 | 遵循 Phase 0-5 |
-| 直接给内容 + 风格 | 同 `--generate` | 先落一个有效 `BRIEF.json`，再按 preset 能力路由到 deterministic renderer 或 reference-driven generator，并执行 strict 写入前门禁；禁止绕过 BRIEF 手拼最终 HTML |
+| 直接给内容 + 风格 | 同 `--generate` | 先落一个有效 `BRIEF.json`，再按 preset 能力路由到 native deterministic renderer、统一 profile renderer 或 custom theme renderer，并执行 strict 写入前门禁；禁止绕过 BRIEF 手拼最终 HTML |
 
 **渐进式披露：** 每个命令只加载所需文件。`--plan` 只提炼 IR，不接触 CSS。
 
@@ -54,8 +54,8 @@ metadata: {"openclaw":{"emoji":"🎞","os":["darwin","linux","windows"],"homepag
 
 1. **风格强制**
    所有颜色、字体、组件、背景、动画、图表色、signature elements 都**必须且只能**来自选中的风格文件。模板里的 `[from style file]` 和示例值只是占位，禁止直接使用。  
-   当前稳定生成器覆盖：`Swiss Modern / Enterprise Dark / Data Story / Blue Sky / Chinese Chan`。默认推荐面聚焦前四个；`Chinese Chan` 只在哲学、文化、品牌、静观类场景中作为上下文推荐。其他有完整 reference 的内置 preset 属于 reference-driven：用户显式选择时可以生成，但不能冒充 deterministic renderer，必须读取选中风格 reference + `html-template.md` / `js-engine.md` / `base-css.md`，由 agent/html worker 产出 HTML，并通过 strict validation。只有 reference 缺失、已归档、或 strict validation 无法修复通过时才 fail closed，并给出最接近的可稳定生成替代项。
-   Custom theme（`themes/<name>/reference.md`）与 generator-ready / reference-driven preset 同等可显式渲染。`BRIEF.json` 的 `style.preset` 支持四种值：generator-ready 内置 preset 名、reference-driven 内置 preset 名、custom theme 文件夹名、或 `themes/<name>/reference.md` 路径。代码层会自动归一化解析；内置 canonical 名优先解析为内置 preset，`custom:<name>` 强制选择自定义主题。
+   当前稳定生成器覆盖：`Swiss Modern / Enterprise Dark / Data Story / Blue Sky / Chinese Chan`。所有内置风格在用户显式选择时都必须可生成。五个 native deterministic core 是最稳定生成面；默认推荐面只包含 `Swiss Modern / Enterprise Dark / Data Story / Blue Sky`，`Chinese Chan` 仅作为 contextual recommendation。其他完整 reference-backed 风格走统一 profile renderer，共享 `BRIEF.json`、shared runtime、strict validation 和 eval/release gate。非核心 profile 必须通过 historical demo parity gate，才可描述为恢复到历史风格保真；但它们仍不冒充 native deterministic core，也不进入默认推荐面。只有 reference 缺失、已归档、custom theme 无效、或 strict validation 无法修复通过时才 fail closed，并给出最接近的可稳定生成替代项。
+   Custom theme（`themes/<name>/reference.md`）与 generator-ready / unified profile preset 同等可显式渲染。`BRIEF.json` 的 `style.preset` 支持四种值：native core 内置 preset 名、profile-rendered 内置 preset 名、custom theme 文件夹名、或 `themes/<name>/reference.md` 路径。代码层会自动归一化解析；内置 canonical 名优先解析为内置 preset，`custom:<name>` 强制选择自定义主题。
    **Swiss Modern 额外要求 canonical export path**：面板保持 `.slide` direct child，token 保持 `--bg/--text/--red`，使用 canonical 类（`.left-panel/.right-panel/.stat-row/.cta-block`），并写入 `data-export-role`；不得生成 `.left-col/.right-col` 或 `--bg-primary/--accent` 这类兼容别名。
 
 2. **叙事弧线**
@@ -75,7 +75,7 @@ metadata: {"openclaw":{"emoji":"🎞","os":["darwin","linux","windows"],"homepag
 
 详见 `references/html-template.md`。生成任何 HTML 前必读此文件。
 
-**Direct-route guard:** 无论是 `--generate` 还是“直接给内容 + 风格”，都必须先 materialize 一个有效 `BRIEF.json`，再按能力路由：deterministic / custom theme 走 `render_from_brief()`；reference-driven preset 走选中风格 reference + `html-template.md` + `js-engine.md` + `base-css.md` 的 agent/html worker。写出最终文件前必须通过 `python3 scripts/validate_html.py "$TMP_HTML" --strict`。禁止在交互式路径里绕过 BRIEF/style contract 手拼最终 HTML。
+**Direct-route guard:** 无论是 `--generate` 还是“直接给内容 + 风格”，都必须先 materialize 一个有效 `BRIEF.json`，再按能力路由：native core、统一 profile renderer、custom theme 都走同一 `render_from_brief()` 产品路径。写出最终文件前必须通过 `python3 scripts/validate_html.py "$TMP_HTML" --strict`。禁止手拼最终 HTML；禁止在交互式路径里绕过 BRIEF/style contract 手拼最终 HTML。
 
 **Optional eval artifact:** 当用户显式要求 `eval` / `评测` 时，生成链路应在 strict gate 通过后额外写出单 deck 评测 JSON。原始 CLI 对应 `--eval`（默认写同名 `.eval.json`）或 `--eval-out <path>`；评测至少包含 `style_score (= style_signature_coverage)`、quality gates、hard failures 与关键 diagnostics。
 

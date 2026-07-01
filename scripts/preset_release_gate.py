@@ -37,6 +37,59 @@ def _collect_gate_failures(report: dict, *, require_baseline: bool) -> list[str]
     for case in report["cases"]:
         if not case["pass"]:
             failures.append(f"{case['case_id']}: eval case failed")
+        browser_geometry = case.get("validations", {}).get("browser_geometry")
+        if browser_geometry and not browser_geometry.get("pass", False):
+            hard_failures = browser_geometry.get("hard_failures") or ["browser-geometry-failed"]
+            for code in hard_failures:
+                failures.append(f"{case['case_id']}: browser geometry failed {code}")
+        preset_contract = case.get("validations", {}).get("preset_contract")
+        if preset_contract and not preset_contract.get("pass", False):
+            hard_failures = preset_contract.get("hard_failures") or ["preset-contract-failed"]
+            for code in hard_failures:
+                failures.append(f"{case['case_id']}: preset contract failed {code}")
+        export_smoke = case.get("validations", {}).get("export_smoke")
+        if export_smoke and not export_smoke.get("pass", False):
+            hard_failures = export_smoke.get("hard_failures") or ["export-smoke-failed"]
+            for code in hard_failures:
+                failures.append(f"{case['case_id']}: export smoke failed {code}")
+        mobile_geometry = case.get("validations", {}).get("mobile_geometry")
+        if mobile_geometry and not mobile_geometry.get("pass", False):
+            hard_failures = mobile_geometry.get("hard_failures") or ["mobile-geometry-failed"]
+            for code in hard_failures:
+                failures.append(f"{case['case_id']}: mobile geometry failed {code}")
+        ai_advised = case.get("validations", {}).get("ai_advised")
+        if ai_advised and not ai_advised.get("pass", False):
+            hard_failures = ai_advised.get("hard_failures") or ["ai-advised-failed"]
+            for code in hard_failures:
+                failures.append(f"{case['case_id']}: ai-advised eval failed {code}")
+        pptx_export = case.get("validations", {}).get("pptx_export")
+        if pptx_export and not pptx_export.get("pass", False):
+            hard_failures = pptx_export.get("hard_failures") or ["pptx-export-failed"]
+            for code in hard_failures:
+                failures.append(f"{case['case_id']}: PPTX export failed {code}")
+
+    promotion_gate = report.get("promotion_gate")
+    if promotion_gate and not promotion_gate.get("pass", False):
+        hard_failures = promotion_gate.get("hard_failures") or ["promotion-gate-failed"]
+        for code in hard_failures:
+            failures.append(f"promotion-gate: {code}")
+
+    demo_parity = report.get("demo_parity")
+    if demo_parity and not demo_parity.get("pass", False):
+        for item in demo_parity.get("results") or []:
+            if item.get("verdict") == "PASS":
+                continue
+            failures.append(
+                f"demo-parity: {item.get('preset', 'unknown preset')} "
+                f"{item.get('verdict', 'FAIL')} - {item.get('main_issue', 'parity failed')}"
+            )
+            visual_gate = item.get("visual_gate") or {}
+            for code in visual_gate.get("failures") or []:
+                failures.append(f"demo-parity: {item.get('preset', 'unknown preset')} visual failed {code}")
+            for code in item.get("required_instance_failures") or []:
+                failures.append(f"demo-parity: {item.get('preset', 'unknown preset')} instance failed {code}")
+        for code in demo_parity.get("hard_failures") or []:
+            failures.append(f"demo-parity: {code}")
 
     if require_baseline:
         for case in report["cases"]:
@@ -261,6 +314,22 @@ def _build_summary_markdown(
             f"style=`{diagnostics.get('style_signature_coverage')}`"
         )
 
+    demo_parity = report.get("demo_parity")
+    if demo_parity:
+        parity_summary = demo_parity.get("summary") or {}
+        verdicts = parity_summary.get("verdicts") or {}
+        lines.extend(
+            [
+                "",
+                "## Demo Parity",
+                "",
+                f"- Pass: `{str(demo_parity.get('pass', False)).lower()}`",
+                f"- Presets: `{parity_summary.get('preset_count', 0)}`",
+                f"- Verdicts: `{json.dumps(verdicts, ensure_ascii=False)}`",
+                f"- Report: `{report.get('demo_parity_report_path')}`",
+            ]
+        )
+
     lines.extend([
         "",
         "## Gate Result",
@@ -309,6 +378,16 @@ def main() -> int:
     parser.add_argument("--output-dir", required=True, help="Directory for eval artifacts")
     parser.add_argument("--baseline-dir", help="Optional baseline eval output directory")
     parser.add_argument("--browser-titles", action="store_true", help="Run browser title QA while evaluating")
+    parser.add_argument("--browser-geometry", action="store_true", help="Run browser geometry QA while evaluating")
+    parser.add_argument("--contract", action="store_true", help="Run preset contract QA while evaluating")
+    parser.add_argument("--export-smoke", action="store_true", help="Run export DOM smoke QA while evaluating")
+    parser.add_argument("--mobile-geometry", action="store_true", help="Run mobile browser geometry QA while evaluating")
+    parser.add_argument("--ai-advised", action="store_true", help="Run AI-advised content/rhythm eval while evaluating")
+    parser.add_argument("--pptx-export", action="store_true", help="Run real HTML-to-PPTX export smoke while evaluating")
+    parser.add_argument("--promotion-gate", action="store_true", help="Run style-native promotion precondition gate")
+    parser.add_argument("--demo-parity", action="store_true", help="Run historical demo parity gate for the 17 profile presets")
+    parser.add_argument("--demo-parity-require-visual", action="store_true", help="Fail demo parity when screenshots cannot be captured")
+    parser.add_argument("--demo-parity-viewport", choices=("desktop", "mobile"), action="append", default=None)
     parser.add_argument("--require-baseline", action="store_true", help="Fail if render cases have no baseline artifact")
     parser.add_argument("--report-path", help="Optional explicit JSON report path")
     parser.add_argument("--summary-md", help="Optional markdown summary output path")
@@ -329,12 +408,30 @@ def main() -> int:
     browser_titles_enabled = args.browser_titles or _suite_requires_browser_titles(suite_path)
     output_dir.mkdir(parents=True, exist_ok=True)
 
-    report = run_suite(
-        suite_path,
-        output_dir=output_dir,
-        baseline_dir=baseline_dir,
-        run_browser_titles=browser_titles_enabled,
-    )
+    run_suite_kwargs = {
+        "output_dir": output_dir,
+        "baseline_dir": baseline_dir,
+        "run_browser_titles": browser_titles_enabled,
+    }
+    if args.browser_geometry:
+        run_suite_kwargs["run_browser_geometry"] = True
+    if args.contract:
+        run_suite_kwargs["run_contract"] = True
+    if args.export_smoke:
+        run_suite_kwargs["run_export_smoke"] = True
+    if args.mobile_geometry:
+        run_suite_kwargs["run_mobile_geometry"] = True
+    if args.ai_advised:
+        run_suite_kwargs["run_ai_advised"] = True
+    if args.pptx_export:
+        run_suite_kwargs["run_pptx_export"] = True
+    if args.promotion_gate:
+        run_suite_kwargs["run_promotion_gate"] = True
+    if args.demo_parity:
+        run_suite_kwargs["run_demo_parity"] = True
+        run_suite_kwargs["demo_parity_require_visual"] = bool(args.demo_parity_require_visual)
+        run_suite_kwargs["demo_parity_viewports"] = args.demo_parity_viewport
+    report = run_suite(suite_path, **run_suite_kwargs)
 
     if args.include_skill_evals:
         report["skill_evals"] = _run_skill_evals(args, output_dir, baseline_dir)
