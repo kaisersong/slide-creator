@@ -96,14 +96,16 @@ def _adapter_key(preset: str) -> str:
 def _visible_classes(preset: str, component_classes: tuple[str, ...]) -> tuple[str, ...]:
     if preset == "Paper & Ink":
         return (
-            "pill",
-            "stats",
-            "stat",
+            "rule",
+            "rule-line",
             "body-text",
             "drop-cap",
             "pull-quote",
             "stat-row",
+            "stat-val",
             "stat-label",
+            "pain-list",
+            "pain-item",
             "steps",
             "step",
         )
@@ -167,6 +169,7 @@ def _make(
     component_classes = _split(classes)
     visible_classes = _visible_classes(preset, component_classes)
     slug = preset.lower().replace("&", "and").replace(" ", "-")
+    background_selectors = ("#slide-1",) if preset == "Paper & Ink" else (".slide-1",)
     return PresetProfileSpec(
         preset=preset,
         family=family,
@@ -180,7 +183,7 @@ def _make(
         background_strategy=_adapter_key(preset),
         adapter_key=_adapter_key(preset),
         visible_signature_classes=visible_classes,
-        background_signature_selectors=(".slide-1",),
+        background_signature_selectors=background_selectors,
         component_adapters=_component_adapters(visible_classes),
     )
 

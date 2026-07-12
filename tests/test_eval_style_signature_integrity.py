@@ -14,6 +14,7 @@ sys.path.insert(0, str(SCRIPTS))
 from low_context import compile_style_contract  # noqa: E402
 from quality_eval import _style_signature_coverage  # noqa: E402
 from run_evals import _compute_style_signature_metrics  # noqa: E402
+from style_signature_eval import collect_signature_presence, requirement_for_preset  # noqa: E402
 
 
 def _class_names_required_by_contract(preset: str) -> tuple[str, ...]:
@@ -139,3 +140,17 @@ def test_empty_pseudo_selector_does_not_count_as_visible_background_signature():
 
     assert _coverage_from_run_evals(html_text, "Paper & Ink") == 0
     assert _coverage_from_quality_eval(html_text, "Paper & Ink") == 0
+
+
+def test_paper_ink_signature_requirement_matches_reference_demo_components():
+    html_text = (ROOT / "demos" / "paper-ink-zh.html").read_text(encoding="utf-8")
+    requirement = requirement_for_preset("Paper & Ink")
+    presence = collect_signature_presence(html_text, "Paper & Ink")
+
+    assert ".pill" not in requirement.classes
+    assert ".stats" not in requirement.classes
+    assert ".stat" not in requirement.classes
+    assert "#slide-1" in requirement.backgrounds
+    assert ".stat-val" in presence.visible_class_hits
+    assert "#slide-1" in presence.background_hits
+    assert presence.coverage >= 0.8

@@ -44,6 +44,7 @@ POLISH_DEMO = ROOT / "demos" / "mode-paths" / "polish-BRIEF.json"
 DATA_STORY_CASE = ROOT / "evals" / "preset-surface-phase1" / "cases" / "core-data-story-brief.json"
 CORE_SWISS_BRIEF = ROOT / "evals" / "preset-surface-phase1" / "cases" / "core-swiss-modern-brief.json"
 CORE_DATA_STORY_BRIEF = ROOT / "evals" / "preset-surface-phase1" / "cases" / "core-data-story-brief.json"
+ENTERPRISE_INTENT_BRIEF = ROOT / "demos" / "mode-paths" / "intent-broker-auto-BRIEF.json"
 BLUE_SKY_DEMO = ROOT / "demos" / "blue-sky-zh.html"
 CORE_GEOMETRY_VIEWPORTS = [{"width": 1600, "height": 900}, {"width": 1280, "height": 720}]
 
@@ -595,12 +596,49 @@ def test_balance_title_lines_produces_no_orphans_or_collapsed_middle_line():
     assert not _has_collapsed_middle_line([_title_visual_units(line) for line in lines])
 
 
+def test_balance_title_lines_preserves_cjk_words_and_quote_boundaries():
+    assert _balance_title_lines("我们正站在一个『背水一战』的时刻", force_balance=True) == [
+        "我们正站在一个",
+        "『背水一战』的时刻",
+    ]
+
+    philosophy_lines = _balance_title_lines(
+        "哲学 7.0 的升级：把『辩证性』写进客户哲学",
+        force_balance=True,
+    )
+    philosophy_joined = "|".join(philosophy_lines)
+    assert "升|级" not in philosophy_joined
+    assert "『|" not in philosophy_joined
+    assert not any(line.endswith("把") for line in philosophy_lines)
+
+    ecology_lines = _balance_title_lines("生态哲学升级:智能共生，不走邪道", force_balance=True)
+    ecology_joined = "|".join(ecology_lines)
+    assert "智|能" not in ecology_joined
+    assert "升级:|" in ecology_joined or "升级：|" in ecology_joined
+
+
+def test_balance_title_lines_preserves_common_cjk_title_words():
+    cases = {
+        "AERAM 五级描述的是授权状态，不是企业优劣排名": ("状|态",),
+        "落地路线从低风险真实场景开始，而不是先追求 L5": ("风|险",),
+        "最终输出是一张授权地图，而不是一个宣传等级": ("地|图",),
+        "SCOPE 把自治能力拆成五个必须同时过线的锚点": ("五|个",),
+    }
+
+    for title, forbidden_breaks in cases.items():
+        joined = "|".join(_balance_title_lines(title, force_balance=True))
+
+        for forbidden in forbidden_breaks:
+            assert forbidden not in joined
+
+
 def test_balance_title_lines_force_balance_rescues_cjk_statement_orphan():
     lines = _balance_title_lines("这轮数据已经足够支持谨慎扩面", force_balance=True)
 
     assert len(lines) == 2
     assert not any(_is_orphan_title_line(line) for line in lines)
-    assert abs(_title_visual_units(lines[0]) - _title_visual_units(lines[1])) <= 1.0
+    assert "足|够" not in "|".join(lines)
+    assert abs(_title_visual_units(lines[0]) - _title_visual_units(lines[1])) <= 2.0
 
 
 def test_compact_display_token_avoids_dangling_negation_and_generic_ai_prefix():
@@ -615,8 +653,27 @@ def test_render_data_story_cta_close_uses_balanced_title_markup():
 
     assert packet["preset"] == "Data Story"
     assert 'class="ds-heading reveal title-balance"' in html
-    assert "这轮数据已经足" in html
-    assert "够支持谨慎扩面" in html
+    assert '<span class="title-line">这轮数据已经足</span><span class="title-line">够支持谨慎扩面</span>' not in html
+
+
+def test_enterprise_dark_split_titles_balance_before_browser_wrap_orphans():
+    brief = read_json(ENTERPRISE_INTENT_BRIEF)
+
+    html, packet, _ = render_from_brief(brief)
+    soup = BeautifulSoup(html, "html.parser")
+    split_titles = {
+        title.get_text("", strip=True): title
+        for title in soup.select(".enterprise-split .ent-title")
+    }
+
+    assert packet["preset"] == "Enterprise Dark"
+    for text in ("现有协作方式缺少稳定任务语义", "Broker 只负责协议与可靠投递"):
+        title = split_titles[text]
+        assert "title-balance" in title.get("class", [])
+        lines = [line.get_text("", strip=True) for line in title.select(".title-line")]
+        assert len(lines) == 2
+        assert not any(_is_orphan_title_line(line) for line in lines)
+        assert not _has_collapsed_middle_line([_title_visual_units(line) for line in lines])
 
 
 def test_data_story_cover_uses_title_as_primary_hero_not_metric():

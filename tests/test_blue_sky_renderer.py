@@ -131,6 +131,21 @@ def test_blue_sky_generated_html_injects_current_watermark():
     assert "· Blue Sky" in html
 
 
+def test_blue_sky_keeps_medium_cjk_titles_on_one_line():
+    brief = _openai_like_blue_sky_brief()
+    brief["narrative"]["slides"][1]["title"] = "我们正站在一个『背水一战』的时刻"
+    brief["narrative"]["slides"][2]["title"] = "哲学 7.0 的升级：把『辩证性』写进客户哲学"
+    brief["narrative"]["slides"][3]["title"] = "生态哲学升级:智能共生，不走邪道"
+    brief["narrative"]["slides"][4]["title"] = "落地路线从低风险真实场景开始，而不是先追求 L5"
+
+    html = render_from_brief(brief)[0]
+
+    assert '<h2 class="gt reveal title-nowrap">我们正站在一个『背水一战』的时刻</h2>' in html
+    assert '<h2 class="gt reveal title-nowrap">哲学 7.0 的升级：把『辩证性』写进客户哲学</h2>' in html
+    assert '<h2 class="gt reveal title-nowrap">生态哲学升级:智能共生，不走邪道</h2>' in html
+    assert '<h2 class="gt reveal title-nowrap">落地路线从低风险真实场景开始，而不是先追求 L5</h2>' in html
+
+
 def test_blue_sky_canonical_twelve_role_brief_strict_validates():
     brief = _openai_like_blue_sky_brief()
     html = render_from_brief(brief)[0]

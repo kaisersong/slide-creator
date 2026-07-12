@@ -505,6 +505,8 @@ slide-creator **无外部依赖**。Python 3 仅用于规划阶段可选的图�
 
 ## 版本日志
 
+**v2.28.0** — 生成质量门禁发版：单 deck eval 现在会对未授权的占位文案 / demo 文案残留给出 hard failure；Paper & Ink 的 signature 评分改为对齐真实 reference demo；同时优化 CJK 标题换行，Blue Sky 报告里的中等长度标题会优先充分利用横向空间，不再把“风险”“地图”等词拆到两行。
+
 **v2.27.0** — Captured-run eval 架构发版：新增 OpenAI-style skill eval prompts、归一化 trace 评分、fixture style rubric、live Codex baseline、回归比较器和可选 release-gate 集成。README 与 design docs 现在记录 Supervisor / Generate Worker / Style Judge 三段式架构、上下文隔离规则和 token 计费策略，确保 live eval 成本可见，而不是被 subagent 隐藏。
 
 **v2.26.0** — Blue Sky 确定性渲染与自定义主题发版：Blue Sky 现在走正式 BRIEF 渲染链路并补齐 strict 校验覆盖；自定义主题在源仓库和插件包布局下都能正确解析；Kingdee / Cloudhub 私有主题素材完成路径清理、压缩和回归测试锁定。

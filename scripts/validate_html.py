@@ -324,6 +324,48 @@ def _extract_title_lines(node) -> list[str]:
     return [text] if text else []
 
 
+_TITLE_OPENING_PUNCTUATION = "([<{（《〈【「『"
+_TITLE_CLOSING_PUNCTUATION = ".,!?;:%，。！？；：、）》〉】」』"
+_TITLE_DANGLING_CONNECTORS = frozenset("把以从向与和及为对在将让被给不")
+_PROTECTED_CJK_TITLE_BIGRAMS = frozenset(
+    """
+    文化 转型 时代 哲学 升级 智能 共生 邪道 辩证 客户 产品 销售 交付 服务
+    市场 生态 领导 能力 战略 全景 产研 中心 实践 干部 企业 伙伴 模型 安全
+    数据 长期 价值 系统 组织 技术 投入 重构 成败 员工 管理 基础 答卷 原生
+    操作 愿景 夯实 塑造 践行 素养 认知 伦理 治理 引领 趋势 机会 模式
+    谨慎 扩面 足够 支持 内核 壁垒 不清 状态 风险 地图 五个 真实 场景
+    开始 追求 输出 宣传 等级 自治 必须 同时 过线 锚点 授权
+    """.split()
+)
+
+
+def _compact_title_text(value: str) -> str:
+    return re.sub(r"\s+", "", value or "")
+
+
+def _semantic_title_boundary_issue(lines: list[str]) -> str | None:
+    for left, right in zip(lines, lines[1:]):
+        left_compact = _compact_title_text(left)
+        right_compact = _compact_title_text(right)
+        if not left_compact or not right_compact:
+            continue
+        left_last = left_compact[-1]
+        right_first = right_compact[0]
+        if left_last in _TITLE_OPENING_PUNCTUATION:
+            return f"dangling opening punctuation '{left_last}'"
+        if right_first in _TITLE_CLOSING_PUNCTUATION:
+            return f"line starts with closing punctuation '{right_first}'"
+        if left_last in _TITLE_DANGLING_CONNECTORS:
+            return f"dangling connector '{left_last}'"
+        if (
+            re.fullmatch(r"[\u3400-\u9fff]", left_last)
+            and re.fullmatch(r"[\u3400-\u9fff]", right_first)
+            and f"{left_last}{right_first}" in _PROTECTED_CJK_TITLE_BIGRAMS
+        ):
+            return f"bad CJK word split '{left_last}{right_first}'"
+    return None
+
+
 def _is_orphan_title_line(text: str) -> bool:
     compact = re.sub(r"\s+", "", text)
     if not compact:
@@ -370,6 +412,8 @@ def _is_title_balance_exempt(node) -> bool:
 def _looks_like_risky_auto_wrap(node, slide, title_text: str) -> bool:
     units = _title_visual_units(title_text)
     if units < 14:
+        return False
+    if "title-nowrap" in _class_tokens(node.get("class", [])):
         return False
 
     style_tokens = []
@@ -1125,6 +1169,10 @@ def check_title_balance(soup, content, warnings) -> tuple[bool, str]:
             orphan_line = next((line for line in lines if _is_orphan_title_line(line)), None)
             if orphan_line:
                 issues.append(f"{label}: orphan line '{orphan_line}'")
+                continue
+            semantic_issue = _semantic_title_boundary_issue(lines)
+            if semantic_issue:
+                issues.append(f"{label}: {semantic_issue} ({lines})")
                 continue
             if _has_collapsed_middle_line(units):
                 issues.append(f"{label}: collapsed middle line ({lines})")
