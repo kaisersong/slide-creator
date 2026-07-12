@@ -2576,6 +2576,73 @@ def _join_title_tokens(tokens: list[str]) -> str:
     return result.strip()
 
 
+_TITLE_OPENING_PUNCTUATION = "([<{（《〈【「『"
+_TITLE_CLOSING_PUNCTUATION = ".,!?;:%，。！？；：、）》〉】」』"
+_TITLE_DANGLING_CONNECTORS = frozenset("把以从向与和及为对在将让被给不")
+_PROTECTED_CJK_TITLE_BIGRAMS = frozenset(
+    """
+    文化 转型 时代 哲学 升级 智能 共生 邪道 辩证 客户 产品 销售 交付 服务
+    市场 生态 领导 能力 战略 全景 产研 中心 实践 干部 企业 伙伴 模型 安全
+    数据 长期 价值 系统 组织 技术 投入 重构 成败 员工 管理 基础 答卷 原生
+    操作 愿景 夯实 塑造 践行 素养 认知 伦理 治理 引领 趋势 机会 模式
+    谨慎 扩面 足够 支持 内核 壁垒 不清 状态 风险 地图 五个 真实 场景
+    开始 追求 输出 宣传 等级 自治 必须 同时 过线 锚点 授权
+    """.split()
+)
+
+
+def _compact_title_text(value: str) -> str:
+    return re.sub(r"\s+", "", value or "")
+
+
+def _semantic_title_boundary_penalty(left: str, right: str) -> float:
+    left_compact = _compact_title_text(left)
+    right_compact = _compact_title_text(right)
+    if not left_compact or not right_compact:
+        return 0.0
+
+    left_last = left_compact[-1]
+    right_first = right_compact[0]
+    if left_last in _TITLE_OPENING_PUNCTUATION:
+        return 120.0
+    if right_first in _TITLE_CLOSING_PUNCTUATION:
+        return 120.0
+    if left_last in _TITLE_DANGLING_CONNECTORS:
+        return 35.0
+
+    if re.fullmatch(r"[\u3400-\u9fff]", left_last) and re.fullmatch(r"[\u3400-\u9fff]", right_first):
+        if f"{left_last}{right_first}" in _PROTECTED_CJK_TITLE_BIGRAMS:
+            return 90.0
+        return 1.25
+
+    if left_last in "，。！？；：:":
+        return -0.35
+    return 0.0
+
+
+def _semantic_title_boundary_issue(lines: list[str]) -> str | None:
+    for left, right in zip(lines, lines[1:]):
+        left_compact = _compact_title_text(left)
+        right_compact = _compact_title_text(right)
+        if not left_compact or not right_compact:
+            continue
+        left_last = left_compact[-1]
+        right_first = right_compact[0]
+        if left_last in _TITLE_OPENING_PUNCTUATION:
+            return f"dangling opening punctuation '{left_last}'"
+        if right_first in _TITLE_CLOSING_PUNCTUATION:
+            return f"line starts with closing punctuation '{right_first}'"
+        if left_last in _TITLE_DANGLING_CONNECTORS:
+            return f"dangling connector '{left_last}'"
+        if (
+            re.fullmatch(r"[\u3400-\u9fff]", left_last)
+            and re.fullmatch(r"[\u3400-\u9fff]", right_first)
+            and f"{left_last}{right_first}" in _PROTECTED_CJK_TITLE_BIGRAMS
+        ):
+            return f"bad CJK word split '{left_last}{right_first}'"
+    return None
+
+
 def _is_orphan_title_line(text: str) -> bool:
     compact = re.sub(r"\s+", "", text)
     if not compact:
@@ -2616,6 +2683,7 @@ def _title_partition_cost(lines: list[str]) -> float:
         return float("inf")
     target = sum(units) / len(units)
     cost = sum((unit - target) ** 2 for unit in units)
+    cost += sum(_semantic_title_boundary_penalty(left, right) for left, right in zip(lines, lines[1:]))
     if any(_is_orphan_title_line(line) for line in lines):
         cost += 100.0
     if _has_collapsed_middle_line(units):
@@ -2626,6 +2694,8 @@ def _title_partition_cost(lines: list[str]) -> float:
     total_units = sum(units)
     if len(lines) == 1 and total_units > 14.5:
         cost += (total_units - 14.5) * 3.2
+    if len(lines) > 1:
+        cost += sum(max(0.0, unit - 10.0) ** 2 * 2.0 for unit in units)
     if len(lines) == 2 and total_units > 23:
         cost += 10.0
     if len(lines) == 3 and total_units < 11:
@@ -5246,7 +5316,14 @@ def _render_enterprise_story_dashboard(spec: dict[str, Any], total: int) -> str:
 
 def _render_enterprise_consulting_split(spec: dict[str, Any], total: int) -> str:
     slide_number = spec["slide_number"]
-    title_tag = _title_tag("h2", "ent-title", spec["title"], preset="Enterprise Dark", layout_id=spec["layout_id"])
+    title_tag = _title_tag(
+        "h2",
+        "ent-title",
+        spec["title"],
+        preset="Enterprise Dark",
+        layout_id=spec["layout_id"],
+        force_balance=True,
+    )
     labels = "".join(f'<div class="ent-split-label">{_escape(item)}</div>' for item in _spec_display_items(spec, limit=3))
     pairs = _spec_detail_pairs(spec, count=3)
     accent_colors = ["ent-accent-cyan", "ent-accent-blue", "ent-accent-violet"]
@@ -7055,13 +7132,21 @@ def _blue_sky_watermark_script(*, preset: str, version: str) -> str:
 
 
 def _blue_sky_title_tag(tag: str, text: str, *, layout_id: str, extra_attrs: str = "") -> str:
+    normalized = _normalize_title_text(text)
+    nowrap_limit = 18.5 if tag.lower() == "h1" else 22.5
+    if _title_visual_units(normalized) <= nowrap_limit:
+        attrs = 'class="gt reveal title-nowrap"'
+        if extra_attrs:
+            attrs += f" {extra_attrs}"
+        return f"<{tag} {attrs}>{_escape(normalized)}</{tag}>"
+
     return _title_tag(
         tag,
         "gt",
         text,
         preset="Blue Sky",
         layout_id=layout_id,
-        force_balance=True,
+        force_balance=False,
         extra_attrs=extra_attrs,
     )
 
@@ -7386,6 +7471,17 @@ def render_blue_sky_html(
 }}
 .title-line {{
   display: block;
+}}
+.title-nowrap {{
+  white-space: nowrap;
+}}
+h2.title-nowrap {{
+  font-size: clamp(1.12rem, 2.6vw, 2.25rem);
+}}
+@media (max-width: 720px) {{
+  .title-nowrap {{
+    white-space: normal;
+  }}
 }}
 .slide-credit {{
   position: absolute;

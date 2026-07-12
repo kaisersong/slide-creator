@@ -1,0 +1,16 @@
+{
+  "content": {
+    "must_include": ["质量评估 gate", "明确证据源"],
+    "must_avoid": ["泛泛开场", "内部策略禁句：不要外传"],
+    "global_facts": []
+  },
+  "narrative": {
+    "slides": [
+      {
+        "role": "quality",
+        "title": "内容残留要有证据",
+        "key_point": "质量评估 gate 只阻断明确残留，抽象禁忌保持 warning。"
+      }
+    ]
+  }
+}

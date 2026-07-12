@@ -505,6 +505,8 @@ For PPTX/PNG export: `clawhub install kai-html-export` or `pip install playwrigh
 
 ## Version History
 
+**v2.28.0** — Generation quality gate release: tightened single-deck evals with hard failures for unauthorized placeholder/demo-copy residuals, corrected Paper & Ink signature scoring against the real reference demo, and improved CJK title wrapping so medium Blue Sky report titles use available horizontal space instead of splitting words like "风险" or "地图" across forced lines.
+
 **v2.27.0** — Captured-run eval architecture release: added OpenAI-style skill eval prompts, normalized trace scoring, fixture style rubrics, live Codex baselines, regression comparison, and optional release-gate integration. README and design docs now document the Supervisor / Generate Worker / Style Judge split, context isolation rules, and token accounting policy so live eval cost remains visible instead of hidden by subagents.
 
 **v2.26.0** — Blue Sky deterministic renderer and custom theme release: Blue Sky now renders through the canonical BRIEF pipeline with strict validation coverage, custom themes resolve correctly in both source and plugin layouts, and private Kingdee / Cloudhub theme assets were cleaned up, compressed, and locked with regression tests.

@@ -16,6 +16,15 @@ from quality_eval import _style_signature_coverage, analyze_html_quality  # noqa
 
 
 QUALITY_EVAL_CLI = SCRIPTS / "eval-quality.py"
+COPY_RESIDUAL_FIXTURES = ROOT / "tests" / "fixtures" / "copy-residual"
+
+
+def _copy_residual_fixture_text(name: str) -> str:
+    return (COPY_RESIDUAL_FIXTURES / name).read_text(encoding="utf-8")
+
+
+def _copy_residual_fixture_json(name: str) -> dict:
+    return json.loads(_copy_residual_fixture_text(name))
 
 
 def test_detects_default_notes_panel_leak_and_occlusion_risk():
@@ -545,6 +554,85 @@ def test_quality_eval_cli_accepts_prior_eval_report_for_non_regression(tmp_path:
     assert report["comparison"]["non_regression"]["pass"] is False
     assert report["quality_gates"]["baseline-non-regression"] is False
     assert "baseline-regression" in report["hard_failures"]
+
+
+def test_quality_eval_passes_clean_copy_residual_fixture():
+    brief = _copy_residual_fixture_json("good-brief.json")
+    html = _copy_residual_fixture_text("good.html")
+
+    report = analyze_html_quality(html, brief=brief, preset="Swiss Modern")
+
+    assert report["quality_gates"]["no-copy-residual-hard-failures"] is True
+    assert report["diagnostics"]["copy_residual_hits"] == []
+    assert report["diagnostics"]["must_avoid_residual_hits"] == []
+    assert not any(code.endswith("-residual") for code in report["hard_failures"])
+
+
+def test_quality_eval_hard_fails_visible_placeholder_residual():
+    brief = _copy_residual_fixture_json("good-brief.json")
+    html = _copy_residual_fixture_text("placeholder-leak.html")
+
+    report = analyze_html_quality(html, brief=brief, preset="Swiss Modern")
+
+    assert report["quality_gates"]["no-copy-residual-hard-failures"] is False
+    assert "placeholder-residual" in report["hard_failures"]
+    assert report["diagnostics"]["copy_residual_hit_count"] == 1
+    assert report["diagnostics"]["copy_residual_hits"] == [
+        {
+            "code": "placeholder-residual",
+            "term": "请输入文本",
+            "category": "placeholder",
+            "severity": "hard",
+            "source": "references/copy-residual-blocklist.json",
+            "evidence": "generic editable placeholder text",
+        }
+    ]
+
+
+def test_quality_eval_hard_fails_unauthorized_demo_copy_residual():
+    brief = _copy_residual_fixture_json("good-brief.json")
+    html = _copy_residual_fixture_text("demo-copy-leak.html")
+
+    report = analyze_html_quality(html, brief=brief, preset="Swiss Modern")
+
+    assert report["quality_gates"]["no-copy-residual-hard-failures"] is False
+    assert "demo-copy-residual" in report["hard_failures"]
+    assert report["diagnostics"]["copy_residual_hits"][0]["term"] == "Salesforce 的产品里程碑几乎逐点映射了行业分水岭"
+
+
+def test_quality_eval_allows_demo_copy_when_source_authorizes_it():
+    brief = _copy_residual_fixture_json("good-brief.json")
+    html = _copy_residual_fixture_text("demo-copy-leak.html")
+    source = "本次报告主题：Salesforce 的产品里程碑几乎逐点映射了行业分水岭。"
+
+    report = analyze_html_quality(html, brief=brief, source_text=source, preset="Swiss Modern")
+
+    assert report["quality_gates"]["no-copy-residual-hard-failures"] is True
+    assert report["diagnostics"]["copy_residual_hits"] == []
+    assert "demo-copy-residual" not in report["hard_failures"]
+
+
+def test_quality_eval_reports_must_avoid_residuals_without_hard_failing():
+    brief = _copy_residual_fixture_json("good-brief.json")
+    html = _copy_residual_fixture_text("must-avoid-warning.html")
+
+    report = analyze_html_quality(html, brief=brief, preset="Swiss Modern")
+
+    assert report["quality_gates"]["no-copy-residual-hard-failures"] is True
+    assert report["diagnostics"]["copy_residual_hits"] == []
+    assert report["diagnostics"]["must_avoid_residual_hits"] == [
+        {
+            "term": "泛泛开场",
+            "severity": "warning",
+            "source": "brief.content.must_avoid",
+        },
+        {
+            "term": "内部策略禁句：不要外传",
+            "severity": "warning",
+            "source": "brief.content.must_avoid",
+        },
+    ]
+    assert not any(code in report["hard_failures"] for code in ("must-avoid-copy-residual", "copy-residual"))
 
 
 def test_quality_eval_flags_chart_without_slide_local_numeric_signal():

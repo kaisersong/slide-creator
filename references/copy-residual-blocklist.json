@@ -1,0 +1,21 @@
+{
+  "version": 1,
+  "items": [
+    {
+      "term": "请输入文本",
+      "code": "placeholder-residual",
+      "category": "placeholder",
+      "severity": "hard",
+      "allow_if_authorized": false,
+      "evidence": "generic editable placeholder text"
+    },
+    {
+      "term": "Salesforce 的产品里程碑几乎逐点映射了行业分水岭",
+      "code": "demo-copy-residual",
+      "category": "demo-copy",
+      "severity": "hard",
+      "allow_if_authorized": true,
+      "evidence": "tests/test_low_context_pipeline.py:2453"
+    }
+  ]
+}

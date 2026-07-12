@@ -100,6 +100,72 @@ def test_title_balance_rejects_collapsed_middle_line():
     )
 
 
+def test_title_balance_rejects_semantic_cjk_breaks():
+    validate = load_validate_module()
+    html = """
+    <!DOCTYPE html>
+    <html>
+      <body data-preset="Blue Sky">
+        <section class="slide" id="slide-1">
+          <h2 class="gt title-balance">
+            <span class="title-line">我们正站在一个『</span>
+            <span class="title-line">背水一战』的时刻</span>
+          </h2>
+        </section>
+        <section class="slide" id="slide-2">
+          <h2 class="gt title-balance">
+            <span class="title-line">哲学 7.0 的升</span>
+            <span class="title-line">级：把『辩证性』</span>
+            <span class="title-line">写进客户哲学</span>
+          </h2>
+        </section>
+        <section class="slide" id="slide-3">
+          <h2 class="gt title-balance">
+            <span class="title-line">生态哲学升级:智</span>
+            <span class="title-line">能共生，不走邪道</span>
+          </h2>
+        </section>
+      </body>
+    </html>
+    """
+    soup = BeautifulSoup(html, "html.parser")
+
+    ok, message = validate.check_title_balance(soup, html, [])
+
+    assert not ok
+    assert "dangling opening punctuation" in message
+
+
+def test_title_balance_rejects_common_cjk_word_splits():
+    validate = load_validate_module()
+    html = """
+    <!DOCTYPE html>
+    <html>
+      <body data-preset="Blue Sky">
+        <section class="slide" id="slide-1">
+          <h2 class="gt title-balance">
+            <span class="title-line">落地路线从低风</span>
+            <span class="title-line">险真实场景开始</span>
+          </h2>
+        </section>
+        <section class="slide" id="slide-2">
+          <h2 class="gt title-balance">
+            <span class="title-line">最终输出是一张授权地</span>
+            <span class="title-line">图，而不是宣传等级</span>
+          </h2>
+        </section>
+      </body>
+    </html>
+    """
+    soup = BeautifulSoup(html, "html.parser")
+
+    ok, message = validate.check_title_balance(soup, html, [])
+
+    assert not ok
+    assert "bad CJK word split '风险'" in message
+    assert "bad CJK word split '地图'" in message
+
+
 def test_title_balance_rejects_long_display_title_that_relies_on_auto_wrap():
     validate = load_validate_module()
     html = """

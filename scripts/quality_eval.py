@@ -45,6 +45,16 @@ COMPONENT_KIND_SELECTORS: dict[str, str] = {
 }
 
 
+def _project_root() -> Path:
+    for candidate in Path(__file__).resolve().parents:
+        if (candidate / "scripts").is_dir() and (candidate / "references").is_dir():
+            return candidate
+    return Path(__file__).resolve().parent.parent
+
+
+COPY_RESIDUAL_BLOCKLIST_PATH = _project_root() / "references" / "copy-residual-blocklist.json"
+
+
 def _read_text(path: str | Path) -> str:
     return Path(path).read_text(encoding="utf-8")
 
@@ -57,6 +67,96 @@ def _load_optional_brief(path: str | Path | None) -> dict[str, Any] | None:
 
 def _normalize_text(value: str) -> str:
     return re.sub(r"\s+", " ", value).strip()
+
+
+def _residual_text_contains(haystack: str, needle: str) -> bool:
+    normalized_haystack = _normalize_text(haystack).casefold()
+    normalized_needle = _normalize_text(needle).casefold()
+    return bool(normalized_needle and normalized_needle in normalized_haystack)
+
+
+def _copy_residual_source_label(path: Path) -> str:
+    try:
+        return path.relative_to(_project_root()).as_posix()
+    except ValueError:
+        return path.as_posix()
+
+
+def _load_copy_residual_blocklist(path: Path = COPY_RESIDUAL_BLOCKLIST_PATH) -> list[dict[str, Any]]:
+    if not path.exists():
+        return []
+    data = json.loads(path.read_text(encoding="utf-8"))
+    items = data.get("items", []) if isinstance(data, dict) else []
+    normalized_items: list[dict[str, Any]] = []
+    source = _copy_residual_source_label(path)
+    for item in items:
+        if not isinstance(item, dict):
+            continue
+        term = str(item.get("term") or "").strip()
+        if not term:
+            continue
+        category = str(item.get("category") or "copy").strip() or "copy"
+        normalized_items.append(
+            {
+                "term": term,
+                "code": str(item.get("code") or f"{category}-residual").strip(),
+                "category": category,
+                "severity": str(item.get("severity") or "warning").strip().lower(),
+                "allow_if_authorized": bool(item.get("allow_if_authorized", True)),
+                "evidence": str(item.get("evidence") or "").strip(),
+                "source": source,
+            }
+        )
+    return normalized_items
+
+
+def _copy_residual_authorized(term: str, brief: dict[str, Any] | None, source_text: str | None) -> bool:
+    corpus: list[str] = []
+    if brief:
+        corpus.append(json.dumps(brief, ensure_ascii=False))
+    if source_text:
+        corpus.append(source_text)
+    return any(_residual_text_contains(chunk, term) for chunk in corpus)
+
+
+def _copy_residual_diagnostics(
+    visible_text: str,
+    brief: dict[str, Any] | None,
+    source_text: str | None,
+) -> tuple[list[dict[str, str]], list[dict[str, str]], list[str]]:
+    hard_hits: list[dict[str, str]] = []
+    hard_failures: list[str] = []
+    for item in _load_copy_residual_blocklist():
+        if not _residual_text_contains(visible_text, item["term"]):
+            continue
+        if item["allow_if_authorized"] and _copy_residual_authorized(item["term"], brief, source_text):
+            continue
+        hit = {
+            "code": item["code"],
+            "term": item["term"],
+            "category": item["category"],
+            "severity": item["severity"],
+            "source": item["source"],
+            "evidence": item["evidence"],
+        }
+        hard_hits.append(hit)
+        if item["severity"] == "hard" and item["code"] not in hard_failures:
+            hard_failures.append(item["code"])
+
+    must_avoid_hits: list[dict[str, str]] = []
+    content = brief.get("content", {}) if brief else {}
+    for item in content.get("must_avoid", []) or []:
+        term = str(item).strip()
+        if term and _residual_text_contains(visible_text, term):
+            must_avoid_hits.append(
+                {
+                    "term": term,
+                    "severity": "warning",
+                    "source": "brief.content.must_avoid",
+                }
+            )
+
+    return hard_hits, must_avoid_hits, hard_failures
 
 
 def _extract_css_text(html_text: str) -> str:
@@ -555,6 +655,7 @@ def analyze_html_quality(
     css_text = _extract_css_text(html_text)
     slides = list(soup.select(".slide"))
     inferred_preset = preset or (soup.body.get("data-preset") if soup.body else None)
+    visible_text = soup.get_text(" ", strip=True)
 
     default_visible_chrome: list[str] = []
     if soup.select_one("#notes-panel") and not _selector_hidden_by_default(css_text, "#notes-panel"):
@@ -589,11 +690,16 @@ def analyze_html_quality(
     avg_components = _avg_component_kinds_per_slide(slides)
     minimal_slide_ratio, max_minimal_run = _minimal_slide_ratio(slides)
     role_coverage, role_sequence_match = _narrative_role_coverage(brief, soup)
-    must_include_coverage = _must_include_coverage(brief, soup.get_text(" ", strip=True))
+    must_include_coverage = _must_include_coverage(brief, visible_text)
     chart_signal_mismatch_count, chart_signal_mismatch_rate = _chart_signal_mismatch(brief, slides)
     global_fact_overuse_count = _global_fact_overuse(brief, slides)
     style_signature_coverage = _style_signature_coverage(soup, inferred_preset)
     style_presence = collect_signature_presence(html_text, inferred_preset) if inferred_preset else None
+    copy_residual_hits, must_avoid_hits, copy_residual_failures = _copy_residual_diagnostics(
+        visible_text,
+        brief,
+        source_text,
+    )
 
     diagnostics = {
         "quality_tier": None,
@@ -623,6 +729,9 @@ def analyze_html_quality(
         "chart_signal_mismatch_count": chart_signal_mismatch_count,
         "chart_signal_mismatch_rate": chart_signal_mismatch_rate,
         "global_fact_overuse_count": global_fact_overuse_count,
+        "copy_residual_hit_count": len(copy_residual_hits),
+        "copy_residual_hits": copy_residual_hits,
+        "must_avoid_residual_hits": must_avoid_hits,
         "narrative_role_coverage": role_coverage,
         "role_sequence_match": role_sequence_match,
         "minimal_slide_ratio": minimal_slide_ratio,
@@ -639,6 +748,7 @@ def analyze_html_quality(
         "numeric-faithfulness": numeric_faithfulness >= 0.95,
         "source-fact-coverage": must_include_coverage is None or must_include_coverage >= 0.67,
         "chart-local-signal": chart_signal_mismatch_count in (None, 0),
+        "no-copy-residual-hard-failures": not copy_residual_failures,
         "narrative-role-coverage": role_coverage is None or role_coverage == 1.0,
         "minimal-slide-run": max_minimal_run < 3,
     }
@@ -654,6 +764,9 @@ def analyze_html_quality(
         hard_failures.append("hallucinated-numeric-chart-values")
     if chart_signal_mismatch_count:
         hard_failures.append("chart-without-local-numeric-signal")
+    for code in copy_residual_failures:
+        if code not in hard_failures:
+            hard_failures.append(code)
     if role_coverage is not None and role_coverage < 1.0:
         hard_failures.append("narrative-role-mismatch")
     if title_browser_report:
