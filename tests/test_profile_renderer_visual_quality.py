@@ -15,6 +15,7 @@ sys.path.insert(0, str(SCRIPTS))
 
 from low_context import render_from_brief  # noqa: E402
 from compare_demo_parity import PRESETS, analyze_html  # noqa: E402
+from preset_profile_renderer import _title_lines  # noqa: E402
 from preset_profile_specs import PROFILE_SPECS  # noqa: E402
 
 
@@ -426,6 +427,12 @@ def test_profile_renderer_does_not_split_latin_tokens_inside_cjk_titles():
         assert not _line_pair_splits_token(title_lines, "链路重排"), f"{preset} split 链路重排 across title lines"
 
 
+def test_profile_renderer_does_not_force_moderate_cjk_titles_to_wrap_early():
+    title = "用同一把尺子比较速度、质量与返工"
+
+    assert _title_lines(title) == [title]
+
+
 def test_profile_renderer_title_line_class_is_not_split_or_signature_polluted():
     polluted = []
     for preset in PROFILE_SPECS:
@@ -485,6 +492,11 @@ def test_profile_renderer_emits_visual_safety_css_for_demo_derived_content():
     assert ".profile-fit-title" in css_text
     assert "word-break: keep-all" in css_text
     assert "min-width: 0" in css_text
+    assert re.search(
+        r'\.profile-fit-title\s+\.title-line\s*\{[^}]*white-space:\s*normal\s*!important',
+        css_text,
+        re.DOTALL,
+    )
 
 
 def test_profile_renderer_emits_readability_hardening_css_for_text_and_command_pills():
@@ -858,6 +870,14 @@ def test_generic_profile_non_cover_slides_use_distinct_layout_routes():
             if soup.select_one(f"section.slide:not(#slide-1) {selector}") is not None
         )
         assert len(used_routes) >= 3, f"{preset} does not vary page rhythm enough: {sorted(used_routes)}"
+
+
+def test_profile_renderer_does_not_attach_demo_css_classes_to_arbitrary_content_nodes():
+    brief = _agent_delivery_review_brief_for_preset("Modern Newspaper")
+    html_text, _packet = _render_profile_from_brief("Modern Newspaper", brief)
+    soup = BeautifulSoup(html_text, "html.parser")
+
+    assert soup.select(".np-rule .np-cmd") == []
 
 
 def test_profile_renderer_styles_visible_signature_classes_in_css():

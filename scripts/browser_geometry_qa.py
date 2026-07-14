@@ -559,6 +559,17 @@ def _wait_for_deterministic_layout(page) -> bool:
     )
 
 
+def _capture_screenshot(page, *, attempts: int = 2) -> bytes:
+    for attempt in range(max(1, attempts)):
+        try:
+            return page.screenshot(full_page=False, timeout=30000)
+        except Exception:
+            if attempt + 1 >= max(1, attempts):
+                raise
+            page.wait_for_timeout(100)
+    raise AssertionError("screenshot retry loop exited without a result")
+
+
 def _measure_viewport(page, viewport: dict[str, int], stable_runs: int) -> tuple[list[dict[str, Any]], bool]:
     slide_records: list[dict[str, Any]] = []
     overall_stable = True
@@ -580,7 +591,7 @@ def _measure_viewport(page, viewport: dict[str, int], stable_runs: int) -> tuple
             {
                 "slide_index": slide_index,
                 "measurements": measurements,
-                "screenshot_bytes": page.screenshot(full_page=False),
+                "screenshot_bytes": _capture_screenshot(page),
             }
         )
     return slide_records, overall_stable

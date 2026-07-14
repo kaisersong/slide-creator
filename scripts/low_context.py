@@ -34,6 +34,15 @@ THEMES_DIR = ROOT / "themes"
 BRIEF_SCHEMA_PATH = ROOT / "schemas" / "generation-brief.schema.json"
 PRESET_USAGE_RULES_PATH = ROOT / "references" / "preset-usage-rules.json"
 
+PICTORIAL_EMOJI_RE = re.compile(
+    "[\U0001F300-\U0001F6FF\U0001F900-\U0001FAFF\U0001F1E0-\U0001F1FF\ufe0f]+",
+    flags=re.UNICODE,
+)
+
+
+def _sanitize_pictorial_text(value: str) -> str:
+    return PICTORIAL_EMOJI_RE.sub("", value)
+
 
 def _is_custom_theme(preset: str) -> bool:
     capability = get_preset_render_capability(preset)
@@ -2348,9 +2357,9 @@ def build_slide_spec(brief: dict[str, Any], packet: dict[str, Any] | None = None
     evidence_usage: dict[str, int] = {}
     for index, slide in enumerate(brief["narrative"]["slides"], start=1):
         role = slide["role"]
-        claim = _slide_claim(slide)
-        explanation = _slide_explanation(slide)
-        visual_intent = _slide_visual_intent(slide)
+        claim = _sanitize_pictorial_text(_slide_claim(slide))
+        explanation = _sanitize_pictorial_text(_slide_explanation(slide))
+        visual_intent = _sanitize_pictorial_text(_slide_visual_intent(slide))
         preferred_layout_family = str(slide.get("preferred_layout_family") or "").strip().lower() or None
         chart_policy = str(slide.get("chart_policy") or "auto").strip().lower()
         supporting_facts = _slide_supporting_facts(slide)
@@ -2407,7 +2416,7 @@ def build_slide_spec(brief: dict[str, Any], packet: dict[str, Any] | None = None
             "slide_number": slide["slide_number"],
             "role": role,
             "layout_id": layout_id,
-            "title": slide["title"],
+            "title": _sanitize_pictorial_text(slide["title"]),
             "claim": claim,
             "key_point": explanation,
             "explanation": explanation,
@@ -4386,7 +4395,11 @@ body::before {{
 .swiss-cta-close .swiss-title {{
     font-size: clamp(2.4rem, 4.48vw, 4.28rem);
     line-height: 0.98;
-    max-width: min(17ch, 760px) !important;
+    max-width: min(18ch, 800px) !important;
+}}
+
+.swiss-cta-close .swiss-title .title-line {{
+    white-space: normal;
 }}
 
 .swiss-cta-close .cta-block {{
@@ -4448,6 +4461,40 @@ body::before {{
         white-space: normal !important;
         overflow-wrap: anywhere !important;
         word-break: normal !important;
+    }}
+    .geometric_diagram .slide-content.disc-header {{
+        justify-content: flex-start;
+        padding-top: clamp(52px, 7vh, 64px) !important;
+        padding-bottom: 18px !important;
+        gap: 8px;
+    }}
+    .geometric_diagram .disc-body {{
+        flex-direction: column;
+        align-items: stretch;
+        gap: 10px;
+        min-height: 0;
+    }}
+    .geometric_diagram .disc-steps {{
+        gap: 8px;
+    }}
+    .geometric_diagram .disc-step {{
+        gap: 8px;
+    }}
+    .geometric_diagram .disc-step-title {{
+        font-size: 13px;
+        line-height: 1.2;
+    }}
+    .geometric_diagram .disc-step-desc {{
+        font-size: 12.5px;
+        line-height: 1.35;
+    }}
+    .geometric_diagram .disc-diagram {{
+        align-self: center;
+        width: min(230px, 100%);
+        max-height: 170px;
+    }}
+    .geometric_diagram .diagram-svg {{
+        max-height: 170px;
     }}
 }}
 
@@ -6240,6 +6287,20 @@ body[data-preset="Data Story"] .ds-workflow .ds-stage-copy {
         overflow-wrap: anywhere !important;
         word-break: normal !important;
     }
+    body[data-preset="Data Story"] .ds-comparison .ds-matrix {
+        height: min(48vh, 400px);
+    }
+    body[data-preset="Data Story"] .ds-comparison .ds-matrix-cell {
+        padding: 10px;
+        gap: 6px;
+    }
+    body[data-preset="Data Story"] .ds-comparison :is(.ds-matrix-title, .ds-matrix-copy) {
+        display: block;
+        -webkit-line-clamp: unset;
+        overflow: visible;
+    }
+    body[data-preset="Data Story"] .ds-comparison .ds-matrix-title { font-size: 13px; }
+    body[data-preset="Data Story"] .ds-comparison .ds-matrix-copy { font-size: 11.5px; line-height: 1.35; }
 }
 """.strip()
 
@@ -7400,14 +7461,16 @@ def _render_blue_sky_preset_body(items: list[str]) -> str:
 
 def _render_blue_sky_action_cards(spec: dict[str, Any], items: list[str]) -> str:
     cards = []
-    for item in items[:4]:
+    accent_classes = [" info", " co", "", ""]
+    for index, item in enumerate(items[:4]):
         title, body = _blue_sky_item_parts(item)
         body = body or item
         is_command = bool(re.search(r"install|clawhub|https?://|/slide-creator", body, flags=re.IGNORECASE))
         body_html = f'<div class="cmd" style="margin-top:10px;">{_escape(body)}</div>' if is_command else f'<p style="margin-top:8px;">{_escape(body)}</p>'
+        card_class = f"g{accent_classes[index]}"
         cards.append(
             f"""
-            <div class="g" style="padding:18px 20px;text-align:left;">
+            <div class="{card_class}" style="padding:18px 20px;text-align:left;">
               <span class="pill green">{_escape(title)}</span>
               {body_html}
             </div>
@@ -7766,7 +7829,7 @@ def _render_blue_sky_slide(
         <span class="pill" style="margin-bottom:14px;display:inline-block;">Chapter {role_index:02d}</span>
         {section_title}
         <div class="divider"></div>
-        <table class="ctable"><thead><tr><th>#</th><th>证据</th></tr></thead><tbody>{table_rows}</tbody></table>
+        <div class="g" style="padding:0;overflow:hidden;"><table class="ctable"><thead><tr><th>#</th><th>证据</th></tr></thead><tbody>{table_rows}</tbody></table></div>
         <p style="margin-top:14px;color:var(--text-secondary);font-size:0.9rem;">{key_point}</p>
       </div>
     </section>""".strip()
@@ -8119,6 +8182,38 @@ NATIVE_RENDERER_REGISTRY = {
 }
 
 
+def _annotate_page_buckets(html_text: str) -> str:
+    pattern = re.compile(r'<section\b[^>]*class="[^"]*\bslide\b[^"]*"[^>]*>')
+    matches = list(pattern.finditer(html_text))
+    if not matches:
+        return html_text
+    total = len(matches)
+    pieces: list[str] = []
+    cursor = 0
+    for index, match in enumerate(matches):
+        opening = match.group(0)
+        if "data-page-bucket=" not in opening:
+            bucket = "cover" if total == 1 or index == 0 else "closing" if index == total - 1 else "content"
+            opening = opening[:-1] + f' data-page-bucket="{bucket}">'
+        pieces.extend((html_text[cursor:match.start()], opening))
+        cursor = match.end()
+    pieces.append(html_text[cursor:])
+    return "".join(pieces)
+
+
+def _annotate_preset_content_scope(html_text: str, preset: str) -> str:
+    slug = re.sub(r"[^a-z0-9]+", "-", preset.lower()).strip("-")
+    marker = f"preset-{slug}-content"
+
+    def add_scope(match: re.Match[str]) -> str:
+        classes = match.group(1).split()
+        if set(classes) & {"slide-content", "content"} and marker not in classes:
+            classes.append(marker)
+        return f'class="{" ".join(classes)}"'
+
+    return re.sub(r'class="([^"]*)"', add_scope, html_text)
+
+
 def render_from_brief(brief: dict[str, Any]) -> tuple[str, dict[str, Any], dict[str, Any]]:
     packet = build_render_packet(brief)
     style_contract = compile_style_contract(brief["style"]["preset"])
@@ -8135,7 +8230,8 @@ def render_from_brief(brief: dict[str, Any]) -> tuple[str, dict[str, Any], dict[
         raise RenderError(
             f"Low-context render does not have a valid strategy for {preset}; got {renderer_strategy}"
         )
-    return html_text, packet, style_contract
+    html_text = _annotate_preset_content_scope(html_text, preset)
+    return _annotate_page_buckets(html_text), packet, style_contract
 
 
 def render_from_context_text(text: str) -> tuple[dict[str, Any], str, dict[str, Any], dict[str, Any]]:

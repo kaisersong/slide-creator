@@ -21,6 +21,7 @@
     "forbidden_substitutions",
     "typography_policy",
     "background_strategy",
+    "style_fidelity",
     "export_dom_mapping",
     "browser_qa_policy",
     "demo_parity_minimum_score"
@@ -54,9 +55,63 @@
     "forbidden_substitutions": { "type": "array", "items": { "type": "string" } },
     "typography_policy": { "type": "object" },
     "background_strategy": { "type": "string" },
+    "style_fidelity": { "$ref": "#/$defs/styleFidelity" },
+    "runtime_fidelity": { "$ref": "#/$defs/runtimeFidelity" },
     "export_dom_mapping": { "type": "object" },
     "browser_qa_policy": { "type": "object" },
     "demo_parity_minimum_score": { "type": "number", "minimum": 0, "maximum": 1 }
+  },
+  "$defs": {
+    "selectorGroup": {
+      "type": "object",
+      "required": ["name", "selectors", "match", "scope", "minimum_group_score", "content_required"],
+      "properties": {
+        "name": { "type": "string", "minLength": 1 },
+        "selectors": { "type": "array", "items": { "type": "string", "minLength": 1 }, "minItems": 1 },
+        "match": { "enum": ["all", "any"] },
+        "scope": { "enum": ["document", "slide"] },
+        "page_buckets": { "type": "array", "items": { "enum": ["cover", "content", "closing"] }, "uniqueItems": true },
+        "weight": { "type": "number", "exclusiveMinimum": 0 },
+        "minimum_group_score": { "type": "number", "minimum": 0, "maximum": 1 },
+        "minimum_bucket_count": { "type": "integer", "minimum": 1 },
+        "content_required": { "type": "boolean" }
+      },
+      "additionalProperties": false
+    },
+    "styleFidelity": {
+      "type": "object",
+      "required": ["minimum_coverage", "minimum_integrity", "required_selector_groups"],
+      "properties": {
+        "minimum_coverage": { "type": "number", "minimum": 0, "maximum": 1 },
+        "minimum_integrity": { "type": "number", "minimum": 0, "maximum": 1 },
+        "required_selector_groups": { "type": "array", "items": { "$ref": "#/$defs/selectorGroup" }, "minItems": 1 },
+        "negative_fixtures": { "type": "array", "items": { "type": "string", "minLength": 1 }, "uniqueItems": true }
+      },
+      "additionalProperties": false
+    },
+    "motionScenario": {
+      "type": "object",
+      "required": ["name", "trigger", "selectors", "match", "required_page_buckets"],
+      "properties": {
+        "name": { "type": "string", "minLength": 1 },
+        "trigger": { "enum": ["initial-load", "navigate"] },
+        "selectors": { "type": "array", "items": { "type": "string", "minLength": 1 }, "minItems": 1 },
+        "match": { "enum": ["any-visible", "all-visible"] },
+        "required_page_buckets": { "type": "array", "items": { "enum": ["cover", "content", "closing"] }, "minItems": 1, "uniqueItems": true }
+      },
+      "additionalProperties": false
+    },
+    "runtimeFidelity": {
+      "type": "object",
+      "required": ["runtime_owner", "required_dom", "motion_scenarios", "sample_ms"],
+      "properties": {
+        "runtime_owner": { "type": "string", "minLength": 1 },
+        "required_dom": { "type": "array", "items": { "type": "string", "minLength": 1 }, "minItems": 1 },
+        "motion_scenarios": { "type": "array", "items": { "$ref": "#/$defs/motionScenario" }, "minItems": 1 },
+        "sample_ms": { "type": "integer", "minimum": 1, "maximum": 5000 }
+      },
+      "additionalProperties": false
+    }
   },
   "additionalProperties": true
 }

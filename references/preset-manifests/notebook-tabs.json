@@ -67,45 +67,37 @@
     "tabs_close"
   ],
   "signature_components": [
-    "ba-split",
-    "cmd-table",
-    "feat-grid",
-    "tab",
-    "tabs"
+    "profile-slide",
+    "profile-content",
+    "preset-content",
+    "profile-title"
   ],
   "required_visible_components": [
     {
-      "name": "ba-split",
+      "name": "profile-slide",
       "selectors": [
-        ".ba-split"
+        "section.profile-slide"
       ],
       "min_count": 1
     },
     {
-      "name": "cmd-table",
+      "name": "profile-content",
       "selectors": [
-        ".cmd-table"
+        ".profile-content"
       ],
       "min_count": 1
     },
     {
-      "name": "feat-grid",
+      "name": "preset-content",
       "selectors": [
-        ".feat-grid"
+        ".preset-notebook-tabs-content"
       ],
       "min_count": 1
     },
     {
-      "name": "tab",
+      "name": "profile-title",
       "selectors": [
-        ".tab"
-      ],
-      "min_count": 1
-    },
-    {
-      "name": "tabs",
-      "selectors": [
-        ".tabs"
+        ".profile-fit-title"
       ],
       "min_count": 1
     }
@@ -120,5 +112,48 @@
     "generic-theme-shell",
     "marker-only-style-signature",
     "empty-component-shell"
-  ]
+  ],
+  "style_fidelity": {
+    "minimum_coverage": 0.85,
+    "minimum_integrity": 1.0,
+    "required_selector_groups": [
+      {
+        "name": "preset-visual-component",
+        "selectors": [
+          ".nb-title",
+          ".paper-content",
+          ".tabs",
+          ".arch-layer-title",
+          ".pill",
+          ".stats"
+        ],
+        "match": "any",
+        "scope": "document",
+        "weight": 1.0,
+        "minimum_group_score": 1.0,
+        "content_required": true
+      },
+      {
+        "name": "preset-content-spread",
+        "selectors": [
+          ".preset-notebook-tabs-content"
+        ],
+        "match": "any",
+        "scope": "slide",
+        "page_buckets": [
+          "content"
+        ],
+        "weight": 1.0,
+        "minimum_group_score": 0.7,
+        "minimum_bucket_count": 1,
+        "content_required": true
+      }
+    ],
+    "negative_fixtures": [
+      "generic-shell",
+      "marker-only",
+      "single-slide-signature-dump",
+      "full-slide-image"
+    ]
+  }
 }

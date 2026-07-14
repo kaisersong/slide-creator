@@ -4,16 +4,50 @@ import sys
 from pathlib import Path
 from io import BytesIO
 
+import pytest
 from PIL import Image
 
 ROOT = Path(__file__).resolve().parent.parent
 SCRIPTS = ROOT / "scripts"
 sys.path.insert(0, str(SCRIPTS))
 
-from browser_geometry_qa import _contrast_violations, analyze_browser_geometry_html  # noqa: E402
+from browser_geometry_qa import _capture_screenshot, _contrast_violations, analyze_browser_geometry_html  # noqa: E402
 
 
 VIEWPORTS = [{"width": 1600, "height": 900}]
+
+
+class _FlakyScreenshotPage:
+    def __init__(self, failures: int) -> None:
+        self.failures = failures
+        self.calls = 0
+        self.waits: list[int] = []
+
+    def screenshot(self, **_kwargs):
+        self.calls += 1
+        if self.calls <= self.failures:
+            raise RuntimeError("transient screenshot timeout")
+        return b"png"
+
+    def wait_for_timeout(self, timeout: int) -> None:
+        self.waits.append(timeout)
+
+
+def test_capture_screenshot_retries_one_transient_failure():
+    page = _FlakyScreenshotPage(failures=1)
+
+    assert _capture_screenshot(page) == b"png"
+    assert page.calls == 2
+    assert page.waits == [100]
+
+
+def test_capture_screenshot_preserves_failure_after_retry():
+    page = _FlakyScreenshotPage(failures=2)
+
+    with pytest.raises(RuntimeError, match="transient screenshot timeout"):
+        _capture_screenshot(page)
+    assert page.calls == 2
+    assert page.waits == [100]
 
 
 def test_contrast_sampler_ignores_foreground_pixels_for_large_text_on_brand_panels():

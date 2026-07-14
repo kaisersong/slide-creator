@@ -60,64 +60,37 @@
     "aurora_timeline"
   ],
   "signature_components": [
-    "aurora-accent",
-    "aurora-badge",
-    "aurora-card",
-    "aurora-content",
-    "aurora-divider",
-    "aurora-slide",
-    "aurora-stat",
-    "aurora-subtitle",
-    "aurora-title",
-    "feat-grid"
+    "profile-slide",
+    "profile-content",
+    "preset-content",
+    "profile-title"
   ],
   "required_visible_components": [
     {
-      "name": "aurora-accent",
+      "name": "profile-slide",
       "selectors": [
-        ".aurora-accent"
+        "section.profile-slide"
       ],
       "min_count": 1
     },
     {
-      "name": "aurora-badge",
+      "name": "profile-content",
       "selectors": [
-        ".aurora-badge"
+        ".profile-content"
       ],
       "min_count": 1
     },
     {
-      "name": "aurora-card",
+      "name": "preset-content",
       "selectors": [
-        ".aurora-card"
+        ".preset-aurora-mesh-content"
       ],
       "min_count": 1
     },
     {
-      "name": "aurora-content",
+      "name": "profile-title",
       "selectors": [
-        ".aurora-content"
-      ],
-      "min_count": 1
-    },
-    {
-      "name": "aurora-slide",
-      "selectors": [
-        ".aurora-slide"
-      ],
-      "min_count": 1
-    },
-    {
-      "name": "aurora-stat",
-      "selectors": [
-        ".aurora-stat"
-      ],
-      "min_count": 1
-    },
-    {
-      "name": "aurora-subtitle",
-      "selectors": [
-        ".aurora-subtitle"
+        ".profile-fit-title"
       ],
       "min_count": 1
     }
@@ -189,5 +162,49 @@
       "browser-geometry-invisible-target"
     ]
   },
-  "demo_parity_minimum_score": 0.85
+  "demo_parity_minimum_score": 0.85,
+  "style_fidelity": {
+    "minimum_coverage": 0.85,
+    "minimum_integrity": 1.0,
+    "required_selector_groups": [
+      {
+        "name": "preset-visual-component",
+        "selectors": [
+          ".aurora-card",
+          ".aurora-title",
+          ".aurora-subtitle",
+          ".aurora-stat",
+          ".a-title",
+          ".a-h2",
+          ".a-body"
+        ],
+        "match": "any",
+        "scope": "document",
+        "weight": 1.0,
+        "minimum_group_score": 1.0,
+        "content_required": true
+      },
+      {
+        "name": "preset-content-spread",
+        "selectors": [
+          ".preset-aurora-mesh-content"
+        ],
+        "match": "any",
+        "scope": "slide",
+        "page_buckets": [
+          "content"
+        ],
+        "weight": 1.0,
+        "minimum_group_score": 0.7,
+        "minimum_bucket_count": 1,
+        "content_required": true
+      }
+    ],
+    "negative_fixtures": [
+      "generic-shell",
+      "marker-only",
+      "single-slide-signature-dump",
+      "full-slide-image"
+    ]
+  }
 }

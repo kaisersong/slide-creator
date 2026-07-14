@@ -710,8 +710,8 @@ def test_enterprise_dark_style_coverage_uses_curated_signature_set():
       <style>body::before { content: ""; }</style>
     </head>
     <body data-preset="Enterprise Dark">
-      <section class="slide">
-        <div class="ent-shell ent-title ent-label-tag ent-kpi-card ent-kpi-number ent-kpi-label ent-badge ent-sep ent-split ent-split-panel ent-feature-row ent-arch-grid"></div>
+      <section class="slide" data-page-bucket="content">
+        <div class="ent-shell ent-title ent-label-tag ent-kpi-card ent-kpi-number ent-kpi-label ent-badge ent-sep ent-split ent-split-panel ent-feature-row ent-arch-grid preset-enterprise-dark-content">content</div>
       </section>
     </body>
     </html>
@@ -729,8 +729,8 @@ def test_data_story_style_coverage_counts_slide_before_background():
       <style>.slide::before { content: ""; }</style>
     </head>
     <body data-preset="Data Story">
-      <section class="slide">
-        <div class="ds-shell ds-heading ds-hero-slide ds-kpi ds-kpi-card ds-kpi-grid ds-kpi-label ds-chart-svg ds-insight ds-divider ds-split-layout ds-stage-grid"></div>
+      <section class="slide" data-page-bucket="content">
+        <div class="ds-shell ds-heading ds-hero-slide ds-kpi ds-kpi-card ds-kpi-grid ds-kpi-label ds-chart-svg ds-insight ds-divider ds-split-layout ds-stage-grid preset-data-story-content">content</div>
       </section>
     </body>
     </html>

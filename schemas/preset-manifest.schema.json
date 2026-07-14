@@ -14,7 +14,8 @@
     "required_visible_components",
     "decorative_selectors",
     "non_critical_selectors",
-    "forbidden_substitutions"
+    "forbidden_substitutions",
+    "style_fidelity"
   ],
   "properties": {
     "version": { "type": "integer", "minimum": 1 },
@@ -30,7 +31,9 @@
     },
     "decorative_selectors": { "type": "array", "items": { "type": "string" } },
     "non_critical_selectors": { "type": "array", "items": { "type": "string" } },
-    "forbidden_substitutions": { "type": "array", "items": { "type": "string" } }
+    "forbidden_substitutions": { "type": "array", "items": { "type": "string" } },
+    "style_fidelity": { "$ref": "preset-contract.schema.json#/$defs/styleFidelity" },
+    "runtime_fidelity": { "$ref": "preset-contract.schema.json#/$defs/runtimeFidelity" }
   },
   "additionalProperties": true
 }

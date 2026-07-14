@@ -54,6 +54,8 @@ Mode label display rule:
 
 Use this mode when the user asks to improve an existing HTML deck instead of generating from scratch.
 
+First classify the request. Content-only edits that keep the current preset may edit the existing HTML directly and then run that preset's strict gate. A preset change or a request to reapply the current preset is a restyle: extract the deck content into a valid `BRIEF.json`, preserve the intended page roles and assets, and invoke `render_from_brief()`. Do not inject a new theme shell, CSS bundle, or runtime around the old slide DOM. A full-slide image may be used only as a renderer-owned background/content asset while preset-specific content components remain present and visible.
+
 1. Count existing content before adding new text or images.
 2. Compare the target slide against the same density limits used for fresh generation.
 3. If the slide is already full, split it before appending more bullets, screenshots, or notes.

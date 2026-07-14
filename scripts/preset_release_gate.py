@@ -15,9 +15,10 @@ if str(SCRIPTS) not in sys.path:
     sys.path.insert(0, str(SCRIPTS))
 
 from run_evals import run_suite  # noqa: E402
+from preset_contracts import load_preset_contract  # noqa: E402
 
 
-DEFAULT_SUITE = ROOT / "evals" / "preset-surface-phase1" / "manifest.json"
+DEFAULT_SUITE = ROOT / "evals" / "preset-surface-all" / "manifest.json"
 SKILL_EVAL_CATEGORIES = ["outcome", "process", "style", "efficiency"]
 
 
@@ -42,11 +43,26 @@ def _collect_gate_failures(report: dict, *, require_baseline: bool) -> list[str]
             hard_failures = browser_geometry.get("hard_failures") or ["browser-geometry-failed"]
             for code in hard_failures:
                 failures.append(f"{case['case_id']}: browser geometry failed {code}")
-        preset_contract = case.get("validations", {}).get("preset_contract")
-        if preset_contract and not preset_contract.get("pass", False):
-            hard_failures = preset_contract.get("hard_failures") or ["preset-contract-failed"]
+        validations = case.get("validations", {})
+        preset_fidelity = validations.get("preset_fidelity")
+        if validations.get("preset_contract") is not None and preset_fidelity is None:
+            failures.append(f"{case['case_id']}: preset fidelity missing (legacy writer key rejected)")
+        if preset_fidelity and not preset_fidelity.get("pass", False):
+            hard_failures = preset_fidelity.get("hard_failures") or ["preset-fidelity-failed"]
             for code in hard_failures:
-                failures.append(f"{case['case_id']}: preset contract failed {code}")
+                failures.append(f"{case['case_id']}: preset fidelity failed {code}")
+        try:
+            runtime_required = bool(load_preset_contract(case.get("preset", "")).get("runtime_fidelity"))
+        except (FileNotFoundError, ValueError, KeyError):
+            runtime_required = False
+        if runtime_required:
+            runtime_fidelity = validations.get("runtime_fidelity")
+            if not runtime_fidelity:
+                failures.append(f"{case['case_id']}: runtime fidelity evidence missing")
+            elif not runtime_fidelity.get("pass", False):
+                hard_failures = runtime_fidelity.get("hard_failures") or ["runtime-fidelity-failed"]
+                for code in hard_failures:
+                    failures.append(f"{case['case_id']}: runtime fidelity failed {code}")
         export_smoke = case.get("validations", {}).get("export_smoke")
         if export_smoke and not export_smoke.get("pass", False):
             hard_failures = export_smoke.get("hard_failures") or ["export-smoke-failed"]
@@ -412,11 +428,10 @@ def main() -> int:
         "output_dir": output_dir,
         "baseline_dir": baseline_dir,
         "run_browser_titles": browser_titles_enabled,
+        "run_contract": True,
     }
     if args.browser_geometry:
         run_suite_kwargs["run_browser_geometry"] = True
-    if args.contract:
-        run_suite_kwargs["run_contract"] = True
     if args.export_smoke:
         run_suite_kwargs["run_export_smoke"] = True
     if args.mobile_geometry:

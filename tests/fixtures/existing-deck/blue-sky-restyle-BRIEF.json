@@ -1,0 +1,39 @@
+{
+  "schema_version": 1,
+  "brief_id": "existing-deck-blue-sky-restyle",
+  "mode": "auto",
+  "language": "zh-CN",
+  "title": "2026 中期会议闭幕辞",
+  "audience": "全体参会者",
+  "desired_action": "统一方向并进入下半年执行",
+  "deck": {
+    "deck_type": "user-content",
+    "page_count": 5,
+    "output_format": "html-slides"
+  },
+  "style": {
+    "preset": "Blue Sky",
+    "tone": "清爽、坚定、面向行动",
+    "visual_density": "medium"
+  },
+  "content": {
+    "source_policy": "distill-only",
+    "must_include": ["阶段成果", "下半年重点", "行动承诺"],
+    "must_avoid": ["通用模板壳", "整页截图覆盖"]
+  },
+  "narrative": {
+    "thesis": "以阶段成果形成信心，以明确行动进入下半年。",
+    "page_roles": ["cover", "evidence", "workflow", "recommendation", "closing"],
+    "slides": [
+      {"slide_number": 1, "role": "cover", "title": "2026 中期会议闭幕辞", "key_point": "向前一步，共赴新程", "visual": "hero statement with stat row", "supporting_facts": ["6 个月", "3 项突破", "1 个目标"]},
+      {"slide_number": 2, "role": "evidence", "title": "阶段成果形成确定性", "key_point": "关键指标与组织能力同步改善", "visual": "data table", "supporting_facts": ["客户价值提升", "交付节奏加快", "协同效率改善"]},
+      {"slide_number": 3, "role": "workflow", "title": "按同一节奏推进", "key_point": "责任、节奏和复盘形成闭环", "visual": "workflow layers", "supporting_facts": ["明确责任", "按周推进", "及时纠偏"]},
+      {"slide_number": 4, "role": "recommendation", "title": "下半年聚焦三件事", "key_point": "把共识转换为可检查的行动", "visual": "bento cards", "supporting_facts": ["聚焦客户", "强化产品", "提升效率"]},
+      {"slide_number": 5, "role": "closing", "title": "一起把目标变成结果", "key_point": "从今天开始执行", "visual": "closing CTA", "supporting_facts": ["明确责任", "按周复盘", "结果闭环"]}
+    ]
+  },
+  "runtime": {"editing_mode": true, "presenter_mode": true, "watermark_mode": "injected-last-slide", "export_intent": "none"},
+  "plan_view": {"emit_planning_view": false, "planning_view_path": "PLANNING.md"},
+  "timing": {"estimate": {"plan": "1 min", "generate": "1 min", "validate": "1 min", "polish": "1 min", "total": "4 min"}, "actual": {"plan": "0m", "generate": "0m", "validate": "0m", "polish": "0m", "total": "0m"}},
+  "notes": "由 existing deck 提取内容后重新渲染"
+}

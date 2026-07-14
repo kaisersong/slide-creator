@@ -49,6 +49,7 @@
     {
       "case_id": "core-blue-sky-render",
       "validation_profile": "strict",
+      "preset_fidelity_mode": "reference",
       "brief_path": "../../demos/mode-paths/auto-BRIEF.json",
       "expectations": {
         "expected_mode": "auto",
@@ -92,6 +93,7 @@
     {
       "case_id": "support-paper-ink-fixture",
       "validation_profile": "strict",
+      "preset_fidelity_mode": "reference",
       "quality_eval_use_brief": false,
       "preset": "Paper & Ink",
       "html_path": "../../demos/paper-ink-zh.html",

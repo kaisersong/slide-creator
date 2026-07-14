@@ -61,5 +61,109 @@
     "generic-theme-shell",
     "marker-only-style-signature",
     "empty-component-shell"
-  ]
+  ],
+  "style_fidelity": {
+    "minimum_coverage": 0.82,
+    "minimum_integrity": 1.0,
+    "required_selector_groups": [
+      {
+        "name": "ambient-cloud-bank",
+        "selectors": [
+          ".cloud-layer",
+          ".cloud-strip",
+          ".cloud-puff"
+        ],
+        "match": "all",
+        "scope": "document",
+        "weight": 1.0,
+        "minimum_group_score": 1.0,
+        "content_required": false
+      },
+      {
+        "name": "blue-sky-content-present",
+        "selectors": [
+          ".g",
+          ".bento",
+          ".layer",
+          ".cols2",
+          ".cols3",
+          ".cols4",
+          ".info",
+          ".co"
+        ],
+        "match": "any",
+        "scope": "document",
+        "weight": 1.0,
+        "minimum_group_score": 1.0,
+        "content_required": true
+      },
+      {
+        "name": "blue-sky-content-spread",
+        "selectors": [
+          ".g",
+          ".bento",
+          ".layer",
+          ".cols2",
+          ".cols3",
+          ".cols4",
+          ".info",
+          ".co"
+        ],
+        "match": "any",
+        "scope": "slide",
+        "page_buckets": [
+          "content"
+        ],
+        "weight": 1.0,
+        "minimum_group_score": 0.75,
+        "minimum_bucket_count": 1,
+        "content_required": true
+      }
+    ],
+    "negative_fixtures": [
+      "generic-shell",
+      "marker-only",
+      "single-slide-signature-dump"
+    ]
+  },
+  "runtime_fidelity": {
+    "runtime_owner": "blue-sky-stage-track",
+    "required_dom": [
+      "#stage",
+      "#track",
+      "#orb1",
+      "#orb2",
+      "#orb3"
+    ],
+    "motion_scenarios": [
+      {
+        "name": "cover-ambient",
+        "trigger": "initial-load",
+        "selectors": [
+          ".cloud-strip"
+        ],
+        "match": "any-visible",
+        "required_page_buckets": [
+          "cover"
+        ]
+      },
+      {
+        "name": "slide-enter",
+        "trigger": "navigate",
+        "selectors": [
+          ".slide.active > *",
+          "#track",
+          "#orb1",
+          "#orb2",
+          "#orb3"
+        ],
+        "match": "any-visible",
+        "required_page_buckets": [
+          "content",
+          "closing"
+        ]
+      }
+    ],
+    "sample_ms": 700
+  }
 }

@@ -49,61 +49,37 @@
     "brutalist_close"
   ],
   "signature_components": [
-    "cta-rule",
-    "feature-grid",
-    "heavy-rule",
-    "left-panel",
-    "right-panel",
-    "brutalist-block",
-    "brutalist-poster"
+    "profile-slide",
+    "profile-content",
+    "preset-content",
+    "profile-title"
   ],
   "required_visible_components": [
     {
-      "name": "cta-rule",
+      "name": "profile-slide",
       "selectors": [
-        ".cta-rule"
+        "section.profile-slide"
       ],
       "min_count": 1
     },
     {
-      "name": "feature-grid",
+      "name": "profile-content",
       "selectors": [
-        ".feature-grid"
+        ".profile-content"
       ],
       "min_count": 1
     },
     {
-      "name": "heavy-rule",
+      "name": "preset-content",
       "selectors": [
-        ".heavy-rule"
+        ".preset-neo-brutalism-content"
       ],
       "min_count": 1
     },
     {
-      "name": "left-panel",
+      "name": "profile-title",
       "selectors": [
-        ".left-panel"
-      ],
-      "min_count": 1
-    },
-    {
-      "name": "right-panel",
-      "selectors": [
-        ".right-panel"
-      ],
-      "min_count": 1
-    },
-    {
-      "name": "brutalist-block",
-      "selectors": [
-        ".brutalist-block"
-      ],
-      "min_count": 1
-    },
-    {
-      "name": "brutalist-poster",
-      "selectors": [
-        ".brutalist-poster"
+        ".profile-fit-title"
       ],
       "min_count": 1
     }
@@ -173,5 +149,46 @@
       "browser-geometry-invisible-target"
     ]
   },
-  "demo_parity_minimum_score": 0.85
+  "demo_parity_minimum_score": 0.85,
+  "style_fidelity": {
+    "minimum_coverage": 0.85,
+    "minimum_integrity": 1.0,
+    "required_selector_groups": [
+      {
+        "name": "preset-visual-component",
+        "selectors": [
+          ".brute-title",
+          ".brute-h2",
+          ".style-card",
+          ".brute-tag"
+        ],
+        "match": "any",
+        "scope": "document",
+        "weight": 1.0,
+        "minimum_group_score": 1.0,
+        "content_required": true
+      },
+      {
+        "name": "preset-content-spread",
+        "selectors": [
+          ".preset-neo-brutalism-content"
+        ],
+        "match": "any",
+        "scope": "slide",
+        "page_buckets": [
+          "content"
+        ],
+        "weight": 1.0,
+        "minimum_group_score": 0.7,
+        "minimum_bucket_count": 1,
+        "content_required": true
+      }
+    ],
+    "negative_fixtures": [
+      "generic-shell",
+      "marker-only",
+      "single-slide-signature-dump",
+      "full-slide-image"
+    ]
+  }
 }

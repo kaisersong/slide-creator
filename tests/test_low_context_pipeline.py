@@ -1480,6 +1480,24 @@ def test_native_core_eval_briefs_pass_browser_geometry_gate():
     assert failing == {}
 
 
+def test_swiss_representative_brief_passes_desktop_and_mobile_browser_geometry():
+    brief = json.loads(
+        (ROOT / "evals" / "preset-surface-all" / "cases" / "representative-12-role-brief.json").read_text(
+            encoding="utf-8"
+        )
+    )
+    brief["style"]["preset"] = "Swiss Modern"
+
+    html_text, _packet, _style_contract = render_from_brief(brief)
+    report = analyze_browser_geometry_html(
+        html_text,
+        viewports=[{"width": 1600, "height": 900}, {"width": 390, "height": 844}],
+        stable_runs=1,
+    )
+
+    assert report["hard_failures"] == []
+
+
 def test_production_presets_do_not_leak_chinese_chan_signatures():
     cases = [
         ("Swiss Modern", _load_core_swiss_brief()),

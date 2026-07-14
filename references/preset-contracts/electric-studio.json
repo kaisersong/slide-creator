@@ -59,53 +59,37 @@
     "electric_close"
   ],
   "signature_components": [
-    "elec-label",
-    "elec-title",
-    "elec-body",
-    "elec-stat-number",
-    "code-block",
-    "cta-pill"
+    "profile-slide",
+    "profile-content",
+    "preset-content",
+    "profile-title"
   ],
   "required_visible_components": [
     {
-      "name": "elec-label",
+      "name": "profile-slide",
       "selectors": [
-        ".elec-label"
+        "section.profile-slide"
       ],
       "min_count": 1
     },
     {
-      "name": "elec-title",
+      "name": "profile-content",
       "selectors": [
-        ".elec-title"
+        ".profile-content"
       ],
       "min_count": 1
     },
     {
-      "name": "elec-body",
+      "name": "preset-content",
       "selectors": [
-        ".elec-body"
+        ".preset-electric-studio-content"
       ],
       "min_count": 1
     },
     {
-      "name": "elec-stat-number",
+      "name": "profile-title",
       "selectors": [
-        ".elec-stat-number"
-      ],
-      "min_count": 1
-    },
-    {
-      "name": "code-block",
-      "selectors": [
-        ".code-block"
-      ],
-      "min_count": 1
-    },
-    {
-      "name": "cta-pill",
-      "selectors": [
-        ".cta-pill"
+        ".profile-fit-title"
       ],
       "min_count": 1
     }
@@ -175,5 +159,48 @@
       "browser-geometry-invisible-target"
     ]
   },
-  "demo_parity_minimum_score": 0.85
+  "demo_parity_minimum_score": 0.85,
+  "style_fidelity": {
+    "minimum_coverage": 0.85,
+    "minimum_integrity": 1.0,
+    "required_selector_groups": [
+      {
+        "name": "preset-visual-component",
+        "selectors": [
+          ".elec-title",
+          ".elec-body",
+          ".badge-pill",
+          ".feat-name",
+          ".pill",
+          ".stats"
+        ],
+        "match": "any",
+        "scope": "document",
+        "weight": 1.0,
+        "minimum_group_score": 1.0,
+        "content_required": true
+      },
+      {
+        "name": "preset-content-spread",
+        "selectors": [
+          ".preset-electric-studio-content"
+        ],
+        "match": "any",
+        "scope": "slide",
+        "page_buckets": [
+          "content"
+        ],
+        "weight": 1.0,
+        "minimum_group_score": 0.7,
+        "minimum_bucket_count": 1,
+        "content_required": true
+      }
+    ],
+    "negative_fixtures": [
+      "generic-shell",
+      "marker-only",
+      "single-slide-signature-dump",
+      "full-slide-image"
+    ]
+  }
 }

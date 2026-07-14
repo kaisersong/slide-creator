@@ -53,75 +53,37 @@
     "voltage_close"
   ],
   "signature_components": [
-    "pill",
-    "stat",
-    "voltage-blue-panel",
-    "voltage-body",
-    "voltage-callout",
-    "voltage-card",
-    "voltage-dark-panel",
-    "voltage-diamond",
-    "voltage-features",
-    "voltage-mono",
-    "voltage-neon-badge",
-    "voltage-split",
-    "voltage-title",
-    "voltage-halftone"
+    "profile-slide",
+    "profile-content",
+    "preset-content",
+    "profile-title"
   ],
   "required_visible_components": [
     {
-      "name": "pill",
+      "name": "profile-slide",
       "selectors": [
-        ".pill"
+        "section.profile-slide"
       ],
       "min_count": 1
     },
     {
-      "name": "stat",
+      "name": "profile-content",
       "selectors": [
-        ".stat"
+        ".profile-content"
       ],
       "min_count": 1
     },
     {
-      "name": "voltage-blue-panel",
+      "name": "preset-content",
       "selectors": [
-        ".voltage-blue-panel"
+        ".preset-creative-voltage-content"
       ],
       "min_count": 1
     },
     {
-      "name": "voltage-body",
+      "name": "profile-title",
       "selectors": [
-        ".voltage-body"
-      ],
-      "min_count": 1
-    },
-    {
-      "name": "voltage-callout",
-      "selectors": [
-        ".voltage-callout"
-      ],
-      "min_count": 1
-    },
-    {
-      "name": "voltage-card",
-      "selectors": [
-        ".voltage-card"
-      ],
-      "min_count": 1
-    },
-    {
-      "name": "voltage-dark-panel",
-      "selectors": [
-        ".voltage-dark-panel"
-      ],
-      "min_count": 1
-    },
-    {
-      "name": "voltage-diamond",
-      "selectors": [
-        ".voltage-diamond"
+        ".profile-fit-title"
       ],
       "min_count": 1
     }
@@ -193,5 +155,50 @@
       "browser-geometry-invisible-target"
     ]
   },
-  "demo_parity_minimum_score": 0.85
+  "demo_parity_minimum_score": 0.85,
+  "style_fidelity": {
+    "minimum_coverage": 0.85,
+    "minimum_integrity": 1.0,
+    "required_selector_groups": [
+      {
+        "name": "preset-visual-component",
+        "selectors": [
+          ".main-title",
+          ".how-card",
+          ".step-card",
+          ".terminal-block",
+          ".voltage-title",
+          ".voltage-card",
+          ".voltage-blue-panel",
+          ".voltage-neon-badge"
+        ],
+        "match": "any",
+        "scope": "document",
+        "weight": 1.0,
+        "minimum_group_score": 1.0,
+        "content_required": true
+      },
+      {
+        "name": "preset-content-spread",
+        "selectors": [
+          ".preset-creative-voltage-content"
+        ],
+        "match": "any",
+        "scope": "slide",
+        "page_buckets": [
+          "content"
+        ],
+        "weight": 1.0,
+        "minimum_group_score": 0.7,
+        "minimum_bucket_count": 1,
+        "content_required": true
+      }
+    ],
+    "negative_fixtures": [
+      "generic-shell",
+      "marker-only",
+      "single-slide-signature-dump",
+      "full-slide-image"
+    ]
+  }
 }

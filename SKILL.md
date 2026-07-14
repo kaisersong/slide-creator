@@ -77,6 +77,8 @@ metadata: {"openclaw":{"emoji":"🎞","os":["darwin","linux","windows"],"homepag
 
 **Direct-route guard:** 无论是 `--generate` 还是“直接给内容 + 风格”，都必须先 materialize 一个有效 `BRIEF.json`，再按能力路由：native core、统一 profile renderer、custom theme 都走同一 `render_from_brief()` 产品路径。写出最终文件前必须通过 `python3 scripts/validate_html.py "$TMP_HTML" --strict`。禁止手拼最终 HTML；禁止在交互式路径里绕过 BRIEF/style contract 手拼最终 HTML。
 
+**Existing-deck restyle guard:** 只修改现有 deck 的文案、数据或同风格组件时，可以直接编辑 HTML 后运行该 preset 的 strict gate。只要用户要求更换或重新套用 preset，就必须先把现有内容提取为合法 `BRIEF.json`，再调用 `render_from_brief()` 重建；禁止向旧 DOM 注入新 preset 的 CSS/runtime 壳子来冒充重套风格。全页图片只能作为 renderer composition 内的资产，不能覆盖或替代 preset-specific 内容 DOM。
+
 **Optional eval artifact:** 当用户显式要求 `eval` / `评测` 时，生成链路应在 strict gate 通过后额外写出单 deck 评测 JSON。原始 CLI 对应 `--eval`（默认写同名 `.eval.json`）或 `--eval-out <path>`；评测至少包含 `style_score (= style_signature_coverage)`、quality gates、hard failures 与关键 diagnostics。
 
 ## Pre-Write Validation Pipeline（写入前门禁）

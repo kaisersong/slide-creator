@@ -8,6 +8,7 @@ from typing import Any
 from bs4 import BeautifulSoup
 
 from low_context import _preset_usage_rules, compile_style_contract, load_brief
+from preset_contracts import requirement_for_preset
 from style_signature_eval import collect_signature_presence
 from title_browser_qa import analyze_title_composition_path
 
@@ -592,7 +593,7 @@ def _style_signature_coverage(soup: BeautifulSoup, preset: str | None) -> float 
     if not preset:
         return None
     try:
-        return collect_signature_presence(str(soup), preset).coverage
+        return collect_signature_presence(str(soup), requirement_for_preset(preset)).coverage
     except Exception:
         return None
 
@@ -694,7 +695,11 @@ def analyze_html_quality(
     chart_signal_mismatch_count, chart_signal_mismatch_rate = _chart_signal_mismatch(brief, slides)
     global_fact_overuse_count = _global_fact_overuse(brief, slides)
     style_signature_coverage = _style_signature_coverage(soup, inferred_preset)
-    style_presence = collect_signature_presence(html_text, inferred_preset) if inferred_preset else None
+    style_presence = (
+        collect_signature_presence(html_text, requirement_for_preset(inferred_preset))
+        if inferred_preset
+        else None
+    )
     copy_residual_hits, must_avoid_hits, copy_residual_failures = _copy_residual_diagnostics(
         visible_text,
         brief,

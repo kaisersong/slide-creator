@@ -117,5 +117,54 @@
       "browser-geometry-invisible-target"
     ]
   },
-  "demo_parity_minimum_score": 0.9
+  "demo_parity_minimum_score": 0.9,
+  "style_fidelity": {
+    "minimum_coverage": 0.85,
+    "minimum_integrity": 1.0,
+    "required_selector_groups": [
+      {
+        "name": "preset-content-present",
+        "selectors": [
+          ".preset-swiss-modern-content",
+          ".swiss-title",
+          ".swiss-stat",
+          ".pain-item",
+          ".disc-step",
+          ".feat-card",
+          ".cta-block"
+        ],
+        "match": "any",
+        "scope": "document",
+        "weight": 3.0,
+        "minimum_group_score": 1.0,
+        "content_required": true
+      },
+      {
+        "name": "preset-content-spread",
+        "selectors": [
+          ".preset-swiss-modern-content",
+          ".swiss-title",
+          ".swiss-stat",
+          ".pain-item",
+          ".disc-step",
+          ".feat-card",
+          ".cta-block"
+        ],
+        "match": "any",
+        "scope": "slide",
+        "page_buckets": [
+          "content"
+        ],
+        "weight": 1.0,
+        "minimum_group_score": 0.5,
+        "minimum_bucket_count": 1,
+        "content_required": true
+      }
+    ],
+    "negative_fixtures": [
+      "generic-shell",
+      "marker-only",
+      "single-slide-signature-dump"
+    ]
+  }
 }

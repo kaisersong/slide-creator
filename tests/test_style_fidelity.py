@@ -1,8 +1,4 @@
-"""Run style fidelity checks against all demo HTML files.
-
-The checker is expected at scripts/check_style_fidelity.py within this repo.
-If not present, the entire test class is skipped.
-"""
+"""Run the canonical style fidelity checker against all demo HTML files."""
 import subprocess
 import sys
 from pathlib import Path
@@ -22,7 +18,6 @@ def preset_from_path(path: Path) -> str:
     return name
 
 
-@pytest.mark.skipif(not CHECKER.exists(), reason="Skill package not installed")
 class TestStyleFidelity:
     """Run the skill's own style fidelity checker against all demos."""
 
