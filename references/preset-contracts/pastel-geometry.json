@@ -58,72 +58,37 @@
     "geo_close"
   ],
   "signature_components": [
-    "feat-grid",
-    "left-panel",
-    "link-text",
-    "pill",
-    "pink",
-    "preset-grid",
-    "right-panel",
-    "steps-grid",
-    "geo-shape",
-    "geo-frame",
-    "pastel-chip"
+    "profile-slide",
+    "profile-content",
+    "preset-content",
+    "profile-title"
   ],
   "required_visible_components": [
     {
-      "name": "feat-grid",
+      "name": "profile-slide",
       "selectors": [
-        ".feat-grid"
+        "section.profile-slide"
       ],
       "min_count": 1
     },
     {
-      "name": "left-panel",
+      "name": "profile-content",
       "selectors": [
-        ".left-panel"
+        ".profile-content"
       ],
       "min_count": 1
     },
     {
-      "name": "link-text",
+      "name": "preset-content",
       "selectors": [
-        ".link-text"
+        ".preset-pastel-geometry-content"
       ],
       "min_count": 1
     },
     {
-      "name": "pill",
+      "name": "profile-title",
       "selectors": [
-        ".pill"
-      ],
-      "min_count": 1
-    },
-    {
-      "name": "pink",
-      "selectors": [
-        ".pink"
-      ],
-      "min_count": 1
-    },
-    {
-      "name": "preset-grid",
-      "selectors": [
-        ".preset-grid"
-      ],
-      "min_count": 1
-    },
-    {
-      "name": "right-panel",
-      "selectors": [
-        ".right-panel"
-      ],
-      "min_count": 1
-    },
-    {
-      "name": "steps-grid",
-      "selectors": [
-        ".steps-grid"
+        ".profile-fit-title"
       ],
       "min_count": 1
     }
@@ -193,5 +158,48 @@
       "browser-geometry-invisible-target"
     ]
   },
-  "demo_parity_minimum_score": 0.85
+  "demo_parity_minimum_score": 0.85,
+  "style_fidelity": {
+    "minimum_coverage": 0.85,
+    "minimum_integrity": 1.0,
+    "required_selector_groups": [
+      {
+        "name": "preset-visual-component",
+        "selectors": [
+          ".card-content",
+          ".flow-card",
+          ".cmd-block",
+          ".hero-inner",
+          ".pill",
+          ".stats"
+        ],
+        "match": "any",
+        "scope": "document",
+        "weight": 1.0,
+        "minimum_group_score": 1.0,
+        "content_required": true
+      },
+      {
+        "name": "preset-content-spread",
+        "selectors": [
+          ".preset-pastel-geometry-content"
+        ],
+        "match": "any",
+        "scope": "slide",
+        "page_buckets": [
+          "content"
+        ],
+        "weight": 1.0,
+        "minimum_group_score": 0.7,
+        "minimum_bucket_count": 1,
+        "content_required": true
+      }
+    ],
+    "negative_fixtures": [
+      "generic-shell",
+      "marker-only",
+      "single-slide-signature-dump",
+      "full-slide-image"
+    ]
+  }
 }

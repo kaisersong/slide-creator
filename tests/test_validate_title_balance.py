@@ -188,6 +188,27 @@ def test_title_balance_rejects_long_display_title_that_relies_on_auto_wrap():
     assert "relies on auto-wrap" in message
 
 
+def test_title_balance_accepts_explicit_profile_fit_auto_wrap_strategy():
+    validate = load_validate_module()
+    html = """
+    <!DOCTYPE html>
+    <html>
+      <body data-preset="Bold Signal">
+        <section class="slide cover" id="slide-1">
+          <div class="slide-content">
+            <h2 class="title-balance profile-fit-title" style="max-width:14ch;">用同一把尺子比较速度、质量与返工</h2>
+          </div>
+        </section>
+      </body>
+    </html>
+    """
+    soup = BeautifulSoup(html, "html.parser")
+
+    ok, message = validate.check_title_balance(soup, html, [])
+
+    assert ok, message
+
+
 def test_title_balance_skips_vertical_and_glitch_title_profiles():
     validate = load_validate_module()
     html = """

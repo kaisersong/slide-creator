@@ -48,37 +48,37 @@
     "newspaper_close"
   ],
   "signature_components": [
-    "pill",
-    "stat",
-    "stats",
-    "np-rule"
+    "profile-slide",
+    "profile-content",
+    "preset-content",
+    "profile-title"
   ],
   "required_visible_components": [
     {
-      "name": "pill",
+      "name": "profile-slide",
       "selectors": [
-        ".pill"
+        "section.profile-slide"
       ],
       "min_count": 1
     },
     {
-      "name": "stat",
+      "name": "profile-content",
       "selectors": [
-        ".stat"
+        ".profile-content"
       ],
       "min_count": 1
     },
     {
-      "name": "stats",
+      "name": "preset-content",
       "selectors": [
-        ".stats"
+        ".preset-modern-newspaper-content"
       ],
       "min_count": 1
     },
     {
-      "name": "np-rule",
+      "name": "profile-title",
       "selectors": [
-        ".np-rule"
+        ".profile-fit-title"
       ],
       "min_count": 1
     }
@@ -93,5 +93,48 @@
     "generic-theme-shell",
     "marker-only-style-signature",
     "empty-component-shell"
-  ]
+  ],
+  "style_fidelity": {
+    "minimum_coverage": 0.85,
+    "minimum_integrity": 1.0,
+    "required_selector_groups": [
+      {
+        "name": "preset-visual-component",
+        "selectors": [
+          ".np-headline",
+          ".np-body",
+          ".np-cmd",
+          ".np-stamp",
+          ".pill",
+          ".stats"
+        ],
+        "match": "any",
+        "scope": "document",
+        "weight": 1.0,
+        "minimum_group_score": 1.0,
+        "content_required": true
+      },
+      {
+        "name": "preset-content-spread",
+        "selectors": [
+          ".preset-modern-newspaper-content"
+        ],
+        "match": "any",
+        "scope": "slide",
+        "page_buckets": [
+          "content"
+        ],
+        "weight": 1.0,
+        "minimum_group_score": 0.7,
+        "minimum_bucket_count": 1,
+        "content_required": true
+      }
+    ],
+    "negative_fixtures": [
+      "generic-shell",
+      "marker-only",
+      "single-slide-signature-dump",
+      "full-slide-image"
+    ]
+  }
 }

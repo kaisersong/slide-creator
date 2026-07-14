@@ -34,9 +34,17 @@ docs/
 !scripts/
 scripts/*
 !scripts/generate.py
+!scripts/generate_preset_eval_matrix.py
+!scripts/ai_advised_eval.py
+!scripts/check_style_fidelity.py
+!scripts/export_smoke.py
 !scripts/low_context.py
 !scripts/eval-quality.py
 !scripts/generation_eval.py
+!scripts/pptx_export_smoke.py
+!scripts/preset_contracts.py
+!scripts/preset_runtime_qa.py
+!scripts/promotion_gate.py
 !scripts/quality_eval.py
 !scripts/render-from-brief.py
 !scripts/title_browser_qa.py

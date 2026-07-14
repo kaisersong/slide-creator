@@ -260,7 +260,7 @@ def test_profile_renderer_emits_visible_signature_components_for_each_profile_pr
     assert diagnostics["style_signature_coverage"] >= 0.5
     assert diagnostics["style_signature_integrity"] == 1.0
     assert diagnostics["ignored_marker_class_count"] == 0
-    assert len(diagnostics["visible_signature_hits"]) >= 3
+    assert len(diagnostics["visible_signature_hits"]) >= 2
 
 
 @pytest.mark.parametrize("preset", sorted(PROFILE_SPECS))

@@ -413,7 +413,8 @@ def _looks_like_risky_auto_wrap(node, slide, title_text: str) -> bool:
     units = _title_visual_units(title_text)
     if units < 14:
         return False
-    if "title-nowrap" in _class_tokens(node.get("class", [])):
+    classes = set(_class_tokens(node.get("class", [])))
+    if classes & {"title-nowrap", "profile-fit-title"}:
         return False
 
     style_tokens = []
@@ -762,6 +763,46 @@ def check_shared_js_engine_contract(soup, content, warnings) -> tuple[bool, str]
     return True, "Shared js-engine runtime present"
 
 
+def check_preset_fidelity(soup, content, warnings, *, mode: str = "product") -> tuple[bool, str]:
+    body = soup.find("body")
+    preset = str(body.get("data-preset", "")).strip() if body else ""
+    if not preset:
+        return False, "Preset fidelity unavailable: body[data-preset] is missing"
+    if mode not in {"product", "reference"}:
+        return False, f"Preset fidelity unavailable: unsupported mode {mode}"
+    try:
+        from preset_contracts import validate_preset_fidelity
+
+        report = validate_preset_fidelity(content, preset, mode=mode)
+    except FileNotFoundError:
+        return True, f"Preset fidelity contract not applicable to custom preset: {preset}"
+    except (KeyError, ValueError) as exc:
+        return False, f"Preset fidelity unavailable: {exc}"
+    if not report["pass"]:
+        return False, "Preset fidelity failed: " + ", ".join(report["hard_failures"])
+    metrics = report["style"]["metrics"]
+    return True, (
+        f"Preset fidelity OK ({mode}, coverage {metrics['coverage']:.2f}, "
+        f"integrity {metrics['integrity']:.2f})"
+    )
+
+
+def check_blue_sky_signature_contract(soup, content, warnings) -> tuple[bool, str]:
+    """Deprecated Blue Sky reference adapter; not registered in strict validation."""
+    if _body_preset(soup).lower() != "blue sky":
+        return True, "Blue Sky signature contract not applicable"
+    try:
+        from preset_contracts import validate_preset_fidelity
+
+        report = validate_preset_fidelity(content, "Blue Sky", mode="reference")
+    except Exception as exc:
+        return False, f"Blue Sky signature contract unavailable: {exc}"
+    if not report["pass"]:
+        return False, "Blue Sky signature contract incomplete: " + ", ".join(report["hard_failures"])
+    coverage = report["style"]["metrics"]["coverage"]
+    return True, f"Blue Sky signature contract OK (coverage {coverage:.2f})"
+
+
 def check_data_notes(soup, content, warnings) -> tuple[bool, str]:
     slides = soup.find_all(class_="slide")
     if not slides:
@@ -775,7 +816,7 @@ def check_data_notes(soup, content, warnings) -> tuple[bool, str]:
     return True, f"data-notes present on {len(with_notes)}/{len(slides)} slides"
 
 
-def check_swiss_modern_contract(soup, content, warnings) -> tuple[bool, str]:
+def check_swiss_modern_layout_semantics(soup, content, warnings) -> tuple[bool, str]:
     body = soup.find("body")
     if not body or body.get("data-preset", "").strip() != "Swiss Modern":
         return True, "Swiss Modern contract not applicable"
@@ -829,7 +870,7 @@ def check_swiss_modern_contract(soup, content, warnings) -> tuple[bool, str]:
     return True, "Swiss Modern contract OK"
 
 
-def check_enterprise_dark_contract(soup, content, warnings) -> tuple[bool, str]:
+def check_enterprise_dark_layout_semantics(soup, content, warnings) -> tuple[bool, str]:
     body = soup.find("body")
     if not body or body.get("data-preset", "").strip() != "Enterprise Dark":
         return True, "Enterprise Dark contract not applicable"
@@ -887,7 +928,7 @@ def check_enterprise_dark_contract(soup, content, warnings) -> tuple[bool, str]:
     return True, "Enterprise Dark contract OK"
 
 
-def check_data_story_contract(soup, content, warnings) -> tuple[bool, str]:
+def check_data_story_layout_semantics(soup, content, warnings) -> tuple[bool, str]:
     body = soup.find("body")
     if not body or body.get("data-preset", "").strip() != "Data Story":
         return True, "Data Story contract not applicable"
@@ -950,7 +991,7 @@ def check_data_story_contract(soup, content, warnings) -> tuple[bool, str]:
     return True, "Data Story contract OK"
 
 
-def check_glassmorphism_contract(soup, content, warnings) -> tuple[bool, str]:
+def check_glassmorphism_layout_semantics(soup, content, warnings) -> tuple[bool, str]:
     body = soup.find("body")
     if not body or body.get("data-preset", "").strip() != "Glassmorphism":
         return True, "Glassmorphism contract not applicable"
@@ -1000,7 +1041,7 @@ def check_glassmorphism_contract(soup, content, warnings) -> tuple[bool, str]:
     return True, "Glassmorphism contract OK"
 
 
-def check_chinese_chan_contract(soup, content, warnings) -> tuple[bool, str]:
+def check_chinese_chan_layout_semantics(soup, content, warnings) -> tuple[bool, str]:
     body = soup.find("body")
     if not body or body.get("data-preset", "").strip() != "Chinese Chan":
         return True, "Chinese Chan contract not applicable"
@@ -1062,6 +1103,14 @@ def check_chinese_chan_contract(soup, content, warnings) -> tuple[bool, str]:
         return False, f"Chinese Chan contract violations: {sample}"
 
     return True, "Chinese Chan contract OK"
+
+
+# Compatibility names stay importable; strict uses the explicit non-scoring names.
+check_swiss_modern_contract = check_swiss_modern_layout_semantics
+check_enterprise_dark_contract = check_enterprise_dark_layout_semantics
+check_data_story_contract = check_data_story_layout_semantics
+check_glassmorphism_contract = check_glassmorphism_layout_semantics
+check_chinese_chan_contract = check_chinese_chan_layout_semantics
 
 
 def check_visual_variety(soup, content, warnings) -> tuple[bool, str]:
@@ -1360,12 +1409,13 @@ STRICT_CHECKS = [
     check_default_hidden_chrome,
     check_preset_metadata,
     check_shared_js_engine_contract,
+    check_preset_fidelity,
     check_data_notes,
-    check_swiss_modern_contract,
-    check_enterprise_dark_contract,
-    check_data_story_contract,
-    check_glassmorphism_contract,
-    check_chinese_chan_contract,
+    check_swiss_modern_layout_semantics,
+    check_enterprise_dark_layout_semantics,
+    check_data_story_layout_semantics,
+    check_glassmorphism_layout_semantics,
+    check_chinese_chan_layout_semantics,
     check_title_balance,
     check_visual_variety,
     check_css_vars_defined,
@@ -1392,7 +1442,12 @@ def render_console_symbol(symbol: str, fallback: str, encoding: str | None = Non
     return symbol
 
 
-def validate(html_path: str | Path, strict: bool = False) -> bool:
+def validate(
+    html_path: str | Path,
+    strict: bool = False,
+    *,
+    preset_fidelity_mode: str = "product",
+) -> bool:
     path = Path(html_path)
     if not path.exists():
         print(f"{RED}File not found: {path}{RESET}")
@@ -1407,7 +1462,10 @@ def validate(html_path: str | Path, strict: bool = False) -> bool:
 
     for check_fn in checks:
         try:
-            passed, message = check_fn(soup, content, warnings)
+            if check_fn is check_preset_fidelity:
+                passed, message = check_fn(soup, content, warnings, mode=preset_fidelity_mode)
+            else:
+                passed, message = check_fn(soup, content, warnings)
         except Exception as e:
             passed, message = False, f"Check error: {e}"
         results.append((passed, check_fn.__name__.replace("check_", ""), message))
@@ -1447,13 +1505,19 @@ def main():
     parser.add_argument("html", help="Path to HTML presentation to validate")
     parser.add_argument("--strict", action="store_true",
                         help="Also run recommended checks (edit mode, data-notes, keyboard nav)")
+    parser.add_argument(
+        "--preset-fidelity-mode",
+        choices=("product", "reference"),
+        default="product",
+        help="Use reference only for checked-in historical demos; product is fail-closed by default",
+    )
     args = parser.parse_args()
 
     if not Path(args.html).exists():
         print(f"File not found: {args.html}")
         sys.exit(2)
 
-    ok = validate(args.html, strict=args.strict)
+    ok = validate(args.html, strict=args.strict, preset_fidelity_mode=args.preset_fidelity_mode)
     sys.exit(0 if ok else 1)
 
 

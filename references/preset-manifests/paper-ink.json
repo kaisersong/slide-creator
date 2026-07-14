@@ -48,79 +48,37 @@
     "paper_close"
   ],
   "signature_components": [
-    "pill",
-    "stats",
-    "stat",
-    "body-text",
-    "drop-cap",
-    "pull-quote",
-    "stat-row",
-    "stat-label",
-    "steps",
-    "step",
-    "cta-layout",
-    "editing-layout",
-    "hero-layout",
-    "install-layout",
-    "present-mode-layout",
-    "preset-gallery-layout",
-    "problem-layout",
-    "workflow-layout"
+    "profile-slide",
+    "profile-content",
+    "preset-content",
+    "profile-title"
   ],
   "required_visible_components": [
     {
-      "name": "pill",
+      "name": "profile-slide",
       "selectors": [
-        ".pill"
+        "section.profile-slide"
       ],
       "min_count": 1
     },
     {
-      "name": "stats",
+      "name": "profile-content",
       "selectors": [
-        ".stats"
+        ".profile-content"
       ],
       "min_count": 1
     },
     {
-      "name": "stat",
+      "name": "preset-content",
       "selectors": [
-        ".stat"
+        ".preset-paper-ink-content"
       ],
       "min_count": 1
     },
     {
-      "name": "body-text",
+      "name": "profile-title",
       "selectors": [
-        ".body-text"
-      ],
-      "min_count": 1
-    },
-    {
-      "name": "drop-cap",
-      "selectors": [
-        ".drop-cap"
-      ],
-      "min_count": 1
-    },
-    {
-      "name": "pull-quote",
-      "selectors": [
-        ".pull-quote"
-      ],
-      "min_count": 1
-    },
-    {
-      "name": "stat-row",
-      "selectors": [
-        ".stat-row"
-      ],
-      "min_count": 1
-    },
-    {
-      "name": "stat-label",
-      "selectors": [
-        ".stat-label"
+        ".profile-fit-title"
       ],
       "min_count": 1
     }
@@ -144,5 +102,48 @@
     "generic-theme-shell",
     "marker-only-style-signature",
     "empty-component-shell"
-  ]
+  ],
+  "style_fidelity": {
+    "minimum_coverage": 0.85,
+    "minimum_integrity": 1.0,
+    "required_selector_groups": [
+      {
+        "name": "preset-visual-component",
+        "selectors": [
+          ".hero-body",
+          ".manifesto-inner",
+          ".steps",
+          ".pain-list",
+          ".pill",
+          ".stats"
+        ],
+        "match": "any",
+        "scope": "document",
+        "weight": 1.0,
+        "minimum_group_score": 1.0,
+        "content_required": true
+      },
+      {
+        "name": "preset-content-spread",
+        "selectors": [
+          ".preset-paper-ink-content"
+        ],
+        "match": "any",
+        "scope": "slide",
+        "page_buckets": [
+          "content"
+        ],
+        "weight": 1.0,
+        "minimum_group_score": 0.7,
+        "minimum_bucket_count": 1,
+        "content_required": true
+      }
+    ],
+    "negative_fixtures": [
+      "generic-shell",
+      "marker-only",
+      "single-slide-signature-dump",
+      "full-slide-image"
+    ]
+  }
 }

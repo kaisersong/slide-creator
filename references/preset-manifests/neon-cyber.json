@@ -55,69 +55,37 @@
     "cyber_close"
   ],
   "signature_components": [
-    "cyber-card",
-    "cyber-heading",
-    "cyber-label",
-    "cyber-title",
-    "grid",
-    "neon-body",
-    "neon-divider",
-    "neon-mono"
+    "profile-slide",
+    "profile-content",
+    "preset-content",
+    "profile-title"
   ],
   "required_visible_components": [
     {
-      "name": "cyber-card",
+      "name": "profile-slide",
       "selectors": [
-        ".cyber-card"
+        "section.profile-slide"
       ],
       "min_count": 1
     },
     {
-      "name": "cyber-heading",
+      "name": "profile-content",
       "selectors": [
-        ".cyber-heading"
+        ".profile-content"
       ],
       "min_count": 1
     },
     {
-      "name": "cyber-label",
+      "name": "preset-content",
       "selectors": [
-        ".cyber-label"
+        ".preset-neon-cyber-content"
       ],
       "min_count": 1
     },
     {
-      "name": "cyber-title",
+      "name": "profile-title",
       "selectors": [
-        ".cyber-title"
-      ],
-      "min_count": 1
-    },
-    {
-      "name": "grid",
-      "selectors": [
-        ".grid"
-      ],
-      "min_count": 1
-    },
-    {
-      "name": "neon-body",
-      "selectors": [
-        ".neon-body"
-      ],
-      "min_count": 1
-    },
-    {
-      "name": "neon-divider",
-      "selectors": [
-        ".neon-divider"
-      ],
-      "min_count": 1
-    },
-    {
-      "name": "neon-mono",
-      "selectors": [
-        ".neon-mono"
+        ".profile-fit-title"
       ],
       "min_count": 1
     }
@@ -132,5 +100,48 @@
     "generic-theme-shell",
     "marker-only-style-signature",
     "empty-component-shell"
-  ]
+  ],
+  "style_fidelity": {
+    "minimum_coverage": 0.85,
+    "minimum_integrity": 1.0,
+    "required_selector_groups": [
+      {
+        "name": "preset-visual-component",
+        "selectors": [
+          ".cyber-title",
+          ".cyber-card",
+          ".cyber-heading",
+          ".neon-body",
+          ".pill",
+          ".stats"
+        ],
+        "match": "any",
+        "scope": "document",
+        "weight": 1.0,
+        "minimum_group_score": 1.0,
+        "content_required": true
+      },
+      {
+        "name": "preset-content-spread",
+        "selectors": [
+          ".preset-neon-cyber-content"
+        ],
+        "match": "any",
+        "scope": "slide",
+        "page_buckets": [
+          "content"
+        ],
+        "weight": 1.0,
+        "minimum_group_score": 0.7,
+        "minimum_bucket_count": 1,
+        "content_required": true
+      }
+    ],
+    "negative_fixtures": [
+      "generic-shell",
+      "marker-only",
+      "single-slide-signature-dump",
+      "full-slide-image"
+    ]
+  }
 }

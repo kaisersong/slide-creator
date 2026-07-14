@@ -145,6 +145,7 @@ def test_run_suite_writes_fixture_html_for_baseline_ready_reuse(tmp_path: Path):
             {
                 "case_id": "fixture-paper-ink",
                 "validation_profile": "strict",
+                "preset_fidelity_mode": "reference",
                 "preset": "Paper & Ink",
                 "html_path": str(ROOT / "demos" / "paper-ink-zh.html"),
                 "expectations": {
@@ -222,6 +223,7 @@ def test_run_suite_degrades_gracefully_when_browser_title_qa_is_unavailable(tmp_
             {
                 "case_id": "fixture-paper-ink",
                 "validation_profile": "strict",
+                "preset_fidelity_mode": "reference",
                 "preset": "Paper & Ink",
                 "html_path": str(ROOT / "demos" / "paper-ink-zh.html"),
                 "expectations": {
@@ -417,12 +419,12 @@ def test_run_suite_merges_contract_export_mobile_ai_and_pptx_gate_reports(tmp_pa
     assert case["pass"] is False
     assert "contract-required-visible-component-missing" in case["hard_failures"]
     assert "mobile-browser-geometry-text-overflow" in case["hard_failures"]
-    assert case["validations"]["preset_contract"]["pass"] is False
+    assert case["validations"]["preset_fidelity"]["pass"] is False
     assert case["validations"]["export_smoke"]["pass"] is True
     assert case["validations"]["mobile_geometry"]["pass"] is False
     assert case["validations"]["ai_advised"]["pass"] is True
     assert case["validations"]["pptx_export"]["pass"] is True
-    assert Path(case["validations"]["preset_contract_report_path"]).exists()
+    assert Path(case["validations"]["preset_fidelity_report_path"]).exists()
     assert Path(case["validations"]["export_smoke_report_path"]).exists()
     assert Path(case["validations"]["mobile_geometry_report_path"]).exists()
     assert Path(case["validations"]["ai_advised_report_path"]).exists()

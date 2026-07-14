@@ -55,76 +55,37 @@
     "consulting_close"
   ],
   "signature_components": [
-    "sc-action-title",
-    "sc-section-header",
-    "sc-evidence-card",
-    "sc-metric-label",
-    "sc-reco-box",
-    "sc-before-after",
-    "sc-before-panel",
-    "sc-after-panel",
-    "sc-panel-label",
-    "sc-three-things",
-    "sc-source",
-    "sc-quote-evidence",
-    "sc-quote-block",
-    "sc-quote-text",
-    "sc-quote-attribution"
+    "profile-slide",
+    "profile-content",
+    "preset-content",
+    "profile-title"
   ],
   "required_visible_components": [
     {
-      "name": "sc-action-title",
+      "name": "profile-slide",
       "selectors": [
-        ".sc-action-title"
+        "section.profile-slide"
       ],
       "min_count": 1
     },
     {
-      "name": "sc-section-header",
+      "name": "profile-content",
       "selectors": [
-        ".sc-section-header"
+        ".profile-content"
       ],
       "min_count": 1
     },
     {
-      "name": "sc-evidence-card",
+      "name": "preset-content",
       "selectors": [
-        ".sc-evidence-card"
+        ".preset-strategy-consulting-content"
       ],
       "min_count": 1
     },
     {
-      "name": "sc-metric-label",
+      "name": "profile-title",
       "selectors": [
-        ".sc-metric-label"
-      ],
-      "min_count": 1
-    },
-    {
-      "name": "sc-reco-box",
-      "selectors": [
-        ".sc-reco-box"
-      ],
-      "min_count": 1
-    },
-    {
-      "name": "sc-before-after",
-      "selectors": [
-        ".sc-before-after"
-      ],
-      "min_count": 1
-    },
-    {
-      "name": "sc-before-panel",
-      "selectors": [
-        ".sc-before-panel"
-      ],
-      "min_count": 1
-    },
-    {
-      "name": "sc-after-panel",
-      "selectors": [
-        ".sc-after-panel"
+        ".profile-fit-title"
       ],
       "min_count": 1
     }
@@ -194,5 +155,46 @@
       "browser-geometry-invisible-target"
     ]
   },
-  "demo_parity_minimum_score": 0.85
+  "demo_parity_minimum_score": 0.85,
+  "style_fidelity": {
+    "minimum_coverage": 0.85,
+    "minimum_integrity": 1.0,
+    "required_selector_groups": [
+      {
+        "name": "preset-visual-component",
+        "selectors": [
+          ".sc-action-title",
+          ".sc-evidence-card",
+          ".sc-before-after",
+          ".sc-three-things"
+        ],
+        "match": "any",
+        "scope": "document",
+        "weight": 1.0,
+        "minimum_group_score": 1.0,
+        "content_required": true
+      },
+      {
+        "name": "preset-content-spread",
+        "selectors": [
+          ".preset-strategy-consulting-content"
+        ],
+        "match": "any",
+        "scope": "slide",
+        "page_buckets": [
+          "content"
+        ],
+        "weight": 1.0,
+        "minimum_group_score": 0.7,
+        "minimum_bucket_count": 1,
+        "content_required": true
+      }
+    ],
+    "negative_fixtures": [
+      "generic-shell",
+      "marker-only",
+      "single-slide-signature-dump",
+      "full-slide-image"
+    ]
+  }
 }

@@ -67,71 +67,37 @@
     "glass_stat"
   ],
   "signature_components": [
-    "glass-body",
-    "glass-card",
-    "glass-item",
-    "glass-title",
-    "grid",
-    "orb",
-    "orb1",
-    "orb2",
-    "orb3",
-    "pill"
+    "profile-slide",
+    "profile-content",
+    "preset-content",
+    "profile-title"
   ],
   "required_visible_components": [
     {
-      "name": "glass-body",
+      "name": "profile-slide",
       "selectors": [
-        ".glass-body"
+        "section.profile-slide"
       ],
       "min_count": 1
     },
     {
-      "name": "glass-card",
+      "name": "profile-content",
       "selectors": [
-        ".glass-card"
+        ".profile-content"
       ],
       "min_count": 1
     },
     {
-      "name": "glass-item",
+      "name": "preset-content",
       "selectors": [
-        ".glass-item"
+        ".preset-glassmorphism-content"
       ],
       "min_count": 1
     },
     {
-      "name": "glass-title",
+      "name": "profile-title",
       "selectors": [
-        ".glass-title"
-      ],
-      "min_count": 1
-    },
-    {
-      "name": "grid",
-      "selectors": [
-        ".grid"
-      ],
-      "min_count": 1
-    },
-    {
-      "name": "orb",
-      "selectors": [
-        ".orb"
-      ],
-      "min_count": 1
-    },
-    {
-      "name": "orb1",
-      "selectors": [
-        ".orb1"
-      ],
-      "min_count": 1
-    },
-    {
-      "name": "orb2",
-      "selectors": [
-        ".orb2"
+        ".profile-fit-title"
       ],
       "min_count": 1
     }
@@ -201,5 +167,48 @@
       "browser-geometry-invisible-target"
     ]
   },
-  "demo_parity_minimum_score": 0.85
+  "demo_parity_minimum_score": 0.85,
+  "style_fidelity": {
+    "minimum_coverage": 0.85,
+    "minimum_integrity": 1.0,
+    "required_selector_groups": [
+      {
+        "name": "preset-visual-component",
+        "selectors": [
+          ".glass-title",
+          ".glass-card",
+          ".glass-item",
+          ".glass-body",
+          ".pill",
+          ".stats"
+        ],
+        "match": "any",
+        "scope": "document",
+        "weight": 1.0,
+        "minimum_group_score": 1.0,
+        "content_required": true
+      },
+      {
+        "name": "preset-content-spread",
+        "selectors": [
+          ".preset-glassmorphism-content"
+        ],
+        "match": "any",
+        "scope": "slide",
+        "page_buckets": [
+          "content"
+        ],
+        "weight": 1.0,
+        "minimum_group_score": 0.7,
+        "minimum_bucket_count": 1,
+        "content_required": true
+      }
+    ],
+    "negative_fixtures": [
+      "generic-shell",
+      "marker-only",
+      "single-slide-signature-dump",
+      "full-slide-image"
+    ]
+  }
 }

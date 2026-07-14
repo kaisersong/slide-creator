@@ -18,6 +18,12 @@ def write_json(path: Path, data: dict) -> None:
     path.write_text(json.dumps(data, ensure_ascii=False, indent=2), encoding="utf-8")
 
 
+def test_preset_release_gate_defaults_to_registry_complete_matrix():
+    assert preset_release_gate.DEFAULT_SUITE == ROOT / "evals" / "preset-surface-all" / "manifest.json"
+    manifest = json.loads(preset_release_gate.DEFAULT_SUITE.read_text(encoding="utf-8"))
+    assert len(manifest["cases"]) == 66
+
+
 def test_preset_release_gate_writes_report_and_summary(tmp_path: Path):
     manifest = {
         "suite_id": "gate-smoke-suite",
@@ -29,19 +35,15 @@ def test_preset_release_gate_writes_report_and_summary(tmp_path: Path):
         },
         "cases": [
             {
-                "case_id": "support-paper-ink",
+                "case_id": "support-strategy-consulting",
                 "validation_profile": "strict",
-                "preset": "Paper & Ink",
-                "html_path": str(ROOT / "demos" / "paper-ink-zh.html"),
+                "preset": "Strategy Consulting",
+                "brief_path": str(
+                    ROOT / "evals" / "preset-surface-phase1" / "cases" / "core-swiss-modern-brief.json"
+                ),
                 "expectations": {
-                    "expected_preset": "Paper & Ink",
+                    "expected_preset": "Strategy Consulting",
                     "expected_support_tier": "supported",
-                    "required_html_checks": [
-                        "shared-runtime",
-                        "present-mode",
-                        "edit-mode",
-                        "watermark-injected",
-                    ],
                     "required_quality_gates": [
                         "chrome-hidden-by-default",
                         "no-content-occlusion-risk",
@@ -166,7 +168,7 @@ def test_preset_release_gate_auto_enables_browser_titles_when_suite_requires_the
 
     called: dict[str, object] = {}
 
-    def fake_run_suite(suite_path, *, output_dir, baseline_dir=None, run_browser_titles=False):
+    def fake_run_suite(suite_path, *, output_dir, baseline_dir=None, run_browser_titles=False, run_contract=False):
         called["suite_path"] = Path(suite_path)
         called["output_dir"] = Path(output_dir)
         called["baseline_dir"] = baseline_dir
@@ -207,7 +209,7 @@ def test_preset_release_gate_auto_enables_browser_titles_when_suite_requires_the
 def test_preset_release_gate_can_include_fixture_skill_evals(tmp_path: Path, monkeypatch):
     called: dict[str, object] = {}
 
-    def fake_run_suite(suite_path, *, output_dir, baseline_dir=None, run_browser_titles=False):
+    def fake_run_suite(suite_path, *, output_dir, baseline_dir=None, run_browser_titles=False, run_contract=False):
         called["suite_path"] = Path(suite_path)
         called["output_dir"] = Path(output_dir)
         called["baseline_dir"] = baseline_dir
@@ -288,7 +290,7 @@ def test_preset_release_gate_compares_skill_evals_against_baseline(tmp_path: Pat
         },
     )
 
-    def fake_run_suite(suite_path, *, output_dir, baseline_dir=None, run_browser_titles=False):
+    def fake_run_suite(suite_path, *, output_dir, baseline_dir=None, run_browser_titles=False, run_contract=False):
         return {
             "suite_id": "gate-skill-eval-suite",
             "output_dir": str(output_dir),
@@ -373,6 +375,7 @@ def test_preset_release_gate_passes_browser_geometry_option(tmp_path: Path, monk
         baseline_dir=None,
         run_browser_titles=False,
         run_browser_geometry=False,
+        run_contract=False,
     ):
         called["run_browser_geometry"] = run_browser_geometry
         return {
@@ -546,7 +549,7 @@ def test_preset_release_gate_reports_contract_export_mobile_ai_pptx_and_promotio
                     "case_id": "aurora-mesh-profile-render",
                     "pass": False,
                     "validations": {
-                        "preset_contract": {
+                        "preset_fidelity": {
                             "hard_failures": ["contract-required-visible-component-missing"],
                         },
                         "export_smoke": {
@@ -570,7 +573,7 @@ def test_preset_release_gate_reports_contract_export_mobile_ai_pptx_and_promotio
 
     assert "aurora-mesh-profile-render: eval case failed" in failures
     assert (
-        "aurora-mesh-profile-render: preset contract failed "
+        "aurora-mesh-profile-render: preset fidelity failed "
         "contract-required-visible-component-missing"
     ) in failures
     assert "aurora-mesh-profile-render: export smoke failed export-smoke-missing-slot" in failures
@@ -596,3 +599,22 @@ def test_preset_release_gate_reports_contract_export_mobile_ai_pptx_and_promotio
         "demo-parity: Terminal Green instance failed "
         "missing required component instance .terminal-scanlines"
     ) in failures
+
+
+def test_release_gate_rejects_legacy_static_key_and_missing_blue_sky_runtime_evidence():
+    failures = preset_release_gate._collect_gate_failures(
+        {
+            "cases": [
+                {
+                    "case_id": "blue-sky-writer-drift",
+                    "preset": "Blue Sky",
+                    "pass": True,
+                    "validations": {"preset_contract": {"pass": True}},
+                }
+            ]
+        },
+        require_baseline=False,
+    )
+
+    assert "blue-sky-writer-drift: preset fidelity missing (legacy writer key rejected)" in failures
+    assert "blue-sky-writer-drift: runtime fidelity evidence missing" in failures

@@ -59,72 +59,37 @@
     "retro_close"
   ],
   "signature_components": [
-    "accent-pink",
-    "arch-tint-pink",
-    "ba-panel",
-    "badge-pink",
-    "body-text",
-    "cards-grid",
-    "cmd-pink",
-    "cmd-table",
-    "hl-pink",
-    "metric-num-pink",
-    "metrics-grid"
+    "profile-slide",
+    "profile-content",
+    "preset-content",
+    "profile-title"
   ],
   "required_visible_components": [
     {
-      "name": "accent-pink",
+      "name": "profile-slide",
       "selectors": [
-        ".accent-pink"
+        "section.profile-slide"
       ],
       "min_count": 1
     },
     {
-      "name": "arch-tint-pink",
+      "name": "profile-content",
       "selectors": [
-        ".arch-tint-pink"
+        ".profile-content"
       ],
       "min_count": 1
     },
     {
-      "name": "ba-panel",
+      "name": "preset-content",
       "selectors": [
-        ".ba-panel"
+        ".preset-neo-retro-dev-deck-content"
       ],
       "min_count": 1
     },
     {
-      "name": "badge-pink",
+      "name": "profile-title",
       "selectors": [
-        ".badge-pink"
-      ],
-      "min_count": 1
-    },
-    {
-      "name": "body-text",
-      "selectors": [
-        ".body-text"
-      ],
-      "min_count": 1
-    },
-    {
-      "name": "cards-grid",
-      "selectors": [
-        ".cards-grid"
-      ],
-      "min_count": 1
-    },
-    {
-      "name": "cmd-pink",
-      "selectors": [
-        ".cmd-pink"
-      ],
-      "min_count": 1
-    },
-    {
-      "name": "cmd-table",
-      "selectors": [
-        ".cmd-table"
+        ".profile-fit-title"
       ],
       "min_count": 1
     }
@@ -139,5 +104,48 @@
     "generic-theme-shell",
     "marker-only-style-signature",
     "empty-component-shell"
-  ]
+  ],
+  "style_fidelity": {
+    "minimum_coverage": 0.85,
+    "minimum_integrity": 1.0,
+    "required_selector_groups": [
+      {
+        "name": "preset-visual-component",
+        "selectors": [
+          ".arch-title",
+          ".cards-grid",
+          ".badge-cyan",
+          ".badge-pink",
+          ".pill",
+          ".stats"
+        ],
+        "match": "any",
+        "scope": "document",
+        "weight": 1.0,
+        "minimum_group_score": 1.0,
+        "content_required": true
+      },
+      {
+        "name": "preset-content-spread",
+        "selectors": [
+          ".preset-neo-retro-dev-deck-content"
+        ],
+        "match": "any",
+        "scope": "slide",
+        "page_buckets": [
+          "content"
+        ],
+        "weight": 1.0,
+        "minimum_group_score": 0.7,
+        "minimum_bucket_count": 1,
+        "content_required": true
+      }
+    ],
+    "negative_fixtures": [
+      "generic-shell",
+      "marker-only",
+      "single-slide-signature-dump",
+      "full-slide-image"
+    ]
+  }
 }

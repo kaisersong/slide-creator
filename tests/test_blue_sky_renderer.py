@@ -7,11 +7,13 @@ import tempfile
 from collections import Counter
 from pathlib import Path
 
+from bs4 import BeautifulSoup
+
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT / "scripts"))
 
 from low_context import build_render_packet, build_slide_spec, render_from_brief
-from validate_html import validate
+from validate_html import check_blue_sky_signature_contract, validate
 
 
 AUTO_BRIEF = ROOT / "demos" / "mode-paths" / "auto-BRIEF.json"
@@ -129,6 +131,106 @@ def test_blue_sky_generated_html_injects_current_watermark():
     assert "slide-credit" in html
     assert "By kai-slide-creator v" in html
     assert "· Blue Sky" in html
+
+
+def test_blue_sky_starter_defines_mobile_grid_constraints():
+    starter = (ROOT / "references" / "blue-sky-starter.html").read_text(encoding="utf-8")
+
+    assert "@media (max-width: 720px)" in starter
+    assert ".cols2, .cols3, .cols4" in starter
+    assert "grid-template-columns: repeat(2, minmax(0, 1fr));" in starter
+    assert ".cols2 > *, .cols3 > *, .cols4 > *, .bento > *" in starter
+    assert "min-width: 0;" in starter
+
+
+def test_blue_sky_signature_contract_accepts_native_renderer_output():
+    brief = _load_json(AUTO_BRIEF)
+    html = render_from_brief(brief)[0]
+    soup = BeautifulSoup(html, "html.parser")
+
+    passed, message = check_blue_sky_signature_contract(soup, html, [])
+
+    assert passed, message
+
+
+def test_blue_sky_signature_contract_rejects_static_shell_without_demo_motion():
+    html = """
+    <html>
+    <head>
+      <style>
+        body::before { content: ""; background: #eaf6ff; }
+        body::after { content: ""; background: #ffffff; }
+        .slide { height: 100vh; overflow: hidden; }
+        .orb { position: absolute; width: 200px; height: 200px; }
+        .pill { display: inline-block; padding: 4px 12px; }
+        .gt { font-size: 6rem; }
+      </style>
+    </head>
+    <body data-preset="Blue Sky">
+      <div class="orb" id="orb1"></div>
+      <div class="orb" id="orb2"></div>
+      <div class="orb" id="orb3"></div>
+      <div id="stage">
+        <div id="track">
+          <section class="slide hero-clean" data-export-role="cover">
+            <span class="pill">2026 MID-YEAR MEETING</span>
+            <h1 class="gt">闭幕辞</h1>
+          </section>
+          <section class="slide thank-you-slide" data-export-role="closing">
+            <h2 class="gt">谢谢</h2>
+          </section>
+        </div>
+      </div>
+    </body>
+    </html>
+    """
+    soup = BeautifulSoup(html, "html.parser")
+
+    passed, message = check_blue_sky_signature_contract(soup, html, [])
+
+    assert not passed
+    assert "style-selector-group-missing" in message
+    assert "style-signature-coverage-low" in message
+
+
+def test_blue_sky_signature_contract_rejects_sparse_cloud_only_shell():
+    html = """
+    <html>
+    <head>
+      <style>
+        body::before { content: ""; background: #eaf6ff; }
+        body::after { content: ""; background: #ffffff; }
+        .slide { height: 100vh; overflow: hidden; }
+        .orb { position: absolute; width: 200px; height: 200px; }
+        .pill { display: inline-block; padding: 4px 12px; }
+        .gt { font-size: 6rem; }
+        .g { border: 1px solid rgba(255,255,255,.9); }
+        .stat { font-size: 2.8rem; }
+        .cloud-layer { position: absolute; bottom: 0; left: 0; width: 100%; height: 75%; }
+        .cloud-strip { position: absolute; bottom: 0; left: 0; display: flex; height: 100%; }
+        .cloud-group { position: absolute; bottom: 0; }
+        .cloud-puff { position: absolute; background: white; border-radius: 50%; }
+      </style>
+    </head>
+    <body data-preset="Blue Sky">
+      <div class="orb" id="orb1"></div>
+      <div class="orb" id="orb2"></div>
+      <div class="orb" id="orb3"></div>
+      <section class="slide cover" data-export-role="cover">
+        <div class="cloud-layer"><div class="cloud-strip"><div class="cloud-group"><div class="cloud-puff"> </div></div></div></div>
+        <span class="pill">Meeting</span>
+        <h1 class="gt">Closing</h1>
+        <div class="g"><div class="stat">2030</div></div>
+      </section>
+    </body>
+    </html>
+    """
+    soup = BeautifulSoup(html, "html.parser")
+
+    passed, message = check_blue_sky_signature_contract(soup, html, [])
+
+    assert not passed
+    assert "style-selector-group-missing" in message
 
 
 def test_blue_sky_keeps_medium_cjk_titles_on_one_line():

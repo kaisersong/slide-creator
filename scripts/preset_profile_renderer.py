@@ -197,44 +197,6 @@ PICTORIAL_EMOJI_RE = re.compile(
 LATIN_TITLE_TOKEN_RE = re.compile(r"[A-Za-z0-9]+(?:[-_][A-Za-z0-9]+)*")
 TITLE_TOKEN_RE = re.compile(r"[A-Za-z0-9]+(?:[-_][A-Za-z0-9]+)*|[\u4e00-\u9fff]|[^\sA-Za-z0-9\u4e00-\u9fff]")
 
-SIGNATURE_AUTOFILL_SKIP_CLASSES = {
-    "pull-quote",
-    "steps",
-    "step",
-    "sc-evidence-card",
-    "sc-metric-label",
-    "sc-reco-box",
-    "sc-before-after",
-    "sc-before-panel",
-    "sc-after-panel",
-    "sc-panel-label",
-    "sc-three-things",
-    "sc-source",
-    "sc-quote-evidence",
-    "sc-quote-block",
-    "sc-quote-text",
-    "sc-quote-attribution",
-    "aurora-content",
-    "aurora-divider",
-    "aurora-slide",
-    "bottom-panel",
-    "elec-quote-block",
-    "feat-grid",
-    "left-panel",
-    "ba-panel",
-    "cards-grid",
-    "cmd-table",
-    "editorial-rule",
-    "grid",
-    "metrics-grid",
-    "preset-grid",
-    "rule",
-    "rule-thick",
-    "right-panel",
-    "step-editorial",
-    "top-panel",
-}
-
 SIGNATURE_TARGET_SKIP_CLASSES = {
     "profile-content",
     "slide-content",
@@ -560,8 +522,8 @@ def _title_lines(value: str) -> list[str]:
     if not cleaned:
         return []
     visual_width = _title_visual_width(cleaned)
-    if re.search(r"[\u4e00-\u9fff]", cleaned) and visual_width > 14:
-        line_count = 2 if visual_width <= 36 else 3
+    if re.search(r"[\u4e00-\u9fff]", cleaned) and visual_width > 28:
+        line_count = 2 if visual_width <= 54 else 3
         punctuated = _punctuation_title_lines(cleaned, line_count)
         if punctuated:
             return punctuated
@@ -741,6 +703,7 @@ body[data-renderer-strategy="unified_profile"][data-profile-spec="vintage-editor
     word-break: normal !important;
 }}
 body[data-renderer-strategy="unified_profile"] .profile-fit-title .title-line {{
+    white-space: normal !important;
     word-break: normal !important;
 }}
 body[data-renderer-strategy="unified_profile"] .profile-generated-title {{
@@ -915,6 +878,10 @@ body[data-renderer-strategy="unified_profile"][data-profile-spec="aurora-mesh"] 
 body[data-renderer-strategy="unified_profile"][data-profile-spec="aurora-mesh"] .feat-card-title,
 body[data-renderer-strategy="unified_profile"][data-profile-spec="aurora-mesh"] .feat-card-desc {{
     letter-spacing: 0;
+}}
+body[data-renderer-strategy="unified_profile"][data-profile-spec="aurora-mesh"] .aurora-subtitle.h2-title {{
+    color: #ffffff !important;
+    opacity: 1 !important;
 }}
 body[data-renderer-strategy="unified_profile"][data-profile-spec="creative-voltage"] #slide-1 .cover-inner,
 body[data-renderer-strategy="unified_profile"][data-profile-spec="creative-voltage"] #slide-1 .main-title,
@@ -1496,6 +1463,8 @@ def _set_node_text(node: Any, value: str) -> None:
 
 def _set_title_node_text(soup: BeautifulSoup, node: Any, title: str) -> None:
     cleaned_title = _sanitize_pictorial_text(title)
+    if node.has_attr("data-text"):
+        node["data-text"] = cleaned_title
     _append_class(node, "title-balance")
     for class_name in _title_fit_classes(cleaned_title):
         _append_class(node, class_name)
@@ -1583,32 +1552,6 @@ def _ensure_component_richness(section: Any) -> None:
     targets = _signature_target_nodes(scope)
     if targets:
         _append_class(targets[0], "profile-eval-card")
-
-
-def _apply_visible_signature_classes(section: Any, profile_spec: PresetProfileSpec, *, slide_number: int, total: int) -> None:
-    scope = section.select_one(".profile-content, .slide-content")
-    if scope is None:
-        return
-    existing_signature_classes = set(profile_spec.visible_signature_classes)
-    targets = [
-        node
-        for node in _signature_target_nodes(scope)
-        if not (set(node.get("class", [])) & existing_signature_classes)
-    ]
-    classes = tuple(
-        class_name
-        for class_name in profile_spec.visible_signature_classes
-        if class_name not in SIGNATURE_AUTOFILL_SKIP_CLASSES
-    )
-    if not targets or not classes:
-        return
-    chunk_size = max(1, (len(classes) + max(1, total) - 1) // max(1, total))
-    start = max(0, slide_number - 1) * chunk_size
-    selected = classes[start : start + chunk_size]
-    if not selected:
-        selected = classes[-chunk_size:]
-    for index, class_name in enumerate(selected):
-        _append_class(targets[index % len(targets)], class_name)
 
 
 def _sanitize_demo_section_text(section: Any) -> None:
@@ -1765,8 +1708,9 @@ def _hydrate_demo_section(
     if slide_label is not None:
         _set_node_text(slide_label, f"{slide_number:02d} / {total:02d}")
 
-    _ensure_profile_content_scope(soup, section)
-    _apply_visible_signature_classes(section, profile_spec, slide_number=slide_number, total=total)
+    content_scope = _ensure_profile_content_scope(soup, section)
+    if content_scope is not None:
+        _append_class(content_scope, f"preset-{slug}-content")
     _ensure_component_richness(section)
     _ensure_glass_orbs(soup, section, profile_spec)
     _mark_presentational_empty_decor(section)
@@ -2479,7 +2423,7 @@ def _render_section(
     return f"""
     <section class="slide slide-{slide_number} profile-slide pf-{family} preset-{slug} {layout}" id="slide-{slide_number}" data-notes="{_escape(spec.get('speaker_note', ''))}" aria-label="{_escape(spec.get('role', 'slide'))}" data-export-role="{_escape(layout)}" data-visual-family="{_escape(family)}" data-visual-signature="{_escape(slug + '-' + layout)}">
         {glass_layers}
-        <div class="slide-content content profile-content">
+        <div class="slide-content content profile-content preset-{slug}-content">
             <div class="profile-eyebrow reveal">{_escape(canonical_preset)} / {_escape(str(spec.get('role', 'slide')))}</div>
             {body}
         </div>

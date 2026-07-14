@@ -171,6 +171,22 @@ p, li { font-size: clamp(0.82rem, 1.4vw, 1.05rem); line-height: 1.6; color: var(
 .bento .span3 { grid-column: span 3; }
 .bento .row2  { grid-row: span 2; }
 
+@media (max-width: 720px) {
+  .cols2, .cols3, .cols4 {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px;
+  }
+  .bento {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-auto-rows: minmax(96px, auto);
+    gap: 10px;
+  }
+  .bento .span3 { grid-column: span 2; }
+  .cols2 > *, .cols3 > *, .cols4 > *, .bento > * {
+    min-width: 0;
+  }
+}
+
 .divider {
   width: 56px; height: 3px; border-radius: 2px;
   background: linear-gradient(90deg, #2563eb, #0ea5e9);

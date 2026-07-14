@@ -71,6 +71,10 @@ CANONICAL_PRESET_NAMES = {
     "vintage editorial": "Vintage Editorial",
 }
 
+PRESET_NAME_ALIASES = {
+    "neo-retro dev": "neo-retro dev deck",
+}
+
 
 READY_NATIVE_PRESETS = {
     "swiss modern",
@@ -140,7 +144,8 @@ class PresetRenderCapability:
 
 
 def normalize_preset_name(value: str | None) -> str:
-    return (value or "").strip().lower()
+    normalized = (value or "").strip().lower()
+    return PRESET_NAME_ALIASES.get(normalized, normalized)
 
 
 def strip_custom_prefix(value: str | None) -> str:

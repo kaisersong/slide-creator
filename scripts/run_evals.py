@@ -35,10 +35,15 @@ from browser_geometry_qa import analyze_browser_geometry_path  # noqa: E402
 from compare_demo_parity import run_demo_parity as run_demo_parity_gate  # noqa: E402
 from export_smoke import run_export_smoke  # noqa: E402
 from pptx_export_smoke import run_pptx_export_smoke  # noqa: E402
-from preset_contracts import check_preset_contract_path  # noqa: E402
+from preset_contracts import (  # noqa: E402
+    check_preset_contract_path,
+    load_preset_contract,
+    requirement_for_preset,
+)
+from preset_runtime_qa import analyze_preset_runtime_path  # noqa: E402
 from promotion_gate import run_promotion_gate  # noqa: E402
 from quality_eval import analyze_html_quality  # noqa: E402
-from style_signature_eval import collect_signature_presence, requirement_for_preset  # noqa: E402
+from style_signature_eval import collect_signature_presence  # noqa: E402
 from title_browser_qa import analyze_title_composition_path  # noqa: E402
 
 
@@ -143,7 +148,12 @@ def _slugify_check_name(function_name: str) -> str:
     return function_name.replace("check_", "")
 
 
-def _run_validate_checks(html_text: str, *, strict: bool) -> dict[str, Any]:
+def _run_validate_checks(
+    html_text: str,
+    *,
+    strict: bool,
+    preset_fidelity_mode: str = "product",
+) -> dict[str, Any]:
     soup = BeautifulSoup(html_text, "html.parser")
     warnings: list[str] = []
     checks = list(VALIDATE.REQUIRED_CHECKS)
@@ -153,7 +163,10 @@ def _run_validate_checks(html_text: str, *, strict: bool) -> dict[str, Any]:
     results: dict[str, dict[str, Any]] = {}
     for check_fn in checks:
         try:
-            passed, message = check_fn(soup, html_text, warnings)
+            if check_fn is VALIDATE.check_preset_fidelity:
+                passed, message = check_fn(soup, html_text, warnings, mode=preset_fidelity_mode)
+            else:
+                passed, message = check_fn(soup, html_text, warnings)
         except Exception as exc:  # pragma: no cover - defensive path
             passed, message = False, f"Check error: {exc}"
         results[_slugify_check_name(check_fn.__name__)] = {
@@ -164,6 +177,7 @@ def _run_validate_checks(html_text: str, *, strict: bool) -> dict[str, Any]:
     failed = sorted(name for name, result in results.items() if not result["passed"])
     return {
         "strict": strict,
+        "preset_fidelity_mode": preset_fidelity_mode,
         "passed": not failed,
         "failed_checks": failed,
         "warnings": warnings,
@@ -192,7 +206,7 @@ def _collect_css_text(html_text: str) -> str:
 
 def _compute_style_signature_metrics(html_text: str, preset: str) -> dict[str, Any]:
     requirement = requirement_for_preset(preset)
-    presence = collect_signature_presence(html_text, preset)
+    presence = collect_signature_presence(html_text, requirement)
 
     signature_required = set(requirement.classes) | set(requirement.ids) | set(requirement.backgrounds)
     background_required = set(requirement.backgrounds)
@@ -648,6 +662,7 @@ def _evaluate_rendered_case(
     expectations = case.get("expectations", {})
     validation_profile = case.get("validation_profile", "strict")
     strict_validate = validation_profile == "strict"
+    preset_fidelity_mode = str(case.get("preset_fidelity_mode", "product"))
     quality_eval_use_brief = case.get("quality_eval_use_brief", True)
 
     brief = None
@@ -770,7 +785,11 @@ def _evaluate_rendered_case(
     packet_path.write_text(json.dumps(packet, ensure_ascii=False, indent=2), encoding="utf-8")
 
     validate_started = perf_counter()
-    validate_report = _run_validate_checks(html_text, strict=strict_validate)
+    validate_report = _run_validate_checks(
+        html_text,
+        strict=strict_validate,
+        preset_fidelity_mode=preset_fidelity_mode,
+    )
     validate_ms = round((perf_counter() - validate_started) * 1000, 2)
 
     baseline_html_text = None
@@ -827,29 +846,54 @@ def _evaluate_rendered_case(
         )
         browser_geometry_report_path = generated_geometry_report_path
 
-    preset_contract_report = None
-    preset_contract_report_path = None
+    preset_fidelity_report = None
+    preset_fidelity_report_path = None
+    runtime_fidelity_report = None
+    runtime_fidelity_report_path = None
     if run_contract or case.get("run_contract"):
         try:
-            preset_contract_report = check_preset_contract_path(
+            preset_fidelity_report = check_preset_contract_path(
                 rendered_html_path,
                 preset=packet["preset"],
             )
         except Exception as exc:  # pragma: no cover - defensive local file path
-            preset_contract_report = {
+            preset_fidelity_report = {
                 "pass": False,
                 "unavailable": True,
-                "error": f"preset contract check unavailable: {exc}",
-                "hard_failures": ["preset-contract-unavailable"],
+                "error": f"preset fidelity check unavailable: {exc}",
+                "hard_failures": ["preset-fidelity-unavailable"],
                 "violations": [],
                 "diagnostics": {},
             }
-        generated_contract_report_path = case_dir / "preset-contract-report.json"
-        generated_contract_report_path.write_text(
-            json.dumps(preset_contract_report, ensure_ascii=False, indent=2),
+        generated_fidelity_report_path = case_dir / "preset-fidelity-report.json"
+        generated_fidelity_report_path.write_text(
+            json.dumps(preset_fidelity_report, ensure_ascii=False, indent=2),
             encoding="utf-8",
         )
-        preset_contract_report_path = generated_contract_report_path
+        preset_fidelity_report_path = generated_fidelity_report_path
+
+        try:
+            contract = load_preset_contract(packet["preset"])
+            if contract.get("runtime_fidelity"):
+                runtime_fidelity_report = analyze_preset_runtime_path(
+                    rendered_html_path,
+                    preset=packet["preset"],
+                )
+        except Exception as exc:  # pragma: no cover - browser/runtime availability
+            runtime_fidelity_report = {
+                "pass": False,
+                "unavailable": True,
+                "error": f"runtime fidelity check unavailable: {exc}",
+                "hard_failures": ["runtime-qa-unavailable"],
+                "violations": [],
+            }
+        if runtime_fidelity_report is not None:
+            generated_runtime_report_path = case_dir / "runtime-fidelity-report.json"
+            generated_runtime_report_path.write_text(
+                json.dumps(runtime_fidelity_report, ensure_ascii=False, indent=2),
+                encoding="utf-8",
+            )
+            runtime_fidelity_report_path = generated_runtime_report_path
 
     export_smoke_report = None
     export_smoke_report_path = None
@@ -995,8 +1039,10 @@ def _evaluate_rendered_case(
         hard_failures.append("strict-validate-failed")
     if browser_geometry_report and not browser_geometry_report.get("pass", False):
         hard_failures.extend(str(code) for code in browser_geometry_report.get("hard_failures", []))
-    if preset_contract_report and not preset_contract_report.get("pass", False):
-        hard_failures.extend(str(code) for code in preset_contract_report.get("hard_failures", []))
+    if preset_fidelity_report and not preset_fidelity_report.get("pass", False):
+        hard_failures.extend(str(code) for code in preset_fidelity_report.get("hard_failures", []))
+    if runtime_fidelity_report and not runtime_fidelity_report.get("pass", False):
+        hard_failures.extend(str(code) for code in runtime_fidelity_report.get("hard_failures", []))
     if export_smoke_report and not export_smoke_report.get("pass", False):
         hard_failures.extend(str(code) for code in export_smoke_report.get("hard_failures", []))
     if mobile_geometry_report and not mobile_geometry_report.get("pass", False):
@@ -1009,7 +1055,8 @@ def _evaluate_rendered_case(
         expectations_report["passed"]
         and (validate_report["passed"] if strict_validate else True)
         and (browser_geometry_report.get("pass", False) if browser_geometry_report else True)
-        and (preset_contract_report.get("pass", False) if preset_contract_report else True)
+        and (preset_fidelity_report.get("pass", False) if preset_fidelity_report else True)
+        and (runtime_fidelity_report.get("pass", False) if runtime_fidelity_report else True)
         and (export_smoke_report.get("pass", False) if export_smoke_report else True)
         and (mobile_geometry_report.get("pass", False) if mobile_geometry_report else True)
         and (ai_advised_report.get("pass", False) if ai_advised_report else True)
@@ -1044,8 +1091,10 @@ def _evaluate_rendered_case(
             "title_browser": title_browser_report,
             "browser_geometry": browser_geometry_report,
             "browser_geometry_report_path": str(browser_geometry_report_path) if browser_geometry_report_path else None,
-            "preset_contract": preset_contract_report,
-            "preset_contract_report_path": str(preset_contract_report_path) if preset_contract_report_path else None,
+            "preset_fidelity": preset_fidelity_report,
+            "preset_fidelity_report_path": str(preset_fidelity_report_path) if preset_fidelity_report_path else None,
+            "runtime_fidelity": runtime_fidelity_report,
+            "runtime_fidelity_report_path": str(runtime_fidelity_report_path) if runtime_fidelity_report_path else None,
             "export_smoke": export_smoke_report,
             "export_smoke_report_path": str(export_smoke_report_path) if export_smoke_report_path else None,
             "mobile_geometry": mobile_geometry_report,

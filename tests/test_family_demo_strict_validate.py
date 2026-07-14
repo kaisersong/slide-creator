@@ -34,4 +34,8 @@ def test_audited_family_demos_pass_strict_validate(demo_name: str):
     validate_html = load_validate_module()
     demo_path = ROOT / "demos" / demo_name
 
-    assert validate_html.validate(demo_path, strict=True), f"{demo_name} failed strict validate"
+    assert validate_html.validate(
+        demo_path,
+        strict=True,
+        preset_fidelity_mode="reference",
+    ), f"{demo_name} failed strict validate"
