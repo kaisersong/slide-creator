@@ -3,7 +3,7 @@
 
 Professional, tech-forward, enterprise-grade. Inspired by Kingdee's brand identity — trustworthy blue tones, clean layouts, and authoritative typography. Designed for B2B solution presentations, product decks, and enterprise communications.
 
-专业、科技感、企业级。灵感来自金蝶品牌识别——可信赖的蓝色调、清晰的布局、权威的排版。专为 B2B 解决方案演示、产品方案和企业通信设计。
+专业，科技感、企业级。灵感来自金蝶品牌识别——可信赖的蓝色调、清晰的布局、权威的排版。专为 B2B 解决方案演示、产品方案和企业通信设计。
 
 ---
 
@@ -163,96 +163,105 @@ Professional, tech-forward, enterprise-grade. Inspired by Kingdee's brand identi
 
 ## Layout Types / 布局类型
 
+Use canonical layout roles: `title_grid`, `contents_index`, `column_content`, `stat_block`, `geometric_diagram`, `data_table`, `pull_quote`, `toc`, `cta_close`.
+
 ### 1. 首页 / Title Slide
 
 ```css
-.kd-slide-title {
+.slide-title {
     background: var(--bg-white);
+    display: flex;
+    align-items: center;
     position: relative;
-    height: 100vh;
 }
 
-/* 左上角 Logo */
+/* 左上角动态 Logo */
 .kd-logo-left {
     position: absolute;
-    top: 40px;
-    left: 60px;
-    height: 48px;
+    top: 20px;
+    left: 30px;
+    height: 96px;
+    z-index: 10;
 }
 
-/* 右上角装饰图 - 上移10% */
+/* 全屏背景图 - homepage.png 满铺整个页面 */
 .kd-hero-image {
     position: absolute;
-    top: -10%;           /* 上移10% */
-    right: 0;
-    width: 45%;
+    top: 0;
+    left: 0;
+    width: 100%;
     height: 100%;
     object-fit: cover;
-    opacity: 0.85;
 }
 
-/* 主标题区域 */
-.kd-title-content {
+/* 主标题区域 - 页面居中 */
+.title-content {
     position: absolute;
-    left: 60px;
     top: 50%;
-    transform: translateY(-50%);
-    max-width: 55%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+    z-index: 2;
+    width: 100%;
+    padding: 0 60px;
 }
 
-/* 主标题 - 蓝色，56磅，最多2行 */
-.kd-title-main {
-    font-size: 56pt;
+/* 主标题 - 白色 54pt */
+.title-main {
+    font-size: 54pt;
     font-weight: 700;
-    color: var(--kd-blue);    /* 蓝色 */
+    color: #FFFFFF;
     line-height: 1.2;
-    display: -webkit-box;
-    -webkit-line-clamp: 2;    /* 最多2行 */
-    -webkit-box-orient: vertical;
-    overflow: hidden;
+    margin-bottom: 20px;
 }
 
-/* 左下角信息区域 */
-.kd-slide-title-footer {
+/* 副标题 - 白色半透明 */
+.title-sub {
+    font-size: clamp(14pt, 2vw, 18pt);
+    font-weight: 400;
+    color: rgba(255,255,255,0.85);
+    line-height: 1.6;
+}
+
+/* 首页左下角信息区域 */
+.slide-title-footer {
     position: absolute;
     left: 60px;
     bottom: 60px;
     z-index: 10;
 }
 
-/* 人名 - 蓝色，24磅 */
-.kd-slide-title-author {
-    font-size: 24pt;
-    font-weight: 600;
-    color: var(--kd-blue);
-    margin-bottom: 8px;
-}
-
-/* 文档创建时间 - 蓝色，18磅 */
-.kd-slide-title-time {
+/* 撰稿人 - 白色 18pt 常规 */
+.slide-title-author {
     font-size: 18pt;
     font-weight: 400;
-    color: var(--kd-blue);
+    color: #FFFFFF;
+    margin-bottom: 6px;
 }
 
-/* 首页右下角保密标识 - 白色 */
-.kd-confidential-title {
-    position: absolute;
-    bottom: 20px;
-    right: 60px;
-    font-size: 9.4pt;
+/* 撰稿部门 - 白色 18pt 加粗 */
+.slide-title-dept {
+    font-size: 18pt;
+    font-weight: 700;
     color: #FFFFFF;
-    letter-spacing: 1px;
+    margin-bottom: 6px;
 }
 
-/* 首页左下角版权信息 - 白色 */
-.kd-copyright-title {
-    position: absolute;
-    bottom: 20px;
-    left: 60px;
-    font-size: 9.4pt;
+/* 日期 - 白色 14pt */
+.slide-title-time {
+    font-size: 14pt;
+    font-weight: 400;
     color: #FFFFFF;
-    letter-spacing: 1px;
+}
+
+/* 首页左下角版权信息 - 合并版：版权+保密同行 */
+.slide-title .kd-copyright-white {
+    color: #95B8F5;
+}
+
+/* 首页版权行内保密标识 - 深蓝 #1054B1 */
+.slide-title .kd-copyright-white span {
+    color: #1054B1;
 }
 ```
 
@@ -260,173 +269,118 @@ Professional, tech-forward, enterprise-grade. Inspired by Kingdee's brand identi
 
 ```html
 <section class="slide slide-title">
-    <img class="kd-logo-left" src="https://static.yunzhijia.com/home/download/png/kingdee-blue.png" alt="金蝶AI Logo（蓝色）">
-    <img class="kd-hero-image" src="https://static.yunzhijia.com/home/download/png/homepage.png" alt="首页右侧装饰">
-    <div class="kd-title-content">
-        <h1 class="kd-title-main kd-reveal">项目标题</h1>
+    <img class="kd-hero-image" src="https://static.yunzhijia.com/home/download/png/homepage.png" alt="首页背景">
+    <img class="kd-logo-left" src="https://static.yunzhijia.com/home/download/png/kingdee_ColorWhitedynamic.gif" alt="金蝶全彩动态Logo">
+    <div class="title-content">
+        <h1 class="title-main reveal">项目标题</h1>
+        <p class="title-sub reveal">副标题（可选）</p>
     </div>
-    <div class="kd-slide-title-footer">
-        <div class="kd-slide-title-author">KClaw</div>
-        <div class="kd-slide-title-time">2024年3月24日</div>
+    <div class="slide-title-footer reveal">
+        <div class="slide-title-author">KClaw</div>
+        <div class="slide-title-dept">解决方案部</div>
+        <div class="slide-title-time">2025.01.01</div>
     </div>
-    <!-- 左下角版权信息 -->
-    <div class="kd-copyright-title">版权所有©金蝶国际软件集团有限公司 始创于1993</div>
-    <!-- 右下角保密标识 -->
-    <div class="kd-confidential-title">④内部公开 请勿外传</div>
+    <!-- 左下角版权+保密合并一行 -->
+    <div class="kd-copyright-white">版权所有©金蝶国际软件集团有限公司 始创于1993  <span style="color:#1054B1;">④内部公开 请勿外传</span></div>
+    <span class="slide-num-label">01</span>
 </section>
 ```
 
 ### 2. 内容页 / Content Slide
 
 ```css
-.kd-slide-content {
+.slide-content {
     background: var(--bg-white);
-    padding: 60px;
+    padding: 60px 80px;
     position: relative;
 }
 
-/* 右上角 Logo */
+/* 右上角 Logo - 在 flex 容器中右对齐 */
 .kd-logo-right {
+    height: 35px;
+}
+
+/* 标题栏：flex 布局，标题左对齐，logo 右对齐，与目录页一致 */
+.content-header {
     position: absolute;
-    top: 50px;
+    top: 30px;
+    left: 80px;
     right: 60px;
-    height: 54px;      /* 54px，与目录页一致 */
-}
-
-/* 右下角保密标识 - 所有页面通用 */
-.kd-confidential {
-    position: absolute;
-    bottom: 20px;
-    right: 60px;
-    font-size: 9.4pt;
-    letter-spacing: 1px;
-}
-
-/* 白色字体版本：章节页 */
-.kd-confidential-white {
-    color: #FFFFFF;
-}
-
-/* 灰色字体版本：目录页、内容页、尾页 */
-.kd-confidential-gray {
-    color: #808080;
-}
-
-/*
- * 保密级别选项（根据序号或关键词选择）：
- * 1、绝密：①绝密信息 严禁泄露
- * 2、机密：②机密信息 严禁泄露
- * 3、秘密：③秘密信息 严禁泄露
- * 4、内部：④内部公开 请勿外传（默认）
- */
-
-/* 左下角版权信息 - 所有页面通用 */
-.kd-copyright {
-    position: absolute;
-    bottom: 20px;
-    left: 60px;
-    font-size: 9.4pt;
-    letter-spacing: 1px;
-}
-
-/* 白色字体版本：首页、章节页、尾页 */
-.kd-copyright-white {
-    color: #FFFFFF;
-}
-
-/* 灰色字体版本：目录页、内容页 */
-.kd-copyright-gray {
-    color: #808080;
-    opacity: 0.7;
-}
-
-/* 标题栏：标题位置上移，与logo齐平 */
-.kd-content-header {
-    position: absolute;
-    top: 50px;             /* 与logo的top位置一致 */
-    left: 60px;
-    right: 200px;          /* 为右侧logo留空间 */
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
     z-index: 10;
 }
 
-.kd-content-title {
-    font-family: "Microsoft YaHei", "PingFang SC", sans-serif;
-    font-size: 22pt;       /* 段落标题一级：22磅 */
+/* 内容页标题 - 24pt，与目录页一致 */
+.content-title {
+    font-size: 24pt;
     font-weight: 700;
+    line-height: 1.0;
     color: var(--text-primary);
-    line-height: 1.2;
 }
 
-.kd-content-subtitle {
-    font-family: "Microsoft YaHei", "PingFang SC", sans-serif;
-    font-size: 18pt;       /* 段落标题二级：18磅 */
+/* 副标题 - 16pt */
+.content-subtitle {
+    font-size: 16pt;
     font-weight: 400;
     color: var(--text-secondary);
-    margin-top: 8px;
+    margin-top: 16px;
+    margin-bottom: 30px;
 }
 
-/* 内容区域 - 标题下方 */
-.kd-content-body {
-    margin-top: 100px;     /* 为标题区域留出空间 */
-    font-size: 12pt;       /* 正文：12磅 */
-    line-height: 1.3;      /* 1.3倍行距 */
+/* 内容区域 */
+.content-body {
+    margin-top: 100px;
+    font-size: 14pt;
+    line-height: 1.8;
+    color: var(--text-primary);
+    max-width: 90%;
 }
 
-/* 内容页右下角保密标识 - 灰色 */
-.kd-confidential-content {
+/* 列表样式 */
+.content-body ul {
+    list-style: none;
+    padding-left: 0;
+}
+
+.content-body li {
+    position: relative;
+    padding-left: 24px;
+    margin-bottom: 12px;
+}
+
+.content-body li::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 10px;
+    width: 8px;
+    height: 8px;
+    background: var(--kd-blue);
+    border-radius: 50%;
+}
+
+/* 右下角保密标识 - 灰色，所有内容页和目录页共用 */
+.kd-confidential-gray {
     position: absolute;
     bottom: 20px;
-    right: 60px;
+    right: 90px;
     font-size: 9.4pt;
     color: #808080;
-    opacity: 0.7;
     letter-spacing: 1px;
+    z-index: 10;
 }
 
-/* 内容页左下角版权信息 - 灰色 */
-.kd-copyright-content {
+/* 左下角版权信息 - 灰色 */
+.kd-copyright-gray {
     position: absolute;
     bottom: 20px;
     left: 60px;
     font-size: 9.4pt;
     color: #808080;
-    opacity: 0.7;
     letter-spacing: 1px;
-}
-
-/* ===========================================
-   内容适配 / Content Adaptation
-   解决内容较少时页面下半部分空白的问题
-   =========================================== */
-
-/* 内容垂直居中 - 适用于内容较少的页面 */
-.kd-content-body.centered {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    min-height: calc(100vh - 220px);  /* 减去header和footer */
-    margin-top: 100px;                /* 为标题区域留空间 */
-}
-
-/* 内容弹性分布 - 适用于内容中等的页面 */
-.kd-content-body.spread {
-    display: flex;
-    flex-direction: column;
-    justify-content: space-evenly;    /* 均匀分布，首尾有间距 */
-    min-height: calc(100vh - 220px);
-    margin-top: 100px;
-}
-
-/* 底部装饰条 - 可选，为空白区域增加视觉元素 */
-.kd-bottom-accent {
-    position: absolute;
-    bottom: 80px;
-    left: 80px;
-    right: 80px;
-    height: 3px;
-    background: linear-gradient(90deg, var(--kd-blue) 0%, transparent 100%);
-    opacity: 0.3;
-    z-index: 5;
+    z-index: 10;
 }
 ```
 
@@ -434,19 +388,27 @@ Professional, tech-forward, enterprise-grade. Inspired by Kingdee's brand identi
 
 ```html
 <section class="slide slide-content">
-    <img class="kd-logo-right" src="https://static.yunzhijia.com/home/download/png/kingdee-blue.png" alt="金蝶AI Logo（蓝色）">
-    <div class="kd-content-header">
-        <h2 class="kd-content-title kd-reveal">页面标题</h2>
-        <p class="kd-content-subtitle kd-reveal">副标题（可选）</p>
+    <div class="content-header">
+        <div>
+            <h2 class="content-title reveal">页面标题</h2>
+            <p class="content-subtitle reveal">副标题（可选）</p>
+        </div>
+        <img class="kd-logo-right" src="https://static.yunzhijia.com/home/download/png/kingdee-blue.png" alt="金蝶AI Logo（蓝色）">
     </div>
-    <div class="kd-content-body">
-        <!-- 正文内容 -->
-        <p class="kd-reveal">这里是正文内容...</p>
+    <div class="content-body">
+        <ul>
+            <li class="reveal">列表项 1</li>
+            <li class="reveal">列表项 2</li>
+        </ul>
+        <div class="cols-2">
+            <div class="kd-card reveal">
+                <h3 class="kd-card-title">卡片标题</h3>
+                <p class="kd-card-body">卡片内容</p>
+            </div>
+        </div>
     </div>
-    <!-- 左下角版权信息 -->
-    <div class="kd-copyright-content">版权所有©金蝶国际软件集团有限公司 始创于1993</div>
-    <!-- 右下角保密标识 -->
-    <div class="kd-confidential-content">④内部公开 请勿外传</div>
+    <div class="kd-confidential-gray">④内部公开 请勿外传</div>
+    <span class="slide-num-label">04</span>
 </section>
 ```
 
@@ -464,43 +426,65 @@ Professional, tech-forward, enterprise-grade. Inspired by Kingdee's brand identi
 
 ```html
 <!-- 内容较少时：垂直居中 -->
-<div class="kd-content-body centered">
-    <div class="kd-highlight-box">
-        ...
-    </div>
+<div class="content-body centered">
+    <div class="kd-highlight-box">...</div>
 </div>
 
 <!-- 内容中等时：弹性分布 -->
-<div class="kd-content-body spread">
-    <div class="kd-feature-card">...</div>
+<div class="content-body spread">
     <div class="kd-feature-card">...</div>
     <div class="kd-feature-card">...</div>
 </div>
 
 <!-- 内容较多时：默认布局 -->
-<div class="kd-content-body">
+<div class="content-body">
     <p>...</p>
     <ul>...</ul>
-    <div class="kd-two-col">...</div>
+    <div class="cols-2">...</div>
 </div>
 ```
+
+### 页码 / Slide Number
+
+```css
+/* 所有页面通用页码 */
+.slide-num-label {
+    position: absolute; bottom: 20px; right: 60px;
+    font-size: 9pt; color: var(--kd-blue); font-weight: 400; z-index: 5;
+}
+
+/* 章节页页码白色 */
+.slide-num-label.light {
+    color: #FFFFFF;
+}
+
+/* 首页和尾页不显示页码 */
+.slide-title .slide-num-label,
+.slide-closing .slide-num-label {
+    display: none;
+}
+```
+
+| 页面类型 | 页码样式 | 说明 |
+|---------|---------|------|
+| 首页 | `slide-num-label`（隐藏） | CSS `display:none` |
+| 目录页 | `slide-num-label`（蓝色） | 正常显示 |
+| 章节页 | `slide-num-label light`（白色） | 加 `.light` class |
+| 内容页 | `slide-num-label`（蓝色） | 正常显示 |
+| 尾页 | `slide-num-label`（隐藏） | CSS `display:none` |
 
 ### 3. 目录页 / TOC Slide
 
 ```css
-.kd-slide-toc {
-    background: var(--bg-white);    /* 白色底 */
+.slide-toc {
+    background: var(--bg-white);
     padding: 60px;
     position: relative;
 }
 
-/* 右上角 Logo - 放大50% (54px) */
+/* 右上角 Logo - 在 flex 容器中右对齐 */
 .kd-logo-right-toc {
-    position: absolute;
-    top: 50px;
-    right: 60px;
-    height: 54px;                   /* 放大50% (原36px) */
-    z-index: 10;
+    height: 35px;
 }
 
 /* 全屏背景图 - kingdee_catalogue.png 平铺整个页面 */
@@ -514,161 +498,136 @@ Professional, tech-forward, enterprise-grade. Inspired by Kingdee's brand identi
     z-index: 1;
 }
 
-.kd-toc-content {
+/* 标题栏：flex 布局，标题左对齐，logo 右对齐 */
+.toc-header {
+    position: absolute;
+    top: 30px;
+    left: 80px;
+    right: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    z-index: 10;
+}
+
+/* 目录标题 - 24磅，加粗 */
+.toc-title {
+    font-size: 24pt;
+    font-weight: 700;
+    line-height: 1.0;
+    color: var(--text-primary);
+    margin: 0;
+}
+
+/* 目录内容区域 */
+.toc-content {
     position: absolute;
     left: 80px;
-    right: 60px;                   /* 延伸到页面右边 */
+    right: 60px;
     top: 50%;
     transform: translateY(-50%);
     z-index: 5;
-    padding: 40px 0;               /* 无背景，仅垂直间距 */
-    /* 移除白色背景卡片 */
+    padding: 0;
 }
 
-/* 目录标题 - 位置上移与logo齐平 */
-.kd-toc-title {
-    font-family: "Microsoft YaHei", "PingFang SC", sans-serif;
-    font-size: 24pt;               /* 24磅 */
-    font-weight: 700;              /* 加粗 */
-    line-height: 1.0;              /* 行距1.0 */
-    color: var(--text-primary);
-    margin-bottom: 40px;
-    position: absolute;
-    top: 50px;                     /* 与logo齐平 */
-    left: 80px;
-}
-
-/* 目录副标题 - 微软雅黑常规16磅 */
-.kd-toc-subtitle {
-    font-family: "Microsoft YaHei", "PingFang SC", sans-serif;
-    font-size: 16pt;               /* 16磅 */
-    font-weight: 400;              /* 常规 */
-    color: var(--text-secondary);
-    margin-bottom: 30px;
-}
-
-/* 目录项容器 - 统一布局 */
-.kd-toc-item {
+/* 目录项容器 */
+.toc-item {
     display: flex;
     align-items: center;
-    margin-bottom: 28px;           /* 默认间距28px */
-    color: var(--text-primary);
-    position: relative;            /* 为页码定位 */
+    margin-bottom: 28px;
+    position: relative;
 }
 
 /* 目录条数>9时的紧凑间距 */
-.kd-toc-item.compact {
-    margin-bottom: 12px;           /* 紧凑间距12px，适用于目录条数>9的情况 */
+.toc-item.compact {
+    margin-bottom: 12px;
 }
 
-/* 目录序号 - 蓝色，格式01、02等 */
-.kd-toc-number {
-    font-family: "Microsoft YaHei", "PingFang SC", sans-serif;
-    font-size: 54pt;               /* 默认54磅；若目录条数>5，调整为35pt */
-    font-weight: 700;              /* 加粗 */
-    color: var(--kd-blue);         /* 蓝色 */
+/* 目录序号 - 蓝色 54磅 */
+.toc-number {
+    font-size: 54pt;
+    font-weight: 700;
+    color: var(--kd-blue);
     margin-right: 24px;
     min-width: 100px;
     line-height: 1;
 }
 
 /* 目录条数>5时的序号样式 */
-.kd-toc-number.compact {
-    font-size: 35pt;               /* 35磅，适用于目录条数>5的情况 */
+.toc-number.compact {
+    font-size: 35pt;
+    min-width: 70px;
+    margin-right: 20px;
 }
 
-/* 目录条数>9时的超紧凑序号样式 */
-.kd-toc-number.ultra-compact {
-    font-size: 24pt;               /* 24磅，适用于目录条数>9的情况 */
+.toc-number.ultra-compact {
+    font-size: 24pt;
+    min-width: 50px;
+    margin-right: 16px;
 }
 
-/* 目录内容 - 24磅，加粗 */
-.kd-toc-text {
-    font-family: "Microsoft YaHei", "PingFang SC", sans-serif;
-    font-size: 24pt;               /* 24磅 */
-    font-weight: 700;              /* 加粗 */
+/* 目录内容 - 24磅加粗 */
+.toc-text {
+    font-size: 24pt;
+    font-weight: 700;
     color: var(--text-primary);
     flex: 1;
 }
 
-/* 目录页码 - 蓝色，加粗，距离页面右边150px */
-.kd-toc-page {
-    font-family: "Microsoft YaHei", "PingFang SC", sans-serif;
-    font-size: 20pt;               /* 20磅 */
-    font-weight: 700;              /* 加粗 */
-    color: var(--kd-blue);         /* 蓝色 */
+/* 目录页码 - 蓝色加粗 */
+.toc-page {
+    font-size: 20pt;
+    font-weight: 700;
+    color: var(--kd-blue);
     position: absolute;
-    right: 90px;                   /* 距离页面右边：60px(内容区域) + 90px = 150px */
+    right: 90px;
 }
 
-/* 目录页右下角保密标识 - 灰色 */
-.kd-confidential-toc {
-    position: absolute;
-    bottom: 20px;
-    right: 60px;
-    font-size: 9.4pt;
-    color: #808080;
-    opacity: 0.7;
-    letter-spacing: 1px;
-}
-
-/* 目录页左下角版权信息 - 灰色 */
-.kd-copyright-toc {
-    position: absolute;
-    bottom: 20px;
-    left: 60px;
-    font-size: 9.4pt;
-    color: #808080;
-    opacity: 0.7;
-    letter-spacing: 1px;
-}
+/* 目录页右下角保密标识 - 与内容页共用的灰色版 */
+/* 使用 .kd-confidential-gray */
+/* 目录页左下角版权 - 与内容页共用的灰色版 */
+/* 使用 .kd-copyright-gray */
 ```
 
 ### 目录页布局示例
 
-**⚠️ 重要：每个目录项必须包含三个元素：序号 + 标题 + 页码，缺一不可！**
-
 ```html
 <section class="slide slide-toc">
-    <img class="kd-toc-image" src="https://static.yunzhijia.com/home/download/png/kingdee_catalogue.png" alt="目录页背景">
-    <img class="kd-logo-right-toc" src="https://static.yunzhijia.com/home/download/png/kingdee-blue.png" alt="金蝶AI Logo（蓝色）">
-    <h2 class="kd-toc-title">目 录</h2>
-    <div class="kd-toc-content">
-        <div class="kd-toc-item">
-            <span class="kd-toc-number">01</span>
-            <span class="kd-toc-text">本周项目全景图</span>
-            <span class="kd-toc-page">P 03</span>  <!-- 必须包含页码！格式：P XX -->
-        </div>
-        <div class="kd-toc-item">
-            <span class="kd-toc-number">02</span>
-            <span class="kd-toc-text">项目漏斗分析</span>
-            <span class="kd-toc-page">P 04</span>  <!-- 必须包含页码！格式：P XX -->
-        </div>
-        <!-- 更多目录项...每个都必须有 kd-toc-page -->
+    <img class="kd-toc-image" src="https://static.yunzhijia.com/home/download/png/kingdee_catalogue.png" alt="目录背景">
+    <div class="toc-header">
+        <h2 class="toc-title reveal">目 录</h2>
+        <img class="kd-logo-right-toc" src="https://static.yunzhijia.com/home/download/png/kingdee-blue.png" alt="金蝶AI Logo（蓝色）">
     </div>
-    <!-- 左下角版权信息 -->
-    <div class="kd-copyright-toc">版权所有©金蝶国际软件集团有限公司 始创于1993</div>
-    <!-- 右下角保密标识 -->
-    <div class="kd-confidential-toc">④内部公开 请勿外传</div>
+    <div class="toc-content">
+        <div class="toc-item reveal">
+            <span class="toc-number">01</span>
+            <span class="toc-text">目录项标题</span>
+            <span class="toc-page">P 03</span>
+        </div>
+        <!-- 更多目录项... -->
+    </div>
+    <div class="kd-copyright-gray">版权所有©金蝶国际软件集团有限公司 始创于1993</div>
+    <div class="kd-confidential-gray">④内部公开 请勿外传</div>
+    <span class="slide-num-label">02</span>
 </section>
 ```
 
 **目录项三要素检查清单：**
-- [ ] `kd-toc-number` — 序号（蓝色54磅，格式01、02...）
-- [ ] `kd-toc-text` — 标题（24磅加粗）
-- [ ] `kd-toc-page` — 页码（蓝色20磅加粗，格式 P XX）← **不可遗漏！**
+- [ ] `toc-number` — 序号（蓝色54磅，格式01、02...；>5条用35pt；>9条用24pt）
+- [ ] `toc-text` — 标题（24磅加粗）
+- [ ] `toc-page` — 页码（蓝色20磅加粗，格式 P XX）← **不可遗漏！**
 
 ### 4. 章节页 / Section Slide
 
 ```css
-.kd-slide-section {
+.slide-section {
     background: var(--kd-blue);
     display: flex;
-    align-items: flex-start;     /* 改为顶部对齐 */
+    align-items: flex-start;
     position: relative;
 }
 
-/* 全屏背景图 - kingdee_chapter.png 平铺整个页面 */
+/* 全屏背景图 - kingdee_chapter.png */
 .kd-section-image {
     position: absolute;
     top: 0;
@@ -679,65 +638,56 @@ Professional, tech-forward, enterprise-grade. Inspired by Kingdee's brand identi
     z-index: 1;
 }
 
-/* 右上角 Logo */
+/* 右上角 Logo - 白色版，位置与目录页一致 */
 .kd-logo-right-section {
     position: absolute;
-    top: 50px;
+    top: 30px;
     right: 60px;
-    height: 54px;               /* 与目录页/内容页一致 */
+    height: 35px;
     z-index: 10;
 }
 
 /* 章节内容层 - 左上角定位 */
-.kd-section-content {
+.section-content {
     position: absolute;
-    top: 80px;                  /* 距顶部80px */
-    left: 80px;                 /* 距左边80px */
+    top: 80px;
+    left: 80px;
     z-index: 5;
 }
 
 /* 章节序号 - 125磅，天蓝色 #00CCFE */
-.kd-section-number {
-    font-size: 125pt;
+.section-number {
+    font-size: clamp(60pt, 12vw, 125pt);
     font-weight: 700;
-    color: #00CCFE;             /* 天蓝色 */
+    color: #00CCFE;
     line-height: 1;
 }
 
 /* 短横线 - 天蓝色 */
-.kd-section-divider {
+.section-divider {
     width: 6em;
     height: 8px;
-    background: #00CCFE;        /* 天蓝色 */
+    background: #00CCFE;
     margin: 20px 0;
 }
 
 /* 章节标题 - 24磅，白色 */
-.kd-section-title {
-    font-size: 24pt;
+.section-title {
+    font-size: clamp(18pt, 2.5vw, 24pt);
     font-weight: 700;
-    color: #FFFFFF;             /* 白色 */
+    color: #FFFFFF;
     line-height: 1.3;
 }
 
-/* 章节页右下角保密标识 - 白色 */
-.kd-confidential-section {
-    position: absolute;
-    bottom: 20px;
-    right: 60px;
-    font-size: 9.4pt;
-    color: #FFFFFF;
-    letter-spacing: 1px;
-}
-
-/* 章节页左下角版权信息 - 白色 */
-.kd-copyright-section {
+/* 白色版权（首页和尾页使用；章节页不显示版权） */
+.kd-copyright-white {
     position: absolute;
     bottom: 20px;
     left: 60px;
-    font-size: 9.4pt;
+    font-size: 9pt;
     color: #FFFFFF;
     letter-spacing: 1px;
+    z-index: 10;
 }
 ```
 
@@ -747,76 +697,56 @@ Professional, tech-forward, enterprise-grade. Inspired by Kingdee's brand identi
 <section class="slide slide-section">
     <img class="kd-section-image" src="https://static.yunzhijia.com/home/download/png/kingdee_chapter.png" alt="章节背景">
     <img class="kd-logo-right-section" src="https://static.yunzhijia.com/home/download/png/kingdee-white.png" alt="金蝶AI Logo（白色）">
-    <div class="kd-section-content">
-        <div class="kd-section-number kd-reveal">01</div>
-        <div class="kd-section-divider kd-reveal"></div>
-        <h2 class="kd-section-title kd-reveal">本周项目全景图</h2>
+    <div class="section-content">
+        <div class="section-number reveal">01</div>
+        <div class="section-divider reveal"></div>
+        <h2 class="section-title reveal">章节标题</h2>
     </div>
-    <!-- 左下角版权信息 -->
-    <div class="kd-copyright-section">版权所有©金蝶国际软件集团有限公司 始创于1993</div>
-    <!-- 右下角保密标识 -->
-    <div class="kd-confidential-section">④内部公开 请勿外传</div>
+    <!-- 章节页不显示版权和保密标识 -->
+    <span class="slide-num-label light">03</span>
 </section>
 ```
 
 ### 5. 尾页 / Closing Slide
 
 ```css
-.kd-slide-closing {
+.slide-closing {
     background: var(--bg-white);
     position: relative;
-    height: 100vh;
 }
 
-/* 左上角 Logo */
-.kd-logo-left-closing {
+/* 左上角动态 Logo - 与首页一致 */
+/* 使用 .kd-logo-left（top:20px, left:30px, height:96px） */
+
+/* 全屏背景图 - kingdee_endpage.png 满铺 */
+.kd-closing-image {
     position: absolute;
-    top: 40px;
-    left: 60px;
-    height: 40px;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
 }
 
-/* 尾页左边居中装饰图 */
+/* 尾页左边居中装饰图 - kingdee-thanks.png */
 .kd-closing-image-left {
     position: absolute;
     top: 50%;
-    left: 5%;           /* 向左移动10% (原15%) */
+    left: 5%;
     transform: translateY(-50%);
-    max-height: 30%;    /* 缩小50% (原60%) */
+    max-height: 40%;
     width: auto;
     object-fit: contain;
     z-index: 5;
 }
 
-/* 右侧背景图 */
-.kd-closing-image {
-    position: absolute;
-    top: -40%;
-    right: 0;
-    width: 87%;         /* 放大20% (原72%) */
-    height: auto;       /* 保持图片原始比例，不强制拉伸 */
-    object-fit: contain; /* 确保图片完整显示，不被裁剪 */
-    opacity: 0.85;
+/* 尾页版权+保密 - 合并一行，浅蓝 #95B8F5 */
+.slide-closing .kd-copyright-white {
+    color: #95B8F5;
 }
 
-/* 尾页右下角保密标识 - 灰色 */
-.kd-confidential-closing {
-    position: absolute;
-    bottom: 20px;
-    right: 60px;
-    font-size: 9.4pt;
-    color: #808080;
-    letter-spacing: 1px;
-}
-
-/* 尾页左下角版权信息 - 灰色 */
-.kd-copyright-closing {
-    position: absolute;
-    bottom: 20px;
-    left: 60px;
-    font-size: 9.4pt;
-    color: #808080;
-    letter-spacing: 1px;
+.slide-closing .kd-copyright-white span {
+    color: #95B8F5;
 }
 ```
 
@@ -824,13 +754,12 @@ Professional, tech-forward, enterprise-grade. Inspired by Kingdee's brand identi
 
 ```html
 <section class="slide slide-closing">
-    <img class="kd-logo-left-closing" src="https://static.yunzhijia.com/home/download/png/kingdee-blue.png" alt="金蝶AI Logo（蓝色）">
+    <img class="kd-logo-left" src="https://static.yunzhijia.com/home/download/png/kingdee_ColorWhitedynamic.gif" alt="金蝶全彩动态Logo">
+    <img class="kd-closing-image" src="https://static.yunzhijia.com/home/download/png/kingdee_endpage.png" alt="尾页背景">
     <img class="kd-closing-image-left" src="https://static.yunzhijia.com/home/download/png/kingdee-thanks.png" alt="感谢页面">
-    <img class="kd-closing-image" src="https://static.yunzhijia.com/home/download/png/kingdee_endpage.png" alt="尾页右侧装饰">
-    <!-- 左下角版权信息 - 灰色 -->
-    <div class="kd-copyright-closing">版权所有©金蝶国际软件集团有限公司 始创于1993</div>
-    <!-- 右下角保密标识 - 灰色 -->
-    <div class="kd-confidential-closing">④内部公开 请勿外传</div>
+    <!-- 左下角版权+保密合并一行 -->
+    <div class="kd-copyright-white">版权所有©金蝶国际软件集团有限公司 始创于1993  <span style="color:#95B8F5;">④内部公开 请勿外传</span></div>
+    <span class="slide-num-label">05</span>
 </section>
 ```
 
@@ -858,18 +787,20 @@ Professional, tech-forward, enterprise-grade. Inspired by Kingdee's brand identi
 
 ## Signature Elements / 签名视觉元素
 
-1. **品牌蓝背景** — 章节页使用 `#0052D9` 蓝色底
-2. **金蝶 AI Logo** — 首页/尾页左上角、内容页/目录页右上角使用 `kingdee-blue.png`（蓝色logo）；章节页右上角使用 `kingdee-white.png`（白色logo）
+1. **首页全屏背景** — `homepage.png` 全屏满铺（`object-fit: cover`），无透明度
+2. **金蝶 Logo** — 首页/尾页左上角使用动态 logo `kingdee_ColorWhitedynamic.gif`（96px, top:20px, left:30px）；内容页/目录页右上角使用蓝色 logo `kingdee-blue.png`（35px，flex 布局右对齐）；章节页右上角使用白色 logo `kingdee-white.png`（35px, top:30px, right:60px）
 3. **白色内容页** — 干净专业，突出内容
-4. **统一字体规范** — 微软雅黑（中英文），大标题24pt加粗，副标题16pt，段落标题一级22pt加粗，段落标题二级18pt加粗，正文12pt普通1.3倍行距，标注10pt普通1.3倍行距，重点强调20pt加粗蓝/黄色
-5. **标题与Logo对齐** — 内容页标题位置上移至top:50px，与右上角Logo齐平
-6. **首页右上角装饰图** — `homepage.png` 上移10%
-7. **首页标题样式** — 蓝色56磅，最多2行
-8. **首页左下角信息** — 人名（蓝色24磅，仅显示姓名无前缀）+ 时间（蓝色18磅，仅显示日期无前缀）。若内容中无法识别汇报人，默认显示"KClaw"
-9. **目录页全屏背景** — `kingdee_catalogue.png` 全屏平铺，目录内容带半透明白色背景卡片
-10. **尾页双装饰图** — `kingdee-thanks.png` 左边居中(left:5%, max-height:30%) + `kingdee_endpage.png` 右侧(width:87%, top:-40%)，无文字
-11. **右下角保密标识（所有页面）** — 字体9.4磅，可选项：①绝密信息 严禁泄露 / ②机密信息 严禁泄露 / ③秘密信息 严禁泄露 / ④内部公开 请勿外传（默认）；章节页白色字体，目录页/内容页/尾页灰色#808080
-12. **左下角版权信息（所有页面）** — 版权所有©金蝶国际软件集团有限公司 始创于1993，字体9.4磅；章节页白色字体，目录页/内容页/尾页灰色#808080
+4. **统一字体规范** — 微软雅黑（中英文），首页标题54pt白色居中，内容/目录页标题24pt，副标题16pt，正文14pt
+5. **标题与Logo flex对齐** — 目录页和内容页标题通过 flex 容器与 logo 同行排列，`top:30px`
+6. **首页标题样式** — 白色 54pt，页面居中
+7. **首页左下角信息** — 撰稿人（白色18pt常规）、部门（白色18pt加粗）、日期（白色14pt），默认撰稿人"KClaw"、部门"解决方案部"、日期"2025.01.01"
+8. **目录页全屏背景** — `kingdee_catalogue.png` 全屏平铺，目录内容区无白色背景卡片
+9. **章节页全屏背景** — `kingdee_chapter.png` 全屏平铺，序号天蓝色125pt，标题白色24pt，**无版权、无保密标识**
+10. **尾页全屏背景** — `kingdee_endpage.png` 全屏满铺，`kingdee-thanks.png` 左侧居中（left:5%, max-height:40%）
+11. **首页版权+保密合并一行** — 版权浅蓝 #95B8F5，保密深蓝 #1054B1，同行显示；尾页版权+保密均浅蓝 #95B8F5 同行显示
+12. **目录页版权+保密分开** — 版权左下灰色 #808080，保密右下灰色 #808080（right:90px）。**内容页仅保密标识（无版权）**
+13. **保密级别选项** — ①绝密 / ②机密 / ③秘密 / ④内部（默认）。目录页和内容页使用 `.kd-confidential-gray`（灰色；章节页不显示；首页/尾页合并到版权行中；可替换保密文本
+14. **页码** — 所有页面使用 `.slide-num-label`（蓝色9pt, right:60px, bottom:20px），章节页加 `.light` 变白色。**首页和尾页通过 CSS `display:none` 隐藏页码**。目录页/内容页用蓝色，章节页用白色。
 
 ---
 
@@ -877,11 +808,11 @@ Professional, tech-forward, enterprise-grade. Inspired by Kingdee's brand identi
 
 | 页面类型 | 背景 | Logo 位置 | 特殊元素 |
 |---------|------|----------|---------|
-| 首页 | 白色 | 左上角 kingdee-blue.png（高度72px） | 右上角 homepage.png（上移10%）；标题蓝色56磅最多2行；左下角人名24磅（仅姓名）+时间18磅（仅日期），默认KClaw；**左下角版权（灰色#808080，9.4磅）；右下角保密标识（灰色#808080，9.4磅，默认④内部）** |
-| 目录页 | 白色 | 右上角 kingdee-blue.png（高度54px） | 全屏背景 kingdee_catalogue.png；标题"目 录"24磅行距1.0，位置与logo齐平；序号蓝色54磅（若条数>5则35磅）；内容24磅加粗；页码蓝色加粗20磅(P 01/P 02)，距离右边150px；无白色背景卡片；**条数>9时行间距改为紧凑（margin-bottom: 12px）**；**左下角版权（灰色#808080，9.4磅）；右下角保密标识（灰色#808080，9.4磅，默认④内部）** |
-| 章节页 | 蓝色 + 全屏背景图 | 右上角 kingdee-white.png（高度54px） | 全屏背景 kingdee_chapter.png；序号125pt天蓝色(#00CCFE)左上角；短横线与0同宽同色；标题24pt白色；**左下角版权（白色9.4磅）；右下角保密标识（白色9.4磅，默认④内部）** |
-| 内容页 | 白色 | 右上角 kingdee-blue.png（高度54px） | 标题22pt/副标题18pt，位置top:50px与logo齐平；正文12pt 1.3倍行距；**左下角版权（灰色#808080，9.4磅）；右下角保密标识（灰色#808080，9.4磅，可选项：①绝密/②机密/③秘密/④内部）** |
-| 尾页 | 白色 | 左上角 kingdee-blue.png（高度72px） | 左边居中kingdee-thanks(left:5%,max-height:30%) + 右侧kingdee_endpage(width:87%,top:-40%)，无文字；**左下角版权（灰色#808080，9.4磅）；右下角保密标识（灰色#808080，9.4磅，默认④内部）** |
+| 首页 | 白色 + homepage.png 全屏满铺 | 左上角 kingdee_ColorWhitedynamic.gif（96px, top:20px, left:30px） | 标题白色54pt居中；撰稿人/部门/日期左下白色；版权浅蓝#95B8F5 + 保密深蓝#1054B1 合并一行；**页码隐藏** |
+| 目录页 | 白色 + kingdee_catalogue.png 全屏 | 右上角 kingdee-blue.png（35px, flex右对齐, top:30px） | 标题"目 录"24pt行距1.0，flex同行与logo齐平；序号蓝色54磅（>5则35pt）；内容24pt加粗；页码蓝色20pt(P 01)；版权左下灰色；保密右下灰色(right:90px)；**页码蓝色** |
+| 章节页 | 蓝色 + kingdee_chapter.png 全屏 | 右上角 kingdee-white.png（35px, top:30px, right:60px） | 序号125pt天蓝色(#00CCFE)左上角；标题24pt白色；**无版权；无保密标识**；页码白色(light) |
+| 内容页 | 白色 | 右上角 kingdee-blue.png（35px, flex右对齐, top:30px） | 标题24pt/副标题16pt，flex同行与logo对齐；正文14pt 1.8倍行距；**无版权**；保密右下灰色(right:90px)；**页码蓝色** |
+| 尾页 | 白色 + kingdee_endpage.png 全屏满铺 | 左上角 kingdee_ColorWhitedynamic.gif（96px, top:20px, left:30px） | kingdee-thanks 左侧居中(left:5%, max-height:40%)；版权+保密均浅蓝#95B8F5 合并一行；**页码隐藏** |
 
 ---
 
@@ -930,8 +861,8 @@ alt="目录页背景"              <!-- kingdee_catalogue.png -->
 alt="章节页背景"              <!-- kingdee_chapter.png -->
 
 <!-- 装饰系列：说明位置/功能 -->
-alt="首页右侧装饰"            <!-- homepage.png -->
-alt="尾页右侧装饰"            <!-- kingdee_endpage.png -->
+alt="首页全屏背景"            <!-- homepage.png -->
+alt="尾页全屏背景"            <!-- kingdee_endpage.png -->
 alt="感谢页面"                <!-- kingdee-thanks.png -->
 ```
 
@@ -939,13 +870,15 @@ alt="感谢页面"                <!-- kingdee-thanks.png -->
 
 | 文件 | 用途 | 页面 |
 |-----|------|-----|
-| `kingdee-blue.png` | 金蝶 AI Logo（蓝色） | 首页/尾页左上角、内容页/目录页右上角 |
+| `kingdee-blue.png` | 金蝶 AI Logo（蓝色） | 内容页/目录页右上角 |
 | `kingdee-white.png` | 金蝶 AI Logo（白色） | 章节页右上角 |
-| `kingdee-thanks.png` | 尾页感谢图（left:5%, max-height:30%） | 尾页左侧 |
-| `homepage.png` | 首页右侧装饰图 | 首页 |
+| `kingdee-thanks.png` | 尾页感谢图（left:5%, max-height:40%） | 尾页左侧 |
+| `homepage.png` | 首页全屏背景图 | 首页 |
 | `kingdee_catalogue.png` | 目录页全屏背景图 | 目录页 |
 | `kingdee_chapter.png` | 章节页全屏背景图 | 章节页 |
-| `kingdee_endpage.png` | 尾页右侧背景图（width:87%, top:-40%） | 尾页 |
+| `kingdee_endpage.png` | 尾页背景图（全屏满铺） | 尾页 |
+| `kingdee_ColorWhitedynamic.gif` | 金蝶全彩动态 Logo（白色版） | 首页/尾页左上角 |
+| `kingdee_Colordynamic.gif` | 金蝶全彩动态 Logo（彩色版） | 备用 |
 
 ---
 
@@ -962,3 +895,5 @@ alt="感谢页面"                <!-- kingdee-thanks.png -->
 | kingdee_catalogue.png | https://static.yunzhijia.com/home/download/png/kingdee_catalogue.png |
 | kingdee_chapter.png | https://static.yunzhijia.com/home/download/png/kingdee_chapter.png |
 | kingdee_endpage.png | https://static.yunzhijia.com/home/download/png/kingdee_endpage.png |
+| kingdee_ColorWhitedynamic.gif | https://static.yunzhijia.com/home/download/png/kingdee_ColorWhitedynamic.gif |
+| kingdee_Colordynamic.gif | https://static.yunzhijia.com/home/download/png/kingdee_Colordynamic.gif |

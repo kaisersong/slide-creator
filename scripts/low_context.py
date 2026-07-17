@@ -2083,9 +2083,26 @@ def _normalize_text_for_story(value: str) -> str:
 
 
 def _skill_version() -> str:
-    skill_text = _read_text(ROOT / "SKILL.md")
-    match = re.search(r"^version:\s*([^\s]+)\s*$", skill_text, re.MULTILINE)
-    return match.group(1) if match else "unknown"
+    plugin_path = ROOT / "plugin.json"
+    try:
+        version = json.loads(plugin_path.read_text(encoding="utf-8")).get("version")
+        if isinstance(version, str) and version.strip():
+            return version.strip()
+    except (OSError, json.JSONDecodeError):
+        pass
+
+    for skill_path in (
+        ROOT / "skills" / "slide-planner" / "SKILL.md",
+        ROOT / "SKILL.md",
+    ):
+        try:
+            skill_text = skill_path.read_text(encoding="utf-8", errors="ignore")
+        except OSError:
+            continue
+        match = re.search(r"^version:\s*([^\s]+)\s*$", skill_text, re.MULTILINE)
+        if match:
+            return match.group(1)
+    return "unknown"
 
 
 def _canonical_render_path(preset: str, renderer_strategy: str = "native") -> str:
@@ -7949,6 +7966,8 @@ def _render_custom_theme_slide(
     slide_number = spec["slide_number"]
     role = spec["role"]
     layout_id = spec["layout_id"]
+    layout_class = re.sub(r"[^a-zA-Z0-9_-]+", "-", str(layout_id)).strip("-") or "default"
+    layout_class = f"layout-{layout_class}"
     items = spec.get("supporting_items", [])
     evidence = spec.get("evidence_items", [])
 
@@ -7964,7 +7983,7 @@ def _render_custom_theme_slide(
         title_logo = f'<img class="kd-logo-left" src="{logo_url}" alt="Logo">' if logo_url else ""
         hero_img = f'<img class="kd-hero-image" src="{images["hero"]}" alt="首页右侧装饰">' if images.get("hero") else ""
         return f"""
-    <section class="slide slide-title" id="slide-{slide_number}" data-notes="{_escape(spec['speaker_note'])}" aria-label="title" data-export-role="title">
+    <section class="slide slide-title {layout_class}" id="slide-{slide_number}" data-notes="{_escape(spec['speaker_note'])}" aria-label="title" data-export-role="title">
         {title_logo}
         {hero_img}
         <div class="title-content">
@@ -7979,15 +7998,17 @@ def _render_custom_theme_slide(
         closing_left = f'<img class="kd-closing-image-left" src="{images["closing_left"]}" alt="感谢页面">' if images.get("closing_left") else ""
         closing_right = f'<img class="kd-closing-image" src="{images["closing_right"]}" alt="尾页右侧装饰">' if images.get("closing_right") else ""
         return f"""
-    <section class="slide slide-closing" id="slide-{slide_number}" data-notes="{_escape(spec['speaker_note'])}" aria-label="cta" data-export-role="cta_close">
+    <section class="slide slide-closing {layout_class}" id="slide-{slide_number}" data-notes="{_escape(spec['speaker_note'])}" aria-label="cta" data-export-role="cta_close">
         {cta_logo}
         {closing_left}
         {closing_right}
-        <div class="section-content" style="left:80px;top:50%;transform:translateY(-50%);">
-            <h2 class="section-title kd-reveal" style="font-size:clamp(28pt,4vw,42pt);color:var(--kd-blue);">{_escape(spec["title"])}</h2>
-            <div class="section-divider kd-reveal" style="background:var(--kd-blue);"></div>
-            <p style="font-size:14pt;color:var(--text-secondary);line-height:1.6;">{_escape(spec.get("key_point", ""))}</p>
+        <div style="position:absolute;left:60px;top:130px;z-index:8;max-width:560px;">
+            <h2 class="kd-reveal" style="font-size:clamp(26pt,3.4vw,38pt);line-height:1.14;margin:0;color:var(--kd-blue);font-weight:700;">{_escape(spec["title"])}</h2>
+            <div class="section-divider kd-reveal" style="background:var(--kd-blue);width:110px;margin:18px 0 14px;"></div>
+            <p style="font-size:13pt;color:var(--text-secondary);line-height:1.6;margin:0;">{_escape(spec.get("key_point", ""))}</p>
         </div>
+        <div class="kd-copyright-gray">版权所有©金蝶国际软件集团有限公司 始创于1993</div>
+        <div class="kd-confidential-gray">④内部公开 请勿外传</div>
     </section>""".strip()
 
     # Section slide (blue background) — use for problem, solution, evidence roles
@@ -7995,9 +8016,17 @@ def _render_custom_theme_slide(
     if is_section_role:
         section_logo = f'<img class="kd-logo-right-section" src="{logo_white}" alt="Logo">' if logo_white else ""
         section_bg = f'<img class="kd-section-image" src="{images["chapter_bg"]}" alt="章节背景">' if images.get("chapter_bg") else ""
-        section_num = f"{role_index:02d}"
+        title_text = str(spec.get("title") or "")
+        if "战场一" in title_text:
+            section_num = "01"
+        elif "战场二" in title_text:
+            section_num = "02"
+        elif "战场三" in title_text:
+            section_num = "03"
+        else:
+            section_num = f"{role_index:02d}"
         return f"""
-    <section class="slide slide-section" id="slide-{slide_number}" data-notes="{_escape(spec['speaker_note'])}" aria-label="{_escape(role)}" data-export-role="{_escape(layout_id)}">
+    <section class="slide slide-section {layout_class}" id="slide-{slide_number}" data-notes="{_escape(spec['speaker_note'])}" aria-label="{_escape(role)}" data-export-role="{_escape(layout_id)}">
         {section_bg}
         {section_logo}
         <div class="section-content">
@@ -8013,16 +8042,23 @@ def _render_custom_theme_slide(
         toc_logo = f'<img class="kd-logo-right-toc" src="{logo_blue}" alt="Logo">' if logo_blue else ""
         toc_bg = f'<img class="kd-toc-image" src="{images["catalogue_bg"]}" alt="目录背景">' if images.get("catalogue_bg") else ""
         toc_items_html = ""
-        for i, item in enumerate(items[:12], 1):
-            compact_cls = " compact" if len(items) > 5 else ""
+        toc_items = spec.get("supporting_facts") or items
+        for i, item in enumerate(toc_items[:12], 1):
+            item_text = str(item)
+            page_label = f"P {i + 2:02d}"
+            page_match = re.match(r"^(.*?)(?:\s*[|｜]\s*)P\s*(\d{1,2})\s*$", item_text)
+            if page_match:
+                item_text = page_match.group(1).strip()
+                page_label = f"P {int(page_match.group(2)):02d}"
+            compact_cls = " compact" if len(toc_items) > 5 else ""
             num_compact = ""
-            if len(items) > 9:
+            if len(toc_items) > 9:
                 num_compact = " ultra-compact"
-            elif len(items) > 5:
+            elif len(toc_items) > 5:
                 num_compact = " compact"
-            toc_items_html += f'<div class="toc-item{compact_cls}"><span class="toc-number{num_compact}">{i:02d}</span><span class="toc-text">{_escape(item)}</span><span class="toc-page">P {i + 1:02d}</span></div>\n'
+            toc_items_html += f'<div class="toc-item{compact_cls}"><span class="toc-number{num_compact}">{i:02d}</span><span class="toc-text">{_escape(item_text)}</span><span class="toc-page">{page_label}</span></div>\n'
         return f"""
-    <section class="slide slide-toc" id="slide-{slide_number}" data-notes="{_escape(spec['speaker_note'])}" aria-label="toc" data-export-role="toc">
+    <section class="slide slide-toc {layout_class}" id="slide-{slide_number}" data-notes="{_escape(spec['speaker_note'])}" aria-label="toc" data-export-role="toc">
         {toc_bg}
         {toc_logo}
         <h2 class="toc-title">目 录</h2>
@@ -8047,7 +8083,7 @@ def _render_custom_theme_slide(
     logo_img = f'<img class="kd-logo-right" src="{logo_url}" alt="Logo">' if logo_url else ""
 
     return f"""
-    <section class="slide slide-content" id="slide-{slide_number}" data-notes="{_escape(spec['speaker_note'])}" aria-label="{_escape(role)}" data-export-role="{_escape(layout_id)}">
+    <section class="slide slide-content {layout_class}" id="slide-{slide_number}" data-notes="{_escape(spec['speaker_note'])}" aria-label="{_escape(role)}" data-export-role="{_escape(layout_id)}">
         {logo_img}
         <div class="content-header">
             <h2 class="content-title kd-reveal">{_escape(spec["title"])}</h2>
