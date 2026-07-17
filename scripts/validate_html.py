@@ -93,12 +93,26 @@ def _collect_css_text(soup) -> str:
 
 
 def _skill_version() -> str:
-    skill_path = ROOT / "SKILL.md"
-    if not skill_path.exists():
-        return "unknown"
-    skill_text = skill_path.read_text(encoding="utf-8", errors="ignore")
-    match = re.search(r"^version:\s*([^\s]+)\s*$", skill_text, re.MULTILINE)
-    return match.group(1) if match else "unknown"
+    plugin_path = ROOT / "plugin.json"
+    try:
+        version = json.loads(plugin_path.read_text(encoding="utf-8")).get("version")
+        if isinstance(version, str) and version.strip():
+            return version.strip()
+    except (OSError, json.JSONDecodeError):
+        pass
+
+    for skill_path in (
+        ROOT / "skills" / "slide-planner" / "SKILL.md",
+        ROOT / "SKILL.md",
+    ):
+        try:
+            skill_text = skill_path.read_text(encoding="utf-8", errors="ignore")
+        except OSError:
+            continue
+        match = re.search(r"^version:\s*([^\s]+)\s*$", skill_text, re.MULTILINE)
+        if match:
+            return match.group(1)
+    return "unknown"
 
 
 def _class_tokens(value) -> list[str]:

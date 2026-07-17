@@ -1389,7 +1389,7 @@
                 if (e.key === 'Escape' && this.active) this.exit();
                 if ((e.key === 'b' || e.key === 'B') && this.active) document.body.classList.toggle('presenting-black');
             });
-            document.addEventListener('fullscreenchange', () => { if (this.active) { setTimeout(() => this._scale(), 100); } if (!document.fullscreenElement && this.active) this.exit(); });
+            document.addEventListener('fullscreenchange', () => { if (!document.fullscreenElement && this.active) { this.exit(); return; } if (this.active) setTimeout(() => { if (this.active) this._scale(); }, 100); });
             window.addEventListener('resize', () => { if (this.active) this._scale(); });
         }
         enter() {

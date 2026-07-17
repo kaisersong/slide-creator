@@ -13,6 +13,7 @@ ROOT = Path(__file__).resolve().parent.parent
 SCRIPTS = ROOT / "scripts"
 sys.path.insert(0, str(SCRIPTS))
 
+import low_context as low_context_module  # noqa: E402
 from low_context import (  # noqa: E402
     _chart_labels_from_spec,
     _chart_metric_values_from_spec,
@@ -51,6 +52,42 @@ CORE_GEOMETRY_VIEWPORTS = [{"width": 1600, "height": 900}, {"width": 1280, "heig
 
 def read_json(path: Path) -> dict:
     return json.loads(path.read_text(encoding="utf-8"))
+
+
+def test_skill_version_supports_source_and_packaged_layouts(tmp_path: Path, monkeypatch):
+    plugin_root = tmp_path / "plugin-layout"
+    plugin_root.mkdir()
+    (plugin_root / "plugin.json").write_text(
+        json.dumps({"version": " 3.2.1 "}),
+        encoding="utf-8",
+    )
+
+    nested_root = tmp_path / "nested-skill-layout"
+    nested_skill = nested_root / "skills" / "slide-planner" / "SKILL.md"
+    nested_skill.parent.mkdir(parents=True)
+    nested_skill.write_text("---\nversion: 3.2.0\n---\n", encoding="utf-8")
+
+    root_skill_root = tmp_path / "root-skill-layout"
+    root_skill_root.mkdir()
+    (root_skill_root / "SKILL.md").write_text(
+        "---\nversion: 3.1.9\n---\n",
+        encoding="utf-8",
+    )
+
+    invalid_plugin_root = tmp_path / "invalid-plugin-layout"
+    invalid_plugin_nested_skill = invalid_plugin_root / "skills" / "slide-planner" / "SKILL.md"
+    invalid_plugin_nested_skill.parent.mkdir(parents=True)
+    (invalid_plugin_root / "plugin.json").write_text("{not-json", encoding="utf-8")
+    invalid_plugin_nested_skill.write_text("---\nversion: 3.1.8\n---\n", encoding="utf-8")
+
+    for candidate_root, expected in (
+        (plugin_root, "3.2.1"),
+        (nested_root, "3.2.0"),
+        (root_skill_root, "3.1.9"),
+        (invalid_plugin_root, "3.1.8"),
+    ):
+        monkeypatch.setattr(low_context_module, "ROOT", candidate_root)
+        assert _skill_version() == expected
 
 
 def write_json(path: Path, data: dict) -> None:
@@ -2667,6 +2704,17 @@ def test_compile_custom_contract():
     assert "themes/kingdee/reference.md" in contract["source_path"]
     assert len(contract.get("tokens", {})) > 0
     assert len(contract.get("css_blocks", [])) > 0
+    assert contract["allowed_layout_ids"] == [
+        "title_grid",
+        "contents_index",
+        "column_content",
+        "stat_block",
+        "geometric_diagram",
+        "data_table",
+        "pull_quote",
+        "toc",
+        "cta_close",
+    ]
 
 
 def test_render_custom_theme():
@@ -2683,6 +2731,27 @@ def test_render_custom_theme():
     assert 'data-preset="Kingdee"' in html_text
     assert packet["preset_support_tier"] == "custom"
     assert contract["preset"] == "Kingdee"
+
+    soup = BeautifulSoup(html_text, "html.parser")
+    slides = soup.select("section.slide")
+    layout_classes = {
+        class_name
+        for slide in slides
+        for class_name in slide.get("class", [])
+        if class_name.startswith("layout-")
+    }
+    assert layout_classes == {
+        "layout-title_grid",
+        "layout-contents_index",
+        "layout-column_content",
+        "layout-stat_block",
+        "layout-geometric_diagram",
+        "layout-pull_quote",
+    }
+    for slide in slides:
+        export_role = slide["data-export-role"]
+        layout_id = "title_grid" if export_role == "title" else export_role
+        assert f"layout-{layout_id}" in slide.get("class", [])
 
 
 def test_preset_support_custom():

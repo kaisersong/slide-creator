@@ -593,6 +593,75 @@ class TestPresentMode:
         assert has_escape_exit, \
             "Demo missing Escape key handler to exit present mode"
 
+    def test_fullscreen_exit_does_not_queue_stale_rescale(self, demo):
+        """Exiting fullscreen must not rescale slides after exit() resets them."""
+        _, content = demo
+        stale_rescale = (
+            "if (this.active) { setTimeout(() => this._scale(), 100); } "
+            "if (!document.fullscreenElement && this.active) this.exit();"
+        )
+        assert stale_rescale not in content, \
+            "fullscreen exit queues _scale() before exit(), restoring the stale transform"
+
+    def test_shared_runtime_does_not_queue_stale_rescale(self):
+        """Future generated decks inherit the same safe fullscreen exit ordering."""
+        content = (Path(__file__).parent.parent / "references" / "js-engine.md").read_text(encoding="utf-8")
+        assert "setTimeout(() => this._scale(), 100); } if (!document.fullscreenElement" not in content
+        assert "if (!document.fullscreenElement && this.active) { this.exit(); return; }" in content
+        assert "setTimeout(() => { if (this.active) this._scale(); }, 100)" in content
+
+    def test_shared_runtime_quick_exit_keeps_transform_reset(self):
+        """A pending fullscreen-enter rescale cannot restore transform after exit."""
+        import subprocess
+
+        content = (Path(__file__).parent.parent / "references" / "js-engine.md").read_text(encoding="utf-8")
+        match = re.search(r"(class PresentMode \{.*?^\})\nnew PresentMode", content, re.DOTALL | re.MULTILINE)
+        assert match, "PresentMode class not found in shared runtime"
+
+        harness = f"""
+const listeners = {{}};
+const timers = [];
+const bodyClasses = new Set();
+const classList = {{
+  add: (...names) => names.forEach(name => bodyClasses.add(name)),
+  remove: (...names) => names.forEach(name => bodyClasses.delete(name)),
+  toggle: name => bodyClasses.has(name) ? bodyClasses.delete(name) : bodyClasses.add(name),
+}};
+const slide = {{
+  style: {{ transform: '' }},
+  classList: {{ remove() {{}}, toggle() {{}} }},
+  scrollIntoView() {{}},
+}};
+global.setTimeout = callback => {{ timers.push(callback); return timers.length; }};
+global.document = {{
+  body: {{ classList, appendChild() {{}} }},
+  documentElement: {{ requestFullscreen: () => Promise.resolve() }},
+  fullscreenElement: null,
+  createElement: () => ({{ setAttribute() {{}}, addEventListener() {{}} }}),
+  addEventListener: (name, callback) => {{ listeners[name] = callback; }},
+  getElementById: () => null,
+  exitFullscreen() {{}},
+}};
+global.window = {{ innerWidth: 1280, innerHeight: 720, addEventListener() {{}} }};
+const ctrl = {{
+  slides: [slide], currentSlide: 0, goTo() {{}}, setActiveSlide() {{}},
+  updateProgress() {{}}, updateDots() {{}}, broadcastState() {{}}, updateNotesPanel() {{}},
+}};
+{match.group(1)}
+const mode = new PresentMode(ctrl);
+mode.enter();
+document.fullscreenElement = document.documentElement;
+listeners.fullscreenchange();
+document.fullscreenElement = null;
+listeners.fullscreenchange();
+timers.splice(0).forEach(callback => callback());
+if (mode.active || slide.style.transform !== '' || bodyClasses.has('presenting')) {{
+  throw new Error(`stale presentation state: active=${{mode.active}}, transform=${{slide.style.transform}}`);
+}}
+"""
+        result = subprocess.run(["node", "-e", harness], capture_output=True, text=True)
+        assert result.returncode == 0, result.stderr
+
 
 class TestWatermark:
     """Watermark must be on the last slide only, not fixed across all slides."""
