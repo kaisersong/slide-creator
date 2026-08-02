@@ -43,6 +43,11 @@ COMPONENT_KIND_SELECTORS: dict[str, str] = {
     "diagram": "[class*='diagram'],[class*='workflow'],[class*='arch'],.layer,.ent-arch-grid",
     "code": "pre,code,.ent-code",
     "image": "img,picture,figure",
+    "fact": ".iri-fact,.iri-fracture-item,.iri-spectrum-item",
+    "field": ".iri-field,.iri-contract-layer",
+    "process": ".iri-pipeline-step,.iri-gate",
+    "control": ".iri-key,.iri-command",
+    "mode": ".iri-mode,.iri-quadrant",
 }
 
 
@@ -694,12 +699,18 @@ def analyze_html_quality(
     must_include_coverage = _must_include_coverage(brief, visible_text)
     chart_signal_mismatch_count, chart_signal_mismatch_rate = _chart_signal_mismatch(brief, slides)
     global_fact_overuse_count = _global_fact_overuse(brief, slides)
-    style_signature_coverage = _style_signature_coverage(soup, inferred_preset)
-    style_presence = (
-        collect_signature_presence(html_text, requirement_for_preset(inferred_preset))
-        if inferred_preset
-        else None
-    )
+    style_presence = None
+    if inferred_preset:
+        try:
+            style_presence = collect_signature_presence(
+                html_text,
+                requirement_for_preset(inferred_preset),
+            )
+        except (FileNotFoundError, KeyError):
+            # Custom themes compile their contract from themes/<name>/reference.md
+            # and do not require a built-in preset-contract JSON.
+            style_presence = None
+    style_signature_coverage = style_presence.coverage if style_presence else None
     copy_residual_hits, must_avoid_hits, copy_residual_failures = _copy_residual_diagnostics(
         visible_text,
         brief,

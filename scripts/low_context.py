@@ -5605,7 +5605,14 @@ def _render_enterprise_contrast_split(spec: dict[str, Any], total: int) -> str:
 
 def _render_enterprise_insight_pull(spec: dict[str, Any], total: int) -> str:
     slide_number = spec["slide_number"]
-    title_tag = _title_tag("div", "ent-pull", spec["title"], preset="Enterprise Dark", layout_id=spec["layout_id"])
+    title_tag = _title_tag(
+        "div",
+        "ent-pull",
+        spec["title"],
+        preset="Enterprise Dark",
+        layout_id=spec["layout_id"],
+        extra_attrs='data-export-slot="title"',
+    )
     return f"""
     <section class="slide enterprise-pull" id="slide-{slide_number}" data-notes="{_escape(spec['speaker_note'])}" aria-label="{_escape(spec['role'])}" data-export-role="insight_pull">
         <div class="slide-content">
@@ -7927,6 +7934,28 @@ def _extract_starter_css(starter_path: Path) -> str:
     return match.group(1).strip() if match else ""
 
 
+def _extract_starter_theme_decor(starter_path: Path) -> str:
+    """Extract optional shared decorative markup from a custom theme starter."""
+    content = _read_text(starter_path)
+    match = re.search(
+        r'<template\s+id=["\']theme-decor["\'][^>]*>(.*?)</template>',
+        content,
+        re.DOTALL | re.IGNORECASE,
+    )
+    return match.group(1).strip() if match else ""
+
+
+def _extract_starter_theme_runtime(starter_path: Path) -> str:
+    """Extract optional custom-theme runtime without copying script tags."""
+    content = _read_text(starter_path)
+    blocks = re.findall(
+        r'<script\s+[^>]*data-theme-runtime(?:=["\'][^"\']*["\'])?[^>]*>(.*?)</script>',
+        content,
+        re.DOTALL | re.IGNORECASE,
+    )
+    return "\n\n".join(block.strip() for block in blocks if block.strip())
+
+
 def _extract_starter_image_urls(starter_path: Path) -> dict[str, str]:
     """Extract all image URLs (logos + backgrounds) from starter.html img tags."""
     content = _read_text(starter_path)
@@ -7954,6 +7983,311 @@ def _extract_starter_image_urls(starter_path: Path) -> dict[str, str]:
     return images
 
 
+def _iridescence_display_items(spec: dict[str, Any], *, limit: int = 6) -> list[str]:
+    """Return local-first display items for the iridescence custom theme."""
+    values = [
+        *spec.get("supporting_facts", []),
+        *spec.get("numeric_facts", []),
+        *spec.get("supporting_items", []),
+        *spec.get("evidence_items", []),
+    ]
+    return _dedupe_preserve(str(value).strip() for value in values if str(value).strip())[:limit]
+
+
+def _render_iridescence_theme_slide(spec: dict[str, Any], total: int, *, role_index: int) -> str:
+    slide_number = spec["slide_number"]
+    role = spec["role"]
+    layout_id = spec["layout_id"]
+    layout_class = re.sub(r"[^a-zA-Z0-9_-]+", "-", str(layout_id)).strip("-") or "default"
+    layout_class = f"layout-{layout_class}"
+    items = _iridescence_display_items(spec)
+    notes = _escape(spec["speaker_note"])
+    scene_order = (
+        "hero",
+        "fracture",
+        "convergence",
+        "brief",
+        "pipeline",
+        "spectrum",
+        "contract",
+        "gates",
+        "runtime",
+        "modes",
+        "use-cases",
+        "closing",
+    )
+    closing_roles = {"cta", "closing", "cta_close", "getting-started"}
+    if role_index == 0 or role in {"cover", "title"}:
+        scene = "hero"
+    elif role in closing_roles:
+        scene = "closing"
+    else:
+        scene = scene_order[min(role_index, len(scene_order) - 2)]
+
+    section_class = "slide-title" if scene == "hero" else "slide-closing" if scene == "closing" else "slide-content"
+    export_role = "title" if scene == "hero" else layout_id
+    opener = (
+        f'<section class="slide {section_class} iri-scene iri-scene--{scene} {layout_class}" '
+        f'id="slide-{slide_number}" data-notes="{notes}" aria-label="{_escape(role)}" '
+        f'data-export-role="{_escape(export_role)}">'
+    )
+
+    semantic_lines = {
+        "把 AI 生成，变成可交付的演示文稿": ("把 AI 生成，变成", "可交付的演示文稿"),
+        "AI 会写内容，最后一步却最容易翻车": ("AI 会写内容，", "最后一步却最容易翻车"),
+        "真正需要保护的，是内容到成品的最后一公里": ("真正需要保护的，", "是内容到成品的最后一公里"),
+        "把整段对话，压成一个短、硬、可执行的真相源": ("把整段对话，压成", "一个短、硬、可执行的真相源"),
+        "Prompt 到成品，只走一条可验证路径": ("Prompt 到成品，只走", "一条可验证路径"),
+        "风格选择不再靠猜：先看图，再落字": ("风格选择不再靠猜：", "先看图，再落字"),
+        "22 种预设不是皮肤，而是 22 套布局契约": ("22 种预设不是皮肤，", "而是 22 套布局契约"),
+        "输出本身就是演示工具，不是一次性截图": ("输出本身就是演示工具，", "不是一次性截图"),
+        "Auto 负责速度，Polish 负责把质量锁住": ("Auto 负责速度，", "Polish 负责把质量锁住"),
+        "一条生成链，覆盖四类真实交付": ("一条生成链，", "覆盖四类真实交付"),
+        "一句话安装，生成你的第一份 deck": ("一句话安装，", "生成你的", "第一份 deck"),
+    }
+    accent_phrases = {
+        "把 AI 生成，变成可交付的演示文稿": "可交付",
+        "一句话安装，生成你的第一份 deck": "第一份 deck",
+    }
+    gate_accent_cycle = (
+        "iri-gate-accent-primary",
+        "iri-gate-accent-secondary",
+        "iri-gate-accent-tertiary",
+    )
+    accent_cycle = (
+        "iri-accent-text-primary",
+        "iri-accent-text-secondary",
+        "iri-accent-text-tertiary",
+    )
+
+    def emphasized_line(line: str, phrase: str | None) -> str:
+        if not phrase or phrase not in line:
+            return _escape(line)
+        before, match, after = line.partition(phrase)
+        return (
+            f"{_escape(before)}"
+            f'<em class="iri-accent-primary">{_escape(match)}</em>'
+            f"{_escape(after)}"
+        )
+
+    def title_markup() -> str:
+        title = str(spec["title"])
+        lines = semantic_lines.get(title)
+        if not lines:
+            return _escape(title)
+        phrase = accent_phrases.get(title)
+        return "".join(f'<span class="iri-title-line">{emphasized_line(line, phrase)}</span>' for line in lines)
+
+    def header(*, level: int = 2, lead: bool = True) -> str:
+        tag = "h1" if level == 1 else "h2"
+        lead_html = (
+            f'<p class="iri-lead kd-reveal">{_escape(spec.get("key_point", ""))}</p>'
+            if lead and spec.get("key_point")
+            else ""
+        )
+        return (
+            '<div class="iri-copy">'
+            f'<span class="iri-label">{slide_number:02d} / {total:02d} · {_escape(role)}</span>'
+            f'<{tag} class="iri-headline kd-reveal">{title_markup()}</{tag}>'
+            f'{lead_html}'
+            '</div>'
+        )
+
+    def facts(values: list[str], *, accented: bool = True) -> str:
+        return "".join(
+            '<div class="iri-fact kd-reveal">'
+            f'<span class="iri-fact-index{f" {accent_cycle[(index - 1) % len(accent_cycle)]}" if accented else ""}">{index:02d}</span>'
+            f'<strong>{_escape(item)}</strong>'
+            '</div>'
+            for index, item in enumerate(values, start=1)
+        )
+
+    if scene == "hero":
+        body = (
+            '<div class="iri-copy">'
+            '<span class="iri-label">SLIDE CREATOR · PRODUCT STORY · 2026</span>'
+            f'<h1 class="iri-headline kd-reveal">{title_markup()}</h1>'
+            f'<p class="iri-lead kd-reveal">{_escape(spec.get("key_point", ""))}</p>'
+            f'<div class="iri-facts">{facts(items[:4], accented=False)}</div>'
+            '</div>'
+        )
+    elif scene == "fracture":
+        left = items[:3]
+        right = [
+            "叙事必须完整推进",
+            "风格必须稳定落地",
+            "打开即播放、验证即交付",
+        ]
+        body = (
+            f'{header(lead=False)}'
+            '<div class="iri-fracture-grid">'
+            '<div class="iri-fracture-side"><h3 class="iri-accent-text-primary">GENERATION END</h3>'
+            + "".join(f'<div class="iri-fracture-item kd-reveal">{_escape(item)}</div>' for item in left)
+            + '</div><div class="iri-fracture-scar" aria-hidden="true"></div>'
+            '<div class="iri-fracture-side"><h3 class="iri-accent-text-primary">DELIVERY STANDARD</h3>'
+            + "".join(f'<div class="iri-fracture-item kd-reveal">{_escape(item)}</div>' for item in right)
+            + '</div></div>'
+        )
+    elif scene == "convergence":
+        body = (
+            '<div class="iri-convergence-core">'
+            f'<span class="iri-label">{slide_number:02d} / {total:02d} · LAST MILE</span>'
+            f'<h2 class="iri-headline kd-reveal">{title_markup()}</h2>'
+            '<span class="iri-convergence-word iri-accent-primary" aria-hidden="true">LAST MILE</span>'
+            f'<div class="iri-convergence-lines">{facts(items[:3])}</div>'
+            '</div>'
+        )
+    elif scene == "brief":
+        field_contract = [
+            ("audience", "决定受众与期望动作"),
+            ("deck.style", "锁定页数、语言和 preset"),
+            ("content", "固定必须包含的事实与边界"),
+            ("narrative.slides", "逐页声明角色、断言和证据"),
+            ("runtime", "约束播放、编辑、备注与耗时"),
+        ]
+        fields = "".join(
+            '<div class="iri-field kd-reveal">'
+            f'<span class="iri-number iri-accent-text-primary">{index:02d}</span>'
+            f'<code class="iri-accent-text-primary">{_escape(field)}</code><span>{_escape(description)}</span>'
+            '</div>'
+            for index, (field, description) in enumerate(field_contract, start=1)
+        )
+        body = (
+            '<div class="iri-brief-layout">'
+            '<div class="iri-panel iri-brief-code kd-reveal"><strong>BRIEF.json</strong>'
+            '<pre>{\n  "audience": "...",\n  "deck": { "style": "..." },\n  "content": { ... },\n  "narrative": { "slides": [ ... ] },\n  "runtime": { ... }\n}</pre></div>'
+            f'<div>{header()}<div class="iri-field-list">{fields}</div></div>'
+            '</div>'
+        )
+    elif scene == "pipeline":
+        pipeline_tints = {
+            2: "iri-accent-tint-primary",
+            4: "iri-accent-tint-secondary",
+            5: "iri-accent-tint-tertiary",
+        }
+        steps = "".join(
+            f'<div class="iri-pipeline-step kd-reveal{f" {pipeline_tints[index]}" if index in pipeline_tints else ""}">'
+            f'<span class="iri-accent-text-primary">{index:02d}</span><strong>{_escape(item)}</strong>'
+            '</div>'
+            for index, item in enumerate(items[:6], start=1)
+        )
+        body = f'{header()}<div class="iri-pipeline">{steps}</div>'
+    elif scene == "spectrum":
+        marker_cycle = (
+            "iri-marker-primary",
+            "iri-marker-secondary",
+            "iri-marker-tertiary",
+        )
+        spectrum_items = "".join(
+            '<div class="iri-spectrum-item kd-reveal">'
+            + (
+                f'<span class="iri-spectrum-marker {marker_cycle[(index - 1) % len(marker_cycle)]}" aria-hidden="true"></span>'
+                if index <= 4
+                else '<span class="iri-spectrum-marker" aria-hidden="true"></span>'
+            )
+            + f'<span>{_escape(item)}</span></div>'
+            for index, item in enumerate(items[:6], start=1)
+        )
+        body = (
+            f'{header()}'
+            '<div class="iri-spectrum">'
+            '<div class="iri-spectrum-total iri-accent-primary" aria-label="22 presets">22</div>'
+            f'<div class="iri-spectrum-list">{spectrum_items}</div>'
+            '</div>'
+        )
+    elif scene == "contract":
+        contract_details = [
+            ("Visual tokens", "锁定颜色、排版、间距与图表语法"),
+            ("Named layouts", "约束每个页面角色可使用的构图"),
+            ("Signature elements", "让视觉身份可以检测并稳定复现"),
+            ("Runtime contract", "播放、编辑、备注与导出共用同一壳子"),
+            ("Renderer tiers", "5 个 native core 与 17 个 profile renderer"),
+        ]
+        layers = "".join(
+            '<div class="iri-contract-layer kd-reveal">'
+            f'<span class="iri-number iri-accent-text-primary">{index:02d}</span><strong>{_escape(label)}</strong><p>{_escape(description)}</p>'
+            '</div>'
+            for index, (label, description) in enumerate(contract_details, start=1)
+        )
+        body = f'{header()}<div class="iri-contract">{layers}</div>'
+    elif scene == "gates":
+        gate_items = [
+            ("Brief contract", "Schema、事实与 page roles 在渲染前先对齐"),
+            ("Render packet", "记录 route、preset 与 renderer provenance"),
+            ("Strict validation", "拦截依赖、壳子、备注与结构失败"),
+            ("Single-deck eval", "检查节奏、压缩、忠实度与效率"),
+        ]
+        gates = "".join(
+            f'<div class="iri-gate kd-reveal {gate_accent_cycle[(index - 1) % len(gate_accent_cycle)]}">'
+            f'<span class="{accent_cycle[(index - 1) % len(accent_cycle)]}">GATE {index:02d}</span>'
+            f'<strong>{_escape(label)}</strong><small>{_escape(description)}</small>'
+            '</div>'
+            for index, (label, description) in enumerate(gate_items, start=1)
+        )
+        body = f'{header()}<div class="iri-gates">{gates}</div>'
+    elif scene == "runtime":
+        runtime_keys = [
+            ("F5", "Present Mode"),
+            ("P", "Presenter Window"),
+            ("E", "Inline Editing"),
+            ("Ctrl+S", "Save self-contained HTML"),
+            ("NOTES", "每页演讲备注随文件保存"),
+            ("← ↑ → ↓", "键盘与 PageUp / PageDown 翻页"),
+        ]
+        keys = "".join(
+            '<div class="iri-key kd-reveal">'
+            f'<b class="iri-accent-text-primary">{_escape(key)}</b><span>{_escape(description)}</span>'
+            '</div>'
+            for key, description in runtime_keys
+        )
+        body = (
+            f'{header()}'
+            '<div class="iri-runtime-stage">'
+            '<div class="iri-runtime-screen kd-reveal"><span class="iri-label">ONE SELF-CONTAINED HTML</span>'
+            '<strong><span class="iri-accent-primary">PLAY</span><br><span class="iri-accent-secondary">EDIT</span><br>'
+            '<span class="iri-accent-text-tertiary">PRESENT</span></strong></div>'
+            f'<div class="iri-keys">{keys}</div>'
+            '</div>'
+        )
+    elif scene == "modes":
+        auto = items[0] if items else "Auto — 3–6 minutes"
+        polish = items[1] if len(items) > 1 else "Polish — 8–15 minutes"
+        auto_time = auto.split(" — ", 1)[-1].replace("expected ", "")
+        polish_time = polish.split(" — ", 1)[-1].replace("expected ", "")
+        body = (
+            f'{header()}'
+            '<div class="iri-modes">'
+            f'<div class="iri-mode kd-reveal"><div><span class="iri-number iri-accent-primary">AUTO</span><h3>{_escape(auto_time)}</h3></div><p>快速形成第一版，并沿同一 BRIEF 与 strict gate 交付。</p></div>'
+            f'<div class="iri-mode kd-reveal"><div><span class="iri-number iri-accent-secondary">POLISH</span><h3>{_escape(polish_time)}</h3></div><p>锁定叙事与视觉，并自动执行深度 Review。</p></div>'
+            '</div>'
+        )
+    elif scene == "use-cases":
+        quadrants = "".join(
+            '<div class="iri-quadrant kd-reveal">'
+            f'<span class="iri-number {accent_cycle[(index - 1) % len(accent_cycle)]}">{index:02d}</span>'
+            f'<strong>{_escape(item.split(" — ", 1)[0])}</strong><p>{_escape(item.split(" — ", 1)[-1])}</p>'
+            '</div>'
+            for index, item in enumerate(items[:4], start=1)
+        )
+        body = f'{header()}<div class="iri-quadrants">{quadrants}</div>'
+    else:
+        commands = "".join(
+            f'<div class="iri-panel iri-command kd-reveal">{_escape(item)}</div>' for item in items[:3]
+        )
+        body = (
+            '<div class="iri-closing-layout">'
+            '<div class="iri-copy"><span class="iri-label">GET STARTED · SLIDE CREATOR</span>'
+            f'<h2 class="iri-headline kd-reveal">{title_markup()}</h2>'
+            f'<p class="iri-lead kd-reveal">{_escape(spec.get("key_point", ""))}</p>'
+            '<div class="iri-closing-note">Protect the last mile from content to deck.</div></div>'
+            f'<div class="iri-command-stack">{commands}</div>'
+            '</div>'
+        )
+
+    page_label = f'<span class="slide-num-label">{slide_number:02d} / {total:02d}</span>'
+    return f"{opener}{body}{page_label}</section>"
+
+
 def _render_custom_theme_slide(
     spec: dict[str, Any],
     total: int,
@@ -7963,6 +8297,9 @@ def _render_custom_theme_slide(
     role_index: int,
 ) -> str:
     """Render a slide using theme-specific component classes from the style contract."""
+    if _normalize_preset_name(style_contract.get("preset", "")) == "iridescence convergence":
+        return _render_iridescence_theme_slide(spec, total, role_index=role_index)
+
     slide_number = spec["slide_number"]
     role = spec["role"]
     layout_id = spec["layout_id"]
@@ -7983,7 +8320,7 @@ def _render_custom_theme_slide(
         title_logo = f'<img class="kd-logo-left" src="{logo_url}" alt="Logo">' if logo_url else ""
         hero_img = f'<img class="kd-hero-image" src="{images["hero"]}" alt="首页右侧装饰">' if images.get("hero") else ""
         return f"""
-    <section class="slide slide-title {layout_class}" id="slide-{slide_number}" data-notes="{_escape(spec['speaker_note'])}" aria-label="title" data-export-role="title">
+    <section class="slide slide-title {layout_class}" id="slide-{slide_number}" data-notes="{_escape(spec['speaker_note'])}" aria-label="{_escape(role)}" data-export-role="title">
         {title_logo}
         {hero_img}
         <div class="title-content">
@@ -7997,13 +8334,15 @@ def _render_custom_theme_slide(
         cta_logo = f'<img class="kd-logo-left" src="{logo_url}" alt="Logo">' if logo_url else ""
         closing_left = f'<img class="kd-closing-image-left" src="{images["closing_left"]}" alt="感谢页面">' if images.get("closing_left") else ""
         closing_right = f'<img class="kd-closing-image" src="{images["closing_right"]}" alt="尾页右侧装饰">' if images.get("closing_right") else ""
+        cta_lines = _balance_title_lines(spec["title"], max_lines=2, force_balance=True) or [spec["title"]]
+        cta_title = "".join(f'<span class="title-line ic-title-line">{_escape(line)}</span>' for line in cta_lines[:2])
         return f"""
     <section class="slide slide-closing {layout_class}" id="slide-{slide_number}" data-notes="{_escape(spec['speaker_note'])}" aria-label="cta" data-export-role="cta_close">
         {cta_logo}
         {closing_left}
         {closing_right}
         <div style="position:absolute;left:60px;top:130px;z-index:8;max-width:560px;">
-            <h2 class="kd-reveal" style="font-size:clamp(26pt,3.4vw,38pt);line-height:1.14;margin:0;color:var(--kd-blue);font-weight:700;">{_escape(spec["title"])}</h2>
+            <h2 class="kd-reveal" style="font-size:clamp(26pt,3.4vw,38pt);line-height:1.14;margin:0;color:var(--kd-blue);font-weight:700;">{cta_title}</h2>
             <div class="section-divider kd-reveal" style="background:var(--kd-blue);width:110px;margin:18px 0 14px;"></div>
             <p style="font-size:13pt;color:var(--text-secondary);line-height:1.6;margin:0;">{_escape(spec.get("key_point", ""))}</p>
         </div>
@@ -8025,6 +8364,11 @@ def _render_custom_theme_slide(
             section_num = "03"
         else:
             section_num = f"{role_index:02d}"
+        section_signals = "".join(
+            f'<li class="kd-reveal">{_escape(item)}</li>'
+            for item in items[:3]
+        )
+        signals_html = f'<ul class="ic-section-signals">{section_signals}</ul>' if section_signals else ""
         return f"""
     <section class="slide slide-section {layout_class}" id="slide-{slide_number}" data-notes="{_escape(spec['speaker_note'])}" aria-label="{_escape(role)}" data-export-role="{_escape(layout_id)}">
         {section_bg}
@@ -8034,6 +8378,7 @@ def _render_custom_theme_slide(
             <div class="section-divider kd-reveal"></div>
             <h2 class="section-title kd-reveal">{_escape(spec["title"])}</h2>
             <p class="section-title kd-reveal" style="font-size:clamp(12pt,1.6vw,16pt);font-weight:400;margin-top:16px;line-height:1.6;">{_escape(spec.get("key_point", ""))}</p>
+            {signals_html}
         </div>
     </section>""".strip()
 
@@ -8124,9 +8469,42 @@ def render_custom_theme_html(
     if starter_path.exists():
         starter_css = _extract_starter_css(starter_path)
         images = _extract_starter_image_urls(starter_path)
+        theme_decor = _extract_starter_theme_decor(starter_path)
+        theme_runtime = _extract_starter_theme_runtime(starter_path)
     else:
-        starter_css = "\n\n".join(style_contract["css_blocks"])
+        starter_css = "\n\n".join(style_contract["css_blocks"]) + """
+
+html {
+    height: 100%;
+    overflow-x: hidden;
+    overflow-y: auto;
+    scroll-snap-type: y mandatory;
+    overscroll-behavior-y: contain;
+}
+
+body {
+    margin: 0;
+    min-height: 100%;
+    overflow-x: hidden;
+    overflow-y: auto;
+    overscroll-behavior-y: contain;
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+
+.slide {
+    width: 100vw;
+    height: 100vh;
+    height: 100dvh;
+    overflow: hidden;
+    scroll-snap-align: start;
+    scroll-snap-stop: always;
+    position: relative;
+}
+"""
         images = {}
+        theme_decor = ""
+        theme_runtime = ""
 
     specs = build_slide_spec(brief, packet=packet)
     total = len(specs)
@@ -8178,32 +8556,48 @@ body.presenting .slide-credit {{ display: none !important; }}
 .edit-hotzone {{
     position: fixed;
     top: 0; left: 0;
-    width: 120px; height: 120px;
+    width: 80px; height: 80px;
     z-index: 9999;
 }}
 #editToggle, .edit-toggle {{
     position: fixed;
-    top: 12px; left: 12px;
+    top: 16px; left: 16px;
     z-index: 10000;
     padding: 6px 16px;
-    border-radius: 6px;
-    border: 1px solid #ddd;
-    background: #fff;
+    border-radius: 8px;
+    border: 1px solid rgba(255,255,255,.24);
+    color: #fff;
+    background: rgba(10,10,18,.82);
     cursor: pointer;
     font-size: 13px;
-    display: none;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity .2s ease;
 }}
-#editToggle.show, .edit-toggle.show {{ display: block; }}
+#editToggle.show, .edit-toggle.show {{ opacity: 1; pointer-events: auto; }}
 #editToggle.active, .edit-toggle.active {{ background: var(--kd-blue, #2971EB); color: #fff; border-color: var(--kd-blue, #2971EB); }}
 </style>
 </head>
 <body data-export-progress="true" data-preset="{_escape(display_preset)}" {provenance_attrs}>
 <span id="brand-mark">{_escape(brand_mark)}</span>
+{theme_decor}
 {slides_html}
 <div class="edit-hotzone"></div>
-<button id="editToggle" class="edit-toggle" type="button">Edit</button>
+<button id="editToggle" class="edit-toggle" type="button" title="Edit mode (E)" aria-label="Edit mode">Edit</button>
+<div id="notes-panel">
+    <div id="notes-panel-header">
+        <div id="notes-panel-label">SPEAKER NOTES - SLIDE 1 / {total}</div>
+        <div id="notes-drag-hint"></div>
+        <button id="notes-collapse-btn" type="button" title="Collapse / expand">▾</button>
+    </div>
+    <div id="notes-body">
+        <textarea id="notes-textarea" placeholder="Add speaker notes..."></textarea>
+    </div>
+</div>
 <script>
 {js_engine}
+
+{theme_runtime}
 </script>
 </body>
 </html>"""

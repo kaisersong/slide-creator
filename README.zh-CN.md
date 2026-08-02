@@ -393,15 +393,15 @@ python3 main.py --generate --brief BRIEF.json --output presentation.html --eval
 
 ### 交互功能
 
-- **播放模式** — 按 `F5` 或点击右下角 ▶ 按钮进入全屏播放；幻灯片缩放适配任意屏幕；控制栏自动隐藏；按 `Esc` 退出
+- **播放模式** — 按 `F5` 或点击右下角标准 44px 圆形 ▶ 按钮进入全屏播放；共享壳子主题统一使用圆点导航、顶部进度条和 `NN / 总页数` 页码；按 `Esc` 退出
 - **演讲者模式** — 按 `P` 打开同步演讲者窗口：备注、计时器、页数、翻页导航；窗口高度随备注自动调整
 - **备注编辑面板** — 编辑模式（`E` 键）下底部出现备注栏，点击标题可收起/展开，输入实时同步
-- **浏览器内编辑** — 默认开启；直接在浏览器中编辑文字，Ctrl+S 保存
+- **浏览器内编辑** — 默认开启；将鼠标移到左上角标准 Edit hotzone 或按 `E`，可直接编辑文字和演讲者备注，然后按 `Ctrl+S` 保存
 - **视口自适应** — 每张幻灯片精确填充 100vh，永不出现滚动条
 
 ### 输出功能
 
-- **自定义主题系统** — 在 `themes/你的主题/` 放入 `reference.md` 即可添加专属预设；可选提供 `starter.html`
+- **自定义主题系统** — 在 `themes/你的主题/` 放入 `reference.md` 即可添加专属预设；复杂系统可选提供 `starter.html`，仓库内置的 `Iridescence-Convergence` 是可直接生成的完整示例
 - **模板导出界面开关** — 在 `<body>` 上设置 `data-export-progress="false"`，同时隐藏进度条和导航点
 - **图片处理流水线** — 自动评估和处理素材（Pillow）
 - **PPT 导入** — 将 `.pptx` 文件转换为网页演示
@@ -445,6 +445,10 @@ python3 main.py --generate --brief BRIEF.json --output presentation.html --eval
 
 **为什么 Blue Sky 是 starter 模板范本：** 它预置了全部 10 个签名视觉元素，模型只需填充幻灯片内容——没有误实现设计系统的风险。这种 `reference.md` + `starter.html` 的模式对任何复杂主题都可复用。
 
+### 内置自定义主题：虹彩汇聚
+
+`themes/iridescence-convergence/` 是一个可直接生成的自定义主题，使用 `style.preset: "custom:iridescence-convergence"` 选中。它只在封面使用动态 WebGL 虹彩，内容页保持不透明白底编辑风格，以克制的蓝/紫/青语义色组织视觉节奏，并用不透明近黑收尾页完成收束。主题继续使用标准非 Blue-Sky 共享壳子：44px 圆形播放按钮、圆点导航、顶部进度条、直属页码、默认开启的 Edit 模式、演讲者备注、Presenter 模式、reduced-motion fallback、可打印输出，且没有远程运行时依赖。
+
 ---
 
 ## 创建自定义主题
@@ -459,7 +463,7 @@ python3 main.py --generate --brief BRIEF.json --output presentation.html --eval
 
 你的主题会以"Custom: 你的主题"出现在风格选择列表中。
 
-**附带的品牌主题示例：** `themes/cloudhub/` 和 `themes/kingdee/`
+**内置自定义主题：** `themes/iridescence-convergence/`（可直接生成）、`themes/ascii-stream/` 和 `themes/kingdee/`
 
 ---
 
@@ -504,6 +508,8 @@ slide-creator **无外部依赖**。Python 3 仅用于规划阶段可选的图�
 ---
 
 ## 版本日志
+
+**v2.29.0** — “虹彩汇聚”与共享壳子一致性发版：新增可直接生成的自定义主题，只在封面使用 WebGL 虹彩，内容页保持不透明白底和克制语义色，并以深色收尾；该主题运行时恢复为标准 44px 圆形播放按钮、圆点导航、顶部进度条、直属页码和可发现的 80px Edit hotzone；无 starter 的 custom theme 补齐必需视口壳子，Enterprise Dark insight-pull 标题补上 canonical export slot；同时扩充 strict / Browser 回归覆盖，并把当前 production demo 水印刷新到 v2.29.0。
 
 **v2.28.0** — 生成质量门禁发版：单 deck eval 现在会对未授权的占位文案 / demo 文案残留给出 hard failure；Paper & Ink 的 signature 评分改为对齐真实 reference demo；同时优化 CJK 标题换行，Blue Sky 报告里的中等长度标题会优先充分利用横向空间，不再把“风险”“地图”等词拆到两行。
 
