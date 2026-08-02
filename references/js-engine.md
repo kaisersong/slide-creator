@@ -41,6 +41,7 @@ class SlidePresentation {
 
     setupObserver() {
         const observer = new IntersectionObserver((entries) => {
+            if (document.body.classList.contains('presenting')) return;
             entries.forEach(entry => {
                 if (entry.isIntersecting) {
                     this.currentSlide = [...this.slides].indexOf(entry.target);
@@ -202,7 +203,7 @@ class SlidePresentation {
             enter: () => {
                 this.editor.active = true;
                 toggle.classList.add('active'); toggle.textContent = 'Done';
-                this.slides.forEach(s => s.querySelectorAll('h1,h2,h3,p,li,span,td,th').forEach(el => {
+                this.slides.forEach(s => s.querySelectorAll('h1,h2,h3,p,li,span,strong,small,b,code,td,th').forEach(el => {
                     el.setAttribute('contenteditable', 'true'); el.style.outline = 'none';
                 }));
                 panel.classList.add('active'); this.updateNotesPanel();
@@ -362,6 +363,7 @@ class PresentMode {
             this.ctrl.updateDots?.();
             this.ctrl.broadcastState?.();
             this.ctrl.updateNotesPanel?.();
+            this._updateCounter();
         };
     }
     exit() {
