@@ -2896,6 +2896,23 @@ def test_custom_theme_no_preset_collision():
     assert "themes/" not in str(ref)
 
 
+def test_enterprise_dark_insight_pull_exports_semantic_title_slot():
+    from low_context import render_from_brief
+
+    brief = read_json(ROOT / "evals" / "preset-surface-all" / "cases" / "image-heavy-restyle-brief.json")
+    brief["style"]["preset"] = "Enterprise Dark"
+
+    html_text, _, _ = render_from_brief(brief)
+    soup = BeautifulSoup(html_text, "html.parser")
+    insight_slides = soup.select('.slide[data-export-role="insight_pull"]')
+
+    assert insight_slides
+    for slide in insight_slides:
+        title = slide.select_one('[data-export-slot="title"]')
+        assert title is not None
+        assert title.get_text(" ", strip=True)
+
+
 def test_enterprise_dark_contrast_split_signal_detection():
     from low_context import _has_before_after_signal
 

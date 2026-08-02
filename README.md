@@ -393,15 +393,15 @@ Tracked segments: `plan`, `generate`, `validate`, `polish`, `total`
 
 ### Interaction
 
-- **Play Mode** — Press `F5` or click ▶ (bottom-right) for fullscreen; slides scale to any screen; controls auto-hide; `Esc` to exit
+- **Play Mode** — Press `F5` or click the standard 44px round ▶ control (bottom-right) for fullscreen; circular page navigation, a top progress bar, and `NN / total` page labels stay consistent across shared-shell themes; `Esc` exits
 - **Presenter Mode** — Press `P` for synced speaker window: notes, timer, slide counter, prev/next nav; height auto-adapts
 - **Notes editing panel** — In edit mode (`E`), notes bar at bottom; click title bar to collapse/expand; edits sync live
-- **Inline editing** — Default-on browser editing; edit text in-browser, `Ctrl+S` to save
+- **Inline editing** — Default-on browser editing; hover the standard top-left Edit hotzone or press `E`, edit text and speaker notes in-browser, then press `Ctrl+S` to save
 - **Viewport fitting** — Every slide fits 100vh exactly, no scrolling
 
 ### Output
 
-- **Custom theme system** — Drop `reference.md` in `themes/your-theme/` to add preset; `starter.html` optional for complex systems
+- **Custom theme system** — Drop `reference.md` in `themes/your-theme/` to add a preset; `starter.html` is optional for complex systems, with the bundled `Iridescence-Convergence` theme serving as a generator-ready example
 - **Template export chrome switch** — Set `data-export-progress="false"` on `<body>` to hide progress bar and nav dots
 - **Image pipeline** — Auto-evaluate and process assets (Pillow)
 - **PPT import** — Convert `.pptx` to web presentations
@@ -445,6 +445,10 @@ Signature elements: grainy noise texture overlay · 3 animated blur orbs reposit
 
 **Why Blue Sky is the starter template:** It demonstrates all 10 signature visual elements pre-built. Models only fill in content — no risk of mis-implementing the design system. This pattern (`reference.md` + `starter.html`) is reusable for any complex theme.
 
+### Bundled Custom Theme: Iridescence Convergence
+
+`themes/iridescence-convergence/` is a generator-ready custom theme selected with `style.preset: "custom:iridescence-convergence"`. It reserves animated WebGL iridescence for the cover, uses opaque white editorial content pages with restrained blue/purple/cyan semantic accents, and closes on an opaque near-black surface. The theme stays on the standard non-Blue-Sky shared shell: 44px round Play control, circular page navigation, top progress, direct-child page labels, default-on Edit mode, speaker notes, presenter mode, reduced-motion fallback, print-safe output, and no remote runtime dependencies.
+
 ---
 
 ## Creating Custom Themes
@@ -459,7 +463,7 @@ Signature elements: grainy noise texture overlay · 3 animated blur orbs reposit
 
 Your theme appears as "Custom: your-theme" in the style picker.
 
-**Example brand themes bundled:** `themes/cloudhub/` and `themes/kingdee/`
+**Bundled custom themes:** `themes/iridescence-convergence/` (generator-ready), `themes/ascii-stream/`, and `themes/kingdee/`
 
 ---
 
@@ -504,6 +508,8 @@ For PPTX/PNG export: `clawhub install kai-html-export` or `pip install playwrigh
 ---
 
 ## Version History
+
+**v2.29.0** — Iridescence Convergence and shared-shell consistency release: added a generator-ready custom theme with cover-only WebGL iridescence, opaque white editorial content pages, restrained semantic accents, and a dark closing surface; restored its runtime chrome to the standard 44px round Play control, circular page navigation, top progress bar, direct-child page labels, and discoverable 80px Edit hotzone; gave no-starter custom themes the required viewport shell, marked Enterprise Dark insight-pull titles with the canonical export slot, expanded strict/browser regression coverage, and refreshed current production demo watermarks for v2.29.0.
 
 **v2.28.0** — Generation quality gate release: tightened single-deck evals with hard failures for unauthorized placeholder/demo-copy residuals, corrected Paper & Ink signature scoring against the real reference demo, and improved CJK title wrapping so medium Blue Sky report titles use available horizontal space instead of splitting words like "风险" or "地图" across forced lines.
 
