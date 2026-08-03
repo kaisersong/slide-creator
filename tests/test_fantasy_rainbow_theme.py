@@ -247,18 +247,21 @@ def test_iridescence_restrained_accent_palette_contract():
     assert "Content pages remain opaque white" in reference
 
 
-def test_iridescence_cover_rebalances_warm_pink_into_cool_purple():
+def test_iridescence_cover_selectively_rebalances_warm_pink_and_preserves_mint():
     starter = STARTER.read_text(encoding="utf-8")
     reference = REFERENCE.read_text(encoding="utf-8")
 
     for signature in (
-        "vec3 balanced=col;",
-        "balanced.r=col.r*0.82+col.b*0.04;",
-        "balanced.g=col.g*0.98;",
-        "balanced.b=min(1.0,col.b*1.08+col.r*0.16);",
-        "col=balanced;",
+        "float warmBias=clamp((col.r-col.g-0.02)*4.0,0.0,1.0);",
+        "vec3 shifted=col;",
+        "shifted.r=col.r*0.82+col.b*0.04;",
+        "shifted.b=min(1.0,col.b*1.08+col.r*0.16);",
+        "col=mix(col,shifted,warmBias);",
     ):
         assert signature in starter
+
+    assert "balanced.g=col.g*0.98;" not in starter
+    assert "green-dominant mint and cyan pixels remain on the original field output" in reference
 
     assert "rgba(255, 110, 221, .82)" not in starter
     assert "rgba(167, 108, 255, .48)" in starter
