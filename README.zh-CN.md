@@ -450,7 +450,7 @@ python3 main.py --generate --brief BRIEF.json --output presentation.html --eval
 
 ### 内置自定义主题：奇幻彩虹（Fantasy Rainbow）
 
-`themes/fantasy-rainbow/` 是一个可直接生成的自定义主题，使用 `style.preset: "custom:fantasy-rainbow"` 选中。它只在封面使用动态 WebGL 虹彩，内容页保持不透明白底编辑风格，以克制的蓝/紫/青语义色组织视觉节奏，并用不透明近黑收尾页完成收束。主题继续使用标准非 Blue-Sky 共享壳子：44px 圆形播放按钮、圆点导航、顶部进度条、直属页码、默认开启的 Edit 模式、演讲者备注、Presenter 模式、reduced-motion fallback、可打印输出，且没有远程运行时依赖。旧的 `custom:iridescence-convergence` preset 继续作为兼容别名使用。
+`themes/fantasy-rainbow/` 是一个可直接生成的自定义主题，使用 `style.preset: "custom:fantasy-rainbow"` 选中。它只在封面使用动态 WebGL 虹彩，内容页保持不透明白底编辑风格，以克制的蓝/紫/青语义色组织视觉节奏，并用不透明近黑收尾页完成收束。主题继续使用标准非 Blue-Sky 共享壳子：44px 圆形播放按钮、圆点导航、顶部进度条、直属页码、默认开启的 Edit 模式、演讲者备注、Presenter 模式、reduced-motion fallback、可打印输出，且没有远程运行时依赖。封面与收尾页的重点短语由可选字段 `narrative.slides[].title_emphasis` 明确声明；旧 BRIEF 会使用通用的标题结构降级规则，不再匹配任何预设专用文案。旧的 `custom:iridescence-convergence` preset 继续作为兼容别名使用。
 
 ---
 
@@ -512,11 +512,13 @@ slide-creator **无外部依赖**。Python 3 仅用于规划阶段可选的图�
 
 ## 仅运行所需的 Skill ZIP
 
-下载 [`kai-slide-creator-v2.29.1-skill-runtime.zip`](https://github.com/kaisersong/slide-creator/releases/download/v2.29.1/kai-slide-creator-v2.29.1-skill-runtime.zip)，即可获得精简的 Skill 安装包。将压缩包顶层的 `kai-slide-creator/` 目录解压到代理的 skills 目录。压缩包只包含 `SKILL.md`、`main.py`、`scripts/`、`schemas/`、`references/` 和 `themes/`；不会包含仓库 README、Demo、测试、eval fixture、设计文档和 Git 元数据。
+下载 [`kai-slide-creator-v2.29.2-skill-runtime.zip`](https://github.com/kaisersong/slide-creator/releases/download/v2.29.2/kai-slide-creator-v2.29.2-skill-runtime.zip)，即可获得精简的 Skill 安装包。将压缩包顶层的 `kai-slide-creator/` 目录解压到代理的 skills 目录。压缩包只包含 `SKILL.md`、`main.py`、`scripts/`、`schemas/`、`references/` 和 `themes/`；不会包含仓库 README、Demo、测试、eval fixture、设计文档和 Git 元数据。
 
 ---
 
 ## 版本日志
+
+**v2.29.2** — 语义标题强调发版：“奇幻彩虹（Fantasy Rainbow）”现在从结构化 `title_emphasis` 字段读取封面或收尾页的重要短语，彻底移除按固定标题和固定短语查表的实现；旧 BRIEF 则根据标点、语言结构和视觉长度进行通用降级。结构分隔符 `|` / `｜` 不再泄漏到最终标题中，多行封面标题也新增了仅封面生效的字形安全间距。同步新增任意业务文案回归测试、更新中英文说明、刷新 production Demo 水印，并发布新的仅运行所需 Skill ZIP。
 
 **v2.29.1** — “奇幻彩虹（Fantasy Rainbow）”运行包发版：内置自定义主题由“虹彩汇聚（Iridescence Convergence）”正式更名为“奇幻彩虹（Fantasy Rainbow）”，canonical preset 调整为 `custom:fantasy-rainbow`，旧的 `custom:iridescence-convergence` 保留为兼容别名；同步更新中英文 README、production Demo 水印，并新增仅包含 Skill 运行文件的 ZIP Release Asset。
 

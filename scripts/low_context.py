@@ -581,6 +581,7 @@ def validate_brief_data(brief: Any) -> list[str]:
             slide_optional = {
                 "claim",
                 "explanation",
+                "title_emphasis",
                 "visual_intent",
                 "preferred_layout_family",
                 "chart_policy",
@@ -599,7 +600,7 @@ def validate_brief_data(brief: Any) -> list[str]:
                 for key in ("role", "title", "key_point", "visual"):
                     if key in slide:
                         _ensure_string(slide[key], f"{path}.{key}", errors)
-                for key in ("claim", "explanation", "visual_intent", "preferred_layout_family"):
+                for key in ("claim", "explanation", "title_emphasis", "visual_intent", "preferred_layout_family"):
                     if key in slide and slide[key] is not None:
                         _ensure_string(slide[key], f"{path}.{key}", errors)
                 if "chart_policy" in slide:
@@ -2434,6 +2435,7 @@ def build_slide_spec(brief: dict[str, Any], packet: dict[str, Any] | None = None
             "role": role,
             "layout_id": layout_id,
             "title": _sanitize_pictorial_text(slide["title"]),
+            "title_emphasis": _sanitize_pictorial_text(slide.get("title_emphasis", "")),
             "claim": claim,
             "key_point": explanation,
             "explanation": explanation,
@@ -7994,6 +7996,43 @@ def _iridescence_display_items(spec: dict[str, Any], *, limit: int = 6) -> list[
     return _dedupe_preserve(str(value).strip() for value in values if str(value).strip())[:limit]
 
 
+def _iridescence_title_lines(title: str) -> list[str]:
+    normalized = _normalize_title_text(title)
+    if not normalized:
+        return []
+    semantic_chunks = []
+    for chunk in re.split(r"(?<=[，。！？；：!?;:｜|])\s*", normalized):
+        cleaned = chunk.strip().rstrip("｜|").rstrip()
+        if cleaned:
+            semantic_chunks.append(cleaned)
+    if 1 < len(semantic_chunks) <= 3 and all(_title_visual_units(chunk) <= 18 for chunk in semantic_chunks):
+        return semantic_chunks
+    return _balance_title_lines(normalized, max_lines=3, force_balance=True) or [normalized]
+
+
+def _iridescence_fallback_title_emphasis(title: str, lines: list[str]) -> str:
+    visible_title = re.sub(r"<[^>]*>", "", title)
+    latin_tokens = re.findall(r"[A-Za-z][A-Za-z0-9%&+/#._:-]*", visible_title)
+    meaningful_latin = [token for token in latin_tokens if len(token) > 3]
+    if meaningful_latin:
+        return meaningful_latin[-1]
+
+    candidate = re.sub(r"<[^>]*>", "", lines[-1] if lines else title).strip(" .,!?:;，。！？：；、｜|")
+    tokens = _tokenize_title(candidate)
+    if not tokens:
+        return ""
+    if _title_visual_units(candidate) <= 8:
+        return candidate
+
+    suffix: list[str] = []
+    for token in reversed(tokens):
+        proposed = [token, *suffix]
+        if suffix and _title_visual_units(_join_title_tokens(proposed)) > 8:
+            break
+        suffix = proposed
+    return _join_title_tokens(suffix).strip(" .,!?:;，。！？：；、｜|")
+
+
 def _render_iridescence_theme_slide(spec: dict[str, Any], total: int, *, role_index: int) -> str:
     slide_number = spec["slide_number"]
     role = spec["role"]
@@ -8032,23 +8071,6 @@ def _render_iridescence_theme_slide(spec: dict[str, Any], total: int, *, role_in
         f'data-export-role="{_escape(export_role)}">'
     )
 
-    semantic_lines = {
-        "把 AI 生成，变成可交付的演示文稿": ("把 AI 生成，变成", "可交付的演示文稿"),
-        "AI 会写内容，最后一步却最容易翻车": ("AI 会写内容，", "最后一步却最容易翻车"),
-        "真正需要保护的，是内容到成品的最后一公里": ("真正需要保护的，", "是内容到成品的最后一公里"),
-        "把整段对话，压成一个短、硬、可执行的真相源": ("把整段对话，压成", "一个短、硬、可执行的真相源"),
-        "Prompt 到成品，只走一条可验证路径": ("Prompt 到成品，只走", "一条可验证路径"),
-        "风格选择不再靠猜：先看图，再落字": ("风格选择不再靠猜：", "先看图，再落字"),
-        "22 种预设不是皮肤，而是 22 套布局契约": ("22 种预设不是皮肤，", "而是 22 套布局契约"),
-        "输出本身就是演示工具，不是一次性截图": ("输出本身就是演示工具，", "不是一次性截图"),
-        "Auto 负责速度，Polish 负责把质量锁住": ("Auto 负责速度，", "Polish 负责把质量锁住"),
-        "一条生成链，覆盖四类真实交付": ("一条生成链，", "覆盖四类真实交付"),
-        "一句话安装，生成你的第一份 deck": ("一句话安装，", "生成你的", "第一份 deck"),
-    }
-    accent_phrases = {
-        "把 AI 生成，变成可交付的演示文稿": "可交付",
-        "一句话安装，生成你的第一份 deck": "第一份 deck",
-    }
     gate_accent_cycle = (
         "iri-gate-accent-primary",
         "iri-gate-accent-secondary",
@@ -8072,10 +8094,12 @@ def _render_iridescence_theme_slide(spec: dict[str, Any], total: int, *, role_in
 
     def title_markup() -> str:
         title = str(spec["title"])
-        lines = semantic_lines.get(title)
-        if not lines:
-            return _escape(title)
-        phrase = accent_phrases.get(title)
+        lines = _iridescence_title_lines(title)
+        phrase = str(spec.get("title_emphasis") or "").strip()
+        if scene not in {"hero", "closing"}:
+            phrase = ""
+        elif not phrase or phrase not in title:
+            phrase = _iridescence_fallback_title_emphasis(title, lines)
         return "".join(f'<span class="iri-title-line">{emphasized_line(line, phrase)}</span>' for line in lines)
 
     def header(*, level: int = 2, lead: bool = True) -> str:

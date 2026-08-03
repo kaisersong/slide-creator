@@ -200,6 +200,10 @@
                 "type": "string",
                 "minLength": 1
               },
+              "title_emphasis": {
+                "type": "string",
+                "minLength": 1
+              },
               "key_point": {
                 "type": "string",
                 "minLength": 1

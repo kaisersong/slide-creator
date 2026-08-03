@@ -450,7 +450,7 @@ Signature elements: grainy noise texture overlay · 3 animated blur orbs reposit
 
 ### Bundled Custom Theme: Fantasy Rainbow
 
-`themes/fantasy-rainbow/` is a generator-ready custom theme selected with `style.preset: "custom:fantasy-rainbow"`. It reserves animated WebGL iridescence for the cover, uses opaque white editorial content pages with restrained blue/purple/cyan semantic accents, and closes on an opaque near-black surface. The theme stays on the standard non-Blue-Sky shared shell: 44px round Play control, circular page navigation, top progress, direct-child page labels, default-on Edit mode, speaker notes, presenter mode, reduced-motion fallback, print-safe output, and no remote runtime dependencies. The legacy `custom:iridescence-convergence` preset remains a compatibility alias.
+`themes/fantasy-rainbow/` is a generator-ready custom theme selected with `style.preset: "custom:fantasy-rainbow"`. It reserves animated WebGL iridescence for the cover, uses opaque white editorial content pages with restrained blue/purple/cyan semantic accents, and closes on an opaque near-black surface. The theme stays on the standard non-Blue-Sky shared shell: 44px round Play control, circular page navigation, top progress, direct-child page labels, default-on Edit mode, speaker notes, presenter mode, reduced-motion fallback, print-safe output, and no remote runtime dependencies. Cover and closing emphasis comes from the optional `narrative.slides[].title_emphasis` field; older briefs use a generic title-structure fallback, never preset-specific copy matching. The legacy `custom:iridescence-convergence` preset remains a compatibility alias.
 
 ---
 
@@ -512,11 +512,13 @@ For PPTX/PNG export: `clawhub install kai-html-export` or `pip install playwrigh
 
 ## Runtime-only Skill ZIP
 
-Download [`kai-slide-creator-v2.29.1-skill-runtime.zip`](https://github.com/kaisersong/slide-creator/releases/download/v2.29.1/kai-slide-creator-v2.29.1-skill-runtime.zip) for a compact Skill installation bundle. Extract its top-level `kai-slide-creator/` folder into your agent's skills directory. The archive contains only `SKILL.md`, `main.py`, `scripts/`, `schemas/`, `references/`, and `themes/`; repository README files, demos, tests, eval fixtures, design documents, and Git metadata are excluded.
+Download [`kai-slide-creator-v2.29.2-skill-runtime.zip`](https://github.com/kaisersong/slide-creator/releases/download/v2.29.2/kai-slide-creator-v2.29.2-skill-runtime.zip) for a compact Skill installation bundle. Extract its top-level `kai-slide-creator/` folder into your agent's skills directory. The archive contains only `SKILL.md`, `main.py`, `scripts/`, `schemas/`, `references/`, and `themes/`; repository README files, demos, tests, eval fixtures, design documents, and Git metadata are excluded.
 
 ---
 
 ## Version History
+
+**v2.29.2** — Semantic title emphasis release: Fantasy Rainbow now reads the important cover or closing phrase from the structured `title_emphasis` field, removes all preset-specific title and phrase lookup tables, and falls back to generic punctuation, script, and visual-length rules for older briefs. Structural `|` / `｜` separators no longer leak into rendered headlines, and multiline cover titles receive cover-only glyph clearance. The release adds arbitrary business-copy regression coverage, updates the bilingual documentation, refreshes production demo watermarks, and ships a new runtime-only Skill ZIP.
 
 **v2.29.1** — Fantasy Rainbow runtime package release: renamed the bundled custom theme from Iridescence Convergence to Fantasy Rainbow, moved its canonical preset to `custom:fantasy-rainbow`, retained `custom:iridescence-convergence` as a compatibility alias, refreshed the bilingual README and production demo watermarks, and added a runtime-only Skill ZIP release asset.
 
