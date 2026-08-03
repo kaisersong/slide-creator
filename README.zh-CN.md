@@ -21,6 +21,9 @@
 
 <table>
 <tr>
+<td colspan="3" align="center"><a href="https://kaisersong.github.io/slide-creator/demos/fantasy-rainbow-zh.html"><img src="demos/screenshots/fantasy-rainbow.png" width="740" alt="奇幻彩虹"/></a><br/><b>奇幻彩虹 · Fantasy Rainbow</b> — 自定义主题</td>
+</tr>
+<tr>
 <td align="center"><a href="https://kaisersong.github.io/slide-creator/demos/blue-sky-zh.html"><img src="demos/screenshots/blue-sky.png" width="240" alt="Blue Sky"/></a><br/><b>Blue Sky</b></td>
 <td align="center"><a href="https://kaisersong.github.io/slide-creator/demos/bold-signal-zh.html"><img src="demos/screenshots/bold-signal.png" width="240" alt="Bold Signal"/></a><br/><b>Bold Signal</b></td>
 <td align="center"><a href="https://kaisersong.github.io/slide-creator/demos/electric-studio-zh.html"><img src="demos/screenshots/electric-studio.png" width="240" alt="Electric Studio"/></a><br/><b>Electric Studio</b></td>

@@ -1,0 +1,1201 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>奇幻彩虹 - Fantasy Rainbow</title>
+<style>
+:root {
+  --iri-ink: #0a0a12;
+  --iri-ink-soft: #252532;
+  --iri-accent-blue: #5B6CFF;
+  --iri-accent-purple: #9B5CFF;
+  --iri-accent-cyan: #20BFC4;
+  --iri-accent-blue-text: #4152CC;
+  --iri-accent-purple-text: #7037D8;
+  --iri-accent-cyan-text: #007B83;
+  --iri-tint-blue: rgba(91, 108, 255, .08);
+  --iri-tint-purple: rgba(155, 92, 255, .08);
+  --iri-tint-cyan: rgba(32, 191, 196, .08);
+  --iri-cover-keyword-veil-alpha: .81;
+  --iri-blue: var(--iri-accent-blue);
+  --iri-line: rgba(10, 10, 18, .20);
+  --iri-paper: rgba(255, 255, 255, .26);
+  --iri-display: "Space Grotesk", "Noto Sans SC", "Helvetica Neue", Arial, sans-serif;
+  --iri-mono: "JetBrains Mono", "SFMono-Regular", Menlo, Consolas, monospace;
+  --kd-blue: var(--iri-blue);
+  --text-secondary: var(--iri-ink-soft);
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+html { min-height: 100%; }
+body {
+  margin: 0;
+  min-height: 100%;
+  color: var(--iri-ink);
+  background-color: #eef7ff;
+  background-image:
+    linear-gradient(156deg, rgba(87, 229, 233, .88) 0%, rgba(87, 229, 233, 0) 36%),
+    linear-gradient(28deg, rgba(255, 110, 221, .82) 2%, rgba(255, 110, 221, 0) 45%),
+    linear-gradient(122deg, rgba(125, 112, 255, .80) 12%, rgba(255, 255, 255, .28) 44%, rgba(83, 222, 212, .76) 76%, rgba(255, 148, 229, .72) 100%);
+  font-family: var(--iri-display);
+  -webkit-font-smoothing: antialiased;
+  scroll-snap-type: y mandatory;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -2;
+  pointer-events: none;
+  background:
+    linear-gradient(164deg, transparent 0 29%, rgba(255,255,255,.82) 30% 35%, transparent 36% 100%),
+    linear-gradient(22deg, transparent 0 48%, rgba(107,126,255,.72) 49% 51%, rgba(255,255,255,.76) 52% 55%, transparent 56% 100%);
+}
+
+#iridescence-canvas {
+  position: fixed;
+  inset: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: -1;
+  pointer-events: none;
+  opacity: 1;
+}
+#iridescence-canvas[hidden],
+body[data-iridescence-active="false"] #iridescence-canvas { display: none; opacity: 0; visibility: hidden; }
+body[data-iridescence-fallback="true"] #iridescence-canvas { opacity: 0; }
+
+.slide {
+  position: relative;
+  z-index: 1;
+  width: 100vw;
+  min-height: 100vh;
+  height: 100vh;
+  aspect-ratio: 16 / 9;
+  overflow: hidden;
+  scroll-snap-align: start;
+  scroll-snap-stop: always;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: clamp(42px, 5.8vh, 64px) clamp(42px, 4.5vw, 66px);
+  background: transparent;
+  isolation: isolate;
+}
+.slide::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background: linear-gradient(180deg, rgba(255,255,255,.08) 0%, rgba(255,255,255,.02) 40%, rgba(255,255,255,.45) 100%);
+}
+
+.iri-scene--hero { background: transparent; }
+.iri-scene:not(.iri-scene--hero):not(.iri-scene--closing) {
+  background: #fff;
+  color: var(--iri-ink);
+}
+.iri-scene:not(.iri-scene--hero)::before { display: none; }
+.iri-scene:not(.iri-scene--hero) .iri-headline { text-shadow: none; }
+.iri-scene--closing {
+  background: #0a0a12;
+  color: #f7f7fb;
+}
+
+h1, h2, h3, p { margin-top: 0; }
+h1, h2, h3 { color: var(--iri-ink); text-wrap: balance; }
+p, li { text-wrap: pretty; }
+
+.iri-scene { align-items: flex-start; }
+.iri-copy { position: relative; z-index: 2; }
+.iri-label,
+.iri-fact-index,
+.iri-fact-label,
+.iri-micro,
+.slide-credit,
+.section-number,
+.toc-number,
+.toc-page {
+  font-family: var(--iri-mono);
+  text-transform: uppercase;
+  letter-spacing: .16em;
+}
+.iri-label {
+  display: block;
+  width: fit-content;
+  margin-bottom: clamp(16px, 2.4vh, 24px);
+  color: rgba(10,10,18,.64);
+  font-size: clamp(9px, .82vw, 12px);
+  font-weight: 500;
+}
+.iri-headline {
+  max-width: 1120px;
+  margin: 0;
+  color: var(--iri-ink);
+  font-size: clamp(54px, 7.5vw, 108px);
+  font-weight: 800;
+  line-height: .93;
+  letter-spacing: -.055em;
+  text-shadow: 0 1px 18px rgba(255,255,255,.20);
+}
+.iri-headline em { font-style: normal; }
+.iri-scene--hero .iri-headline em.iri-accent-primary { display: inline-block; position: relative; isolation: isolate; }
+.iri-scene--hero .iri-headline em.iri-accent-primary::before {
+  content: "";
+  position: absolute;
+  inset: -.12em -.20em;
+  z-index: -1;
+  background: radial-gradient(ellipse at center, rgba(255,255,255,var(--iri-cover-keyword-veil-alpha)) 0%, rgba(255,255,255,var(--iri-cover-keyword-veil-alpha)) 38%, rgba(255,255,255,0) 78%);
+  filter: blur(.09em);
+  pointer-events: none;
+}
+.iri-title-line { display: block; }
+.iri-lead {
+  max-width: 760px;
+  margin: clamp(18px, 2.8vh, 28px) 0 0;
+  color: var(--iri-ink-soft);
+  font-size: clamp(16px, 1.45vw, 21px);
+  line-height: 1.52;
+  font-weight: 500;
+}
+.iri-facts {
+  display: flex;
+  flex-wrap: wrap;
+  gap: clamp(24px, 4vw, 58px);
+  margin-top: clamp(26px, 4.2vh, 44px);
+}
+.iri-fact {
+  min-width: 118px;
+  padding: 13px 0 0;
+  border-top: 1px solid rgba(10,10,18,.46);
+}
+.iri-fact-index { display: block; color: var(--iri-ink); font-size: 9px; }
+.iri-fact-label { display: block; color: rgba(10,10,18,.56); font-size: 9px; }
+.iri-fact strong { display: block; margin-top: 8px; color: var(--iri-ink); font-size: clamp(15px, 1.42vw, 21px); line-height: 1.25; }
+
+.iri-panel {
+  color: #f9fbff;
+  background: #0a0a12;
+  border: 1px solid rgba(255,255,255,.22);
+  box-shadow: 16px 18px 0 rgba(91,108,255,.28);
+}
+.iri-panel code, .iri-panel pre { color: inherit; font-family: var(--iri-mono); }
+.iri-rule { height: 1px; background: rgba(10,10,18,.48); }
+.iri-number { color: var(--iri-ink); font-family: var(--iri-mono); font-weight: 700; }
+.iri-muted { color: rgba(10,10,18,.58); }
+.iri-scene:not(.iri-scene--hero):not(.iri-scene--convergence):not(.iri-scene--closing) > .iri-copy {
+  width: min(92vw, 1320px);
+  margin-bottom: clamp(20px, 3vh, 32px);
+}
+.iri-scene:not(.iri-scene--hero):not(.iri-scene--convergence):not(.iri-scene--closing) > .iri-copy .iri-headline {
+  max-width: 1260px;
+  font-size: clamp(40px, 4.55vw, 68px);
+  line-height: .96;
+  letter-spacing: -.05em;
+}
+
+/* 01 — hero */
+.iri-scene--hero { justify-content: center; }
+.iri-scene--hero .iri-copy { width: min(78vw, 1120px); }
+.iri-scene--hero .iri-label { color: var(--iri-ink); }
+.iri-scene--hero .iri-headline { max-width: 1020px; }
+.iri-scene--hero .iri-facts { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: clamp(18px, 2.8vw, 44px); width: min(86vw, 1140px); max-width: none; }
+
+/* 02 — fracture */
+.iri-fracture-grid { width: min(91vw, 1310px); display: grid; grid-template-columns: 1fr 74px 1fr; gap: 24px; align-items: stretch; }
+.iri-fracture-side { display: grid; align-content: start; gap: 0; }
+.iri-fracture-side h3 { margin: 0 0 20px; font: 600 12px var(--iri-mono); letter-spacing: .14em; text-transform: uppercase; }
+.iri-fracture-item { padding: 16px 0; border-top: 1px solid rgba(10,10,18,.42); font-size: clamp(15px, 1.25vw, 19px); font-weight: 650; }
+.iri-fracture-scar { position: relative; }
+.iri-fracture-scar::before { content: ""; position: absolute; left: 50%; top: -5%; bottom: -5%; width: 5px; transform: skew(-14deg); background: #0a0a12; box-shadow: 10px 0 0 var(--iri-accent-blue); }
+
+/* 03 — convergence */
+.iri-scene--convergence { align-items: center; text-align: center; }
+.iri-convergence-core { position: relative; width: min(90vw, 1260px); }
+.iri-convergence-core .iri-headline { margin: 0 auto; max-width: 1200px; }
+.iri-scene--convergence .iri-headline { font-size: clamp(48px, 5.4vw, 80px); line-height: .94; }
+.iri-convergence-word { display: block; margin: 10px 0 -4px; font-size: clamp(76px, 13vw, 188px); font-weight: 800; line-height: .8; letter-spacing: -.08em; }
+.iri-convergence-lines { display: grid; grid-template-columns: repeat(3, 1fr); gap: 34px; margin-top: 34px; text-align: left; }
+.iri-convergence-lines .iri-fact { min-width: 0; }
+
+/* 04 — brief */
+.iri-brief-layout { width: min(91vw, 1310px); display: grid; grid-template-columns: .82fr 1.18fr; gap: clamp(34px, 5vw, 76px); align-items: center; }
+.iri-scene--brief .iri-headline { font-size: clamp(38px, 3.6vw, 54px); line-height: .96; }
+.iri-brief-code { padding: clamp(24px, 3vw, 38px); min-height: 430px; display: grid; align-content: center; }
+.iri-brief-code strong { font-size: clamp(36px, 5.5vw, 80px); letter-spacing: -.055em; }
+.iri-brief-code pre { margin: 28px 0 0; white-space: pre-wrap; font-size: clamp(11px, .9vw, 14px); line-height: 1.7; }
+.iri-field-list { display: grid; gap: 0; }
+.iri-field { display: grid; grid-template-columns: 42px 180px 1fr; gap: 14px; padding: 14px 0; border-top: 1px solid rgba(10,10,18,.42); align-items: baseline; }
+.iri-field code { font: 600 clamp(12px, 1vw, 15px) var(--iri-mono); }
+.iri-field span:last-child { font-size: clamp(14px, 1.08vw, 17px); }
+
+/* 05 — pipeline */
+.iri-pipeline { width: min(88vw, 1260px); display: grid; grid-template-columns: repeat(6, 1fr); transform: rotate(-2deg); border-top: 2px solid var(--iri-ink); border-bottom: 2px solid var(--iri-ink); }
+.iri-pipeline-step { min-height: 190px; padding: 22px 16px; border-right: 1px solid rgba(10,10,18,.4); display: grid; align-content: space-between; background: #fff; }
+.iri-pipeline-step:last-child { border-right: 0; }
+.iri-pipeline-step span { font: 700 10px var(--iri-mono); letter-spacing: .16em; }
+.iri-pipeline-step strong { font-size: clamp(14px, 1.22vw, 19px); line-height: 1.25; }
+
+/* 06 — spectrum */
+.iri-spectrum { width: min(92vw, 1320px); display: grid; grid-template-columns: 300px 1fr; gap: 54px; align-items: end; }
+.iri-spectrum-total { font-size: clamp(150px, 22vw, 320px); line-height: .68; font-weight: 800; letter-spacing: -.09em; }
+.iri-spectrum-list { display: grid; grid-template-columns: repeat(2, 1fr); border-top: 2px solid var(--iri-ink); }
+.iri-spectrum-item { padding: 18px 0; border-bottom: 1px solid rgba(10,10,18,.42); display: flex; align-items: center; gap: 12px; color: var(--iri-ink); font-size: clamp(14px, 1.15vw, 18px); font-weight: 650; }
+.iri-spectrum-item:nth-child(odd) { padding-right: 28px; }
+.iri-spectrum-marker { width: 9px; height: 9px; flex: 0 0 9px; background: var(--iri-ink); }
+.iri-spectrum-marker.iri-marker-primary { background: var(--iri-accent-blue); }
+.iri-spectrum-marker.iri-marker-secondary { background: var(--iri-accent-purple); }
+.iri-spectrum-marker.iri-marker-tertiary { background: var(--iri-accent-cyan); }
+
+/* 07 — contract */
+.iri-contract { width: min(91vw, 1310px); display: grid; gap: 0; border-top: 2px solid var(--iri-ink); }
+.iri-contract-layer { display: grid; grid-template-columns: 66px 260px 1fr; gap: 22px; padding: 18px 0; border-bottom: 1px solid rgba(10,10,18,.44); align-items: center; }
+.iri-contract-layer strong { font-size: clamp(18px, 1.6vw, 24px); }
+.iri-contract-layer p { margin: 0; font-size: clamp(14px, 1.08vw, 17px); }
+
+/* 08 — gates */
+.iri-gates { width: min(92vw, 1330px); display: grid; grid-template-columns: repeat(4, 1fr); gap: 18px; }
+.iri-gate { min-height: 300px; padding: 24px 20px; border-left: 8px solid var(--iri-ink); display: grid; grid-template-rows: auto 1fr auto; background: #f4f4f8; }
+.iri-gate span { color: var(--iri-ink); font: 700 10px var(--iri-mono); letter-spacing: .15em; }
+.iri-gate strong { align-self: center; font-size: clamp(21px, 2vw, 30px); line-height: 1.05; }
+.iri-gate small { font: 500 clamp(12px, .9vw, 13px)/1.5 var(--iri-mono); }
+
+/* 09 — runtime */
+.iri-runtime-stage { width: min(91vw, 1310px); min-height: 390px; border: 2px solid var(--iri-ink); display: grid; grid-template-columns: 1.3fr .7fr; }
+.iri-runtime-screen { padding: 30px; display: grid; align-content: center; border-right: 1px solid var(--iri-ink); }
+.iri-runtime-screen strong { max-width: 650px; font-size: clamp(38px, 5vw, 76px); line-height: .95; letter-spacing: -.05em; }
+.iri-keys { display: grid; grid-template-columns: 1fr 1fr; }
+.iri-key { min-height: 96px; padding: 18px; border-right: 1px solid rgba(10,10,18,.4); border-bottom: 1px solid rgba(10,10,18,.4); }
+.iri-key:nth-child(even) { border-right: 0; }
+.iri-key b { display: block; font: 700 18px var(--iri-mono); }
+.iri-key span { display: block; margin-top: 9px; font-size: clamp(12px, .94vw, 14px); }
+
+/* 10 — modes */
+.iri-modes { width: min(91vw, 1310px); display: grid; grid-template-columns: 1fr 1fr; border-top: 2px solid var(--iri-ink); border-bottom: 2px solid var(--iri-ink); }
+.iri-mode { min-height: 320px; padding: 28px 34px; display: grid; align-content: space-between; }
+.iri-mode + .iri-mode { border-left: 1px solid var(--iri-ink); }
+.iri-mode .iri-number { font-size: clamp(64px, 8vw, 116px); line-height: .8; letter-spacing: -.07em; }
+.iri-mode h3 { margin: 20px 0 0; font-size: clamp(32px, 4vw, 60px); }
+.iri-mode p { margin: 0; max-width: 470px; font-size: clamp(14px, 1.15vw, 18px); line-height: 1.5; }
+
+/* 11 — use cases */
+.iri-quadrants { width: min(91vw, 1310px); display: grid; grid-template-columns: 1fr 1fr; border-top: 2px solid var(--iri-ink); border-left: 2px solid var(--iri-ink); }
+.iri-quadrant { min-height: 176px; padding: 20px 24px; border-right: 2px solid var(--iri-ink); border-bottom: 2px solid var(--iri-ink); display: grid; grid-template-columns: 50px 1fr; gap: 16px; }
+.iri-quadrant strong { font-size: clamp(18px, 1.7vw, 26px); }
+.iri-quadrant p { grid-column: 2; margin: 0; font-size: clamp(12px, 1vw, 15px); line-height: 1.45; }
+
+/* 12 — closing */
+.iri-closing-layout { width: min(91vw, 1310px); display: grid; grid-template-columns: 1.08fr .92fr; gap: clamp(40px, 6vw, 92px); align-items: end; }
+.iri-scene--closing .iri-headline { color: #f7f7fb; font-size: clamp(48px, 5.6vw, 82px); }
+.iri-scene--closing .iri-label { color: rgba(247,247,251,.62); }
+.iri-scene--closing .iri-lead { color: rgba(247,247,251,.76); }
+.iri-scene--closing .iri-closing-note { color: rgba(247,247,251,.52); }
+.iri-scene--closing .slide-credit { color: rgba(247,247,251,.62); }
+.iri-scene--closing .iri-panel { color: #0a0a12; background: #f7f7fb; border-color: #f7f7fb; box-shadow: 12px 12px 0 var(--iri-blue); }
+.iri-command-stack { display: grid; gap: 14px; }
+.iri-command { padding: 20px 22px; font: 600 clamp(10.5px, .82vw, 13px)/1.5 var(--iri-mono); white-space: nowrap; }
+.iri-closing-note { margin-top: 18px; font: 500 10px var(--iri-mono); letter-spacing: .12em; text-transform: uppercase; }
+
+/* Renderer-owned semantic accents. Keep after component rules so markers win the cascade. */
+.iri-accent-primary { color: var(--iri-accent-blue); }
+.iri-accent-secondary { color: var(--iri-accent-purple); }
+.iri-accent-text-primary { color: var(--iri-accent-blue-text); }
+.iri-accent-text-secondary { color: var(--iri-accent-purple-text); }
+.iri-accent-text-tertiary { color: var(--iri-accent-cyan-text); }
+.iri-accent-tint-primary { background: var(--iri-tint-blue); }
+.iri-accent-tint-secondary { background: var(--iri-tint-purple); }
+.iri-accent-tint-tertiary { background: var(--iri-tint-cyan); }
+.iri-convergence-word.iri-accent-primary { color: rgba(255,255,255,.10); -webkit-text-stroke: 2.4px var(--iri-accent-blue); }
+.iri-gate.iri-gate-accent-primary { border-left-color: var(--iri-accent-blue); }
+.iri-gate.iri-gate-accent-secondary { border-left-color: var(--iri-accent-purple); }
+.iri-gate.iri-gate-accent-tertiary { border-left-color: var(--iri-accent-cyan); }
+.iri-gate.iri-gate-accent-primary > span { color: var(--iri-accent-blue-text); }
+.iri-gate.iri-gate-accent-secondary > span { color: var(--iri-accent-purple-text); }
+.iri-gate.iri-gate-accent-tertiary > span { color: var(--iri-accent-cyan-text); }
+.iri-gate strong, .iri-gate small { color: var(--iri-ink); }
+
+.slide-title.iri-scene--hero { background: transparent; }
+.title-content, .section-content, .content-header, .content-body, .ic-closing-content { width: 100%; }
+.title-main, .section-title, .content-title, .slide-closing h2 { color: var(--iri-ink); font-family: var(--iri-display); }
+.title-sub, .content-subtitle, .section-content p { color: var(--iri-ink-soft); }
+.slide-credit { position: absolute; right: 14px; bottom: 8px; color: rgba(10,10,18,.48); font-size: 8px; }
+#brand-mark { position: fixed; top: 22px; right: 28px; z-index: 90; color: var(--iri-accent-blue-text); font: 600 9px var(--iri-mono); letter-spacing: .13em; }
+body:has(.iri-scene--hero.visible) #brand-mark { color: var(--iri-ink); }
+body:has(.iri-scene--closing.visible) #brand-mark { color: rgba(247,247,251,.72); }
+.nav-dots button {
+  width: 8px;
+  height: 8px;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: rgba(10,10,18,.20);
+  cursor: pointer;
+  transition: background .3s ease, transform .3s ease;
+}
+.nav-dots button.active { background: var(--iri-accent-blue-text); transform: scale(1.3); }
+.progress-bar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 0;
+  height: 4px;
+  z-index: 1000;
+  background: var(--iri-accent-blue-text);
+  transition: width .3s ease;
+}
+.slide-num-label {
+  position: absolute;
+  right: 84px;
+  bottom: 24px;
+  z-index: 2;
+  color: var(--iri-accent-blue-text);
+  font: 600 10px var(--iri-mono);
+  letter-spacing: .12em;
+}
+.iri-scene--hero > .slide-num-label { color: var(--iri-ink); }
+.iri-scene--closing > .slide-num-label { color: rgba(247,247,251,.62); }
+
+#present-btn {
+  position: fixed;
+  right: 1.5rem;
+  bottom: 1.5rem;
+  z-index: 9997;
+  display: flex;
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid rgba(255,255,255,.34);
+  border-radius: 50%;
+  color: #fff;
+  background: rgba(10,10,18,.88);
+  cursor: pointer;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity .2s ease;
+}
+body:hover #present-btn { opacity: 1; pointer-events: auto; }
+#present-counter {
+  position: fixed;
+  top: 16px;
+  left: 50%;
+  z-index: 9998;
+  display: none;
+  padding: 7px 10px;
+  color: #fff;
+  background: rgba(10,10,18,.82);
+  font: 600 10px var(--iri-mono);
+  letter-spacing: .14em;
+  transform: translateX(-50%);
+}
+
+#notes-panel {
+  display: none;
+  position: fixed;
+  right: 18px;
+  bottom: 18px;
+  width: min(380px, 36vw);
+  z-index: 9996;
+  color: #f8fafc;
+  background: rgba(10,10,18,.97);
+  border: 1px solid rgba(255,255,255,.24);
+  overflow: hidden;
+}
+#notes-panel.active { display: block; }
+#notes-panel.collapsed #notes-body { display: none; }
+#notes-panel-header { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 12px 14px; cursor: pointer; border-bottom: 1px solid rgba(255,255,255,.14); }
+#notes-panel-label { color: rgba(248,250,252,.74); font: 700 10px var(--iri-mono); letter-spacing: .12em; }
+#notes-body { padding: 12px 14px 14px; }
+#notes-textarea { width: 100%; min-height: 150px; resize: vertical; border: 0; outline: 0; color: #fff; background: transparent; font: 14px/1.55 var(--iri-display); }
+#notes-collapse-btn { border: 0; color: #fff; background: transparent; cursor: pointer; }
+
+.reveal { opacity: .22; transform: translateY(12px); transition: opacity .45s ease, transform .45s ease; }
+.reveal.visible, .kd-reveal.visible, .slide.visible .kd-reveal { opacity: 1; transform: none; }
+
+@media (max-width: 900px) {
+  .slide { padding: 34px 42px; }
+  .iri-headline { font-size: clamp(48px, 7.2vw, 76px); }
+  .iri-fracture-grid { grid-template-columns: 1fr 46px 1fr; gap: 14px; }
+  .iri-brief-layout, .iri-spectrum, .iri-closing-layout { grid-template-columns: 1fr 1fr; gap: 28px; }
+  .iri-pipeline { grid-template-columns: repeat(3, 1fr); transform: rotate(-1deg); }
+  .iri-pipeline-step { min-height: 118px; }
+  .iri-gates { gap: 10px; }
+  .iri-gate { min-height: 250px; padding: 18px 14px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *, *::before, *::after { animation: none !important; transition: none !important; }
+  #iridescence-canvas { opacity: 0 !important; }
+}
+
+@media print {
+  @page { size: 16in 9in; margin: 0; }
+  html, body { overflow: visible !important; }
+  body { scroll-snap-type: none; }
+  #iridescence-canvas, #brand-mark, .nav-dots, .progress-bar, #present-btn, #present-counter, .edit-hotzone, .edit-toggle, #notes-panel { display: none !important; }
+  .slide { width: 16in !important; height: 9in !important; min-height: 9in !important; break-after: page; page-break-after: always; }
+}
+
+/* Present mode */
+body.presenting {
+    margin: 0; padding: 0;
+    background: #000;
+    overflow: hidden;
+    scroll-snap-type: none;
+}
+body.presenting .slide {
+    position: fixed; top: 0; left: 0;
+    width: 1440px; height: 900px;
+    transform-origin: top left;
+    scroll-snap-align: none;
+    visibility: hidden;
+    pointer-events: none;
+}
+body.presenting .slide.p-on {
+    visibility: visible;
+    pointer-events: auto;
+    display: flex !important;
+}
+body.presenting #present-btn { display: none !important; }
+body.presenting #present-counter { display: block; }
+body.presenting.presenting-black .slide { visibility: hidden !important; }
+body.presenting .slide-credit { display: none !important; }
+
+/* Edit hotzone */
+.edit-hotzone {
+    position: fixed;
+    top: 0; left: 0;
+    width: 80px; height: 80px;
+    z-index: 9999;
+}
+#editToggle, .edit-toggle {
+    position: fixed;
+    top: 16px; left: 16px;
+    z-index: 10000;
+    padding: 6px 16px;
+    border-radius: 8px;
+    border: 1px solid rgba(255,255,255,.24);
+    color: #fff;
+    background: rgba(10,10,18,.82);
+    cursor: pointer;
+    font-size: 13px;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity .2s ease;
+}
+#editToggle.show, .edit-toggle.show { opacity: 1; pointer-events: auto; }
+#editToggle.active, .edit-toggle.active { background: var(--kd-blue, #2971EB); color: #fff; border-color: var(--kd-blue, #2971EB); }
+</style>
+</head>
+<body data-export-progress="true" data-preset="Fantasy Rainbow" data-generator="kai-slide-creator" data-generator-version="2.29.1" data-render-path="brief-canonical" data-brief-hash="sha256:ef8edab52288bb651c7dc0e35972c3367ab5b1091848ee90b6268211a6fba9b5" data-runtime-path="shared-js-engine" data-validate-strict="pass" data-preset-generation-status="custom" data-renderer-strategy="custom_theme">
+<span id="brand-mark">奇幻彩虹</span>
+<canvas id="iridescence-canvas" aria-hidden="true"></canvas>
+  <nav class="nav-dots" aria-label="Slide navigation"></nav>
+  <div class="progress-bar" aria-hidden="true"></div>
+<section class="slide slide-title iri-scene iri-scene--hero layout-title_grid" id="slide-1" data-notes="cover: 聚拢灵感，生成可编辑的 HTML 演示文稿" aria-label="cover" data-export-role="title" data-page-bucket="cover"><div class="iri-copy"><span class="iri-label">SLIDE CREATOR · PRODUCT STORY · 2026</span><h1 class="iri-headline kd-reveal">奇幻彩虹</h1><p class="iri-lead kd-reveal">聚拢灵感，生成可编辑的 HTML 演示文稿</p><div class="iri-facts"><div class="iri-fact kd-reveal"><span class="iri-fact-index">01</span><strong>聚拢灵感</strong></div><div class="iri-fact kd-reveal"><span class="iri-fact-index">02</span><strong>BRIEF 到 HTML</strong></div><div class="iri-fact kd-reveal"><span class="iri-fact-index">03</span><strong>slide-creator 是什么</strong></div><div class="iri-fact kd-reveal"><span class="iri-fact-index">04</span><strong>浏览器原生输出</strong></div></div></div><span class="slide-num-label">01 / 05</span></section>
+
+<section class="slide slide-content iri-scene iri-scene--fracture layout-column_content preset-fantasy-rainbow-content" id="slide-2" data-notes="problem: 结构、排版、交互和交付标准需要一起稳定下来" aria-label="problem" data-export-role="column_content" data-page-bucket="content"><div class="iri-copy"><span class="iri-label">02 / 05 · problem</span><h2 class="iri-headline kd-reveal">好内容不该被模板拖累</h2></div><div class="iri-fracture-grid"><div class="iri-fracture-side"><h3 class="iri-accent-text-primary">GENERATION END</h3><div class="iri-fracture-item kd-reveal">结构</div><div class="iri-fracture-item kd-reveal">slide-creator 是什么</div><div class="iri-fracture-item kd-reveal">BRIEF 到 HTML</div></div><div class="iri-fracture-scar" aria-hidden="true"></div><div class="iri-fracture-side"><h3 class="iri-accent-text-primary">DELIVERY STANDARD</h3><div class="iri-fracture-item kd-reveal">叙事必须完整推进</div><div class="iri-fracture-item kd-reveal">风格必须稳定落地</div><div class="iri-fracture-item kd-reveal">打开即播放、验证即交付</div></div></div><span class="slide-num-label">02 / 05</span></section>
+
+<section class="slide slide-content iri-scene iri-scene--convergence layout-geometric_diagram preset-fantasy-rainbow-content" id="slide-3" data-notes="workflow: 规划、生成、验证、浏览器检查形成闭环" aria-label="workflow" data-export-role="geometric_diagram" data-page-bucket="content"><div class="iri-convergence-core"><span class="iri-label">03 / 05 · LAST MILE</span><h2 class="iri-headline kd-reveal">从 BRIEF 到成品，只保留关键步骤</h2><span class="iri-convergence-word iri-accent-primary" aria-hidden="true">LAST MILE</span><div class="iri-convergence-lines"><div class="iri-fact kd-reveal"><span class="iri-fact-index iri-accent-text-primary">01</span><strong>规划</strong></div><div class="iri-fact kd-reveal"><span class="iri-fact-index iri-accent-text-secondary">02</span><strong>从 BRIEF 到成品</strong></div><div class="iri-fact kd-reveal"><span class="iri-fact-index iri-accent-text-tertiary">03</span><strong>BRIEF 到 HTML</strong></div></div></div><span class="slide-num-label">03 / 05</span></section>
+
+<section class="slide slide-content iri-scene iri-scene--brief layout-title_grid preset-fantasy-rainbow-content" id="slide-4" data-notes="capabilities: 标准运行时让演示稿可直接使用，也方便继续修改" aria-label="capabilities" data-export-role="title_grid" data-page-bucket="content"><div class="iri-brief-layout"><div class="iri-panel iri-brief-code kd-reveal"><strong>BRIEF.json</strong><pre>{
+  "audience": "...",
+  "deck": { "style": "..." },
+  "content": { ... },
+  "narrative": { "slides": [ ... ] },
+  "runtime": { ... }
+}</pre></div><div><div class="iri-copy"><span class="iri-label">04 / 05 · capabilities</span><h2 class="iri-headline kd-reveal">播放、导航、编辑，一个文件全部具备</h2><p class="iri-lead kd-reveal">标准运行时让演示稿可直接使用，也方便继续修改</p></div><div class="iri-field-list"><div class="iri-field kd-reveal"><span class="iri-number iri-accent-text-primary">01</span><code class="iri-accent-text-primary">audience</code><span>决定受众与期望动作</span></div><div class="iri-field kd-reveal"><span class="iri-number iri-accent-text-primary">02</span><code class="iri-accent-text-primary">deck.style</code><span>锁定页数、语言和 preset</span></div><div class="iri-field kd-reveal"><span class="iri-number iri-accent-text-primary">03</span><code class="iri-accent-text-primary">content</code><span>固定必须包含的事实与边界</span></div><div class="iri-field kd-reveal"><span class="iri-number iri-accent-text-primary">04</span><code class="iri-accent-text-primary">narrative.slides</code><span>逐页声明角色、断言和证据</span></div><div class="iri-field kd-reveal"><span class="iri-number iri-accent-text-primary">05</span><code class="iri-accent-text-primary">runtime</code><span>约束播放、编辑、备注与耗时</span></div></div></div></div><span class="slide-num-label">04 / 05</span></section>
+
+<section class="slide slide-closing iri-scene iri-scene--closing layout-pull_quote" id="slide-5" data-notes="closing: 先生成，再用浏览器完成最后一公里" aria-label="closing" data-export-role="pull_quote" data-page-bucket="closing"><div class="iri-closing-layout"><div class="iri-copy"><span class="iri-label">GET STARTED · SLIDE CREATOR</span><h2 class="iri-headline kd-reveal">把下一份内容，变成真正能讲的 deck</h2><p class="iri-lead kd-reveal">先生成，再用浏览器完成最后一公里</p><div class="iri-closing-note">Protect the last mile from content to deck.</div></div><div class="iri-command-stack"><div class="iri-panel iri-command kd-reveal">先生成</div><div class="iri-panel iri-command kd-reveal">把下一份内容</div><div class="iri-panel iri-command kd-reveal">slide-creator 是什么</div></div></div><span class="slide-num-label">05 / 05</span></section>
+<div class="edit-hotzone"></div>
+<button id="editToggle" class="edit-toggle" type="button" title="Edit mode (E)" aria-label="Edit mode">Edit</button>
+<div id="notes-panel">
+    <div id="notes-panel-header">
+        <div id="notes-panel-label">SPEAKER NOTES - SLIDE 1 / 5</div>
+        <div id="notes-drag-hint"></div>
+        <button id="notes-collapse-btn" type="button" title="Collapse / expand">▾</button>
+    </div>
+    <div id="notes-body">
+        <textarea id="notes-textarea" placeholder="Add speaker notes..."></textarea>
+    </div>
+</div>
+<script>
+class SlidePresentation {
+    constructor() {
+        this.slides = document.querySelectorAll('.slide');
+        this.currentSlide = 0;
+        this.channel = new BroadcastChannel('slide-creator-presenter');
+        this.slides[0]?.classList.add('visible');
+        this.slides[0]?.querySelectorAll('.reveal').forEach(function(r) { r.classList.add('visible'); });
+        this.setActiveSlide(0);
+        this.setupNavDots(); this.setupObserver(); this.setupKeyboard();
+        this.setupTouch(); this.setupWheel(); this.setupPresenter(); this.setupEditor(); this.updateProgress();
+    }
+
+    setActiveSlide(index) {
+        this.slides.forEach((slide, i) => {
+            const active = i === index;
+            slide.classList.toggle('visible', active);
+            slide.querySelectorAll('.reveal').forEach(function(r) { r.classList.toggle('visible', active); });
+        });
+    }
+
+    setupNavDots() {
+        const nav = document.querySelector('.nav-dots');
+        if (!nav) return;
+        this.slides.forEach((_, i) => {
+            const dot = document.createElement('button');
+            dot.type = 'button';
+            dot.setAttribute('aria-label', 'Go to slide ' + (i + 1));
+            dot.addEventListener('click', () => this.goTo(i)); nav.appendChild(dot);
+        });
+        nav.style.cssText = 'position:fixed;right:1.5rem;top:50%;transform:translateY(-50%);display:flex;flex-direction:column;gap:8px;z-index:100;';
+    }
+
+    setupObserver() {
+        const observer = new IntersectionObserver((entries) => {
+            if (document.body.classList.contains('presenting')) return;
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    this.currentSlide = [...this.slides].indexOf(entry.target);
+                    if (this.currentSlide < 0) return;
+                    this.setActiveSlide(this.currentSlide);
+                    this.updateProgress(); this.updateDots(); this.broadcastState();
+                    this.updateNotesPanel();
+                }
+            });
+        }, { threshold: 0.5 });
+        this.slides.forEach(s => observer.observe(s));
+    }
+
+    setupKeyboard() {
+        document.addEventListener('keydown', (e) => {
+            if (e.target.getAttribute('contenteditable') || e.target.tagName === 'TEXTAREA') return;
+            if (['ArrowDown','ArrowRight',' ','PageDown','Enter'].includes(e.key)) { e.preventDefault(); this.next(); }
+            else if (['ArrowUp','ArrowLeft','PageUp','Backspace'].includes(e.key)) { e.preventDefault(); this.prev(); }
+            else if (e.key === 'p' || e.key === 'P') { window.open(location.href.split('?')[0] + '?presenter', 'slide-presenter-' + Date.now(), 'width=1100,menubar=no,toolbar=no,location=no'); }
+            else if (e.key === 'e' || e.key === 'E') { if (this.editor && !this.editor.active) this.editor.enter(); else if (this.editor && this.editor.active) this.editor.exit(); }
+        });
+    }
+
+    setupTouch() {
+        let startY = 0, startX = 0;
+        document.addEventListener('touchstart', e => { startY = e.touches[0].clientY; startX = e.touches[0].clientX; }, { passive: true });
+        document.addEventListener('touchend', e => {
+            const dy = startY - e.changedTouches[0].clientY;
+            const dx = Math.abs(startX - e.changedTouches[0].clientX);
+            if (Math.abs(dy) > 50 && Math.abs(dy) > dx * 1.2) dy > 0 ? this.next() : this.prev();
+        });
+    }
+
+    setupWheel() {
+        this.wState = 'idle';
+        this.wLastTime = 0;
+        this.wFallback = null;
+        this.scrollSettleTimer = null;
+
+        const enterDraining = () => {
+            if (this.wState !== 'animating') return;
+            this.wState = 'draining';
+            this.wLastTime = Date.now();
+            clearTimeout(this.wFallback);
+            this.wFallback = setTimeout(() => { this.wState = 'idle'; }, 1500);
+        };
+
+        window.addEventListener('scroll', () => {
+            if (this.wState !== 'animating') return;
+            clearTimeout(this.scrollSettleTimer);
+            this.scrollSettleTimer = setTimeout(enterDraining, 120);
+        }, { passive: true });
+
+        document.addEventListener('wheel', (e) => {
+            if (e.target.tagName === 'TEXTAREA' || e.target.tagName === 'INPUT'
+              || e.target.getAttribute('contenteditable')) return;
+            if (e.target.closest && e.target.closest('#notes-panel')) return;
+
+            let dx = e.deltaX, dy = e.deltaY;
+            if (e.deltaMode === WheelEvent.DOM_DELTA_LINE) { dx *= 20; dy *= 20; }
+            if (e.deltaMode === WheelEvent.DOM_DELTA_PAGE) { dx *= window.innerHeight; dy *= window.innerHeight; }
+            const delta = Math.abs(dy) >= Math.abs(dx) ? dy : dx;
+            if (Math.abs(delta) < 6) return;
+
+            e.preventDefault();
+            if (this.wState === 'animating') return;
+
+            const now = Date.now();
+            if (this.wState === 'draining') {
+                const gap = now - this.wLastTime;
+                this.wLastTime = now;
+                if (gap <= 80) return;
+                this.wState = 'idle';
+                clearTimeout(this.wFallback);
+            }
+
+            this.wState = 'animating';
+            clearTimeout(this.scrollSettleTimer);
+            const moved = delta > 0 ? this.next() : this.prev();
+            if (!moved) {
+                this.wState = 'idle';
+                return;
+            }
+
+            this.scrollSettleTimer = setTimeout(enterDraining, 450);
+        }, { passive: false });
+    }
+
+    setupPresenter() {
+        this.channel.addEventListener('message', e => {
+            if (e.data.type === 'nav-next') this.next();
+            else if (e.data.type === 'nav-prev') this.prev();
+            else if (e.data.type === 'request-state') this.broadcastState();
+        });
+    }
+
+    broadcastState() {
+        const slide = this.slides[this.currentSlide];
+        this.channel.postMessage({ type: 'state', index: this.currentSlide, total: this.slides.length, notes: slide?.dataset.notes || '' });
+    }
+
+    goTo(index) {
+        const idx = Math.max(0, Math.min(index, this.slides.length - 1));
+        const moved = idx !== this.currentSlide;
+        this.currentSlide = idx;
+        this.setActiveSlide(idx);
+        this.slides[idx]?.scrollIntoView({ behavior: moved ? 'smooth' : 'auto' });
+        this.updateProgress(); this.updateDots(); this.broadcastState();
+        this.updateNotesPanel();
+        return moved;
+    }
+    next() { return this.goTo(Math.min(this.currentSlide + 1, this.slides.length - 1)); }
+    prev() { return this.goTo(Math.max(this.currentSlide - 1, 0)); }
+
+    updateProgress() {
+        const pct = (this.currentSlide / (this.slides.length - 1)) * 100;
+        const bar = document.querySelector('.progress-bar');
+        if (bar) bar.style.width = pct + '%';
+    }
+
+    updateDots() {
+        document.querySelectorAll('.nav-dots button').forEach((dot, i) => {
+            const active = i === this.currentSlide;
+            dot.classList.toggle('active', active);
+            if (active) dot.setAttribute('aria-current', 'true');
+            else dot.removeAttribute('aria-current');
+        });
+    }
+
+    setupEditor() {
+        const panel = document.getElementById('notes-panel');
+        const label = document.getElementById('notes-panel-label');
+        const textarea = document.getElementById('notes-textarea');
+        const toggle = document.getElementById('editToggle');
+        const hotzone = document.querySelector('.edit-hotzone');
+        let hideTimeout = null;
+
+        hotzone.addEventListener('mouseenter', () => { clearTimeout(hideTimeout); toggle.classList.add('show'); });
+        hotzone.addEventListener('mouseleave', () => { hideTimeout = setTimeout(() => { if (this.editor.active) return; toggle.classList.remove('show'); }, 400); });
+        toggle.addEventListener('mouseenter', () => clearTimeout(hideTimeout));
+        toggle.addEventListener('mouseleave', () => { hideTimeout = setTimeout(() => { if (this.editor.active) return; toggle.classList.remove('show'); }, 400); });
+        hotzone.addEventListener('click', () => this.editor.toggle());
+        toggle.addEventListener('click', () => this.editor.toggle());
+
+        document.getElementById('notes-panel-header').addEventListener('click', () => panel.classList.toggle('collapsed'));
+
+        textarea.addEventListener('input', () => {
+            const slide = this.slides[this.currentSlide];
+            if (slide) { slide.dataset.notes = textarea.value; this.broadcastState(); }
+        });
+
+        document.addEventListener('keydown', (e) => {
+            if ((e.ctrlKey || e.metaKey) && e.key === 's') { e.preventDefault(); this.saveFile(); }
+        });
+
+        this.editor = {
+            active: false,
+            toggle: () => this.editor.active ? this.editor.exit() : this.editor.enter(),
+            enter: () => {
+                this.editor.active = true;
+                toggle.classList.add('active'); toggle.textContent = 'Done';
+                this.slides.forEach(s => s.querySelectorAll('h1,h2,h3,p,li,span,strong,small,b,code,td,th').forEach(el => {
+                    el.setAttribute('contenteditable', 'true'); el.style.outline = 'none';
+                }));
+                panel.classList.add('active'); this.updateNotesPanel();
+            },
+            exit: () => {
+                this.editor.active = false;
+                toggle.classList.remove('active'); toggle.textContent = 'Edit';
+                this.slides.forEach(s => s.querySelectorAll('[contenteditable]').forEach(el => {
+                    el.removeAttribute('contenteditable'); el.style.outline = '';
+                }));
+                panel.classList.remove('active');
+            }
+        };
+        this._notesLabel = label; this._notesTextarea = textarea;
+    }
+
+    updateNotesPanel() {
+        if (!this.editor?.active) return;
+        const slide = this.slides[this.currentSlide];
+        this._notesLabel.textContent = 'SPEAKER NOTES \u2014 SLIDE ' + (this.currentSlide + 1) + ' / ' + this.slides.length;
+        this._notesTextarea.value = slide?.dataset.notes || '';
+    }
+
+    saveFile() {
+        const html = '<!DOCTYPE html>\n' + document.documentElement.outerHTML;
+        const bytes = new TextEncoder().encode(html);
+        fetch(location.pathname, { method: 'PUT', body: bytes, headers: { 'Content-Type': 'text/html' } })
+            .catch(() => {
+                const a = Object.assign(document.createElement('a'), {
+                    href: URL.createObjectURL(new Blob([html], { type: 'text/html' })),
+                    download: location.pathname.split('/').pop() || 'presentation.html'
+                }); a.click(); URL.revokeObjectURL(a.href);
+            });
+    }
+}
+
+if (new URLSearchParams(location.search).has('presenter')) {
+    document.title = 'Presenter \u2014 ' + document.title;
+    document.body.innerHTML = `
+    <style>
+        * { box-sizing: border-box; margin: 0; }
+        body { background: #111; color: #fff; font-family: system-ui, sans-serif; }
+        #pv { display: grid; grid-template-columns: 1fr 220px; gap: 1rem; padding: 1.25rem; align-items: start; }
+        .pv-panel { background: #1e1e1e; border-radius: 12px; padding: 1.25rem; }
+        #pv-label { font-size: 0.6rem; letter-spacing: 0.18em; text-transform: uppercase; color: #555; margin-bottom: 0.6rem; }
+        #pv-notes { font-size: 1.05rem; line-height: 1.85; color: #d0d0d0; }
+        #pv-right { display: flex; flex-direction: column; gap: 1rem; }
+        #pv-nav { display: flex; align-items: center; justify-content: space-between; gap: 0.5rem; }
+        .pv-arrow { width: 32px; height: 32px; border-radius: 6px; border: 1px solid #333; background: #2a2a2a; color: #aaa; font-size: 1rem; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+        .pv-arrow:hover { background: #383838; color: #fff; }
+        #pv-counter { text-align: center; flex: 1; }
+        #pv-num { font-size: 1.6rem; font-weight: 700; font-variant-numeric: tabular-nums; line-height: 1; }
+        #pv-of { color: #555; font-size: 0.75rem; margin-top: 0.2rem; }
+        #pv-timer { font-size: 1.5rem; font-weight: 700; font-family: monospace; font-variant-numeric: tabular-nums; }
+        #pv-timer-label { font-size: 0.6rem; letter-spacing: 0.18em; text-transform: uppercase; color: #555; }
+    </style>
+    <div id="pv">
+        <div class="pv-panel"><div id="pv-label">Speaker Notes</div><div id="pv-notes">Waiting for main window...</div></div>
+        <div id="pv-right">
+            <div class="pv-panel"><div id="pv-nav">
+                <button class="pv-arrow" id="pv-prev">\u2190</button>
+                <div id="pv-counter"><div id="pv-num">\u2014</div><div id="pv-of">/ \u2014</div></div>
+                <button class="pv-arrow" id="pv-next">\u2192</button>
+            </div></div>
+            <div class="pv-panel"><div id="pv-timer-label">Elapsed</div><div id="pv-timer">0:00</div></div>
+        </div>
+    </div>`;
+
+    const ch = new BroadcastChannel('slide-creator-presenter');
+    let startTime = null;
+    const pv = document.getElementById('pv');
+    let lastH = 0, roTimer = null;
+    new ResizeObserver(() => {
+        clearTimeout(roTimer);
+        roTimer = setTimeout(() => {
+            const h = Math.ceil(pv.getBoundingClientRect().height);
+            if (h === lastH) return;
+            lastH = h;
+            const chrome = window.outerHeight - window.innerHeight;
+            window.resizeTo(window.outerWidth, Math.max(260, h + chrome + 4));
+        }, 40);
+    }).observe(pv);
+
+    ch.addEventListener('message', e => {
+        if (e.data.type !== 'state') return;
+        if (!startTime) startTime = Date.now();
+        document.getElementById('pv-notes').textContent = e.data.notes || '(no notes for this slide)';
+        document.getElementById('pv-num').textContent = e.data.index + 1;
+        document.getElementById('pv-of').textContent = '/ ' + e.data.total;
+    });
+    ch.postMessage({ type: 'request-state' });
+
+    setInterval(() => {
+        if (!startTime) return;
+        const s = Math.floor((Date.now() - startTime) / 1000);
+        document.getElementById('pv-timer').textContent = Math.floor(s / 60) + ':' + String(s % 60).padStart(2, '0');
+    }, 1000);
+
+    document.getElementById('pv-prev').addEventListener('click', () => ch.postMessage({ type: 'nav-prev' }));
+    document.getElementById('pv-next').addEventListener('click', () => ch.postMessage({ type: 'nav-next' }));
+    document.addEventListener('keydown', e => {
+        if (e.key === 'ArrowRight' || e.key === 'ArrowDown' || e.key === ' ' || e.key === 'PageDown' || e.key === 'Enter') ch.postMessage({ type: 'nav-next' });
+        else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp' || e.key === 'PageUp' || e.key === 'Backspace') ch.postMessage({ type: 'nav-prev' });
+    });
+
+} else {
+// PresentMode class goes here, then: new PresentMode(new SlidePresentation());
+
+class PresentMode {
+    constructor(ctrl) {
+        this.ctrl = ctrl;
+        this.baseW = 1440; this.baseH = 900;
+        this.active = false;
+        const btn = document.createElement('button');
+        btn.id = 'present-btn'; btn.title = 'Present (F5)'; btn.setAttribute('aria-label', 'Present'); btn.textContent = '\u25B6';
+        document.body.appendChild(btn);
+        const counter = document.createElement('div');
+        counter.id = 'present-counter'; document.body.appendChild(counter);
+        btn.addEventListener('click', () => this.enter());
+        document.addEventListener('keydown', e => {
+            if (e.key === 'F5') { e.preventDefault(); this.enter(); }
+            if (e.key === 'Escape' && this.active) this.exit();
+            if ((e.key === 'b' || e.key === 'B') && this.active) document.body.classList.toggle('presenting-black');
+        });
+        document.addEventListener('fullscreenchange', () => { if (!document.fullscreenElement && this.active) { this.exit(); return; } if (this.active) setTimeout(() => { if (this.active) this._scale(); }, 100); });
+        window.addEventListener('resize', () => { if (this.active) this._scale(); });
+    }
+    enter() {
+        if (this.active) return;
+        this.active = true;
+        document.body.classList.add('presenting');
+        if (document.documentElement.requestFullscreen) document.documentElement.requestFullscreen().catch(() => {});
+        this._scale();
+        this._show(this.ctrl.currentSlide);
+        this._updateCounter();
+        this._origGoTo = this.ctrl.goTo.bind(this.ctrl);
+        this.ctrl.goTo = (i) => {
+            const idx = Math.max(0, Math.min(i, this.ctrl.slides.length - 1));
+            this.ctrl.currentSlide = idx;
+            this.ctrl.setActiveSlide(idx);
+            this._show(idx);
+            this.ctrl.updateProgress?.();
+            this.ctrl.updateDots?.();
+            this.ctrl.broadcastState?.();
+            this.ctrl.updateNotesPanel?.();
+            this._updateCounter();
+        };
+    }
+    exit() {
+        if (!this.active) return;
+        this.active = false;
+        document.body.classList.remove('presenting', 'presenting-black');
+        this._reset();
+        if (document.fullscreenElement) document.exitFullscreen?.();
+        if (this._origGoTo) { this.ctrl.goTo = this._origGoTo; this._origGoTo = null; }
+        this.ctrl.slides[this.ctrl.currentSlide]?.scrollIntoView({ behavior: 'instant' });
+    }
+    _scale() {
+        const vw = window.innerWidth;
+        const vh = window.innerHeight;
+        const s = Math.min(vw / this.baseW, vh / this.baseH);
+        const ox = (vw - this.baseW * s) / 2;
+        const oy = (vh - this.baseH * s) / 2;
+        this.ctrl.slides.forEach(slide => {
+            slide.style.transform = 'translate(' + ox + 'px, ' + oy + 'px) scale(' + s + ')';
+        });
+    }
+    _reset() {
+        this.ctrl.slides.forEach(slide => { slide.style.transform = ''; slide.classList.remove('p-on'); });
+    }
+    _show(i) {
+        this.ctrl.slides.forEach((s, idx) => s.classList.toggle('p-on', idx === i));
+    }
+    _updateCounter() {
+        const c = document.getElementById('present-counter');
+        if (c) c.textContent = (this.ctrl.currentSlide + 1) + ' / ' + this.ctrl.slides.length;
+    }
+}
+new PresentMode(new SlidePresentation());
+}
+
+(function() {
+    var slides = document.querySelectorAll('.slide');
+    if (!slides.length) return;
+    var last = slides[slides.length - 1];
+    var credit = document.createElement('div');
+    credit.className = 'slide-credit';
+    credit.textContent = 'By kai-slide-creator v2.29.1 · Fantasy Rainbow';
+    last.appendChild(credit);
+})();
+
+(function () {
+  "use strict";
+
+  class IridescenceController {
+    constructor(canvas) {
+      this.canvas = canvas;
+      this.gl = null;
+      this.program = null;
+      this.buffer = null;
+      this.uniforms = null;
+      this.rafId = 0;
+      this.ready = false;
+      this.contextLost = false;
+      this.printing = false;
+      this.active = true;
+      this.testTime = null;
+      this.startedAt = performance.now();
+      this.lastFrameAt = 0;
+      this.intervals = [];
+      this.drawCount = 0;
+      this.lossExtension = null;
+      this.scrollSyncTimer = 0;
+      this.slideObserver = null;
+      this.motion = matchMedia("(prefers-reduced-motion: reduce)");
+      this.vertexSource = "attribute vec2 uv;attribute vec2 position;varying vec2 vUv;void main(){vUv=uv;gl_Position=vec4(position,0.0,1.0);}";
+      this.fragmentSource = [
+        "precision highp float;",
+        "uniform float uTime;uniform vec3 uResolution;varying vec2 vUv;",
+        "void main(){",
+        "float mr=min(uResolution.x,uResolution.y);",
+        "vec2 uv=(vUv.xy*2.0-1.0)*uResolution.xy/mr;",
+        "float d=-uTime*0.5;float a=0.0;",
+        "for(float i=0.0;i<8.0;++i){a+=cos(i-d-a*uv.x);d+=sin(uv.y*i+a);}",
+        "d+=uTime*0.5;",
+        "vec3 col=vec3(cos(uv*vec2(d,a))*0.6+0.4,cos(a+d)*0.5+0.5);",
+        "col=cos(col*cos(vec3(d,a,2.5))*0.5+0.5)*vec3(0.9843137,0.9921569,1.0);",
+        "gl_FragColor=vec4(col,1.0);",
+        "}"
+      ].join("\n");
+      this.bindLifecycle();
+      this.sync();
+    }
+
+    compileShader(type, source) {
+      const shader = this.gl.createShader(type);
+      if (!shader) throw new Error("shader-create-failed");
+      this.gl.shaderSource(shader, source);
+      this.gl.compileShader(shader);
+      if (!this.gl.getShaderParameter(shader, this.gl.COMPILE_STATUS)) {
+        const detail = this.gl.getShaderInfoLog(shader) || "shader-compile-failed";
+        this.gl.deleteShader(shader);
+        throw new Error(detail);
+      }
+      return shader;
+    }
+
+    init() {
+      if (this.ready || this.contextLost || this.motion.matches) return this.ready;
+      try {
+        this.gl = this.canvas.getContext("webgl", { antialias: true, alpha: false, preserveDrawingBuffer: true });
+        if (!this.gl) throw new Error("webgl-unavailable");
+        const vertex = this.compileShader(this.gl.VERTEX_SHADER, this.vertexSource);
+        const fragment = this.compileShader(this.gl.FRAGMENT_SHADER, this.fragmentSource);
+        this.program = this.gl.createProgram();
+        if (!this.program) throw new Error("program-create-failed");
+        this.gl.attachShader(this.program, vertex);
+        this.gl.attachShader(this.program, fragment);
+        this.gl.linkProgram(this.program);
+        this.gl.deleteShader(vertex);
+        this.gl.deleteShader(fragment);
+        if (!this.gl.getProgramParameter(this.program, this.gl.LINK_STATUS)) {
+          throw new Error(this.gl.getProgramInfoLog(this.program) || "program-link-failed");
+        }
+        this.gl.useProgram(this.program);
+        this.buffer = this.gl.createBuffer();
+        this.gl.bindBuffer(this.gl.ARRAY_BUFFER, this.buffer);
+        this.gl.bufferData(this.gl.ARRAY_BUFFER, new Float32Array([-1,-1,0,0, 1,-1,1,0, 1,1,1,1, -1,1,0,1]), this.gl.STATIC_DRAW);
+        const position = this.gl.getAttribLocation(this.program, "position");
+        const uv = this.gl.getAttribLocation(this.program, "uv");
+        if (position < 0 || uv < 0) throw new Error("attribute-location-failed");
+        this.gl.enableVertexAttribArray(position);
+        this.gl.vertexAttribPointer(position, 2, this.gl.FLOAT, false, 16, 0);
+        this.gl.enableVertexAttribArray(uv);
+        this.gl.vertexAttribPointer(uv, 2, this.gl.FLOAT, false, 16, 8);
+        this.uniforms = {
+          time: this.gl.getUniformLocation(this.program, "uTime"),
+          resolution: this.gl.getUniformLocation(this.program, "uResolution")
+        };
+        if (!this.uniforms.time || !this.uniforms.resolution) throw new Error("uniform-location-failed");
+        this.ready = true;
+        this.startedAt = performance.now();
+        document.body.dataset.iridescenceFallback = "false";
+        delete this.canvas.dataset.fallbackReason;
+        return true;
+      } catch (error) {
+        this.fallback(error && error.message);
+        return false;
+      }
+    }
+
+    fallback(reason) {
+      this.stop();
+      this.ready = false;
+      document.body.dataset.iridescenceFallback = "true";
+      this.canvas.dataset.fallbackReason = String(reason || "webgl-unavailable");
+    }
+
+    resize() {
+      if (!this.ready) return false;
+      const rect = this.canvas.getBoundingClientRect();
+      if (rect.width < 2 || rect.height < 2) return false;
+      const dpr = Math.max(.65, Math.min(devicePixelRatio || 1, 1.5, 2560 / rect.width, 1440 / rect.height));
+      const width = Math.round(rect.width * dpr);
+      const height = Math.round(rect.height * dpr);
+      if (this.canvas.width !== width || this.canvas.height !== height) {
+        this.canvas.width = width;
+        this.canvas.height = height;
+      }
+      return true;
+    }
+
+    draw(seconds) {
+      if (!this.ready || this.contextLost || !this.resize()) return false;
+      const now = performance.now();
+      if (this.lastFrameAt) {
+        this.intervals.push(now - this.lastFrameAt);
+        if (this.intervals.length > 720) this.intervals.shift();
+      }
+      this.lastFrameAt = now;
+      this.drawCount += 1;
+      this.gl.useProgram(this.program);
+      this.gl.uniform1f(this.uniforms.time, seconds);
+      this.gl.uniform3f(this.uniforms.resolution, this.canvas.width, this.canvas.height, 1);
+      this.gl.viewport(0, 0, this.canvas.width, this.canvas.height);
+      this.gl.drawArrays(this.gl.TRIANGLE_FAN, 0, 4);
+      return true;
+    }
+
+    shouldAnimate() {
+      return this.active && this.ready && !this.contextLost && !this.printing && !document.hidden && !this.motion.matches && this.testTime === null;
+    }
+
+    frame = (now) => {
+      this.rafId = 0;
+      if (!this.shouldAnimate()) return;
+      this.draw((now - this.startedAt) / 1000 + this.activeIndex() * .61);
+      this.rafId = requestAnimationFrame(this.frame);
+    };
+
+    start() {
+      if (this.shouldAnimate() && !this.rafId) this.rafId = requestAnimationFrame(this.frame);
+    }
+
+    stop() {
+      if (this.rafId) cancelAnimationFrame(this.rafId);
+      this.rafId = 0;
+    }
+
+    activeIndex() {
+      const slides = Array.from(document.querySelectorAll(".slide"));
+      if (document.body.classList.contains("presenting")) {
+        const presented = slides.findIndex((slide) => slide.classList.contains("p-on"));
+        if (presented >= 0) return presented;
+      }
+      const center = innerHeight / 2;
+      const nearest = slides
+        .map((slide, index) => ({ index, distance: Math.abs(slide.getBoundingClientRect().top + slide.getBoundingClientRect().height / 2 - center) }))
+        .sort((left, right) => left.distance - right.distance)[0];
+      return nearest ? nearest.index : 0;
+    }
+
+    isCoverActive() {
+      return this.activeIndex() === 0;
+    }
+
+    sync() {
+      this.active = this.isCoverActive();
+      document.body.dataset.iridescenceActive = String(this.active);
+      this.canvas.hidden = !this.active;
+      if (!this.active) { this.stop(); return; }
+      if (!this.ready && !this.contextLost) this.init();
+      if (!this.ready) return;
+      const seconds = this.testTime === null ? Math.max(0, (performance.now() - this.startedAt) / 1000) : this.testTime;
+      this.draw(seconds);
+      this.start();
+    }
+
+    bindLifecycle() {
+      this.canvas.addEventListener("webglcontextlost", (event) => {
+        event.preventDefault();
+        this.contextLost = true;
+        this.fallback("webgl-context-lost");
+      });
+      this.canvas.addEventListener("webglcontextrestored", () => {
+        this.stop();
+        this.contextLost = false;
+        this.gl = null;
+        this.program = null;
+        this.buffer = null;
+        this.uniforms = null;
+        this.ready = false;
+        this.sync();
+      });
+      document.addEventListener("visibilitychange", () => document.hidden ? this.stop() : this.sync());
+      addEventListener("resize", () => this.sync());
+      addEventListener("fullscreenchange", () => this.sync());
+      addEventListener("scroll", () => {
+        clearTimeout(this.scrollSyncTimer);
+        this.scrollSyncTimer = setTimeout(() => this.sync(), 40);
+      }, { passive: true });
+      addEventListener("beforeprint", () => { this.printing = true; this.stop(); });
+      addEventListener("afterprint", () => { this.printing = false; this.sync(); });
+      addEventListener("pagehide", () => this.stop());
+      addEventListener("pageshow", () => this.sync());
+      const motionChange = () => this.sync();
+      if (this.motion.addEventListener) this.motion.addEventListener("change", motionChange);
+      else this.motion.addListener(motionChange);
+      this.slideObserver = new MutationObserver(() => this.sync());
+      document.querySelectorAll(".slide").forEach((slide) => {
+        this.slideObserver.observe(slide, { attributes: true, attributeFilter: ["class"] });
+      });
+    }
+
+    setDeterministicTime(value) {
+      this.testTime = value === null ? null : Number(value);
+      this.sync();
+      return this.state();
+    }
+
+    forceFallback() {
+      this.fallback("qa-forced-fallback");
+      return this.state();
+    }
+
+    loseContext() {
+      this.lossExtension = this.gl && this.gl.getExtension("WEBGL_lose_context");
+      if (this.lossExtension) this.lossExtension.loseContext();
+      return Boolean(this.lossExtension);
+    }
+
+    restoreContext() {
+      if (this.lossExtension) this.lossExtension.restoreContext();
+      return Boolean(this.lossExtension);
+    }
+
+    getFrameStats() {
+      const sorted = this.intervals.slice().sort((a, b) => a - b);
+      const p95 = sorted.length ? sorted[Math.min(sorted.length - 1, Math.floor(sorted.length * .95))] : 0;
+      return { drawCount: this.drawCount, samples: sorted.length, p95FrameInterval: p95 };
+    }
+
+    state() {
+      return {
+        active: this.active,
+        ready: this.ready,
+        fallback: document.body.dataset.iridescenceFallback === "true",
+        contextLost: this.contextLost,
+        reducedMotion: this.motion.matches,
+        activeIndex: this.activeIndex(),
+        canvasHidden: this.canvas.hidden,
+        rafActive: Boolean(this.rafId),
+        activeRafCount: this.rafId ? 1 : 0,
+        canvasWidth: this.canvas.width,
+        canvasHeight: this.canvas.height,
+        ...this.getFrameStats()
+      };
+    }
+  }
+
+  const canvas = document.getElementById("iridescence-canvas");
+  if (!canvas) return;
+  const controller = new IridescenceController(canvas);
+  window.__iridescenceQA = {
+    setDeterministicTime: (value) => controller.setDeterministicTime(value),
+    forceFallback: () => controller.forceFallback(),
+    loseContext: () => controller.loseContext(),
+    restoreContext: () => controller.restoreContext(),
+    getFrameStats: () => controller.getFrameStats(),
+    state: () => controller.state(),
+    sync: () => controller.sync()
+  };
+})();
+</script>
+</body>
+</html>
