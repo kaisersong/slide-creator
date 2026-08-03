@@ -37,6 +37,15 @@ def main() -> int:
     path = Path(args.html)
     html_text = path.read_text(encoding="utf-8")
     preset = args.preset or _preset_from_html_or_path(html_text, path)
+    if preset not in builtin_preset_names():
+        print(json.dumps({
+            "pass": True,
+            "preset": preset,
+            "mode": args.mode,
+            "applicable": False,
+            "reason": "custom theme has no built-in preset fidelity contract",
+        }, ensure_ascii=False, indent=2))
+        return 0
     report = validate_preset_fidelity(html_text, preset, mode=args.mode)
     print(json.dumps(report, ensure_ascii=False, indent=2))
     return 0 if report["pass"] else 1
