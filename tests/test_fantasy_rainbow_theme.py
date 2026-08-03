@@ -247,6 +247,27 @@ def test_iridescence_restrained_accent_palette_contract():
     assert "Content pages remain opaque white" in reference
 
 
+def test_iridescence_cover_rebalances_warm_pink_into_cool_purple():
+    starter = STARTER.read_text(encoding="utf-8")
+    reference = REFERENCE.read_text(encoding="utf-8")
+
+    for signature in (
+        "vec3 balanced=col;",
+        "balanced.r=col.r*0.82+col.b*0.04;",
+        "balanced.g=col.g*0.98;",
+        "balanced.b=min(1.0,col.b*1.08+col.r*0.16);",
+        "col=balanced;",
+    ):
+        assert signature in starter
+
+    assert "rgba(255, 110, 221, .82)" not in starter
+    assert "rgba(167, 108, 255, .48)" in starter
+    assert "rgba(167, 108, 255, 0) 34%" in starter
+    assert "--ic-violet: #A76CFF" in reference
+    assert "--ic-pink: var(--ic-violet)" in reference
+    assert "cyan-blue → blue-violet → limited pink-violet" in reference
+
+
 def test_iridescence_cover_keyword_veil_is_a_cover_only_soft_bloom():
     starter = STARTER.read_text(encoding="utf-8")
     reference = REFERENCE.read_text(encoding="utf-8")
