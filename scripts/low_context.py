@@ -8297,7 +8297,10 @@ def _render_custom_theme_slide(
     role_index: int,
 ) -> str:
     """Render a slide using theme-specific component classes from the style contract."""
-    if _normalize_preset_name(style_contract.get("preset", "")) == "iridescence convergence":
+    if _normalize_preset_name(style_contract.get("preset", "")) in {
+        "fantasy rainbow",
+        "iridescence convergence",
+    }:
         return _render_iridescence_theme_slide(spec, total, role_index=role_index)
 
     slide_number = spec["slide_number"]

@@ -10,7 +10,7 @@ from bs4 import BeautifulSoup
 
 ROOT = Path(__file__).resolve().parent.parent
 SCRIPTS = ROOT / "scripts"
-THEME_DIR = ROOT / "themes" / "iridescence-convergence"
+THEME_DIR = ROOT / "themes" / "fantasy-rainbow"
 REFERENCE = THEME_DIR / "reference.md"
 STARTER = THEME_DIR / "starter.html"
 
@@ -20,8 +20,8 @@ sys.path.insert(0, str(SCRIPTS))
 def _brief() -> dict:
     fixture = ROOT / "demos" / "mode-paths" / "auto-BRIEF.json"
     data = json.loads(fixture.read_text(encoding="utf-8"))
-    data["title"] = "虹彩汇聚测试稿"
-    data["style"]["preset"] = "custom:iridescence-convergence"
+    data["title"] = "奇幻彩虹测试稿"
+    data["style"]["preset"] = "custom:fantasy-rainbow"
     data["narrative"]["page_roles"][-1] = "cta"
     data["narrative"]["slides"][-1]["role"] = "cta"
     data["narrative"]["slides"][-1]["title"] = "一句话安装，生成你的第一份 deck"
@@ -40,14 +40,40 @@ def _brief() -> dict:
     return data
 
 
+def test_fantasy_rainbow_is_canonical_and_legacy_preset_remains_renderable():
+    from preset_capabilities import get_preset_render_capability
+    from low_context import render_from_brief
+
+    canonical = get_preset_render_capability("custom:fantasy-rainbow")
+    display_name = get_preset_render_capability("Fantasy Rainbow")
+    legacy = get_preset_render_capability("custom:iridescence-convergence")
+
+    assert canonical.can_render is True
+    assert canonical.canonical_preset == "Fantasy Rainbow"
+    assert canonical.reference_path == "themes/fantasy-rainbow/reference.md"
+    assert display_name.can_render is True
+    assert display_name.reference_path == canonical.reference_path
+    assert legacy.can_render is True
+    assert legacy.canonical_preset == "Fantasy Rainbow"
+    assert legacy.reference_path == canonical.reference_path
+
+    legacy_brief = _brief()
+    legacy_brief["style"]["preset"] = "custom:iridescence-convergence"
+    legacy_html, legacy_packet, legacy_contract = render_from_brief(legacy_brief)
+    assert legacy_packet["canonical_preset"] == "Fantasy Rainbow"
+    assert legacy_contract["preset"] == "Fantasy Rainbow"
+    assert 'data-preset="Fantasy Rainbow"' in legacy_html
+    assert "iri-scene--hero" in legacy_html
+
+
 def test_iridescence_theme_is_discoverable_and_renderable():
     from preset_capabilities import discover_custom_themes, get_preset_render_capability
 
     themes = discover_custom_themes()
-    assert "iridescence-convergence" in themes
-    assert themes["iridescence-convergence"] == REFERENCE.resolve()
+    assert "fantasy-rainbow" in themes
+    assert themes["fantasy-rainbow"] == REFERENCE.resolve()
 
-    capability = get_preset_render_capability("custom:iridescence-convergence")
+    capability = get_preset_render_capability("custom:fantasy-rainbow")
     assert capability.can_render is True
     assert capability.renderer_strategy == "custom_theme"
     assert capability.support_tier == "custom"
@@ -56,9 +82,9 @@ def test_iridescence_theme_is_discoverable_and_renderable():
 def test_iridescence_reference_compiles_the_approved_contract():
     from low_context import compile_style_contract
 
-    contract = compile_style_contract("custom:iridescence-convergence")
+    contract = compile_style_contract("custom:fantasy-rainbow")
 
-    assert contract["preset"] == "Iridescence Convergence"
+    assert contract["preset"] == "Fantasy Rainbow"
     assert contract["allowed_layout_ids"] == [
         "title_grid",
         "contents_index",
@@ -585,8 +611,8 @@ def test_rendered_iridescence_deck_injects_theme_decor_and_runtime_once():
     html, packet, contract = render_from_brief(_brief())
 
     assert packet["renderer_strategy"] == "custom_theme"
-    assert contract["preset"] == "Iridescence Convergence"
-    assert 'data-preset="Iridescence-Convergence"' in html
+    assert contract["preset"] == "Fantasy Rainbow"
+    assert 'data-preset="Fantasy Rainbow"' in html
     assert html.count('<canvas id="iridescence-canvas"') == 1
     assert html.count("class IridescenceController") == 1
     assert html.count("window.__iridescenceQA") == 1
@@ -656,7 +682,7 @@ def test_custom_theme_generation_eval_skips_missing_builtin_signature_contract()
 
     report = analyze_html_quality(html, brief=brief, preset=packet["preset"])
 
-    assert report["preset"] == "Iridescence-Convergence"
+    assert report["preset"] == "Fantasy Rainbow"
     assert report["diagnostics"]["style_signature_coverage"] is None
     assert report["diagnostics"]["style_signature_integrity"] is None
 
