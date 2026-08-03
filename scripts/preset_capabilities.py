@@ -72,7 +72,13 @@ CANONICAL_PRESET_NAMES = {
 }
 
 PRESET_NAME_ALIASES = {
+    "fantasy rainbow": "fantasy-rainbow",
+    "iridescence-convergence": "fantasy-rainbow",
     "neo-retro dev": "neo-retro dev deck",
+}
+
+CUSTOM_THEME_DISPLAY_NAMES = {
+    "fantasy-rainbow": "Fantasy Rainbow",
 }
 
 
@@ -145,6 +151,9 @@ class PresetRenderCapability:
 
 def normalize_preset_name(value: str | None) -> str:
     normalized = (value or "").strip().lower()
+    if normalized.startswith("custom:"):
+        custom_name = normalized.removeprefix("custom:").strip()
+        return f"custom:{PRESET_NAME_ALIASES.get(custom_name, custom_name)}"
     return PRESET_NAME_ALIASES.get(normalized, normalized)
 
 
@@ -167,6 +176,11 @@ def discover_custom_themes() -> dict[str, Path]:
         if reference.exists():
             themes[normalize_preset_name(directory.name)] = reference.resolve()
     return themes
+
+
+def _custom_theme_display_name(reference_path: Path) -> str:
+    directory_name = reference_path.parent.name
+    return CUSTOM_THEME_DISPLAY_NAMES.get(directory_name, directory_name.title())
 
 
 def is_custom_theme(preset: str) -> bool:
@@ -216,7 +230,7 @@ def canonical_preset_name(preset: str) -> str:
     clean = strip_custom_prefix(preset)
     custom_themes = discover_custom_themes()
     if clean in custom_themes:
-        return custom_themes[clean].parent.name.title()
+        return _custom_theme_display_name(custom_themes[clean])
     raise KeyError(f"Unknown preset in support matrix: {preset}")
 
 
@@ -269,7 +283,7 @@ def _is_theme_reference_path(path: Path) -> bool:
 
 
 def _custom_capability(reference_path: Path, display_name: str | None = None) -> PresetRenderCapability:
-    name = display_name or reference_path.parent.name.title()
+    name = display_name or _custom_theme_display_name(reference_path)
     return PresetRenderCapability(
         preset=name,
         canonical_preset=name,
