@@ -401,7 +401,7 @@ Tracked segments: `plan`, `generate`, `validate`, `polish`, `total`
 
 ### Output
 
-- **Custom theme system** — Drop `reference.md` in `themes/your-theme/` to add a preset; `starter.html` is optional for complex systems, with the bundled `Iridescence-Convergence` theme serving as a generator-ready example
+- **Custom theme system** — Drop `reference.md` in `themes/your-theme/` to add a preset; `starter.html` is optional for complex systems, with the bundled `Fantasy Rainbow` theme serving as a generator-ready example
 - **Template export chrome switch** — Set `data-export-progress="false"` on `<body>` to hide progress bar and nav dots
 - **Image pipeline** — Auto-evaluate and process assets (Pillow)
 - **PPT import** — Convert `.pptx` to web presentations
@@ -445,9 +445,9 @@ Signature elements: grainy noise texture overlay · 3 animated blur orbs reposit
 
 **Why Blue Sky is the starter template:** It demonstrates all 10 signature visual elements pre-built. Models only fill in content — no risk of mis-implementing the design system. This pattern (`reference.md` + `starter.html`) is reusable for any complex theme.
 
-### Bundled Custom Theme: Iridescence Convergence
+### Bundled Custom Theme: Fantasy Rainbow
 
-`themes/iridescence-convergence/` is a generator-ready custom theme selected with `style.preset: "custom:iridescence-convergence"`. It reserves animated WebGL iridescence for the cover, uses opaque white editorial content pages with restrained blue/purple/cyan semantic accents, and closes on an opaque near-black surface. The theme stays on the standard non-Blue-Sky shared shell: 44px round Play control, circular page navigation, top progress, direct-child page labels, default-on Edit mode, speaker notes, presenter mode, reduced-motion fallback, print-safe output, and no remote runtime dependencies.
+`themes/fantasy-rainbow/` is a generator-ready custom theme selected with `style.preset: "custom:fantasy-rainbow"`. It reserves animated WebGL iridescence for the cover, uses opaque white editorial content pages with restrained blue/purple/cyan semantic accents, and closes on an opaque near-black surface. The theme stays on the standard non-Blue-Sky shared shell: 44px round Play control, circular page navigation, top progress, direct-child page labels, default-on Edit mode, speaker notes, presenter mode, reduced-motion fallback, print-safe output, and no remote runtime dependencies. The legacy `custom:iridescence-convergence` preset remains a compatibility alias.
 
 ---
 
@@ -463,7 +463,7 @@ Signature elements: grainy noise texture overlay · 3 animated blur orbs reposit
 
 Your theme appears as "Custom: your-theme" in the style picker.
 
-**Bundled custom themes:** `themes/iridescence-convergence/` (generator-ready), `themes/ascii-stream/`, and `themes/kingdee/`
+**Bundled custom themes:** `themes/fantasy-rainbow/` (generator-ready), `themes/ascii-stream/`, and `themes/kingdee/`
 
 ---
 
@@ -507,7 +507,15 @@ For PPTX/PNG export: `clawhub install kai-html-export` or `pip install playwrigh
 
 ---
 
+## Runtime-only Skill ZIP
+
+Download [`kai-slide-creator-v2.29.1-skill-runtime.zip`](https://github.com/kaisersong/slide-creator/releases/download/v2.29.1/kai-slide-creator-v2.29.1-skill-runtime.zip) for a compact Skill installation bundle. Extract its top-level `kai-slide-creator/` folder into your agent's skills directory. The archive contains only `SKILL.md`, `main.py`, `scripts/`, `schemas/`, `references/`, and `themes/`; repository README files, demos, tests, eval fixtures, design documents, and Git metadata are excluded.
+
+---
+
 ## Version History
+
+**v2.29.1** — Fantasy Rainbow runtime package release: renamed the bundled custom theme from Iridescence Convergence to Fantasy Rainbow, moved its canonical preset to `custom:fantasy-rainbow`, retained `custom:iridescence-convergence` as a compatibility alias, refreshed the bilingual README and production demo watermarks, and added a runtime-only Skill ZIP release asset.
 
 **v2.29.0** — Iridescence Convergence and shared-shell consistency release: added a generator-ready custom theme with cover-only WebGL iridescence, opaque white editorial content pages, restrained semantic accents, and a dark closing surface; restored its runtime chrome to the standard 44px round Play control, circular page navigation, top progress bar, direct-child page labels, and discoverable 80px Edit hotzone; gave no-starter custom themes the required viewport shell, marked Enterprise Dark insight-pull titles with the canonical export slot, expanded strict/browser regression coverage, and refreshed current production demo watermarks for v2.29.0.
 

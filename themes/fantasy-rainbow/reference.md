@@ -1,4 +1,4 @@
-# Iridescence Convergence — Reference-Fidelity Style Contract
+# Fantasy Rainbow — Reference-Fidelity Style Contract
 
 This custom theme is visually derived from the local reference `iridescence-hero.html`. Its identity is deliberately three-part: a full-viewport animated iridescent cover, opaque white editorial report pages, and a dark closing surface. The iridescent field is a hero treatment, not a deck-wide background.
 
