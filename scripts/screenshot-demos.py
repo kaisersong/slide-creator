@@ -15,14 +15,15 @@ except ImportError:
     print("ERROR: playwright not installed. Run: pip install playwright")
     sys.exit(1)
 
-DEMOS_DIR = pathlib.Path(sys.argv[1]) if len(sys.argv) > 1 else pathlib.Path(__file__).parent.parent / "demos"
-OUT_DIR   = pathlib.Path(sys.argv[2]) if len(sys.argv) > 2 else DEMOS_DIR / "screenshots"
+DEMOS_DIR = (pathlib.Path(sys.argv[1]) if len(sys.argv) > 1 else pathlib.Path(__file__).parent.parent / "demos").resolve()
+OUT_DIR   = (pathlib.Path(sys.argv[2]) if len(sys.argv) > 2 else DEMOS_DIR / "screenshots").resolve()
 WIDTH, HEIGHT = 1280, 720
 
 OUT_DIR.mkdir(parents=True, exist_ok=True)
 
 # Map demo filename → screenshot filename
 DEMOS = [
+    ("fantasy-rainbow-zh.html",    "fantasy-rainbow.png"),
     ("blue-sky-zh.html",           "blue-sky.png"),
     ("bold-signal-zh.html",        "bold-signal.png"),
     ("electric-studio-zh.html",    "electric-studio.png"),

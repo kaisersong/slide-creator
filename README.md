@@ -21,6 +21,9 @@ Click any screenshot below to open the live demo (same content, different styles
 
 <table>
 <tr>
+<td colspan="3" align="center"><a href="https://kaisersong.github.io/slide-creator/demos/fantasy-rainbow-en.html"><img src="demos/screenshots/fantasy-rainbow.png" width="740" alt="Fantasy Rainbow"/></a><br/><b>Fantasy Rainbow · 奇幻彩虹</b> — custom theme</td>
+</tr>
+<tr>
 <td align="center"><a href="https://kaisersong.github.io/slide-creator/demos/blue-sky-en.html"><img src="demos/screenshots/blue-sky.png" width="240" alt="Blue Sky"/></a><br/><b>Blue Sky</b></td>
 <td align="center"><a href="https://kaisersong.github.io/slide-creator/demos/bold-signal-en.html"><img src="demos/screenshots/bold-signal.png" width="240" alt="Bold Signal"/></a><br/><b>Bold Signal</b></td>
 <td align="center"><a href="https://kaisersong.github.io/slide-creator/demos/electric-studio-en.html"><img src="demos/screenshots/electric-studio.png" width="240" alt="Electric Studio"/></a><br/><b>Electric Studio</b></td>
