@@ -303,6 +303,19 @@ def test_iridescence_cover_keyword_veil_is_a_cover_only_soft_bloom():
     assert "closing headline emphasis receives no veil" in reference
 
 
+def test_iridescence_multiline_cover_headline_has_glyph_clearance():
+    starter = STARTER.read_text(encoding="utf-8")
+    match = re.search(
+        r"\.iri-scene--hero \.iri-title-line \+ \.iri-title-line\s*\{(?P<body>[^}]*)\}",
+        starter,
+    )
+
+    assert match is not None
+    margin = re.search(r"margin-top:\s*(?P<value>[0-9.]+)em", match.group("body"))
+    assert margin is not None
+    assert float(margin.group("value")) >= 0.06
+
+
 def test_iridescence_cover_keyword_veil_meets_worst_pixel_contrast():
     starter = STARTER.read_text(encoding="utf-8")
     alpha_match = re.search(r"--iri-cover-keyword-veil-alpha:\s*([0-9.]+)", starter)
@@ -723,8 +736,15 @@ def test_iridescence_scene_primitives_count_as_real_eval_components():
     assert report["diagnostics"]["avg_component_kinds_per_slide"] >= 2.0
 
 
-def _scene_spec(*, slide_number: int, role: str, title: str, items: list[str]) -> dict:
-    return {
+def _scene_spec(
+    *,
+    slide_number: int,
+    role: str,
+    title: str,
+    items: list[str],
+    title_emphasis: str = "",
+) -> dict:
+    spec = {
         "slide_number": slide_number,
         "role": role,
         "layout_id": "column_content",
@@ -736,6 +756,54 @@ def _scene_spec(*, slide_number: int, role: str, title: str, items: list[str]) -
         "supporting_items": [],
         "evidence_items": [],
     }
+    if title_emphasis:
+        spec["title_emphasis"] = title_emphasis
+    return spec
+
+
+def test_iridescence_cover_uses_structured_emphasis_for_arbitrary_business_copy():
+    from low_context import render_from_brief
+
+    brief = _brief()
+    cover = brief["narrative"]["slides"][0]
+    cover["title"] = "灵基 Lingee｜企业 AI 操作系统"
+    cover["title_emphasis"] = "企业 AI 操作系统"
+
+    html, _, _ = render_from_brief(brief)
+    soup = BeautifulSoup(html, "html.parser")
+    emphasis = soup.select("#slide-1 .iri-headline em.iri-accent-primary")
+
+    assert len(emphasis) == 1
+    assert emphasis[0].get_text(strip=True) == "企业 AI 操作系统"
+    headline = soup.select_one("#slide-1 .iri-headline")
+    assert headline.get_text(" ", strip=True) == "灵基 Lingee 企业 AI 操作系统"
+    assert "｜" not in headline.get_text()
+    assert [line.get_text("", strip=True) for line in headline.select(".iri-title-line")] == [
+        "灵基 Lingee",
+        "企业 AI 操作系统",
+    ]
+
+
+def test_iridescence_cover_fallback_emphasis_is_content_independent():
+    from low_context import _render_iridescence_theme_slide
+
+    soup = BeautifulSoup(
+        _render_iridescence_theme_slide(
+            _scene_spec(
+                slide_number=1,
+                role="cover",
+                title="灵基 Lingee",
+                items=["企业 AI 操作系统"],
+            ),
+            10,
+            role_index=0,
+        ),
+        "html.parser",
+    )
+
+    emphasis = soup.select(".iri-headline em.iri-accent-primary")
+    assert len(emphasis) == 1
+    assert emphasis[0].get_text(strip=True) == "Lingee"
 
 
 def test_iridescence_renderer_emits_restrained_accent_semantics():
@@ -768,6 +836,7 @@ def test_iridescence_renderer_emits_restrained_accent_semantics():
                 role="cover",
                 title="把 AI 生成，变成可交付的演示文稿",
                 items=["22 design presets", "16 review checkpoints"],
+                title_emphasis="可交付",
             ),
             12,
             role_index=0,
@@ -856,6 +925,7 @@ def test_iridescence_renderer_emits_restrained_accent_semantics():
                 role="cta" if index == 11 else "cover" if index == 0 else "content",
                 title=title,
                 items=["A", "B", "C", "D", "E", "F"],
+                title_emphasis="第一份 deck" if index == 11 else "可交付" if index == 0 else "",
             ),
             12,
             role_index=index,
@@ -1032,16 +1102,21 @@ def test_reviewed_titles_use_semantic_line_breaks_and_cover_only_runtime():
 
     closing = BeautifulSoup(
         _render_iridescence_theme_slide(
-            _scene_spec(slide_number=12, role="cta", title="一句话安装，生成你的第一份 deck", items=["A", "B"]),
+            _scene_spec(
+                slide_number=12,
+                role="cta",
+                title="一句话安装，生成你的第一份 deck",
+                items=["A", "B"],
+                title_emphasis="第一份 deck",
+            ),
             12,
             role_index=11,
         ),
         "html.parser",
     )
-    assert [node.get_text(" ", strip=True) for node in closing.select(".iri-title-line")] == [
+    assert [node.get_text("", strip=True) for node in closing.select(".iri-title-line")] == [
         "一句话安装，",
-        "生成你的",
-        "第一份 deck",
+        "生成你的第一份 deck",
     ]
 
     starter = STARTER.read_text(encoding="utf-8")

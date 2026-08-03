@@ -154,6 +154,7 @@ p, li { text-wrap: pretty; }
   pointer-events: none;
 }
 .iri-title-line { display: block; }
+.iri-scene--hero .iri-title-line + .iri-title-line { margin-top: .08em; }
 .iri-lead {
   max-width: 760px;
   margin: clamp(18px, 2.8vh, 28px) 0 0;
@@ -493,7 +494,7 @@ body.presenting .slide-credit { display: none !important; }
 #editToggle.active, .edit-toggle.active { background: var(--kd-blue, #2971EB); color: #fff; border-color: var(--kd-blue, #2971EB); }
 </style>
 </head>
-<body data-export-progress="true" data-preset="Fantasy Rainbow" data-generator="kai-slide-creator" data-generator-version="2.29.1" data-render-path="brief-canonical" data-brief-hash="sha256:5c5556caf6e24505ce74c0cab33a841e79c371b186037aac3dcedfd5795465a1" data-runtime-path="shared-js-engine" data-validate-strict="pass" data-preset-generation-status="custom" data-renderer-strategy="custom_theme">
+<body data-export-progress="true" data-preset="Fantasy Rainbow" data-generator="kai-slide-creator" data-generator-version="2.29.2" data-render-path="brief-canonical" data-brief-hash="sha256:5c5556caf6e24505ce74c0cab33a841e79c371b186037aac3dcedfd5795465a1" data-runtime-path="shared-js-engine" data-validate-strict="pass" data-preset-generation-status="custom" data-renderer-strategy="custom_theme">
 <span id="brand-mark">Fantasy Rainbow</span>
 <canvas id="iridescence-canvas" aria-hidden="true"></canvas>
   <nav class="nav-dots" aria-label="Slide navigation"></nav>
@@ -910,7 +911,7 @@ new PresentMode(new SlidePresentation());
     var last = slides[slides.length - 1];
     var credit = document.createElement('div');
     credit.className = 'slide-credit';
-    credit.textContent = 'By kai-slide-creator v2.29.1 · Fantasy Rainbow';
+    credit.textContent = 'By kai-slide-creator v2.29.2 · Fantasy Rainbow';
     last.appendChild(credit);
 })();
 

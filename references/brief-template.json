@@ -56,6 +56,7 @@
         "slide_number": 1,
         "role": "cover",
         "title": "Slide Creator",
+        "title_emphasis": "Creator",
         "key_point": "从 prompt 到可演示 HTML deck",
         "visual": "hero statement",
         "claim": "Slide Creator 把内容提炼和 HTML deck 交付压成一个轻量流程",
