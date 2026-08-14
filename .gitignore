@@ -2,11 +2,13 @@ __pycache__/
 *.pyc
 *.pyo
 .pytest_cache/
+.tmp/
 .tmp-run/
 .tmp-test-doc-sync/
 .tmp-preset-surface-all*/
 .tmp-preset-profile-parity/
 .tmp-demo-parity/
+.claude/
 .gstack/
 .governance-claims/
 .governance-log/
