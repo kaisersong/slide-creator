@@ -7990,10 +7990,26 @@ def _iridescence_display_items(spec: dict[str, Any], *, limit: int = 6) -> list[
     values = [
         *spec.get("supporting_facts", []),
         *spec.get("numeric_facts", []),
-        *spec.get("supporting_items", []),
-        *spec.get("evidence_items", []),
     ]
+    if not values:
+        values = [
+            *spec.get("supporting_items", []),
+            *spec.get("evidence_items", []),
+        ]
     return _dedupe_preserve(str(value).strip() for value in values if str(value).strip())[:limit]
+
+
+def _iridescence_split_item(item: str) -> tuple[str, str]:
+    """Split one supporting fact into a short label and its description."""
+    text = str(item).strip()
+    for separator in ("：", ":", " — ", "——"):
+        if separator in text:
+            label, _, description = text.partition(separator)
+            label = label.strip()
+            description = description.strip()
+            if label and description:
+                return label, description
+    return text, ""
 
 
 def _iridescence_title_lines(title: str) -> list[str]:
@@ -8061,7 +8077,10 @@ def _render_iridescence_theme_slide(spec: dict[str, Any], total: int, *, role_in
     elif role in closing_roles:
         scene = "closing"
     else:
-        scene = scene_order[min(role_index, len(scene_order) - 2)]
+        # Cycle through the middle scenes so decks longer than the scene list
+        # keep alternating compositions instead of repeating the last one.
+        middle_scenes = scene_order[1:-1]
+        scene = middle_scenes[(role_index - 1) % len(middle_scenes)]
 
     section_class = "slide-title" if scene == "hero" else "slide-closing" if scene == "closing" else "slide-content"
     export_role = "title" if scene == "hero" else layout_id
@@ -8129,26 +8148,23 @@ def _render_iridescence_theme_slide(spec: dict[str, Any], total: int, *, role_in
     if scene == "hero":
         body = (
             '<div class="iri-copy">'
-            '<span class="iri-label">SLIDE CREATOR · PRODUCT STORY · 2026</span>'
+            f'<span class="iri-label">{slide_number:02d} / {total:02d} · {_escape(role.upper())}</span>'
             f'<h1 class="iri-headline kd-reveal">{title_markup()}</h1>'
             f'<p class="iri-lead kd-reveal">{_escape(spec.get("key_point", ""))}</p>'
             f'<div class="iri-facts">{facts(items[:4], accented=False)}</div>'
             '</div>'
         )
     elif scene == "fracture":
-        left = items[:3]
-        right = [
-            "叙事必须完整推进",
-            "风格必须稳定落地",
-            "打开即播放、验证即交付",
-        ]
+        split = (len(items) + 1) // 2
+        left = items[:split]
+        right = items[split:]
         body = (
             f'{header(lead=False)}'
             '<div class="iri-fracture-grid">'
-            '<div class="iri-fracture-side"><h3 class="iri-accent-text-primary">GENERATION END</h3>'
+            '<div class="iri-fracture-side">'
             + "".join(f'<div class="iri-fracture-item kd-reveal">{_escape(item)}</div>' for item in left)
             + '</div><div class="iri-fracture-scar" aria-hidden="true"></div>'
-            '<div class="iri-fracture-side"><h3 class="iri-accent-text-primary">DELIVERY STANDARD</h3>'
+            '<div class="iri-fracture-side">'
             + "".join(f'<div class="iri-fracture-item kd-reveal">{_escape(item)}</div>' for item in right)
             + '</div></div>'
         )
@@ -8162,24 +8178,20 @@ def _render_iridescence_theme_slide(spec: dict[str, Any], total: int, *, role_in
             '</div>'
         )
     elif scene == "brief":
-        field_contract = [
-            ("audience", "决定受众与期望动作"),
-            ("deck.style", "锁定页数、语言和 preset"),
-            ("content", "固定必须包含的事实与边界"),
-            ("narrative.slides", "逐页声明角色、断言和证据"),
-            ("runtime", "约束播放、编辑、备注与耗时"),
-        ]
         fields = "".join(
             '<div class="iri-field kd-reveal">'
             f'<span class="iri-number iri-accent-text-primary">{index:02d}</span>'
-            f'<code class="iri-accent-text-primary">{_escape(field)}</code><span>{_escape(description)}</span>'
+            f'<span>{_escape(_iridescence_split_item(item)[0])}</span>'
+            f'<span>{_escape(_iridescence_split_item(item)[1])}</span>'
             '</div>'
-            for index, (field, description) in enumerate(field_contract, start=1)
+            for index, item in enumerate(items[:5], start=1)
         )
+        anchor = spec.get("claim") or spec.get("key_point", "")
         body = (
             '<div class="iri-brief-layout">'
-            '<div class="iri-panel iri-brief-code kd-reveal"><strong>BRIEF.json</strong>'
-            '<pre>{\n  "audience": "...",\n  "deck": { "style": "..." },\n  "content": { ... },\n  "narrative": { "slides": [ ... ] },\n  "runtime": { ... }\n}</pre></div>'
+            '<div class="iri-panel iri-brief-code kd-reveal">'
+            f'<strong>{slide_number:02d}</strong>'
+            f'<pre>{_escape(anchor)}</pre></div>'
             f'<div>{header()}<div class="iri-field-list">{fields}</div></div>'
             '</div>'
         )
@@ -8215,81 +8227,71 @@ def _render_iridescence_theme_slide(spec: dict[str, Any], total: int, *, role_in
         body = (
             f'{header()}'
             '<div class="iri-spectrum">'
-            '<div class="iri-spectrum-total iri-accent-primary" aria-label="22 presets">22</div>'
+            f'<div class="iri-spectrum-total iri-accent-primary" aria-label="{len(items)} items">{len(items):02d}</div>'
             f'<div class="iri-spectrum-list">{spectrum_items}</div>'
             '</div>'
         )
     elif scene == "contract":
-        contract_details = [
-            ("Visual tokens", "锁定颜色、排版、间距与图表语法"),
-            ("Named layouts", "约束每个页面角色可使用的构图"),
-            ("Signature elements", "让视觉身份可以检测并稳定复现"),
-            ("Runtime contract", "播放、编辑、备注与导出共用同一壳子"),
-            ("Renderer tiers", "5 个 native core 与 17 个 profile renderer"),
-        ]
         layers = "".join(
             '<div class="iri-contract-layer kd-reveal">'
-            f'<span class="iri-number iri-accent-text-primary">{index:02d}</span><strong>{_escape(label)}</strong><p>{_escape(description)}</p>'
+            f'<span class="iri-number iri-accent-text-primary">{index:02d}</span>'
+            f'<strong>{_escape(_iridescence_split_item(item)[0])}</strong>'
+            f'<p>{_escape(_iridescence_split_item(item)[1])}</p>'
             '</div>'
-            for index, (label, description) in enumerate(contract_details, start=1)
+            for index, item in enumerate(items[:5], start=1)
         )
         body = f'{header()}<div class="iri-contract">{layers}</div>'
     elif scene == "gates":
-        gate_items = [
-            ("Brief contract", "Schema、事实与 page roles 在渲染前先对齐"),
-            ("Render packet", "记录 route、preset 与 renderer provenance"),
-            ("Strict validation", "拦截依赖、壳子、备注与结构失败"),
-            ("Single-deck eval", "检查节奏、压缩、忠实度与效率"),
-        ]
         gates = "".join(
             f'<div class="iri-gate kd-reveal {gate_accent_cycle[(index - 1) % len(gate_accent_cycle)]}">'
             f'<span class="{accent_cycle[(index - 1) % len(accent_cycle)]}">GATE {index:02d}</span>'
-            f'<strong>{_escape(label)}</strong><small>{_escape(description)}</small>'
+            f'<strong>{_escape(_iridescence_split_item(item)[0])}</strong>'
+            f'<small>{_escape(_iridescence_split_item(item)[1])}</small>'
             '</div>'
-            for index, (label, description) in enumerate(gate_items, start=1)
+            for index, item in enumerate(items[:4], start=1)
         )
         body = f'{header()}<div class="iri-gates">{gates}</div>'
     elif scene == "runtime":
-        runtime_keys = [
-            ("F5", "Present Mode"),
-            ("P", "Presenter Window"),
-            ("E", "Inline Editing"),
-            ("Ctrl+S", "Save self-contained HTML"),
-            ("NOTES", "每页演讲备注随文件保存"),
-            ("← ↑ → ↓", "键盘与 PageUp / PageDown 翻页"),
-        ]
+        split_items = [_iridescence_split_item(item) for item in items[:6]]
         keys = "".join(
             '<div class="iri-key kd-reveal">'
-            f'<b class="iri-accent-text-primary">{_escape(key)}</b><span>{_escape(description)}</span>'
+            f'<b class="iri-accent-text-primary">{index:02d}</b>'
+            f'<span>{_escape(description or label)}</span>'
             '</div>'
-            for key, description in runtime_keys
+            for index, (label, description) in enumerate(split_items, start=1)
+        )
+        screen_accents = ("iri-accent-primary", "iri-accent-secondary", "iri-accent-text-tertiary")
+        screen = "<br>".join(
+            f'<span class="{screen_accents[i % len(screen_accents)]}">{_escape(label)}</span>'
+            for i, (label, _) in enumerate(split_items[:3])
         )
         body = (
             f'{header()}'
             '<div class="iri-runtime-stage">'
-            '<div class="iri-runtime-screen kd-reveal"><span class="iri-label">ONE SELF-CONTAINED HTML</span>'
-            '<strong><span class="iri-accent-primary">PLAY</span><br><span class="iri-accent-secondary">EDIT</span><br>'
-            '<span class="iri-accent-text-tertiary">PRESENT</span></strong></div>'
+            f'<div class="iri-runtime-screen kd-reveal"><span class="iri-label">{slide_number:02d} / {total:02d}</span>'
+            f'<strong>{screen}</strong></div>'
             f'<div class="iri-keys">{keys}</div>'
             '</div>'
         )
     elif scene == "modes":
-        auto = items[0] if items else "Auto — 3–6 minutes"
-        polish = items[1] if len(items) > 1 else "Polish — 8–15 minutes"
-        auto_time = auto.split(" — ", 1)[-1].replace("expected ", "")
-        polish_time = polish.split(" — ", 1)[-1].replace("expected ", "")
+        mode_accents = ("iri-accent-primary", "iri-accent-secondary")
+        modes = "".join(
+            '<div class="iri-mode kd-reveal"><div>'
+            f'<span class="iri-number {mode_accents[index % len(mode_accents)]}">{index + 1:02d}</span>'
+            f'<h3>{_escape(_iridescence_split_item(item)[0])}</h3></div>'
+            f'<p>{_escape(_iridescence_split_item(item)[1])}</p></div>'
+            for index, item in enumerate(items[:2])
+        )
         body = (
             f'{header()}'
-            '<div class="iri-modes">'
-            f'<div class="iri-mode kd-reveal"><div><span class="iri-number iri-accent-primary">AUTO</span><h3>{_escape(auto_time)}</h3></div><p>快速形成第一版，并沿同一 BRIEF 与 strict gate 交付。</p></div>'
-            f'<div class="iri-mode kd-reveal"><div><span class="iri-number iri-accent-secondary">POLISH</span><h3>{_escape(polish_time)}</h3></div><p>锁定叙事与视觉，并自动执行深度 Review。</p></div>'
-            '</div>'
+            f'<div class="iri-modes">{modes}</div>'
         )
     elif scene == "use-cases":
         quadrants = "".join(
             '<div class="iri-quadrant kd-reveal">'
             f'<span class="iri-number {accent_cycle[(index - 1) % len(accent_cycle)]}">{index:02d}</span>'
-            f'<strong>{_escape(item.split(" — ", 1)[0])}</strong><p>{_escape(item.split(" — ", 1)[-1])}</p>'
+            f'<strong>{_escape(_iridescence_split_item(item)[0])}</strong>'
+            f'<p>{_escape(_iridescence_split_item(item)[1])}</p>'
             '</div>'
             for index, item in enumerate(items[:4], start=1)
         )
@@ -8298,12 +8300,13 @@ def _render_iridescence_theme_slide(spec: dict[str, Any], total: int, *, role_in
         commands = "".join(
             f'<div class="iri-panel iri-command kd-reveal">{_escape(item)}</div>' for item in items[:3]
         )
+        closing_note = spec.get("claim") or spec.get("explanation", "")
         body = (
             '<div class="iri-closing-layout">'
-            '<div class="iri-copy"><span class="iri-label">GET STARTED · SLIDE CREATOR</span>'
+            f'<div class="iri-copy"><span class="iri-label">{slide_number:02d} / {total:02d} · {_escape(role.upper())}</span>'
             f'<h2 class="iri-headline kd-reveal">{title_markup()}</h2>'
             f'<p class="iri-lead kd-reveal">{_escape(spec.get("key_point", ""))}</p>'
-            '<div class="iri-closing-note">Protect the last mile from content to deck.</div></div>'
+            f'<div class="iri-closing-note">{_escape(closing_note)}</div></div>'
             f'<div class="iri-command-stack">{commands}</div>'
             '</div>'
         )

@@ -134,6 +134,7 @@ LABEL_SELECTORS = (
     ".hero-brand",
     ".brute-tag",
     ".badge",
+    ".sc-source",
 )
 
 ITEM_TITLE_SELECTORS = (
@@ -148,6 +149,12 @@ ITEM_TITLE_SELECTORS = (
     ".stat-label",
     ".metric-label",
     ".cmd-name",
+    ".sc-metric-label",
+    ".sc-thing-title",
+    ".sc-driver-child-title",
+    ".sc-panel-label",
+    ".sc-funnel-label",
+    ".sc-matrix-cell > div:first-child",
     "h3",
 )
 
@@ -162,6 +169,10 @@ ITEM_BODY_SELECTORS = (
     ".stat-sub",
     ".metric-body",
     ".cmd-desc",
+    ".sc-thing-body",
+    ".sc-driver-child-body",
+    ".sc-evidence-card p",
+    ".sc-matrix-cell > div:nth-child(2)",
 )
 
 NUMBER_SELECTORS = (
@@ -172,6 +183,18 @@ NUMBER_SELECTORS = (
     ".stat-value",
     ".metric-num-pink",
     ".num",
+    ".sc-metric",
+    ".sc-funnel-value",
+)
+
+# Demo-derived templates carry preset-specific narrative slots that are not plain
+# title/body/label nodes. Without explicit hydration they leak the checked-in demo
+# copy into user decks (e.g. Strategy Consulting recommendation boxes and pull
+# quotes). Each entry maps a selector to the spec field that should fill it.
+NARRATIVE_SLOT_SELECTORS: tuple[tuple[str, str, int], ...] = (
+    (".sc-reco-box", "claim", 150),
+    (".sc-quote-text", "claim", 170),
+    (".sc-quote-attribution", "key_point", 60),
 )
 
 READABLE_PROFILE_INK = {
@@ -1692,6 +1715,13 @@ def _hydrate_demo_section(
         numbers = ["21", "0", "∞"][: len(number_nodes)]
     for index, node in enumerate(number_nodes):
         _set_node_text(node, numbers[index])
+
+    for selector, field, limit in NARRATIVE_SLOT_SELECTORS:
+        value = _compact(str(spec.get(field, "") or spec.get("key_point", "")), limit=limit)
+        if not value:
+            continue
+        for node in section.select(selector):
+            _set_node_text(node, value)
 
     for index, node in enumerate(section.select("li")):
         if node.find(True):
