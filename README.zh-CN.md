@@ -512,11 +512,13 @@ slide-creator **无外部依赖**。Python 3 仅用于规划阶段可选的图�
 
 ## 仅运行所需的 Skill ZIP
 
-下载 [`kai-slide-creator-v2.29.2-skill-runtime.zip`](https://github.com/kaisersong/slide-creator/releases/download/v2.29.2/kai-slide-creator-v2.29.2-skill-runtime.zip)，即可获得精简的 Skill 安装包。将压缩包顶层的 `kai-slide-creator/` 目录解压到代理的 skills 目录。压缩包只包含 `SKILL.md`、`main.py`、`scripts/`、`schemas/`、`references/` 和 `themes/`；不会包含仓库 README、Demo、测试、eval fixture、设计文档和 Git 元数据。
+下载 [`kai-slide-creator-v2.29.3-skill-runtime.zip`](https://github.com/kaisersong/slide-creator/releases/download/v2.29.3/kai-slide-creator-v2.29.3-skill-runtime.zip)，即可获得精简的 Skill 安装包。将压缩包顶层的 `kai-slide-creator/` 目录解压到代理的 skills 目录。压缩包只包含 `SKILL.md`、`main.py`、`scripts/`、`schemas/`、`references/` 和 `themes/`；不会包含仓库 README、Demo、测试、eval fixture、设计文档和 Git 元数据。
 
 ---
 
 ## 版本日志
+
+**v2.29.3** — 奇幻彩虹内容忠实度发版：虹彩渲染器不再输出 slide-creator 自身的产品文案。hero、fracture、brief、contract、gates、runtime、modes 与 closing 场景全部改为渲染调用方的 `BRIEF.json`，并新增统一的「小标题 + 说明」拆分逻辑供双段式组件复用。spectrum 的展示总数改为按要点数派生，不再固定为 `22`；显式给出的 `supporting_facts` 优先于从 `claim` 和 `explanation` 派生的事实，被截断的重复碎片不再出现；`brief` 字段改为输出三个网格单元，正文不再挤在窄标签列里换行。超过十二个场景的 deck 现在会循环复用中间场景，而不是重复 `use-cases`——后者会触发视觉多样性门禁，导致十一页以上的 deck 根本无法生成；前十个内容页的场景映射保持不变。
 
 **v2.29.2** — 语义标题强调发版：“奇幻彩虹（Fantasy Rainbow）”现在从结构化 `title_emphasis` 字段读取封面或收尾页的重要短语，彻底移除按固定标题和固定短语查表的实现；旧 BRIEF 则根据标点、语言结构和视觉长度进行通用降级。结构分隔符 `|` / `｜` 不再泄漏到最终标题中，多行封面标题也新增了仅封面生效的字形安全间距。同步新增任意业务文案回归测试、更新中英文说明、刷新 production Demo 水印，并发布新的仅运行所需 Skill ZIP。
 

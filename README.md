@@ -512,11 +512,13 @@ For PPTX/PNG export: `clawhub install kai-html-export` or `pip install playwrigh
 
 ## Runtime-only Skill ZIP
 
-Download [`kai-slide-creator-v2.29.2-skill-runtime.zip`](https://github.com/kaisersong/slide-creator/releases/download/v2.29.2/kai-slide-creator-v2.29.2-skill-runtime.zip) for a compact Skill installation bundle. Extract its top-level `kai-slide-creator/` folder into your agent's skills directory. The archive contains only `SKILL.md`, `main.py`, `scripts/`, `schemas/`, `references/`, and `themes/`; repository README files, demos, tests, eval fixtures, design documents, and Git metadata are excluded.
+Download [`kai-slide-creator-v2.29.3-skill-runtime.zip`](https://github.com/kaisersong/slide-creator/releases/download/v2.29.3/kai-slide-creator-v2.29.3-skill-runtime.zip) for a compact Skill installation bundle. Extract its top-level `kai-slide-creator/` folder into your agent's skills directory. The archive contains only `SKILL.md`, `main.py`, `scripts/`, `schemas/`, `references/`, and `themes/`; repository README files, demos, tests, eval fixtures, design documents, and Git metadata are excluded.
 
 ---
 
 ## Version History
+
+**v2.29.3** — Fantasy Rainbow content fidelity release: the iridescence renderer no longer emits slide-creator's own product copy. The hero, fracture, brief, contract, gates, runtime, modes, and closing scenes now render the caller's `BRIEF.json` instead of hardcoded demo strings, and a shared label/description splitter feeds the two-part scene components. The spectrum display total is derived from the item count rather than a fixed `22`, explicit `supporting_facts` take precedence over facts derived from `claim` and `explanation` so truncated duplicate fragments no longer appear, and `brief` fields emit three grid cells so body text stops wrapping inside the narrow label column. Decks longer than the twelve-scene list now cycle the middle scenes instead of repeating `use-cases`, which previously tripped the visual variety gate and made decks over eleven pages ungeneratable; scene mapping for the first ten content pages is unchanged.
 
 **v2.29.2** — Semantic title emphasis release: Fantasy Rainbow now reads the important cover or closing phrase from the structured `title_emphasis` field, removes all preset-specific title and phrase lookup tables, and falls back to generic punctuation, script, and visual-length rules for older briefs. Structural `|` / `｜` separators no longer leak into rendered headlines, and multiline cover titles receive cover-only glyph clearance. The release adds arbitrary business-copy regression coverage, updates the bilingual documentation, refreshes production demo watermarks, and ships a new runtime-only Skill ZIP.
 
