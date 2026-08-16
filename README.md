@@ -216,6 +216,12 @@ python3 scripts/preset_release_gate.py \
 
 This gate blocks desktop/mobile geometry failures, missing PresetContract components, empty export slots, AI-advised content/rhythm proxy failures, unsupported style-native promotion, and real PPTX export/page-count failures.
 
+Desktop geometry is measured at three window shapes — `1600x900`, `1280x720`, and the real laptop window `1440x733` — in both window mode and play mode, because play mode pins slides to a fixed `1440x900` box whose geometry window mode never observes. Any text a slide box crops vertically fails as `browser-geometry-content-clipped`. To run that check on a single deck:
+
+```bash
+python3 scripts/browser_geometry_qa.py deck.html --mode both --laptop-window --strict
+```
+
 **Contract alignment: validators must match generation contracts**
 
 validate.py checks must align with actual contracts in SKILL.md / html-template.md / js-engine.md. For example:
@@ -512,11 +518,13 @@ For PPTX/PNG export: `clawhub install kai-html-export` or `pip install playwrigh
 
 ## Runtime-only Skill ZIP
 
-Download [`kai-slide-creator-v2.29.3-skill-runtime.zip`](https://github.com/kaisersong/slide-creator/releases/download/v2.29.3/kai-slide-creator-v2.29.3-skill-runtime.zip) for a compact Skill installation bundle. Extract its top-level `kai-slide-creator/` folder into your agent's skills directory. The archive contains only `SKILL.md`, `main.py`, `scripts/`, `schemas/`, `references/`, and `themes/`; repository README files, demos, tests, eval fixtures, design documents, and Git metadata are excluded.
+Download [`kai-slide-creator-v2.30.0-skill-runtime.zip`](https://github.com/kaisersong/slide-creator/releases/download/v2.30.0/kai-slide-creator-v2.30.0-skill-runtime.zip) for a compact Skill installation bundle. Extract its top-level `kai-slide-creator/` folder into your agent's skills directory. The archive contains only `SKILL.md`, `main.py`, `scripts/`, `schemas/`, `references/`, and `themes/`; repository README files, demos, tests, eval fixtures, design documents, and Git metadata are excluded.
 
 ---
 
 ## Version History
+
+**v2.30.0** — Playback and short-window geometry release: play mode is now a measured surface instead of an assumption. `scripts/browser_geometry_qa.py` gains `--mode window|present|both`, a `--laptop-window` viewport (`1440x733`), and a new `browser-geometry-content-clipped` hard failure that catches body copy, list rows, table cells and footers cropped by the slide box — previously only titles were checked, and only in window mode at 900px-tall viewports. The release-gate desktop geometry step now runs all three window shapes in both modes. Two new strict validators encode the runtime bugs behind that gap: `playback_scale_safety` rejects a root font size driven by window width (play mode pins slides to a fixed `1440x900` box, so width-driven typography truncates dense slides on the projector while looking correct in the window), and `canvas_visibility_guard` rejects canvas buffers sized from `getBoundingClientRect()` without a small-rect guard (a hidden slide reports `0x0`, collapsing an animated cover to a 1x1 buffer stretched into a flat gradient). Generators gained the missing short-window rhythm: the native-core shells, Swiss Modern evidence stacks, the unified profile renderer, the Blue Sky starter and the Fantasy Rainbow theme all compact at `max-height: 860px` instead of clipping at a real laptop window height, display numerals keep a line box tall enough for their glyphs, and long phone showcase lists fall back to two compact columns rather than losing rows. Blue Sky and Vintage Editorial production demos are fixed accordingly, and `references/base-css.md` plus `references/impeccable-anti-patterns.md` document the play-mode geometry contract, the hidden-element measurement rule, and window-mode-only verification as anti-patterns.
 
 **v2.29.3** — Fantasy Rainbow content fidelity release: the iridescence renderer no longer emits slide-creator's own product copy. The hero, fracture, brief, contract, gates, runtime, modes, and closing scenes now render the caller's `BRIEF.json` instead of hardcoded demo strings, and a shared label/description splitter feeds the two-part scene components. The spectrum display total is derived from the item count rather than a fixed `22`, explicit `supporting_facts` take precedence over facts derived from `claim` and `explanation` so truncated duplicate fragments no longer appear, and `brief` fields emit three grid cells so body text stops wrapping inside the narrow label column. Decks longer than the twelve-scene list now cycle the middle scenes instead of repeating `use-cases`, which previously tripped the visual variety gate and made decks over eleven pages ungeneratable; scene mapping for the first ten content pages is unchanged.
 

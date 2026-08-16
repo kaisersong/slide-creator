@@ -71,7 +71,7 @@ body { height: 100%; font-family: 'Work Sans', 'Noto Sans SC', sans-serif; backg
 
 /* LAYOUT HELPERS */
 .content-wrapper {
-  flex: 1; display: flex; flex-direction: column;
+  flex: 1; min-height: 0; display: flex; flex-direction: column;
   padding: clamp(40px, 6vh, 80px) clamp(32px, 6vw, 100px);
   max-width: 900px; margin: 0 auto; width: 100%;
   position: relative; z-index: 2;
@@ -276,6 +276,13 @@ body.presenting #present-counter { display: block; }
 body.presenting.presenting-black .slide { visibility: hidden !important; }
 body.presenting.presenting-black::after { content: ''; position: fixed; inset: 0; background: #000; z-index: 99999; }
 body.presenting .slide-credit { display: none !important; }
+
+/* Real laptop browser windows leave 730-860px of usable height; without this tier the
+   dense workflow page pushes the running footer past the slide edge. */
+@media (max-height: 860px) {
+  .content-wrapper { padding: clamp(20px, 3.4vh, 56px) clamp(28px, 5.4vw, 84px); }
+  .slide-footer { padding: 8px clamp(28px, 5.4vw, 84px); }
+}
 
 @media (max-height: 600px) {
   #nav-dots { display: none; }
@@ -762,7 +769,7 @@ class SlidePresentation {
   var last = slides[slides.length - 1];
   var credit = document.createElement('div');
   credit.className = 'slide-credit';
-  credit.textContent = 'By kai-slide-creator v2.29.2 · Vintage Editorial';
+  credit.textContent = 'By kai-slide-creator v2.30.0 · Vintage Editorial';
   last.appendChild(credit);
 })();
 

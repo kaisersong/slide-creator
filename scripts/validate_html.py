@@ -1337,6 +1337,105 @@ def check_present_mode(soup, content, warnings) -> tuple[bool, str]:
     return True, "Present mode present (F5 + body.presenting CSS + PresentMode)"
 
 
+def check_playback_scale_safety(soup, content, warnings) -> tuple[bool, str]:
+    """Root typography must not be driven by window width.
+
+    Play mode pins every slide to a fixed 1440x900 box and scales it (see
+    references/html-template.md). If the root font size follows the window width, the
+    same slide renders larger inside that fixed box on a wide screen than it did in the
+    window, and dense pages silently lose their bottom rows on the projector.
+    """
+    import re
+
+    css_text = _collect_css_text(soup)
+    if not css_text:
+        return True, "Playback scale safety: no CSS to inspect"
+
+    offenders: list[str] = []
+
+    # 1) html/:root font-size expressed in viewport units
+    root_rule_pattern = re.compile(
+        r"(?:^|[\s,}])(?:html|:root)(?:[^{}]*)\{([^{}]*)\}",
+        re.IGNORECASE,
+    )
+    for match in root_rule_pattern.finditer(css_text):
+        block = match.group(1)
+        for declaration in re.finditer(r"font-size\s*:\s*([^;]+)", block, re.IGNORECASE):
+            value = declaration.group(1)
+            if re.search(r"\d\s*(vw|vmin|vmax)\b", value, re.IGNORECASE):
+                offenders.append(f"root font-size uses viewport width units: {value.strip()[:60]}")
+
+    # 2) html font-size overridden inside width-based media queries
+    media_pattern = re.compile(r"@media[^{]*\((?:min|max)-width[^{]*\{", re.IGNORECASE)
+    for match in media_pattern.finditer(css_text):
+        start = match.end()
+        depth = 1
+        index = start
+        while index < len(css_text) and depth > 0:
+            char = css_text[index]
+            if char == "{":
+                depth += 1
+            elif char == "}":
+                depth -= 1
+            index += 1
+        body = css_text[start : max(start, index - 1)]
+        if re.search(r"(?:^|[\s,}])(?:html|:root)[^{}]*\{[^{}]*font-size\s*:", body, re.IGNORECASE):
+            offenders.append("html/:root font-size overridden inside a width-based @media block")
+
+    if offenders:
+        unique = list(dict.fromkeys(offenders))
+        return False, "Play mode scale hazard: " + "; ".join(unique[:2])
+    return True, "Playback scale safety: root typography independent of window width"
+
+
+def check_canvas_visibility_guard(soup, content, warnings) -> tuple[bool, str]:
+    """Canvas sizing from a measured rect must guard against hidden elements.
+
+    Play mode hides non-current slides with `display: none`, so a cover canvas measured
+    at that moment reports a 0x0 rect. Writing that into `canvas.width/height` collapses
+    the drawing buffer (a 1x1 buffer stretched by CSS looks like a flat gradient), and the
+    artwork never comes back when the cover is shown again.
+    """
+    import re
+
+    scripts = "\n".join(s.string or "" for s in soup.find_all("script"))
+    if not scripts:
+        return True, "Canvas guard: no inline scripts"
+
+    sizes_canvas_from_rect = bool(
+        re.search(r"getBoundingClientRect", scripts)
+    ) and bool(
+        re.search(r"\b(?:this\.)?[A-Za-z_$][\w$]*(?:canvas|cvs|surface)[\w$]*\s*\.\s*(?:width|height)\s*=", scripts, re.IGNORECASE)
+        or re.search(r"\bcanvas\s*\.\s*(?:width|height)\s*=", scripts, re.IGNORECASE)
+    )
+    if not sizes_canvas_from_rect:
+        return True, "Canvas guard: no rect-driven canvas sizing"
+
+    has_guard = bool(
+        re.search(
+            r"(?:rect|r|box|bounds)\s*\.\s*(?:width|height)\s*(?:<|<=)\s*\d"
+            r"|\b(?:width|height|w|h)\s*(?:<|<=)\s*[12]\b",
+            scripts,
+        )
+    )
+    if not has_guard:
+        return (
+            False,
+            "Canvas sized from getBoundingClientRect() without a small-rect guard "
+            "(hidden slide -> 0x0 rect -> collapsed drawing buffer)",
+        )
+
+    has_revisibility_remeasure = "ResizeObserver" in scripts or bool(
+        re.search(r"requestAnimationFrame", scripts)
+    )
+    if not has_revisibility_remeasure:
+        warnings.append(
+            "Canvas guard present but no ResizeObserver/frame re-measure: a resize while the "
+            "canvas is hidden will keep a stale buffer size"
+        )
+    return True, "Canvas guard: rect-driven sizing skips hidden elements"
+
+
 def check_unicode_fe0f(soup, content, warnings) -> tuple[bool, str]:
     """Check for U+FE0F variant selector (emoji presentation modifier) in raw HTML."""
     if "️" in content:
@@ -1434,6 +1533,8 @@ STRICT_CHECKS = [
     check_visual_variety,
     check_css_vars_defined,
     check_present_mode,
+    check_playback_scale_safety,
+    check_canvas_visibility_guard,
     check_unicode_fe0f,
     check_watermark_injection,
     check_hero_rhythm,

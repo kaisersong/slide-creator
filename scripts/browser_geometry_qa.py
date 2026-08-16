@@ -18,6 +18,16 @@ except ImportError:  # pragma: no cover - import availability depends on environ
 
 REPORT_VERSION = 1
 DEFAULT_VIEWPORTS = [{"width": 1600, "height": 900}, {"width": 1280, "height": 720}]
+# Real laptop browser windows (menu bar + tab strip + dock) land near 730-860px of
+# usable height. Dense slides clip there while passing at 900px, so keep an explicit
+# short-window viewport available for gates that want laptop coverage.
+LAPTOP_WINDOW_VIEWPORT = {"width": 1440, "height": 733}
+# Play mode pins every slide to a fixed 1440x900 box and scales it (see
+# references/html-template.md). Window-mode geometry therefore never observes what the
+# audience sees on a projector, which is why measurement modes are explicit.
+MEASUREMENT_MODES = ("window", "present")
+PRESENT_BOX = {"width": 1440, "height": 900}
+CLIPPING_TOLERANCE_PX = 4.0
 DEVICE_PIXEL_RATIO = 1
 QA_FREEZE_CSS = """
 *, *::before, *::after {
@@ -31,6 +41,7 @@ QA_FREEZE_CSS = """
 
 HARD_FAILURE_CODES = {
     "title_clipped": "browser-geometry-title-clipped",
+    "content_clipped": "browser-geometry-content-clipped",
     "text_overflow": "browser-geometry-text-overflow",
     "empty_component": "browser-geometry-empty-component",
     "character_overlap": "browser-geometry-character-overlap",
@@ -255,7 +266,48 @@ def _slide_count(page) -> int:
     return int(page.evaluate("() => Math.max(1, document.querySelectorAll('.slide').length)"))
 
 
-def _activate_slide(page, slide_index: int) -> bool:
+def _enter_present_mode(page) -> bool:
+    """Activate the deck's own play mode (F5 / round play control).
+
+    Play mode pins slides to a fixed 1440x900 box and scales them, so its geometry is
+    independent from window-mode geometry. Headless Chromium rejects the fullscreen
+    request; the deck keeps `body.presenting` regardless, which is what we measure.
+    """
+    return bool(
+        page.evaluate(
+            """
+            () => {
+              const btn = document.getElementById('present-btn');
+              if (btn) btn.click();
+              if (!document.body.classList.contains('presenting')) {
+                document.dispatchEvent(new KeyboardEvent('keydown', { key: 'F5', bubbles: true }));
+              }
+              return document.body.classList.contains('presenting');
+            }
+            """
+        )
+    )
+
+
+def _activate_slide(page, slide_index: int, *, mode: str = "window") -> bool:
+    if mode == "present":
+        return bool(
+            page.evaluate(
+                """
+                ({ slideIndex }) => {
+                  const slides = Array.from(document.querySelectorAll('.slide'));
+                  if (!slides.length) return true;
+                  const idx = Math.max(0, Math.min((slideIndex || 1) - 1, slides.length - 1));
+                  try {
+                    if (typeof ctrl !== 'undefined' && ctrl && typeof ctrl.goTo === 'function') ctrl.goTo(idx);
+                  } catch (_err) {}
+                  slides.forEach((slide, slideIdx) => slide.classList.toggle('p-on', slideIdx === idx));
+                  return slides[idx].classList.contains('p-on');
+                }
+                """,
+                {"slideIndex": slide_index},
+            )
+        )
     return bool(
         page.evaluate(
             """
@@ -535,6 +587,74 @@ def _measure_targets_script() -> str:
     """
 
 
+def _measure_clipping_script() -> str:
+    """Scan one slide for text that the slide box clips vertically.
+
+    `.slide` is `overflow: hidden` by contract, so any text whose box crosses the slide's
+    top or bottom edge is invisible to the audience. Titles are already covered by
+    `title_clipped`; this scan covers body copy, list rows, table cells and footers, which
+    is where dense decks actually lose lines on short windows and in play mode.
+    """
+    return """
+    ({ slideIndex, tolerance, mode }) => {
+      const decorativePattern = /(orb|deco|decor|ornament|shape|rule|divider|ghost|mesh|gradient|blob|bg|cloud|noise|grid|watermark|template-source)/i;
+      const chromeSelector = '[aria-hidden="true"], .notes-panel, #notes-panel, .slide-credit, #present-counter, .edit-hotzone, #present-btn, .nav-dots, #nav-dots';
+      const slides = Array.from(document.querySelectorAll('.slide'));
+      if (!slides.length) return [];
+      const idx = Math.max(0, Math.min((slideIndex || 1) - 1, slides.length - 1));
+      const slide = slides[idx];
+      const slideRect = slide.getBoundingClientRect();
+      if (slideRect.width < 2 || slideRect.height < 2) return [];
+
+      const isScreenReaderOnly = (node) => {
+        const style = window.getComputedStyle(node);
+        if (style.clipPath && style.clipPath !== 'none') return true;
+        if (style.clip && style.clip !== 'auto') return true;
+        return false;
+      };
+
+      const out = [];
+      const candidates = Array.from(slide.querySelectorAll(
+        'h1, h2, h3, h4, h5, h6, p, li, td, th, dd, dt, blockquote, figcaption, code, pre, span, small, strong, em, div, label'
+      ));
+      for (const node of candidates) {
+        const text = (node.innerText || node.textContent || '').replace(/\\s+/g, ' ').trim();
+        if (!text) continue;
+        // Only leaf-ish text holders, so one clipped line is reported once.
+        if (Array.from(node.children).some((child) => (child.textContent || '').trim())) continue;
+        const style = window.getComputedStyle(node);
+        if (style.display === 'none' || style.visibility === 'hidden') continue;
+        if (Number(style.opacity || '1') < 0.05) continue;
+        if (node.closest(chromeSelector)) continue;
+        if (decorativePattern.test(Array.from(node.classList || []).join(' '))) continue;
+        if (isScreenReaderOnly(node)) continue;
+        const rect = node.getBoundingClientRect();
+        if (rect.width < 1 || rect.height < 1) continue;
+        // Require horizontal intersection so off-canvas metadata markers
+        // (left: -9999px) are not reported as clipped content.
+        if (rect.right < slideRect.left + 1 || rect.left > slideRect.right - 1) continue;
+        const below = rect.bottom - slideRect.bottom;
+        const above = slideRect.top - rect.top;
+        const overflow = Math.max(below, above);
+        if (overflow <= tolerance) continue;
+        out.push({
+          slide_index: slideIndex,
+          mode,
+          selector: node.id
+            ? `#${node.id}`
+            : `${node.tagName.toLowerCase()}${Array.from(node.classList || []).slice(0, 1).map((cls) => `.${cls}`).join('')}`,
+          text: text.slice(0, 120),
+          rect: { x: rect.left, y: rect.top, width: rect.width, height: rect.height },
+          slide_rect: { x: slideRect.left, y: slideRect.top, width: slideRect.width, height: slideRect.height },
+          clipped_px: Math.round(overflow * 10) / 10,
+          edge: below >= above ? 'bottom' : 'top',
+        });
+      }
+      return out;
+    }
+    """
+
+
 def _wait_for_deterministic_layout(page) -> bool:
     return bool(
         page.evaluate(
@@ -570,11 +690,17 @@ def _capture_screenshot(page, *, attempts: int = 2) -> bytes:
     raise AssertionError("screenshot retry loop exited without a result")
 
 
-def _measure_viewport(page, viewport: dict[str, int], stable_runs: int) -> tuple[list[dict[str, Any]], bool]:
+def _measure_viewport(
+    page,
+    viewport: dict[str, int],
+    stable_runs: int,
+    *,
+    mode: str = "window",
+) -> tuple[list[dict[str, Any]], bool]:
     slide_records: list[dict[str, Any]] = []
     overall_stable = True
     for slide_index in range(1, _slide_count(page) + 1):
-        _activate_slide(page, slide_index)
+        _activate_slide(page, slide_index, mode=mode)
         _wait_for_deterministic_layout(page)
         signatures: list[list[dict[str, Any]]] = []
         measurements: list[dict[str, Any]] = []
@@ -585,12 +711,20 @@ def _measure_viewport(page, viewport: dict[str, int], stable_runs: int) -> tuple
             )
             signatures.append(_measurement_signature(run_measurements))
             measurements = run_measurements
+        for item in measurements:
+            item["mode"] = mode
+        clipped = page.evaluate(
+            _measure_clipping_script(),
+            {"slideIndex": slide_index, "tolerance": CLIPPING_TOLERANCE_PX, "mode": mode},
+        )
         stable = all(signature == signatures[0] for signature in signatures[1:])
         overall_stable = overall_stable and stable
         slide_records.append(
             {
                 "slide_index": slide_index,
+                "mode": mode,
                 "measurements": measurements,
+                "clipped": clipped,
                 "screenshot_bytes": _capture_screenshot(page),
             }
         )
@@ -682,6 +816,36 @@ def _geometry_violations(measurements: list[dict[str, Any]], *, evidence_image: 
     return violations
 
 
+def _clipping_violations(
+    clipped: list[dict[str, Any]],
+    *,
+    viewport: dict[str, int],
+    mode: str,
+    evidence_image: str,
+) -> list[dict[str, Any]]:
+    violations: list[dict[str, Any]] = []
+    for item in clipped:
+        violations.append(
+            {
+                "type": "content_clipped",
+                "code": HARD_FAILURE_CODES["content_clipped"],
+                "severity": "hard",
+                "mode": mode,
+                "viewport": dict(viewport),
+                "slide_index": item.get("slide_index"),
+                "selector": item.get("selector"),
+                "role": "text",
+                "text": item.get("text"),
+                "rect": _round_rect(item.get("rect", {})),
+                "slide_rect": _round_rect(item.get("slide_rect", {})),
+                "clipped_px": item.get("clipped_px"),
+                "edge": item.get("edge"),
+                "evidence_image": evidence_image,
+            }
+        )
+    return violations
+
+
 def analyze_browser_geometry_html(
     html_text: str,
     *,
@@ -689,14 +853,20 @@ def analyze_browser_geometry_html(
     viewports: list[dict[str, int]] | None = None,
     stable_runs: int = 3,
     artifact_dir: str | Path | None = None,
+    modes: tuple[str, ...] | list[str] | None = None,
 ) -> dict[str, Any]:
     viewports = viewports or DEFAULT_VIEWPORTS
+    modes = tuple(modes) if modes else ("window",)
+    unknown_modes = [mode for mode in modes if mode not in MEASUREMENT_MODES]
+    if unknown_modes:
+        raise ValueError(f"unsupported measurement modes: {unknown_modes}")
     all_measurements: list[dict[str, Any]] = []
     violations: list[dict[str, Any]] = []
     telemetry: list[dict[str, Any]] = []
     layout_settled = True
     stable = True
     screenshot_refs: list[str] = []
+    present_mode_entered: dict[str, bool] = {}
 
     with tempfile.TemporaryDirectory(prefix="browser-geometry-qa-") as temp_dir:
         html_path = Path(temp_dir) / "deck.html"
@@ -704,38 +874,63 @@ def analyze_browser_geometry_html(
         playwright, browser = _launch_browser()
         try:
             for viewport in viewports:
-                context = browser.new_context(
-                    viewport={"width": int(viewport["width"]), "height": int(viewport["height"])},
-                    device_scale_factor=DEVICE_PIXEL_RATIO,
-                )
-                page = context.new_page()
-                try:
-                    page.goto(html_path.as_uri(), wait_until="load", timeout=20000)
-                    page.add_style_tag(content=QA_FREEZE_CSS)
-                    layout_settled = _wait_for_deterministic_layout(page) and layout_settled
-                    slide_records, viewport_stable = _measure_viewport(page, viewport, stable_runs)
-                    stable = stable and viewport_stable
-                    for record in slide_records:
-                        measurements = record["measurements"]
-                        screenshot_bytes = record["screenshot_bytes"]
-                        evidence_image = _artifact_reference(
-                            screenshot_bytes,
-                            artifact_dir=artifact_dir,
-                            label=(
-                                f"browser-geometry-slide-{record['slide_index']}-"
-                                f"{viewport['width']}x{viewport['height']}"
-                            ),
+                for mode in modes:
+                    context = browser.new_context(
+                        viewport={"width": int(viewport["width"]), "height": int(viewport["height"])},
+                        device_scale_factor=DEVICE_PIXEL_RATIO,
+                    )
+                    page = context.new_page()
+                    try:
+                        page.goto(html_path.as_uri(), wait_until="load", timeout=20000)
+                        page.add_style_tag(content=QA_FREEZE_CSS)
+                        layout_settled = _wait_for_deterministic_layout(page) and layout_settled
+                        if mode == "present":
+                            entered = _enter_present_mode(page)
+                            present_mode_entered[f"{viewport['width']}x{viewport['height']}"] = entered
+                            if not entered:
+                                telemetry.append(
+                                    {
+                                        "type": "needs_contract_policy",
+                                        "reason": "present_mode_not_entered",
+                                        "viewport": dict(viewport),
+                                    }
+                                )
+                                continue
+                            _wait_for_deterministic_layout(page)
+                        slide_records, viewport_stable = _measure_viewport(
+                            page, viewport, stable_runs, mode=mode
                         )
-                        screenshot_refs.append(evidence_image)
-                        all_measurements.extend(measurements)
-                        violations.extend(_geometry_violations(measurements, evidence_image=evidence_image))
-                        contrast_violations, contrast_telemetry = _contrast_violations(
-                            measurements, screenshot_bytes, evidence_image=evidence_image
-                        )
-                        violations.extend(contrast_violations)
-                        telemetry.extend(contrast_telemetry)
-                finally:
-                    context.close()
+                        stable = stable and viewport_stable
+                        for record in slide_records:
+                            measurements = record["measurements"]
+                            screenshot_bytes = record["screenshot_bytes"]
+                            evidence_image = _artifact_reference(
+                                screenshot_bytes,
+                                artifact_dir=artifact_dir,
+                                label=(
+                                    f"browser-geometry-{mode}-slide-{record['slide_index']}-"
+                                    f"{viewport['width']}x{viewport['height']}"
+                                ),
+                            )
+                            screenshot_refs.append(evidence_image)
+                            all_measurements.extend(measurements)
+                            violations.extend(_geometry_violations(measurements, evidence_image=evidence_image))
+                            violations.extend(
+                                _clipping_violations(
+                                    record.get("clipped", []),
+                                    viewport=viewport,
+                                    mode=mode,
+                                    evidence_image=evidence_image,
+                                )
+                            )
+                            if mode == "window":
+                                contrast_violations, contrast_telemetry = _contrast_violations(
+                                    measurements, screenshot_bytes, evidence_image=evidence_image
+                                )
+                                violations.extend(contrast_violations)
+                                telemetry.extend(contrast_telemetry)
+                    finally:
+                        context.close()
         finally:
             browser.close()
             playwright.stop()
@@ -751,6 +946,8 @@ def analyze_browser_geometry_html(
         "hard_violation_count": len(violations),
         "telemetry_count": len(telemetry),
         "viewport_count": len(viewports),
+        "mode_count": len(modes),
+        "clipped_violation_count": len([v for v in violations if v.get("type") == "content_clipped"]),
         "stable_measurement": stable,
     }
     return {
@@ -765,6 +962,9 @@ def analyze_browser_geometry_html(
         "diagnostics": diagnostics,
         "runner": {
             "viewports": viewports,
+            "modes": list(modes),
+            "present_mode_entered": present_mode_entered,
+            "clipping_tolerance_px": CLIPPING_TOLERANCE_PX,
             "device_pixel_ratio": DEVICE_PIXEL_RATIO,
             "stable_runs": stable_runs,
             "fonts_ready": True,
@@ -785,6 +985,7 @@ def analyze_browser_geometry_path(
     viewports: list[dict[str, int]] | None = None,
     stable_runs: int = 3,
     artifact_dir: str | Path | None = None,
+    modes: tuple[str, ...] | list[str] | None = None,
 ) -> dict[str, Any]:
     report = analyze_browser_geometry_html(
         _read_text(path),
@@ -792,6 +993,7 @@ def analyze_browser_geometry_path(
         viewports=viewports,
         stable_runs=stable_runs,
         artifact_dir=artifact_dir,
+        modes=modes,
     )
     report["html_path"] = str(path)
     return report
@@ -815,16 +1017,33 @@ def main() -> int:
     parser.add_argument("--output", help="Optional output path for the JSON report")
     parser.add_argument("--artifact-dir", help="Directory for evidence screenshots")
     parser.add_argument("--viewport", action="append", type=_parse_viewport, help="Viewport as WIDTHxHEIGHT")
+    parser.add_argument(
+        "--laptop-window",
+        action="store_true",
+        help=f"Add the short laptop window viewport ({LAPTOP_WINDOW_VIEWPORT['width']}x{LAPTOP_WINDOW_VIEWPORT['height']})",
+    )
+    parser.add_argument(
+        "--mode",
+        choices=("window", "present", "both"),
+        default="window",
+        help="Measure window scrolling geometry, play-mode geometry (fixed 1440x900 box), or both",
+    )
     parser.add_argument("--stable-runs", type=int, default=3, help="Repeated measurements per viewport")
     parser.add_argument("--strict", action="store_true", help="Return exit code 1 when hard failures exist")
     args = parser.parse_args()
 
+    viewports = list(args.viewport or DEFAULT_VIEWPORTS)
+    if args.laptop_window and LAPTOP_WINDOW_VIEWPORT not in viewports:
+        viewports.append(dict(LAPTOP_WINDOW_VIEWPORT))
+    modes = MEASUREMENT_MODES if args.mode == "both" else (args.mode,)
+
     report = analyze_browser_geometry_path(
         args.html_path,
         preset=args.preset,
-        viewports=args.viewport or DEFAULT_VIEWPORTS,
+        viewports=viewports,
         stable_runs=args.stable_runs,
         artifact_dir=args.artifact_dir,
+        modes=modes,
     )
     text = json.dumps(report, ensure_ascii=False, indent=2)
     if args.output:

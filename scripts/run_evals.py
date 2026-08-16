@@ -31,7 +31,12 @@ from low_context import (  # noqa: E402
 )
 from preset_support import preset_support_tier  # noqa: E402
 from ai_advised_eval import analyze_ai_advised_path  # noqa: E402
-from browser_geometry_qa import analyze_browser_geometry_path  # noqa: E402
+from browser_geometry_qa import (  # noqa: E402
+    DEFAULT_VIEWPORTS,
+    LAPTOP_WINDOW_VIEWPORT,
+    MEASUREMENT_MODES,
+    analyze_browser_geometry_path,
+)
 from compare_demo_parity import run_demo_parity as run_demo_parity_gate  # noqa: E402
 from export_smoke import run_export_smoke  # noqa: E402
 from pptx_export_smoke import run_pptx_export_smoke  # noqa: E402
@@ -824,9 +829,15 @@ def _evaluate_rendered_case(
     browser_geometry_report_path = None
     if run_browser_geometry or case.get("run_browser_geometry"):
         try:
+            # Desktop geometry covers three window shapes and both playback modes:
+            # 1600x900 and 1280x720 are the historical defaults, 1440x733 is the real
+            # laptop browser window where dense slides clip, and play mode pins slides
+            # to a fixed 1440x900 box whose geometry window mode never observes.
             browser_geometry_report = analyze_browser_geometry_path(
                 rendered_html_path,
                 preset=packet["preset"],
+                viewports=[*DEFAULT_VIEWPORTS, dict(LAPTOP_WINDOW_VIEWPORT)],
+                modes=MEASUREMENT_MODES,
                 stable_runs=1,
                 artifact_dir=case_dir / "browser-geometry-evidence",
             )

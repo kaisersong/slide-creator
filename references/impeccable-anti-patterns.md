@@ -146,6 +146,28 @@
 
 ---
 
+## Playback & Runtime（播放与运行时）
+
+### 21. 根字号跟随窗口宽度（Root Font Size Driven by Window Width）— CLI
+- **检测：** `html { font-size: ...vw }`、或 `html` / `:root` 的 `font-size` 出现在 `@media (min-width|max-width)` 块里
+- **为什么是硬伤：** 播放模式把幻灯片钉成固定 **1440×900** 盒子再整体缩放（`references/html-template.md`）。根字号跟着窗口宽度长，盒子却不变——1080p 全屏时字号比设计基准大出一截，密集页从底部被裁，而窗口浏览时一切正常，所以只在上台那一刻暴露
+- **修复：** 播放相关的排版一律基于固定基准；需要响应式就用 `clamp()` 配 `vh`/内容盒，不要动根字号。若历史文件必须保留，最低限度加 `html:has(body.presenting) { font-size: 16px !important }`
+- **slide-creator 已有：** `scripts/validate_html.py --strict` → `playback_scale_safety`；`references/base-css.md` → Play Mode Geometry Contract
+
+### 22. 对隐藏元素测尺寸（Measuring a Hidden Element for Canvas Sizing）— CLI
+- **检测：** 脚本里 `canvas.width =` / `canvas.height =` 的取值来自 `getBoundingClientRect()`，且附近没有小尺寸守卫（`rect.width < 2` 这类）
+- **为什么是硬伤：** 播放模式给非当前页加 `display: none`。进全屏本身会触发一次 `resize`，此刻封面若不是当前页，rect 拿到 `0×0`，画布被压成 1×1 再被 CSS 拉满整屏——纹样消失只剩一片渐变，切回封面也不恢复
+- **修复：** ① `rect < 2px` 直接返回、不动画布；② 用 `ResizeObserver` 在元素变可见时补测一次；③ 保留原有 `window resize` 兜底。不要用 `Math.max(1, rect.width)`（那就是 1×1 bug），也不要逐帧比对——播放模式的 `transform: scale` 会让布局盒与 rect 永不相等，导致每帧重建画布
+- **slide-creator 已有：** `scripts/validate_html.py --strict` → `canvas_visibility_guard`；`themes/fantasy-rainbow/starter.html` 是正确实现的参考
+
+### 23. 只在窗口模式验收（Verifying Window Mode Only）— Browser
+- **检测：** 交付前只跑了窗口尺寸的几何检查，没跑播放模式；或只测 900px 以上的窗口高度
+- **为什么是硬伤：** 播放盒子固定 1440×900，与窗口几何是两套坐标；真实笔记本浏览器窗口可用高度常在 730–860px，密集页在 900px 通过、在 733px 掉行
+- **修复：** `python3 scripts/browser_geometry_qa.py deck.html --mode both --laptop-window --strict`
+- **slide-creator 已有：** `browser-geometry-content-clipped` 硬失败码
+
+---
+
 ## 排除项（不适用于幻灯片）
 
 | 反模式 | 排除原因 |
@@ -180,3 +202,6 @@
 | 23 | U+FE0F 变体选择符 | `\uFE0F` 或 `\xEF\xB8\x8F` 出现在 HTML 中 | 移除所有变体选择符，使用基础 emoji |
 | 24 | 组件单调 | >50% 幻灯片使用同一种组件模式 | 至少一半使用 2-3 种不同组件类型 |
 | 27 | 深色文字在亮色卡片上 | `background: var(--card-bg)` 容器内子元素 `color:.*#1a1a1a` / `rgba\(26,26,26` / `#333` | 替换为 `var(--text-on-card)` 或 `rgba(255,255,255,*)` |
+| 28 | 根字号跟随窗口宽度 | `html`/`:root` 的 `font-size` 使用 `vw`/`vmin`/`vmax`，或出现在 `@media (min-width\|max-width)` 块内 | 改为固定基准；播放盒是固定 1440×900 |
+| 29 | 对隐藏元素测尺寸 | `getBoundingClientRect()` 驱动 `canvas.width/height` 且无 `rect.width < 2` 类守卫 | 加守卫 + `ResizeObserver` 补测 |
+| 30 | 只在窗口模式验收 | 几何检查未跑 `--mode both`，或未覆盖 ≤860px 窗口高度 | 跑 `--mode both --laptop-window` |

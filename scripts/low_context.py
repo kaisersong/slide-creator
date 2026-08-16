@@ -2891,6 +2891,30 @@ def _assemble_shell_html(
 """
 
 
+SHORT_WINDOW_SHELL_CSS = """
+/* Short laptop windows.
+   Real browser windows on a laptop leave roughly 730-860px of usable height once the menu
+   bar, tab strip and dock are subtracted. Without this tier a dense slide fits at 900px and
+   clips at the top and bottom edges at 733px — the geometry people actually rehearse in.
+   Play mode is unaffected: it pins slides to a fixed 1440x900 box and scales that box. */
+@media (max-height: 860px) {
+    .slide-content {
+        gap: clamp(6px, 1.05vw, 13px);
+        padding: clamp(18px, 3.2vw, 40px);
+    }
+    .slide-num-label { bottom: 16px; }
+}
+
+@media (max-height: 760px) {
+    .slide-content {
+        gap: clamp(5px, 0.85vw, 10px);
+        padding: clamp(14px, 2.6vw, 30px);
+    }
+    .slide-num-label { bottom: 12px; }
+}
+""".strip()
+
+
 def _build_non_swiss_shell_css(style_contract: dict[str, Any], preset: str) -> str:
     contract_css = "\n\n".join(style_contract["css_blocks"])
     tokens = style_contract.get("tokens", {})
@@ -3216,6 +3240,8 @@ body.presenting.presenting-black::after {{
 }}
 
 body.presenting .slide-credit {{ display: none !important; }}
+
+{SHORT_WINDOW_SHELL_CSS}
 """.strip()
 
 
@@ -4753,6 +4779,21 @@ body.presenting.presenting-black::after {{
 }}
 
 body.presenting .slide-credit {{ display: none !important; }}
+
+{SHORT_WINDOW_SHELL_CSS}
+
+/* Swiss Modern dense evidence stacks on short windows. */
+@media (max-height: 860px) {{
+    .inst-blocks {{ gap: clamp(11px, 1.5vw, 18px); }}
+    .inst-block {{ padding: clamp(11px, 1.5vw, 17px); gap: 6px; }}
+    .feat-grid {{ gap: clamp(9px, 1.3vw, 15px); }}
+}}
+
+@media (max-height: 760px) {{
+    .inst-blocks {{ gap: clamp(9px, 1.2vw, 14px); }}
+    .inst-block {{ padding: clamp(9px, 1.2vw, 14px); gap: 5px; }}
+    .feat-grid {{ gap: clamp(7px, 1vw, 12px); }}
+}}
 """.strip()
 
 

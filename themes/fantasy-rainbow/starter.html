@@ -429,6 +429,35 @@ body:hover #present-btn { opacity: 1; pointer-events: auto; }
   .iri-gate { min-height: 250px; padding: 18px 14px; }
 }
 
+/* Short laptop windows: real browser windows leave 730-860px of usable height, and the
+   scene blocks below carry fixed min-heights that only fit a 900px+ window. Play mode is
+   unaffected — it pins slides to a fixed 1440x900 box. */
+@media (max-height: 860px) {
+  .iri-scene { padding: clamp(20px, 3.2vh, 42px) clamp(30px, 3.9vw, 56px); }
+  .iri-runtime-stage { min-height: 0; }
+  .iri-runtime-screen { padding: 18px 22px; }
+  .iri-brief-code { min-height: 0; padding: clamp(16px, 2.2vw, 26px); }
+  .iri-pipeline-step { min-height: 0; padding: 14px 12px; }
+  .iri-contract-layer { padding: 11px 0; gap: 16px; }
+  .iri-fracture-item { padding: 10px 0; }
+  .iri-field { padding: 9px 0; }
+  .iri-fact { padding-top: 9px; }
+  .iri-fact strong { margin-top: 5px; }
+}
+
+@media (max-height: 780px) {
+  .iri-scene { padding: clamp(16px, 2.6vh, 32px) clamp(26px, 3.5vw, 48px); }
+  .iri-runtime-screen { padding: 14px 18px; }
+  .iri-runtime-screen strong { font-size: clamp(26px, 3.1vw, 46px); }
+  .iri-key { min-height: 0; padding: 12px 14px; }
+  .iri-key b { font-size: 15px; }
+  .iri-key span { margin-top: 6px; }
+  .iri-contract-layer { padding: 8px 0; gap: 12px; }
+  .iri-mode { min-height: 0; padding: 18px 22px; }
+  .iri-quadrant { min-height: 0; padding: 14px 16px; }
+  .iri-pipeline-step { min-height: 0; padding: 11px 10px; }
+}
+
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
   *, *::before, *::after { animation: none !important; transition: none !important; }

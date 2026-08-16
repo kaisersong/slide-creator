@@ -74,6 +74,17 @@ img {
 }
 
 /* Responsive breakpoints - height-based */
+/* Real laptop browser windows (menu bar + tab strip + dock) sit near 730-860px of usable
+   height. Without this tier, dense slides pass at 900px and clip at 733px. */
+@media (max-height: 860px) {
+    :root {
+        --slide-padding: clamp(0.85rem, 3.5vw, 2.5rem);
+        --content-gap: clamp(0.45rem, 1.7vw, 1.25rem);
+        --title-size: clamp(1.35rem, 4.75vw, 3rem);
+        --body-size: clamp(0.72rem, 1.35vw, 1.05rem);
+    }
+}
+
 @media (max-height: 700px) {
     :root {
         --slide-padding: clamp(0.75rem, 3vw, 2rem);
@@ -110,6 +121,49 @@ img {
     }
 }
 ```
+
+### Play Mode Geometry Contract（播放模式几何契约）
+
+Play mode does **not** reuse window geometry. `body.presenting .slide` is pinned to a fixed
+**1440×900** box and scaled with `transform` (see `references/html-template.md`). Two rules follow:
+
+1. **Root typography must not depend on window width.** Never set `html { font-size }` in `vw`
+   units and never override it inside a `@media (min-width | max-width)` block. Inside the fixed
+   1440×900 box a width-driven root font size grows on a wide screen while the box does not, so
+   dense slides lose their bottom rows on the projector while looking correct in the window.
+   `scripts/validate_html.py --strict` fails this as `playback_scale_safety`.
+2. **Verify in play mode, not only in the window.** Window-mode checks cannot see play-mode
+   clipping. Use:
+
+   ```bash
+   python3 scripts/browser_geometry_qa.py deck.html --mode both --laptop-window --strict
+   ```
+
+   `--mode both` measures the window and the fixed play-mode box; `--laptop-window` adds the
+   1440×733 viewport where short-window clipping actually shows up.
+
+### Animated Covers: Never Measure a Hidden Element
+
+Play mode sets `display: none` on every non-current slide. A cover canvas measured at that moment
+reports a `0×0` rect; writing it into `canvas.width/height` collapses the drawing buffer, and CSS
+then stretches a 1×1 buffer into a flat gradient — the artwork does not come back when the cover is
+shown again. Required shape:
+
+```js
+resize() {
+  const rect = this.canvas.getBoundingClientRect();
+  if (rect.width < 2 || rect.height < 2) return false;   // hidden: keep the existing buffer
+  /* ... size the canvas ... */
+  return true;
+}
+// re-measure when the element becomes visible again
+new ResizeObserver(() => this.resize()).observe(this.canvas);
+window.addEventListener('resize', () => this.resize());
+```
+
+Do not "fix" this with `Math.max(1, rect.width)` — that is the 1×1 buffer bug. Do not poll every
+frame either: play-mode slides carry `transform: scale`, so layout-box and rect measurements never
+agree and the canvas would be rebuilt on every frame.
 
 ### Content Density Limits
 

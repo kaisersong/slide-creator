@@ -216,6 +216,12 @@ python3 scripts/preset_release_gate.py \
 
 该 gate 会阻断 desktop/mobile geometry hard failure、缺失 PresetContract 组件、空 export slot、AI-advised 内容/节奏 proxy failure、未满足前置条件的 style-native promotion，以及真实 PPTX 导出或页数不匹配失败。
 
+桌面几何会在三种窗口形状下测量——`1600x900`、`1280x720`，以及真实笔记本窗口 `1440x733`——并且窗口模式与播放模式都测：播放模式把幻灯片钉成固定 `1440x900` 盒子，那套几何是窗口模式永远观察不到的。任何被幻灯片盒子纵向裁掉的文字都会以 `browser-geometry-content-clipped` 失败。单份 deck 可以这样跑：
+
+```bash
+python3 scripts/browser_geometry_qa.py deck.html --mode both --laptop-window --strict
+```
+
 **契约对齐：验证脚本必须与生成契约一致**
 
 validate.py 的检查项必须与 SKILL.md / html-template.md / js-engine.md 的实际契约保持一致。例如：
@@ -512,11 +518,13 @@ slide-creator **无外部依赖**。Python 3 仅用于规划阶段可选的图�
 
 ## 仅运行所需的 Skill ZIP
 
-下载 [`kai-slide-creator-v2.29.3-skill-runtime.zip`](https://github.com/kaisersong/slide-creator/releases/download/v2.29.3/kai-slide-creator-v2.29.3-skill-runtime.zip)，即可获得精简的 Skill 安装包。将压缩包顶层的 `kai-slide-creator/` 目录解压到代理的 skills 目录。压缩包只包含 `SKILL.md`、`main.py`、`scripts/`、`schemas/`、`references/` 和 `themes/`；不会包含仓库 README、Demo、测试、eval fixture、设计文档和 Git 元数据。
+下载 [`kai-slide-creator-v2.30.0-skill-runtime.zip`](https://github.com/kaisersong/slide-creator/releases/download/v2.30.0/kai-slide-creator-v2.30.0-skill-runtime.zip)，即可获得精简的 Skill 安装包。将压缩包顶层的 `kai-slide-creator/` 目录解压到代理的 skills 目录。压缩包只包含 `SKILL.md`、`main.py`、`scripts/`、`schemas/`、`references/` 和 `themes/`；不会包含仓库 README、Demo、测试、eval fixture、设计文档和 Git 元数据。
 
 ---
 
 ## 版本日志
+
+**v2.30.0** — 播放模式与矮窗口几何发版：播放模式从此是被测量的交付面，而不是靠假设。`scripts/browser_geometry_qa.py` 新增 `--mode window|present|both`、`--laptop-window` 视口（`1440x733`），以及新的硬失败码 `browser-geometry-content-clipped`——它会抓住被幻灯片盒子裁掉的正文、列表行、表格单元与页脚；此前只检查标题，而且只在窗口模式、900px 高的视口下检查。发布门的桌面几何步骤现在跑三种窗口形状 × 两种模式。两条新的 strict 校验把这个盲区背后的运行时 bug 固化下来：`playback_scale_safety` 拒绝按窗口宽度驱动的根字号（播放模式把幻灯片钉成固定 `1440x900` 盒子，宽度驱动的排版会在投屏上截断密集页，而窗口里看起来完全正常），`canvas_visibility_guard` 拒绝用 `getBoundingClientRect()` 定尺寸却没有小尺寸守卫的画布（隐藏的幻灯片报告 `0x0`，动效封面会塌成 1×1 缓冲再被拉成一片纯渐变）。生成器补上了缺失的矮窗口节奏：native core 两个 shell、Swiss Modern 证据栈、统一 profile 渲染器、Blue Sky starter 与奇幻彩虹主题都在 `max-height: 860px` 收紧，而不是在真实笔记本窗口高度下裁切；展示型数字保留足够容纳字形的行盒；手机端的长展示列表回退成两列紧凑排布，而不是丢行。Blue Sky 与 Vintage Editorial 生产 demo 同步修复，`references/base-css.md` 与 `references/impeccable-anti-patterns.md` 补齐播放模式几何契约、不得对隐藏元素测尺寸的规则，以及「只在窗口模式验收」这条反模式。
 
 **v2.29.3** — 奇幻彩虹内容忠实度发版：虹彩渲染器不再输出 slide-creator 自身的产品文案。hero、fracture、brief、contract、gates、runtime、modes 与 closing 场景全部改为渲染调用方的 `BRIEF.json`，并新增统一的「小标题 + 说明」拆分逻辑供双段式组件复用。spectrum 的展示总数改为按要点数派生，不再固定为 `22`；显式给出的 `supporting_facts` 优先于从 `claim` 和 `explanation` 派生的事实，被截断的重复碎片不再出现；`brief` 字段改为输出三个网格单元，正文不再挤在窄标签列里换行。超过十二个场景的 deck 现在会循环复用中间场景，而不是重复 `use-cases`——后者会触发视觉多样性门禁，导致十一页以上的 deck 根本无法生成；前十个内容页的场景映射保持不变。
 
