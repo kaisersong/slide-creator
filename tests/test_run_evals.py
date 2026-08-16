@@ -285,11 +285,18 @@ def test_run_suite_merges_browser_geometry_hard_failures(tmp_path: Path, monkeyp
     manifest_path = tmp_path / "manifest.json"
     write_json(manifest_path, manifest)
 
-    def fake_geometry(path, *, preset=None, artifact_dir=None, stable_runs=1):
+    def fake_geometry(path, *, preset=None, artifact_dir=None, stable_runs=1, viewports=None, modes=None):
         assert Path(path).name == "deck.html"
         assert preset == "Paper & Ink"
         assert artifact_dir is not None
         assert stable_runs == 1
+        # Desktop geometry must cover the laptop window and both playback modes.
+        assert viewports == [
+            {"width": 1600, "height": 900},
+            {"width": 1280, "height": 720},
+            {"width": 1440, "height": 733},
+        ]
+        assert tuple(modes) == ("window", "present")
         return {
             "pass": False,
             "hard_failures": ["browser-geometry-character-overlap"],
@@ -384,7 +391,7 @@ def test_run_suite_merges_contract_export_mobile_ai_and_pptx_gate_reports(tmp_pa
             "pptx_path": str(Path(output_dir) / "paper-ink.pptx"),
         }
 
-    def fake_geometry(path, *, preset=None, artifact_dir=None, stable_runs=1, viewports=None):
+    def fake_geometry(path, *, preset=None, artifact_dir=None, stable_runs=1, viewports=None, modes=None):
         assert Path(path).name == "deck.html"
         assert preset == "Paper & Ink"
         assert artifact_dir is not None
