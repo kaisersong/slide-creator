@@ -11,6 +11,7 @@ Reference for Phase 3 generation. Contains HTML architecture, JS patterns, anima
 Every generated HTML must include all of the following:
 
 1. **Present mode CSS** — `#present-btn`, `#present-counter`, `body.presenting .slide`, `body.presenting .slide.p-on`, `body.presenting.presenting-black`
+   Hide the browsing counter (`#counter` / `#slide-counter`) while `body.presenting` is active and restore it on exit. Keep page numbers belonging to slide content separate from this global browsing control.
 2. **Edit hotzone HTML** — `<div class="edit-hotzone">` + `<button class="edit-toggle" id="editToggle">` + `#notes-panel`
 3. **`SlidePresentation` class** — navigation, dots, keyboard, touch, wheel, BroadcastChannel; for non-Blue-Sky decks, insert the shared runtime from `references/js-engine.md` verbatim
 4. **`?presenter` branch** — replaces body with notes/timer UI when `?presenter` in URL; do not replace this with a summary snippet
@@ -137,6 +138,7 @@ Every generated HTML must include all of the following:
         body.presenting .slide.p-on { display: flex !important; }
         body.presenting #present-btn { display: none !important; }
         body.presenting #present-counter { display: block; }
+        body.presenting #counter, body.presenting #slide-counter { display: none !important; }
         body.presenting.presenting-black .slide { visibility: hidden !important; }
         body.presenting.presenting-black::after { content: ''; position: fixed; inset: 0; background: #000; z-index: 99999; }
 

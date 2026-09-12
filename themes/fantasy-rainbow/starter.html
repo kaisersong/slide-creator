@@ -381,6 +381,7 @@ body:has(.iri-scene--closing.visible) #brand-mark { color: rgba(247,247,251,.72)
   transition: opacity .2s ease;
 }
 body:hover #present-btn { opacity: 1; pointer-events: auto; }
+body.presenting #counter, body.presenting #slide-counter { display: none !important; }
 #present-counter {
   position: fixed;
   top: 16px;
@@ -623,7 +624,12 @@ body:hover #present-btn { opacity: 1; pointer-events: auto; }
       this.lastFrameAt = now;
       this.drawCount += 1;
       this.gl.useProgram(this.program);
-      this.gl.uniform1f(this.uniforms.time, seconds);
+      // The field repeats every 4π seconds (uTime * 0.5 is an angle).
+      // Wrap in JS double precision before uploading a float to the GPU:
+      // large times quantize the iterative field into bands and blocks.
+      const cycle = 4 * Math.PI;
+      const phase = ((seconds % cycle) + cycle) % cycle;
+      this.gl.uniform1f(this.uniforms.time, phase);
       this.gl.uniform3f(this.uniforms.resolution, this.canvas.width, this.canvas.height, 1);
       this.gl.viewport(0, 0, this.canvas.width, this.canvas.height);
       this.gl.drawArrays(this.gl.TRIANGLE_FAN, 0, 4);
