@@ -465,6 +465,7 @@ body.presenting .slide.p-on {
 }
 body.presenting #present-btn { display: none !important; }
 body.presenting #present-counter { display: block; }
+body.presenting #counter, body.presenting #slide-counter { display: none !important; }
 body.presenting.presenting-black .slide { visibility: hidden !important; }
 body.presenting .slide-credit { display: none !important; }
 
@@ -911,7 +912,7 @@ new PresentMode(new SlidePresentation());
     var last = slides[slides.length - 1];
     var credit = document.createElement('div');
     credit.className = 'slide-credit';
-    credit.textContent = 'By kai-slide-creator v2.30.0 · Fantasy Rainbow';
+    credit.textContent = 'By kai-slide-creator v2.30.1 · Fantasy Rainbow';
     last.appendChild(credit);
 })();
 
@@ -1051,7 +1052,12 @@ new PresentMode(new SlidePresentation());
       this.lastFrameAt = now;
       this.drawCount += 1;
       this.gl.useProgram(this.program);
-      this.gl.uniform1f(this.uniforms.time, seconds);
+      // The field repeats every 4π seconds (uTime * 0.5 is an angle).
+      // Wrap in JS double precision before uploading a float to the GPU:
+      // large times quantize the iterative field into bands and blocks.
+      const cycle = 4 * Math.PI;
+      const phase = ((seconds % cycle) + cycle) % cycle;
+      this.gl.uniform1f(this.uniforms.time, phase);
       this.gl.uniform3f(this.uniforms.resolution, this.canvas.width, this.canvas.height, 1);
       this.gl.viewport(0, 0, this.canvas.width, this.canvas.height);
       this.gl.drawArrays(this.gl.TRIANGLE_FAN, 0, 4);

@@ -70,6 +70,7 @@ Legacy `.ic-orbit`, `.ic-prism`, `.ic-hero-metric`, glass cards, technical grids
 
 - Use a single canvas, one `IridescenceController`, and one requestAnimationFrame id.
 - Start the RAF only while the active page is `slide-1`. Leaving the cover hides the canvas and stops the RAF; returning to the cover restores both.
+- Keep GPU time bounded: wrap elapsed seconds modulo `4 * Math.PI` in JavaScript double precision before uploading `uTime`. The field is periodic because time enters at half speed; wrapping preserves the motion and prevents long-running float quantization, banding, and blocks. Never wrap after conversion to a GPU float.
 - Preserve the reference field geometry: 8 iterations, `uTime * 0.5`, and the original cosine color field. Immediately before direct `gl_FragColor` output, derive `warmBias` only when red exceeds green, then blend toward the approved cold-purple mapping. When `warmBias` is zero, leave the original RGB output untouched so mint, cyan, and neutral highlights survive.
 - Do not add luminance lift, `smoothstep` whitening, or `mix(col, vec3(1.0), ...)`.
 - Shader compile or program link failure triggers fallback without hiding content.

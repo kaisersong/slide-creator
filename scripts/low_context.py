@@ -3209,6 +3209,7 @@ body.presenting .slide {{
 body.presenting .slide.p-on {{ display: flex !important; }}
 body.presenting #present-btn {{ display: none !important; }}
 body.presenting #present-counter {{ display: block; }}
+body.presenting #counter, body.presenting #slide-counter {{ display: none !important; }}
 body.presenting.presenting-black .slide {{ visibility: hidden !important; }}
 body.presenting.presenting-black::after {{
     content: '';
@@ -4758,6 +4759,7 @@ body.presenting .slide {{
 body.presenting .slide.p-on {{ display: flex !important; }}
 body.presenting #present-btn {{ display: none !important; }}
 body.presenting #present-counter {{ display: block; }}
+body.presenting #counter, body.presenting #slide-counter {{ display: none !important; }}
 body.presenting.presenting-black .slide {{ visibility: hidden !important; }}
 body.presenting.presenting-black::after {{
     content: '';
@@ -8620,6 +8622,7 @@ body.presenting .slide.p-on {{
 }}
 body.presenting #present-btn {{ display: none !important; }}
 body.presenting #present-counter {{ display: block; }}
+body.presenting #counter, body.presenting #slide-counter {{ display: none !important; }}
 body.presenting.presenting-black .slide {{ visibility: hidden !important; }}
 body.presenting .slide-credit {{ display: none !important; }}
 

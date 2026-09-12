@@ -1124,3 +1124,43 @@ def test_reviewed_titles_use_semantic_line_breaks_and_cover_only_runtime():
     assert "isCoverActive()" in starter
     assert "this.active = this.isCoverActive();" in starter
     assert "seconds + this.activeIndex() * .61" not in starter
+
+
+def test_iridescence_gpu_time_stays_precise_after_long_runtime():
+    """Exercise the real upload expression, including all shipped runtimes."""
+    import shutil
+    import subprocess
+
+    import pytest
+
+    node = shutil.which("node")
+    if not node:
+        pytest.skip("Node is required to exercise JavaScript float uploads")
+    for path in (STARTER, ROOT / "demos/fantasy-rainbow-zh.html", ROOT / "demos/fantasy-rainbow-en.html"):
+        html = path.read_text(encoding="utf-8")
+        draw = re.search(r"    draw\(seconds\) \{(.*?)\n    \}", html, re.DOTALL)
+        assert draw
+        script = """
+const assert = require('node:assert/strict');
+let uploaded;
+const controller = {
+  ready: true, contextLost: false, resize: () => true,
+  intervals: [], lastFrameAt: 0, drawCount: 0, canvas: {width: 1280, height: 720},
+  uniforms: {time: 'time', resolution: 'resolution'},
+  gl: {useProgram() {}, uniform1f(_, value) {uploaded = Math.fround(value)},
+       uniform3f() {}, viewport() {}, drawArrays() {}}
+};
+const draw = new Function('seconds', DRAW_BODY).bind(controller);
+const period = 4 * Math.PI;
+for (const seconds of [0, 1, 60, 3600, 86400, 604800, 1e7, 1e9]) {
+  assert.equal(draw(seconds), true);
+  assert.ok(uploaded >= 0 && uploaded <= period);
+  assert.ok(Math.abs(uploaded - seconds % period) < 1e-6);
+}
+// Both sides of the wrap represent adjacent angles, with no motion jump.
+draw(period - 1e-5); const before = uploaded * .5;
+draw(period + 1e-5); const after = uploaded * .5;
+assert.ok(Math.abs(Math.sin(before) - Math.sin(after)) < 2e-5);
+assert.ok(Math.abs(Math.cos(before) - Math.cos(after)) < 2e-5);
+""".replace("DRAW_BODY", json.dumps(draw.group(1)))
+        subprocess.run([node, "-e", script], check=True, capture_output=True, text=True)
