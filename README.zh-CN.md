@@ -518,11 +518,13 @@ slide-creator **无外部依赖**。Python 3 仅用于规划阶段可选的图�
 
 ## 仅运行所需的 Skill ZIP
 
-下载 [`kai-slide-creator-v2.30.1-skill-runtime.zip`](https://github.com/kaisersong/slide-creator/releases/download/v2.30.1/kai-slide-creator-v2.30.1-skill-runtime.zip)，即可获得精简的 Skill 安装包。将压缩包顶层的 `kai-slide-creator/` 目录解压到代理的 skills 目录。压缩包只包含 `SKILL.md`、`main.py`、`scripts/`、`schemas/`、`references/` 和 `themes/`；不会包含仓库 README、Demo、测试、eval fixture、设计文档和 Git 元数据。
+下载 [`kai-slide-creator-v2.30.2-skill-runtime.zip`](https://github.com/kaisersong/slide-creator/releases/download/v2.30.2/kai-slide-creator-v2.30.2-skill-runtime.zip)，即可获得精简的 Skill 安装包。将压缩包顶层的 `kai-slide-creator/` 目录解压到代理的 skills 目录。压缩包只包含 `SKILL.md`、`main.py`、`scripts/`、`schemas/`、`references/` 和 `themes/`；不会包含仓库 README、Demo、测试、eval fixture、设计文档和 Git 元数据。
 
 ---
 
 ## 版本日志
+
+**v2.30.2** — 奇幻彩虹播放性能修复：离开封面或暂停播放时停止 WebGL 与封面 CSS 动画，返回后恢复单个动画循环；移除逐帧页面几何遍历。禁用整页位移缩放过渡，保留放映固定缩放，内容改用短淡入，并补齐黑屏遮罩。新增 36 项生命周期回归测试，同步提供精简运行安装 ZIP。
 
 **v2.30.1** — 奇幻彩虹长时间动画与播放界面修复：将 GPU 时间限制在原动画周期内，避免浮点精度下降产生色带和色块；播放模式隐藏全局浏览页码，退出后恢复。同步更新模板、生成器共享壳子和中英文奇幻彩虹 Demo，提供便于企业安装的精简运行 ZIP 包。
 

@@ -68,6 +68,18 @@ body::before {
 body[data-iridescence-active="false"] #iridescence-canvas { display: none; opacity: 0; visibility: hidden; }
 body[data-iridescence-fallback="true"] #iridescence-canvas { opacity: 0; }
 
+/* Optional cover stars share the cover lifecycle, including pseudo-elements. */
+body { --iri-cover-play-state: paused; }
+body[data-cover-animating="true"] { --iri-cover-play-state: running; }
+:is(.iri-scene--hero, [data-cover-animation]),
+:is(.iri-scene--hero, [data-cover-animation])::before,
+:is(.iri-scene--hero, [data-cover-animation])::after,
+:is(.iri-scene--hero, [data-cover-animation]) *,
+:is(.iri-scene--hero, [data-cover-animation]) *::before,
+:is(.iri-scene--hero, [data-cover-animation]) *::after {
+  animation-play-state: var(--iri-cover-play-state) !important;
+}
+
 .slide {
   position: relative;
   z-index: 1;
@@ -84,6 +96,10 @@ body[data-iridescence-fallback="true"] #iridescence-canvas { opacity: 0; }
   padding: clamp(42px, 5.8vh, 64px) clamp(42px, 4.5vw, 66px);
   background: transparent;
   isolation: isolate;
+  /* Keep the presentation viewport scale static; never animate a full slide. */
+  animation: none !important;
+  transition: none !important;
+  will-change: auto;
 }
 .slide::before {
   content: "";
@@ -381,6 +397,13 @@ body:has(.iri-scene--closing.visible) #brand-mark { color: rgba(247,247,251,.72)
   transition: opacity .2s ease;
 }
 body:hover #present-btn { opacity: 1; pointer-events: auto; }
+body.presenting.presenting-black::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 99999;
+  background: #000;
+}
 #present-counter {
   position: fixed;
   top: 16px;
@@ -415,7 +438,13 @@ body:hover #present-btn { opacity: 1; pointer-events: auto; }
 #notes-textarea { width: 100%; min-height: 150px; resize: vertical; border: 0; outline: 0; color: #fff; background: transparent; font: 14px/1.55 var(--iri-display); }
 #notes-collapse-btn { border: 0; color: #fff; background: transparent; cursor: pointer; }
 
-.reveal { opacity: .22; transform: translateY(12px); transition: opacity .45s ease, transform .45s ease; }
+.reveal { opacity: .22; transition: opacity .2s ease; }
+.slide-content, .reveal, .kd-reveal {
+  transform: none;
+  animation: none;
+  transition-property: opacity;
+  will-change: auto;
+}
 .reveal.visible, .kd-reveal.visible, .slide.visible .kd-reveal { opacity: 1; transform: none; }
 
 @media (max-width: 900px) {
@@ -912,7 +941,7 @@ new PresentMode(new SlidePresentation());
     var last = slides[slides.length - 1];
     var credit = document.createElement('div');
     credit.className = 'slide-credit';
-    credit.textContent = 'By kai-slide-creator v2.30.1 · Fantasy Rainbow';
+    credit.textContent = 'By kai-slide-creator v2.30.2 · Fantasy Rainbow';
     last.appendChild(credit);
 })();
 
@@ -930,6 +959,7 @@ new PresentMode(new SlidePresentation());
       this.ready = false;
       this.contextLost = false;
       this.printing = false;
+      this.pageHidden = false;
       this.active = true;
       this.testTime = null;
       this.startedAt = performance.now();
@@ -937,7 +967,8 @@ new PresentMode(new SlidePresentation());
       this.intervals = [];
       this.drawCount = 0;
       this.lossExtension = null;
-      this.scrollSyncTimer = 0;
+      this.slides = Array.from(document.querySelectorAll(".slide"));
+      this.cover = this.slides[0];
       this.slideObserver = null;
       this.motion = matchMedia("(prefers-reduced-motion: reduce)");
       this.vertexSource = "attribute vec2 uv;attribute vec2 position;varying vec2 vUv;void main(){vUv=uv;gl_Position=vec4(position,0.0,1.0);}";
@@ -1065,13 +1096,21 @@ new PresentMode(new SlidePresentation());
     }
 
     shouldAnimate() {
-      return this.active && this.ready && !this.contextLost && !this.printing && !document.hidden && !this.motion.matches && this.testTime === null;
+      return this.active && this.ready && !this.contextLost && !this.suspended() && this.testTime === null;
+    }
+
+    suspended() {
+      return this.printing || this.pageHidden || document.hidden || this.motion.matches || document.body.classList.contains("presenting-black");
     }
 
     frame = (now) => {
       this.rafId = 0;
-      if (!this.shouldAnimate()) return;
-      this.draw((now - this.startedAt) / 1000 + this.activeIndex() * .61);
+      if (!this.shouldAnimate()) {
+        document.body.dataset.coverAnimating = "false";
+        this.stop();
+        return;
+      }
+      this.draw((now - this.startedAt) / 1000);
       this.rafId = requestAnimationFrame(this.frame);
     };
 
@@ -1082,10 +1121,11 @@ new PresentMode(new SlidePresentation());
     stop() {
       if (this.rafId) cancelAnimationFrame(this.rafId);
       this.rafId = 0;
+      this.lastFrameAt = 0;
     }
 
     activeIndex() {
-      const slides = Array.from(document.querySelectorAll(".slide"));
+      const slides = this.slides;
       if (document.body.classList.contains("presenting")) {
         const presented = slides.findIndex((slide) => slide.classList.contains("p-on"));
         if (presented >= 0) return presented;
@@ -1098,18 +1138,27 @@ new PresentMode(new SlidePresentation());
     }
 
     isCoverActive() {
-      return this.activeIndex() === 0;
+      if (!this.cover) return false;
+      if (document.body.classList.contains("presenting")) return this.cover.classList.contains("p-on");
+      // Navigation marks the target before smooth scrolling finishes. Stop at once
+      // when leaving, and wait until the cover is actually back in view to resume.
+      if (!this.cover.classList.contains("visible") && this.slides.some((slide) => slide.classList.contains("visible"))) return false;
+      const rect = this.cover.getBoundingClientRect();
+      return rect.height > 0 && rect.top <= innerHeight / 2 && rect.bottom > innerHeight / 2;
     }
 
     sync() {
       this.active = this.isCoverActive();
       document.body.dataset.iridescenceActive = String(this.active);
       this.canvas.hidden = !this.active;
-      if (!this.active) { this.stop(); return; }
+      const suspended = this.suspended();
+      document.body.dataset.coverAnimating = String(this.active && !suspended && this.testTime === null);
+      if (!this.active || suspended) { this.stop(); return; }
+      if (this.testTime !== null) this.stop();
       if (!this.ready && !this.contextLost) this.init();
       if (!this.ready) return;
       const seconds = this.testTime === null ? Math.max(0, (performance.now() - this.startedAt) / 1000) : this.testTime;
-      this.draw(seconds);
+      if (!this.rafId) this.draw(seconds);
       this.start();
     }
 
@@ -1129,22 +1178,20 @@ new PresentMode(new SlidePresentation());
         this.ready = false;
         this.sync();
       });
-      document.addEventListener("visibilitychange", () => document.hidden ? this.stop() : this.sync());
+      document.addEventListener("visibilitychange", () => this.sync());
       addEventListener("resize", () => this.sync());
       addEventListener("fullscreenchange", () => this.sync());
-      addEventListener("scroll", () => {
-        clearTimeout(this.scrollSyncTimer);
-        this.scrollSyncTimer = setTimeout(() => this.sync(), 40);
-      }, { passive: true });
-      addEventListener("beforeprint", () => { this.printing = true; this.stop(); });
+      addEventListener("scroll", () => this.sync(), { passive: true });
+      addEventListener("beforeprint", () => { this.printing = true; this.sync(); });
       addEventListener("afterprint", () => { this.printing = false; this.sync(); });
-      addEventListener("pagehide", () => this.stop());
-      addEventListener("pageshow", () => this.sync());
+      addEventListener("pagehide", () => { this.pageHidden = true; this.sync(); });
+      addEventListener("pageshow", () => { this.pageHidden = false; this.sync(); });
       const motionChange = () => this.sync();
       if (this.motion.addEventListener) this.motion.addEventListener("change", motionChange);
       else this.motion.addListener(motionChange);
       this.slideObserver = new MutationObserver(() => this.sync());
-      document.querySelectorAll(".slide").forEach((slide) => {
+      this.slideObserver.observe(document.body, { attributes: true, attributeFilter: ["class"] });
+      this.slides.forEach((slide) => {
         this.slideObserver.observe(slide, { attributes: true, attributeFilter: ["class"] });
       });
     }
