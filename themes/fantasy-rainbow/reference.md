@@ -70,13 +70,21 @@ Legacy `.ic-orbit`, `.ic-prism`, `.ic-hero-metric`, glass cards, technical grids
 
 - Use a single canvas, one `IridescenceController`, and one requestAnimationFrame id.
 - Start the RAF only while the active page is `slide-1`. Leaving the cover hides the canvas and stops the RAF; returning to the cover restores both.
+- Resolve cover visibility on navigation, scroll, and presentation-mode changes. Cache slide nodes; never scan slide geometry from the animation frame callback. Repeated navigation must leave at most one pending RAF.
 - Keep GPU time bounded: wrap elapsed seconds modulo `4 * Math.PI` in JavaScript double precision before uploading `uTime`. The field is periodic because time enters at half speed; wrapping preserves the motion and prevents long-running float quantization, banding, and blocks. Never wrap after conversion to a GPU float.
 - Preserve the reference field geometry: 8 iterations, `uTime * 0.5`, and the original cosine color field. Immediately before direct `gl_FragColor` output, derive `warmBias` only when red exceeds green, then blend toward the approved cold-purple mapping. When `warmBias` is zero, leave the original RGB output untouched so mint, cyan, and neutral highlights survive.
 - Do not add luminance lift, `smoothstep` whitening, or `mix(col, vec3(1.0), ...)`.
 - Shader compile or program link failure triggers fallback without hiding content.
 - Handle `webglcontextlost` and `webglcontextrestored`.
-- Stop while the document is hidden, printing, on `pagehide`, or when reduced motion is requested.
+- Cancel pending RAF immediately while the document is hidden, printing, on `pagehide`, in presentation black-screen mode, or when reduced motion is requested. Resize, context restoration, and other state updates must not draw or restart it while suspended. Resume only when the cover is visible again.
+- CSS starfields or other decorations inside `.iri-scene--hero` automatically share the cover lifecycle. Cover decorations mounted outside the hero must put `data-cover-animation` on their container. The shared runtime sets `data-cover-animating` on the body; the starter pauses animations on the container, descendants, and pseudo-elements whenever the cover is inactive or suspended. Do not hide an infinite animation with opacity alone. Any optional canvas-based starfield must share the same start/stop conditions and cancel its RAF; do not introduce an independent unconditional animation loop.
 - Expose deterministic QA controls for time, fallback, context loss/restore, frame statistics, and lifecycle state.
+
+## Navigation performance
+
+- Never animate `transform`, `filter`, or scale on `.slide`, `.slide-content`, or a full-page image wrapper. Do not apply persistent `will-change` to slides, images, or their wrappers.
+- Use a short opacity reveal for content. Keep the static `PresentMode` viewport transform used to fit the 1440 × 900 presentation box; it is not a slide transition and must not be removed.
+- Verify cover → content → cover in both browsing and presentation mode, including repeated navigation: hidden-cover draw counts must stay unchanged, optional CSS starfields must be paused, and returning to the cover must resume exactly one RAF. Check background-tab, reduced-motion, print, and black-screen transitions too.
 
 ## Accessibility and fallback
 

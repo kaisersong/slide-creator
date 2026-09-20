@@ -518,11 +518,13 @@ For PPTX/PNG export: `clawhub install kai-html-export` or `pip install playwrigh
 
 ## Runtime-only Skill ZIP
 
-Download [`kai-slide-creator-v2.30.1-skill-runtime.zip`](https://github.com/kaisersong/slide-creator/releases/download/v2.30.1/kai-slide-creator-v2.30.1-skill-runtime.zip) for a compact Skill installation bundle. Extract its top-level `kai-slide-creator/` folder into your agent's skills directory. The archive contains only `SKILL.md`, `main.py`, `scripts/`, `schemas/`, `references/`, and `themes/`; repository README files, demos, tests, eval fixtures, design documents, and Git metadata are excluded.
+Download [`kai-slide-creator-v2.30.2-skill-runtime.zip`](https://github.com/kaisersong/slide-creator/releases/download/v2.30.2/kai-slide-creator-v2.30.2-skill-runtime.zip) for a compact Skill installation bundle. Extract its top-level `kai-slide-creator/` folder into your agent's skills directory. The archive contains only `SKILL.md`, `main.py`, `scripts/`, `schemas/`, `references/`, and `themes/`; repository README files, demos, tests, eval fixtures, design documents, and Git metadata are excluded.
 
 ---
 
 ## Version History
+
+**v2.30.2** — Fantasy Rainbow playback performance fix: stop cover WebGL and CSS decorations when navigating away or suspending playback, resume a single animation loop on return, and remove per-frame slide geometry scans. Disable full-slide transform transitions while retaining the fixed presentation scale; use short opacity reveals and a complete blackout overlay. Includes 36 lifecycle regression tests and a synchronized runtime-only installation ZIP.
 
 **v2.30.1** — Fantasy Rainbow long-running animation and presentation chrome fixes: keep GPU time within its original animation cycle to prevent floating-point banding and blocks; hide the global browsing counter during presentation and restore it on exit. Templates, generated shells, and bilingual Fantasy Rainbow demos are synchronized. The runtime-only ZIP is available for enterprise installation.
 
