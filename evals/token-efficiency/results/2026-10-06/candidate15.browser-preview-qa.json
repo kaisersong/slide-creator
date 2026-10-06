@@ -1,0 +1,18 @@
+{
+  "browser": "real Chrome via Playwright",
+  "viewport": {
+    "width": 1600,
+    "height": 900
+  },
+  "gallery_cards": 8,
+  "consulting_rep": 1,
+  "preset": "Strategy Consulting",
+  "slide_count": 10,
+  "F5_present_mode": true,
+  "ArrowRight_slide2": true,
+  "page_errors": 0,
+  "screenshots": [
+    "/Users/kai/.codex/visualizations/2026/10/06/01a10f3e-2681-7b83-a273-503fe9a63330/slide-preset-guard-consulting.png",
+    "/Users/kai/.codex/visualizations/2026/10/06/01a10f3e-2681-7b83-a273-503fe9a63330/slide-preset-guard-consulting-slide2.png"
+  ]
+}
