@@ -486,8 +486,11 @@ def main():
         if args.force_reassess and not args.case_id:parser.error("--force-reassess requires --case-id")
         reassess(base,args.arm,args.case_id,args.force_reassess)
     elif args.action=="summarize":print(json.dumps({k:v for k,v in summarize(base,args.arm).items() if k != "runs"},ensure_ascii=False,indent=2))
-    else: print(json.dumps(compare(base,args.candidate_arm),ensure_ascii=False,indent=2))
+    else:
+        payload=compare(base,args.candidate_arm)
+        print(json.dumps(payload,ensure_ascii=False,indent=2))
+        return 0 if payload["adoption_gate"]["pass"] else 1
 
 
 if __name__=="__main__":
-    main()
+    raise SystemExit(main())

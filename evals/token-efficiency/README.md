@@ -38,3 +38,5 @@ python scripts/token-efficiency-eval.py compare --run-dir evals/artifacts/token-
 ## 持续优化
 
 冻结 manifest 和版本后每轮都跑两臂。对照可复用此前已冻结基线，但模型、运行面或 evaluator 变化时重跑两臂。失败样本进入下一轮固定用例，报告不得删去。扩展用户真实文稿时先去除私密信息并固定事实依据；不能把当前 8 类任务的结果称为全部任务覆盖。
+
+后续候选可用 `--arm candidate2` 冻结/运行，使用 `--candidate-arm candidate2` 对照。`compare` 保存完整报告，并在采用 gate 失败或证据缺失时返回 exit code 1，防止 CI 将低 token 但质量回退的候选当作通过。评测器修复只需对受影响产物用 `reassess --case-id <id> --force-reassess` 重查；原生成收据和旧评分保留，不自动重放生成。
