@@ -1,0 +1,624 @@
+{
+  "version": "1.0",
+  "date": "2026-10-07",
+  "scope": "Local Codex CLI + real Chrome; not installed-consumer or release validation",
+  "implementation": {
+    "implementation_commit": "f82e16617936585b84993ebc84d17f855e37fd78",
+    "snapshot_sha256": "64e1b88f7afb4ca284a88c827e5ac9a09bcf98505e76e3296f634b823de605ec",
+    "model": "gpt-5.5",
+    "reasoning_effort": "high",
+    "jobs": 2,
+    "evaluator_version": 2,
+    "baseline_arm": "candidate5",
+    "regression": "2878 passed,114 skipped,7 deselected,0 failures",
+    "scope": "Explicit user preset recorded independently before model run; generator refuses mismatched BRIEF before writing; original grading thresholds unchanged",
+    "controlled_replay": "controls/candidate15-request-guard/receipt.json"
+  },
+  "complete_model_runs": 312,
+  "full_arm_count": 12,
+  "unscored_interrupted_generations": 2,
+  "unscored_known_generation_tokens": 587075,
+  "unscored_judge_tokens": null,
+  "arms": {
+    "baseline": {
+      "complete": 26,
+      "passed": 14,
+      "wall_ms": {
+        "n": 24,
+        "mean": 230167.79,
+        "median": 223527.0,
+        "p90": 306665
+      },
+      "total_tokens": {
+        "n": 24,
+        "mean": 1606165.42,
+        "median": 1415463.0,
+        "p90": 2267025
+      },
+      "quality": {
+        "n": 24,
+        "mean": 77.88,
+        "median": 82.0,
+        "p90": 88
+      },
+      "eval_wall_ms": {
+        "n": 24,
+        "mean": 273423.25,
+        "median": 269405.5,
+        "p90": 348551
+      },
+      "eval_total_tokens": {
+        "n": 24,
+        "mean": 1633805.83,
+        "median": 1442213.5,
+        "p90": 2293290
+      },
+      "uncached_input_tokens": {
+        "n": 24,
+        "mean": 98226.58,
+        "median": 93760.0,
+        "p90": 121637
+      },
+      "technical_language": {
+        "n": 15,
+        "mean": 78.33,
+        "median": 83,
+        "p90": 87
+      }
+    },
+    "candidate": {
+      "complete": 26,
+      "passed": 13,
+      "wall_ms": {
+        "n": 24,
+        "mean": 172361.38,
+        "median": 139522.0,
+        "p90": 243101
+      },
+      "total_tokens": {
+        "n": 24,
+        "mean": 628648.33,
+        "median": 369327.5,
+        "p90": 1392301
+      },
+      "quality": {
+        "n": 24,
+        "mean": 76.88,
+        "median": 80.5,
+        "p90": 86
+      },
+      "eval_wall_ms": {
+        "n": 24,
+        "mean": 221261.46,
+        "median": 199136.5,
+        "p90": 288359
+      },
+      "eval_total_tokens": {
+        "n": 24,
+        "mean": 656106.46,
+        "median": 398754.0,
+        "p90": 1418661
+      },
+      "uncached_input_tokens": {
+        "n": 24,
+        "mean": 43264.75,
+        "median": 35774.5,
+        "p90": 67305
+      },
+      "technical_language": {
+        "n": 15,
+        "mean": 80.07,
+        "median": 82,
+        "p90": 85
+      }
+    },
+    "candidate2": {
+      "complete": 26,
+      "passed": 12,
+      "wall_ms": {
+        "n": 24,
+        "mean": 161278.96,
+        "median": 141975.0,
+        "p90": 212757
+      },
+      "total_tokens": {
+        "n": 24,
+        "mean": 489285.21,
+        "median": 326308.0,
+        "p90": 793793
+      },
+      "quality": {
+        "n": 24,
+        "mean": 76.75,
+        "median": 81.0,
+        "p90": 87
+      },
+      "eval_wall_ms": {
+        "n": 24,
+        "mean": 205334.46,
+        "median": 185525.5,
+        "p90": 256740
+      },
+      "eval_total_tokens": {
+        "n": 24,
+        "mean": 516561.25,
+        "median": 354409.0,
+        "p90": 819667
+      },
+      "uncached_input_tokens": {
+        "n": 24,
+        "mean": 41678.75,
+        "median": 37649.0,
+        "p90": 57760
+      },
+      "technical_language": {
+        "n": 15,
+        "mean": 81.4,
+        "median": 83,
+        "p90": 87
+      }
+    },
+    "candidate5": {
+      "complete": 26,
+      "passed": 26,
+      "wall_ms": {
+        "n": 24,
+        "mean": 139712.96,
+        "median": 138576.5,
+        "p90": 168727
+      },
+      "total_tokens": {
+        "n": 24,
+        "mean": 335243.46,
+        "median": 319533.0,
+        "p90": 450547
+      },
+      "quality": {
+        "n": 24,
+        "mean": 87.88,
+        "median": 88.0,
+        "p90": 92
+      },
+      "eval_wall_ms": {
+        "n": 24,
+        "mean": 181237.54,
+        "median": 177775.0,
+        "p90": 214649
+      },
+      "eval_total_tokens": {
+        "n": 24,
+        "mean": 362753.46,
+        "median": 345708.0,
+        "p90": 484348
+      },
+      "uncached_input_tokens": {
+        "n": 24,
+        "mean": 35489.67,
+        "median": 33558.0,
+        "p90": 46246
+      },
+      "technical_language": {
+        "n": 15,
+        "mean": 86.4,
+        "median": 87,
+        "p90": 91
+      }
+    },
+    "candidate6": {
+      "complete": 26,
+      "passed": 24,
+      "wall_ms": {
+        "n": 24,
+        "mean": 154184.54,
+        "median": 151133.5,
+        "p90": 183892
+      },
+      "total_tokens": {
+        "n": 24,
+        "mean": 381650.62,
+        "median": 354256.0,
+        "p90": 540939
+      },
+      "quality": {
+        "n": 24,
+        "mean": 86.54,
+        "median": 87.0,
+        "p90": 93
+      },
+      "eval_wall_ms": {
+        "n": 24,
+        "mean": 197223.92,
+        "median": 193195.0,
+        "p90": 227669
+      },
+      "eval_total_tokens": {
+        "n": 24,
+        "mean": 408935.88,
+        "median": 380276.5,
+        "p90": 566374
+      },
+      "uncached_input_tokens": {
+        "n": 24,
+        "mean": 40498.42,
+        "median": 36909.5,
+        "p90": 57363
+      },
+      "technical_language": {
+        "n": 15,
+        "mean": 87.6,
+        "median": 88,
+        "p90": 91
+      }
+    },
+    "candidate13": {
+      "complete": 26,
+      "passed": 26,
+      "wall_ms": {
+        "n": 24,
+        "mean": 162277.62,
+        "median": 148709.5,
+        "p90": 204371
+      },
+      "total_tokens": {
+        "n": 24,
+        "mean": 380245.75,
+        "median": 312857.0,
+        "p90": 661833
+      },
+      "quality": {
+        "n": 24,
+        "mean": 87.88,
+        "median": 88.0,
+        "p90": 92
+      },
+      "eval_wall_ms": {
+        "n": 24,
+        "mean": 206464.12,
+        "median": 193915.0,
+        "p90": 250207
+      },
+      "eval_total_tokens": {
+        "n": 24,
+        "mean": 407280.42,
+        "median": 342606.0,
+        "p90": 687720
+      },
+      "uncached_input_tokens": {
+        "n": 24,
+        "mean": 37904.46,
+        "median": 34758.5,
+        "p90": 51950
+      },
+      "technical_language": {
+        "n": 15,
+        "mean": 86.73,
+        "median": 87,
+        "p90": 91
+      }
+    },
+    "candidate14": {
+      "complete": 26,
+      "passed": 25,
+      "wall_ms": {
+        "n": 24,
+        "mean": 154444.92,
+        "median": 145737.5,
+        "p90": 198013
+      },
+      "total_tokens": {
+        "n": 24,
+        "mean": 350412.46,
+        "median": 300599.0,
+        "p90": 585469
+      },
+      "quality": {
+        "n": 24,
+        "mean": 87.96,
+        "median": 88.0,
+        "p90": 91
+      },
+      "eval_wall_ms": {
+        "n": 24,
+        "mean": 199509.04,
+        "median": 190865.5,
+        "p90": 244826
+      },
+      "eval_total_tokens": {
+        "n": 24,
+        "mean": 377431.88,
+        "median": 326472.5,
+        "p90": 611233
+      },
+      "uncached_input_tokens": {
+        "n": 24,
+        "mean": 38188.71,
+        "median": 30603.5,
+        "p90": 58018
+      },
+      "technical_language": {
+        "n": 15,
+        "mean": 88.13,
+        "median": 88,
+        "p90": 91
+      }
+    },
+    "candidate15": {
+      "complete": 26,
+      "passed": 26,
+      "wall_ms": {
+        "n": 24,
+        "mean": 143050.58,
+        "median": 141743.5,
+        "p90": 165554
+      },
+      "total_tokens": {
+        "n": 24,
+        "mean": 356474.88,
+        "median": 317447.0,
+        "p90": 475266
+      },
+      "quality": {
+        "n": 24,
+        "mean": 88.54,
+        "median": 89.0,
+        "p90": 92
+      },
+      "eval_wall_ms": {
+        "n": 24,
+        "mean": 180999.5,
+        "median": 180508.0,
+        "p90": 203194
+      },
+      "eval_total_tokens": {
+        "n": 24,
+        "mean": 383878.17,
+        "median": 343145.5,
+        "p90": 509518
+      },
+      "uncached_input_tokens": {
+        "n": 24,
+        "mean": 36660.08,
+        "median": 34298.5,
+        "p90": 50734
+      },
+      "technical_language": {
+        "n": 15,
+        "mean": 88.47,
+        "median": 88,
+        "p90": 91
+      }
+    }
+  },
+  "candidate15_vs_original": {
+    "generation_token_median_change_percent": -77.57,
+    "generation_wall_median_change_percent": -36.59,
+    "quality_mean_paired_change": 10.67,
+    "adoption_gate": {
+      "pass": true,
+      "failures": []
+    }
+  },
+  "candidate15_vs_passed_candidate5": {
+    "generation_token_median_change_percent": -0.65,
+    "generation_wall_median_change_percent": 2.29,
+    "quality_mean_paired_change": 0.67,
+    "adoption_gate": {
+      "pass": true,
+      "failures": []
+    }
+  },
+  "candidate13_source_override": {
+    "disposition": "reject_source_entity_regression",
+    "automatic_gate": {
+      "pass": true,
+      "failures": []
+    },
+    "source_review_overrides_automatic_gate": true,
+    "case_id": "data-kpi-en",
+    "rep": 1,
+    "quality_score": 80,
+    "source": "Two regulated customers still need data residency review.",
+    "rendered_error": "2 open data residency reviews",
+    "location": "Slide5 explanatory summary; correct supporting_facts and must_include existed but late-listed customer fact did not reach the two-card close.",
+    "reason": "Counted entity changed from customers to reviews; must not adopt even when all26 automatic outcomes pass.",
+    "repair": "candidate14 uses complete primary local source facts at quantified close and does not append the rewritten explanatory summary; numeric entities/qualifiers preserved in generation guidance."
+  },
+  "candidate15_source_review": {
+    "arm": "candidate15",
+    "scope": "Targeted manual source review of quantified/conditional titles; not exhaustive validation of all copy",
+    "style_fix": "verified24/24; consulting3/3; original wrong BRIEF blocked before writing",
+    "default_adoption": "defer despite any automatic gate pass",
+    "issues": [
+      {
+        "case_id": "data-kpi-en",
+        "rep": 2,
+        "title": "Two Reviews Gate Expansion",
+        "source": "Two regulated customers still need data residency review.",
+        "issue": "Headline counts reviews; source counts customers. Body correctly retains customers, but one-review-per-customer is not established."
+      },
+      {
+        "case_id": "consulting-strategy-zh",
+        "rep": 3,
+        "title": "成本恶化即停",
+        "source": "若服务成本增加且满意度未改善，停止扩展。",
+        "issue": "Headline makes cost deterioration alone trigger stopping. Body retains the conjunction; the headline remains stronger than the source."
+      }
+    ],
+    "scores_unchanged": true,
+    "automatic_passed": 26,
+    "automatic_adoption_gate": {
+      "pass": true,
+      "failures": []
+    }
+  },
+  "readability_v4": {
+    "scope": "24 decks, two viewports and two modes; defined audience-node selector; exact full-sentence duplicates, not semantic similarity",
+    "old_candidate5": {
+      "median_of_deck_body_font_medians": 16.8,
+      "below16_observations": 539,
+      "duplicate_observations": 220
+    },
+    "same_input_new_renderer": {
+      "median_of_deck_body_font_medians": 22.0,
+      "below16_observations": 0,
+      "duplicate_observations": 0
+    },
+    "fresh_model_candidate14": {
+      "median_of_deck_body_font_medians": 22.0,
+      "below16_observations": 0,
+      "duplicate_observations": 6
+    }
+  },
+  "source_files": [
+    {
+      "repository_path": "evals/token-efficiency/results/2026-10-06/baseline.summary.json",
+      "sha256": "bd0d6ba3e61ee137432fbd6200ab43085a6f8589bf739e3fd62f16130a232475"
+    },
+    {
+      "repository_path": "evals/token-efficiency/results/2026-10-06/candidate.summary.json",
+      "sha256": "f4fa28abe71d80c71425da57a4277bdcc801d1f18787bc1d08f074046309e62a"
+    },
+    {
+      "repository_path": "evals/token-efficiency/results/2026-10-06/candidate2.summary.json",
+      "sha256": "3ba6b380ec4fd92fc4313b9c7f23cc59f918d05ae74ea7697ea18487bd1bdc67"
+    },
+    {
+      "repository_path": "evals/token-efficiency/results/2026-10-06/candidate3.summary.json",
+      "sha256": "d1d671008eb54c963dc632c2dcdbfa9afcc4bdf937f615d49aba5756159450d8"
+    },
+    {
+      "repository_path": "evals/token-efficiency/results/2026-10-06/candidate4.summary.json",
+      "sha256": "eb04703534d2d349f67d809555d3528954579a47a7fe0024dc09745ffe491a27"
+    },
+    {
+      "repository_path": "evals/token-efficiency/results/2026-10-06/candidate5.summary.json",
+      "sha256": "bcd135b60eb443e839d4ada4adc428dd3c8f09cb91409710b73a390d3c71ad1a"
+    },
+    {
+      "repository_path": "evals/token-efficiency/results/2026-10-06/candidate6.summary.json",
+      "sha256": "f367968f2df23c9a21098dbc4e5f2e2e1c9f278a3ba4693e74e6744a39fd8146"
+    },
+    {
+      "repository_path": "evals/token-efficiency/results/2026-10-06/candidate10.summary.json",
+      "sha256": "972c8c8564ac6f3ee3f0f6d39c50dc18d37293133a1f3af02780556bd6d2d8bb"
+    },
+    {
+      "repository_path": "evals/token-efficiency/results/2026-10-06/candidate12.summary.json",
+      "sha256": "30304d3acfe000ae8d82b4b1c1e482765acf04b76d3fe958e77fdf53272b602a"
+    },
+    {
+      "repository_path": "evals/token-efficiency/results/2026-10-06/candidate13.summary.json",
+      "sha256": "1145076089f8d15aa331c282f06fed5885f926d7ee029714cca69723fdc9d174"
+    },
+    {
+      "repository_path": "evals/token-efficiency/results/2026-10-06/candidate14.summary.json",
+      "sha256": "693e9239c4835b6b343874236d751182220b62d748e5930948ca0821561db8ff"
+    },
+    {
+      "repository_path": "evals/token-efficiency/results/2026-10-06/candidate15.summary.json",
+      "sha256": "d7adb0d8fa8a7c1bc9b129cf31c01be9c1ce8133b6f213ce48e51ca5bc887cb8"
+    },
+    {
+      "repository_path": "evals/token-efficiency/results/2026-10-06/comparison.candidate15.json",
+      "sha256": "4efb9d9c3e79c133962eeeebfe4b7e85c33ce74f6ed8217902edab2ee910a4b3"
+    },
+    {
+      "repository_path": "evals/token-efficiency/results/2026-10-06/comparison.candidate15.vs.candidate5.json",
+      "sha256": "f1ac3b326a915a7a1bc65b25ce9f665d0be34cdb891cd2f152b65d72b43c4d65"
+    },
+    {
+      "repository_path": "evals/token-efficiency/results/2026-10-06/review-disposition.candidate13.json",
+      "sha256": "12c0a5a315b5e4dbaecac9ee414173b7517975ee30fa0652bbfe370582e3991a"
+    },
+    {
+      "repository_path": "evals/token-efficiency/results/2026-10-06/review-disposition.candidate14.json",
+      "sha256": "3771cc40e5e406050866e4f8dea528fbe536b8c7c7b3ffae166b469c4a583c3a"
+    },
+    {
+      "repository_path": "evals/token-efficiency/results/2026-10-06/review-disposition.candidate15.json",
+      "sha256": "c600c0027ab3192eca81230be1fe399f0f1535f914afff11ed0a30a14c8fe9b7"
+    },
+    {
+      "repository_path": "evals/token-efficiency/results/2026-10-06/candidate15.request-runtime-audit.json",
+      "sha256": "8639b6737f4a6ef5dd51ffc6d8d442b9852dfe0655db2b197f7387c01bf8d430"
+    },
+    {
+      "repository_path": "evals/token-efficiency/results/2026-10-06/candidate14.readability-v4-controls.json",
+      "sha256": "23b3e990f7fea579e69604d26793e0ae2e24f6ad8b19e540ce398693ba76e832"
+    },
+    {
+      "repository_path": "evals/token-efficiency/results/2026-10-06/candidate14.readability-v4-model-generated.json",
+      "sha256": "1e9f804a665c19530af5a689505efafc1668120b692c9e08c44b1c2be93acdf5"
+    },
+    {
+      "repository_path": "evals/token-efficiency/results/2026-10-06/provenance.candidate15.json",
+      "sha256": "e70bb712db3a9a79071b364c91a5a38eaf7de26c8c2a6a062a9d01df5e7647a1"
+    }
+  ],
+  "formal_generation_token_sum": 146385674,
+  "formal_evaluation_token_sum": 154243140,
+  "formal_evaluation_usage_missing": 0,
+  "formal_cost_sources": [
+    {
+      "repository_path": "evals/artifacts/token-efficiency/2026-10-06-p1-formal/baseline.summary.json",
+      "sha256": "2687cd66de0fa494ec56e1f8a2c5fe82cf42a7b550c16fbf3f54a39d71af6741",
+      "recorded_tasks": 26
+    },
+    {
+      "repository_path": "evals/artifacts/token-efficiency/2026-10-06-p1-formal/candidate.summary.json",
+      "sha256": "3dfc1701d0471b0f9c36e56faa9df944cb8bb52d29758e39a026982e0d4124c1",
+      "recorded_tasks": 26
+    },
+    {
+      "repository_path": "evals/artifacts/token-efficiency/2026-10-06-p1-formal/candidate2.summary.json",
+      "sha256": "eaddfaa513736d1ea3700b02cc2db1e2107caaede82bce8cce6c2971f03abc5d",
+      "recorded_tasks": 26
+    },
+    {
+      "repository_path": "evals/artifacts/token-efficiency/2026-10-06-p1-formal/candidate3.summary.json",
+      "sha256": "63da537625bda59ed9afa6696d1d21bce9682c019db051817c0e0bb2b86c1443",
+      "recorded_tasks": 26
+    },
+    {
+      "repository_path": "evals/artifacts/token-efficiency/2026-10-06-p1-formal/candidate4.summary.json",
+      "sha256": "2fe198599ac4dd7285270b56d858bf63a033c138768b14739c73e80337ba75b2",
+      "recorded_tasks": 26
+    },
+    {
+      "repository_path": "evals/artifacts/token-efficiency/2026-10-06-p1-formal/candidate5.summary.json",
+      "sha256": "a2207500e9792530aeb65583d03846b2a188dfb722a34c2ac97de366611fa6ad",
+      "recorded_tasks": 26
+    },
+    {
+      "repository_path": "evals/artifacts/token-efficiency/2026-10-06-p1-formal/candidate6.summary.json",
+      "sha256": "f367968f2df23c9a21098dbc4e5f2e2e1c9f278a3ba4693e74e6744a39fd8146",
+      "recorded_tasks": 26
+    },
+    {
+      "repository_path": "evals/artifacts/token-efficiency/2026-10-06-p1-formal/candidate10.summary.json",
+      "sha256": "972c8c8564ac6f3ee3f0f6d39c50dc18d37293133a1f3af02780556bd6d2d8bb",
+      "recorded_tasks": 26
+    },
+    {
+      "repository_path": "evals/artifacts/token-efficiency/2026-10-06-p1-formal/candidate12.summary.json",
+      "sha256": "30304d3acfe000ae8d82b4b1c1e482765acf04b76d3fe958e77fdf53272b602a",
+      "recorded_tasks": 26
+    },
+    {
+      "repository_path": "evals/artifacts/token-efficiency/2026-10-06-p1-formal/candidate13.summary.json",
+      "sha256": "1145076089f8d15aa331c282f06fed5885f926d7ee029714cca69723fdc9d174",
+      "recorded_tasks": 26
+    },
+    {
+      "repository_path": "evals/artifacts/token-efficiency/2026-10-06-p1-formal/candidate14.summary.json",
+      "sha256": "693e9239c4835b6b343874236d751182220b62d748e5930948ca0821561db8ff",
+      "recorded_tasks": 26
+    },
+    {
+      "repository_path": "evals/artifacts/token-efficiency/2026-10-06-p1-formal/candidate15.summary.json",
+      "sha256": "d7adb0d8fa8a7c1bc9b129cf31c01be9c1ce8133b6f213ce48e51ca5bc887cb8",
+      "recorded_tasks": 26
+    }
+  ],
+  "cost_scope": "312 generation/route tasks plus their recorded QA/judge; excludes calibration, environment probes, coordinator research and two interrupted generations; total tokens include cached input and are not billed cost"
+}

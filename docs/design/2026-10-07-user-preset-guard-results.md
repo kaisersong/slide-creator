@@ -46,3 +46,6 @@
 [最新完整原始模型稿](http://127.0.0.1:8796/preview.html)，每案默认rep-1，另外两次均保留；[咨询rep-1完整稿](http://127.0.0.1:8796/candidate15/consulting-strategy-zh/rep-1/workspace/output/deck.html)。本地HTML支持F5播放、方向键翻页。
 
 原始结果在 evals/artifacts/token-efficiency/2026-10-06-p1-formal/candidate15/；受控复现 controls/candidate15-request-guard/。紧凑收据在 evals/token-efficiency/results/2026-10-06/。全部代码仅在worktree，未合并发布或替换安装版。
+
+
+跨 Skill 复用参考：[Skill 优化方法论 v1.0](../methodology/skill-optimization/README.md)。方法文档保留本案例的人工来源复核边界；后续 bug 依其版本与回归规则更新。
