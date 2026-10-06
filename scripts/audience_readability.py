@@ -44,7 +44,7 @@ def apply_audience_readability(html: str) -> str:
         # Keep source statement labels, numbers and conditions. Remove a
         # repeated paragraph only when the entire normalized text is already
         # present elsewhere; do not merge similar but distinct propositions.
-        fact_nodes = [n for n in slide.select("h1,h2,h3,h4,h5,h6,li,td,strong,.pill,.ds-action-title,.ds-kpi-label,.ent-kpi-label,.hero-stat-label,.sc-metric-label,.iri-field span:last-child,.iri-fracture-item") if not n.find_parent(["svg","foreignobject"])]
+        fact_nodes = [n for n in slide.select("h1,h2,h3,h4,h5,h6,li,td,strong,.pill,.ds-action-title,.ds-kpi-label,.ent-kpi-label,.hero-stat-label,.sc-metric-label,.iri-field span:last-child,.iri-fracture-item,.pain-title,.pain-desc,.disc-step-title,.disc-step-desc,.sc-thing-body") if not n.find_parent(["svg","foreignobject"])]
         fact_records = [(n, n.get_text(" ",strip=True)) for n in fact_nodes]
         seen = set()
         for paragraph in list(slide.select("p")):

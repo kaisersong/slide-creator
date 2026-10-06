@@ -128,3 +128,11 @@ def test_fully_repeated_insight_uses_one_real_source_callout():
     assert s.select_one('.ds-stage-card.ds-insight')
     assert s.select_one('.slide').get_text(' ',strip=True)==fact
     assert len(s.select('.ds-insight'))==1
+
+
+def test_swiss_div_facts_remove_repeated_left_summary_without_losing_checks():
+    facts=['验收必须检查任务不丢失。','验收必须检查重试可恢复。','验收必须检查重复请求不重复扣款。']
+    h='<html><head></head><body><section class="slide"><h2>验收只看三件事</h2><p>'+''.join(facts)+'</p>'+''.join('<div class="pain-title">'+f+'</div>' for f in facts)+'</section></body></html>'
+    s=BeautifulSoup(apply_audience_readability(h),'html.parser')
+    assert not s.select('p')
+    assert [n.get_text() for n in s.select('.pain-title')]==facts
