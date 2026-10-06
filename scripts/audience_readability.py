@@ -45,17 +45,20 @@ def apply_audience_readability(html: str) -> str:
         # repeated paragraph only when the entire normalized text is already
         # present elsewhere; do not merge similar but distinct propositions.
         fact_nodes = [n for n in slide.select("h1,h2,h3,h4,h5,h6,li,td,strong,.pill,.ds-action-title,.ds-kpi-label,.ent-kpi-label,.hero-stat-label,.sc-metric-label,.iri-field span:last-child,.iri-fracture-item") if not n.find_parent(["svg","foreignobject"])]
-        fact_text = [n.get_text(" ",strip=True) for n in fact_nodes]
-        seen = {copy_key(text) for text in fact_text}
+        fact_records = [(n, n.get_text(" ",strip=True)) for n in fact_nodes]
+        seen = set()
         for paragraph in list(slide.select("p")):
             if paragraph.find_parent(["svg", "foreignobject"]):
                 continue
             # A metric must retain its adjacent source label, even when the
             # same fact is used in a headline or summary elsewhere.
-            if "blue-metric-label" in paragraph.get("class", []):
+            if "blue-metric-label" in paragraph.get("class", []) or paragraph.get("data-copy-binding") == "true":
                 continue
+            # A table/list cell or bold child cannot be evidence that its own
+            # paragraph is duplicated; compare separate visible statements.
+            fact_text = [text for n,text in fact_records if n not in paragraph.parents and paragraph not in n.parents]
             key = copy_key(paragraph.get_text(" ", strip=True))
-            if key and key in seen:
+            if key and (key in seen or key in {copy_key(text) for text in fact_text}):
                 paragraph.decompose()
             elif key:
                 if not paragraph.find(True):

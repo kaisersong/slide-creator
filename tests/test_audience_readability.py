@@ -89,3 +89,19 @@ def test_custom_theme_fields_remove_only_repeated_lead_sentences():
     soup=BeautifulSoup(apply_audience_readability(html),'html.parser')
     assert soup.select_one('p').get_text()=="需要继续改字时选择 HTML。"
     assert soup.select_one('.iri-field span:last-child').get_text()=="导出的图片不能保留文字编辑能力。"
+
+
+def test_dedup_never_uses_own_ancestor_or_child_as_a_duplicate():
+    html='<html><head></head><body><section class="slide"><table><tr><td><p>Disable debug dumps before production use.</p></td></tr></table><li><p><strong>Revoke the old token first.</strong></p></li></section></body></html>'
+    soup=BeautifulSoup(apply_audience_readability(html),'html.parser')
+    assert soup.select_one('td p').get_text()=="Disable debug dumps before production use."
+    assert soup.select_one('li p').get_text()=="Revoke the old token first."
+
+
+def test_enterprise_action_binding_survives_matching_headline_without_fake_bars():
+    from low_context import _render_enterprise_consulting_split
+    spec={'slide_number':3,'title':'Disable Debug Dumps','layout_id':'consulting_split','key_point':'The service does not encrypt local debug dumps.','role':'condition','speaker_note':'Before production use, disable debug dumps.','supporting_facts':['Condition: before production use.','Action: Disable Debug Dumps']}
+    h=_render_enterprise_consulting_split(spec,5)
+    soup=BeautifulSoup(apply_audience_readability('<html><head></head><body>'+h+'</body></html>'),'html.parser')
+    assert [p.get_text() for p in soup.select('.ent-split-item-copy')]==['before production use.','Disable Debug Dumps']
+    assert not soup.select('.ent-prog-bar')
