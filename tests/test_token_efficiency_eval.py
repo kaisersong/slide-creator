@@ -82,3 +82,7 @@ def test_best_effort_language_policy_retains_quality_guard(tmp_path):
     result["qa"]["geometry_pass"]=False
     path.write_text(json.dumps(result))
     assert not EVAL.compare(tmp_path,"candidate3","observe")["adoption_gate"]["pass"]
+    result["qa"]["geometry_pass"]=True
+    result["qa"]["missing_required_terms"]=["24"]
+    path.write_text(json.dumps(result))
+    assert "guard.technical.rep1.missing_required_terms.added" in EVAL.compare(tmp_path,"candidate3","observe")["adoption_gate"]["failures"]

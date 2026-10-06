@@ -10,7 +10,10 @@ from low_context import (
     _build_candidate_fact_pool, _spec_detail_pairs, _enterprise_table_items,
     _render_enterprise_contrast_split, _render_data_story_kpi_chart,
     render_from_brief,
+    _render_enterprise_consulting_split, visible_numeric_coverage_failures,
+    _chart_metric_values_from_spec, _cleanup_display_candidate,
 )
+from preset_contracts import check_preset_contract_html
 
 
 def spec(facts):
@@ -65,9 +68,64 @@ def test_consulting_explicit_facts_clear_demo_copy_and_preserve_four_steps():
                      supporting_facts=facts, chart_policy="avoid")
         slide.pop("numeric_facts", None)
     html, _, _ = render_from_brief(brief)
+    assert check_preset_contract_html(html, "Strategy Consulting")["pass"]
     slides = BeautifulSoup(html, "html.parser").select("section.slide")
     for slide in slides:
         text = slide.get_text(" ", strip=True)
         assert all(fact in text for fact in facts)
         assert "demo-derived" not in text
         assert "PowerPoint" not in text and "60秒" not in text and "2.24.3" not in text
+
+
+def test_enterprise_split_keeps_expiry_explanation_and_fourth_risk():
+    facts = ["Condition: a token leaks.", "Action: revoke it before replacement.",
+             "Operators must revoke the old token.", "Remaining risk: the leaked token is still valid."]
+    value = spec(facts)
+    value.update(layout_id="consulting_split", key_point="Access tokens expire after 24 hours.")
+    html = _render_enterprise_consulting_split(value, 5)
+    text = BeautifulSoup(html, "html.parser").get_text(" ", strip=True)
+    assert value["key_point"] in text
+    assert all(fact.replace(":", "") in text.replace(":", "") for fact in facts)
+
+
+def test_required_numeric_guard_ignores_notes_and_identifiers():
+    brief = {"content":{"must_include":["Tokens expire after 24 hours.", "p95 latency is 310 ms."]}}
+    html = '<section class="slide" data-notes="Expires after 24 hours."><p>p95 latency is 310 ms.</p></section>'
+    failures=visible_numeric_coverage_failures(brief,html)
+    assert len(failures) == 1
+    assert failures[0]["missing_tokens"] == ["24"]
+    numbered=html.replace('</section>','<span class="slide-num-label">24</span></section>')
+    assert visible_numeric_coverage_failures(brief,numbered)[0]["missing_tokens"] == ["24"]
+    html=html.replace('</section>','<p>Tokens expire after 24 hours.</p></section>')
+    assert visible_numeric_coverage_failures(brief,html) == []
+
+
+def test_numeric_guard_keeps_legacy_brief_without_required_numbers():
+    assert visible_numeric_coverage_failures({"content":{"must_include":["Keep uncertainty clear."]}},'<section class="slide">Evidence</section>') == []
+
+
+def test_cli_missing_required_number_preserves_existing_output(tmp_path):
+    import subprocess
+    brief=json.loads((ROOT/"references/brief-template.json").read_text())
+    brief["content"]["must_include"]=["Access tokens expire after 987654 hours."]
+    path=tmp_path/"BRIEF.json"
+    path.write_text(json.dumps(brief))
+    output=tmp_path/"deck.html"
+    output.write_text("existing output")
+    result=subprocess.run([sys.executable,str(ROOT/"main.py"),"--generate","--brief",str(path),"--output",str(output)],capture_output=True,text=True)
+    assert result.returncode == 1
+    assert "CONTENT ERROR" in result.stdout
+    assert "987654" in result.stdout
+    assert output.read_text() == "existing output"
+
+
+def test_chart_values_reject_mixed_units_but_keep_same_unit_series():
+    value=spec(["Activation: 52.5%", "Latency: 310 ms", "Change: 9 percentage points"])
+    value.update(numeric_facts=value["supporting_facts"], chart_policy="auto")
+    assert _chart_metric_values_from_spec(value,["0","0","0"]) == []
+    value.update(numeric_facts=["North: 40%", "South: 50%", "West: 60%"],supporting_facts=[],supporting_items=[],evidence_items=[])
+    assert _chart_metric_values_from_spec(value,["0","0","0"]) == ["40%","50%","60%"]
+
+
+def test_english_display_words_keep_spaces():
+    assert _cleanup_display_candidate("No source value gives the prior baseline") == "No source value gives the prior baseline"

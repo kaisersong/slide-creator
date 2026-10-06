@@ -2459,6 +2459,12 @@ def build_slide_spec(brief: dict[str, Any], packet: dict[str, Any] | None = None
             "chart_policy": chart_policy,
             "quality_tier": quality_tier,
         }
+        if normalized_preset == "data story" and _has_mixed_numeric_units(spec):
+            # Plain numeric_facts have no common scale or conversion contract.
+            # Use evidence cards rather than implying comparable magnitudes.
+            if spec["chart_policy"] == "required":
+                raise RenderError("Required quantitative chart has mixed units; split into same-unit series or use chart_policy=avoid")
+            spec["chart_policy"] = "avoid"
         if rhythm_scheduler_enabled:
             spec["layout_id"] = _choose_rhythm_layout(
                 spec,
@@ -3266,6 +3272,27 @@ def _extract_numbers(text: str) -> list[str]:
     return re.findall(r"(?<![A-Za-z0-9_.])\d+(?:\.\d+)?(?:\+|%|万|亿|座|年)?", text)
 
 
+def visible_numeric_coverage_failures(brief: dict[str, Any], html_text: str) -> list[dict[str, Any]]:
+    """Check required source numbers against audience text, never speaker notes.
+
+    This is a narrow omission guard. It cannot verify entities, units or the
+    truth of the input BRIEF; independent source-based review still does that.
+    """
+    from bs4 import BeautifulSoup
+    soup = BeautifulSoup(html_text, "html.parser")
+    # Page numbers and purely structural step indices are not source evidence.
+    for node in soup.select('.slide-num-label, .profile-eyebrow, .pain-num, .disc-step-num, .ent-feature-icon, .ds-matrix-index, [aria-hidden="true"]'):
+        node.decompose()
+    text = " ".join(slide.get_text(" ", strip=True) for slide in soup.select("section.slide"))
+    visible = set(_extract_numbers(text))
+    failures = []
+    for fact in brief.get("content", {}).get("must_include", []):
+        missing = sorted(set(_extract_numbers(str(fact))) - visible)
+        if missing:
+            failures.append({"code":"required-numeric-fact-missing", "source_fact":fact, "missing_tokens":missing})
+    return failures
+
+
 def _dedupe_preserve(values: list[str]) -> list[str]:
     deduped: list[str] = []
     for value in values:
@@ -3319,12 +3346,27 @@ def _metric_values_from_spec(spec: dict[str, Any], fallback: list[str]) -> list[
     return deduped[: len(fallback)]
 
 
+def _has_mixed_numeric_units(spec: dict[str, Any]) -> bool:
+    units = set()
+    aliases = {"milliseconds":"ms", "millisecond":"ms", "毫秒":"ms",
+               "seconds":"s", "second":"s", "秒":"s",
+               "percentage points":"pp", "percentage point":"pp", "百分点":"pp",
+               "hours":"h", "hour":"h", "小时":"h", "days":"d", "day":"d", "天":"d"}
+    for fact in spec.get("numeric_facts", []):
+        for unit in re.findall(r"(?<![A-Za-z0-9_.])\d+(?:\.\d+)?\s*(%|percentage[ -]points?|pp\b|milliseconds?\b|ms\b|seconds?\b|s\b|hours?\b|days?\b|毫秒|秒|小时|天|百分点)", str(fact), flags=re.I):
+            normalized = unit.lower().replace("-", " ")
+            units.add(aliases.get(normalized, normalized))
+    return len(units) > 1
+
+
 def _chart_metric_values_from_spec(
     spec: dict[str, Any],
     fallback: list[str],
     *,
     allow_evidence_fill: bool = False,
 ) -> list[str]:
+    if spec.get("chart_policy") == "avoid" or _has_mixed_numeric_units(spec):
+        return []
     values = _dedupe_preserve(
         [
             *_extract_numbers(" ".join(spec.get("numeric_facts", []))),
@@ -3419,7 +3461,8 @@ DISPLAY_KEYWORDS: list[tuple[str, str]] = [
 
 
 def _cleanup_display_candidate(text: str) -> str:
-    candidate = re.sub(r"\s+", "", text or "").strip("，。；、,;:：/+-（）()【】[]“”\"' ")
+    separator = "" if re.search(r"[\u4e00-\u9fff]", text or "") else " "
+    candidate = re.sub(r"\s+", separator, text or "").strip("，。；、,;:：/+-（）()【】[]“”\"' ")
     if not candidate:
         return ""
 
@@ -5407,7 +5450,7 @@ def _render_enterprise_kpi_dashboard(spec: dict[str, Any], total: int) -> str:
     <section class="slide {section_class}" id="slide-{slide_number}" data-notes="{_escape(spec['speaker_note'])}" aria-label="{_escape(spec['role'])}" data-export-role="kpi_dashboard">
         <div class="slide-content">
             <div class="ent-shell">
-                <span class="ent-label-tag reveal">AI landscape</span>
+                <span class="ent-label-tag reveal">briefing</span>
                 {title_tag}
                 <div class="ent-sep reveal"></div>
                 {subtitle_html}
@@ -5472,8 +5515,11 @@ def _render_enterprise_consulting_split(spec: dict[str, Any], total: int) -> str
         layout_id=spec["layout_id"],
         force_balance=True,
     )
-    labels = "".join(f'<div class="ent-split-label">{_escape(item)}</div>' for item in _spec_display_items(spec, limit=3))
-    pairs = _spec_detail_pairs(spec, count=3)
+    if spec.get("supporting_facts"):
+        labels = f'<p class="ent-split-label" style="line-height:1.5;">{_escape(spec["key_point"])}</p>'
+    else:
+        labels = "".join(f'<div class="ent-split-label">{_escape(item)}</div>' for item in _spec_display_items(spec, limit=3))
+    pairs = _spec_detail_pairs(spec, count=4)
     accent_colors = ["ent-accent-cyan", "ent-accent-blue", "ent-accent-violet"]
     rows = "".join(
         f"""
@@ -5486,7 +5532,7 @@ def _render_enterprise_consulting_split(spec: dict[str, Any], total: int) -> str
             </div>
         </div>
         """
-        for index, (title, body) in enumerate(pairs[:3])
+        for index, (title, body) in enumerate(pairs[:4])
     )
     return f"""
     <section class="slide enterprise-split" id="slide-{slide_number}" data-notes="{_escape(spec['speaker_note'])}" aria-label="{_escape(spec['role'])}" data-export-role="consulting_split">
@@ -6545,7 +6591,7 @@ def _render_data_story_hero_number(spec: dict[str, Any], total: int) -> str:
     <section class="slide ds-hero-number ds-cover-hero" id="slide-{slide_number}" data-notes="{_escape(spec['speaker_note'])}" aria-label="{_escape(spec['role'])}" data-export-role="hero_number">
         <div class="slide-content ds-hero-slide">
             <div class="ds-shell">
-                <div class="ds-subhead reveal">AI industry landscape</div>
+                <div class="ds-subhead reveal">evidence</div>
                 {title_tag}
                 <div class="ds-cover-metric reveal">
                     <div class="ds-kpi positive">{_escape(value)}</div>
@@ -6561,7 +6607,7 @@ def _render_data_story_hero_number(spec: dict[str, Any], total: int) -> str:
     <section class="slide ds-hero-number" id="slide-{slide_number}" data-notes="{_escape(spec['speaker_note'])}" aria-label="{_escape(spec['role'])}" data-export-role="hero_number">
         <div class="slide-content ds-hero-slide">
             <div class="ds-shell">
-                <div class="ds-subhead reveal">AI industry landscape</div>
+                <div class="ds-subhead reveal">evidence</div>
                 <div class="ds-kpi positive reveal">{_escape(value)}</div>
                 <div class="ds-kpi-label reveal">{_escape(label)}</div>
                 {title_tag}
