@@ -1,0 +1,28 @@
+{
+  "arm": "candidate15",
+  "scope": "Targeted manual source review of quantified/conditional titles; not exhaustive validation of all copy",
+  "style_fix": "verified24/24; consulting3/3; original wrong BRIEF blocked before writing",
+  "default_adoption": "defer despite any automatic gate pass",
+  "issues": [
+    {
+      "case_id": "data-kpi-en",
+      "rep": 2,
+      "title": "Two Reviews Gate Expansion",
+      "source": "Two regulated customers still need data residency review.",
+      "issue": "Headline counts reviews; source counts customers. Body correctly retains customers, but one-review-per-customer is not established."
+    },
+    {
+      "case_id": "consulting-strategy-zh",
+      "rep": 3,
+      "title": "成本恶化即停",
+      "source": "若服务成本增加且满意度未改善，停止扩展。",
+      "issue": "Headline makes cost deterioration alone trigger stopping. Body retains the conjunction; the headline remains stronger than the source."
+    }
+  ],
+  "scores_unchanged": true,
+  "automatic_passed": 26,
+  "automatic_adoption_gate": {
+    "pass": true,
+    "failures": []
+  }
+}

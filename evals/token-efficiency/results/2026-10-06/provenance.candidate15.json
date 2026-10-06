@@ -1,0 +1,12 @@
+{
+  "implementation_commit": "f82e16617936585b84993ebc84d17f855e37fd78",
+  "snapshot_sha256": "64e1b88f7afb4ca284a88c827e5ac9a09bcf98505e76e3296f634b823de605ec",
+  "model": "gpt-5.5",
+  "reasoning_effort": "high",
+  "jobs": 2,
+  "evaluator_version": 2,
+  "baseline_arm": "candidate5",
+  "regression": "2878 passed,114 skipped,7 deselected,0 failures",
+  "scope": "Explicit user preset recorded independently before model run; generator refuses mismatched BRIEF before writing; original grading thresholds unchanged",
+  "controlled_replay": "controls/candidate15-request-guard/receipt.json"
+}

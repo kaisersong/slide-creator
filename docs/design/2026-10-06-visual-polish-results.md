@@ -90,3 +90,6 @@ consulting-strategy-zh rep-1 的正文、几何、页数与必需事实检查通
 ```
 
 环境与边界：Python 3.12.14、Playwright 1.63、macOS Chrome 154，本地 skill CLI+真实浏览器。Browser plugin 不可用，按 frontend-testing-debugging 技能使用现有 Playwright。英文 STE 对齐评分与中文适配是项目观察值，未核对完整标准词典，不作标准认证。代码仅在隔离 worktree 的 `codex/slide-token-eval`，未合并或替换安装版。
+
+
+2026-10-07 指定风格问题已修复并完整复测：26/26自动通过、24/24风格一致、咨询案例3/3指定风格正确。原14结果保持不变，其他标题来源问题仍保留；详见[用户风格约束报告](2026-10-07-user-preset-guard-results.md)。
