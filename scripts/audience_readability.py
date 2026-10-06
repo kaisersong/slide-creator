@@ -21,6 +21,14 @@ def unique_facts(values: list[str]) -> list[str]:
     return result
 
 
+def non_repeating_copy(text: str, visible_facts: list[str]) -> str:
+    """Remove only complete, verbatim sentences already visibly stated."""
+    facts = {copy_key(fact) for fact in visible_facts if fact.strip()}
+    sentences = re.findall(r".*?(?:[。!?！？]|(?<!\d)\.(?=\s|$)|$)", text, re.S)
+    return " ".join(sentence.strip() for sentence in sentences
+                    if sentence.strip() and copy_key(sentence) not in facts)
+
+
 def apply_audience_readability(html: str) -> str:
     scripts = []
     def protect_script(match):
@@ -36,16 +44,32 @@ def apply_audience_readability(html: str) -> str:
         # Keep source statement labels, numbers and conditions. Remove a
         # repeated paragraph only when the entire normalized text is already
         # present elsewhere; do not merge similar but distinct propositions.
-        seen = {copy_key(n.get_text(" ", strip=True)) for n in slide.select("h1,h2,h3,li,td,strong,.ds-kpi-label,.ent-kpi-label,.hero-stat-label,.sc-metric-label")}
+        fact_nodes = [n for n in slide.select("h1,h2,h3,h4,h5,h6,li,td,strong,.pill,.ds-action-title,.ds-kpi-label,.ent-kpi-label,.hero-stat-label,.sc-metric-label") if not n.find_parent(["svg","foreignobject"])]
+        fact_text = [n.get_text(" ",strip=True) for n in fact_nodes]
+        seen = {copy_key(text) for text in fact_text}
         for paragraph in list(slide.select("p")):
             if paragraph.find_parent(["svg", "foreignobject"]):
+                continue
+            # A metric must retain its adjacent source label, even when the
+            # same fact is used in a headline or summary elsewhere.
+            if "blue-metric-label" in paragraph.get("class", []):
                 continue
             key = copy_key(paragraph.get_text(" ", strip=True))
             if key and key in seen:
                 paragraph.decompose()
             elif key:
+                if not paragraph.find(True):
+                    compact = non_repeating_copy(paragraph.get_text(" ",strip=True), fact_text)
+                    if not compact:
+                        paragraph.decompose()
+                        continue
+                    paragraph.string = compact
+                    key = copy_key(compact)
                 seen.add(key)
-        for node in slide.select("p,li,td,h3,.ds-insight,.hero-stat-label,.ent-kpi-label,.ent-cover-metric-title,.ds-kpi-label,.sc-metric-label,.sc-thing-body,.iri-fracture-item,.iri-field span:last-child,.iri-contract-layer p,.iri-fact strong,.pain-title,.pain-desc,.disc-step-title,.disc-step-desc"):
+        for card in list(slide.select(".g,.ent-kpi-card,.ds-stage-card,.sc-evidence-card")):
+            if not card.get_text(" ",strip=True) and not card.select("img,svg,canvas,video"):
+                card.decompose()
+        for node in slide.select("p,li,td,h3,h4,h5,h6,span[data-audience-fact],.ds-action-title,.ds-insight,.hero-stat-label,.ent-kpi-label,.ent-cover-metric-title,.ds-kpi-label,.sc-metric-label,.sc-thing-body,.iri-fracture-item,.iri-field span:last-child,.iri-contract-layer p,.iri-fact strong,.pain-title,.pain-desc,.disc-step-title,.disc-step-desc"):
             if node.find_parent(["svg", "foreignobject"]):
                 continue
             if not node.get_text(" ", strip=True):
@@ -62,6 +86,7 @@ def apply_audience_readability(html: str) -> str:
         html = html.replace(f"<!--AUDIENCE_SCRIPT_{index}-->", script)
     css = """
 body .slide .audience-copy { font-size:22px !important; line-height:1.45 !important; letter-spacing:normal; }
+body .slide .pill.audience-copy { white-space:normal; max-width:100%; }
 @media (max-width:600px) { body:not(.presenting) .slide .audience-copy { font-size:18px !important; } }
 body .slide .iri-field code { font-size:20px; line-height:1.35; overflow-wrap:anywhere; }
 body[data-preset="Data Story"] .ds-close .ds-kpi { font-size:clamp(38px,4vw,58px); line-height:1.1; }
