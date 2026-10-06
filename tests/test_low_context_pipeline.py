@@ -2162,7 +2162,12 @@ def test_enterprise_dark_slide_creator_intro_uses_demo_level_component_rhythm():
     assert features_slide.get("data-export-role") == "comparison_matrix"
     assert "enterprise-feature-grid-slide" in features_slide.get("class", [])
     assert len(features_slide.select(".ent-feature-card")) == 4
-    assert len(features_slide.select(".ent-prog-bar")) == 4
+    # Unmeasured capabilities must not receive position-derived percentages.
+    feature_source = next(slide for slide in brief["narrative"]["slides"] if slide["role"] == "features")
+    if feature_source.get("supporting_facts"):
+        assert not features_slide.select(".ent-prog-bar")
+    else:
+        assert len(features_slide.select(".ent-prog-bar")) == 4
 
     workflow_slide = soup.select_one('section.slide[aria-label="workflow"]')
     assert workflow_slide is not None

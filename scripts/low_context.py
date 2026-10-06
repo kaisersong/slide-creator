@@ -5559,8 +5559,8 @@ def _render_enterprise_consulting_split(spec: dict[str, Any], total: int) -> str
             <div class="ent-feature-icon {accent_colors[index % len(accent_colors)]}">{index + 1}</div>
             <div style="flex:1;">
                 <h3 class="ent-split-item-title">{_escape(title)}</h3>
-                <p class="ent-split-item-copy">{_escape(body)}</p>
-                <div class="ent-prog-bar" style="margin-top:10px;"><div class="ent-prog-fill" style="width:{70 - index * 15}%"></div></div>
+                {f'<p class="ent-split-item-copy" data-copy-binding="true">{_escape(body)}</p>' if body else ''}
+                {f'<div class="ent-prog-bar" style="margin-top:10px;"><div class="ent-prog-fill" style="width:{70 - index * 15}%"></div></div>' if not spec.get('supporting_facts') else ''}
             </div>
         </div>
         """
@@ -5678,7 +5678,7 @@ def _render_enterprise_feature_grid(spec: dict[str, Any], total: int) -> str:
                     </div>
                 </div>
                 <p class="ent-feature-card-copy">{_escape(body)}</p>
-                <div class="ent-prog-bar"><div class="ent-prog-fill" style="width:{78 - index * 14}%"></div></div>
+                {f'<div class="ent-prog-bar"><div class="ent-prog-fill" style="width:{78 - index * 14}%"></div></div>' if not spec.get('supporting_facts') else ''}
             </div>
             """
         )
