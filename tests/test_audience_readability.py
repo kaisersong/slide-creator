@@ -160,3 +160,25 @@ def test_title_balancing_keeps_possessives_and_contractions_in_one_atom():
         lines=_balance_title_lines(text,force_balance=True)
         assert word in ' '.join(lines)
         assert "' s" not in ' '.join(lines)
+
+
+def test_close_uses_full_source_customer_fact_instead_of_rewritten_review_count():
+    from low_context import _render_data_story_cta_close
+    spec={'slide_number':5,'title':'Decide Next Week','supporting_items':[],'evidence_items':[],'numeric_facts':[],'layout_id':'cta_close','role':'decision','speaker_note':'Two regulated customers still need data residency review.','desired_action':'Decide whether to expand to all enterprise tenants next week.','claim':'Decide from the evidence','key_point':'The evidence includes 2 open data residency reviews.','supporting_facts':['Enterprise activation is 52.5%, up 7.1 percentage points month over month.','API p95 latency is 310 ms, down 18%.','The rollout has 3 cohorts and no critical incidents.','Two regulated customers still need data residency review.']}
+    soup=BeautifulSoup(_render_data_story_cta_close(spec,5),'html.parser')
+    text=soup.select_one('section.slide').get_text(' ',strip=True)
+    assert '2 open data residency reviews' not in text
+    assert all(fact in text for fact in spec['supporting_facts'])
+    assert spec['desired_action'] in text
+    assert len(soup.select('.ds-kpi-card'))==4
+
+
+def test_quantified_close_keeps_one_real_card_when_action_equals_only_fact():
+    from low_context import _render_data_story_cta_close
+    fact='Record the API p95 latency of 310 ms.'
+    spec={'slide_number':5,'title':'Run The Next Test','supporting_items':[],'evidence_items':[],'numeric_facts':[],'layout_id':'cta_close','role':'decision','speaker_note':fact,'desired_action':fact,'key_point':fact,'supporting_facts':[fact]}
+    output='<html><head></head><body>'+_render_data_story_cta_close(spec,5)+'</body></html>'
+    soup=BeautifulSoup(apply_audience_readability(output),'html.parser')
+    assert len(soup.select('.ds-kpi-card'))==1
+    assert soup.select_one('section.slide').get_text(' ',strip=True).count(fact)==1
+    assert soup.select_one('.ds-kpi-card.ds-insight')

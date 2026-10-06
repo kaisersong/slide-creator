@@ -18,7 +18,7 @@ from preset_capabilities import (
 from preset_profile_renderer import build_preset_profile_payload, profile_auto_contrast_script
 from preset_support import preset_support_tier
 from title_profiles import profile_allows_explicit_line_control, resolve_title_profile
-from audience_readability import unique_facts, non_repeating_copy, apply_audience_readability
+from audience_readability import unique_facts, copy_key, non_repeating_copy, apply_audience_readability
 
 
 def _discover_root() -> Path:
@@ -6851,6 +6851,21 @@ def _render_data_story_cta_close(spec: dict[str, Any], total: int) -> str:
         layout_id=spec["layout_id"],
         force_balance=True,
     )
+    local_facts = unique_facts([str(fact) for fact in spec.get("supporting_facts", [])])
+    if local_facts and _data_story_has_numeric_cta_signal(spec, local_facts):
+        # Closing summaries must not rewrite measured entities. Use the
+        # complete local statements, including late-listed review blockers.
+        decision_copy = str(spec.get("desired_action") or spec.get("claim") or spec["title"])
+        facts = [fact for fact in local_facts[:5] if copy_key(fact) != copy_key(decision_copy)] or local_facts[:1]
+        cards = ''.join('<div class="ds-kpi-card reveal"><div class="ds-kpi-label" style="text-transform:none;">' + _escape(fact) + '</div></div>' for fact in facts)
+        return f"""
+    <section class="slide ds-close" id="slide-{slide_number}" data-notes="{_escape(spec['speaker_note'])}" aria-label="{_escape(spec['role'])}" data-export-role="cta_close">
+      <div class="slide-content"><div class="ds-shell ds-cta-block">
+        <div><div class="ds-subhead reveal">closing readout</div>{title_tag}<div class="ds-divider reveal"></div>
+          <div class="ds-insight reveal"><strong>Decision:</strong> {_escape(decision_copy)}</div></div>
+        <div class="ds-kpi-grid">{cards}</div>
+      </div></div><span class="slide-num-label">{slide_number:02d} / {total:02d}</span>
+    </section>""".strip()
     items = _spec_display_items(spec, limit=2)
     decision_copy = spec.get("desired_action") or spec["key_point"]
     if decision_copy != spec["key_point"]:

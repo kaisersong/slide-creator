@@ -2,7 +2,7 @@ import argparse,json,statistics,sys,re
 from pathlib import Path
 sys.path.insert(0,str(Path(__file__).resolve().parents[2]/'scripts'))
 from browser_geometry_qa import _launch_browser,_enter_present_mode,_activate_slide,_wait_for_deterministic_layout
-p=argparse.ArgumentParser();p.add_argument('--target',default='candidate13');p.add_argument('--run-dir',type=Path,required=True);a=p.parse_args()
+p=argparse.ArgumentParser();p.add_argument('--target',default='candidate14');p.add_argument('--run-dir',type=Path,required=True);a=p.parse_args()
 base=a.run_dir.resolve();manifest=json.loads((base/'manifest.json').read_text())
 selector='h1,h2,h3,h4,h5,h6,p,li,td,pre,code,.pill,.ds-insight,.ds-close-readout-text,.audience-copy,.ds-action-title,.ent-kpi-label,.ent-cover-metric-title,.ds-kpi-label,.hero-stat-label,.sc-metric-label,.iri-fracture-item,.iri-field span:last-child,.sc-thing-body'
 js=r'''({selector})=>{

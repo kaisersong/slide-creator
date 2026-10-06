@@ -50,6 +50,7 @@ def build_model_context(preset: str) -> dict[str, Any]:
             "preferred_layout_family is a family such as hero, evidence, comparison, flow, close. Do not put layout IDs in that field.",
             "Preserve the chosen preset; the renderer owns CSS, runtime, export DOM, title balancing and layout implementation.",
             "Keep all numeric values paired with source entities and units. Keep targets and unknowns explicit. Never invent measurements.",
+            "Copy quantified source statements into supporting_facts without changing the counted entity or qualifier. Two regulated customers needing review is not a count of two reviews. Keep the same entities in explanations and speaker notes.",
             "Keep observations, targets, proposals and causal hypotheses distinct. Interview reports do not prove a root cause. Preserve source actors, action order and scope; do not add inferred actors or conditions to evidence.",
             "If the source has no measurements, set chart_policy=avoid; explain the next test instead of using counts as evidence.",
             "Do not combine unlike units (activation %, latency ms, percentage-point change) in one quantitative series. Use labeled cards or chart_policy=avoid on that page.",
