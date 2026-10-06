@@ -6,11 +6,17 @@ import json
 from typing import Any
 
 from low_context import ROOT, compile_style_contract, StyleContractError
-from preset_capabilities import discover_custom_themes, get_preset_render_capability
+from preset_capabilities import discover_custom_themes, get_preset_render_capability, CANONICAL_PRESET_NAMES
+from title_profiles import resolve_title_profile
 
 
 def build_model_context(preset: str) -> dict[str, Any]:
     capability = get_preset_render_capability(preset)
+    if not capability.can_render and not preset.startswith("custom:"):
+        canonical=CANONICAL_PRESET_NAMES.get(preset.lower().replace("-"," "))
+        if canonical:
+            preset=canonical
+            capability=get_preset_render_capability(preset)
     if not capability.can_render:
         raise StyleContractError(json.dumps(capability.render_error_payload(), ensure_ascii=False))
     contract = compile_style_contract(preset)
@@ -28,6 +34,7 @@ def build_model_context(preset: str) -> dict[str, Any]:
         "renderer_strategy":capability.renderer_strategy, "support_tier":capability.support_tier,
         "style_source":contract["source_path"], "style_digest":contract["digest"],
         "visual_contract":{key:contract[key] for key in ("font_families","allowed_layout_ids","style_reminders")},
+        "title_profile":resolve_title_profile(preset),
         "color_tokens":{key:value for key,value in contract["tokens"].items() if any(s in key for s in ("bg","text","accent","red","navy"))},
         "brief_skeleton":template,
         "slide_required":slide_shape["required"],
@@ -44,8 +51,11 @@ def build_model_context(preset: str) -> dict[str, Any]:
             "If the source has no measurements, set chart_policy=avoid; explain the next test instead of using counts as evidence.",
             "Do not combine unlike units (activation %, latency ms, percentage-point change) in one quantitative series. Use labeled cards or chart_policy=avoid on that page.",
             "Use a concrete assertion as a title; preserve uncertainty. Avoid generic Overview/Introduction/Summary labels.",
-            "Keep the user language. Use source-specific explanations for speaker notes. Do not add new top-level BRIEF fields.",
-            "explanation is factual content, not stage directions such as 讲解顺序 or tell the audience; it can appear on the slide as well as in notes.",
+            "Keep the user language. Put speaker directions in slide.speaker_note only. Do not add new top-level BRIEF fields.",
+            "explanation, key_point, claim and supporting_facts are audience-visible content. Never put 演讲备注, 这一页, Explain that, Tell operators, Walk through, or thesis= in these fields.",
+            "Use short assertion titles: aim for <=12 CJK characters or <=6 English words. Put full evidence and conditions in body fields, not an overlong title.",
+            "Use at most 12 English words in a compact card item. explanation can use several short factual sentences; put longer speaking guidance in speaker_note.",
+            "Do not use a before/after comparison for two unrelated facts or unchanged requirements; use evidence or flow instead.",
             "Do not inspect runtime source on the normal generation path. Read the full selected style reference only for a concrete missing design decision.",
         ],
         "technical_language_reference":"references/technical-language.md (technical content only)",

@@ -291,6 +291,19 @@ def _enter_present_mode(page) -> bool:
 
 def _activate_slide(page, slide_index: int, *, mode: str = "window") -> bool:
     if mode == "present":
+        if page.locator("#track").count():
+            # Do not click Blue Sky's window-mode dots while presenting: their
+            # original go() translates #track and moves fixed slides offscreen.
+            # Its public keyboard handler uses PresentMode's wrapped goTo().
+            page.keyboard.press("Home")
+            for _ in range(max(0, slide_index - 1)):
+                page.keyboard.press("ArrowRight")
+            return bool(page.evaluate("""(i) => {
+              const slide = document.querySelectorAll('.slide')[i - 1];
+              if (!slide || !slide.classList.contains('p-on')) return false;
+              const r = slide.getBoundingClientRect();
+              return r.right > 0 && r.left < innerWidth && r.bottom > 0 && r.top < innerHeight;
+            }""", slide_index))
         activated = bool(
             page.evaluate(
                 """

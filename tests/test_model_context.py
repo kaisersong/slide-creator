@@ -47,6 +47,13 @@ def test_context_requires_preset():
     assert "--preset is required" in result.stderr
 
 
+def test_query_normalizes_builtin_hyphen_alias_without_losing_note_field():
+    context=build_model_context("swiss-modern")
+    assert context["brief_skeleton"]["style"]["preset"] == "Swiss Modern"
+    assert "speaker_note" in context["slide_optional"]
+    assert context["title_profile"]["max_lines"] == 3
+
+
 def test_preset_argument_does_not_silently_override_generation():
     result = subprocess.run([sys.executable,str(ROOT/"main.py"),"--generate","--preset","Data Story","--output","unused.html"],capture_output=True,text=True)
     assert result.returncode == 2

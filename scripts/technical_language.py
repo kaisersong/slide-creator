@@ -18,7 +18,7 @@ def analyze_technical_language(brief, technical=True):
         return report
     fields=[]
     for i,slide in enumerate(brief.get("narrative",{}).get("slides",[]),1):
-        for key in ("title","key_point","claim","explanation"):
+        for key in ("title","key_point","claim","explanation","speaker_note"):
             if isinstance(slide.get(key),str):
                 fields.append((f"slides[{i}].{key}",slide[key]))
         for key in ("supporting_facts","numeric_facts"):

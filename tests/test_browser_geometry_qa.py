@@ -48,6 +48,9 @@ def test_present_navigation_uses_anonymous_production_controller(tmp_path, prese
             assert state["visible"] and state["reveals"]
         else:
             assert page.locator(".slide.p-on").get_attribute("class").find("active") >= 0
+            rect = page.locator(".slide.p-on").bounding_box()
+            assert rect and rect["x"] >= -4
+            assert page.locator("#track").evaluate("e => getComputedStyle(e).transform") in ("none", "matrix(1, 0, 0, 1, 0, 0)")
         page.keyboard.press("ArrowRight")
         assert page.locator("#present-counter").inner_text().startswith("5 /")
         assert page.locator(".slide.p-on").get_attribute("id") == "slide-5"
