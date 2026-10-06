@@ -66,6 +66,7 @@ scripts/*
 !scripts/preset_release_gate.py
 !scripts/token-efficiency-eval.py
 !scripts/model_context.py
+!scripts/audience_readability.py
 !scripts/technical_language.py
 !docs/
 docs/*

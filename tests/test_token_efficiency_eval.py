@@ -86,3 +86,14 @@ def test_best_effort_language_policy_retains_quality_guard(tmp_path):
     result["qa"]["missing_required_terms"]=["24"]
     path.write_text(json.dumps(result))
     assert "guard.technical.rep1.missing_required_terms.added" in EVAL.compare(tmp_path,"candidate3","observe")["adoption_gate"]["failures"]
+
+
+def test_visual_refinement_compares_to_passed_candidate_without_requiring_another_token_cut(tmp_path):
+    (tmp_path/"manifest.json").write_text(json.dumps({"repetitions":1,"cases":[{"id":"visual"}]}))
+    for arm,tokens in (("candidate5",200),("candidate6",205)):
+        result={"case_id":"visual","rep":1,"complete":True,"passed":True,"technical":False,"evaluator_version":2,"generation":{"total_tokens":tokens,"wall_ms":100},"judge":{"complete":True,"quality_score":90},"qa":{"strict_pass":True,"geometry_pass":True,"page_count_pass":True,"quality_failures":[],"geometry_failures":[],"missing_required_terms":[]}}
+        path=tmp_path/arm/"visual/rep-1/result.json";path.parent.mkdir(parents=True);path.write_text(json.dumps(result))
+    comparison=EVAL.compare(tmp_path,"candidate6","observe","candidate5")
+    assert comparison["adoption_gate"]["pass"]
+    assert comparison["acceptance_policy"]["baseline_arm"]=="candidate5"
+    assert (tmp_path/"comparison.candidate6.vs.candidate5.json").exists()

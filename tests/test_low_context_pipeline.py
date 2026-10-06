@@ -1561,7 +1561,7 @@ def test_production_presets_do_not_leak_chinese_chan_signatures():
 def test_org_phase_change_production_presets_avoid_generic_or_truncated_anchor_tokens():
     source_brief = _make_anchor_regression_brief()
     cases = [
-        ("Swiss Modern", ".hero-stat-num", 3),
+        ("Swiss Modern", ".hero-stat-num", 0),
         ("Enterprise Dark", ".ent-kpi-number", 0),
         ("Data Story", ".ds-kpi", 1),
     ]
@@ -1581,6 +1581,10 @@ def test_org_phase_change_production_presets_avoid_generic_or_truncated_anchor_t
         assert 'class="ds-kpi positive reveal">AI<' not in html_text
         if preset == "Swiss Modern":
             assert 'class="swiss-stat accent">流体化<' in html_text
+        if preset == "Swiss Modern":
+            # Qualitative statements remain visible; do not fabricate numeric
+            # cards just to satisfy a fixed component count.
+            assert len(soup.select(".hero-stat-label")) >= 3
         if expected_count:
             assert len(values) >= expected_count
         if expected_count > 1:
@@ -2281,7 +2285,10 @@ def test_swiss_slide_creator_intro_uses_demo_level_component_rhythm():
         for node in features_slide.select(".feat-card, .data-table td")
     ]
     assert feature_text_units
-    assert all(len(cell) <= 100 for cell in feature_text_units)
+    # Full statements must survive wrapping, including facts over 100 chars.
+    assert not any(cell.endswith("...") for cell in feature_text_units)
+    fact_slide = next(slide for slide in brief["narrative"]["slides"] if slide["role"] == "features")
+    assert all(fact in features_slide.get_text(" ", strip=True) for fact in fact_slide.get("supporting_facts", [])[:4])
     assert "IR-first Workflow — IR-first Workflow" not in features_slide.get_text(" ", strip=True)
 
     design_slide = soup.select_one('section.slide[aria-label="design-philosophy"]')
