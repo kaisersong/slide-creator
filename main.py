@@ -48,6 +48,7 @@ def build_parser() -> argparse.ArgumentParser:
         description="Sandbox-friendly CLI for slide-creator BRIEF validation and deterministic rendering."
     )
     mode = parser.add_mutually_exclusive_group(required=True)
+    mode.add_argument("--model-context", action="store_true", help="Print a compact model-facing BRIEF/style contract")
     mode.add_argument(
         "--plan",
         nargs="*",
@@ -65,6 +66,7 @@ def build_parser() -> argparse.ArgumentParser:
         help="Validate a BRIEF.json artifact",
     )
     parser.add_argument("--brief", help="Path to BRIEF.json (defaults to ./BRIEF.json)")
+    parser.add_argument("--preset", help="Selected preset for --model-context")
     parser.add_argument("--context-file", help="Path to a context artifact containing exactly one valid BRIEF")
     parser.add_argument("--output", help="Output HTML path for --generate")
     parser.add_argument("--eval", action="store_true", help="Write a single-deck eval JSON next to the output HTML")
@@ -191,8 +193,17 @@ def main() -> int:
     parser = build_parser()
     args = parser.parse_args()
 
+    if args.preset and not args.model_context:
+        parser.error("--preset is only valid with --model-context; generation style comes from BRIEF")
+
     if args.plan is not None:
         return run_plan(args.plan)
+
+    if args.model_context:
+        if not args.preset:
+            parser.error("--preset is required with --model-context")
+        from model_context import print_model_context
+        return print_model_context(args.preset)
 
     brief_path = _default_brief_path(args.brief)
 

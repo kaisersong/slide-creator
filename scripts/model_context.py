@@ -1,0 +1,63 @@
+"""Model-facing contract compiled from existing runtime owners, without CSS/JS."""
+from __future__ import annotations
+
+import copy
+import json
+from typing import Any
+
+from low_context import ROOT, compile_style_contract, StyleContractError
+from preset_capabilities import discover_custom_themes, get_preset_render_capability
+
+
+def build_model_context(preset: str) -> dict[str, Any]:
+    capability = get_preset_render_capability(preset)
+    if not capability.can_render:
+        raise StyleContractError(json.dumps(capability.render_error_payload(), ensure_ascii=False))
+    contract = compile_style_contract(preset)
+    template = copy.deepcopy(json.loads((ROOT / "references/brief-template.json").read_text()))
+    template.update(brief_id="your-deck", title="", audience="", desired_action="", notes="")
+    template["deck"].update(page_count=5, deck_type="user-content")
+    template["style"].update(preset=preset, tone="", visual_density="medium")
+    template["content"] = {"source_policy":"distill-only", "must_include":[], "must_avoid":[]}
+    template["narrative"] = {"thesis":"", "page_roles":[], "slides":[]}
+    template["timing"] = {kind:{key:"not measured" for key in ("plan","generate","validate","polish","total")} for kind in ("estimate","actual")}
+    schema = json.loads((ROOT / "schemas/generation-brief.schema.json").read_text())
+    slide_shape = schema["properties"]["narrative"]["properties"]["slides"]["items"]
+    return {
+        "contract_version":1, "preset":preset, "canonical_preset":capability.canonical_preset,
+        "renderer_strategy":capability.renderer_strategy, "support_tier":capability.support_tier,
+        "style_source":contract["source_path"], "style_digest":contract["digest"],
+        "visual_contract":{key:contract[key] for key in ("font_families","allowed_layout_ids","style_reminders")},
+        "color_tokens":{key:value for key,value in contract["tokens"].items() if any(s in key for s in ("bg","text","accent","red","navy"))},
+        "brief_skeleton":template,
+        "slide_required":slide_shape["required"],
+        "slide_optional":{key: ({"enum":value["enum"]} if "enum" in value else value["type"])
+                          for key,value in slide_shape["properties"].items() if key not in slide_shape["required"]},
+        "rules":[
+            "Fill every empty field and create page_roles/slides for all requested pages (5-20). The skeleton is not a valid final BRIEF.",
+            "Use slide claim, explanation, visual_intent, supporting_facts and numeric_facts to preserve source evidence and rich content.",
+            "One main claim and one main exhibit per page. Use varied layout families; do not reduce evidence to title-only slides.",
+            "Distribute all source facts across pages. Do not pad evidence tables by repeating a fact, or copy global_facts into every page.",
+            "preferred_layout_family is a family such as hero, evidence, comparison, flow, close. Do not put layout IDs in that field.",
+            "Preserve the chosen preset; the renderer owns CSS, runtime, export DOM, title balancing and layout implementation.",
+            "Keep all numeric values paired with source entities and units. Keep targets and unknowns explicit. Never invent measurements.",
+            "If the source has no measurements, set chart_policy=avoid; explain the next test instead of using counts as evidence.",
+            "Do not combine unlike units (activation %, latency ms, percentage-point change) in one quantitative series. Use labeled cards or chart_policy=avoid on that page.",
+            "Use a concrete assertion as a title; preserve uncertainty. Avoid generic Overview/Introduction/Summary labels.",
+            "Keep the user language. Use source-specific explanations for speaker notes. Do not add new top-level BRIEF fields.",
+            "explanation is factual content, not stage directions such as 讲解顺序 or tell the audience; it can appear on the slide as well as in notes.",
+            "Do not inspect runtime source on the normal generation path. Read the full selected style reference only for a concrete missing design decision.",
+        ],
+        "technical_language_reference":"references/technical-language.md (technical content only)",
+        "custom_themes":[path.parent.name for path in discover_custom_themes().values()],
+    }
+
+
+def print_model_context(preset: str) -> int:
+    try:
+        context = build_model_context(preset)
+    except (StyleContractError, OSError, ValueError) as exc:
+        print(f"CONTEXT ERROR: {exc}")
+        return 1
+    print(json.dumps(context, ensure_ascii=False, separators=(",", ":")))
+    return 0

@@ -299,9 +299,19 @@ def _activate_slide(page, slide_index: int, *, mode: str = "window") -> bool:
                   if (!slides.length) return true;
                   const idx = Math.max(0, Math.min((slideIndex || 1) - 1, slides.length - 1));
                   try {
-                    if (typeof ctrl !== 'undefined' && ctrl && typeof ctrl.goTo === 'function') ctrl.goTo(idx);
+                    if (typeof ctrl !== 'undefined' && ctrl && typeof ctrl.goTo === 'function') {
+                      ctrl.goTo(idx);
+                      return slides[idx].classList.contains('p-on');
+                    }
                   } catch (_err) {}
-                  slides.forEach((slide, slideIdx) => slide.classList.toggle('p-on', slideIdx === idx));
+                  // Shared decks bootstrap an anonymous controller. Its real
+                  // navigation buttons call PresentMode's wrapped goTo().
+                  // Toggling p-on alone leaves reveal nodes hidden and the
+                  // controller/counter on the previous slide.
+                  const nav = document.querySelector('#nav-dots, .nav-dots');
+                  const dots = nav ? Array.from(nav.querySelectorAll('button, .dot')) : [];
+                  if (!dots[idx]) return false;
+                  dots[idx].click();
                   return slides[idx].classList.contains('p-on');
                 }
                 """,
@@ -700,7 +710,8 @@ def _measure_viewport(
     slide_records: list[dict[str, Any]] = []
     overall_stable = True
     for slide_index in range(1, _slide_count(page) + 1):
-        _activate_slide(page, slide_index, mode=mode)
+        if not _activate_slide(page, slide_index, mode=mode):
+            raise RuntimeError(f"Cannot activate slide {slide_index} through the {mode} controller")
         _wait_for_deterministic_layout(page)
         signatures: list[list[dict[str, Any]]] = []
         measurements: list[dict[str, Any]] = []
@@ -867,11 +878,14 @@ def analyze_browser_geometry_html(
     stable = True
     screenshot_refs: list[str] = []
     present_mode_entered: dict[str, bool] = {}
+    page_errors: list[dict[str, Any]] = []
+    console_errors: list[str] = []
 
     with tempfile.TemporaryDirectory(prefix="browser-geometry-qa-") as temp_dir:
         html_path = Path(temp_dir) / "deck.html"
         html_path.write_text(html_text, encoding="utf-8")
         playwright, browser = _launch_browser()
+        browser_version = browser.version
         try:
             for viewport in viewports:
                 for mode in modes:
@@ -880,6 +894,8 @@ def analyze_browser_geometry_html(
                         device_scale_factor=DEVICE_PIXEL_RATIO,
                     )
                     page = context.new_page()
+                    page.on("pageerror", lambda error, v=dict(viewport), m=mode: page_errors.append({"code":"browser-geometry-page-error","type":"page_error","message":str(error),"viewport":v,"mode":m}))
+                    page.on("console", lambda message: console_errors.append(message.text) if message.type == "error" else None)
                     try:
                         page.goto(html_path.as_uri(), wait_until="load", timeout=20000)
                         page.add_style_tag(content=QA_FREEZE_CSS)
@@ -935,6 +951,7 @@ def analyze_browser_geometry_html(
             browser.close()
             playwright.stop()
 
+    violations.extend(page_errors)
     hard_failures: list[str] = []
     for violation in violations:
         code = str(violation["code"])
@@ -949,6 +966,8 @@ def analyze_browser_geometry_html(
         "mode_count": len(modes),
         "clipped_violation_count": len([v for v in violations if v.get("type") == "content_clipped"]),
         "stable_measurement": stable,
+        "page_error_count": len(page_errors),
+        "console_error_count": len(console_errors),
     }
     return {
         "version": REPORT_VERSION,
@@ -958,9 +977,11 @@ def analyze_browser_geometry_html(
         "hard_failures": hard_failures,
         "violations": violations,
         "telemetry": telemetry,
+        "console_errors": console_errors,
         "measurements": all_measurements,
         "diagnostics": diagnostics,
         "runner": {
+            "browser_version": browser_version,
             "viewports": viewports,
             "modes": list(modes),
             "present_mode_entered": present_mode_entered,

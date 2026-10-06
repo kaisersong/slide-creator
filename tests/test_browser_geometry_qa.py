@@ -17,6 +17,43 @@ from browser_geometry_qa import _capture_screenshot, _contrast_violations, analy
 VIEWPORTS = [{"width": 1600, "height": 900}]
 
 
+@pytest.mark.slow
+def test_present_navigation_uses_anonymous_production_controller(tmp_path):
+    """Switching only p-on used to screenshot a blank page and stale counter."""
+    import json
+    from browser_geometry_qa import _launch_browser, _enter_present_mode, _activate_slide
+    from low_context import render_from_brief
+    brief = json.loads((ROOT / "references/brief-template.json").read_text())
+    brief["style"]["preset"] = "Swiss Modern"
+    html, _, _ = render_from_brief(brief)
+    deck = tmp_path / "deck.html"
+    deck.write_text(html)
+    playwright, browser = _launch_browser()
+    try:
+        page = browser.new_page(viewport=VIEWPORTS[0])
+        page.route("https://**/*", lambda route: route.abort())
+        page.goto(deck.as_uri())
+        assert _enter_present_mode(page)
+        assert _activate_slide(page, 4, mode="present")
+        state = page.evaluate("""() => ({
+          counter:document.querySelector('#present-counter').textContent,
+          activeId:document.querySelector('.p-on').id,
+          visible:document.querySelector('.p-on').classList.contains('visible'),
+          reveals:Array.from(document.querySelectorAll('.p-on .reveal')).every(n => n.classList.contains('visible'))
+        })""")
+        assert state["activeId"] == "slide-4"
+        assert state["counter"].startswith("4 /")
+        assert state["visible"] and state["reveals"]
+        page.keyboard.press("ArrowRight")
+        assert page.locator("#present-counter").inner_text().startswith("5 /")
+        assert page.locator(".slide.p-on").get_attribute("id") == "slide-5"
+        page.keyboard.press("ArrowLeft")
+        assert page.locator("#present-counter").inner_text().startswith("4 /")
+    finally:
+        browser.close()
+        playwright.stop()
+
+
 class _FlakyScreenshotPage:
     def __init__(self, failures: int) -> None:
         self.failures = failures

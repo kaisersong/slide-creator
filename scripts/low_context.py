@@ -3247,7 +3247,10 @@ body.presenting .slide-credit {{ display: none !important; }}
 
 
 def _extract_numbers(text: str) -> list[str]:
-    return re.findall(r"\d+(?:\.\d+)?(?:\+|%|万|亿|座|年)?", text)
+    # p95/v2 are metric names or identifiers, not measured values. Fence
+    # ASCII identifier characters (and decimal tails) without excluding CJK
+    # text such as 峰值120请求 or measurements written as 310ms.
+    return re.findall(r"(?<![A-Za-z0-9_.])\d+(?:\.\d+)?(?:\+|%|万|亿|座|年)?", text)
 
 
 def _dedupe_preserve(values: list[str]) -> list[str]:
