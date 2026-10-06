@@ -72,7 +72,7 @@ def apply_audience_readability(html: str) -> str:
         for card in list(slide.select(".g,.ent-kpi-card,.ds-stage-card,.sc-evidence-card")):
             if not card.get_text(" ",strip=True) and not card.select("img,svg,canvas,video"):
                 card.decompose()
-        for node in slide.select("p,li,td,h3,h4,h5,h6,span[data-audience-fact],.ds-action-title,.ds-insight,.hero-stat-label,.ent-kpi-label,.ent-cover-metric-title,.ds-kpi-label,.sc-metric-label,.sc-thing-body,.iri-fracture-item,.iri-field span:last-child,.iri-contract-layer p,.iri-fact strong,.pain-title,.pain-desc,.disc-step-title,.disc-step-desc"):
+        for node in slide.select("p,li,td,h3,h4,h5,h6,pre,code,span[data-audience-fact],.ds-action-title,.ds-insight,.hero-stat-label,.ent-kpi-label,.ent-cover-metric-title,.ds-kpi-label,.sc-metric-label,.sc-thing-body,.iri-fracture-item,.iri-field span:last-child,.iri-contract-layer p,.iri-fact strong,.pain-title,.pain-desc,.disc-step-title,.disc-step-desc"):
             if node.find_parent(["svg", "foreignobject"]):
                 continue
             if not node.get_text(" ", strip=True):
@@ -92,6 +92,7 @@ body .slide .audience-copy { font-size:22px !important; line-height:1.45 !import
 body .slide .pill.audience-copy { white-space:normal; max-width:100%; }
 @media (max-width:600px) { body:not(.presenting) .slide .audience-copy { font-size:18px !important; } }
 body .slide .iri-field code { font-size:20px; line-height:1.35; overflow-wrap:anywhere; }
+body .slide .iri-brief-code pre { font-size:20px !important; line-height:1.45 !important; white-space:pre-wrap; overflow-wrap:anywhere; }
 body[data-preset="Data Story"] .ds-close .ds-kpi { font-size:clamp(38px,4vw,58px); line-height:1.1; }
 body[data-preset="Data Story"] .ds-stage-grid--evidence { display:flex; flex-direction:column; gap:0; }
 body[data-preset="Data Story"] .ds-stage-grid--evidence .ds-stage-card { display:grid; grid-template-columns:100px minmax(0,1fr); border:0; border-bottom:1px solid var(--axis-line,#c8d1dc); background:transparent; padding:14px 0; }
