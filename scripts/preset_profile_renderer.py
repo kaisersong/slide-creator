@@ -2379,15 +2379,19 @@ def _render_strategy_consulting_body(spec: dict[str, Any], *, layout: str, canon
         elif layout == "consulting_matrix":
             grid = '<table class="sc-fact-table reveal"><tbody>' + ''.join(f'<tr><td>{index:02d}</td><td>{_escape(fact)}</td></tr>' for index,fact in enumerate(local[:5],1)) + '</tbody></table>'
         elif layout == "consulting_close":
-            rows = []
+            rule_rows, plain_rows = [], []
             for fact in local[:5]:
                 parts = re.split(r"[，,]", fact)
                 if len(parts) == 2 and re.match(r"^(若|如果|if\b)",fact,re.I):
-                    rows.append('<tr><td>' + _escape(parts[0]) + '</td><td>' + _escape(parts[1]) + '</td></tr>')
+                    rule_rows.append('<tr><td>' + _escape(parts[0]) + '</td><td>' + _escape(parts[1]) + '</td></tr>')
                 else:
-                    rows.append('<tr><td colspan="2">' + _escape(fact) + '</td></tr>')
+                    plain_rows.append('<li>' + _escape(fact) + '</li>')
             zh = _is_zh_language("zh" if re.search(r"[\u4e00-\u9fff]", title) else "en")
-            grid = '<table class="sc-fact-table sc-rule-table reveal"><thead><tr><th>' + ('条件' if zh else 'Condition') + '</th><th>' + ('行动' if zh else 'Action') + '</th></tr></thead><tbody>' + ''.join(rows) + '</tbody></table>'
+            grid = ''
+            if rule_rows:
+                grid = '<table class="sc-fact-table sc-rule-table reveal"><thead><tr><th>' + ('条件' if zh else 'Condition') + '</th><th>' + ('行动' if zh else 'Action') + '</th></tr></thead><tbody>' + ''.join(rule_rows) + '</tbody></table>'
+            if plain_rows:
+                grid += '<ul class="sc-close-facts reveal">' + ''.join(plain_rows) + '</ul>'
         return '<div class="strategy-consulting-block">' + header + grid + '</div>'
     title = str(spec.get("title", ""))
     key_point = _compact(str(spec.get("key_point", "")), limit=160)

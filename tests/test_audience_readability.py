@@ -36,9 +36,19 @@ def test_consulting_uses_distinct_exhibits_and_source_condition_action_pairs():
     assert sections[2].select_one('.sc-before-after')
     assert sections[3].select_one('.sc-quote-block')
     table=sections[4].select_one('.sc-rule-table')
-    assert table and len(table.select('tbody tr'))==3
+    assert table and len(table.select('tbody tr'))==2
+    assert sections[4].select_one('.sc-close-facts').get_text(strip=True)=="当前没有试点结果。"
     first=table.select('tbody tr')[0]
     assert [c.get_text() for c in first.select('td')]==['若服务成本增加且满意度未改善','停止扩展。']
+
+
+def test_consulting_close_does_not_label_plain_facts_as_condition_action():
+    from preset_profile_renderer import _render_strategy_consulting_body
+    from preset_profile_specs import PROFILE_SPECS
+    value={'title':'先评估再扩展','key_point':'当前没有试点结果','supporting_facts':['当前没有试点结果。','访谈是小样本，不能推断全体比例。']}
+    soup=BeautifulSoup(_render_strategy_consulting_body(value,layout='consulting_close',canonical_preset='Strategy Consulting',profile_spec=PROFILE_SPECS['Strategy Consulting']),'html.parser')
+    assert not soup.select('.sc-rule-table,th')
+    assert [n.get_text() for n in soup.select('.sc-close-facts li')]==value['supporting_facts']
 
 
 def test_complete_sentence_filter_keeps_new_scope_negations_and_decimal_values():
@@ -72,3 +82,10 @@ def test_metric_keeps_its_adjacent_source_label_when_summary_repeats_it():
     html='<html><head></head><body><section class="slide"><h2>45名产品经理参与试点</h2><div class="g"><div class="stat">45</div><p class="blue-metric-label">45名产品经理参与试点</p></div></section></body></html>'
     soup=BeautifulSoup(apply_audience_readability(html),'html.parser')
     assert soup.select_one('.g .blue-metric-label').get_text()=="45名产品经理参与试点"
+
+
+def test_custom_theme_fields_remove_only_repeated_lead_sentences():
+    html='<html><head></head><body><section class="slide"><p>导出的图片不能保留文字编辑能力。 需要继续改字时选择 HTML。</p><div class="iri-field"><span>01</span><span>导出的图片不能保留文字编辑能力。</span></div></section></body></html>'
+    soup=BeautifulSoup(apply_audience_readability(html),'html.parser')
+    assert soup.select_one('p').get_text()=="需要继续改字时选择 HTML。"
+    assert soup.select_one('.iri-field span:last-child').get_text()=="导出的图片不能保留文字编辑能力。"
