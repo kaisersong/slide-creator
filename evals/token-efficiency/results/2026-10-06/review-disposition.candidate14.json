@@ -1,0 +1,12 @@
+{
+  "arm": "candidate14",
+  "automatic_complete": 26,
+  "automatic_passed": 25,
+  "adoption": "rejected",
+  "reasons": [
+    "consulting-strategy-zh.rep1 requested Strategy Consulting but generated Swiss Modern",
+    "Source review: stop and expand titles omitted conjunctions; page5 strengthened suggestion to need"
+  ],
+  "repair_lane": "repairs/candidate14-consulting-rep1",
+  "repair_scope": "Manual source corrections and canonical renderer; strict, geometry, preset, page count, required facts pass. Not an E2E model run; no independent rejudge or fabricated token estimate."
+}

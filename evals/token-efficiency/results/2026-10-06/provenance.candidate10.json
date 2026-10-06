@@ -1,0 +1,16 @@
+{
+  "implementation_commit": "90a0f4e7b0364cffa18f7379560dbbd439a967ae",
+  "snapshot_sha256": "333674b8437f4c31786ef833f0106333d9ab729a238a8fb4c4fcce9317108f86",
+  "model": "gpt-5.5",
+  "reasoning_effort": "high",
+  "jobs": 2,
+  "evaluator_version": 2,
+  "baseline_arm": "candidate5",
+  "regression": "2863 passed,114 skipped,7 deselected,0 failures",
+  "fixed_input_controls": "24/24 strict, geometry and required terms passed, controls/candidate10-same-brief",
+  "readability_measurement_version": 3,
+  "source_authority": "Frozen manifest source notes; no scorer/source changes.",
+  "preview_url": "http://127.0.0.1:8796/preview.html",
+  "candidate6_failures_retained": true,
+  "intermediate_lifecycle": "candidate7/8 frozen unrun; candidate9 interrupted after two generations and before any completed scored result; all files/known usage retained."
+}

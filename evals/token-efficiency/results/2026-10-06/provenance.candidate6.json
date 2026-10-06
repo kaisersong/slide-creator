@@ -1,0 +1,20 @@
+{
+  "objective": "Fix two inherited failures and font/duplicate/rhythm issues; show generated decks; finish full candidate6 vs candidate5 eval.",
+  "branch": "codex/slide-token-eval",
+  "implementation_commit": "72803535c8bb2d390bba941ed2cfa059474f8422",
+  "candidate6_snapshot_sha256": "5fac00b4be478cf80afa88ed270ceced922404d900c325f3b0f7967034479030",
+  "run_root": "evals/artifacts/token-efficiency/2026-10-06-p1-formal",
+  "session_id": 25749,
+  "preview_url": "http://127.0.0.1:8796/preview.html",
+  "preview_server_session": 23032,
+  "candidate6_running": true,
+  "regression": "2853 pass,114 skipped,7 deselected,0 failures; latest focused test11 pass",
+  "controls": "24 source candidate5 BRIEFs all strict/geometry/required-terms pass; font median16.8->22px, below16 263->0, duplicate10->1 before last selector dedup fix",
+  "next": [
+    "Wait all26 candidate6 results and compare --baseline-arm candidate5 --language-policy observe, separately compare original baseline",
+    "Recompute runtime integrity and readability diagnostics, inspect new sample screenshots",
+    "Show candidate6 all24 decks/3reps gallery, verify playback navigation",
+    "Write updated report preserving all old outcomes and fix explanation for stale domain-specific assertions",
+    "Commit clean worktree; final Chinese links/results with relevant MEMORY citation"
+  ]
+}

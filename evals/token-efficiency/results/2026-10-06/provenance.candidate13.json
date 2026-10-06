@@ -1,0 +1,15 @@
+{
+  "implementation_commit": "6b883d1576b06ea6cca3cad5a5d516df0f21e03d",
+  "snapshot_sha256": "00ebbe85ba9b57d3fbc66e1d92e70d75355c4c70b0da321d947e9cb2e67b6032",
+  "model": "gpt-5.5",
+  "reasoning_effort": "high",
+  "jobs": 2,
+  "evaluator_version": 2,
+  "baseline_arm": "candidate5",
+  "regression": "2869 passed,114 skipped,7 deselected,0 failures",
+  "fixed_input_controls": "24/24 strict, geometry and required terms passed, controls/candidate13-same-brief",
+  "readability_measurement_version": 4,
+  "source_authority": "Same frozen manifest and evaluator v2",
+  "candidate12_full_run_retained": true,
+  "scope": "Primary evidence not auxiliary indexes; complete local Chan facts not clause fragments; possessives/contractions not broken by title layout."
+}

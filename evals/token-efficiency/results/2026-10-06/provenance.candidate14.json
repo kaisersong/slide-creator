@@ -1,0 +1,15 @@
+{
+  "implementation_commit": "3fa74f29a7fcd49f04a2ebfdd59cb2f799ccdafa",
+  "snapshot_sha256": "d7c9a00983c5f34abca0ff6e764c08ce7fbfec063518092f94295dcafe9ff567",
+  "model": "gpt-5.5",
+  "reasoning_effort": "high",
+  "jobs": 2,
+  "evaluator_version": 2,
+  "baseline_arm": "candidate5",
+  "regression": "2871 passed,114 skipped,7 deselected,0 failures",
+  "fixed_input_controls": "24/24 strict, geometry and required terms passed, controls/candidate14-final-same-brief",
+  "readability_measurement_version": 4,
+  "source_authority": "Same frozen manifest and evaluator v2",
+  "candidate13_disposition": "Reject after full26 automatic pass: KPIrep1 counted reviews instead of regulated customers; review-disposition.candidate13.json retains source override",
+  "scope": "Quantified closing uses complete local facts not explanatory paraphrase; numeric entity and qualifier preserved. Nonquantified action path compatible."
+}

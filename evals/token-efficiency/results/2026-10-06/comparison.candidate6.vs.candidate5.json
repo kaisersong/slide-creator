@@ -1,0 +1,363 @@
+{
+  "baseline": {
+    "arm": "candidate5",
+    "complete": 26,
+    "passed": 26,
+    "wall_ms": {
+      "n": 24,
+      "mean": 139712.96,
+      "median": 138576.5,
+      "p90": 168727
+    },
+    "input_tokens": {
+      "n": 24,
+      "mean": 329169.67,
+      "median": 313890.0,
+      "p90": 442406
+    },
+    "cached_input_tokens": {
+      "n": 24,
+      "mean": 293680,
+      "median": 281216.0,
+      "p90": 396160
+    },
+    "uncached_input_tokens": {
+      "n": 24,
+      "mean": 35489.67,
+      "median": 33558.0,
+      "p90": 46246
+    },
+    "output_tokens": {
+      "n": 24,
+      "mean": 6073.79,
+      "median": 5895.5,
+      "p90": 7655
+    },
+    "total_tokens": {
+      "n": 24,
+      "mean": 335243.46,
+      "median": 319533.0,
+      "p90": 450547
+    },
+    "quality": {
+      "n": 24,
+      "mean": 87.88,
+      "median": 88.0,
+      "p90": 92
+    },
+    "technical_language": {
+      "n": 15,
+      "mean": 86.4,
+      "median": 87,
+      "p90": 91
+    },
+    "eval_total_tokens": {
+      "n": 24,
+      "mean": 362753.46,
+      "median": 345708.0,
+      "p90": 484348
+    },
+    "eval_wall_ms": {
+      "n": 24,
+      "mean": 181237.54,
+      "median": 177775.0,
+      "p90": 214649
+    },
+    "recorded_runs": 26,
+    "observed_generation_token_sum": 8150766,
+    "generation_usage_missing": 0,
+    "calibration_overhead_tokens": 0
+  },
+  "candidate": {
+    "arm": "candidate6",
+    "complete": 26,
+    "passed": 24,
+    "wall_ms": {
+      "n": 24,
+      "mean": 154184.54,
+      "median": 151133.5,
+      "p90": 183892
+    },
+    "input_tokens": {
+      "n": 24,
+      "mean": 375239.75,
+      "median": 347741.0,
+      "p90": 533907
+    },
+    "cached_input_tokens": {
+      "n": 24,
+      "mean": 334741.33,
+      "median": 306560.0,
+      "p90": 476544
+    },
+    "uncached_input_tokens": {
+      "n": 24,
+      "mean": 40498.42,
+      "median": 36909.5,
+      "p90": 57363
+    },
+    "output_tokens": {
+      "n": 24,
+      "mean": 6410.88,
+      "median": 6295.0,
+      "p90": 7640
+    },
+    "total_tokens": {
+      "n": 24,
+      "mean": 381650.62,
+      "median": 354256.0,
+      "p90": 540939
+    },
+    "quality": {
+      "n": 24,
+      "mean": 86.54,
+      "median": 87.0,
+      "p90": 93
+    },
+    "technical_language": {
+      "n": 15,
+      "mean": 87.6,
+      "median": 88,
+      "p90": 91
+    },
+    "eval_total_tokens": {
+      "n": 24,
+      "mean": 408935.88,
+      "median": 380276.5,
+      "p90": 566374
+    },
+    "eval_wall_ms": {
+      "n": 24,
+      "mean": 197223.92,
+      "median": 193195.0,
+      "p90": 227669
+    },
+    "recorded_runs": 26,
+    "observed_generation_token_sum": 9263804,
+    "generation_usage_missing": 0,
+    "calibration_overhead_tokens": 0
+  },
+  "pairs": [
+    {
+      "case_id": "blue-launch-zh",
+      "rep": 1,
+      "complete": true,
+      "token_delta": -33534,
+      "quality_delta": -4
+    },
+    {
+      "case_id": "blue-launch-zh",
+      "rep": 2,
+      "complete": true,
+      "token_delta": 66290,
+      "quality_delta": -3
+    },
+    {
+      "case_id": "blue-launch-zh",
+      "rep": 3,
+      "complete": true,
+      "token_delta": -262600,
+      "quality_delta": 1
+    },
+    {
+      "case_id": "chan-learning-zh",
+      "rep": 1,
+      "complete": true,
+      "token_delta": 54649,
+      "quality_delta": -5
+    },
+    {
+      "case_id": "chan-learning-zh",
+      "rep": 2,
+      "complete": true,
+      "token_delta": -2491,
+      "quality_delta": -2
+    },
+    {
+      "case_id": "chan-learning-zh",
+      "rep": 3,
+      "complete": true,
+      "token_delta": 41977,
+      "quality_delta": -5
+    },
+    {
+      "case_id": "consulting-strategy-zh",
+      "rep": 1,
+      "complete": true,
+      "token_delta": 55418,
+      "quality_delta": -2
+    },
+    {
+      "case_id": "consulting-strategy-zh",
+      "rep": 2,
+      "complete": true,
+      "token_delta": 213360,
+      "quality_delta": 3
+    },
+    {
+      "case_id": "consulting-strategy-zh",
+      "rep": 3,
+      "complete": true,
+      "token_delta": -58681,
+      "quality_delta": -7
+    },
+    {
+      "case_id": "data-kpi-en",
+      "rep": 1,
+      "complete": true,
+      "token_delta": 32538,
+      "quality_delta": -3
+    },
+    {
+      "case_id": "data-kpi-en",
+      "rep": 2,
+      "complete": true,
+      "token_delta": -368586,
+      "quality_delta": 3
+    },
+    {
+      "case_id": "data-kpi-en",
+      "rep": 3,
+      "complete": true,
+      "token_delta": -41405,
+      "quality_delta": 8
+    },
+    {
+      "case_id": "enterprise-security-en",
+      "rep": 1,
+      "complete": true,
+      "token_delta": 26356,
+      "quality_delta": -4
+    },
+    {
+      "case_id": "enterprise-security-en",
+      "rep": 2,
+      "complete": true,
+      "token_delta": -42192,
+      "quality_delta": -4
+    },
+    {
+      "case_id": "enterprise-security-en",
+      "rep": 3,
+      "complete": true,
+      "token_delta": 189505,
+      "quality_delta": -8
+    },
+    {
+      "case_id": "fantasy-custom-zh",
+      "rep": 1,
+      "complete": true,
+      "token_delta": 116856,
+      "quality_delta": -2
+    },
+    {
+      "case_id": "fantasy-custom-zh",
+      "rep": 2,
+      "complete": true,
+      "token_delta": 442647,
+      "quality_delta": 1
+    },
+    {
+      "case_id": "fantasy-custom-zh",
+      "rep": 3,
+      "complete": true,
+      "token_delta": 325042,
+      "quality_delta": -1
+    },
+    {
+      "case_id": "negative-export",
+      "rep": 1,
+      "complete": true,
+      "token_delta": -202,
+      "quality_delta": null
+    },
+    {
+      "case_id": "negative-report",
+      "rep": 1,
+      "complete": true,
+      "token_delta": -532,
+      "quality_delta": null
+    },
+    {
+      "case_id": "sparse-api-en",
+      "rep": 1,
+      "complete": true,
+      "token_delta": -826,
+      "quality_delta": 5
+    },
+    {
+      "case_id": "sparse-api-en",
+      "rep": 2,
+      "complete": true,
+      "token_delta": 94408,
+      "quality_delta": 6
+    },
+    {
+      "case_id": "sparse-api-en",
+      "rep": 3,
+      "complete": true,
+      "token_delta": 158860,
+      "quality_delta": -4
+    },
+    {
+      "case_id": "swiss-architecture-zh",
+      "rep": 1,
+      "complete": true,
+      "token_delta": 144722,
+      "quality_delta": -5
+    },
+    {
+      "case_id": "swiss-architecture-zh",
+      "rep": 2,
+      "complete": true,
+      "token_delta": -35968,
+      "quality_delta": -6
+    },
+    {
+      "case_id": "swiss-architecture-zh",
+      "rep": 3,
+      "complete": true,
+      "token_delta": -2573,
+      "quality_delta": 6
+    }
+  ],
+  "generation_token_median_change_percent": 10.87,
+  "generation_wall_median_change_percent": 9.06,
+  "quality_mean_paired_change": -1.33,
+  "quality_change_cluster_bootstrap_95pct": [
+    -3.17,
+    0.5
+  ],
+  "per_case_quality_change": {
+    "data-kpi-en": 2.67,
+    "swiss-architecture-zh": -1.67,
+    "blue-launch-zh": -2,
+    "enterprise-security-en": -5.33,
+    "chan-learning-zh": -4,
+    "consulting-strategy-zh": -2,
+    "fantasy-custom-zh": -0.67,
+    "sparse-api-en": 2.33
+  },
+  "acceptance_policy": {
+    "version": 2,
+    "technical_language": "observe",
+    "quality_thresholds_unchanged": true,
+    "baseline_arm": "candidate5",
+    "token_median_max_change_percent": 10
+  },
+  "adoption_gate": {
+    "pass": false,
+    "failures": [
+      "efficiency.token_median_target_not_met",
+      "outcome.consulting-strategy-zh.rep3.pass_regressed",
+      "outcome.swiss-architecture-zh.rep2.pass_regressed",
+      "quality.enterprise-security-en.regressed"
+    ]
+  },
+  "limitations": [
+    "8 fixed tasks, 3 runs each; no broad statistical claim",
+    "same model and tool surface; sequential arm periods and service/cache variation",
+    "English STE-aligned rubric and Chinese adaptation; full official dictionary not verified",
+    "calibration QA/judge overhead is retained separately"
+  ]
+}

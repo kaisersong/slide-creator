@@ -1,0 +1,5 @@
+{
+  "status": "frozen_unrun",
+  "model_runs": 0,
+  "reason": "Added known action-binding repair in separately frozen candidate9 before dispatch. Snapshot preserved."
+}
