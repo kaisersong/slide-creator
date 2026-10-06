@@ -1760,6 +1760,12 @@ def _hydrate_demo_section(
     profile_spec: PresetProfileSpec,
     language: str,
 ) -> str:
+    # Consulting demos contain product copy inside diagrams and nested list
+    # nodes. For explicit local facts, use content components with the same
+    # demo CSS rather than partially hydrating arbitrary example sentences.
+    if canonical_preset == "Strategy Consulting" and spec.get("supporting_facts"):
+        return _render_section(spec, total=total, layout=layout, family=family,
+                               canonical_preset=canonical_preset, slug=slug)
     soup = BeautifulSoup(template_html, "html.parser")
     section = soup.select_one("section.slide")
     if section is None:
@@ -2345,6 +2351,30 @@ def _render_paper_and_ink_body(spec: dict[str, Any], *, layout: str, canonical_p
 
 
 def _render_strategy_consulting_body(spec: dict[str, Any], *, layout: str, canonical_preset: str, profile_spec: PresetProfileSpec) -> str:
+    local = _dedupe([str(item) for item in spec.get("supporting_facts", [])])
+    if local:
+        title = str(spec.get("title", ""))
+        key_point = str(spec.get("key_point", ""))
+        header = (_title_markup("h2", "sc-action-title reveal", title)
+                  + f'<p class="sc-body reveal">{_escape(key_point)}</p>')
+        columns = 2 if len(local) in (2, 4) else min(3, len(local))
+        cards = ''.join(
+            '<article class="sc-evidence-card reveal">'
+            f'<div class="sc-metric">{index:02d}</div>'
+            f'<div class="sc-metric-label" style="text-transform:none;letter-spacing:0;font-size:clamp(1rem,1.8vw,1.35rem);line-height:1.5">{_escape(fact)}</div>'
+            '<p></p></article>' for index, fact in enumerate(local[:5], 1))
+        grid = f'<div class="sc-evidence-row" style="display:grid;grid-template-columns:repeat({columns},minmax(0,1fr));gap:24px">{cards}</div>'
+        if layout == "consulting_split":
+            split = max(1, (len(local) + 1) // 2)
+            panels = ''.join(
+                '<div class="sc-before-panel" style="border-top-color:var(--accent)">'
+                f'<div class="sc-panel-label" style="color:var(--accent)">{index:02d}</div>'
+                '<ul>' + ''.join('<li>' + _escape(fact) + '</li>' for fact in group) + '</ul></div>'
+                for index, group in enumerate((local[:split], local[split:]), 1) if group)
+            grid = '<div class="sc-before-after reveal">' + panels + '</div>'
+        elif layout == "consulting_quote":
+            grid = '<div class="sc-quote-evidence reveal"><div class="sc-quote-block"><ul>' + ''.join('<li>' + _escape(fact) + '</li>' for fact in local[:5]) + '</ul></div></div>'
+        return '<div class="strategy-consulting-block">' + header + grid + '</div>'
     title = str(spec.get("title", ""))
     key_point = _compact(str(spec.get("key_point", "")), limit=160)
     items = _items_for_spec(spec, minimum=4)
@@ -2553,11 +2583,13 @@ def _render_section(
         profile_spec=profile_spec,
     )
     glass_layers = _glass_orbs() if family == "glass_material" else ""
+    eyebrow = (f"{slide_number:02d} / {total:02d}" if canonical_preset == "Strategy Consulting"
+               else f"{canonical_preset} / {spec.get('role', 'slide')}")
     return f"""
     <section class="slide slide-{slide_number} profile-slide pf-{family} preset-{slug} {layout}" id="slide-{slide_number}" data-notes="{_escape(spec.get('speaker_note', ''))}" aria-label="{_escape(spec.get('role', 'slide'))}" data-export-role="{_escape(layout)}" data-visual-family="{_escape(family)}" data-visual-signature="{_escape(slug + '-' + layout)}">
         {glass_layers}
         <div class="slide-content content profile-content preset-{slug}-content">
-            <div class="profile-eyebrow reveal">{_escape(canonical_preset)} / {_escape(str(spec.get('role', 'slide')))}</div>
+            <div class="profile-eyebrow reveal">{_escape(eyebrow)}</div>
             {body}
         </div>
         <span class="slide-num-label">{slide_number:02d} / {total:02d}</span>

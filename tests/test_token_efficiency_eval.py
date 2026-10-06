@@ -59,3 +59,26 @@ def test_compare_cli_cannot_pass_with_missing_evidence(tmp_path):
     payload=json.loads(result.stdout)
     assert not payload["adoption_gate"]["pass"]
     assert "baseline.planned_runs_missing_or_extra" in payload["adoption_gate"]["failures"]
+
+
+def test_best_effort_language_policy_retains_quality_guard(tmp_path):
+    (tmp_path/"manifest.json").write_text(json.dumps({"repetitions":1,"cases":[{"id":"technical"}]}))
+    for arm, tokens in (("baseline",1000),("candidate3",200)):
+        result = {"case_id":"technical","rep":1,"complete":True,"passed":True,
+                  "technical":True,"evaluator_version":2,
+                  "generation":{"total_tokens":tokens,"wall_ms":100},
+                  "judge":{"complete":True,"quality_score":85,"technical_language_score":70},
+                  "qa":{"strict_pass":True,"geometry_pass":True,"page_count_pass":True,
+                        "quality_failures":[],"geometry_failures":[]}}
+        path=tmp_path/arm/"technical/rep-1/result.json"
+        path.parent.mkdir(parents=True)
+        path.write_text(json.dumps(result))
+    assert not EVAL.compare(tmp_path,"candidate3")["adoption_gate"]["pass"]
+    observed=EVAL.compare(tmp_path,"candidate3","observe")
+    assert observed["adoption_gate"]["pass"]
+    assert observed["acceptance_policy"]["version"] == 2
+    path=tmp_path/"candidate3/technical/rep-1/result.json"
+    result=json.loads(path.read_text())
+    result["qa"]["geometry_pass"]=False
+    path.write_text(json.dumps(result))
+    assert not EVAL.compare(tmp_path,"candidate3","observe")["adoption_gate"]["pass"]

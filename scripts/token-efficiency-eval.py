@@ -396,7 +396,7 @@ def summarize(base, arm):
     return payload
 
 
-def compare(base, candidate_arm="candidate"):
+def compare(base, candidate_arm="candidate", language_policy="required"):
     a,b = summarize(base,"baseline"),summarize(base,candidate_arm)
     matched = { (r["case_id"],r["rep"]):r for r in a["runs"] }
     pairs=[]
@@ -438,7 +438,7 @@ def compare(base, candidate_arm="candidate"):
         if ids[r["case_id"]].get("negative"):
             if not r.get("passed"):failures.append(f"route.{r['case_id']}.failed")
             continue
-        if r.get("technical") and (r.get("judge",{}).get("technical_language_score") is None or r["judge"]["technical_language_score"]<80):failures.append(f"language.{r['case_id']}.rep{r['rep']}.below80")
+        if language_policy == "required" and r.get("technical") and (r.get("judge",{}).get("technical_language_score") is None or r["judge"]["technical_language_score"]<80):failures.append(f"language.{r['case_id']}.rep{r['rep']}.below80")
         if old:
             for guard in ("strict_pass","geometry_pass","page_count_pass"):
                 if old.get("qa",{}).get(guard) and not r.get("qa",{}).get(guard):failures.append(f"guard.{r['case_id']}.rep{r['rep']}.{guard}.regressed")
@@ -456,6 +456,7 @@ def compare(base, candidate_arm="candidate"):
        "generation_token_median_change_percent":token_change,"generation_wall_median_change_percent":wall_change,
        "quality_mean_paired_change":round(statistics.mean(quality_changes),2) if quality_changes else None,
        "quality_change_cluster_bootstrap_95pct":ci,"per_case_quality_change":per_case,
+       "acceptance_policy":{"version":2 if language_policy == "observe" else 1,"technical_language":language_policy,"quality_thresholds_unchanged":True},
        "adoption_gate":{"pass":not failures,"failures":sorted(set(failures))},
        "limitations":["8 fixed tasks, 3 runs each; no broad statistical claim","same model and tool surface; sequential arm periods and service/cache variation","English STE-aligned rubric and Chinese adaptation; full official dictionary not verified","calibration QA/judge overhead is retained separately"]}
     write_json(base/f"comparison.{candidate_arm}.json",payload)
@@ -467,8 +468,9 @@ def main():
     parser=argparse.ArgumentParser(description=__doc__)
     parser.add_argument("action",choices=["freeze","run","summarize","compare","reassess"])
     parser.add_argument("--run-dir",required=True,type=Path)
-    parser.add_argument("--arm",choices=["baseline","candidate","candidate2"],default="baseline")
-    parser.add_argument("--candidate-arm",choices=["candidate","candidate2"],default="candidate")
+    parser.add_argument("--arm",choices=["baseline","candidate","candidate2","candidate3"],default="baseline")
+    parser.add_argument("--candidate-arm",choices=["candidate","candidate2","candidate3"],default="candidate")
+    parser.add_argument("--language-policy",choices=["required","observe"],default="required",help="Keep historical policy by default; observe is the user-authorized best-effort STE policy")
     parser.add_argument("--revision")
     parser.add_argument("--case-id")
     parser.add_argument("--force-reassess",action="store_true",help="Reassess selected artifact after an evaluator repair; generation is never replayed")
@@ -487,7 +489,7 @@ def main():
         reassess(base,args.arm,args.case_id,args.force_reassess)
     elif args.action=="summarize":print(json.dumps({k:v for k,v in summarize(base,args.arm).items() if k != "runs"},ensure_ascii=False,indent=2))
     else:
-        payload=compare(base,args.candidate_arm)
+        payload=compare(base,args.candidate_arm,args.language_policy)
         print(json.dumps(payload,ensure_ascii=False,indent=2))
         return 0 if payload["adoption_gate"]["pass"] else 1
 
