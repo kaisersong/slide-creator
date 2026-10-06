@@ -4,7 +4,7 @@ from bs4 import BeautifulSoup
 
 ROOT=Path(__file__).parents[1]
 sys.path.insert(0,str(ROOT/'scripts'))
-from audience_readability import apply_audience_readability, unique_facts
+from audience_readability import apply_audience_readability, unique_facts, non_repeating_copy
 
 
 def test_dedup_preserves_negation_conditions_and_internal_punctuation():
@@ -39,3 +39,36 @@ def test_consulting_uses_distinct_exhibits_and_source_condition_action_pairs():
     assert table and len(table.select('tbody tr'))==3
     first=table.select('tbody tr')[0]
     assert [c.get_text() for c in first.select('td')]==['若服务成本增加且满意度未改善','停止扩展。']
+
+
+def test_complete_sentence_filter_keeps_new_scope_negations_and_decimal_values():
+    text="Activation is 52.5%. If a token leaks, revoke it first. No, retry. No retry."
+    result=non_repeating_copy(text,["Activation is 52.5%.","No retry."])
+    assert result=="If a token leaks, revoke it first. No, retry."
+
+
+def test_blue_action_fact_is_not_copied_into_pill_and_body():
+    from low_context import _render_blue_sky_action_cards
+    fact="下一阶段邀请两个团队试点。"
+    html=_render_blue_sky_action_cards({},[fact])
+    assert BeautifulSoup(html,'html.parser').get_text(' ',strip=True)==fact
+    command="clawhub install kai-slide-creator"
+    html=_render_blue_sky_action_cards({},[command])
+    soup=BeautifulSoup(html,'html.parser')
+    assert soup.select_one('.cmd').get_text(strip=True)==command
+    assert not soup.select('.pill')
+
+
+def test_long_fact_pill_and_heading_participate_in_dedup_and_audience_font():
+    html='<html><head></head><body><section class="slide"><span class="pill" data-audience-fact="true">下一阶段邀请两个团队试点。</span><p>下一阶段邀请两个团队试点。 新条件仍需确认。</p><h4>Known risk remains</h4><p>Known risk remains.</p></section></body></html>'
+    soup=BeautifulSoup(apply_audience_readability(html),'html.parser')
+    assert soup.select_one('p').get_text()=="新条件仍需确认。"
+    assert len(soup.select('p'))==1
+    assert 'audience-copy' in soup.select_one('.pill')['class']
+    assert 'audience-copy' in soup.select_one('h4')['class']
+
+
+def test_metric_keeps_its_adjacent_source_label_when_summary_repeats_it():
+    html='<html><head></head><body><section class="slide"><h2>45名产品经理参与试点</h2><div class="g"><div class="stat">45</div><p class="blue-metric-label">45名产品经理参与试点</p></div></section></body></html>'
+    soup=BeautifulSoup(apply_audience_readability(html),'html.parser')
+    assert soup.select_one('.g .blue-metric-label').get_text()=="45名产品经理参与试点"

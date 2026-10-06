@@ -2274,7 +2274,10 @@ def test_swiss_slide_creator_intro_uses_demo_level_component_rhythm():
     assert "font-size: clamp(17px, 1.9vw, 22px);" in html_text
     assert "font-size: clamp(16px, 1.8vw, 21px);" in html_text
     assert "font-size: clamp(16px, 1.7vw, 20px);" in html_text
-    assert [node.get_text(" ", strip=True) for node in pain_slide.select(".pain-num")] == ["01", "02", "03"]
+    pain_source = next(slide for slide in brief["narrative"]["slides"] if slide["role"] == "pain-solution")
+    source_facts = pain_source.get("supporting_facts", [])[:5]
+    assert [node.get_text(" ", strip=True) for node in pain_slide.select(".pain-num")] == [f"{i:02d}" for i in range(1, len(source_facts) + 1)]
+    assert all(fact in pain_slide.get_text(" ", strip=True) for fact in source_facts)
     assert not any("." in node.get_text(" ", strip=True) for node in pain_slide.select(".pain-num"))
 
     features_slide = soup.select_one('section.slide[aria-label="features"]')

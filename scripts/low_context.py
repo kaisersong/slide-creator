@@ -18,7 +18,7 @@ from preset_capabilities import (
 from preset_profile_renderer import build_preset_profile_payload, profile_auto_contrast_script
 from preset_support import preset_support_tier
 from title_profiles import profile_allows_explicit_line_control, resolve_title_profile
-from audience_readability import unique_facts, apply_audience_readability
+from audience_readability import unique_facts, non_repeating_copy, apply_audience_readability
 
 
 def _discover_root() -> Path:
@@ -4123,7 +4123,7 @@ def _render_swiss_title_grid(spec: dict[str, Any], total: int) -> str:
 def _render_swiss_column_content(spec: dict[str, Any], total: int) -> str:
     slide_number = spec["slide_number"]
     title_tag = _swiss_left_title_tag("h2", spec["title"], layout_id=spec["layout_id"])
-    pairs = _spec_detail_pairs(spec, count=3)
+    pairs = _spec_detail_pairs(spec, count=5 if spec.get("supporting_facts") else 3)
     items = "".join(
         f"""
         <div class="pain-item{' accent-border' if index == 0 else ''} reveal">
@@ -4132,7 +4132,7 @@ def _render_swiss_column_content(spec: dict[str, Any], total: int) -> str:
             <div class="pain-desc">{_escape(body)}</div>
         </div>
         """
-        for index, (title, body) in enumerate(pairs[:3])
+        for index, (title, body) in enumerate(pairs)
     )
     return f"""
     <section class="slide column_content" id="slide-{slide_number}" data-notes="{_escape(spec['speaker_note'])}" aria-label="{_escape(spec['role'])}" data-export-role="column_content">
@@ -6854,7 +6854,9 @@ def _render_data_story_cta_close(spec: dict[str, Any], total: int) -> str:
     items = _spec_display_items(spec, limit=2)
     decision_copy = spec.get("desired_action") or spec["key_point"]
     if decision_copy != spec["key_point"]:
-        decision_copy += " " + spec["key_point"]
+        extra = non_repeating_copy(spec["key_point"], [*items, decision_copy])
+        if extra:
+            decision_copy += " " + extra
     if not _data_story_has_numeric_cta_signal(spec, items):
         action_grid = _render_data_story_action_grid(spec)
         return f"""
@@ -7678,14 +7680,22 @@ def _render_blue_sky_action_cards(spec: dict[str, Any], items: list[str]) -> str
     accent_classes = [" info", " co", "", ""]
     for index, item in enumerate(items[:4]):
         title, body = _blue_sky_item_parts(item)
-        body = body or item
-        is_command = bool(re.search(r"install|clawhub|https?://|/slide-creator", body, flags=re.IGNORECASE))
-        body_html = f'<div class="cmd" style="margin-top:10px;">{_escape(body)}</div>' if is_command else f'<p style="margin-top:8px;">{_escape(body)}</p>'
+        is_command = bool(re.search(r"install|clawhub|https?://|/slide-creator", body or item, flags=re.IGNORECASE))
+        title_html = f'<span class="pill green" data-audience-fact="true">{_escape(title)}</span>'
+        if is_command and not body:
+            title_html = ""
+            body_html = f'<div class="cmd audience-copy" style="margin-top:10px;">{_escape(item)}</div>'
+        elif body:
+            body_html = f'<div class="cmd audience-copy" style="margin-top:10px;">{_escape(body)}</div>' if is_command else f'<p style="margin-top:8px;">{_escape(body)}</p>'
+        else:
+            # A complete fact is body content, rather than a label-only card.
+            title_html = ""
+            body_html = f'<p>{_escape(item)}</p>'
         card_class = f"g{accent_classes[index]}"
         cards.append(
             f"""
             <div class="{card_class}" style="padding:18px 20px;text-align:left;">
-              <span class="pill green">{_escape(title)}</span>
+              {title_html}
               {body_html}
             </div>
             """
@@ -7846,7 +7856,7 @@ def _render_blue_sky_slide(
         cover_pill = _blue_sky_cover_pill_text(spec, cover_items, cover_metrics)
         stat_items = []
         for stat_val, stat_label in cover_metrics:
-            label_html = f'<p style="font-size:0.78rem;margin-top:2px;">{_escape(stat_label)}</p>' if stat_label else ""
+            label_html = f'<p class="blue-metric-label" style="font-size:0.78rem;margin-top:2px;">{_escape(stat_label)}</p>' if stat_label else ""
             stat_items.append(
                 f'<div class="g" style="padding:16px 28px;text-align:center;">'
                 f'<div class="stat" style="font-size:2.8rem;">{_escape(stat_val)}</div>'
