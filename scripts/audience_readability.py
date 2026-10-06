@@ -69,6 +69,34 @@ def apply_audience_readability(html: str) -> str:
                     paragraph.string = compact
                     key = copy_key(compact)
                 seen.add(key)
+        # Data Story stores explanatory copy in a div with a bold UI prefix.
+        # Compare its body, rather than allowing "Insight:" to hide a repeat.
+        for block in list(slide.select(".ds-insight:not(.ds-stage-card):not(.ds-kpi-card)")):
+            label = block.find("strong", recursive=False)
+            if not label or len(block.find_all(True, recursive=False)) != 1:
+                continue
+            prefix = label.get_text(" ",strip=True)
+            if not re.fullmatch(r"(?:Insight|Flow|Decision|Question|Readout)[:：]", prefix, re.I):
+                continue
+            body = block.get_text(" ",strip=True)[len(prefix):].strip()
+            visible = [text for n,text in fact_records if n not in block.parents and block not in n.parents]
+            compact = non_repeating_copy(body, visible)
+            if compact == body:
+                continue
+            if compact:
+                label.extract()
+                block.clear()
+                block.append(label)
+                block.append(" " + compact)
+            else:
+                # Keep the real insight visual, using the existing source card
+                # once rather than adding a second copy or an empty shell.
+                card = next((card for card in slide.select(".ds-stage-card,.ds-kpi-card")
+                             if any(copy_key(text) in copy_key(card.get_text(" ",strip=True))
+                                    for text in visible if text and copy_key(text) in copy_key(body))), None)
+                if card is not None:
+                    card["class"] = [*card.get("class", []), "ds-insight"]
+                    block.decompose()
         for card in list(slide.select(".g,.ent-kpi-card,.ds-stage-card,.sc-evidence-card")):
             if not card.get_text(" ",strip=True) and not card.select("img,svg,canvas,video"):
                 card.decompose()
@@ -97,6 +125,7 @@ body[data-preset="Data Story"] .ds-close .ds-kpi { font-size:clamp(38px,4vw,58px
 body[data-preset="Data Story"] .ds-stage-grid--evidence { display:flex; flex-direction:column; gap:0; }
 body[data-preset="Data Story"] .ds-stage-grid--evidence .ds-stage-card { display:grid; grid-template-columns:100px minmax(0,1fr); border:0; border-bottom:1px solid var(--axis-line,#c8d1dc); background:transparent; padding:14px 0; }
 body[data-preset="Data Story"] .ds-stage-grid--evidence .ds-stage-copy { grid-column:2; }
+body[data-preset="Data Story"] .ds-stage-card.ds-insight { border-left:3px solid var(--chart-primary,#3b82f6) !important; background:rgba(59,130,246,0.08) !important; }
 body[data-preset="Strategy Consulting"] .sc-fact-table { border-collapse:collapse; width:100%; }
 body[data-preset="Strategy Consulting"] .sc-fact-table td { border-bottom:1px solid var(--border,#c8d1dc); padding:16px; vertical-align:top; }
 body[data-preset="Strategy Consulting"] .sc-fact-table td:first-child { width:55px; color:#1b3a6b; }

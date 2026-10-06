@@ -45,6 +45,7 @@ def build_model_context(preset: str) -> dict[str, Any]:
             "Use slide claim, explanation, visual_intent, supporting_facts and numeric_facts to preserve source evidence and rich content.",
             "One main claim and one main exhibit per page. Use varied layout families; do not reduce evidence to title-only slides.",
             "Distribute all source facts across pages. Do not pad evidence tables by repeating a fact, or copy global_facts into every page.",
+            "Do not repeat the full evidence list in explanation. Prefer a distinct source-backed scope or next action; do not invent causal interpretation to create an insight.",
             "preferred_layout_family is a family such as hero, evidence, comparison, flow, close. Do not put layout IDs in that field.",
             "Preserve the chosen preset; the renderer owns CSS, runtime, export DOM, title balancing and layout implementation.",
             "Keep all numeric values paired with source entities and units. Keep targets and unknowns explicit. Never invent measurements.",
