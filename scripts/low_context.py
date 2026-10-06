@@ -581,6 +581,7 @@ def validate_brief_data(brief: Any) -> list[str]:
             slide_optional = {
                 "claim",
                 "explanation",
+                "speaker_note",
                 "title_emphasis",
                 "visual_intent",
                 "preferred_layout_family",
@@ -600,9 +601,11 @@ def validate_brief_data(brief: Any) -> list[str]:
                 for key in ("role", "title", "key_point", "visual"):
                     if key in slide:
                         _ensure_string(slide[key], f"{path}.{key}", errors)
-                for key in ("claim", "explanation", "title_emphasis", "visual_intent", "preferred_layout_family"):
+                for key in ("claim", "explanation", "speaker_note", "title_emphasis", "visual_intent", "preferred_layout_family"):
                     if key in slide and slide[key] is not None:
                         _ensure_string(slide[key], f"{path}.{key}", errors)
+                if "speaker_note" in slide and (not isinstance(slide["speaker_note"],str) or not slide["speaker_note"].strip() or len(slide["speaker_note"])>1200):
+                    errors.append(f"{path}.speaker_note must be a non-empty string of at most 1200 characters")
                 if "chart_policy" in slide:
                     _ensure_enum(slide["chart_policy"], f"{path}.chart_policy", errors, {"auto", "required", "avoid"})
                 for key in ("supporting_facts", "numeric_facts"):
@@ -2443,7 +2446,7 @@ def build_slide_spec(brief: dict[str, Any], packet: dict[str, Any] | None = None
             "evidence_items": evidence,
             "supporting_facts": supporting_facts,
             "numeric_facts": numeric_facts,
-            "speaker_note": f"{role}: {explanation}",
+            "speaker_note": _sanitize_pictorial_text(slide.get("speaker_note") or f"{role}: {explanation}"),
             "visual": visual_intent,
             "visual_intent": visual_intent,
             "preferred_layout_family": preferred_layout_family,
@@ -6305,10 +6308,8 @@ body[data-preset="Data Story"] .ds-workflow .ds-stage-copy {
     font-size: clamp(0.86rem, 1.18vw, 0.98rem);
     line-height: 1.46;
     overflow-wrap: anywhere;
-    display: -webkit-box;
-    -webkit-line-clamp: 3;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
+    display: block;
+    overflow: visible;
 }
 
 .ds-cta-block {

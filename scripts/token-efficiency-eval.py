@@ -251,25 +251,26 @@ def judge(out, case, qa, config):
     return report
 
 
-def reassess(base, arm):
+def reassess(base, arm, case_id=None, force=False):
     """Replay only QA/judgment from immutable generation artifacts, never generation."""
     config = read_json(base / "manifest.json")
     cases = {c["id"]:c for c in config["cases"]}
     def task(path):
         old = read_json(path)
         case = cases[old["case_id"]]
-        if case.get("negative") or (old.get("evaluator_version") == 2 and old.get("complete")):
+        if case.get("negative") or (case_id and case["id"] != case_id) or (old.get("evaluator_version") == 2 and old.get("complete") and not force):
             return
         run = path.parent
         previous = run / "result.initial.json"
-        retry = old.get("evaluator_version") == 2 and not old.get("complete")
+        retry = old.get("evaluator_version") == 2
         if previous.exists() and not retry:
             raise ValueError(f"Interrupted reassessment at {run}; do not replay silently")
         if retry:
-            write_json(run / "result.evaluator-error.json", old)
+            attempt=len(list(run.glob("evidence-v2*")))
+            write_json(run / f"result.assessment-{attempt}.json", old)
         else:
             write_json(previous, old)
-        evidence = run / ("evidence-v2-retry1" if retry else "evidence-v2")
+        evidence = run / (f"evidence-v2-retry{attempt}" if retry else "evidence-v2")
         if evidence.exists():raise ValueError(f"Assessment evidence already exists: {evidence}")
         evidence.mkdir()
         print(f"REASSESS {arm} {case['id']} {old['rep']}", flush=True)
@@ -278,6 +279,7 @@ def reassess(base, arm):
         result.pop("judge",None)
         result.pop("qa_error",None)
         result["evaluator_version"]=2
+        result["assessment_evidence"]=str(evidence.relative_to(run))
         try:
             qa=program_qa(run/"workspace",evidence,case)
             result["qa"]={k:v for k,v in qa.items() if k != "visible_text"}
@@ -287,8 +289,15 @@ def reassess(base, arm):
         except Exception as exc:
             result.update(complete=False,passed=False,qa_error=f"{type(exc).__name__}: {exc}")
         result["calibration_overhead_ms"]=max(0,old.get("eval_wall_ms",0)-old["generation"]["wall_ms"])+ (old.get("calibration_overhead_ms",0) if retry else 0)
-        previous_judge = run / "evidence-v2/judge/metrics.json"
-        prior_tokens=read_json(previous_judge).get("total_tokens") if retry and previous_judge.exists() else (0 if retry else old.get("judge",{}).get("metrics",{}).get("total_tokens"))
+        if retry:
+            old_evidence=old.get("assessment_evidence")
+            if not old_evidence:
+                folders=sorted((p for p in run.glob("evidence-v2*") if p != evidence),key=lambda p:p.stat().st_mtime)
+                old_evidence=folders[-1].name if folders else "evidence"
+            previous_judge=run/old_evidence/"judge/metrics.json"
+            prior_tokens=read_json(previous_judge).get("total_tokens") if previous_judge.exists() else 0
+        else:
+            prior_tokens=old.get("judge",{}).get("metrics",{}).get("total_tokens")
         result["calibration_overhead_tokens"]=(old.get("calibration_overhead_tokens") or 0)+prior_tokens if retry and prior_tokens is not None else prior_tokens
         result["eval_wall_ms"]=old["generation"]["wall_ms"]+round((time.perf_counter()-started)*1000)
         gm=old["generation"]["total_tokens"];jm=result.get("judge",{}).get("metrics",{}).get("total_tokens")
@@ -387,8 +396,8 @@ def summarize(base, arm):
     return payload
 
 
-def compare(base):
-    a,b = summarize(base,"baseline"),summarize(base,"candidate")
+def compare(base, candidate_arm="candidate"):
+    a,b = summarize(base,"baseline"),summarize(base,candidate_arm)
     matched = { (r["case_id"],r["rep"]):r for r in a["runs"] }
     pairs=[]
     for r in b["runs"]:
@@ -449,6 +458,7 @@ def compare(base):
        "quality_change_cluster_bootstrap_95pct":ci,"per_case_quality_change":per_case,
        "adoption_gate":{"pass":not failures,"failures":sorted(set(failures))},
        "limitations":["8 fixed tasks, 3 runs each; no broad statistical claim","same model and tool surface; sequential arm periods and service/cache variation","English STE-aligned rubric and Chinese adaptation; full official dictionary not verified","calibration QA/judge overhead is retained separately"]}
+    write_json(base/f"comparison.{candidate_arm}.json",payload)
     write_json(base/"comparison.json",payload)
     return payload
 
@@ -457,9 +467,11 @@ def main():
     parser=argparse.ArgumentParser(description=__doc__)
     parser.add_argument("action",choices=["freeze","run","summarize","compare","reassess"])
     parser.add_argument("--run-dir",required=True,type=Path)
-    parser.add_argument("--arm",choices=["baseline","candidate"],default="baseline")
+    parser.add_argument("--arm",choices=["baseline","candidate","candidate2"],default="baseline")
+    parser.add_argument("--candidate-arm",choices=["candidate","candidate2"],default="candidate")
     parser.add_argument("--revision")
     parser.add_argument("--case-id")
+    parser.add_argument("--force-reassess",action="store_true",help="Reassess selected artifact after an evaluator repair; generation is never replayed")
     parser.add_argument("--manifest",type=Path,default=ROOT/"evals/token-efficiency/manifest.json")
     args=parser.parse_args()
     base=args.run_dir.resolve();base.mkdir(parents=True,exist_ok=True)
@@ -470,9 +482,11 @@ def main():
         write_json(base/f"environment.{args.arm}.json",environment)
         if not (base/"environment.json").exists():write_json(base/"environment.json",environment)
     elif args.action=="run":run_arm(base,args.arm,args.manifest,args.case_id)
-    elif args.action=="reassess":reassess(base,args.arm)
+    elif args.action=="reassess":
+        if args.force_reassess and not args.case_id:parser.error("--force-reassess requires --case-id")
+        reassess(base,args.arm,args.case_id,args.force_reassess)
     elif args.action=="summarize":print(json.dumps({k:v for k,v in summarize(base,args.arm).items() if k != "runs"},ensure_ascii=False,indent=2))
-    else: print(json.dumps(compare(base),ensure_ascii=False,indent=2))
+    else: print(json.dumps(compare(base,args.candidate_arm),ensure_ascii=False,indent=2))
 
 
 if __name__=="__main__":
