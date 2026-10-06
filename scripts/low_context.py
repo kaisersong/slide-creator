@@ -2584,11 +2584,11 @@ def _normalize_title_text(value: str) -> str:
 
 def _title_visual_units(text: str) -> float:
     units = 0.0
-    tokens = re.findall(r"[A-Za-z0-9][A-Za-z0-9%&+/#._:-]*|[\u3400-\u9fff]|[^\w\s]", text)
+    tokens = _tokenize_title(text)
     for token in tokens:
         if re.fullmatch(r"[\u3400-\u9fff]", token):
             units += 1.0
-        elif re.fullmatch(r"[A-Za-z0-9][A-Za-z0-9%&+/#._:-]*", token):
+        elif re.fullmatch(r"[A-Za-z0-9][A-Za-z0-9%&+/#._:-]*(?:['’][A-Za-z0-9]+)*", token):
             units += min(max(len(token) * 0.56, 1.0), 4.2)
         else:
             units += 0.25
@@ -2596,7 +2596,7 @@ def _title_visual_units(text: str) -> float:
 
 
 def _tokenize_title(text: str) -> list[str]:
-    return re.findall(r"[A-Za-z0-9][A-Za-z0-9%&+/#._:-]*|[\u3400-\u9fff]|[^\w\s]", text)
+    return re.findall(r"[A-Za-z0-9][A-Za-z0-9%&+/#._:-]*(?:['’][A-Za-z0-9]+)*|[\u3400-\u9fff]|[^\w\s]", text)
 
 
 def _join_title_tokens(tokens: list[str]) -> str:
@@ -2604,7 +2604,7 @@ def _join_title_tokens(tokens: list[str]) -> str:
     opening = "([<{（《〈【「『"
     result = ""
     previous = ""
-    word_pattern = r"[A-Za-z0-9][A-Za-z0-9%&+/#._:-]*"
+    word_pattern = r"[A-Za-z0-9][A-Za-z0-9%&+/#._:-]*(?:['’][A-Za-z0-9]+)*"
     cjk_pattern = r"[\u3400-\u9fff]"
     for token in tokens:
         if not result:
@@ -7104,6 +7104,11 @@ def _chinese_chan_caption(spec: dict[str, Any], language: str) -> str:
 
 
 def _chinese_chan_copy_items(spec: dict[str, Any], *, count: int = 3) -> list[str]:
+    facts = unique_facts([str(item) for item in spec.get("supporting_facts", [])])
+    if facts:
+        # Complete local statements outrank fragments derived from prose.
+        # Sparse facts do not justify repeated or unfinished filler items.
+        return facts[:count]
     items = _dedupe_preserve(
         [
             *spec.get("supporting_facts", []),
@@ -8044,7 +8049,9 @@ def _render_blue_sky_slide(
     # Evidence / data slide
     if layout_id == "table":
         table_rows = ""
-        table_items = all_items or [spec["key_point"]]
+        # The explicit facts are the source statements. Derived item/numeric
+        # indexes must not become a second row for the same observation.
+        table_items = unique_facts([str(item) for item in facts]) or all_items or [spec["key_point"]]
         for idx, item in enumerate(table_items[:8], 1):
             table_rows += f'<tr><td>{idx}</td><td>{_escape(item)}</td></tr>'
         return f"""
