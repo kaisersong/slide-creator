@@ -43,12 +43,14 @@ metadata: {"openclaw":{"emoji":"🎞","os":["darwin","linux","windows"],"homepag
 | 命令 | 加载内容 | 行为 |
 |------|----------|------|
 | `--plan [prompt]` | `references/brief-template.json`；如用户指定了 custom theme，同步加载 `themes/<name>/reference.md` | 创建 `BRIEF.json`；仅在用户明确要求时额外派生 `PLANNING.md` |
-| `--generate` | SKILL.md + 已选风格文件（内置 `references/*.md` / `blue-sky-starter.html`；自定义 `themes/<name>/reference.md`）+ composition 源 + `references/title-quality.md` + `references/html-template.md` + `references/js-engine.md` + `references/base-css.md` + `references/impeccable-anti-patterns.md` | 从 `BRIEF.json` 生成 HTML，并执行写入前门禁；如用户显式要求 `eval`，同步产出单 deck 评测 JSON |
+| `--generate` | `references/generation-contract.md` + `python3 main.py --model-context --preset <已选风格>` 的 JSON；技术文稿再读 `references/technical-language.md`。`references/title-quality.md` / `references/impeccable-anti-patterns.md` 仅深度精修/review 按需加载 | 模型只写完整 `BRIEF.json`，程序读取全部风格与 runtime 并生成 HTML，执行写入前门禁；用户显式要求 `eval` 时产出单 deck 评测 JSON |
 | `--review [file.html]` | `references/review-checklist.md` + 目标 HTML | 执行 17 项检查点 → 确认窗口 → 修复/报告 |
 | 无 flag (交互式) | `references/workflow.md` + 其他按需 | 遵循 Phase 0-5 |
 | 直接给内容 + 风格 | 同 `--generate` | 先落一个有效 `BRIEF.json`，再按 preset 能力路由到 native deterministic renderer、统一 profile renderer 或 custom theme renderer，并执行 strict 写入前门禁；禁止绕过 BRIEF 手拼最终 HTML |
 
-**渐进式披露：** 每个命令只加载所需文件。`--plan` 只提炼 IR，不接触 CSS。
+**渐进式披露：** 每个命令只加载所需文件。`--plan` 只提炼 IR，不接触 CSS。正常生成时，模型不读取完整 starter、CSS/JS、HTML 模板或 renderer 源码；程序仍完整读取这些实现。精简契约缺少某个具体设计决策时，才按需打开已选风格的相关章节。
+
+**技术语言：** 技术文稿遵循 `references/technical-language.md`，ASD-STE100 对齐项目评分目标 ≥80/100。英文使用简化技术英语，中文按同样清晰度原则适配；保留用户指定语言、技术名称、事实与条件。非技术文稿不强制 STE。这个分数不是标准认证，完整词典合规不得未经核验声称通过。
 
 ## 核心规则（按优先级）
 
@@ -73,7 +75,7 @@ metadata: {"openclaw":{"emoji":"🎞","os":["darwin","linux","windows"],"homepag
    - 编辑模式：默认开启，**可省略编辑模式**，尤其在用户明确说不要或 existing HTML/导入场景受约束时  
    - 水印：默认保留，但必须是 JS 注入到最后一页，`position: absolute`，禁止 `position: fixed`
 
-详见 `references/html-template.md`。生成任何 HTML 前必读此文件。
+实现细节见 `references/html-template.md`，由 renderer 读取并执行。正常生成必读 `references/generation-contract.md`，无需让模型重复读取完整 HTML/CSS/JS。
 
 **Direct-route guard:** 无论是 `--generate` 还是“直接给内容 + 风格”，都必须先 materialize 一个有效 `BRIEF.json`，再按能力路由：native core、统一 profile renderer、custom theme 都走同一 `render_from_brief()` 产品路径。写出最终文件前必须通过 `python3 scripts/validate_html.py "$TMP_HTML" --strict`。禁止手拼最终 HTML；禁止在交互式路径里绕过 BRIEF/style contract 手拼最终 HTML。
 

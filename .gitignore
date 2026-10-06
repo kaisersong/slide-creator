@@ -64,10 +64,15 @@ scripts/*
 !scripts/style_signature_eval.py
 !scripts/browser_geometry_qa.py
 !scripts/preset_release_gate.py
+!scripts/token-efficiency-eval.py
+!scripts/model_context.py
+!scripts/technical_language.py
 !docs/
 docs/*
 !docs/design/
 docs/design/*
+!docs/design/2026-10-06-token-efficiency-plan.md
+!docs/design/2026-10-06-token-efficiency-results.md
 !docs/design/README.md
 !docs/design/2026-04-24-slide-creator-test-matrix.md
 !docs/design/2026-04-25-slide-creator-core-md-guard-design.md
@@ -82,3 +87,6 @@ themes/.DS_Store
 # Private custom themes (not for public repo)
 themes/kingdee/
 themes/cloudhub/
+
+# Raw live eval evidence stays local; frozen input and reports are tracked.
+evals/artifacts/token-efficiency/
