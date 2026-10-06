@@ -291,7 +291,7 @@ def _enter_present_mode(page) -> bool:
 
 def _activate_slide(page, slide_index: int, *, mode: str = "window") -> bool:
     if mode == "present":
-        return bool(
+        activated = bool(
             page.evaluate(
                 """
                 ({ slideIndex }) => {
@@ -318,6 +318,18 @@ def _activate_slide(page, slide_index: int, *, mode: str = "window") -> bool:
                 {"slideIndex": slide_index},
             )
         )
+        if activated:
+            return True
+        # Blue Sky keeps its controller inside the bundled closure, and its
+        # dot handlers call the original go() instead of PresentMode's wrapper.
+        # Keyboard navigation reaches the real wrapped controller in that case.
+        page.keyboard.press("Home")
+        for _ in range(max(0, slide_index - 1)):
+            page.keyboard.press("ArrowRight")
+        return bool(page.evaluate("""(i) => {
+          const slide = document.querySelectorAll('.slide')[i - 1];
+          return !!slide && slide.classList.contains('p-on');
+        }""", slide_index))
     return bool(
         page.evaluate(
             """

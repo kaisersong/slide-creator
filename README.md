@@ -104,12 +104,15 @@ slide-creator keeps `SKILL.md` as a thin router and pushes detail into reference
 
 ```
 --plan        → references/brief-template.json only
---generate    → references/html-template.md + references/js-engine.md + one style file + base-css.md
+--generate    → references/generation-contract.md + main.py --model-context --preset <style>
+runtime reads → references/html-template.md + references/js-engine.md + one style file + base-css.md
 interactive   → references/workflow.md
 style picker  → references/style-index.md
 ```
 
 The goal is not elegance for its own sake. It is to reduce context pressure so the model does not forget the important parts right before it renders.
+
+The model contract comes from the existing schema and style compiler. It contains no CSS or JavaScript source. The model writes BRIEF; the renderer reads the full style and runtime. Technical decks also use `references/technical-language.md`, with a project target of 80/100 for STE-aligned language. Chinese uses the same clarity principles. Full dictionary compliance needs a separate review. See `docs/design/2026-10-06-token-efficiency-plan.md` and `evals/token-efficiency/README.md` for the plan and live before/after eval commands.
 
 ### 4. Show, don't tell, for visual choices
 

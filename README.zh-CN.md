@@ -104,12 +104,15 @@ slide-creator 把 `SKILL.md` 保持成一个薄路由层，把细节下沉到 re
 
 ```
 --plan        → 只读 references/brief-template.json
---generate    → references/html-template.md + references/js-engine.md + 单个风格文件 + base-css.md
+--generate    → references/generation-contract.md + main.py --model-context --preset <风格>
+程序读取      → references/html-template.md + references/js-engine.md + 单个风格文件 + base-css.md
 交互模式      → references/workflow.md
 风格选择      → references/style-index.md
 ```
 
 这不是为了形式上的优雅，而是为了减少上下文压力，避免模型在真正渲染前把最重要的约束忘掉。
+
+模型契约由现有 schema 与风格 compiler 生成，不包含 CSS/JS 源码。正常内容生成只写 BRIEF，完整风格与 runtime 仍由程序读取。技术文稿额外加载 `references/technical-language.md`，ASD-STE100 对齐项目评分目标为 80/100；中文按清晰度原则适配，完整词典符合度另行核验。详细方案与真实前后评测入口在 `docs/design/2026-10-06-token-efficiency-plan.md` 和 `evals/token-efficiency/README.md`。
 
 ### 四、视觉选择必须“先看图，再落字”
 

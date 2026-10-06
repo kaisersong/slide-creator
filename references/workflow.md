@@ -159,7 +159,19 @@ When running checked-in demos or formal validation, record segmented timing for:
 - `polish`
 - `total`
 
-### Step 1: Load and integrate references (3-step process)
+### Step 0: Use the compact generation contract
+
+For normal generation, read `generation-contract.md`. Run `python3 main.py --model-context --preset <selected-preset>`.
+Write a complete BRIEF from its skeleton and content rules. Keep all source facts and the user language.
+For technical content, also read `technical-language.md`. Its STE-aligned project target is 80/100; Chinese uses a clarity adaptation.
+Run `python3 main.py --generate --brief BRIEF.json --output deck.html`. This command validates BRIEF and runs the strict pre-write gate.
+If it passes, go to Phase 3.5 in Polish mode or Phase 5 in Auto mode.
+If it fails, use the concrete error to fix BRIEF. Do not change renderer code to make one deck pass.
+
+The steps below describe renderer and design implementation contracts. They are reference material for implementation faults or deeper design work.
+They do not require the model to load CSS/JS or hand-compose final HTML on the normal generation path.
+
+### Step 1: Runtime reference owners (implementation reference)
 
 **Step 1a: Read composition-guide.md** → Get the 12 narrative roles and their layout categories.
 The composition guide defines the layout category for each slide role:
