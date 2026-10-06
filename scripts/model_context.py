@@ -55,6 +55,7 @@ def build_model_context(preset: str) -> dict[str, Any]:
             "explanation, key_point, claim and supporting_facts are audience-visible content. Never put 演讲备注, 这一页, Explain that, Tell operators, Walk through, or thesis= in these fields.",
             "Use short assertion titles: aim for <=12 CJK characters or <=6 English words. Put full evidence and conditions in body fields, not an overlong title.",
             "supporting_facts must be complete audience-visible facts, conditions or actions; distribute them across pages, normally 2-4 items per page. Do not use fragment labels, instructions to the slide designer, or prose copied from this contract.",
+            "Provide local supporting_facts on every page, including cover and close; sparse pages may have one fact. Set desired_action to the exact audience decision/next step, including scope and timing; it is visible on the closing page.",
             "Use at most 12 English words in a compact card item. explanation can use several short factual sentences; put longer speaking guidance in speaker_note.",
             "Do not use a before/after comparison for two unrelated facts or unchanged requirements; use evidence or flow instead.",
             "Do not inspect runtime source on the normal generation path. Read the full selected style reference only for a concrete missing design decision.",

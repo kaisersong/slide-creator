@@ -812,8 +812,8 @@ def test_data_story_numeric_only_metric_never_returns_text_tokens():
 
     value = _metric_value_for_item("数据报告", spec, index=0, numeric_only=True)
 
-    assert value == "1"
-    assert any(char.isdigit() for char in value)
+    # A structural sequence number cannot stand in for a source measurement.
+    assert value == ""
 
 
 def test_shared_runtime_keeps_slide_number_clear_of_present_button():
@@ -1628,7 +1628,9 @@ def test_data_story_work_hub_uses_non_numeric_svgs_when_numbers_are_not_slide_lo
     assert 'aria-label="line chart"' not in str(driver_slide)
     assert 'aria-label="flow map"' in str(driver_slide)
     assert 'data-export-role="chart_insight"' in str(risk_slide)
-    assert 'aria-label="signal bars"' in str(risk_slide)
+    # No local measurements: retain a source diagram without implied bar sizes.
+    assert 'aria-label="source facts"' in str(risk_slide)
+    assert risk_slide.select_one('.ds-signal-bars') is None
     metrics_slide = soup.select_one('section.slide[aria-label="metrics"]')
     if metrics_slide is not None:
         assert 'aria-label="bar chart"' not in str(metrics_slide)
