@@ -49,6 +49,7 @@ def build_model_context(preset: str) -> dict[str, Any]:
             "Do not repeat the full evidence list in explanation. Prefer a distinct source-backed scope or next action; do not invent causal interpretation to create an insight.",
             "preferred_layout_family is a family such as hero, evidence, comparison, flow, close. Do not put layout IDs in that field.",
             "Preserve the chosen preset; the renderer owns CSS, runtime, export DOM, title balancing and layout implementation.",
+            "Keep an explicit user preset in SLIDE_REQUEST.json (version=1, preset=user choice) before writing BRIEF. Never alter that request to match your selection. On PRESET MISMATCH correct BRIEF.style.preset and retry canonical render.",
             "Keep all numeric values paired with source entities and units. Keep targets and unknowns explicit. Never invent measurements.",
             "Copy quantified source statements into supporting_facts without changing the counted entity or qualifier. Two regulated customers needing review is not a count of two reviews. Keep the same entities in explanations and speaker notes.",
             "Keep observations, targets, proposals and causal hypotheses distinct. Interview reports do not prove a root cause. Preserve source actors, action order and scope; do not add inferred actors or conditions to evidence.",

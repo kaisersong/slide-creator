@@ -40,3 +40,7 @@ python scripts/token-efficiency-eval.py compare --run-dir evals/artifacts/token-
 冻结 manifest 和版本后每轮都跑两臂。对照可复用此前已冻结基线，但模型、运行面或 evaluator 变化时重跑两臂。失败样本进入下一轮固定用例，报告不得删去。扩展用户真实文稿时先去除私密信息并固定事实依据；不能把当前 8 类任务的结果称为全部任务覆盖。
 
 后续候选可用 `--arm candidate2` 冻结/运行，使用 `--candidate-arm candidate2` 对照。`compare` 保存完整报告，并在采用 gate 失败或证据缺失时返回 exit code 1，防止 CI 将低 token 但质量回退的候选当作通过。评测器修复只需对受影响产物用 `reassess --case-id <id> --force-reassess` 重查；原生成收据和旧评分保留，不自动重放生成。
+
+## 用户指定风格的独立输入
+
+支持 `--requested-preset` 的 runtime 版本：每个正向 workspace 在模型启动前由调用方按 manifest 写入 `SLIDE_REQUEST.json`（version=1，preset=用户指定值），并在 workspace 外保留 `requested-style.json` 收据。此项是明确请求的持久输入，模型不能按 BRIEF 改写。`main.py --generate` 自动核对；不同风格拒绝写出，模型应修正 BRIEF 后重试。QA 同时保留原 preset 检查并核对请求文件未被删除或改写；不降低原有几何、事实、质量或采用阈值。历史 runtime 不支持此输入时保持原协议，不能把新文件约束追溯成旧臂已验证的能力。
