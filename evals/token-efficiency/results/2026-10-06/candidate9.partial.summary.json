@@ -1,0 +1,46 @@
+{
+  "status": "interrupted_partial",
+  "runs": [
+    {
+      "case_id": "swiss-architecture-zh",
+      "rep": 3,
+      "generation": {
+        "completed": true,
+        "input_tokens": 306446,
+        "cached_input_tokens": 272128,
+        "output_tokens": 6473,
+        "total_tokens": 312919
+      },
+      "judge": {
+        "completed": false,
+        "input_tokens": null,
+        "cached_input_tokens": null,
+        "output_tokens": null,
+        "total_tokens": null
+      }
+    },
+    {
+      "case_id": "blue-launch-zh",
+      "rep": 3,
+      "generation": {
+        "completed": true,
+        "input_tokens": 269022,
+        "cached_input_tokens": 234624,
+        "output_tokens": 5134,
+        "total_tokens": 274156
+      },
+      "judge": {
+        "completed": false,
+        "input_tokens": null,
+        "cached_input_tokens": null,
+        "output_tokens": null,
+        "total_tokens": null
+      }
+    }
+  ],
+  "completed_generations": 2,
+  "scored_complete_runs": 0,
+  "known_generation_token_sum": 587075,
+  "generation_usage_missing_count": 0,
+  "warning": "Known-token sum is a lower bound when usage is missing; this arm is not a complete comparison."
+}

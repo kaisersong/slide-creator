@@ -111,3 +111,6 @@ python scripts/token-efficiency-eval.py compare --run-dir evals/artifacts/token-
 ```
 
 此分支是实验结果与后续优化基础，不是已批准的新默认生成器。主目录、main 分支和发布资产均未改动。
+
+
+后续字号、重复文案、基线失败与完整复测：[2026-10-06-visual-polish-results.md](2026-10-06-visual-polish-results.md)。新正式臂25/26，未通过维护门槛；此处保留原历史结果。

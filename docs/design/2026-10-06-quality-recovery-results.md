@@ -82,3 +82,6 @@
 仍可改进的重点是可读字号、标题与正文重复、空 Meaning 列、装饰序号与真实指标混用、咨询风格的视觉节奏，以及把试点与决策门槛画成来源支持的结构。下一轮应增加带 label/value/unit/source 的展示契约和条件/行动字段，给组件提供真实语义；同时用 renderer/contract 对照消融区分算法与提示词收益。先从当前最佳通过候选建立新基线，再扩大真实任务集，保持效率与事实门槛。技术语言继续作为观察项。
 
 方案：`docs/design/2026-10-06-token-efficiency-plan.md`。机器汇总：`evals/token-efficiency/results/2026-10-06/`。全部原始 prompt、trace、usage、BRIEF、HTML、QA、截图与 judge 收据：`evals/artifacts/token-efficiency/2026-10-06-p1-formal/`。该目录留在 worktree，未发布或合并主分支。
+
+
+后续字号、重复文案、基线失败与完整复测：[2026-10-06-visual-polish-results.md](2026-10-06-visual-polish-results.md)。新正式臂25/26，未通过维护门槛；此处保留原历史结果。

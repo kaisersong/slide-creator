@@ -1,0 +1,11 @@
+{
+  "status": "interrupted_partial",
+  "reason": "Screenshot verification found unmeasured audience pre block typography before any scored run completed. Final candidate10 separately fixes font and expands measurement to pre/code. This arm is not adopted or counted as a complete eval.",
+  "workspaces_retained": [
+    "candidate9/swiss-architecture-zh/rep-3/workspace",
+    "candidate9/blue-launch-zh/rep-3/workspace"
+  ],
+  "completed_receipts": 0,
+  "processes_stopped": 11,
+  "generation_usage_missing_is_unknown": true
+}

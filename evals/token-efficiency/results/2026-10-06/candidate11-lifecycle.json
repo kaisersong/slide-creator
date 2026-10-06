@@ -1,0 +1,5 @@
+{
+  "status": "frozen_unrun",
+  "model_runs": 0,
+  "reason": "v4 controls exposed Swiss div-fact duplicates; corrected in separately frozen candidate12 before model dispatch."
+}

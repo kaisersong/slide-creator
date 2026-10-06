@@ -92,3 +92,5 @@ themes/cloudhub/
 
 # Raw live eval evidence stays local; frozen input and reports are tracked.
 evals/artifacts/token-efficiency/
+
+!docs/design/2026-10-06-visual-polish-results.md

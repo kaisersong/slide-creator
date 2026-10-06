@@ -1,0 +1,138 @@
+[
+  {
+    "case": "data-kpi-en",
+    "results": [
+      {
+        "arm": "candidate5",
+        "pass": true,
+        "hard_failures": [],
+        "violations": []
+      },
+      {
+        "arm": "controls/candidate14-final-same-brief",
+        "pass": true,
+        "hard_failures": [],
+        "violations": []
+      }
+    ]
+  },
+  {
+    "case": "swiss-architecture-zh",
+    "results": [
+      {
+        "arm": "candidate5",
+        "pass": true,
+        "hard_failures": [],
+        "violations": []
+      },
+      {
+        "arm": "controls/candidate14-final-same-brief",
+        "pass": true,
+        "hard_failures": [],
+        "violations": []
+      }
+    ]
+  },
+  {
+    "case": "blue-launch-zh",
+    "results": [
+      {
+        "arm": "candidate5",
+        "pass": true,
+        "hard_failures": [],
+        "violations": []
+      },
+      {
+        "arm": "controls/candidate14-final-same-brief",
+        "pass": true,
+        "hard_failures": [],
+        "violations": []
+      }
+    ]
+  },
+  {
+    "case": "enterprise-security-en",
+    "results": [
+      {
+        "arm": "candidate5",
+        "pass": true,
+        "hard_failures": [],
+        "violations": []
+      },
+      {
+        "arm": "controls/candidate14-final-same-brief",
+        "pass": true,
+        "hard_failures": [],
+        "violations": []
+      }
+    ]
+  },
+  {
+    "case": "chan-learning-zh",
+    "results": [
+      {
+        "arm": "candidate5",
+        "pass": true,
+        "hard_failures": [],
+        "violations": []
+      },
+      {
+        "arm": "controls/candidate14-final-same-brief",
+        "pass": true,
+        "hard_failures": [],
+        "violations": []
+      }
+    ]
+  },
+  {
+    "case": "consulting-strategy-zh",
+    "results": [
+      {
+        "arm": "candidate5",
+        "pass": true,
+        "hard_failures": [],
+        "violations": []
+      },
+      {
+        "arm": "controls/candidate14-final-same-brief",
+        "pass": true,
+        "hard_failures": [],
+        "violations": []
+      }
+    ]
+  },
+  {
+    "case": "fantasy-custom-zh",
+    "results": [
+      {
+        "arm": "candidate5",
+        "pass": true,
+        "hard_failures": [],
+        "violations": []
+      },
+      {
+        "arm": "controls/candidate14-final-same-brief",
+        "pass": true,
+        "hard_failures": [],
+        "violations": []
+      }
+    ]
+  },
+  {
+    "case": "sparse-api-en",
+    "results": [
+      {
+        "arm": "candidate5",
+        "pass": true,
+        "hard_failures": [],
+        "violations": []
+      },
+      {
+        "arm": "controls/candidate14-final-same-brief",
+        "pass": true,
+        "hard_failures": [],
+        "violations": []
+      }
+    ]
+  }
+]

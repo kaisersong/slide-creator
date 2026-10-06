@@ -1,0 +1,16 @@
+{
+  "disposition": "reject_source_entity_regression",
+  "automatic_gate": {
+    "pass": true,
+    "failures": []
+  },
+  "source_review_overrides_automatic_gate": true,
+  "case_id": "data-kpi-en",
+  "rep": 1,
+  "quality_score": 80,
+  "source": "Two regulated customers still need data residency review.",
+  "rendered_error": "2 open data residency reviews",
+  "location": "Slide5 explanatory summary; correct supporting_facts and must_include existed but late-listed customer fact did not reach the two-card close.",
+  "reason": "Counted entity changed from customers to reviews; must not adopt even when all26 automatic outcomes pass.",
+  "repair": "candidate14 uses complete primary local source facts at quantified close and does not append the rewritten explanatory summary; numeric entities/qualifiers preserved in generation guidance."
+}

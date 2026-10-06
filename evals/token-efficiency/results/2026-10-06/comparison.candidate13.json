@@ -1,0 +1,358 @@
+{
+  "baseline": {
+    "arm": "baseline",
+    "complete": 26,
+    "passed": 14,
+    "wall_ms": {
+      "n": 24,
+      "mean": 230167.79,
+      "median": 223527.0,
+      "p90": 306665
+    },
+    "input_tokens": {
+      "n": 24,
+      "mean": 1596509.25,
+      "median": 1405613.5,
+      "p90": 2257233
+    },
+    "cached_input_tokens": {
+      "n": 24,
+      "mean": 1498282.67,
+      "median": 1316800.0,
+      "p90": 2147840
+    },
+    "uncached_input_tokens": {
+      "n": 24,
+      "mean": 98226.58,
+      "median": 93760.0,
+      "p90": 121637
+    },
+    "output_tokens": {
+      "n": 24,
+      "mean": 9656.17,
+      "median": 9126.0,
+      "p90": 12872
+    },
+    "total_tokens": {
+      "n": 24,
+      "mean": 1606165.42,
+      "median": 1415463.0,
+      "p90": 2267025
+    },
+    "quality": {
+      "n": 24,
+      "mean": 77.88,
+      "median": 82.0,
+      "p90": 88
+    },
+    "technical_language": {
+      "n": 15,
+      "mean": 78.33,
+      "median": 83,
+      "p90": 87
+    },
+    "eval_total_tokens": {
+      "n": 24,
+      "mean": 1633805.83,
+      "median": 1442213.5,
+      "p90": 2293290
+    },
+    "eval_wall_ms": {
+      "n": 24,
+      "mean": 273423.25,
+      "median": 269405.5,
+      "p90": 348551
+    },
+    "recorded_runs": 26,
+    "observed_generation_token_sum": 38651674,
+    "generation_usage_missing": 0,
+    "calibration_overhead_tokens": 737753
+  },
+  "candidate": {
+    "arm": "candidate13",
+    "complete": 26,
+    "passed": 26,
+    "wall_ms": {
+      "n": 24,
+      "mean": 162277.62,
+      "median": 148709.5,
+      "p90": 204371
+    },
+    "input_tokens": {
+      "n": 24,
+      "mean": 373808.46,
+      "median": 307280.0,
+      "p90": 653489
+    },
+    "cached_input_tokens": {
+      "n": 24,
+      "mean": 335904,
+      "median": 263488.0,
+      "p90": 602880
+    },
+    "uncached_input_tokens": {
+      "n": 24,
+      "mean": 37904.46,
+      "median": 34758.5,
+      "p90": 51950
+    },
+    "output_tokens": {
+      "n": 24,
+      "mean": 6437.29,
+      "median": 5869.5,
+      "p90": 8075
+    },
+    "total_tokens": {
+      "n": 24,
+      "mean": 380245.75,
+      "median": 312857.0,
+      "p90": 661833
+    },
+    "quality": {
+      "n": 24,
+      "mean": 87.88,
+      "median": 88.0,
+      "p90": 92
+    },
+    "technical_language": {
+      "n": 15,
+      "mean": 86.73,
+      "median": 87,
+      "p90": 91
+    },
+    "eval_total_tokens": {
+      "n": 24,
+      "mean": 407280.42,
+      "median": 342606.0,
+      "p90": 687720
+    },
+    "eval_wall_ms": {
+      "n": 24,
+      "mean": 206464.12,
+      "median": 193915.0,
+      "p90": 250207
+    },
+    "recorded_runs": 26,
+    "observed_generation_token_sum": 9229099,
+    "generation_usage_missing": 0,
+    "calibration_overhead_tokens": 0
+  },
+  "pairs": [
+    {
+      "case_id": "blue-launch-zh",
+      "rep": 1,
+      "complete": true,
+      "token_delta": -812765,
+      "quality_delta": 6
+    },
+    {
+      "case_id": "blue-launch-zh",
+      "rep": 2,
+      "complete": true,
+      "token_delta": -1930822,
+      "quality_delta": 4
+    },
+    {
+      "case_id": "blue-launch-zh",
+      "rep": 3,
+      "complete": true,
+      "token_delta": -958092,
+      "quality_delta": 4
+    },
+    {
+      "case_id": "chan-learning-zh",
+      "rep": 1,
+      "complete": true,
+      "token_delta": -1013233,
+      "quality_delta": 0
+    },
+    {
+      "case_id": "chan-learning-zh",
+      "rep": 2,
+      "complete": true,
+      "token_delta": -473481,
+      "quality_delta": 3
+    },
+    {
+      "case_id": "chan-learning-zh",
+      "rep": 3,
+      "complete": true,
+      "token_delta": -957487,
+      "quality_delta": 11
+    },
+    {
+      "case_id": "consulting-strategy-zh",
+      "rep": 1,
+      "complete": true,
+      "token_delta": -1855786,
+      "quality_delta": 14
+    },
+    {
+      "case_id": "consulting-strategy-zh",
+      "rep": 2,
+      "complete": true,
+      "token_delta": -808649,
+      "quality_delta": 37
+    },
+    {
+      "case_id": "consulting-strategy-zh",
+      "rep": 3,
+      "complete": true,
+      "token_delta": -1950099,
+      "quality_delta": 29
+    },
+    {
+      "case_id": "data-kpi-en",
+      "rep": 1,
+      "complete": true,
+      "token_delta": -1622787,
+      "quality_delta": 23
+    },
+    {
+      "case_id": "data-kpi-en",
+      "rep": 2,
+      "complete": true,
+      "token_delta": -1328333,
+      "quality_delta": 21
+    },
+    {
+      "case_id": "data-kpi-en",
+      "rep": 3,
+      "complete": true,
+      "token_delta": -1927810,
+      "quality_delta": 11
+    },
+    {
+      "case_id": "enterprise-security-en",
+      "rep": 1,
+      "complete": true,
+      "token_delta": -2135150,
+      "quality_delta": 0
+    },
+    {
+      "case_id": "enterprise-security-en",
+      "rep": 2,
+      "complete": true,
+      "token_delta": -643019,
+      "quality_delta": 11
+    },
+    {
+      "case_id": "enterprise-security-en",
+      "rep": 3,
+      "complete": true,
+      "token_delta": -268147,
+      "quality_delta": 7
+    },
+    {
+      "case_id": "fantasy-custom-zh",
+      "rep": 1,
+      "complete": true,
+      "token_delta": -1682330,
+      "quality_delta": -5
+    },
+    {
+      "case_id": "fantasy-custom-zh",
+      "rep": 2,
+      "complete": true,
+      "token_delta": -989059,
+      "quality_delta": 0
+    },
+    {
+      "case_id": "fantasy-custom-zh",
+      "rep": 3,
+      "complete": true,
+      "token_delta": -346849,
+      "quality_delta": -2
+    },
+    {
+      "case_id": "negative-export",
+      "rep": 1,
+      "complete": true,
+      "token_delta": -1301,
+      "quality_delta": null
+    },
+    {
+      "case_id": "negative-report",
+      "rep": 1,
+      "complete": true,
+      "token_delta": 798,
+      "quality_delta": null
+    },
+    {
+      "case_id": "sparse-api-en",
+      "rep": 1,
+      "complete": true,
+      "token_delta": -1782731,
+      "quality_delta": 14
+    },
+    {
+      "case_id": "sparse-api-en",
+      "rep": 2,
+      "complete": true,
+      "token_delta": -1476021,
+      "quality_delta": 18
+    },
+    {
+      "case_id": "sparse-api-en",
+      "rep": 3,
+      "complete": true,
+      "token_delta": -711978,
+      "quality_delta": 15
+    },
+    {
+      "case_id": "swiss-architecture-zh",
+      "rep": 1,
+      "complete": true,
+      "token_delta": -1139250,
+      "quality_delta": 9
+    },
+    {
+      "case_id": "swiss-architecture-zh",
+      "rep": 2,
+      "complete": true,
+      "token_delta": -802994,
+      "quality_delta": 5
+    },
+    {
+      "case_id": "swiss-architecture-zh",
+      "rep": 3,
+      "complete": true,
+      "token_delta": -1805200,
+      "quality_delta": 5
+    }
+  ],
+  "generation_token_median_change_percent": -77.9,
+  "generation_wall_median_change_percent": -33.47,
+  "quality_mean_paired_change": 10,
+  "quality_change_cluster_bootstrap_95pct": [
+    4.33,
+    16.38
+  ],
+  "per_case_quality_change": {
+    "data-kpi-en": 18.33,
+    "swiss-architecture-zh": 6.33,
+    "blue-launch-zh": 4.67,
+    "enterprise-security-en": 6,
+    "chan-learning-zh": 4.67,
+    "consulting-strategy-zh": 26.67,
+    "fantasy-custom-zh": -2.33,
+    "sparse-api-en": 15.67
+  },
+  "acceptance_policy": {
+    "version": 2,
+    "technical_language": "observe",
+    "quality_thresholds_unchanged": true,
+    "baseline_arm": "baseline",
+    "token_median_max_change_percent": -10
+  },
+  "adoption_gate": {
+    "pass": true,
+    "failures": []
+  },
+  "limitations": [
+    "8 fixed tasks, 3 runs each; no broad statistical claim",
+    "same model and tool surface; sequential arm periods and service/cache variation",
+    "English STE-aligned rubric and Chinese adaptation; full official dictionary not verified",
+    "calibration QA/judge overhead is retained separately"
+  ]
+}

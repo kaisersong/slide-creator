@@ -1,0 +1,713 @@
+[
+  {
+    "arm": "baseline",
+    "checked_cards": 8,
+    "mismatches": [],
+    "rows": [
+      {
+        "case_id": "enterprise-security-en",
+        "rep": 2,
+        "value": "24",
+        "source_label": "24 -hour access token expiry",
+        "expected_entity_pattern": "token|access.*expir",
+        "bound_to_expected_source_entity": true
+      },
+      {
+        "case_id": "enterprise-security-en",
+        "rep": 2,
+        "value": "7",
+        "source_label": "7 -day audit record retention",
+        "expected_entity_pattern": "audit|record.*retain",
+        "bound_to_expected_source_entity": true
+      },
+      {
+        "case_id": "enterprise-security-en",
+        "rep": 3,
+        "value": "24",
+        "source_label": "Access tokens expire after 24 hours.",
+        "expected_entity_pattern": "token|access.*expir",
+        "bound_to_expected_source_entity": true
+      },
+      {
+        "case_id": "enterprise-security-en",
+        "rep": 3,
+        "value": "7",
+        "source_label": "Audit records remain for 7 days.",
+        "expected_entity_pattern": "audit|record.*retain",
+        "bound_to_expected_source_entity": true
+      },
+      {
+        "case_id": "data-kpi-en",
+        "rep": 1,
+        "value": "52.5%",
+        "source_label": "Enterprise activation is 52.5%, up 7.1 percentage points month over month.",
+        "expected_entity_pattern": "activat",
+        "bound_to_expected_source_entity": true
+      },
+      {
+        "case_id": "data-kpi-en",
+        "rep": 1,
+        "value": "310",
+        "source_label": "API latency is 310 ms at p95, down 18%.",
+        "expected_entity_pattern": "latency|p95",
+        "bound_to_expected_source_entity": true
+      },
+      {
+        "case_id": "data-kpi-en",
+        "rep": 2,
+        "value": "52.5%",
+        "source_label": "Enterprise activation: 52.5%",
+        "expected_entity_pattern": "activat",
+        "bound_to_expected_source_entity": true
+      },
+      {
+        "case_id": "data-kpi-en",
+        "rep": 3,
+        "value": "52.5%",
+        "source_label": "Enterprise activation is 52.5%",
+        "expected_entity_pattern": "activat",
+        "bound_to_expected_source_entity": true
+      }
+    ]
+  },
+  {
+    "arm": "candidate",
+    "checked_cards": 4,
+    "mismatches": [],
+    "rows": [
+      {
+        "case_id": "data-kpi-en",
+        "rep": 1,
+        "value": "2",
+        "source_label": "2 regulated customers still need data residency review.",
+        "expected_entity_pattern": "customer",
+        "bound_to_expected_source_entity": true
+      },
+      {
+        "case_id": "data-kpi-en",
+        "rep": 1,
+        "value": "52.5%",
+        "source_label": "Ask the engineering leaders for a decision path. The positive evidence is activation at 52.5%",
+        "expected_entity_pattern": "activat",
+        "bound_to_expected_source_entity": true
+      },
+      {
+        "case_id": "data-kpi-en",
+        "rep": 3,
+        "value": "52.5%",
+        "source_label": "Enterprise activation is 52.5%, up 7.1 percentage points month over month.",
+        "expected_entity_pattern": "activat",
+        "bound_to_expected_source_entity": true
+      },
+      {
+        "case_id": "data-kpi-en",
+        "rep": 3,
+        "value": "310",
+        "source_label": "API p95 latency is 310 ms, down 18%.",
+        "expected_entity_pattern": "latency|p95",
+        "bound_to_expected_source_entity": true
+      }
+    ]
+  },
+  {
+    "arm": "candidate2",
+    "checked_cards": 9,
+    "mismatches": [
+      {
+        "case_id": "enterprise-security-en",
+        "rep": 1,
+        "value": "24",
+        "source_label": "The gateway uses TLS for data in transit.",
+        "expected_entity_pattern": "token|access.*expir",
+        "bound_to_expected_source_entity": false
+      },
+      {
+        "case_id": "enterprise-security-en",
+        "rep": 1,
+        "value": "7",
+        "source_label": "Access tokens expire after 24 hours.",
+        "expected_entity_pattern": "audit|record.*retain",
+        "bound_to_expected_source_entity": false
+      },
+      {
+        "case_id": "enterprise-security-en",
+        "rep": 2,
+        "value": "24",
+        "source_label": "Ask the team to approve an audit before wider rollout.",
+        "expected_entity_pattern": "token|access.*expir",
+        "bound_to_expected_source_entity": false
+      },
+      {
+        "case_id": "enterprise-security-en",
+        "rep": 2,
+        "value": "7",
+        "source_label": "Disable debug dumps before production use.",
+        "expected_entity_pattern": "audit|record.*retain",
+        "bound_to_expected_source_entity": false
+      }
+    ],
+    "rows": [
+      {
+        "case_id": "enterprise-security-en",
+        "rep": 1,
+        "value": "24",
+        "source_label": "The gateway uses TLS for data in transit.",
+        "expected_entity_pattern": "token|access.*expir",
+        "bound_to_expected_source_entity": false
+      },
+      {
+        "case_id": "enterprise-security-en",
+        "rep": 1,
+        "value": "7",
+        "source_label": "Access tokens expire after 24 hours.",
+        "expected_entity_pattern": "audit|record.*retain",
+        "bound_to_expected_source_entity": false
+      },
+      {
+        "case_id": "enterprise-security-en",
+        "rep": 2,
+        "value": "24",
+        "source_label": "Ask the team to approve an audit before wider rollout.",
+        "expected_entity_pattern": "token|access.*expir",
+        "bound_to_expected_source_entity": false
+      },
+      {
+        "case_id": "enterprise-security-en",
+        "rep": 2,
+        "value": "7",
+        "source_label": "Disable debug dumps before production use.",
+        "expected_entity_pattern": "audit|record.*retain",
+        "bound_to_expected_source_entity": false
+      },
+      {
+        "case_id": "data-kpi-en",
+        "rep": 1,
+        "value": "52.5%",
+        "source_label": "Enterprise activation is 52.5%, up 7.1 percentage points month over month.",
+        "expected_entity_pattern": "activat",
+        "bound_to_expected_source_entity": true
+      },
+      {
+        "case_id": "data-kpi-en",
+        "rep": 1,
+        "value": "310",
+        "source_label": "API p95 latency is 310 ms, down 18%.",
+        "expected_entity_pattern": "latency|p95",
+        "bound_to_expected_source_entity": true
+      },
+      {
+        "case_id": "data-kpi-en",
+        "rep": 2,
+        "value": "2",
+        "source_label": "Residency reviews open: 2 regulated customers.",
+        "expected_entity_pattern": "customer",
+        "bound_to_expected_source_entity": true
+      },
+      {
+        "case_id": "data-kpi-en",
+        "rep": 3,
+        "value": "52.5%",
+        "source_label": "Enterprise activation is 52.5%, up 7.1 percentage points month over month.",
+        "expected_entity_pattern": "activat",
+        "bound_to_expected_source_entity": true
+      },
+      {
+        "case_id": "data-kpi-en",
+        "rep": 3,
+        "value": "310",
+        "source_label": "API p95 latency is 310 ms, down 18%.",
+        "expected_entity_pattern": "latency|p95",
+        "bound_to_expected_source_entity": true
+      }
+    ]
+  },
+  {
+    "arm": "candidate3",
+    "checked_cards": 10,
+    "mismatches": [],
+    "rows": [
+      {
+        "case_id": "enterprise-security-en",
+        "rep": 1,
+        "value": "24",
+        "source_label": "Access tokens expire after 24 hours.",
+        "expected_entity_pattern": "token|access.*expir",
+        "bound_to_expected_source_entity": true
+      },
+      {
+        "case_id": "enterprise-security-en",
+        "rep": 1,
+        "value": "7",
+        "source_label": "Audit records remain for 7 days.",
+        "expected_entity_pattern": "audit|record.*retain",
+        "bound_to_expected_source_entity": true
+      },
+      {
+        "case_id": "enterprise-security-en",
+        "rep": 3,
+        "value": "7",
+        "source_label": "Audit records remain for 7 days.",
+        "expected_entity_pattern": "audit|record.*retain",
+        "bound_to_expected_source_entity": true
+      },
+      {
+        "case_id": "data-kpi-en",
+        "rep": 1,
+        "value": "52.5%",
+        "source_label": "Enterprise activation is 52.5%, up 7.1 percentage points month over month.",
+        "expected_entity_pattern": "activat",
+        "bound_to_expected_source_entity": true
+      },
+      {
+        "case_id": "data-kpi-en",
+        "rep": 1,
+        "value": "310",
+        "source_label": "API p95 latency is 310 ms, down 18%.",
+        "expected_entity_pattern": "latency|p95",
+        "bound_to_expected_source_entity": true
+      },
+      {
+        "case_id": "data-kpi-en",
+        "rep": 2,
+        "value": "52.5%",
+        "source_label": "Enterprise activation is 52.5%. It is up 7.1 percentage points month over month.",
+        "expected_entity_pattern": "activat",
+        "bound_to_expected_source_entity": true
+      },
+      {
+        "case_id": "data-kpi-en",
+        "rep": 2,
+        "value": "52.5%",
+        "source_label": "Activation is 52.5%, up 7.1 percentage points month over month.",
+        "expected_entity_pattern": "activat",
+        "bound_to_expected_source_entity": true
+      },
+      {
+        "case_id": "data-kpi-en",
+        "rep": 2,
+        "value": "310",
+        "source_label": "API p95 latency is 310 ms, down 18%.",
+        "expected_entity_pattern": "latency|p95",
+        "bound_to_expected_source_entity": true
+      },
+      {
+        "case_id": "data-kpi-en",
+        "rep": 3,
+        "value": "52.5%",
+        "source_label": "Activation is 52.5%, up 7.1 percentage points month over month.",
+        "expected_entity_pattern": "activat",
+        "bound_to_expected_source_entity": true
+      },
+      {
+        "case_id": "data-kpi-en",
+        "rep": 3,
+        "value": "310",
+        "source_label": "API p95 latency is 310 ms, down 18%.",
+        "expected_entity_pattern": "latency|p95",
+        "bound_to_expected_source_entity": true
+      }
+    ]
+  },
+  {
+    "arm": "candidate4",
+    "checked_cards": 9,
+    "mismatches": [
+      {
+        "case_id": "enterprise-security-en",
+        "rep": 2,
+        "value": "24",
+        "source_label": "Gateway data in transit uses TLS.",
+        "expected_entity_pattern": "token|access.*expir",
+        "bound_to_expected_source_entity": false
+      },
+      {
+        "case_id": "enterprise-security-en",
+        "rep": 2,
+        "value": "7",
+        "source_label": "Access tokens expire after 24 hours.",
+        "expected_entity_pattern": "audit|record.*retain",
+        "bound_to_expected_source_entity": false
+      },
+      {
+        "case_id": "enterprise-security-en",
+        "rep": 3,
+        "value": "24",
+        "source_label": "TLS protects data in transit.",
+        "expected_entity_pattern": "token|access.*expir",
+        "bound_to_expected_source_entity": false
+      },
+      {
+        "case_id": "enterprise-security-en",
+        "rep": 3,
+        "value": "7",
+        "source_label": "Do not claim certification.",
+        "expected_entity_pattern": "audit|record.*retain",
+        "bound_to_expected_source_entity": false
+      }
+    ],
+    "rows": [
+      {
+        "case_id": "enterprise-security-en",
+        "rep": 2,
+        "value": "24",
+        "source_label": "Gateway data in transit uses TLS.",
+        "expected_entity_pattern": "token|access.*expir",
+        "bound_to_expected_source_entity": false
+      },
+      {
+        "case_id": "enterprise-security-en",
+        "rep": 2,
+        "value": "7",
+        "source_label": "Access tokens expire after 24 hours.",
+        "expected_entity_pattern": "audit|record.*retain",
+        "bound_to_expected_source_entity": false
+      },
+      {
+        "case_id": "enterprise-security-en",
+        "rep": 3,
+        "value": "24",
+        "source_label": "TLS protects data in transit.",
+        "expected_entity_pattern": "token|access.*expir",
+        "bound_to_expected_source_entity": false
+      },
+      {
+        "case_id": "enterprise-security-en",
+        "rep": 3,
+        "value": "7",
+        "source_label": "Do not claim certification.",
+        "expected_entity_pattern": "audit|record.*retain",
+        "bound_to_expected_source_entity": false
+      },
+      {
+        "case_id": "data-kpi-en",
+        "rep": 1,
+        "value": "52.5%",
+        "source_label": "Enterprise activation is 52.5%.",
+        "expected_entity_pattern": "activat",
+        "bound_to_expected_source_entity": true
+      },
+      {
+        "case_id": "data-kpi-en",
+        "rep": 1,
+        "value": "310",
+        "source_label": "API p95 latency is 310 ms.",
+        "expected_entity_pattern": "latency|p95",
+        "bound_to_expected_source_entity": true
+      },
+      {
+        "case_id": "data-kpi-en",
+        "rep": 2,
+        "value": "52.5%",
+        "source_label": "Enterprise activation is 52.5%, up 7.1 percentage points month over month.",
+        "expected_entity_pattern": "activat",
+        "bound_to_expected_source_entity": true
+      },
+      {
+        "case_id": "data-kpi-en",
+        "rep": 3,
+        "value": "52.5%",
+        "source_label": "Enterprise activation is 52.5%, up 7.1 percentage points month over month.",
+        "expected_entity_pattern": "activat",
+        "bound_to_expected_source_entity": true
+      },
+      {
+        "case_id": "data-kpi-en",
+        "rep": 3,
+        "value": "310",
+        "source_label": "API p95 latency is 310 ms, down 18%.",
+        "expected_entity_pattern": "latency|p95",
+        "bound_to_expected_source_entity": true
+      }
+    ]
+  },
+  {
+    "arm": "candidate5",
+    "checked_cards": 9,
+    "mismatches": [],
+    "rows": [
+      {
+        "case_id": "enterprise-security-en",
+        "rep": 1,
+        "value": "24",
+        "source_label": "Access tokens expire after 24 hours.",
+        "expected_entity_pattern": "token|access.*expir",
+        "bound_to_expected_source_entity": true
+      },
+      {
+        "case_id": "enterprise-security-en",
+        "rep": 1,
+        "value": "7",
+        "source_label": "Audit records remain for 7 days.",
+        "expected_entity_pattern": "audit|record.*retain",
+        "bound_to_expected_source_entity": true
+      },
+      {
+        "case_id": "enterprise-security-en",
+        "rep": 3,
+        "value": "24",
+        "source_label": "Access tokens expire after 24 hours.",
+        "expected_entity_pattern": "token|access.*expir",
+        "bound_to_expected_source_entity": true
+      },
+      {
+        "case_id": "enterprise-security-en",
+        "rep": 3,
+        "value": "7",
+        "source_label": "Audit records remain for 7 days.",
+        "expected_entity_pattern": "audit|record.*retain",
+        "bound_to_expected_source_entity": true
+      },
+      {
+        "case_id": "data-kpi-en",
+        "rep": 1,
+        "value": "52.5%",
+        "source_label": "Enterprise activation is 52.5%, up 7.1 percentage points month over month.",
+        "expected_entity_pattern": "activat",
+        "bound_to_expected_source_entity": true
+      },
+      {
+        "case_id": "data-kpi-en",
+        "rep": 1,
+        "value": "310",
+        "source_label": "API p95 latency is 310 ms, down 18%.",
+        "expected_entity_pattern": "latency|p95",
+        "bound_to_expected_source_entity": true
+      },
+      {
+        "case_id": "data-kpi-en",
+        "rep": 2,
+        "value": "52.5%",
+        "source_label": "Enterprise activation is 52.5%, up 7.1 percentage points month over month.",
+        "expected_entity_pattern": "activat",
+        "bound_to_expected_source_entity": true
+      },
+      {
+        "case_id": "data-kpi-en",
+        "rep": 2,
+        "value": "310",
+        "source_label": "API p95 latency is 310 ms, down 18%.",
+        "expected_entity_pattern": "latency|p95",
+        "bound_to_expected_source_entity": true
+      },
+      {
+        "case_id": "data-kpi-en",
+        "rep": 3,
+        "value": "52.5%",
+        "source_label": "Enterprise activation is 52.5%, up 7.1 percentage points month over month.",
+        "expected_entity_pattern": "activat",
+        "bound_to_expected_source_entity": true
+      }
+    ]
+  },
+  {
+    "arm": "candidate6",
+    "checked_cards": 7,
+    "mismatches": [],
+    "rows": [
+      {
+        "case_id": "enterprise-security-en",
+        "rep": 1,
+        "value": "24",
+        "source_label": "Access tokens expire after 24 hours.",
+        "expected_entity_pattern": "token|access.*expir",
+        "bound_to_expected_source_entity": true
+      },
+      {
+        "case_id": "enterprise-security-en",
+        "rep": 1,
+        "value": "7",
+        "source_label": "Audit records remain for 7 days.",
+        "expected_entity_pattern": "audit|record.*retain",
+        "bound_to_expected_source_entity": true
+      },
+      {
+        "case_id": "enterprise-security-en",
+        "rep": 2,
+        "value": "24",
+        "source_label": "Access tokens expire after 24 hours.",
+        "expected_entity_pattern": "token|access.*expir",
+        "bound_to_expected_source_entity": true
+      },
+      {
+        "case_id": "enterprise-security-en",
+        "rep": 2,
+        "value": "7",
+        "source_label": "Audit records remain for 7 days.",
+        "expected_entity_pattern": "audit|record.*retain",
+        "bound_to_expected_source_entity": true
+      },
+      {
+        "case_id": "data-kpi-en",
+        "rep": 2,
+        "value": "52.5%",
+        "source_label": "Enterprise activation: 52.5%.",
+        "expected_entity_pattern": "activat",
+        "bound_to_expected_source_entity": true
+      },
+      {
+        "case_id": "data-kpi-en",
+        "rep": 3,
+        "value": "52.5%",
+        "source_label": "Enterprise activation is 52.5%, up 7.1 percentage points month over month.",
+        "expected_entity_pattern": "activat",
+        "bound_to_expected_source_entity": true
+      },
+      {
+        "case_id": "data-kpi-en",
+        "rep": 3,
+        "value": "310",
+        "source_label": "API p95 latency is 310 ms, down 18%.",
+        "expected_entity_pattern": "latency|p95",
+        "bound_to_expected_source_entity": true
+      }
+    ]
+  },
+  {
+    "arm": "candidate10",
+    "checked_cards": 7,
+    "mismatches": [],
+    "rows": [
+      {
+        "case_id": "enterprise-security-en",
+        "rep": 1,
+        "value": "24",
+        "source_label": "Access tokens expire after 24 hours.",
+        "expected_entity_pattern": "token|access.*expir",
+        "bound_to_expected_source_entity": true
+      },
+      {
+        "case_id": "enterprise-security-en",
+        "rep": 1,
+        "value": "7",
+        "source_label": "Audit records remain for 7 days.",
+        "expected_entity_pattern": "audit|record.*retain",
+        "bound_to_expected_source_entity": true
+      },
+      {
+        "case_id": "enterprise-security-en",
+        "rep": 2,
+        "value": "24",
+        "source_label": "Access tokens expire after 24 hours.",
+        "expected_entity_pattern": "token|access.*expir",
+        "bound_to_expected_source_entity": true
+      },
+      {
+        "case_id": "data-kpi-en",
+        "rep": 2,
+        "value": "52.5%",
+        "source_label": "Enterprise activation is 52.5%, up 7.1 percentage points month over month.",
+        "expected_entity_pattern": "activat",
+        "bound_to_expected_source_entity": true
+      },
+      {
+        "case_id": "data-kpi-en",
+        "rep": 2,
+        "value": "310",
+        "source_label": "API p95 latency is 310 ms, down 18%.",
+        "expected_entity_pattern": "latency|p95",
+        "bound_to_expected_source_entity": true
+      },
+      {
+        "case_id": "data-kpi-en",
+        "rep": 3,
+        "value": "52.5%",
+        "source_label": "Activation is 52.5%, up 7.1 percentage points month over month.",
+        "expected_entity_pattern": "activat",
+        "bound_to_expected_source_entity": true
+      },
+      {
+        "case_id": "data-kpi-en",
+        "rep": 3,
+        "value": "310",
+        "source_label": "API p95 latency is 310 ms, down 18%.",
+        "expected_entity_pattern": "latency|p95",
+        "bound_to_expected_source_entity": true
+      }
+    ]
+  },
+  {
+    "arm": "candidate12",
+    "checked_cards": 4,
+    "mismatches": [],
+    "rows": [
+      {
+        "case_id": "enterprise-security-en",
+        "rep": 1,
+        "value": "24",
+        "source_label": "Access tokens expire after 24 hours.",
+        "expected_entity_pattern": "token|access.*expir",
+        "bound_to_expected_source_entity": true
+      },
+      {
+        "case_id": "enterprise-security-en",
+        "rep": 1,
+        "value": "7",
+        "source_label": "Audit records remain for 7 days.",
+        "expected_entity_pattern": "audit|record.*retain",
+        "bound_to_expected_source_entity": true
+      },
+      {
+        "case_id": "data-kpi-en",
+        "rep": 2,
+        "value": "52.5%",
+        "source_label": "Enterprise activation is 52.5%, up 7.1 percentage points month over month.",
+        "expected_entity_pattern": "activat",
+        "bound_to_expected_source_entity": true
+      },
+      {
+        "case_id": "data-kpi-en",
+        "rep": 2,
+        "value": "310",
+        "source_label": "API p95 latency is 310 ms, down 18%.",
+        "expected_entity_pattern": "latency|p95",
+        "bound_to_expected_source_entity": true
+      }
+    ]
+  },
+  {
+    "arm": "candidate13",
+    "checked_cards": 2,
+    "mismatches": [],
+    "rows": [
+      {
+        "case_id": "data-kpi-en",
+        "rep": 1,
+        "value": "52.5%",
+        "source_label": "Enterprise activation: 52.5%.",
+        "expected_entity_pattern": "activat",
+        "bound_to_expected_source_entity": true
+      },
+      {
+        "case_id": "data-kpi-en",
+        "rep": 1,
+        "value": "52.5%",
+        "source_label": "Enterprise activation is 52.5%, up 7.1 percentage points month over month.",
+        "expected_entity_pattern": "activat",
+        "bound_to_expected_source_entity": true
+      }
+    ]
+  },
+  {
+    "arm": "candidate14",
+    "checked_cards": 2,
+    "mismatches": [],
+    "rows": [
+      {
+        "case_id": "enterprise-security-en",
+        "rep": 1,
+        "value": "24",
+        "source_label": "Access tokens expire after 24 hours.",
+        "expected_entity_pattern": "token|access.*expir",
+        "bound_to_expected_source_entity": true
+      },
+      {
+        "case_id": "enterprise-security-en",
+        "rep": 1,
+        "value": "7",
+        "source_label": "Audit records remain for 7 days.",
+        "expected_entity_pattern": "audit|record.*retain",
+        "bound_to_expected_source_entity": true
+      }
+    ]
+  }
+]

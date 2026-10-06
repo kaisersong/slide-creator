@@ -1,0 +1,16 @@
+{
+  "implementation_commit": "f4316dd8ce92799be0f3e840553843e81d017512",
+  "snapshot_sha256": "3316652fad6e6878919fdc1f31f3ca83669e7afc1bf8310f28a3ef57355e80e2",
+  "model": "gpt-5.5",
+  "reasoning_effort": "high",
+  "jobs": 2,
+  "evaluator_version": 2,
+  "baseline_arm": "candidate5",
+  "regression": "2866 passed,114 skipped,7 deselected,0 failures",
+  "fixed_input_controls": "24/24 strict, geometry and required terms passed, controls/candidate12-same-brief",
+  "readability_measurement_version": 4,
+  "measurement_correction": "Old v2/v3 omitted Insight; v4 makes fair covered-scope comparisons, preserving history",
+  "source_authority": "Same frozen manifest and evaluator v2",
+  "candidate10_full_run_retained": true,
+  "candidate11_lifecycle": "frozen unrun; added remaining Swiss div-fact fix before dispatch."
+}
