@@ -43,6 +43,7 @@ def build_model_context(preset: str) -> dict[str, Any]:
         "rules":[
             "Fill every empty field and create page_roles/slides for all requested pages (5-20). The skeleton is not a valid final BRIEF.",
             "Use slide claim, explanation, visual_intent, supporting_facts and numeric_facts to preserve source evidence and rich content.",
+            "Put all complete local evidence statements, including measurements, in supporting_facts. numeric_facts is an auxiliary index for metric binding, not additional table rows.",
             "One main claim and one main exhibit per page. Use varied layout families; do not reduce evidence to title-only slides.",
             "Distribute all source facts across pages. Do not pad evidence tables by repeating a fact, or copy global_facts into every page.",
             "Do not repeat the full evidence list in explanation. Prefer a distinct source-backed scope or next action; do not invent causal interpretation to create an insight.",

@@ -136,3 +136,27 @@ def test_swiss_div_facts_remove_repeated_left_summary_without_losing_checks():
     s=BeautifulSoup(apply_audience_readability(h),'html.parser')
     assert not s.select('p')
     assert [n.get_text() for n in s.select('.pain-title')]==facts
+
+
+def test_blue_evidence_does_not_turn_numeric_indexes_into_duplicate_rows():
+    from low_context import _render_blue_sky_slide
+    facts=['试点有45名产品经理。','反馈整理时间减少30%。']
+    spec={'slide_number':2,'role':'evidence','layout_id':'table','title':'试点减少整理时间','key_point':'仅描述试点结果','speaker_note':'不能推断全体市场。','supporting_facts':facts,'supporting_items':['45名产品经理','反馈整理时间减少30%'],'evidence_items':[]}
+    soup=BeautifulSoup(_render_blue_sky_slide(spec,5,language='zh-CN',role_index=1),'html.parser')
+    assert [row.select('td')[1].get_text() for row in soup.select('tbody tr')]==facts
+
+
+def test_chan_uses_complete_local_facts_without_clause_fragments_or_padding():
+    from low_context import _chinese_chan_copy_items
+    facts=['小实验只改变一个主要变量。']
+    spec={'supporting_facts':facts,'supporting_items':['如果同时改变多个主要变量'],'evidence_items':[],'key_point':'如果同时改变多个主要变量，就无法辨别影响。','title':'一次只改一变量'}
+    assert _chinese_chan_copy_items(spec,count=3)==facts
+
+
+def test_title_balancing_keeps_possessives_and_contractions_in_one_atom():
+    from low_context import _tokenize_title,_balance_title_lines
+    for text,word in [("Decide Next Week's Expansion","Week's"),("Decide Next Week’s Expansion","Week’s"),("Don't Invent Results","Don't")]:
+        assert word in _tokenize_title(text)
+        lines=_balance_title_lines(text,force_balance=True)
+        assert word in ' '.join(lines)
+        assert "' s" not in ' '.join(lines)
