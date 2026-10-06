@@ -48,3 +48,14 @@ def test_generation_prompt_does_not_override_reference_budget():
     prompt = EVAL.generation_prompt({"request":"create a deck", "source":"facts"})
     assert "No artificial limit" in prompt
     assert "at most 3" not in prompt
+
+
+def test_compare_cli_cannot_pass_with_missing_evidence(tmp_path):
+    import subprocess
+    import sys
+    (tmp_path/"manifest.json").write_text(json.dumps({"repetitions":1,"cases":[{"id":"missing"}]}))
+    result=subprocess.run([sys.executable,str(Path(EVAL.__file__)),"compare","--run-dir",str(tmp_path)],capture_output=True,text=True)
+    assert result.returncode==1
+    payload=json.loads(result.stdout)
+    assert not payload["adoption_gate"]["pass"]
+    assert "baseline.planned_runs_missing_or_extra" in payload["adoption_gate"]["failures"]

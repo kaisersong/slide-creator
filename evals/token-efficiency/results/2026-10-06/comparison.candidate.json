@@ -1,0 +1,368 @@
+{
+  "baseline": {
+    "arm": "baseline",
+    "complete": 26,
+    "passed": 14,
+    "wall_ms": {
+      "n": 24,
+      "mean": 230167.79,
+      "median": 223527.0,
+      "p90": 306665
+    },
+    "input_tokens": {
+      "n": 24,
+      "mean": 1596509.25,
+      "median": 1405613.5,
+      "p90": 2257233
+    },
+    "cached_input_tokens": {
+      "n": 24,
+      "mean": 1498282.67,
+      "median": 1316800.0,
+      "p90": 2147840
+    },
+    "uncached_input_tokens": {
+      "n": 24,
+      "mean": 98226.58,
+      "median": 93760.0,
+      "p90": 121637
+    },
+    "output_tokens": {
+      "n": 24,
+      "mean": 9656.17,
+      "median": 9126.0,
+      "p90": 12872
+    },
+    "total_tokens": {
+      "n": 24,
+      "mean": 1606165.42,
+      "median": 1415463.0,
+      "p90": 2267025
+    },
+    "quality": {
+      "n": 24,
+      "mean": 77.88,
+      "median": 82.0,
+      "p90": 88
+    },
+    "technical_language": {
+      "n": 15,
+      "mean": 78.33,
+      "median": 83,
+      "p90": 87
+    },
+    "eval_total_tokens": {
+      "n": 24,
+      "mean": 1633805.83,
+      "median": 1442213.5,
+      "p90": 2293290
+    },
+    "eval_wall_ms": {
+      "n": 24,
+      "mean": 273423.25,
+      "median": 269405.5,
+      "p90": 348551
+    },
+    "recorded_runs": 26,
+    "observed_generation_token_sum": 38651674,
+    "generation_usage_missing": 0,
+    "calibration_overhead_tokens": 737753
+  },
+  "candidate": {
+    "arm": "candidate",
+    "complete": 26,
+    "passed": 13,
+    "wall_ms": {
+      "n": 24,
+      "mean": 172361.38,
+      "median": 139522.0,
+      "p90": 243101
+    },
+    "input_tokens": {
+      "n": 24,
+      "mean": 621366.08,
+      "median": 364150.0,
+      "p90": 1381737
+    },
+    "cached_input_tokens": {
+      "n": 24,
+      "mean": 578101.33,
+      "median": 332992.0,
+      "p90": 1314432
+    },
+    "uncached_input_tokens": {
+      "n": 24,
+      "mean": 43264.75,
+      "median": 35774.5,
+      "p90": 67305
+    },
+    "output_tokens": {
+      "n": 24,
+      "mean": 7282.25,
+      "median": 6301.5,
+      "p90": 9731
+    },
+    "total_tokens": {
+      "n": 24,
+      "mean": 628648.33,
+      "median": 369327.5,
+      "p90": 1392301
+    },
+    "quality": {
+      "n": 24,
+      "mean": 76.88,
+      "median": 80.5,
+      "p90": 86
+    },
+    "technical_language": {
+      "n": 15,
+      "mean": 80.07,
+      "median": 82,
+      "p90": 85
+    },
+    "eval_total_tokens": {
+      "n": 24,
+      "mean": 656106.46,
+      "median": 398754.0,
+      "p90": 1418661
+    },
+    "eval_wall_ms": {
+      "n": 24,
+      "mean": 221261.46,
+      "median": 199136.5,
+      "p90": 288359
+    },
+    "recorded_runs": 26,
+    "observed_generation_token_sum": 15192099,
+    "generation_usage_missing": 0,
+    "calibration_overhead_tokens": 78982
+  },
+  "pairs": [
+    {
+      "case_id": "blue-launch-zh",
+      "rep": 1,
+      "complete": true,
+      "token_delta": -728023,
+      "quality_delta": -4
+    },
+    {
+      "case_id": "blue-launch-zh",
+      "rep": 2,
+      "complete": true,
+      "token_delta": -1961704,
+      "quality_delta": 1
+    },
+    {
+      "case_id": "blue-launch-zh",
+      "rep": 3,
+      "complete": true,
+      "token_delta": -923452,
+      "quality_delta": -2
+    },
+    {
+      "case_id": "chan-learning-zh",
+      "rep": 1,
+      "complete": true,
+      "token_delta": -839895,
+      "quality_delta": -7
+    },
+    {
+      "case_id": "chan-learning-zh",
+      "rep": 2,
+      "complete": true,
+      "token_delta": -475977,
+      "quality_delta": -11
+    },
+    {
+      "case_id": "chan-learning-zh",
+      "rep": 3,
+      "complete": true,
+      "token_delta": -850634,
+      "quality_delta": -7
+    },
+    {
+      "case_id": "consulting-strategy-zh",
+      "rep": 1,
+      "complete": true,
+      "token_delta": -1467602,
+      "quality_delta": -6
+    },
+    {
+      "case_id": "consulting-strategy-zh",
+      "rep": 2,
+      "complete": true,
+      "token_delta": -790241,
+      "quality_delta": 4
+    },
+    {
+      "case_id": "consulting-strategy-zh",
+      "rep": 3,
+      "complete": true,
+      "token_delta": -1973839,
+      "quality_delta": 9
+    },
+    {
+      "case_id": "data-kpi-en",
+      "rep": 1,
+      "complete": true,
+      "token_delta": -2366956,
+      "quality_delta": 19
+    },
+    {
+      "case_id": "data-kpi-en",
+      "rep": 2,
+      "complete": true,
+      "token_delta": -1488997,
+      "quality_delta": -7
+    },
+    {
+      "case_id": "data-kpi-en",
+      "rep": 3,
+      "complete": true,
+      "token_delta": -1504568,
+      "quality_delta": -13
+    },
+    {
+      "case_id": "enterprise-security-en",
+      "rep": 1,
+      "complete": true,
+      "token_delta": -2211103,
+      "quality_delta": -12
+    },
+    {
+      "case_id": "enterprise-security-en",
+      "rep": 2,
+      "complete": true,
+      "token_delta": 2022179,
+      "quality_delta": 10
+    },
+    {
+      "case_id": "enterprise-security-en",
+      "rep": 3,
+      "complete": true,
+      "token_delta": 28563,
+      "quality_delta": -14
+    },
+    {
+      "case_id": "fantasy-custom-zh",
+      "rep": 1,
+      "complete": true,
+      "token_delta": -1589081,
+      "quality_delta": -1
+    },
+    {
+      "case_id": "fantasy-custom-zh",
+      "rep": 2,
+      "complete": true,
+      "token_delta": -936803,
+      "quality_delta": -2
+    },
+    {
+      "case_id": "fantasy-custom-zh",
+      "rep": 3,
+      "complete": true,
+      "token_delta": -289848,
+      "quality_delta": -6
+    },
+    {
+      "case_id": "negative-export",
+      "rep": 1,
+      "complete": true,
+      "token_delta": -82,
+      "quality_delta": null
+    },
+    {
+      "case_id": "negative-report",
+      "rep": 1,
+      "complete": true,
+      "token_delta": 917,
+      "quality_delta": null
+    },
+    {
+      "case_id": "sparse-api-en",
+      "rep": 1,
+      "complete": true,
+      "token_delta": -1840625,
+      "quality_delta": 8
+    },
+    {
+      "case_id": "sparse-api-en",
+      "rep": 2,
+      "complete": true,
+      "token_delta": -1522765,
+      "quality_delta": 6
+    },
+    {
+      "case_id": "sparse-api-en",
+      "rep": 3,
+      "complete": true,
+      "token_delta": -717258,
+      "quality_delta": 12
+    },
+    {
+      "case_id": "swiss-architecture-zh",
+      "rep": 1,
+      "complete": true,
+      "token_delta": 63892,
+      "quality_delta": -2
+    },
+    {
+      "case_id": "swiss-architecture-zh",
+      "rep": 2,
+      "complete": true,
+      "token_delta": -74257,
+      "quality_delta": 0
+    },
+    {
+      "case_id": "swiss-architecture-zh",
+      "rep": 3,
+      "complete": true,
+      "token_delta": -1021416,
+      "quality_delta": 1
+    }
+  ],
+  "generation_token_median_change_percent": -73.91,
+  "generation_wall_median_change_percent": -37.58,
+  "quality_mean_paired_change": -1,
+  "quality_change_cluster_bootstrap_95pct": [
+    -4.12,
+    2.42
+  ],
+  "per_case_quality_change": {
+    "data-kpi-en": -0.33,
+    "swiss-architecture-zh": -0.33,
+    "blue-launch-zh": -1.67,
+    "enterprise-security-en": -5.33,
+    "chan-learning-zh": -8.33,
+    "consulting-strategy-zh": 2.33,
+    "fantasy-custom-zh": -3,
+    "sparse-api-en": 8.67
+  },
+  "adoption_gate": {
+    "pass": false,
+    "failures": [
+      "guard.sparse-api-en.rep1.geometry_failures.added",
+      "guard.sparse-api-en.rep1.geometry_pass.regressed",
+      "guard.sparse-api-en.rep2.geometry_failures.added",
+      "guard.sparse-api-en.rep3.geometry_failures.added",
+      "guard.sparse-api-en.rep3.geometry_pass.regressed",
+      "language.data-kpi-en.rep1.below80",
+      "language.data-kpi-en.rep2.below80",
+      "language.data-kpi-en.rep3.below80",
+      "language.enterprise-security-en.rep1.below80",
+      "language.enterprise-security-en.rep3.below80",
+      "language.sparse-api-en.rep1.below80",
+      "outcome.chan-learning-zh.rep3.pass_regressed",
+      "outcome.enterprise-security-en.rep1.pass_regressed",
+      "outcome.enterprise-security-en.rep3.pass_regressed",
+      "quality.chan-learning-zh.regressed",
+      "quality.enterprise-security-en.regressed"
+    ]
+  },
+  "limitations": [
+    "8 fixed tasks, 3 runs each; no broad statistical claim",
+    "same model and tool surface; sequential arm periods and service/cache variation",
+    "English STE-aligned rubric and Chinese adaptation; full official dictionary not verified",
+    "calibration QA/judge overhead is retained separately"
+  ]
+}
