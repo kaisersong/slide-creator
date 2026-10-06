@@ -12,6 +12,8 @@ from low_context import (
     render_from_brief,
     _render_enterprise_consulting_split, visible_numeric_coverage_failures,
     _chart_metric_values_from_spec, _cleanup_display_candidate,
+    _render_enterprise_kpi_dashboard, _render_data_story_kpi_grid, _render_data_story_hero_number,
+    _render_data_story_chart_insight, _render_data_story_cta_close, _render_chinese_chan_center,
 )
 from preset_contracts import check_preset_contract_html
 
@@ -129,3 +131,59 @@ def test_chart_values_reject_mixed_units_but_keep_same_unit_series():
 
 def test_english_display_words_keep_spaces():
     assert _cleanup_display_candidate("No source value gives the prior baseline") == "No source value gives the prior baseline"
+
+
+def test_enterprise_kpis_do_not_shift_token_and_audit_values_to_tls():
+    facts=["The gateway uses TLS for data in transit.", "Access tokens expire after 24 hours.", "Audit records remain for 7 days."]
+    value=spec(facts)
+    value.update(role="controls",layout_id="kpi_dashboard",numeric_facts=facts[1:])
+    soup=BeautifulSoup(_render_enterprise_kpi_dashboard(value,5),'html.parser')
+    cards=soup.select('.ent-kpi-card')
+    assert len(cards) == 3
+    assert cards[0].select_one('.ent-kpi-number') is None
+    assert cards[1].select_one('.ent-kpi-number').get_text(strip=True) == "24"
+    assert cards[2].select_one('.ent-kpi-number').get_text(strip=True) == "7"
+
+
+def test_data_story_numbers_follow_items_even_if_numeric_facts_order_differs():
+    facts=["Review is pending.", "Latency reached 310 ms.", "Activation reached 52.5%."]
+    value=spec(facts)
+    value.update(layout_id="kpi_grid",numeric_facts=[facts[2],facts[1]])
+    soup=BeautifulSoup(_render_data_story_kpi_grid(value,5),'html.parser')
+    cards=soup.select('.ds-kpi-card')
+    by_label={card.select_one('.ds-kpi-label').get_text(strip=True):card for card in cards}
+    assert by_label[facts[0]].select_one('.ds-kpi') is None
+    assert by_label[facts[1]].select_one('.ds-kpi').get_text(strip=True) == "310"
+    assert by_label[facts[2]].select_one('.ds-kpi').get_text(strip=True) == "52.5%"
+    assert "▲" not in soup.get_text() and "▼" not in soup.get_text()
+
+
+def test_hero_number_has_its_own_source_entity_label():
+    value=spec(["Activation reached 52.5%.", "The team has not approved expansion."])
+    value.update(role="cover",layout_id="hero_number",title="Expansion waits for review",key_point="The team has not approved expansion.",numeric_facts=["Activation reached 52.5%."])
+    soup=BeautifulSoup(_render_data_story_hero_number(value,5),'html.parser')
+    assert soup.select_one('.ds-kpi').get_text(strip=True) == "52.5%"
+    assert soup.select_one('.ds-kpi-label').get_text(strip=True) == "Activation reached 52.5%."
+
+
+def test_single_measurement_never_creates_placeholder_bars():
+    value=spec(["Activation reached 52.5%.", "Prior baseline is not provided."])
+    value.update(role="evidence",layout_id="chart_insight",chart_policy="auto",numeric_facts=["Activation reached 52.5%."])
+    soup=BeautifulSoup(_render_data_story_chart_insight(value,5),'html.parser')
+    assert not soup.select('svg')
+    assert "Signal 01" not in soup.get_text()
+    assert "Prior baseline is not provided." in soup.get_text()
+
+
+def test_closing_scope_comes_from_audience_action():
+    value=spec(["Activation reached 52.5%.", "Reviews remain open."])
+    value.update(layout_id="cta_close",desired_action="Decide whether to expand to all enterprise tenants next week.")
+    text=BeautifulSoup(_render_data_story_cta_close(value,5),'html.parser').get_text(' ',strip=True)
+    assert value['desired_action'] in text
+
+
+def test_chan_center_retains_observation_fact_when_explanation_paraphrases_it():
+    value=spec(["团队先观察用户遇到的问题。", "观察之后再写假设。"])
+    value.update(layout_id="zen_center",title="先看真实困处",key_point="先看用户在哪里受阻，再决定要检验什么。")
+    text=BeautifulSoup(_render_chinese_chan_center(value,5,language="zh-CN"),'html.parser').get_text(' ',strip=True)
+    assert all(fact in text for fact in value['supporting_facts'])

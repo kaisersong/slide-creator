@@ -2458,6 +2458,7 @@ def build_slide_spec(brief: dict[str, Any], packet: dict[str, Any] | None = None
             "preferred_layout_family": preferred_layout_family,
             "chart_policy": chart_policy,
             "quality_tier": quality_tier,
+            "desired_action": brief.get("desired_action", ""),
         }
         if normalized_preset == "data story" and _has_mixed_numeric_units(spec):
             # Plain numeric_facts have no common scale or conversion contract.
@@ -3699,6 +3700,11 @@ def _metric_value_for_item(
     used_tokens: set[str] | None = None,
     numeric_only: bool = False,
 ) -> str:
+    if numeric_only and (spec.get("supporting_facts") or spec.get("numeric_facts")):
+        # A nearby number is not a value for this item. Unbound items remain
+        # qualitative; the body still carries the full source statement.
+        direct = _extract_numbers(item)
+        return direct[0] if direct else ""
     numeric_fact_numbers = _primary_numbers_from_numeric_facts(spec)
     if numeric_only and numeric_fact_numbers:
         return numeric_fact_numbers[min(index, len(numeric_fact_numbers) - 1)]
@@ -4018,10 +4024,25 @@ def _data_story_non_numeric_svg(spec: dict[str, Any]) -> str:
     if role in {"interaction"}:
         return _svg_state_grid(spec, count=4)
     if role in {"pain-solution", "problem", "risk"} or family in {"comparison"}:
-        return _svg_signal_bars(spec, count=4)
+        return _svg_source_facts(spec, count=4)
     if role in {"design-philosophy", "architecture"} or family in {"architecture-map"}:
         return _svg_signal_map(spec, count=4)
-    return _svg_signal_bars(spec, count=4)
+    return _svg_source_facts(spec, count=4)
+
+
+def _svg_source_facts(spec: dict[str, Any], *, count: int = 4) -> str:
+    """Equal-size fact nodes have no invented quantitative scale."""
+    facts = _dedupe_preserve(spec.get("supporting_facts", []) or _spec_display_items(spec, limit=count))[:count]
+    lines = max((int(_title_visual_units(fact) / 9) + 2 for fact in facts), default=2)
+    height = max(72, lines * 18 + 16)
+    rows = (len(facts) + 1) // 2
+    cells = []
+    for index, fact in enumerate(facts):
+        x, y = 8 + (index % 2) * 160, 8 + (index // 2) * (height + 16)
+        cells.append(f'<rect x="{x}" y="{y}" width="144" height="{height}" rx="8" class="ds-state-cell"></rect>'
+                     f'<foreignObject x="{x+8}" y="{y+8}" width="128" height="{height-16}">'
+                     f'<div xmlns="http://www.w3.org/1999/xhtml" style="font-size:14px;line-height:18px;color:var(--text);overflow-wrap:anywhere;">{_escape(fact)}</div></foreignObject>')
+    return f'<svg viewBox="0 0 320 {max(88, rows*(height+16))}" class="ds-chart-svg ds-source-facts" style="max-height:340px;" role="img" aria-label="source facts">' + ''.join(cells) + '</svg>'
 
 
 SWISS_BG_NUM_ROLES = {"cover", "pain-solution", "presets", "content-routing", "use-cases", "cta_close", "closing", "cta", "getting-started"}
@@ -5316,11 +5337,14 @@ def _enterprise_metric_value_for_label(
     metric_values: list[str],
     used_values: set[str],
     index: int,
+    *,
+    allow_fallback: bool = True,
 ) -> str | None:
     candidates = _extract_numbers(label)
-    if index < len(metric_values):
+    if allow_fallback and index < len(metric_values):
         candidates.append(metric_values[index])
-    candidates.extend(metric_values)
+    if allow_fallback:
+        candidates.extend(metric_values)
     for value in candidates:
         if value not in used_values:
             used_values.add(value)
@@ -5410,8 +5434,9 @@ def _render_enterprise_kpi_dashboard(spec: dict[str, Any], total: int) -> str:
         # Content area: card-based KPI row
         cards = []
         for index, label in enumerate(labels[:3]):
-            trend_class = "positive" if index == 0 else ("neutral" if index == 1 else "negative")
-            metric_value = _enterprise_metric_value_for_label(label, real_numbers, used_metric_values, index)
+            trend_class = "neutral" if spec.get("supporting_facts") else ("positive" if index == 0 else ("neutral" if index == 1 else "negative"))
+            metric_value = _enterprise_metric_value_for_label(label, real_numbers, used_metric_values, index,
+                allow_fallback=not bool(spec.get("supporting_facts") or spec.get("numeric_facts")))
             if metric_value is None:
                 cards.append(
                     f"""
@@ -5815,8 +5840,9 @@ def _render_enterprise_cta_close(spec: dict[str, Any], total: int) -> str:
     used_metric_values: set[str] = set()
     card_html = []
     for index, item in enumerate(items[:3]):
-        metric_value = _enterprise_metric_value_for_label(item, metric_values, used_metric_values, index)
-        trend_class = "positive" if index == 2 else "neutral"
+        metric_value = _enterprise_metric_value_for_label(item, metric_values, used_metric_values, index,
+            allow_fallback=not bool(spec.get("supporting_facts") or spec.get("numeric_facts")))
+        trend_class = "neutral" if spec.get("supporting_facts") else ("positive" if index == 2 else "neutral")
         if metric_value is None:
             card_html.append(
                 f'<div class="ent-kpi-card reveal"><div class="ent-kpi-label" style="text-transform:none;font-size:clamp(13px,1.3vw,16px);letter-spacing:0;max-width:260px">{_escape(item)}</div></div>'
@@ -6585,6 +6611,15 @@ def _render_data_story_hero_number(spec: dict[str, Any], total: int) -> str:
     title_tag = _title_tag("h1", "ds-heading", spec["title"], preset="Data Story", layout_id=spec["layout_id"])
     value = _metric_values_from_spec(spec, [_compact_display_token(spec["title"], fallback="关键")])[0]
     label = _split_supporting_phrases(spec["key_point"], minimum=1)[0]
+    if spec.get("supporting_facts") or spec.get("numeric_facts"):
+        pool = _dedupe_preserve([*spec.get("numeric_facts", []), *spec.get("supporting_facts", []),
+                                 *spec.get("supporting_items", []), *spec.get("evidence_items", [])])
+        title_numbers = _extract_numbers(spec["title"])
+        if title_numbers and any(title_numbers[0] in _extract_numbers(fact) for fact in pool):
+            value = title_numbers[0]
+        # A prominent number must have its own source label, rather than an
+        # unrelated first clause from the page explanation.
+        label = next((fact for fact in pool if value in _extract_numbers(fact)), label)
     if spec["role"] == "cover":
         summary = _cover_summary_without_metric_label(spec["key_point"], label)
         return f"""
@@ -6622,7 +6657,7 @@ def _render_data_story_hero_number(spec: dict[str, Any], total: int) -> str:
 def _render_data_story_kpi_chart(spec: dict[str, Any], total: int) -> str:
     slide_number = spec["slide_number"]
     title_tag = _title_tag("h2", "ds-heading", spec["title"], preset="Data Story", layout_id=spec["layout_id"])
-    labels = _spec_display_items(spec, limit=3)
+    labels = _dedupe_preserve([*spec.get("numeric_facts", []), *_spec_display_items(spec, limit=3)])[:3]
     used_tokens: set[str] = set()
     metric_values = []
     for index, item in enumerate(labels):
@@ -6638,7 +6673,7 @@ def _render_data_story_kpi_chart(spec: dict[str, Any], total: int) -> str:
     cards = "".join(
         f"""
         <div class="ds-kpi-card reveal">
-            <div class="ds-kpi">{_escape(metric_values[index])}</div>
+            {('<div class="ds-kpi">' + _escape(metric_values[index]) + '</div>') if metric_values[index] else ''}
             <div class="ds-kpi-label">{_escape(item)}</div>
             <div class="ds-trend">{_escape(spec['role'])}</div>
         </div>
@@ -6674,22 +6709,23 @@ def _render_data_story_chart_insight(spec: dict[str, Any], total: int) -> str:
     slide_number = spec["slide_number"]
     title_tag = _title_tag("h2", "ds-heading", spec["title"], preset="Data Story", layout_id=spec["layout_id"])
     chart_values = _chart_metric_values_from_spec(spec, ["1", "2", "3", "4"])
-    if spec["role"] == "interaction" and not chart_values:
+    runtime_copy = " ".join([*spec.get("supporting_facts", []), spec["key_point"]])
+    runtime_interaction = bool(re.search(r"\bF5\b|Ctrl\+S|presenter|inline edit|play mode|edit mode|播放|编辑|导出", runtime_copy, re.I))
+    if spec["role"] == "interaction" and not chart_values and runtime_interaction:
         chart_container = _render_data_story_interaction_panel(spec)
     elif chart_values and spec.get("chart_policy") != "avoid":
         insight_body = _svg_line_chart(_chart_labels_from_spec(spec, count=4), chart_values)
         chart_container = _render_data_story_visual_container(insight_body)
-    elif spec.get("chart_policy") == "avoid":
+    elif spec.get("chart_policy") == "avoid" or spec.get("numeric_facts"):
         insight_body = _render_data_story_stage_grid(spec, count=4, prefix="evidence")
         chart_container = _render_data_story_visual_container(insight_body)
     else:
-        insight_body = _data_story_non_numeric_svg(spec)
-        chart_container = _render_data_story_visual_container(insight_body)
+        chart_container = _render_data_story_visual_container(_data_story_non_numeric_svg(spec))
     return f"""
     <section class="slide ds-chart-insight" id="slide-{slide_number}" data-notes="{_escape(spec['speaker_note'])}" aria-label="{_escape(spec['role'])}" data-export-role="chart_insight">
         <div class="slide-content">
             <div class="ds-shell">
-                <div class="ds-subhead reveal">trend</div>
+                <div class="ds-subhead reveal">{'trend' if chart_values else 'evidence'}</div>
                 {title_tag}
                 <div class="ds-divider reveal"></div>
                 {chart_container}
@@ -6735,17 +6771,17 @@ def _render_data_story_kpi_grid(spec: dict[str, Any], total: int) -> str:
     title_tag = _title_tag("h2", "ds-heading", spec["title"], preset="Data Story", layout_id=spec["layout_id"])
     numeric_fact_count = len(_primary_numbers_from_numeric_facts(spec))
     card_count = numeric_fact_count if 3 <= numeric_fact_count < 4 else 4
-    items = _spec_display_items(spec, limit=card_count)
+    items = _dedupe_preserve([*spec.get("numeric_facts", []), *_spec_display_items(spec, limit=card_count)])[:card_count]
     cards = []
     for index, item in enumerate(items[:card_count]):
-        tone = "positive" if index == 0 else ("negative" if index == 2 else "neutral")
+        tone = "neutral" if spec.get("supporting_facts") else ("positive" if index == 0 else ("negative" if index == 2 else "neutral"))
         value = _metric_value_for_item(item, spec, index=index, numeric_only=True)
         cards.append(
             f"""
             <div class="ds-kpi-card reveal">
-                <div class="ds-kpi {tone}">{_escape(value)}</div>
+                {('<div class="ds-kpi ' + tone + '">' + _escape(value) + '</div>') if value else ''}
                 <div class="ds-kpi-label">{_escape(item)}</div>
-                <div class="ds-trend {'up' if index != 2 else 'down'}">{'▲' if index != 2 else '▼'} {_escape(spec['role'])}</div>
+                <div class="ds-trend">{_escape(spec['role'])}</div>
             </div>
             """
         )
@@ -6770,7 +6806,7 @@ def _render_data_story_workflow_chart(spec: dict[str, Any], total: int) -> str:
     chart_values = _chart_metric_values_from_spec(spec, ["1", "2", "3", "4"])
     if chart_values and spec.get("chart_policy") != "avoid":
         chart = _svg_line_chart(_chart_labels_from_spec(spec, count=4, family="workflow"), chart_values)
-    elif spec.get("chart_policy") == "avoid":
+    elif spec.get("chart_policy") == "avoid" or spec.get("numeric_facts"):
         chart = _render_data_story_stage_grid(spec, count=4, prefix="phase")
     else:
         chart = _data_story_non_numeric_svg(spec)
@@ -6804,6 +6840,9 @@ def _render_data_story_cta_close(spec: dict[str, Any], total: int) -> str:
         force_balance=True,
     )
     items = _spec_display_items(spec, limit=2)
+    decision_copy = spec.get("desired_action") or spec["key_point"]
+    if decision_copy != spec["key_point"]:
+        decision_copy += " " + spec["key_point"]
     if not _data_story_has_numeric_cta_signal(spec, items):
         action_grid = _render_data_story_action_grid(spec)
         return f"""
@@ -6814,7 +6853,7 @@ def _render_data_story_cta_close(spec: dict[str, Any], total: int) -> str:
                     <div class="ds-subhead reveal">closing readout</div>
                     {title_tag}
                     <div class="ds-divider reveal"></div>
-                    <div class="ds-insight reveal"><strong>Decision:</strong> {_escape(spec['key_point'])}</div>
+                    <div class="ds-insight reveal"><strong>Decision:</strong> {_escape(decision_copy)}</div>
                 </div>
                 {action_grid}
             </div>
@@ -6824,9 +6863,9 @@ def _render_data_story_cta_close(spec: dict[str, Any], total: int) -> str:
     """.strip()
 
     used_tokens: set[str] = set()
-    value0 = _metric_value_for_item(items[0], spec, index=0, used_tokens=used_tokens)
+    value0 = _metric_value_for_item(items[0], spec, index=0, used_tokens=used_tokens, numeric_only=True)
     used_tokens.add(value0)
-    value1 = _metric_value_for_item(items[1], spec, index=1, used_tokens=used_tokens)
+    value1 = _metric_value_for_item(items[1], spec, index=1, used_tokens=used_tokens, numeric_only=True)
     return f"""
     <section class="slide ds-close" id="slide-{slide_number}" data-notes="{_escape(spec['speaker_note'])}" aria-label="{_escape(spec['role'])}" data-export-role="cta_close">
         <div class="slide-content">
@@ -6835,11 +6874,11 @@ def _render_data_story_cta_close(spec: dict[str, Any], total: int) -> str:
                     <div class="ds-subhead reveal">closing readout</div>
                     {title_tag}
                     <div class="ds-divider reveal"></div>
-                    <div class="ds-insight reveal"><strong>Decision:</strong> {_escape(spec['key_point'])}</div>
+                    <div class="ds-insight reveal"><strong>Decision:</strong> {_escape(decision_copy)}</div>
                 </div>
                 <div class="ds-kpi-grid">
-                    <div class="ds-kpi-card reveal"><div class="ds-kpi positive">{_escape(value0)}</div><div class="ds-kpi-label">{_escape(items[0])}</div></div>
-                    <div class="ds-kpi-card reveal"><div class="ds-kpi neutral">{_escape(value1)}</div><div class="ds-kpi-label">{_escape(items[1])}</div></div>
+                    <div class="ds-kpi-card reveal">{('<div class="ds-kpi neutral">' + _escape(value0) + '</div>') if value0 else ''}<div class="ds-kpi-label">{_escape(items[0])}</div></div>
+                    <div class="ds-kpi-card reveal">{('<div class="ds-kpi neutral">' + _escape(value1) + '</div>') if value1 else ''}<div class="ds-kpi-label">{_escape(items[1])}</div></div>
                 </div>
             </div>
         </div>
@@ -7174,6 +7213,7 @@ def _render_chinese_chan_center(spec: dict[str, Any], total: int, *, language: s
             <div class="zen-caption reveal">{_escape(_chinese_chan_caption(spec, language))}</div>
             {title_tag}
             <p class="zen-body zen-cn reveal" style="margin-top: 18px;">{_escape(spec['key_point'])}</p>
+            <ul class="zen-list zen-cn reveal">{''.join('<li>' + _escape(fact) + '</li>' for fact in spec.get('supporting_facts', [])[:3] if _normalize_match_text(fact) not in _normalize_match_text(spec['key_point']))}</ul>
             {separator}
         </div>
         <span class="slide-num-label zen-caption">{slide_number:02d} / {total:02d}</span>
