@@ -1,0 +1,830 @@
+[
+  {
+    "arm": "baseline",
+    "recorded_runs": 26,
+    "all_recorded_runtime_files_unchanged": true,
+    "snapshot_sha256": "14335f6776319b227aa0b100e2071ed209e94e28a37545531e201b5dbc27683e",
+    "runs": [
+      {
+        "case_id": "blue-launch-zh",
+        "rep": 1,
+        "changed_runtime_files": []
+      },
+      {
+        "case_id": "blue-launch-zh",
+        "rep": 2,
+        "changed_runtime_files": []
+      },
+      {
+        "case_id": "blue-launch-zh",
+        "rep": 3,
+        "changed_runtime_files": []
+      },
+      {
+        "case_id": "chan-learning-zh",
+        "rep": 1,
+        "changed_runtime_files": []
+      },
+      {
+        "case_id": "chan-learning-zh",
+        "rep": 2,
+        "changed_runtime_files": []
+      },
+      {
+        "case_id": "chan-learning-zh",
+        "rep": 3,
+        "changed_runtime_files": []
+      },
+      {
+        "case_id": "consulting-strategy-zh",
+        "rep": 1,
+        "changed_runtime_files": []
+      },
+      {
+        "case_id": "consulting-strategy-zh",
+        "rep": 2,
+        "changed_runtime_files": []
+      },
+      {
+        "case_id": "consulting-strategy-zh",
+        "rep": 3,
+        "changed_runtime_files": []
+      },
+      {
+        "case_id": "data-kpi-en",
+        "rep": 1,
+        "changed_runtime_files": []
+      },
+      {
+        "case_id": "data-kpi-en",
+        "rep": 2,
+        "changed_runtime_files": []
+      },
+      {
+        "case_id": "data-kpi-en",
+        "rep": 3,
+        "changed_runtime_files": []
+      },
+      {
+        "case_id": "enterprise-security-en",
+        "rep": 1,
+        "changed_runtime_files": []
+      },
+      {
+        "case_id": "enterprise-security-en",
+        "rep": 2,
+        "changed_runtime_files": []
+      },
+      {
+        "case_id": "enterprise-security-en",
+        "rep": 3,
+        "changed_runtime_files": []
+      },
+      {
+        "case_id": "fantasy-custom-zh",
+        "rep": 1,
+        "changed_runtime_files": []
+      },
+      {
+        "case_id": "fantasy-custom-zh",
+        "rep": 2,
+        "changed_runtime_files": []
+      },
+      {
+        "case_id": "fantasy-custom-zh",
+        "rep": 3,
+        "changed_runtime_files": []
+      },
+      {
+        "case_id": "negative-export",
+        "rep": 1,
+        "changed_runtime_files": []
+      },
+      {
+        "case_id": "negative-report",
+        "rep": 1,
+        "changed_runtime_files": []
+      },
+      {
+        "case_id": "sparse-api-en",
+        "rep": 1,
+        "changed_runtime_files": []
+      },
+      {
+        "case_id": "sparse-api-en",
+        "rep": 2,
+        "changed_runtime_files": []
+      },
+      {
+        "case_id": "sparse-api-en",
+        "rep": 3,
+        "changed_runtime_files": []
+      },
+      {
+        "case_id": "swiss-architecture-zh",
+        "rep": 1,
+        "changed_runtime_files": []
+      },
+      {
+        "case_id": "swiss-architecture-zh",
+        "rep": 2,
+        "changed_runtime_files": []
+      },
+      {
+        "case_id": "swiss-architecture-zh",
+        "rep": 3,
+        "changed_runtime_files": []
+      }
+    ]
+  },
+  {
+    "arm": "candidate",
+    "recorded_runs": 26,
+    "all_recorded_runtime_files_unchanged": true,
+    "snapshot_sha256": "1fc2f0eaad665ae2bb4ddb5e259f21cbabadb92f72061a8706c0fbf67577f20c",
+    "runs": [
+      {
+        "case_id": "blue-launch-zh",
+        "rep": 1,
+        "changed_runtime_files": []
+      },
+      {
+        "case_id": "blue-launch-zh",
+        "rep": 2,
+        "changed_runtime_files": []
+      },
+      {
+        "case_id": "blue-launch-zh",
+        "rep": 3,
+        "changed_runtime_files": []
+      },
+      {
+        "case_id": "chan-learning-zh",
+        "rep": 1,
+        "changed_runtime_files": []
+      },
+      {
+        "case_id": "chan-learning-zh",
+        "rep": 2,
+        "changed_runtime_files": []
+      },
+      {
+        "case_id": "chan-learning-zh",
+        "rep": 3,
+        "changed_runtime_files": []
+      },
+      {
+        "case_id": "consulting-strategy-zh",
+        "rep": 1,
+        "changed_runtime_files": []
+      },
+      {
+        "case_id": "consulting-strategy-zh",
+        "rep": 2,
+        "changed_runtime_files": []
+      },
+      {
+        "case_id": "consulting-strategy-zh",
+        "rep": 3,
+        "changed_runtime_files": []
+      },
+      {
+        "case_id": "data-kpi-en",
+        "rep": 1,
+        "changed_runtime_files": []
+      },
+      {
+        "case_id": "data-kpi-en",
+        "rep": 2,
+        "changed_runtime_files": []
+      },
+      {
+        "case_id": "data-kpi-en",
+        "rep": 3,
+        "changed_runtime_files": []
+      },
+      {
+        "case_id": "enterprise-security-en",
+        "rep": 1,
+        "changed_runtime_files": []
+      },
+      {
+        "case_id": "enterprise-security-en",
+        "rep": 2,
+        "changed_runtime_files": []
+      },
+      {
+        "case_id": "enterprise-security-en",
+        "rep": 3,
+        "changed_runtime_files": []
+      },
+      {
+        "case_id": "fantasy-custom-zh",
+        "rep": 1,
+        "changed_runtime_files": []
+      },
+      {
+        "case_id": "fantasy-custom-zh",
+        "rep": 2,
+        "changed_runtime_files": []
+      },
+      {
+        "case_id": "fantasy-custom-zh",
+        "rep": 3,
+        "changed_runtime_files": []
+      },
+      {
+        "case_id": "negative-export",
+        "rep": 1,
+        "changed_runtime_files": []
+      },
+      {
+        "case_id": "negative-report",
+        "rep": 1,
+        "changed_runtime_files": []
+      },
+      {
+        "case_id": "sparse-api-en",
+        "rep": 1,
+        "changed_runtime_files": []
+      },
+      {
+        "case_id": "sparse-api-en",
+        "rep": 2,
+        "changed_runtime_files": []
+      },
+      {
+        "case_id": "sparse-api-en",
+        "rep": 3,
+        "changed_runtime_files": []
+      },
+      {
+        "case_id": "swiss-architecture-zh",
+        "rep": 1,
+        "changed_runtime_files": []
+      },
+      {
+        "case_id": "swiss-architecture-zh",
+        "rep": 2,
+        "changed_runtime_files": []
+      },
+      {
+        "case_id": "swiss-architecture-zh",
+        "rep": 3,
+        "changed_runtime_files": []
+      }
+    ]
+  },
+  {
+    "arm": "candidate2",
+    "recorded_runs": 26,
+    "all_recorded_runtime_files_unchanged": true,
+    "snapshot_sha256": "57ce200f4bdda74b103a7a7322ec24bb62390d0f33f1fb5d0b446b27034c44c3",
+    "runs": [
+      {
+        "case_id": "blue-launch-zh",
+        "rep": 1,
+        "changed_runtime_files": []
+      },
+      {
+        "case_id": "blue-launch-zh",
+        "rep": 2,
+        "changed_runtime_files": []
+      },
+      {
+        "case_id": "blue-launch-zh",
+        "rep": 3,
+        "changed_runtime_files": []
+      },
+      {
+        "case_id": "chan-learning-zh",
+        "rep": 1,
+        "changed_runtime_files": []
+      },
+      {
+        "case_id": "chan-learning-zh",
+        "rep": 2,
+        "changed_runtime_files": []
+      },
+      {
+        "case_id": "chan-learning-zh",
+        "rep": 3,
+        "changed_runtime_files": []
+      },
+      {
+        "case_id": "consulting-strategy-zh",
+        "rep": 1,
+        "changed_runtime_files": []
+      },
+      {
+        "case_id": "consulting-strategy-zh",
+        "rep": 2,
+        "changed_runtime_files": []
+      },
+      {
+        "case_id": "consulting-strategy-zh",
+        "rep": 3,
+        "changed_runtime_files": []
+      },
+      {
+        "case_id": "data-kpi-en",
+        "rep": 1,
+        "changed_runtime_files": []
+      },
+      {
+        "case_id": "data-kpi-en",
+        "rep": 2,
+        "changed_runtime_files": []
+      },
+      {
+        "case_id": "data-kpi-en",
+        "rep": 3,
+        "changed_runtime_files": []
+      },
+      {
+        "case_id": "enterprise-security-en",
+        "rep": 1,
+        "changed_runtime_files": []
+      },
+      {
+        "case_id": "enterprise-security-en",
+        "rep": 2,
+        "changed_runtime_files": []
+      },
+      {
+        "case_id": "enterprise-security-en",
+        "rep": 3,
+        "changed_runtime_files": []
+      },
+      {
+        "case_id": "fantasy-custom-zh",
+        "rep": 1,
+        "changed_runtime_files": []
+      },
+      {
+        "case_id": "fantasy-custom-zh",
+        "rep": 2,
+        "changed_runtime_files": []
+      },
+      {
+        "case_id": "fantasy-custom-zh",
+        "rep": 3,
+        "changed_runtime_files": []
+      },
+      {
+        "case_id": "negative-export",
+        "rep": 1,
+        "changed_runtime_files": []
+      },
+      {
+        "case_id": "negative-report",
+        "rep": 1,
+        "changed_runtime_files": []
+      },
+      {
+        "case_id": "sparse-api-en",
+        "rep": 1,
+        "changed_runtime_files": []
+      },
+      {
+        "case_id": "sparse-api-en",
+        "rep": 2,
+        "changed_runtime_files": []
+      },
+      {
+        "case_id": "sparse-api-en",
+        "rep": 3,
+        "changed_runtime_files": []
+      },
+      {
+        "case_id": "swiss-architecture-zh",
+        "rep": 1,
+        "changed_runtime_files": []
+      },
+      {
+        "case_id": "swiss-architecture-zh",
+        "rep": 2,
+        "changed_runtime_files": []
+      },
+      {
+        "case_id": "swiss-architecture-zh",
+        "rep": 3,
+        "changed_runtime_files": []
+      }
+    ]
+  },
+  {
+    "arm": "candidate3",
+    "recorded_runs": 26,
+    "all_recorded_runtime_files_unchanged": true,
+    "snapshot_sha256": "6822eebe3020c27a554555b9458188c15889f97929a7f42fdd5af492aa50181f",
+    "runs": [
+      {
+        "case_id": "blue-launch-zh",
+        "rep": 1,
+        "changed_runtime_files": []
+      },
+      {
+        "case_id": "blue-launch-zh",
+        "rep": 2,
+        "changed_runtime_files": []
+      },
+      {
+        "case_id": "blue-launch-zh",
+        "rep": 3,
+        "changed_runtime_files": []
+      },
+      {
+        "case_id": "chan-learning-zh",
+        "rep": 1,
+        "changed_runtime_files": []
+      },
+      {
+        "case_id": "chan-learning-zh",
+        "rep": 2,
+        "changed_runtime_files": []
+      },
+      {
+        "case_id": "chan-learning-zh",
+        "rep": 3,
+        "changed_runtime_files": []
+      },
+      {
+        "case_id": "consulting-strategy-zh",
+        "rep": 1,
+        "changed_runtime_files": []
+      },
+      {
+        "case_id": "consulting-strategy-zh",
+        "rep": 2,
+        "changed_runtime_files": []
+      },
+      {
+        "case_id": "consulting-strategy-zh",
+        "rep": 3,
+        "changed_runtime_files": []
+      },
+      {
+        "case_id": "data-kpi-en",
+        "rep": 1,
+        "changed_runtime_files": []
+      },
+      {
+        "case_id": "data-kpi-en",
+        "rep": 2,
+        "changed_runtime_files": []
+      },
+      {
+        "case_id": "data-kpi-en",
+        "rep": 3,
+        "changed_runtime_files": []
+      },
+      {
+        "case_id": "enterprise-security-en",
+        "rep": 1,
+        "changed_runtime_files": []
+      },
+      {
+        "case_id": "enterprise-security-en",
+        "rep": 2,
+        "changed_runtime_files": []
+      },
+      {
+        "case_id": "enterprise-security-en",
+        "rep": 3,
+        "changed_runtime_files": []
+      },
+      {
+        "case_id": "fantasy-custom-zh",
+        "rep": 1,
+        "changed_runtime_files": []
+      },
+      {
+        "case_id": "fantasy-custom-zh",
+        "rep": 2,
+        "changed_runtime_files": []
+      },
+      {
+        "case_id": "fantasy-custom-zh",
+        "rep": 3,
+        "changed_runtime_files": []
+      },
+      {
+        "case_id": "negative-export",
+        "rep": 1,
+        "changed_runtime_files": []
+      },
+      {
+        "case_id": "negative-report",
+        "rep": 1,
+        "changed_runtime_files": []
+      },
+      {
+        "case_id": "sparse-api-en",
+        "rep": 1,
+        "changed_runtime_files": []
+      },
+      {
+        "case_id": "sparse-api-en",
+        "rep": 2,
+        "changed_runtime_files": []
+      },
+      {
+        "case_id": "sparse-api-en",
+        "rep": 3,
+        "changed_runtime_files": []
+      },
+      {
+        "case_id": "swiss-architecture-zh",
+        "rep": 1,
+        "changed_runtime_files": []
+      },
+      {
+        "case_id": "swiss-architecture-zh",
+        "rep": 2,
+        "changed_runtime_files": []
+      },
+      {
+        "case_id": "swiss-architecture-zh",
+        "rep": 3,
+        "changed_runtime_files": []
+      }
+    ]
+  },
+  {
+    "arm": "candidate4",
+    "recorded_runs": 26,
+    "all_recorded_runtime_files_unchanged": true,
+    "snapshot_sha256": "417f667fc63eacd2577db545e54ef626d585c94d708580bef123e346d7c682a7",
+    "runs": [
+      {
+        "case_id": "blue-launch-zh",
+        "rep": 1,
+        "changed_runtime_files": []
+      },
+      {
+        "case_id": "blue-launch-zh",
+        "rep": 2,
+        "changed_runtime_files": []
+      },
+      {
+        "case_id": "blue-launch-zh",
+        "rep": 3,
+        "changed_runtime_files": []
+      },
+      {
+        "case_id": "chan-learning-zh",
+        "rep": 1,
+        "changed_runtime_files": []
+      },
+      {
+        "case_id": "chan-learning-zh",
+        "rep": 2,
+        "changed_runtime_files": []
+      },
+      {
+        "case_id": "chan-learning-zh",
+        "rep": 3,
+        "changed_runtime_files": []
+      },
+      {
+        "case_id": "consulting-strategy-zh",
+        "rep": 1,
+        "changed_runtime_files": []
+      },
+      {
+        "case_id": "consulting-strategy-zh",
+        "rep": 2,
+        "changed_runtime_files": []
+      },
+      {
+        "case_id": "consulting-strategy-zh",
+        "rep": 3,
+        "changed_runtime_files": []
+      },
+      {
+        "case_id": "data-kpi-en",
+        "rep": 1,
+        "changed_runtime_files": []
+      },
+      {
+        "case_id": "data-kpi-en",
+        "rep": 2,
+        "changed_runtime_files": []
+      },
+      {
+        "case_id": "data-kpi-en",
+        "rep": 3,
+        "changed_runtime_files": []
+      },
+      {
+        "case_id": "enterprise-security-en",
+        "rep": 1,
+        "changed_runtime_files": []
+      },
+      {
+        "case_id": "enterprise-security-en",
+        "rep": 2,
+        "changed_runtime_files": []
+      },
+      {
+        "case_id": "enterprise-security-en",
+        "rep": 3,
+        "changed_runtime_files": []
+      },
+      {
+        "case_id": "fantasy-custom-zh",
+        "rep": 1,
+        "changed_runtime_files": []
+      },
+      {
+        "case_id": "fantasy-custom-zh",
+        "rep": 2,
+        "changed_runtime_files": []
+      },
+      {
+        "case_id": "fantasy-custom-zh",
+        "rep": 3,
+        "changed_runtime_files": []
+      },
+      {
+        "case_id": "negative-export",
+        "rep": 1,
+        "changed_runtime_files": []
+      },
+      {
+        "case_id": "negative-report",
+        "rep": 1,
+        "changed_runtime_files": []
+      },
+      {
+        "case_id": "sparse-api-en",
+        "rep": 1,
+        "changed_runtime_files": []
+      },
+      {
+        "case_id": "sparse-api-en",
+        "rep": 2,
+        "changed_runtime_files": []
+      },
+      {
+        "case_id": "sparse-api-en",
+        "rep": 3,
+        "changed_runtime_files": []
+      },
+      {
+        "case_id": "swiss-architecture-zh",
+        "rep": 1,
+        "changed_runtime_files": []
+      },
+      {
+        "case_id": "swiss-architecture-zh",
+        "rep": 2,
+        "changed_runtime_files": []
+      },
+      {
+        "case_id": "swiss-architecture-zh",
+        "rep": 3,
+        "changed_runtime_files": []
+      }
+    ]
+  },
+  {
+    "arm": "candidate5",
+    "recorded_runs": 26,
+    "all_recorded_runtime_files_unchanged": true,
+    "snapshot_sha256": "ba43ff908b9e7b0d0b761ffa06d26ebe083b95f99227620e024c35b8759331d6",
+    "runs": [
+      {
+        "case_id": "blue-launch-zh",
+        "rep": 1,
+        "changed_runtime_files": []
+      },
+      {
+        "case_id": "blue-launch-zh",
+        "rep": 2,
+        "changed_runtime_files": []
+      },
+      {
+        "case_id": "blue-launch-zh",
+        "rep": 3,
+        "changed_runtime_files": []
+      },
+      {
+        "case_id": "chan-learning-zh",
+        "rep": 1,
+        "changed_runtime_files": []
+      },
+      {
+        "case_id": "chan-learning-zh",
+        "rep": 2,
+        "changed_runtime_files": []
+      },
+      {
+        "case_id": "chan-learning-zh",
+        "rep": 3,
+        "changed_runtime_files": []
+      },
+      {
+        "case_id": "consulting-strategy-zh",
+        "rep": 1,
+        "changed_runtime_files": []
+      },
+      {
+        "case_id": "consulting-strategy-zh",
+        "rep": 2,
+        "changed_runtime_files": []
+      },
+      {
+        "case_id": "consulting-strategy-zh",
+        "rep": 3,
+        "changed_runtime_files": []
+      },
+      {
+        "case_id": "data-kpi-en",
+        "rep": 1,
+        "changed_runtime_files": []
+      },
+      {
+        "case_id": "data-kpi-en",
+        "rep": 2,
+        "changed_runtime_files": []
+      },
+      {
+        "case_id": "data-kpi-en",
+        "rep": 3,
+        "changed_runtime_files": []
+      },
+      {
+        "case_id": "enterprise-security-en",
+        "rep": 1,
+        "changed_runtime_files": []
+      },
+      {
+        "case_id": "enterprise-security-en",
+        "rep": 2,
+        "changed_runtime_files": []
+      },
+      {
+        "case_id": "enterprise-security-en",
+        "rep": 3,
+        "changed_runtime_files": []
+      },
+      {
+        "case_id": "fantasy-custom-zh",
+        "rep": 1,
+        "changed_runtime_files": []
+      },
+      {
+        "case_id": "fantasy-custom-zh",
+        "rep": 2,
+        "changed_runtime_files": []
+      },
+      {
+        "case_id": "fantasy-custom-zh",
+        "rep": 3,
+        "changed_runtime_files": []
+      },
+      {
+        "case_id": "negative-export",
+        "rep": 1,
+        "changed_runtime_files": []
+      },
+      {
+        "case_id": "negative-report",
+        "rep": 1,
+        "changed_runtime_files": []
+      },
+      {
+        "case_id": "sparse-api-en",
+        "rep": 1,
+        "changed_runtime_files": []
+      },
+      {
+        "case_id": "sparse-api-en",
+        "rep": 2,
+        "changed_runtime_files": []
+      },
+      {
+        "case_id": "sparse-api-en",
+        "rep": 3,
+        "changed_runtime_files": []
+      },
+      {
+        "case_id": "swiss-architecture-zh",
+        "rep": 1,
+        "changed_runtime_files": []
+      },
+      {
+        "case_id": "swiss-architecture-zh",
+        "rep": 2,
+        "changed_runtime_files": []
+      },
+      {
+        "case_id": "swiss-architecture-zh",
+        "rep": 3,
+        "changed_runtime_files": []
+      }
+    ]
+  }
+]

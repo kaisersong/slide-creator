@@ -1,0 +1,69 @@
+{
+  "arm": "candidate3",
+  "complete": 26,
+  "passed": 21,
+  "wall_ms": {
+    "n": 24,
+    "mean": 175781.88,
+    "median": 161735.0,
+    "p90": 253940
+  },
+  "input_tokens": {
+    "n": 24,
+    "mean": 426733.17,
+    "median": 354606.0,
+    "p90": 812316
+  },
+  "cached_input_tokens": {
+    "n": 24,
+    "mean": 388026.67,
+    "median": 320704.0,
+    "p90": 765696
+  },
+  "uncached_input_tokens": {
+    "n": 24,
+    "mean": 38706.5,
+    "median": 34507.5,
+    "p90": 59188
+  },
+  "output_tokens": {
+    "n": 24,
+    "mean": 6564,
+    "median": 6351.5,
+    "p90": 8988
+  },
+  "total_tokens": {
+    "n": 24,
+    "mean": 433297.17,
+    "median": 360968.5,
+    "p90": 821333
+  },
+  "quality": {
+    "n": 24,
+    "mean": 85,
+    "median": 86.5,
+    "p90": 91
+  },
+  "technical_language": {
+    "n": 15,
+    "mean": 86,
+    "median": 87,
+    "p90": 90
+  },
+  "eval_total_tokens": {
+    "n": 24,
+    "mean": 460457.62,
+    "median": 387027.0,
+    "p90": 851416
+  },
+  "eval_wall_ms": {
+    "n": 24,
+    "mean": 217918.71,
+    "median": 204365.5,
+    "p90": 297980
+  },
+  "recorded_runs": 26,
+  "observed_generation_token_sum": 10535699,
+  "generation_usage_missing": 0,
+  "calibration_overhead_tokens": 0
+}

@@ -73,6 +73,7 @@ docs/*
 docs/design/*
 !docs/design/2026-10-06-token-efficiency-plan.md
 !docs/design/2026-10-06-token-efficiency-results.md
+!docs/design/2026-10-06-quality-recovery-results.md
 !docs/design/README.md
 !docs/design/2026-04-24-slide-creator-test-matrix.md
 !docs/design/2026-04-25-slide-creator-core-md-guard-design.md
