@@ -1,0 +1,30 @@
+{
+  "candidate": "candidate4",
+  "implementation_commit": "a9f8fec16e684c3cc527c7ec100226d6d903bb5b",
+  "snapshot_sha256": "417f667fc63eacd2577db545e54ef626d585c94d708580bef123e346d7c682a7",
+  "manifest_sha256": "f510238b15e6ca2b070161ae11c71d6888cf9aaa7b1cb68fbeee2428d7148b64",
+  "model": "gpt-5.5",
+  "reasoning": "high",
+  "jobs": 2,
+  "evaluator_version": 2,
+  "acceptance_policy": {
+    "version": 2,
+    "technical_language": "observe",
+    "quality_thresholds_unchanged": true,
+    "required_fact_guard_repaired": true
+  },
+  "baseline_reused": true,
+  "regression": {
+    "passed": 2842,
+    "skipped": 114,
+    "deselected": 7,
+    "existing_baseline_failures": 2
+  },
+  "changes": [
+    "Enterprise split preserves explanation and four local facts",
+    "Pre-write required-numeric coverage checks audience text and preserves existing output",
+    "Known mixed units use cards; required chart fails closed",
+    "English display text preserves word spaces",
+    "Neutral briefing labels remove irrelevant AI-industry topic"
+  ]
+}

@@ -1,0 +1,16 @@
+{
+  "adopt": false,
+  "automated_gate": {
+    "pass": false,
+    "failures": [
+      "guard.chan-learning-zh.rep3.missing_required_terms.added",
+      "outcome.chan-learning-zh.rep3.pass_regressed"
+    ]
+  },
+  "manual_source_review": {
+    "case": "enterprise-security-en.rep2",
+    "finding": "24-hour token expiry shown as TLS metric; 7-day audit retention shown as access token metric",
+    "classification": "critical source-entity binding error",
+    "action": "Reject despite mean score; fix program binding in candidate5 and rerun full arm"
+  }
+}

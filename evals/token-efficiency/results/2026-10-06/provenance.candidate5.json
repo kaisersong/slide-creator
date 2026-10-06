@@ -1,0 +1,33 @@
+{
+  "candidate": "candidate5",
+  "implementation_commit": "5915b72bfd33b0c6f49b5c0f50cbefdaac1e900f",
+  "snapshot_sha256": "ba43ff908b9e7b0d0b761ffa06d26ebe083b95f99227620e024c35b8759331d6",
+  "manifest_sha256": "f510238b15e6ca2b070161ae11c71d6888cf9aaa7b1cb68fbeee2428d7148b64",
+  "model": "gpt-5.5",
+  "reasoning": "high",
+  "jobs": 2,
+  "evaluator_version": 2,
+  "acceptance_policy": {
+    "version": 2,
+    "technical_language": "observe",
+    "quality_thresholds_unchanged": true
+  },
+  "baseline_reused": true,
+  "checks": {
+    "targeted_passed": 229,
+    "full_passed": 2848,
+    "skipped": 114,
+    "deselected": 7,
+    "existing_baseline_failures": 2,
+    "controls_strict_passed": 24,
+    "controls_geometry_passed": 24,
+    "controls_required_terms_passed": 24
+  },
+  "changes": [
+    "Metric cards bind values to their own complete source facts",
+    "Unknown qualitative items do not receive neighboring numbers or fake numeric counters",
+    "Insufficient quantitative evidence does not create Signal placeholder bars",
+    "Closing decision exposes desired_action scope and timing",
+    "Chan centered pages preserve local observation facts"
+  ]
+}

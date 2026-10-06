@@ -1,0 +1,27 @@
+{
+  "candidate": "candidate3",
+  "implementation_commit": "e6924c3b540afdacae5956df5aa980587c7871b3",
+  "snapshot_sha256": "6822eebe3020c27a554555b9458188c15889f97929a7f42fdd5af492aa50181f",
+  "manifest_sha256": "f510238b15e6ca2b070161ae11c71d6888cf9aaa7b1cb68fbeee2428d7148b64",
+  "acceptance_policy": {
+    "version": 2,
+    "technical_language": "observe",
+    "user_instruction": "技术语言不是关键，尽量达成即可。",
+    "quality_thresholds_unchanged": true
+  },
+  "evaluator_version": 2,
+  "baseline_reused": true,
+  "model": "gpt-5.5",
+  "reasoning": "high",
+  "jobs": 2,
+  "regression": {
+    "passed": 2835,
+    "skipped": 114,
+    "deselected": 7,
+    "existing_baseline_failures": [
+      "test_iridescence_renderer_emits_restrained_accent_semantics",
+      "test_reviewed_scenes_remove_truncated_and_echoed_content"
+    ]
+  },
+  "skill_validator": "The generic validator rejects the pre-existing custom version frontmatter. Version is retained for existing runtime/package compatibility."
+}
