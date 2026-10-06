@@ -12,6 +12,7 @@ from typing import Any
 from bs4 import BeautifulSoup
 
 from preset_profile_specs import PROFILE_SPECS, PresetProfileSpec
+from audience_readability import unique_facts
 
 
 PROFILE_FAMILY_REGISTRY = {preset: spec.family for preset, spec in PROFILE_SPECS.items()}
@@ -2351,7 +2352,7 @@ def _render_paper_and_ink_body(spec: dict[str, Any], *, layout: str, canonical_p
 
 
 def _render_strategy_consulting_body(spec: dict[str, Any], *, layout: str, canonical_preset: str, profile_spec: PresetProfileSpec) -> str:
-    local = _dedupe([str(item) for item in spec.get("supporting_facts", [])])
+    local = unique_facts([str(item) for item in spec.get("supporting_facts", [])])
     if local:
         title = str(spec.get("title", ""))
         key_point = str(spec.get("key_point", ""))
@@ -2373,7 +2374,20 @@ def _render_strategy_consulting_body(spec: dict[str, Any], *, layout: str, canon
                 for index, group in enumerate((local[:split], local[split:]), 1) if group)
             grid = '<div class="sc-before-after reveal">' + panels + '</div>'
         elif layout == "consulting_quote":
-            grid = '<div class="sc-quote-evidence reveal"><div class="sc-quote-block"><ul>' + ''.join('<li>' + _escape(fact) + '</li>' for fact in local[:5]) + '</ul></div></div>'
+            claim = str(spec.get("claim") or title)
+            grid = '<div class="sc-quote-evidence reveal"><div class="sc-quote-block">' + _escape(claim) + '</div><ol>' + ''.join('<li>' + _escape(fact) + '</li>' for fact in local[:5]) + '</ol></div>'
+        elif layout == "consulting_matrix":
+            grid = '<table class="sc-fact-table reveal"><tbody>' + ''.join(f'<tr><td>{index:02d}</td><td>{_escape(fact)}</td></tr>' for index,fact in enumerate(local[:5],1)) + '</tbody></table>'
+        elif layout == "consulting_close":
+            rows = []
+            for fact in local[:5]:
+                parts = re.split(r"[，,]", fact)
+                if len(parts) == 2 and re.match(r"^(若|如果|if\b)",fact,re.I):
+                    rows.append('<tr><td>' + _escape(parts[0]) + '</td><td>' + _escape(parts[1]) + '</td></tr>')
+                else:
+                    rows.append('<tr><td colspan="2">' + _escape(fact) + '</td></tr>')
+            zh = _is_zh_language("zh" if re.search(r"[\u4e00-\u9fff]", title) else "en")
+            grid = '<table class="sc-fact-table sc-rule-table reveal"><thead><tr><th>' + ('条件' if zh else 'Condition') + '</th><th>' + ('行动' if zh else 'Action') + '</th></tr></thead><tbody>' + ''.join(rows) + '</tbody></table>'
         return '<div class="strategy-consulting-block">' + header + grid + '</div>'
     title = str(spec.get("title", ""))
     key_point = _compact(str(spec.get("key_point", "")), limit=160)

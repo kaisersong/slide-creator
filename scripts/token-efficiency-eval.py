@@ -396,8 +396,8 @@ def summarize(base, arm):
     return payload
 
 
-def compare(base, candidate_arm="candidate", language_policy="required"):
-    a,b = summarize(base,"baseline"),summarize(base,candidate_arm)
+def compare(base, candidate_arm="candidate", language_policy="required", baseline_arm="baseline"):
+    a,b = summarize(base,baseline_arm),summarize(base,candidate_arm)
     matched = { (r["case_id"],r["rep"]):r for r in a["runs"] }
     pairs=[]
     for r in b["runs"]:
@@ -420,7 +420,7 @@ def compare(base, candidate_arm="candidate", language_policy="required"):
         old,new=a[metric]["median"],b[metric]["median"]
         return round(100*(new-old)/old,2) if old not in (None,0) and new is not None else None
     token_change=change_percent("total_tokens");wall_change=change_percent("wall_ms")
-    if token_change is None or token_change > -10:failures.append("efficiency.token_median_target_not_met")
+    if token_change is None or token_change > (-10 if baseline_arm == "baseline" else 10):failures.append("efficiency.token_median_target_not_met")
     if wall_change is None or wall_change > 10:failures.append("efficiency.wall_median_regressed")
     positive_pairs=[p for p in pairs if not ids[p["case_id"]].get("negative")]
     quality_changes=[p["quality_delta"] for p in positive_pairs if p["quality_delta"] is not None]
@@ -456,10 +456,11 @@ def compare(base, candidate_arm="candidate", language_policy="required"):
        "generation_token_median_change_percent":token_change,"generation_wall_median_change_percent":wall_change,
        "quality_mean_paired_change":round(statistics.mean(quality_changes),2) if quality_changes else None,
        "quality_change_cluster_bootstrap_95pct":ci,"per_case_quality_change":per_case,
-       "acceptance_policy":{"version":2 if language_policy == "observe" else 1,"technical_language":language_policy,"quality_thresholds_unchanged":True},
+       "acceptance_policy":{"version":2 if language_policy == "observe" else 1,"technical_language":language_policy,"quality_thresholds_unchanged":True,"baseline_arm":baseline_arm,"token_median_max_change_percent":-10 if baseline_arm == "baseline" else 10},
        "adoption_gate":{"pass":not failures,"failures":sorted(set(failures))},
        "limitations":["8 fixed tasks, 3 runs each; no broad statistical claim","same model and tool surface; sequential arm periods and service/cache variation","English STE-aligned rubric and Chinese adaptation; full official dictionary not verified","calibration QA/judge overhead is retained separately"]}
-    write_json(base/f"comparison.{candidate_arm}.json",payload)
+    suffix = "" if baseline_arm == "baseline" else f".vs.{baseline_arm}"
+    write_json(base/f"comparison.{candidate_arm}{suffix}.json",payload)
     write_json(base/"comparison.json",payload)
     return payload
 
@@ -468,9 +469,10 @@ def main():
     parser=argparse.ArgumentParser(description=__doc__)
     parser.add_argument("action",choices=["freeze","run","summarize","compare","reassess"])
     parser.add_argument("--run-dir",required=True,type=Path)
-    parser.add_argument("--arm",choices=["baseline","candidate","candidate2","candidate3","candidate4","candidate5"],default="baseline")
-    parser.add_argument("--candidate-arm",choices=["candidate","candidate2","candidate3","candidate4","candidate5"],default="candidate")
+    parser.add_argument("--arm",choices=["baseline","candidate","candidate2","candidate3","candidate4","candidate5","candidate6"],default="baseline")
+    parser.add_argument("--candidate-arm",choices=["candidate","candidate2","candidate3","candidate4","candidate5","candidate6"],default="candidate")
     parser.add_argument("--language-policy",choices=["required","observe"],default="required",help="Keep historical policy by default; observe is the user-authorized best-effort STE policy")
+    parser.add_argument("--baseline-arm",choices=["baseline","candidate5"],default="baseline")
     parser.add_argument("--revision")
     parser.add_argument("--case-id")
     parser.add_argument("--force-reassess",action="store_true",help="Reassess selected artifact after an evaluator repair; generation is never replayed")
@@ -489,7 +491,7 @@ def main():
         reassess(base,args.arm,args.case_id,args.force_reassess)
     elif args.action=="summarize":print(json.dumps({k:v for k,v in summarize(base,args.arm).items() if k != "runs"},ensure_ascii=False,indent=2))
     else:
-        payload=compare(base,args.candidate_arm,args.language_policy)
+        payload=compare(base,args.candidate_arm,args.language_policy,args.baseline_arm)
         print(json.dumps(payload,ensure_ascii=False,indent=2))
         return 0 if payload["adoption_gate"]["pass"] else 1
 

@@ -743,6 +743,7 @@ def _scene_spec(
     title: str,
     items: list[str],
     title_emphasis: str = "",
+    claim: str = "",
 ) -> dict:
     spec = {
         "slide_number": slide_number,
@@ -758,6 +759,8 @@ def _scene_spec(
     }
     if title_emphasis:
         spec["title_emphasis"] = title_emphasis
+    if claim:
+        spec["claim"] = claim
     return spec
 
 
@@ -1016,9 +1019,12 @@ def test_reviewed_scenes_remove_truncated_and_echoed_content():
         ),
         "html.parser",
     )
-    assert len(fracture.select(".iri-fracture-side:first-child .iri-fracture-item")) == 3
-    assert len(fracture.select(".iri-fracture-side:last-child .iri-fracture-item")) == 3
-    assert "打开即播放、验证即交付" in fracture.get_text(" ", strip=True)
+    # Generic scenes must not pad with unrelated product-demo delivery claims.
+    assert [node.get_text(strip=True) for node in fracture.select(".iri-fracture-item")] == [
+        "上下文遗忘关键约束", "抽象风格难以落地", "错误打开浏览器后才发现",
+    ]
+    assert len(fracture.select(".iri-fracture-side h3")) == 2
+    assert "打开即播放、验证即交付" not in fracture.get_text(" ", strip=True)
 
     brief = BeautifulSoup(
         _render_iridescence_theme_slide(
@@ -1027,13 +1033,14 @@ def test_reviewed_scenes_remove_truncated_and_echoed_content():
                 role="definition",
                 title="把整段对话，压成一个短、硬、可执行的真相源",
                 items=[
-                    "audience + desired_action",
-                    "deck + style",
-                    "content.must_include + must_avoid",
-                    "narrative.slides",
-                    "runtime + timing",
+                    "audience: 决定受众与期望动作",
+                    "deck.style: 锁定页数、语言和 preset",
+                    "content: 固定必须包含的事实与边界",
+                    "narrative.slides: 逐页声明角色、断言和证据",
+                    "runtime: 约束播放、编辑、备注与耗时",
                     "渲染器读取的是结构化 brief",
                 ],
+                claim='{"deck": {"style": "..."}, "content": {}, "narrative": {"slides": []}, "runtime": {}}',
             ),
             12,
             role_index=3,
@@ -1048,10 +1055,7 @@ def test_reviewed_scenes_remove_truncated_and_echoed_content():
         "runtime",
     ]
     preview = brief.select_one(".iri-brief-code pre").get_text(" ", strip=True)
-    assert '"deck": { "style": "..." }' in preview
-    assert '"content": { ... }' in preview
-    assert '"narrative": { "slides": [ ... ] }' in preview
-    assert '"runtime": { ... }' in preview
+    assert json.loads(preview) == {"deck":{"style":"..."},"content":{},"narrative":{"slides":[]},"runtime":{}}
     assert '"desired_action"' not in preview
     assert '"page_roles"' not in preview
     assert "渲染器读取的是结构化" not in brief.get_text(" ", strip=True)
@@ -1062,7 +1066,7 @@ def test_reviewed_scenes_remove_truncated_and_echoed_content():
                 slide_number=9,
                 role="reliability",
                 title="输出本身就是演示工具，不是一次性截图",
-                items=["F5 — Present Mode", "P — Presenter Window", "E — Inline Editing", "Ctrl+S — Save", "Speaker Notes", "Keyboard Navigation"],
+                items=["F5 — Present Mode", "P — Presenter Window", "E — Inline Editing", "Ctrl+S — Save", "NOTES — Speaker Notes", "← ↑ → ↓ — Keyboard Navigation"],
             ),
             12,
             role_index=8,

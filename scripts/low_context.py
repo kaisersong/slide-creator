@@ -18,6 +18,7 @@ from preset_capabilities import (
 from preset_profile_renderer import build_preset_profile_payload, profile_auto_contrast_script
 from preset_support import preset_support_tier
 from title_profiles import profile_allows_explicit_line_control, resolve_title_profile
+from audience_readability import unique_facts, apply_audience_readability
 
 
 def _discover_root() -> Path:
@@ -2217,10 +2218,10 @@ def _build_candidate_fact_pool(
 ) -> list[str]:
     # Explicit local facts define the page boundary. Global facts are a legacy
     # fallback, not filler for unrelated rows or diagram nodes.
-    local = _dedupe_preserve([*_slide_supporting_facts(slide), *_slide_numeric_facts(slide)])
+    local = unique_facts([*_slide_supporting_facts(slide), *_slide_numeric_facts(slide)])
     if local:
         return local
-    return _dedupe_preserve(
+    return unique_facts(
         [
             *_slide_global_facts(brief),
             *_slide_optional_support(brief),
@@ -3623,7 +3624,7 @@ def _compact_display_token(
 
 
 def _spec_display_items(spec: dict[str, Any], *, limit: int = 4) -> list[str]:
-    items = _dedupe_preserve(
+    items = unique_facts(
         [
             *spec.get("supporting_facts", []),
             *spec["supporting_items"],
@@ -3641,7 +3642,7 @@ def _spec_display_items(spec: dict[str, Any], *, limit: int = 4) -> list[str]:
 def _spec_detail_pairs(spec: dict[str, Any], *, count: int = 4) -> list[tuple[str, str]]:
     # Do not manufacture a second fact as a caption for the first. A local fact
     # can be a complete card; an explicit colon can separate label and detail.
-    local = _dedupe_preserve(spec.get("supporting_facts", []))
+    local = unique_facts(spec.get("supporting_facts", []))
     if local:
         pairs = []
         for fact in local[:count]:
@@ -4088,17 +4089,17 @@ def _render_swiss_title_grid(spec: dict[str, Any], total: int) -> str:
     slide_number = spec["slide_number"]
     title_tag = _title_tag("h1", "swiss-title", spec["title"], preset="Swiss Modern", layout_id=spec["layout_id"])
     hero_stats = ""
-    stat_items = spec["evidence_items"][:3] or spec["supporting_items"][:3]
+    stat_items = unique_facts(spec.get("supporting_facts") or spec["evidence_items"] or spec["supporting_items"])[:3]
     if stat_items:
         stat_blocks = []
         used_tokens: set[str] = set()
         for index, item in enumerate(stat_items, start=1):
-            stat_value = _metric_value_for_item(item, spec, index=index - 1, used_tokens=used_tokens)
+            stat_value = _metric_value_for_item(item, spec, index=index - 1, used_tokens=used_tokens, numeric_only=True)
             used_tokens.add(stat_value)
             stat_blocks.append(
                 f"""
                 <div class="hero-stat reveal">
-                    <div class="hero-stat-num">{_escape(stat_value)}</div>
+                    {('<div class="hero-stat-num">' + _escape(stat_value) + '</div>') if stat_value else ''}
                     <div class="hero-stat-label">{_escape(item)}</div>
                 </div>
                 """
@@ -4233,6 +4234,12 @@ def _render_swiss_data_table(spec: dict[str, Any], total: int) -> str:
     slide_number = spec["slide_number"]
     title_tag = _title_tag("h2", "swiss-title", spec["title"], preset="Swiss Modern", layout_id=spec["layout_id"])
     pairs = _spec_detail_pairs(spec, count=3)
+    if spec.get("supporting_facts") and spec["role"] not in {"content-routing", "validation", "proof", "evidence"}:
+        facts = unique_facts(spec["supporting_facts"])[:4]
+        rows = ''.join(f'<tr><td>{index:02d}</td><td>{_escape(fact)}</td></tr>' for index, fact in enumerate(facts,1))
+        return f'''<section class="slide data_table" id="slide-{slide_number}" data-notes="{_escape(spec['speaker_note'])}" aria-label="{_escape(spec['role'])}" data-export-role="data_table">
+        {_swiss_bg_num(spec)}<div class="slide-content content"><div class="eyebrow swiss-label reveal">{_escape(spec['role'])}</div>{title_tag}
+        <p class="swiss-body reveal">{_escape(spec['key_point'])}</p><table class="data-table reveal"><thead><tr><th>#</th><th>Source fact</th></tr></thead><tbody>{rows}</tbody></table></div><span class="slide-num-label">{slide_number:02d} / {total:02d}</span></section>'''
     if spec["role"] in {"content-routing", "validation", "proof", "evidence"}:
         blocks = []
         for index, (label, body) in enumerate(pairs[:3], start=1):
@@ -5583,7 +5590,11 @@ def _render_enterprise_data_table(spec: dict[str, Any], total: int) -> str:
     slide_number = spec["slide_number"]
     title_tag = _title_tag("h2", "ent-title", spec["title"], preset="Enterprise Dark", layout_id=spec["layout_id"])
     rows = []
-    if spec["role"] == "checkpoint":
+    if spec.get("supporting_facts") and spec["role"] != "checkpoint":
+        rows = [f'<tr><td><span class="ent-status-dot ent-dot-blue" aria-hidden="true"></span><span class="ent-badge ent-badge-blue">{index:02d}</span></td><td colspan="2">{_escape(fact)}</td></tr>' for index, fact in enumerate(unique_facts(spec['supporting_facts'])[:4],1)]
+        headers = '<thead><tr><th>#</th><th colspan="2">Source fact</th></tr></thead>'
+        label = "evidence"
+    elif spec["role"] == "checkpoint":
         row_items = _enterprise_table_items(spec, minimum=4, limit=4)
         while len(row_items) < 4:
             row_items.append(spec["visual"])
@@ -6499,7 +6510,8 @@ def _render_data_story_stage_grid(spec: dict[str, Any], *, count: int = 4, prefi
             </div>
             """
         )
-    return f'<div class="ds-stage-grid">{"".join(cards)}</div>'
+    variant = " ds-stage-grid--evidence" if prefix == "evidence" else " ds-stage-grid--phase"
+    return f'<div class="ds-stage-grid{variant}">{"".join(cards)}</div>'
 
 
 def _data_story_interaction_keycap(title: str, body: str, index: int) -> str:
@@ -7415,7 +7427,7 @@ def _blue_sky_title_tag(tag: str, text: str, *, layout_id: str, extra_attrs: str
 
 
 def _blue_sky_display_items(spec: dict[str, Any], *, limit: int | None = None) -> list[str]:
-    items = _dedupe_preserve(
+    items = unique_facts(
         [
             *[str(item) for item in spec.get("supporting_facts", [])],
             *[str(item) for item in spec.get("supporting_items", [])],
@@ -8338,10 +8350,10 @@ def _render_iridescence_theme_slide(spec: dict[str, Any], total: int, *, role_in
         body = (
             f'{header(lead=False)}'
             '<div class="iri-fracture-grid">'
-            '<div class="iri-fracture-side">'
+            '<div class="iri-fracture-side"><h3 class="iri-accent-text-primary">FACTS</h3>'
             + "".join(f'<div class="iri-fracture-item kd-reveal">{_escape(item)}</div>' for item in left)
             + '</div><div class="iri-fracture-scar" aria-hidden="true"></div>'
-            '<div class="iri-fracture-side">'
+            '<div class="iri-fracture-side"><h3 class="iri-accent-text-primary">FACTS CONTINUED</h3>'
             + "".join(f'<div class="iri-fracture-item kd-reveal">{_escape(item)}</div>' for item in right)
             + '</div></div>'
         )
@@ -8358,8 +8370,9 @@ def _render_iridescence_theme_slide(spec: dict[str, Any], total: int, *, role_in
         fields = "".join(
             '<div class="iri-field kd-reveal">'
             f'<span class="iri-number iri-accent-text-primary">{index:02d}</span>'
-            f'<span>{_escape(_iridescence_split_item(item)[0])}</span>'
-            f'<span>{_escape(_iridescence_split_item(item)[1])}</span>'
+            + (f'<code class="iri-accent-text-primary">{_escape(_iridescence_split_item(item)[0])}</code><span>{_escape(_iridescence_split_item(item)[1])}</span>'
+               if _iridescence_split_item(item)[1] or re.fullmatch(r"[A-Za-z_$][\w.$+-]*", _iridescence_split_item(item)[0]) else f'<span style="grid-column:2 / span 2;">{_escape(item)}</span>')
+            +
             '</div>'
             for index, item in enumerate(items[:5], start=1)
         )
@@ -8432,7 +8445,7 @@ def _render_iridescence_theme_slide(spec: dict[str, Any], total: int, *, role_in
         split_items = [_iridescence_split_item(item) for item in items[:6]]
         keys = "".join(
             '<div class="iri-key kd-reveal">'
-            f'<b class="iri-accent-text-primary">{index:02d}</b>'
+            f'<b class="iri-accent-text-primary">{_escape(label) if description else f"{index:02d}"}</b>'
             f'<span>{_escape(description or label)}</span>'
             '</div>'
             for index, (label, description) in enumerate(split_items, start=1)
@@ -8869,7 +8882,8 @@ def render_from_brief(brief: dict[str, Any]) -> tuple[str, dict[str, Any], dict[
             f"Low-context render does not have a valid strategy for {preset}; got {renderer_strategy}"
         )
     html_text = _annotate_preset_content_scope(html_text, preset)
-    return _annotate_page_buckets(html_text), packet, style_contract
+    html_text = apply_audience_readability(_annotate_page_buckets(html_text))
+    return html_text, packet, style_contract
 
 
 def render_from_context_text(text: str) -> tuple[dict[str, Any], str, dict[str, Any], dict[str, Any]]:
