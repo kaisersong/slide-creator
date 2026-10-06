@@ -22,6 +22,7 @@ from low_context import (  # noqa: E402
     render_from_context_path,
     stamp_validation_status,
     validate_brief_path,
+    visible_numeric_coverage_failures,
 )
 from generation_eval import (  # noqa: E402
     build_generation_eval_report,
@@ -153,6 +154,12 @@ def run_generate(
 
     if not _has_canonical_provenance(html_text):
         print("PROVENANCE ERROR: canonical render markers missing; refusing to write output")
+        return 1
+
+    missing_numeric_facts = visible_numeric_coverage_failures(brief, html_text)
+    if missing_numeric_facts:
+        print("CONTENT ERROR: required source numbers missing from audience text; refusing to write output")
+        print(json.dumps(missing_numeric_facts, ensure_ascii=False, indent=2))
         return 1
 
     if not _strict_validate_rendered_html(html_text):

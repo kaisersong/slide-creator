@@ -442,7 +442,7 @@ def compare(base, candidate_arm="candidate", language_policy="required"):
         if old:
             for guard in ("strict_pass","geometry_pass","page_count_pass"):
                 if old.get("qa",{}).get(guard) and not r.get("qa",{}).get(guard):failures.append(f"guard.{r['case_id']}.rep{r['rep']}.{guard}.regressed")
-            for field in ("quality_failures","geometry_failures"):
+            for field in ("quality_failures","geometry_failures","missing_required_terms"):
                 added=set(r.get("qa",{}).get(field,[]))-set(old.get("qa",{}).get(field,[]))
                 if added:failures.append(f"guard.{r['case_id']}.rep{r['rep']}.{field}.added")
             if old.get("passed") and not r.get("passed"):failures.append(f"outcome.{r['case_id']}.rep{r['rep']}.pass_regressed")
@@ -468,8 +468,8 @@ def main():
     parser=argparse.ArgumentParser(description=__doc__)
     parser.add_argument("action",choices=["freeze","run","summarize","compare","reassess"])
     parser.add_argument("--run-dir",required=True,type=Path)
-    parser.add_argument("--arm",choices=["baseline","candidate","candidate2","candidate3"],default="baseline")
-    parser.add_argument("--candidate-arm",choices=["candidate","candidate2","candidate3"],default="candidate")
+    parser.add_argument("--arm",choices=["baseline","candidate","candidate2","candidate3","candidate4"],default="baseline")
+    parser.add_argument("--candidate-arm",choices=["candidate","candidate2","candidate3","candidate4"],default="candidate")
     parser.add_argument("--language-policy",choices=["required","observe"],default="required",help="Keep historical policy by default; observe is the user-authorized best-effort STE policy")
     parser.add_argument("--revision")
     parser.add_argument("--case-id")
