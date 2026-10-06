@@ -215,3 +215,87 @@ def test_main_run_generate_refuses_missing_canonical_provenance(monkeypatch, tmp
 
     assert result == 1
     assert not output_path.exists()
+
+
+def _run_requested_style(tmp_path, *arguments, context=False):
+    brief = read_json(POLISH_DEMO)
+    brief['style']['preset'] = 'Swiss Modern'
+    source = tmp_path / 'brief.json'
+    write_json(source, brief)
+    if context:
+        source.write_text('Source artifact\n```json\n' + json.dumps(brief) + '\n```\n')
+    return subprocess.run(
+        [sys.executable, str(MAIN), '--generate',
+         '--context-file' if context else '--brief', str(source),
+         '--output', str(tmp_path / 'deck.html'), *arguments],
+        cwd=tmp_path, capture_output=True, text=True, timeout=30,
+    )
+
+
+def test_requested_style_rejects_wrong_brief_before_overwriting_artifacts(tmp_path):
+    output = tmp_path / 'deck.html'
+    output.write_text('previous completed deck')
+    packet = tmp_path / 'packet.json'
+    packet.write_text('previous packet')
+    result = _run_requested_style(tmp_path, '--requested-preset', 'Strategy Consulting',
+                                  '--packet-out', str(packet))
+    assert result.returncode == 1
+    assert 'PRESET MISMATCH' in result.stdout
+    assert 'Strategy Consulting' in result.stdout and 'Swiss Modern' in result.stdout
+    assert output.read_text() == 'previous completed deck'
+    assert packet.read_text() == 'previous packet'
+
+
+def test_request_file_cannot_be_bypassed_by_omitting_flag_or_conflicting_override(tmp_path):
+    request = {'version': 1, 'preset': 'Strategy Consulting'}
+    write_json(tmp_path / 'SLIDE_REQUEST.json', request)
+    before = (tmp_path / 'SLIDE_REQUEST.json').read_bytes()
+    for arguments in [(), ('--requested-preset', 'Swiss Modern')]:
+        result = _run_requested_style(tmp_path, *arguments)
+        assert result.returncode == 1
+        assert not (tmp_path / 'deck.html').exists()
+        assert (tmp_path / 'SLIDE_REQUEST.json').read_bytes() == before
+
+
+def test_context_artifact_has_the_same_user_preset_guard(tmp_path):
+    result = _run_requested_style(tmp_path, '--requested-preset', 'Strategy Consulting', context=True)
+    assert result.returncode == 1
+    assert 'PRESET MISMATCH' in result.stdout
+    assert not (tmp_path / 'deck.html').exists()
+
+
+def test_requested_style_alias_is_accepted_and_retains_brief_provenance(tmp_path):
+    write_json(tmp_path / 'SLIDE_REQUEST.json', {'version': 1, 'preset': 'swiss-modern'})
+    result = _run_requested_style(tmp_path, '--requested-preset', 'Swiss Modern')
+    assert result.returncode == 0, result.stdout + result.stderr
+    assert 'data-preset="Swiss Modern"' in (tmp_path / 'deck.html').read_text()
+    assert read_json(tmp_path / 'brief.json')['style']['preset'] == 'Swiss Modern'
+
+
+def test_custom_style_identity_accepts_alias_and_reference_path(tmp_path):
+    reference = ROOT / 'themes/fantasy-rainbow/reference.md'
+    for requested in ['Fantasy Rainbow', 'custom:fantasy-rainbow', str(reference)]:
+        main_cli.assert_requested_preset({'style': {'preset': 'fantasy-rainbow'}}, requested)
+
+
+def test_invalid_or_missing_request_fails_without_output(tmp_path):
+    for data in ['{', '{}', '{"version":true,"preset":"Swiss Modern"}',
+                 '{"version":1,"preset":""}', '{"version":1,"preset":7}',
+                 '{"version":1,"preset":"nonexistent-preset"}']:
+        (tmp_path / 'SLIDE_REQUEST.json').write_text(data)
+        result = _run_requested_style(tmp_path)
+        assert result.returncode == 1, result.stdout + result.stderr
+        assert not (tmp_path / 'deck.html').exists()
+    (tmp_path / 'SLIDE_REQUEST.json').unlink()
+    result = _run_requested_style(tmp_path, '--request-file', 'missing.json')
+    assert result.returncode == 1
+    assert not (tmp_path / 'deck.html').exists()
+
+
+def test_explicit_request_file_outside_working_directory_is_checked(tmp_path):
+    request = tmp_path / 'inputs/request.json'
+    request.parent.mkdir()
+    write_json(request, {'version': 1, 'preset': 'Strategy Consulting'})
+    result = _run_requested_style(tmp_path, '--request-file', str(request))
+    assert result.returncode == 1
+    assert 'PRESET MISMATCH' in result.stdout

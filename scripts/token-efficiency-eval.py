@@ -164,10 +164,20 @@ def program_qa(workspace, out, case):
     expected_preset = get_preset_render_capability(case["preset"]).canonical_preset or case["preset"]
     norm = lambda s: re.sub(r"[^a-z0-9]", "", s.casefold())
     notes = [s.get("data-notes", "") for s in BeautifulSoup(html, "html.parser").select(".slide")]
+    request_lock_pass = True
+    request_receipt = workspace.parent / "requested-style.json"
+    if request_receipt.exists():
+        expected_request = {"version": 1, "preset": case["preset"]}
+        try:
+            request_lock_pass = (read_json(request_receipt) == expected_request
+                                 and read_json(workspace / "SLIDE_REQUEST.json") == expected_request)
+        except (OSError, ValueError):
+            request_lock_pass = False
     return {"complete":True, "strict_pass":cp.returncode == 0, "strict_ms":strict_ms, "quality_ms":quality_ms,
             "geometry_ms":geometry_ms, "geometry_pass":geometry["pass"], "missing_required_terms":missing,
             "page_count":count, "page_count_pass":count == case["pages"], "quality":quality.get("diagnostics", {}),
             "preset_pass":norm(actual_preset) == norm(expected_preset), "actual_preset":actual_preset,
+            "request_lock_pass":request_lock_pass,
             "geometry_failures":geometry["hard_failures"], "visible_text":text,
             "quality_failures":quality.get("hard_failures", []), "speaker_notes":notes}
 
@@ -285,7 +295,7 @@ def reassess(base, arm, case_id=None, force=False):
             result["qa"]={k:v for k,v in qa.items() if k != "visible_text"}
             result["judge"]=judge(evidence,case,qa,config) if qa["complete"] else {"complete":False}
             result["complete"]=bool(old["generation"]["completed"] and old["generation"]["returncode"] == 0 and qa["complete"] and result["judge"]["complete"])
-            result["passed"]=bool(result["complete"] and qa["strict_pass"] and qa["geometry_pass"] and qa["preset_pass"] and qa["page_count_pass"] and not qa["quality_failures"] and not qa["missing_required_terms"] and result["judge"]["quality_score"] >= 80)
+            result["passed"]=bool(result["complete"] and qa["strict_pass"] and qa["geometry_pass"] and qa["preset_pass"] and qa.get("request_lock_pass", True) and qa["page_count_pass"] and not qa["quality_failures"] and not qa["missing_required_terms"] and result["judge"]["quality_score"] >= 80)
         except Exception as exc:
             result.update(complete=False,passed=False,qa_error=f"{type(exc).__name__}: {exc}")
         result["calibration_overhead_ms"]=max(0,old.get("eval_wall_ms",0)-old["generation"]["wall_ms"])+ (old.get("calibration_overhead_ms",0) if retry else 0)
@@ -338,6 +348,11 @@ def run_arm(base, arm, manifest, case_id=None):
             raise ValueError(f"Interrupted run retained at {run}; audit before resuming, do not replay")
         shutil.copytree(snapshot, workspace)
         (workspace / "output").mkdir()
+        request_lock = None
+        if not case.get("negative") and "--requested-preset" in (snapshot / "main.py").read_text():
+            request_lock = {"version": 1, "preset": case["preset"]}
+            write_json(workspace / "SLIDE_REQUEST.json", request_lock)
+            write_json(run / "requested-style.json", request_lock)
         print(f"START {arm} {case['id']} {rep}", flush=True)
         started = time.perf_counter()
         metrics = invoke(generation_prompt(case), workspace, evidence, config)
@@ -352,7 +367,7 @@ def run_arm(base, arm, manifest, case_id=None):
                 if qa["complete"]:
                     result["judge"] = judge(evidence, case, qa, config)
                 result["complete"] = bool(metrics["completed"] and metrics["returncode"] == 0 and qa["complete"] and result.get("judge",{}).get("complete"))
-                result["passed"] = bool(result["complete"] and qa["strict_pass"] and qa["geometry_pass"] and qa["page_count_pass"] and qa["preset_pass"] and not qa["quality_failures"] and not qa["missing_required_terms"] and result["judge"]["quality_score"] >= 80)
+                result["passed"] = bool(result["complete"] and qa["strict_pass"] and qa["geometry_pass"] and qa["page_count_pass"] and qa["preset_pass"] and qa.get("request_lock_pass", True) and not qa["quality_failures"] and not qa["missing_required_terms"] and result["judge"]["quality_score"] >= 80)
             except Exception as exc:
                 result.update(complete=False, passed=False, qa_error=f"{type(exc).__name__}: {exc}")
         result["eval_wall_ms"] = round((time.perf_counter() - started)*1000)
@@ -469,8 +484,8 @@ def main():
     parser=argparse.ArgumentParser(description=__doc__)
     parser.add_argument("action",choices=["freeze","run","summarize","compare","reassess"])
     parser.add_argument("--run-dir",required=True,type=Path)
-    parser.add_argument("--arm",choices=["baseline","candidate","candidate2","candidate3","candidate4","candidate5","candidate6","candidate7","candidate8","candidate9","candidate10","candidate11","candidate12","candidate13","candidate14"],default="baseline")
-    parser.add_argument("--candidate-arm",choices=["candidate","candidate2","candidate3","candidate4","candidate5","candidate6","candidate7","candidate8","candidate9","candidate10","candidate11","candidate12","candidate13","candidate14"],default="candidate")
+    parser.add_argument("--arm",choices=["baseline","candidate","candidate2","candidate3","candidate4","candidate5","candidate6","candidate7","candidate8","candidate9","candidate10","candidate11","candidate12","candidate13","candidate14","candidate15"],default="baseline")
+    parser.add_argument("--candidate-arm",choices=["candidate","candidate2","candidate3","candidate4","candidate5","candidate6","candidate7","candidate8","candidate9","candidate10","candidate11","candidate12","candidate13","candidate14","candidate15"],default="candidate")
     parser.add_argument("--language-policy",choices=["required","observe"],default="required",help="Keep historical policy by default; observe is the user-authorized best-effort STE policy")
     parser.add_argument("--baseline-arm",choices=["baseline","candidate5"],default="baseline")
     parser.add_argument("--revision")
