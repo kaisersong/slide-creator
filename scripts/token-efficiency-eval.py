@@ -258,18 +258,25 @@ def reassess(base, arm):
     def task(path):
         old = read_json(path)
         case = cases[old["case_id"]]
-        if case.get("negative") or old.get("evaluator_version") == 2:
+        if case.get("negative") or (old.get("evaluator_version") == 2 and old.get("complete")):
             return
         run = path.parent
         previous = run / "result.initial.json"
-        if previous.exists():
+        retry = old.get("evaluator_version") == 2 and not old.get("complete")
+        if previous.exists() and not retry:
             raise ValueError(f"Interrupted reassessment at {run}; do not replay silently")
-        write_json(previous, old)
-        evidence = run / "evidence-v2"
+        if retry:
+            write_json(run / "result.evaluator-error.json", old)
+        else:
+            write_json(previous, old)
+        evidence = run / ("evidence-v2-retry1" if retry else "evidence-v2")
+        if evidence.exists():raise ValueError(f"Assessment evidence already exists: {evidence}")
         evidence.mkdir()
         print(f"REASSESS {arm} {case['id']} {old['rep']}", flush=True)
         started=time.perf_counter()
         result=dict(old)
+        result.pop("judge",None)
+        result.pop("qa_error",None)
         result["evaluator_version"]=2
         try:
             qa=program_qa(run/"workspace",evidence,case)
@@ -279,8 +286,10 @@ def reassess(base, arm):
             result["passed"]=bool(result["complete"] and qa["strict_pass"] and qa["geometry_pass"] and qa["preset_pass"] and qa["page_count_pass"] and not qa["quality_failures"] and not qa["missing_required_terms"] and result["judge"]["quality_score"] >= 80)
         except Exception as exc:
             result.update(complete=False,passed=False,qa_error=f"{type(exc).__name__}: {exc}")
-        result["calibration_overhead_ms"]=old.get("eval_wall_ms",0)-old["generation"]["wall_ms"]
-        result["calibration_overhead_tokens"]=old.get("judge",{}).get("metrics",{}).get("total_tokens")
+        result["calibration_overhead_ms"]=max(0,old.get("eval_wall_ms",0)-old["generation"]["wall_ms"])+ (old.get("calibration_overhead_ms",0) if retry else 0)
+        previous_judge = run / "evidence-v2/judge/metrics.json"
+        prior_tokens=read_json(previous_judge).get("total_tokens") if retry and previous_judge.exists() else (0 if retry else old.get("judge",{}).get("metrics",{}).get("total_tokens"))
+        result["calibration_overhead_tokens"]=(old.get("calibration_overhead_tokens") or 0)+prior_tokens if retry and prior_tokens is not None else prior_tokens
         result["eval_wall_ms"]=old["generation"]["wall_ms"]+round((time.perf_counter()-started)*1000)
         gm=old["generation"]["total_tokens"];jm=result.get("judge",{}).get("metrics",{}).get("total_tokens")
         result["eval_total_tokens"]=gm+jm if None not in (gm,jm) else None

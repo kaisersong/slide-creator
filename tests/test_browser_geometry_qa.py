@@ -18,13 +18,14 @@ VIEWPORTS = [{"width": 1600, "height": 900}]
 
 
 @pytest.mark.slow
-def test_present_navigation_uses_anonymous_production_controller(tmp_path):
+@pytest.mark.parametrize("preset", ["Swiss Modern", "Blue Sky"])
+def test_present_navigation_uses_anonymous_production_controller(tmp_path, preset):
     """Switching only p-on used to screenshot a blank page and stale counter."""
     import json
     from browser_geometry_qa import _launch_browser, _enter_present_mode, _activate_slide
     from low_context import render_from_brief
     brief = json.loads((ROOT / "references/brief-template.json").read_text())
-    brief["style"]["preset"] = "Swiss Modern"
+    brief["style"]["preset"] = preset
     html, _, _ = render_from_brief(brief)
     deck = tmp_path / "deck.html"
     deck.write_text(html)
@@ -43,7 +44,10 @@ def test_present_navigation_uses_anonymous_production_controller(tmp_path):
         })""")
         assert state["activeId"] == "slide-4"
         assert state["counter"].startswith("4 /")
-        assert state["visible"] and state["reveals"]
+        if preset == "Swiss Modern":
+            assert state["visible"] and state["reveals"]
+        else:
+            assert page.locator(".slide.p-on").get_attribute("class").find("active") >= 0
         page.keyboard.press("ArrowRight")
         assert page.locator("#present-counter").inner_text().startswith("5 /")
         assert page.locator(".slide.p-on").get_attribute("id") == "slide-5"
