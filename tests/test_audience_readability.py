@@ -105,3 +105,10 @@ def test_enterprise_action_binding_survives_matching_headline_without_fake_bars(
     soup=BeautifulSoup(apply_audience_readability('<html><head></head><body>'+h+'</body></html>'),'html.parser')
     assert [p.get_text() for p in soup.select('.ent-split-item-copy')]==['before production use.','Disable Debug Dumps']
     assert not soup.select('.ent-prog-bar')
+
+
+def test_custom_theme_preformatted_source_claim_is_readable_audience_copy():
+    html='<html><head></head><body><section class="slide"><div class="iri-brief-code"><pre>图片导出不再保留文字可编辑性。</pre></div></section></body></html>'
+    output=apply_audience_readability(html)
+    assert 'audience-copy' in BeautifulSoup(output,'html.parser').select_one('pre')['class']
+    assert 'body .slide .iri-brief-code pre { font-size:20px !important' in output
