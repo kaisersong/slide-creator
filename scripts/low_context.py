@@ -2031,6 +2031,9 @@ def _select_relevant_evidence_items(
 
 
 def _build_supporting_items(slide: dict[str, Any], evidence: list[str], *, minimum: int) -> list[str]:
+    local = _slide_supporting_facts(slide)
+    if local:
+        return _dedupe_preserve(local)[:max(minimum, 5)]
     candidates: list[str] = []
     for source in (slide.get("key_point", ""), slide.get("title", "")):
         for item in _split_supporting_phrases(source, minimum=1):
@@ -2191,7 +2194,7 @@ def _build_enterprise_story_items(
     if not labels:
         labels = [spec["title"], spec["key_point"], spec["visual"]]
 
-    body = spec["visual"].strip() or spec["key_point"]
+    body = spec["key_point"]
     for offset, label in enumerate(labels[:3], start=1):
         if label == body:
             card_body = spec["key_point"]
@@ -2212,10 +2215,13 @@ def _build_candidate_fact_pool(
     slide: dict[str, Any],
     brief: dict[str, Any],
 ) -> list[str]:
+    # Explicit local facts define the page boundary. Global facts are a legacy
+    # fallback, not filler for unrelated rows or diagram nodes.
+    local = _dedupe_preserve([*_slide_supporting_facts(slide), *_slide_numeric_facts(slide)])
+    if local:
+        return local
     return _dedupe_preserve(
         [
-            *_slide_supporting_facts(slide),
-            *_slide_numeric_facts(slide),
             *_slide_global_facts(brief),
             *_slide_optional_support(brief),
         ]
@@ -2511,6 +2517,10 @@ def build_slide_spec(brief: dict[str, Any], packet: dict[str, Any] | None = None
             spec["layout_id"] = _avoid_long_layout_runs(spec["layout_id"], previous_layouts, layout_cycle)
         if normalized_preset == "enterprise dark":
             spec.pop("_skip_comparison_signal_check", None)
+        if (normalized_preset == "swiss modern" and spec["layout_id"] == "pull_quote"
+                and len(supporting_facts) > 1
+                and role not in {"closing", "cta", "cta_close", "getting-started"}):
+            spec["layout_id"] = "column_content"
         # Removed second _resolve_layout_with_usage_rules call to prevent overriding diversity adjustment
         # The first resolve + avoid_long_layout_runs already handles all constraints
         specs.append(spec)
@@ -3585,6 +3595,18 @@ def _spec_display_items(spec: dict[str, Any], *, limit: int = 4) -> list[str]:
 
 
 def _spec_detail_pairs(spec: dict[str, Any], *, count: int = 4) -> list[tuple[str, str]]:
+    # Do not manufacture a second fact as a caption for the first. A local fact
+    # can be a complete card; an explicit colon can separate label and detail.
+    local = _dedupe_preserve(spec.get("supporting_facts", []))
+    if local:
+        pairs = []
+        for fact in local[:count]:
+            pieces = re.split(r"[:：]", fact, maxsplit=1)
+            if len(pieces) == 2 and pieces[0].strip() and pieces[1].strip():
+                pairs.append((pieces[0].strip(), pieces[1].strip()))
+            else:
+                pairs.append((fact, ""))
+        return pairs
     titles = _spec_display_items(spec, limit=count)
     detail_pool = _dedupe_preserve(
         [
@@ -3654,6 +3676,8 @@ def _metric_value_for_item(
             return evidence_numbers[min(index, len(evidence_numbers) - 1)]
         return str(index + 1)
 
+    if spec.get("supporting_facts"):
+        return f"{index + 1:02d}"
     compact = _compact_display_token(item, fallback=str(index + 1), used_tokens=used_tokens)
     if compact not in {"关键", str(index + 1)}:
         return compact
@@ -4109,7 +4133,8 @@ def _render_swiss_geometric_diagram(spec: dict[str, Any], total: int) -> str:
         """
         for index, (title, body) in enumerate(pairs[:3])
     )
-    diagram_labels = _chart_labels_from_spec(spec, count=3)
+    diagram_labels = ([f"{index + 1:02d}" for index in range(3)]
+                      if spec.get("supporting_facts") else _chart_labels_from_spec(spec, count=3))
     return f"""
     <section class="slide geometric_diagram" id="slide-{slide_number}" data-notes="{_escape(spec['speaker_note'])}" aria-label="{_escape(spec['role'])}" data-export-role="geometric_diagram">
         {_swiss_bg_num(spec)}
@@ -4175,7 +4200,8 @@ def _render_swiss_data_table(spec: dict[str, Any], total: int) -> str:
         highlight = " class=\"highlight\"" if index == 0 else ""
         signal = _swiss_table_cell(item, max_chars=58)
         meaning = _swiss_table_cell(body, max_chars=72)
-        focus = _swiss_table_cell(_compact_display_token(item, fallback=spec["role"]), max_chars=24)
+        focus = (f"{index + 1:02d}" if spec.get("supporting_facts")
+                 else _swiss_table_cell(_compact_display_token(item, fallback=spec["role"]), max_chars=24))
         rows.append(
             f"<tr{highlight}><td>{_escape(signal)}</td><td>{_escape(meaning)}</td><td>{_escape(focus)}</td></tr>"
         )
@@ -4186,6 +4212,7 @@ def _render_swiss_data_table(spec: dict[str, Any], total: int) -> str:
         <div class="slide-content content">
             <div class="eyebrow swiss-label reveal">{_escape(spec['role'])}</div>
             {title_tag}
+            <p class="swiss-body reveal" style="margin:12px 0 20px;">{_escape(spec['key_point'])}</p>
             <table class="data-table reveal">
                 <thead>
                     <tr><th>Signal</th><th>Meaning</th><th>Focus</th></tr>
@@ -4862,6 +4889,9 @@ def render_swiss_modern_html(
 
 def _enterprise_extra_css() -> str:
     return """
+.ent-contrast-block--neutral { border-color: var(--accent-cyan); }
+.ent-contrast-block--neutral h4, .ent-contrast-block--neutral .ent-contrast-marker { color: var(--accent-cyan); }
+
 #brand-mark {
     display: none;
 }
@@ -5256,6 +5286,9 @@ def _enterprise_metric_value_for_label(
 
 
 def _enterprise_table_items(spec: dict[str, Any], *, minimum: int = 3, limit: int = 4) -> list[str]:
+    local = _dedupe_preserve(spec.get("supporting_facts", []))
+    if local:
+        return local[:limit]
     pools = [
         spec.get("supporting_facts") or [],
         spec.get("evidence_items") or [],
@@ -5615,35 +5648,39 @@ def _render_enterprise_comparison_matrix(spec: dict[str, Any], total: int) -> st
 def _render_enterprise_contrast_split(spec: dict[str, Any], total: int) -> str:
     slide_number = spec["slide_number"]
     title_tag = _title_tag("h2", "ent-title", spec["title"], preset="Enterprise Dark", layout_id=spec["layout_id"])
-    items = _spec_display_items(spec, limit=4)
-    if len(items) >= 4:
+    local = _dedupe_preserve(spec.get("supporting_facts", []))
+    items = local or _spec_display_items(spec, limit=4)
+    if local:
+        split = max(1, (len(items) + 1) // 2)
+        neg_items, pos_items = items[:split], items[split:]
+    elif len(items) >= 4:
         neg_items = items[:len(items) // 2]
         pos_items = items[len(items) // 2:]
     else:
         neg_items = items[:1] + [spec["key_point"]]
         pos_items = items[1:] + [spec["key_point"]]
     neg_rows = "".join(
-        f'<div class="ent-contrast-item"><span class="ent-contrast-marker">&#x2717;</span>{_escape(item)}</div>'
+        f'<div class="ent-contrast-item"><span class="ent-contrast-marker">{"&#x2022;" if local else "&#x2717;"}</span>{_escape(item)}</div>'
         for item in neg_items
     )
     pos_rows = "".join(
-        f'<div class="ent-contrast-item"><span class="ent-contrast-marker">&#x2713;</span>{_escape(item)}</div>'
+        f'<div class="ent-contrast-item"><span class="ent-contrast-marker">{"&#x2022;" if local else "&#x2713;"}</span>{_escape(item)}</div>'
         for item in pos_items
     )
     return f"""
     <section class="slide enterprise-contrast" id="slide-{slide_number}" data-notes="{_escape(spec['speaker_note'])}" aria-label="{_escape(spec['role'])}" data-export-role="contrast_split">
         <div class="slide-content">
             <div class="ent-shell">
-                <span class="ent-label-tag reveal">对比</span>
+                <span class="ent-label-tag reveal">{'Requirements' if local else 'Comparison'}</span>
                 {title_tag}
                 <div class="ent-sep reveal"></div>
                 <div class="ent-contrast-split reveal">
-                    <div class="ent-contrast-block ent-contrast-block--negative">
-                        <h4>Before</h4>
+                    <div class="ent-contrast-block {'ent-contrast-block--neutral' if local else 'ent-contrast-block--negative'}">
+                        <h4>{'01' if local else 'Before'}</h4>
                         {neg_rows}
                     </div>
-                    <div class="ent-contrast-block ent-contrast-block--positive">
-                        <h4>After</h4>
+                    <div class="ent-contrast-block {'ent-contrast-block--neutral' if local else 'ent-contrast-block--positive'}">
+                        <h4>{'02' if local else 'After'}</h4>
                         {pos_rows}
                     </div>
                 </div>
@@ -5749,7 +5786,7 @@ def _render_enterprise_cta_close(spec: dict[str, Any], total: int) -> str:
                 <span class="ent-label-tag reveal">close</span>
                 {title_tag}
                 <div class="ent-sep reveal"></div>
-                <div class="ent-code reveal"><span class="green">thesis</span> = {_escape(spec['key_point'])}</div>
+                <p class="ent-code reveal">{_escape(spec['key_point'])}</p>
                 <div class="ent-kpi-row" style="margin-top:18px;">
                     {''.join(card_html)}
                 </div>
@@ -6435,8 +6472,8 @@ def _render_data_story_interaction_panel(spec: dict[str, Any]) -> str:
             """
         )
 
-    mode = " / ".join(_dedupe_preserve([pairs[0][0], pairs[1][0]])[:2])
-    edit = " / ".join(_dedupe_preserve([pairs[2][0], pairs[3][0]])[:2])
+    mode = " / ".join(_dedupe_preserve([title for title, _ in pairs[:2]]))
+    edit = " / ".join(_dedupe_preserve([title for title, _ in pairs[2:4]]))
     loop = _compact_display_token(spec["key_point"], fallback="Live deck")
     return f"""
     <div class="ds-interaction-layout">
@@ -6549,7 +6586,7 @@ def _render_data_story_kpi_chart(spec: dict[str, Any], total: int) -> str:
     chart_values = _chart_metric_values_from_spec(spec, ["1", "2", "3"])
     chart = (
         _svg_bar_chart(_chart_labels_from_spec(spec, count=3), chart_values)
-        if chart_values
+        if chart_values and spec.get("chart_policy") != "avoid"
         else _render_data_story_stage_grid(spec, count=3, prefix="metric")
     )
     cards = "".join(
@@ -6557,7 +6594,7 @@ def _render_data_story_kpi_chart(spec: dict[str, Any], total: int) -> str:
         <div class="ds-kpi-card reveal">
             <div class="ds-kpi">{_escape(metric_values[index])}</div>
             <div class="ds-kpi-label">{_escape(item)}</div>
-            <div class="ds-trend {'up' if index < 2 else 'down'}">{'▲' if index < 2 else '▼'} {_escape(spec['role'])}</div>
+            <div class="ds-trend">{_escape(spec['role'])}</div>
         </div>
         """
         for index, item in enumerate(labels)
@@ -6909,6 +6946,11 @@ body[data-preset="Chinese Chan"] .zen-vertical-shell {
     position: relative;
 }
 
+body[data-preset="Chinese Chan"] .zen-vertical-title {
+    font-size: clamp(1.6rem, 3.5vh, 2.2rem);
+    max-height: 40vh;
+}
+
 body[data-preset="Chinese Chan"] .zen-vertical-caption {
     position: static;
     text-align: center;
@@ -7218,6 +7260,7 @@ def _render_chinese_chan_vertical(spec: dict[str, Any], total: int) -> str:
             <div class="zen-seal"></div>
             <div class="zen-vertical-caption">
                 <p class="zen-body zen-cn reveal">{_escape(spec['key_point'])}</p>
+                <ul class="zen-list zen-cn reveal">{''.join('<li>' + _escape(fact) + '</li>' for fact in spec.get('supporting_facts', [])[:3] if fact != spec['key_point'])}</ul>
             </div>
         </div>
         <span class="slide-num-label zen-caption">{slide_number:02d} / {total:02d}</span>
@@ -7826,10 +7869,12 @@ def _render_blue_sky_slide(
 
     # Two-column comparison
     if layout_id == "comparison":
-        left_items = all_items[:len(all_items)//2]
-        right_items = all_items[len(all_items)//2:]
+        split = max(1, len(all_items) // 2)
+        left_items = all_items[:split]
+        right_items = all_items[split:]
         left_html = "".join(f"<li>{_escape(i)}</li>" for i in left_items)
         right_html = "".join(f"<li>{_escape(i)}</li>" for i in right_items)
+        panels_html = ''.join('<div class="g" style="padding:22px 24px;"><ul class="bl">' + panel + '</ul></div>' for panel in (left_html, right_html) if panel)
         return f"""
     <!-- slide {slide_number}: {role} -->
     <section class="slide" id="slide-{slide_number}" data-notes="{speaker_note}" aria-label="{role_attr}" data-export-role="{role_attr}">
@@ -7838,8 +7883,7 @@ def _render_blue_sky_slide(
         {section_title}
         <div class="divider"></div>
         <div class="cols2">
-          <div class="g" style="padding:22px 24px;"><ul class="bl">{left_html}</ul></div>
-          <div class="g" style="padding:22px 24px;"><ul class="bl">{right_html}</ul></div>
+          {panels_html}
         </div>
         <p style="margin-top:14px;color:var(--text-secondary);font-size:0.9rem;">{key_point}</p>
       </div>

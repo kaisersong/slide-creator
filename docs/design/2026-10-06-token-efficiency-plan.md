@@ -95,3 +95,11 @@ P3：为精修提供逐页 claim、证据、notes 和评论；导出带 brief ha
 - [OpenAI：Testing Agent Skills Systematically with Evals](https://developers.openai.com/blog/eval-skills)。
 - [OpenAI：Non-interactive mode](https://developers.openai.com/codex/noninteractive)。
 - [ASD-STE100 官方下载与说明](https://www.asd-ste100.org/STE_downloads.html)。本机 web 抓取官方标准全文返回 403；语义评分与词典核验边界须保留，不能推断已验证官方全文。
+
+## 10. 候选 3：在效率路径上修复内容质量
+
+用户在候选 2 的报告后要求继续研究质量问题，并将技术语言降为尽力满足。新对照使用验收策略 v2：STE 评分继续逐次计量，80 分为观察目标，不阻止采用；效率、事实、版面和质量回退阈值全部保持。历史策略 v1 的报告与结论保留。CLI 必须显式指定 `--language-policy observe`，默认仍为历史 required 策略。
+
+候选 3 先修 renderer，再做同一冻结 manifest 的完整 26 次生成：页内 supporting_facts/numeric_facts 不混入全局事实；显式事实不强制填满组件、不用无关句子作解释；Swiss 验收页不把多项条件压成单句引用，装饰标签用序号替代截断词；Enterprise 普通事实用中性面板，不推断正误或前后状态，正文不显示 visual 指令与 thesis 代码；咨询风格以原 demo CSS 的组件装载事实，清除嵌套示例文案、假指标与版本信息；Data Story 遵守 avoid 图表策略，不按卡片位置画方向箭头；Chinese Chan 竖排标题使用高度预算，并显示结尾动作事实。
+
+测试顺序：先目标回归；用候选 2 的 24 份 BRIEF 做同输入消融（只用于识别 renderer 效果，不能当模型端到端结果）；检查真实浏览器截图；冻结新的 candidate3 snapshot；保持 gpt-5.5/high、2 并发、语料与 evaluator v2 不变，完整生成与匿名评审。基线沿用已完成的 26 次记录，明确它不是同期重新生成，缓存与服务时段差异继续作为限制。新候选绝不混用前轮最佳产物。结果不达质量门槛时保存失败与下一步，不声称已经可以发布。
