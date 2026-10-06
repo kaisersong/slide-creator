@@ -112,3 +112,19 @@ def test_custom_theme_preformatted_source_claim_is_readable_audience_copy():
     output=apply_audience_readability(html)
     assert 'audience-copy' in BeautifulSoup(output,'html.parser').select_one('pre')['class']
     assert 'body .slide .iri-brief-code pre { font-size:20px !important' in output
+
+
+def test_insight_prefix_does_not_hide_a_repeated_source_sentence():
+    h='<html><head></head><body><section class="slide"><div class="ds-stage-card"><h3>Enterprise activation is 52.5%.</h3></div><div class="ds-insight"><strong>Insight:</strong> Enterprise activation is 52.5%. Residency review remains open.</div></section></body></html>'
+    s=BeautifulSoup(apply_audience_readability(h),'html.parser')
+    assert s.select_one('.ds-insight').get_text(' ',strip=True)=='Insight: Residency review remains open.'
+    assert s.select_one('h3').get_text()=='Enterprise activation is 52.5%.'
+
+
+def test_fully_repeated_insight_uses_one_real_source_callout():
+    fact='The retry limit is unknown.'
+    h='<html><head></head><body><section class="slide"><div class="ds-stage-card"><h3>'+fact+'</h3></div><div class="ds-insight"><strong>Insight:</strong> '+fact+'</div></section></body></html>'
+    s=BeautifulSoup(apply_audience_readability(h),'html.parser')
+    assert s.select_one('.ds-stage-card.ds-insight')
+    assert s.select_one('.slide').get_text(' ',strip=True)==fact
+    assert len(s.select('.ds-insight'))==1
