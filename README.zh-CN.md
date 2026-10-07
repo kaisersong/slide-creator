@@ -74,225 +74,134 @@
 
 ---
 
-## 设计理念：为真实的最后一步而设计
+## 设计理念：模型组织内容，程序执行交付
 
-slide-creator 的出发点很具体：用户通常会先花很长时间生成内容、讨论结构，最后才说一句“帮我做成 slide”。这恰好是最容易翻车的时刻。上下文已经很长，风格信号被稀释，硬约束也最容易丢。
+slide-creator 面向内容工作流的最后一步：把已经形成的论点变成可使用的演示文稿。这一步往往发生在长对话之后。架构保留原始材料和用户明确选择，向模型提供精简的内容契约，并把重复实现交给渲染程序。
 
-所以 slide-creator 的设计目标不是“会做 slide”，而是**保护最后这一步**。
-
-### 一、IR-first，planning 退居可选
-
-现在的主流程明确是 **IR-first 工作流**：
-
-```
-user prompt → BRIEF.json → HTML → validate → eval
-```
-
-`--plan` 的默认职责，是提炼可执行的 `BRIEF.json`，而不是强制先走一遍人工审阅。`PLANNING.md` 仍然保留，但定位已经变成“需要人看时才派生的人类可读视图”。
-
-原因很简单：真正生成 HTML 时，不应该继续背整段聊天记录，而应该只背一个短、硬、结构化的真相源。
-
-这条规则同样适用于“直接给内容 + 风格，立刻生成”。这类请求也必须先 materialize `BRIEF.json`，再按 preset 能力路由：native core、统一 profile renderer、custom theme 都走 `render_from_brief()` 产品路径，最后通过 strict 写入前门禁，不能在交互路径里绕过 BRIEF/style contract 手拼最终 HTML。
-
-### 二、公开模式尽量简单，内部链路必须严格
-
-对用户来说，公开心智模型应该尽量小：
-
-- **Auto**，先出第一版
-- **Polish**，把质量锁住
-
-但内部流程不能因此变松。真正的路径仍然是风格发现、BRIEF 提炼、渲染、校验、review。外部更简单，内部更严格。
-
-这也是为什么 README 和技能对外强调 Auto / Polish，而仓库内部仍然维护清晰的路由、review 逻辑和 eval 资产。
-
-### 三、渐进式披露，不浪费模型上下文
-
-技能文件每次调用都会进入模型上下文，所以“上下文预算”本身就是产品面。
-
-slide-creator 把 `SKILL.md` 保持成一个薄路由层，把细节下沉到 references，让每条路径只加载当前需要的内容：
-
-```
---plan        → 只读 references/brief-template.json
---generate    → references/generation-contract.md + main.py --model-context --preset <风格>
-程序读取      → references/html-template.md + references/js-engine.md + 单个风格文件 + base-css.md
-交互模式      → references/workflow.md
-风格选择      → references/style-index.md
+```mermaid
+flowchart LR
+    R["用户指定风格"] --> V["请求与 BRIEF 校验"]
+    S["原始来源"] --> M["模型组织内容"]
+    C["程序编译的能力契约"] --> M
+    M --> B["BRIEF.json"]
+    B --> V
+    V --> G["Canonical renderer"]
+    G --> H["写入前门禁"]
+    H --> O["浏览器原生 HTML"]
+    O --> Q["Review 与任务评测"]
+    S --> Q
 ```
 
-这不是为了形式上的优雅，而是为了减少上下文压力，避免模型在真正渲染前把最重要的约束忘掉。
+Review 和评测按用户所选流程执行；普通生成不会自动调用独立模型评分器。各层有明确的责任。
 
-模型契约由现有 schema 与风格 compiler 生成，不包含 CSS/JS 源码。正常内容生成只写 BRIEF，完整风格与 runtime 仍由程序读取。技术文稿额外加载 `references/technical-language.md`，ASD-STE100 对齐项目评分目标为 80/100；中文按清晰度原则适配，完整词典符合度另行核验。详细方案与真实前后评测入口在 `docs/design/2026-10-06-token-efficiency-plan.md` 和 `evals/token-efficiency/README.md`。
+### 一、内容判断与重复实现分工
 
-### 四、视觉选择必须“先看图，再落字”
+模型组织论点、证据、页间叙事、展示意图、本页事实、结尾请求和演讲备注。程序完整读取所选风格和 runtime，选择具体布局，实现 CSS/JavaScript，组装导出 DOM，并在写出前校验。
 
-大多数用户无法稳定地用抽象词描述自己想要的风格，但他们看到方案后会立刻知道喜欢什么。
+这种分工减少重复读取源码和实现返工。Renderer 缺陷应在 renderer 中修复；让每份新稿都由模型读源码、改程序来补偿，会掩盖缺陷并消耗上下文。Native core、统一 profile 和受支持的 custom theme 都走 `render_from_brief()`。
 
-所以 slide-creator 把风格选择看成“预览问题”，而不是“问卷问题”。先给 3 个强烈不同的方向，让用户选。然后再把选择写进 `BRIEF.json`。
+Auto 和 Polish 使用同一执行路径。Auto 先出第一稿，Polish 增加内容和设计审阅。Polish 是更深入的 review 流程，不能保证任意稿件的来源语义都完美。
 
-风格如果一直停留在模糊描述，拖到 HTML 生成阶段才真正决定，就已经太晚了。
+### 二、BRIEF 是派生计划，不是已经验证的真相
 
-### 五、零依赖运行时，本身就是产品的一部分
+原始材料定义事实，用户明确选择定义交付要求。`BRIEF.json` 是模型对两者的结构化理解，因此仍可能写错；schema 有效不等于论点真实。
 
-输出结果不是截图，也不是还要交给另一套工具链继续处理的中间产物。输出本身就是浏览器原生 deck，包含：
+计划把逐页 claim、explanation、`supporting_facts`、数值证据和 visual intent 放在一起。`numeric_facts` 是数值绑定的辅助索引，不应再作为额外表格行。`speaker_note` 将讲者指令与观众正文分开，`desired_action` 保留结尾请求的范围与时间。旧 BRIEF 继续使用已定义的 fallback。
 
-- 视口适配的幻灯片
-- 演讲者模式
-- **Default-on** 浏览器内编辑
-- 键盘导航
-- 自包含运行时
+`--plan` 负责提炼可执行计划，`PLANNING.md` 只在需要时派生成人类可读视图。直接给内容和风格也先物化 BRIEF，再调用渲染程序，不绕过产品路径手拼最终 HTML。
 
-零依赖约束会逼出纪律。如果一个 deck 必须依赖 bundler、远程字体或额外运行时胶水才能正常工作，那产品意义已经打折。
+### 三、从完整实现的 owner 编译精简模型契约
 
-### 六、先验证，再相信结果
+`SKILL.md` 负责路由。生成契约来自现有 schema、风格 compiler、标题 profile 和能力注册表，向模型提供字段形状、允许布局、token 和内容规则，避免重复读取实现源码。
 
-系统应该在用户打开坏 deck 之前就发现问题。
+```text
+模型读取 → generation-contract.md + main.py --model-context --preset <风格>
+程序读取 → 完整的所选风格、模板与共享 runtime
+技术内容 → 按任务读取 technical-language.md
+深度设计 → 具体决策不在契约中时，再读取相关风格章节
+```
 
-这就是为什么 slide-creator 把质量检查不断前移：
+完整能力仍留在程序中。精简上下文要保留证据、条件和必要设计选择；机械规定最多读取几个文件，不能替代有效契约。
 
-- `--plan` 先产出结构化 `BRIEF.json`
-- `--generate` 从 IR 生成，而不是从整段对话硬生成
-- `validate-brief.py` 校验 brief 契约
-- `scripts/validate_html.py --strict` 校验运行时契约
-- eval 按 route / compression / render / efficiency 四层打分
+### 四、用户明确选择应当可以独立执行
 
-这里最重要的设计思想不是”多写一点测试”，而是**更准确地定位失败发生在哪一层**。这样坏结果才能反过来推动 skill 本身变好。
+未选风格时，提供合适的预览和推荐。用户已经明确选好时，保留该选择，不再重新推荐。
 
-**验证的定位：写入前门禁，不是可选复查**
+在编写 BRIEF 前，将原始选择保存到本次工作目录的 `SLIDE_REQUEST.json`。`--generate` 独立核对请求与 `BRIEF.style.preset`，不一致就返回 `PRESET MISMATCH`，不写出产物。调用方也可以通过 `--requested-preset` 或 `--request-file` 提供约束。别名按实际风格 reference 归一化，冲突参数不能覆盖请求文件。
 
-validate.py 应当运行在 `--generate` 内部，但位置是在渲染完成之后、最终文件被接受之前。正确顺序是：组装 HTML → 写入临时文件 → 运行 `python3 scripts/validate_html.py "$TMP_HTML" --strict` → 修复或重生直到通过 → 再写入最终输出。如果还要单 deck 评测产物，就在 strict gate 通过后追加 `--eval` 或 `--eval-out report.json`。
+这要求调用方先正确记录用户选择。它是对已提供请求的程序约束，不代表自然语言理解永不出错。冲突后修正 BRIEF，不能把请求文件改成模型选的风格；不支持的风格明确报告，不悄悄替换。
 
-这样做的含义是：
-- 不增加规划阶段步骤 → 不增加构思时的 LLM 认知负担
-- 不增加额外 style file 读取 → 仍然复用现有生成输入
-- 硬失败直接拦住坏产物 → 不再把失败 deck 当成功交付
-- warning 仍可进入 polish / retry 策略，但不能冒充“已经有效”
+### 五、排版适配不能改变内容含义
 
-**捕获运行轨迹的 Skill Evals**
+每页承载完整的本页声明。数字与来源对象、单位一起保留；目标仍是目标，未知值明确保留，访谈线索不能升级为已证明根因。客户数不能直接当成审查数，AND 条件不能变成单一触发条件。
 
-`scripts/run_evals.py` 检查仓库内已有的 BRIEF/HTML 工件和确定性 renderer 行为。它是回归门禁，不是完整的 skill eval。
+空间不足时应重排、选择合适展示，或删除完整同文重复。不能裁掉最后一条事实、编造数值，或重复填满固定卡片数。排重保护否定、十进制、不同条件和解释指标所需的标签。不同单位不组成同一数值系列；材料稀疏时可以说明下一项测试。
 
-按 OpenAI eval-skills 的四类目标评测时，使用：
+标题需要单独对照来源。短标题可能删掉条件或改变数量对象，与正确正文产生矛盾。可读性、对比度和视觉节奏以实际渲染结果检查，布局变化应帮助论证，而不只是增加装饰。
 
-```bash
+### 六、共享浏览器壳子也是程序的责任
+
+主题负责视觉语言和内容构图，生成器负责共享编辑、备注、导航、进度和播放契约。Starter 没提供必需节点时，由生成器补齐；主题已提供时只保留一份。通过实际 Edit/Done 和键盘操作验证壳子能用。
+
+交付的 HTML 无需 Python 或 JavaScript 构建工具，直接由浏览器运行；网络字体不可用时回退本地字体。生成器本身则需要 Python 3.10+ 和已说明的运行依赖，这两类要求分别说明。
+
+能力路由区分五个 native core、四个默认推荐、按场景推荐的 Chinese Chan、reference-backed profile 和 custom theme。存在 reference 或打包了资产，不等于可执行渲染或历史 demo 保真已经通过。当前 Cloudhub 限制明确记录，不将其描述成已验证支持。
+
+### 七、互补验证不能被一个绿色分数替代
+
+| 层级 | 责任 | 通过意味着什么 |
+|---|---|---|
+| 请求与 BRIEF | 核对指定风格和输入结构 | 已提供的请求与计划兼容 |
+| 写入前门禁 | 检查 canonical 来源标记、必需可见数字、严格 HTML/runtime 规则 | 在这些程序检查下允许写出 |
+| 真实浏览器 | 使用真实 controller，测几何与对比度，操作备注、编辑与播放 | 被测交互和视口可用 |
+| 来源复核 | 检查实体、单位、并列条件、否定、目标、未知与标题强度 | 审查范围内内容忠于来源 |
+| 完整模型任务 | 从请求到生成、检查与独立评分，保留实际 trace | 该任务有真实结果和成本记录 |
+| 发行包 | 实际解压、安装最小依赖、比对远端下载字节 | 被测下载包与发行 runtime 一致 |
+
+完整执行、自动通过、来源复核通过和已经发布是不同状态。均分较高不能抵消关键语义错误；即使自动检查通过，已知标题问题也继续保留。
+
+普通 CLI 在写出前检查来源标记、必需数字可见性和 strict HTML。用户要求的单 deck `--eval` 在门禁后增加诊断报告；它本身不代表完整模型任务评测。
+
+### 八、效率与质量、研究成本一起计量
+
+优化使用冻结输入与实现快照、新任务工作区、多次模型运行、provider 真实 usage 和独立评分。同一 BRIEF 在两版程序中重渲染，可以隔离 renderer 行为；它不能说明模型会写出什么。完整提示词到演示稿的任务评测回答另一个问题。
+
+记录 input、cached input、uncached input、output 和耗时，把 QA/评分与校准成本单列。失败和慢样本保留在结果中；总 token 包含缓存输入，不能直接把减少比例当作付费下降比例。
+
+比较配对任务与每类任务，而不只看总均分。完整验收前，先用低成本复现、针对性回归和固定输入实验定位问题。研究总成本与每份稿件提效分别记录，不从不同版本挑选最好样本拼成通过结论。
+
+### 九、用版本化失败证据持续改进 Skill
+
+新 bug 要定位失败层，保留原要求和产物，并成为回归输入。契约或生成行为变化应做适用的任务评测；检查器缺陷应校准受影响的比较。包验证和文档检查保留各自更窄的范围。
+
+[Skill 优化方法论](docs/methodology/skill-optimization/README.md)提供计划、评测和 bug 模板及更新记录，[效率评测指南](evals/token-efficiency/README.md)定义本项目的实际计量协议。这条反馈链改进程序与契约，让普通用户任务能够复用成果。
+
+---
+
+## 评测与维护
+
+以下命令用于完整仓库、已安装评测依赖的环境；模型任务还需要 runner 的登录状态。精简运行 ZIP 不包含测试和评测输入。
+
+当前前后比较协议见[evals/token-efficiency/README.md](evals/token-efficiency/README.md)：冻结语料和 runtime，运行基线与候选，比较真实成本、质量和失败；来源复核判定与自动结果分别保留。
+
+早期 captured-run harness 仍可使用：
+
+```sh
 python3 scripts/run-skill-evals.py --runner codex --run-live --format json --json-out .tmp-run/skill-evals/results.json
 ```
 
-该命令会读取 `evals/slide-skill-prompts.csv`，通过选定 runner 运行提示词，保存原始 trace 和归一化 metrics，并按四类目标评分：
+其中 Supervisor、Generate Worker 和 Style Judge 描述评测角色，不代表普通生成必须调用多个 agent。Fixture 运行验证 harness，不是模型任务证据。该独立协议见[captured-run架构](docs/design/2026-05-17-slide-creator-captured-run-eval-architecture.md)。
 
-- Outcome：deck 任务是否完成，HTML 工件是否有效。
-- Process：是否按 skill 路由、BRIEF 物化、reference 加载和 strict validation 流程执行。
-- Style：是否符合 preset、版式节奏、内容保真，以及正向 captured-run case 的结构化 rubric 评分。
-- Efficiency：命令数量、重复失败、token 预算和总耗时。
+公开 preset 交付矩阵使用：
 
-live eval 架构刻意拆成三类角色：
-
-- Supervisor：选择 case、启动隔离 worker、捕获 trace、写入 baseline，并做回归比较。
-- Generate Worker：每个 case 一个 fresh isolated worker；只读 `SKILL.md` 和少量必要 reference，写 `BRIEF.json`，渲染 HTML，并运行 strict validation。
-- Style Judge：独立生成 `style-rubric.json`；generator 不自评 style。
-
-Generate Worker 的 shell command 和 token 全部计入 Efficiency。subagent / fresh worker 只用于隔离上下文，不能用来隐藏成本。live worker prompt 明确禁止 broad repo search、previous eval trace、existing deck、`tests/`、`demos/`、`evals/baselines/`、CLI discovery、Python introspection、symlink，以及写入 per-case artifact 目录以外的位置。
-
-本地单元测试使用 normalized fixture trace，不会真实调用任何 agent：
-
-```bash
-python3 scripts/run-skill-evals.py --runner fixture --case-id explicit-generate --normalized-trace tests/fixtures/skill-evals/explicit-generate-normalized.json --format json
-```
-
-`scripts/preset_release_gate.py` 中 captured-run eval 默认不启用。需要确定性发版检查时加 `--include-skill-evals`；只有手动评测才使用 `--runner codex --run-live`。正向 fixture case 使用仓库内的 `tests/fixtures/skill-evals/*-style-rubric.json`，如果缺 rubric，harness 会把 case 标成 `eval_complete: false` 并失败，不再用绿色分数掩盖覆盖缺口。
-
-当 `--baseline-dir` 下存在 `skill-evals.json` 时，release gate 会自动比较新的 captured-run 结果和 baseline；如果 pass 状态、完整性、总分或分类分数退化，会直接失败。也可以单独运行 comparator：
-
-```bash
-python3 scripts/compare-skill-eval-baseline.py \
-  --old evals/baselines/2026-05-17/skill-evals/skill-evals.json \
-  --new /path/to/candidate/skill-evals.json \
-  --format json
-```
-
-每次新增检查前，都要先判断：它是不是属于确定性的运行时门禁？如果本质上是主观审美判断，而不是契约校验，就应留在 review/eval，不要塞进 strict validate。
-
-完整的 22-preset 交付门禁使用 slow path：
-
-```bash
+```sh
 python3 scripts/preset_release_gate.py \
   --suite evals/preset-surface-all/manifest.json \
-  --output-dir /tmp/slide-quality-full-slow-gate \
-  --browser-geometry \
-  --contract \
-  --export-smoke \
-  --mobile-geometry \
-  --ai-advised \
-  --promotion-gate \
-  --pptx-export
+  --output-dir .tmp-run/release-gate \
+  --contract --browser-geometry --mobile-geometry --export-smoke
 ```
 
-该 gate 会阻断 desktop/mobile geometry hard failure、缺失 PresetContract 组件、空 export slot、AI-advised 内容/节奏 proxy failure、未满足前置条件的 style-native promotion，以及真实 PPTX 导出或页数不匹配失败。
-
-桌面几何会在三种窗口形状下测量——`1600x900`、`1280x720`，以及真实笔记本窗口 `1440x733`——并且窗口模式与播放模式都测：播放模式把幻灯片钉成固定 `1440x900` 盒子，那套几何是窗口模式永远观察不到的。任何被幻灯片盒子纵向裁掉的文字都会以 `browser-geometry-content-clipped` 失败。单份 deck 可以这样跑：
-
-```bash
-python3 scripts/browser_geometry_qa.py deck.html --mode both --laptop-window --strict
-```
-
-**契约对齐：验证脚本必须与生成契约一致**
-
-validate.py 的检查项必须与 SKILL.md / html-template.md / js-engine.md 的实际契约保持一致。例如：
-- 检查 hotzone → 必须用 `.edit-hotzone`（class）而不是 `id=”hotzone”`
-- 检查 preset metadata → 生成结果必须写出真实的 `body[data-preset]`，不能省略，也不能保留模板占位值
-- 检查外部链接 → 必须允许 Google Fonts（html-template.md 明确要求）
-- 检查水印 → 必须验证 JS 注入逻辑（而不是硬编码位置）
-
-契约对齐不是靠文档同步，而是靠脚本实测：每次改动 validate.py，都要跑一遍 demo，确保检查项真的匹配生成输出。
-
-### 七、反对 slide slop，既反对视觉烂稿，也反对内容烂稿
-
-AI 幻灯片最常见的问题不是明显报错，而是平庸。页面太空、布局重复、标题没判断、结构泛泛。这些最容易让结果看起来像“机器做的”。
-
-slide-creator 把它同时当成设计问题和内容问题来处理：
-
-- 视觉密度必须是刻意的
-- 版式节奏必须变化
-- 该用判断句标题时就不能偷懒用名词短语
-- 有数字时要尽量前置
-- 有术语时要翻译给目标受众
-
-目标不是让每一页都很满，而是避免“意外的空”和“意外的虚”。
-
-### 八、自定义主题可以扩展，但必须有契约
-
-支持自定义主题，不代表允许 prompt soup。
-
-theme 的约束是明确的：
-
-- 创建 `themes/your-theme/`
-- 用 `reference.md` 描述视觉语言
-- 复杂主题再附带 `starter.html`
-
-这样 theme 才是可组合、可审查、可复用的渲染契约，而不只是“帮我套一下品牌色”。
-
-### 九、内容类型路由，本质上是质量功能
-
-22 个风格方向只有在”系统能帮用户先站到对的位置”时才真正有价值。
-
-所以 slide-creator 会先按内容类型给出合理起点，但运行时路由只使用当前可稳定生成的 surface，而不是把完整设计参考库都当成可生成目标：
-
-```
-数据报告 / KPI 看板    → Data Story、Enterprise Dark、Swiss Modern
-商业路演 / VC Deck     → Enterprise Dark、Blue Sky、Swiss Modern
-开发工具 / API 文档    → Data Story、Blue Sky、Enterprise Dark
-咨询报告 / 战略方案    → Enterprise Dark、Swiss Modern、Data Story
-```
-
-好的默认值会直接减少返工。结果就是更少的坏第一稿，更少的风格重置，也更少被上下文浪费掉的 token。
-
-第一阶段的默认推荐面会有意收窄到 4 个核心 preset：
-
-- `Swiss Modern`
-- `Enterprise Dark`
-- `Data Story`
-- `Blue Sky`
-
-这**不代表其他 preset 被删除**。所有内置风格在用户显式选择时都必须可生成。五个 native deterministic core 是最稳定生成面；默认推荐面只包含 `Swiss Modern / Enterprise Dark / Data Story / Blue Sky`，`Chinese Chan` 仅作为 contextual recommendation。其他完整 reference-backed 风格走统一 profile renderer，共享 `BRIEF.json`、shared runtime、strict validation 和 eval/release gate。非核心 profile 可生成，且需要通过 historical demo parity gate 后，才可以描述为恢复到历史风格保真；但它们仍不冒充 native deterministic core，也不进入默认推荐面。
+这些检查覆盖确定性渲染、契约、实际几何与导出 DOM。`--pptx-export` 是独立的真实导出检查，`--demo-parity` 和 `--promotion-gate` 对应其他风格声明；报告实际运行的选项。单份 HTML 可运行 `scripts/browser_geometry_qa.py deck.html --mode both --laptop-window --strict`，覆盖窗口与播放两种形态。
 
 ---
 
