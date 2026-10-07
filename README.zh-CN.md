@@ -10,6 +10,15 @@
 
 ---
 
+## 下载 v2.31.0
+
+[精简 Skill 安装 ZIP](https://github.com/kaisersong/slide-creator/releases/download/v2.31.0/kai-slide-creator-v2.31.0-skill-runtime.zip) · [Release 与 SHA-256](https://github.com/kaisersong/slide-creator/releases/tag/v2.31.0) · [优化方法论 v1.0.1 ZIP](https://github.com/kaisersong/slide-creator/releases/download/v2.31.0/skill-optimization-methodology-v1.0.1.zip)
+
+方法论正文、优化计划、评测报告与bug模板见[跨 Skill 优化指南](docs/methodology/skill-optimization/README.md)。运行包与方法包分开下载，研究文档不会占用正常生成上下文。
+
+---
+
+
 ## 效果展示
 
 用浏览器直接打开，零安装查看效果：
@@ -497,7 +506,15 @@ python3 main.py --generate --brief BRIEF.json --output presentation.html --eval
 
 ## 依赖要求
 
-slide-creator **无外部依赖**。Python 3 仅用于规划阶段可选的图片评估，无需安装任何 Python 包。
+生成器需要 **Python 3.10+** 和 **beautifulsoup4**；生成后的 HTML 不需要 Python 或 JavaScript 构建工具，直接用浏览器打开。网络字体不可用时使用本地字体回退。
+
+```sh
+python3 -m venv .venv
+.venv/bin/python -m pip install -r scripts/requirements-runtime.txt
+.venv/bin/python main.py --model-context --preset "Data Story"
+```
+
+以上命令在解压后的 `kai-slide-creator/` 中执行，后续 CLI 也使用该虚拟环境的 Python。Windows 对应路径为 `.venv\Scripts\python.exe`。浏览器 QA 与 PPTX 导出属于额外工具依赖，不是普通生成路径的必需项。
 
 如需导出 PPTX 或 PNG：`clawhub install kai-html-export` 或 `pip install playwright python-pptx`
 
@@ -521,11 +538,17 @@ slide-creator **无外部依赖**。Python 3 仅用于规划阶段可选的图�
 
 ## 仅运行所需的 Skill ZIP
 
-下载 [`kai-slide-creator-v2.30.2-skill-runtime.zip`](https://github.com/kaisersong/slide-creator/releases/download/v2.30.2/kai-slide-creator-v2.30.2-skill-runtime.zip)，即可获得精简的 Skill 安装包。将压缩包顶层的 `kai-slide-creator/` 目录解压到代理的 skills 目录。压缩包只包含 `SKILL.md`、`main.py`、`scripts/`、`schemas/`、`references/` 和 `themes/`；不会包含仓库 README、Demo、测试、eval fixture、设计文档和 Git 元数据。
+下载 [`kai-slide-creator-v2.31.0-skill-runtime.zip`](https://github.com/kaisersong/slide-creator/releases/download/v2.31.0/kai-slide-creator-v2.31.0-skill-runtime.zip)，即可获得精简的 Skill 安装包。将压缩包顶层的 `kai-slide-creator/` 目录解压到代理的 skills 目录。压缩包只包含 `SKILL.md`、`main.py`、`scripts/`、`schemas/`、`references/` 和 `themes/`；不会包含仓库 README、Demo、测试、eval fixture、设计文档和 Git 元数据。
+
+---
+
+本次保留上一版的 Cloudhub 企业主题资产，但其旧参考缺少可执行布局，canonical 生成仍被视觉重复门禁阻止；没有将其标记为可生成主题。Kingdee 已完成解压生成与共享编辑壳子修复。
 
 ---
 
 ## 版本日志
+
+**v2.31.0** — 上下文与质量优化：模型只编写 BRIEF，程序加载完整风格和 runtime；新增独立用户风格约束、完整事实与数字对象绑定、正文可读性及同文排重修复。优化阶段冻结版本的8类任务、26次自动评测通过，24份正向稿风格均正确；相对原始基线生成token中位数降低77.57%、耗时降低36.59%、质量均分77.88→88.54。标题仍可能改变数量对象或省略并列条件，关键稿件需要来源复核；这些结果不代表所有任务或安装环境的质量保证。新增跨Skill优化方法论与模板，独立下载包更新到v1.0.1；发布检查补齐小屏布局和自定义主题备注面板的隐藏/打开规则。
 
 **v2.30.2** — 奇幻彩虹播放性能修复：离开封面或暂停播放时停止 WebGL 与封面 CSS 动画，返回后恢复单个动画循环；移除逐帧页面几何遍历。禁用整页位移缩放过渡，保留放映固定缩放，内容改用短淡入，并补齐黑屏遮罩。新增 36 项生命周期回归测试，同步提供精简运行安装 ZIP。
 

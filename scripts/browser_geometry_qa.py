@@ -322,7 +322,7 @@ def _activate_slide(page, slide_index: int, *, mode: str = "window") -> bool:
                   // Toggling p-on alone leaves reveal nodes hidden and the
                   // controller/counter on the previous slide.
                   const nav = document.querySelector('#nav-dots, .nav-dots');
-                  const dots = nav ? Array.from(nav.querySelectorAll('button, .dot')) : [];
+                  const dots = nav ? Array.from(nav.querySelectorAll('button, .dot, .nav-dot')) : [];
                   if (!dots[idx]) return false;
                   dots[idx].click();
                   return slides[idx].classList.contains('p-on');

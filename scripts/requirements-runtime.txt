@@ -1,0 +1,2 @@
+# Ordinary BRIEF validation, model-context and HTML generation
+beautifulsoup4>=4.12,<5

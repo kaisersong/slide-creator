@@ -5547,11 +5547,15 @@ def _render_enterprise_consulting_split(spec: dict[str, Any], total: int) -> str
         layout_id=spec["layout_id"],
         force_balance=True,
     )
+    pairs = _spec_detail_pairs(spec, count=4)
     if spec.get("supporting_facts"):
         labels = f'<p class="ent-split-label" style="line-height:1.5;">{_escape(spec["key_point"])}</p>'
     else:
-        labels = "".join(f'<div class="ent-split-label">{_escape(item)}</div>' for item in _spec_display_items(spec, limit=3))
-    pairs = _spec_detail_pairs(spec, count=4)
+        # Legacy labels repeat the cards; keep only distinct source statements.
+        card_copy = {copy_key(text) for pair in pairs[:4] for text in pair}
+        labels = "".join(f'<div class="ent-split-label">{_escape(item)}</div>'
+                         for item in _spec_display_items(spec, limit=3)
+                         if copy_key(item) not in card_copy)
     accent_colors = ["ent-accent-cyan", "ent-accent-blue", "ent-accent-violet"]
     rows = "".join(
         f"""
@@ -5590,6 +5594,7 @@ def _render_enterprise_data_table(spec: dict[str, Any], total: int) -> str:
     slide_number = spec["slide_number"]
     title_tag = _title_tag("h2", "ent-title", spec["title"], preset="Enterprise Dark", layout_id=spec["layout_id"])
     rows = []
+    summary = ""
     if spec.get("supporting_facts") and spec["role"] != "checkpoint":
         rows = [f'<tr><td><span class="ent-status-dot ent-dot-blue" aria-hidden="true"></span><span class="ent-badge ent-badge-blue">{index:02d}</span></td><td colspan="2">{_escape(fact)}</td></tr>' for index, fact in enumerate(unique_facts(spec['supporting_facts'])[:4],1)]
         headers = '<thead><tr><th>#</th><th colspan="2">Source fact</th></tr></thead>'
@@ -5611,13 +5616,19 @@ def _render_enterprise_data_table(spec: dict[str, Any], total: int) -> str:
         headers = "<thead><tr><th>Ritual</th><th>Decision focus</th><th>Cadence</th></tr></thead>"
         label = "governance"
     else:
-        for index, item in enumerate(_enterprise_table_items(spec, minimum=3, limit=4)[:4]):
+        cells = [_enterprise_table_cells(item, spec["key_point"])
+                 for item in _enterprise_table_items(spec, minimum=3, limit=4)[:4]]
+        shared_meaning = len({copy_key(meaning) for _, meaning in cells}) == 1
+        if shared_meaning and cells:
+            summary = f'<p class="ent-table-summary">{_escape(cells[0][1])}</p>'
+        for index, (signal, meaning) in enumerate(cells):
             dot = "ent-dot-green" if index == 0 else ("ent-dot-blue" if index == 1 else "ent-dot-red")
-            signal, meaning = _enterprise_table_cells(item, spec["key_point"])
+            meaning_cell = "" if shared_meaning else f'<td>{_escape(meaning)}</td>'
             rows.append(
-                f"<tr><td><span class=\"ent-status-dot {dot}\"></span>{_escape(signal)}</td><td>{_escape(meaning)}</td><td><span class=\"ent-badge {'ent-badge-green' if index == 0 else 'ent-badge-blue'}\">{_escape(spec['role'])}</span></td></tr>"
+                f"<tr><td><span class=\"ent-status-dot {dot}\"></span>{_escape(signal)}</td>{meaning_cell}<td><span class=\"ent-badge {'ent-badge-green' if index == 0 else 'ent-badge-blue'}\">{_escape(spec['role'])}</span></td></tr>"
             )
-        headers = "<thead><tr><th>Signal</th><th>Meaning</th><th>State</th></tr></thead>"
+        headers = ("<thead><tr><th>Signal</th><th>State</th></tr></thead>" if shared_meaning
+                   else "<thead><tr><th>Signal</th><th>Meaning</th><th>State</th></tr></thead>")
         label = "evidence"
     return f"""
     <section class="slide enterprise-table" id="slide-{slide_number}" data-notes="{_escape(spec['speaker_note'])}" aria-label="{_escape(spec['role'])}" data-export-role="data_table">
@@ -5626,6 +5637,7 @@ def _render_enterprise_data_table(spec: dict[str, Any], total: int) -> str:
                 <span class="ent-label-tag reveal">{label}</span>
                 {title_tag}
                 <div class="ent-sep reveal"></div>
+                {summary}
                 <table class="ent-table reveal">
                     {headers}
                     <tbody>{''.join(rows)}</tbody>
@@ -8765,7 +8777,25 @@ body {
         for i, spec in enumerate(specs)
     )
 
-    # Use starter.html CSS directly, skip the generic shell CSS
+    # Themes own their content CSS, but legacy starters may omit editor chrome.
+    from bs4 import BeautifulSoup
+    decor_soup = BeautifulSoup(theme_decor, "html.parser")
+    shell_chrome = ("" if decor_soup.select_one(".progress-bar") else '<div class="progress-bar" aria-hidden="true"></div>')
+    shell_chrome += "" if decor_soup.select_one(".nav-dots") else '<div class="nav-dots"></div>'
+    chrome_css = ""
+    if not decor_soup.select_one(".progress-bar"):
+        chrome_css += ".progress-bar { position:fixed; top:0; left:0; height:3px; z-index:9990; background:var(--kd-blue,#3b82f6); }\n"
+    if not decor_soup.select_one(".nav-dots"):
+        chrome_css += ".nav-dots button { width:8px; height:8px; border:0; padding:0; border-radius:50%; background:var(--kd-blue,#3b82f6); }\n"
+    notes_css = ""
+    if not re.search(r"#notes-panel\s*\{", starter_css):
+        notes_css = """
+#notes-panel { position:fixed; right:18px; bottom:18px;
+    width:min(380px,calc(100vw - 36px)); max-height:45vh; overflow:auto;
+    background:var(--bg,#fff); color:var(--text,#18243c);
+    border:1px solid rgba(0,0,0,.15); padding:12px; z-index:9996; }
+#notes-textarea { width:100%; min-height:90px; box-sizing:border-box; }
+"""
     js_engine = _extract_js_engine_blocks(preset=display_preset, version=_skill_version())
     brand_mark = _brand_mark_text(brief["title"], display_preset)
     provenance_attrs = _html_body_provenance_attrs(packet)
@@ -8778,6 +8808,14 @@ body {
 <title>{_escape(brief['title'])} - {_escape(display_preset)}</title>
 <style>
 {starter_css}
+{notes_css}
+#notes-panel {{ display:none; }}
+#notes-panel.active {{ display:block; }}
+{chrome_css}
+body[data-preset="Kingdee"] .title-sub {{ color:var(--text-primary,#444); background:var(--bg-primary,#fff); padding:8px 12px; }}
+@media (min-width:720px) {{
+body[data-preset="Kingdee"] .slide-title .title-content {{ max-width:calc(45vw - 60px); }}
+}}
 
 /* Present mode */
 body.presenting {{
@@ -8835,6 +8873,7 @@ body.presenting .slide-credit {{ display: none !important; }}
 <span id="brand-mark">{_escape(brand_mark)}</span>
 {theme_decor}
 {slides_html}
+{shell_chrome}
 <div class="edit-hotzone"></div>
 <button id="editToggle" class="edit-toggle" type="button" title="Edit mode (E)" aria-label="Edit mode">Edit</button>
 <div id="notes-panel">

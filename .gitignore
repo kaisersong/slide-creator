@@ -100,3 +100,7 @@ evals/artifacts/token-efficiency/
 # Reusable Skill optimization methodology and versioned templates
 !docs/methodology/
 !docs/methodology/**
+
+!scripts/requirements-runtime.txt
+
+!docs/design/2026-10-08-release-v2.31.0.md

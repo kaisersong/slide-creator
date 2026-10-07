@@ -2880,9 +2880,9 @@ def test_custom_theme_e2e_render_and_validate(tmp_path):
     assert output_path.exists()
     assert len(html_text) > 5000
 
-    # Run required (non-strict) validation
-    passed = validate(output_path, strict=False)
-    assert passed, f"Required validation failed for Kingdee deck at {output_path}"
+    # The shared editor must start hidden, including themes without a starter.
+    passed = validate(output_path, strict=True)
+    assert passed, f"Strict validation failed for Kingdee deck at {output_path}"
 
 
 def test_custom_theme_provenance_attrs():
@@ -3001,3 +3001,29 @@ def test_enterprise_dark_signal_detection_in_routing():
     assert not _has_before_after_signal("从旧系统到新系统")  # "从...到" is no longer a signal
     assert not _has_before_after_signal("升级计划")
     assert not _has_before_after_signal("改变策略")
+
+
+def test_legacy_enterprise_preserves_facts_without_repeated_summary_columns():
+    brief = read_json(ROOT / 'evals/preset-surface-all/cases/representative-12-role-brief.json')
+    brief['style']['preset'] = 'Enterprise Dark'
+    html_text, _, _ = render_from_brief(brief)
+    soup = BeautifulSoup(html_text, 'html.parser')
+    governance = soup.select_one('#slide-10')
+    summary = brief['narrative']['slides'][9]['key_point']
+    assert governance.select_one('.ent-table-summary').get_text(' ', strip=True) == summary
+    assert governance.get_text(' ', strip=True).count(summary) == 1
+    assert len(governance.select('.ent-table tbody tr')) == 4
+    for slide in soup.select('.enterprise-split'):
+        card_titles = {n.get_text(' ',strip=True) for n in slide.select('.ent-split-item-title')}
+        assert all(n.get_text(' ',strip=True) not in card_titles for n in slide.select('.ent-split-label'))
+
+
+def test_custom_themes_own_or_receive_exactly_one_shared_navigation_shell():
+    for preset in ['Kingdee','fantasy-rainbow']:
+        brief = read_json(AUTO_DEMO)
+        brief['style']['preset'] = preset
+        html_text, _, _ = render_from_brief(brief)
+        soup = BeautifulSoup(html_text,'html.parser')
+        assert len(soup.select('.nav-dots')) == 1, preset
+        assert len(soup.select('.progress-bar')) == 1, preset
+        assert len(soup.select('#notes-panel')) == 1, preset

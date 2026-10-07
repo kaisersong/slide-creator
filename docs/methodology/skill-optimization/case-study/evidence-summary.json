@@ -1,5 +1,5 @@
 {
-  "version": "1.0",
+  "version": "1.0.1",
   "date": "2026-10-07",
   "scope": "Local Codex CLI + real Chrome; not installed-consumer or release validation",
   "implementation": {
@@ -620,5 +620,11 @@
       "recorded_tasks": 26
     }
   ],
-  "cost_scope": "312 generation/route tasks plus their recorded QA/judge; excludes calibration, environment probes, coordinator research and two interrupted generations; total tokens include cached input and are not billed cost"
+  "cost_scope": "312 generation/route tasks plus their recorded QA/judge; excludes calibration, environment probes, coordinator research and two interrupted generations; total tokens include cached input and are not billed cost",
+  "methodology_updated_at": "2026-10-08",
+  "release_follow_up": {
+    "version": "2.31.0",
+    "model_measurements": "Frozen original implementation; no new model E2E claim for package checks",
+    "new_bug_record": "release-checks-bug.md"
+  }
 }

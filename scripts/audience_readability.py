@@ -119,6 +119,33 @@ def apply_audience_readability(html: str) -> str:
 body .slide .audience-copy { font-size:22px !important; line-height:1.45 !important; letter-spacing:normal; }
 body .slide .pill.audience-copy { white-space:normal; max-width:100%; }
 @media (max-width:600px) { body:not(.presenting) .slide .audience-copy { font-size:18px !important; } }
+/* Reflow narrow exhibits instead of cropping facts after enlarging body text. */
+body[data-profile-spec="neo-retro-dev-deck"] .slide li.plus,
+body[data-profile-spec="neo-retro-dev-deck"] .slide li.minus { padding-top:4px !important; padding-bottom:4px !important; line-height:1.35 !important; }
+@media (max-width:600px) {
+body:not(.presenting)[data-profile-spec="bold-signal"] .slide-content { padding:12px !important; }
+body:not(.presenting)[data-profile-spec="bold-signal"] .slide-content > div:first-child { grid-template-columns:1fr !important; gap:12px !important; }
+body:not(.presenting)[data-profile-spec="bold-signal"] .slide-content div[style*="border:"] { padding:10px !important; }
+body:not(.presenting)[data-profile-spec="neo-brutalism"] .slide { flex-direction:column !important; }
+body:not(.presenting)[data-profile-spec="neo-brutalism"] .slide :is(.left-panel,.right-panel) { width:100% !important; height:auto !important; min-height:0 !important; flex:none !important; padding:12px !important; }
+body:not(.presenting)[data-profile-spec="neo-brutalism"] .brute-list li { overflow-wrap:anywhere; }
+body:not(.presenting)[data-profile-spec="neo-retro-dev-deck"] .cards-grid { grid-template-columns:1fr !important; }
+body:not(.presenting)[data-profile-spec="neo-retro-dev-deck"] .cmd-table,
+body:not(.presenting)[data-profile-spec="neo-retro-dev-deck"] .cmd-table tbody { display:block; width:100%; }
+body:not(.presenting)[data-profile-spec="neo-retro-dev-deck"] .cmd-table tr { display:grid; grid-template-columns:minmax(0,1fr); margin-bottom:8px; }
+body:not(.presenting)[data-profile-spec="neo-retro-dev-deck"] .cmd-table td { display:block; width:100%; padding:4px 8px !important; overflow-wrap:anywhere; }
+body:not(.presenting)[data-profile-spec="notebook-tabs"] .paper-content { padding:16px !important; }
+body:not(.presenting)[data-profile-spec="notebook-tabs"] .ba-split { flex-direction:column; gap:8px; }
+body:not(.presenting)[data-profile-spec="notebook-tabs"] .ba-col { padding:12px !important; }
+body:not(.presenting)[data-preset="Enterprise Dark"] .ent-split { padding:16px !important; gap:12px !important; }
+body:not(.presenting)[data-preset="Enterprise Dark"] .ent-split-panel .ent-kpi-card { padding:12px !important; }
+body:not(.presenting)[data-preset="Enterprise Dark"] .ent-title { font-size:28px !important; line-height:1.15 !important; }
+body:not(.presenting)[data-preset="Enterprise Dark"] .ent-title .title-line { display:inline !important; white-space:normal !important; }
+body:not(.presenting)[data-preset="Enterprise Dark"] .ent-table,
+body:not(.presenting)[data-preset="Enterprise Dark"] .ent-table tbody { display:block; width:100%; }
+body:not(.presenting)[data-preset="Enterprise Dark"] .ent-table tr { display:grid; grid-template-columns:minmax(0,1fr); margin-bottom:8px; }
+body:not(.presenting)[data-preset="Enterprise Dark"] .ent-table td { display:block; width:100%; padding:4px 8px !important; }
+}
 body .slide .iri-field code { font-size:20px; line-height:1.35; overflow-wrap:anywhere; }
 body .slide .iri-brief-code pre { font-size:20px !important; line-height:1.45 !important; white-space:pre-wrap; overflow-wrap:anywhere; }
 body[data-preset="Data Story"] .ds-close .ds-kpi { font-size:clamp(38px,4vw,58px); line-height:1.1; }

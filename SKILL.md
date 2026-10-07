@@ -1,7 +1,7 @@
 ---
 name: kai-slide-creator
 description: 生成HTML演示文稿/幻灯片 — 稳定生成器覆盖核心风格，播放/演讲者模式。适用于路演、产品发布、技术分享、方案宣讲等场景。
-version: 2.30.2
+version: 2.31.0
 metadata: {"openclaw":{"emoji":"🎞","os":["darwin","linux","windows"],"homepage":"https://github.com/kaisersong/slide-creator","requires":{"bins":["python3"]},"install":[]}}
 ---
 
@@ -13,6 +13,8 @@ metadata: {"openclaw":{"emoji":"🎞","os":["darwin","linux","windows"],"homepag
 
 **Claude Code:** 告诉 Claude「安装 https://github.com/kaisersong/slide-creator」  
 **OpenClaw:** `clawhub install kai-slide-creator`
+
+生成器需要 Python 3.10+ 与 `beautifulsoup4`；安装运行包后，在 Python 虚拟环境执行 `python -m pip install -r scripts/requirements-runtime.txt`。生成与契约查询使用该环境的 Python 可执行路径。生成后的 HTML 无需 Python，直接由浏览器运行。
 
 ## 使用方式
 

@@ -18,7 +18,7 @@ VIEWPORTS = [{"width": 1600, "height": 900}]
 
 
 @pytest.mark.slow
-@pytest.mark.parametrize("preset", ["Swiss Modern", "Blue Sky"])
+@pytest.mark.parametrize("preset", ["Swiss Modern", "Blue Sky", "Kingdee"])
 def test_present_navigation_uses_anonymous_production_controller(tmp_path, preset):
     """Switching only p-on used to screenshot a blank page and stale counter."""
     import json
@@ -44,7 +44,7 @@ def test_present_navigation_uses_anonymous_production_controller(tmp_path, prese
         })""")
         assert state["activeId"] == "slide-4"
         assert state["counter"].startswith("4 /")
-        if preset == "Swiss Modern":
+        if preset != "Blue Sky":
             assert state["visible"] and state["reveals"]
         else:
             assert page.locator(".slide.p-on").get_attribute("class").find("active") >= 0
