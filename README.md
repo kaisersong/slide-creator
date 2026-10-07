@@ -73,223 +73,134 @@ Click any screenshot below to open the live demo (same content, different styles
 
 ---
 
-## Design Philosophy: Build for the Real Last Mile
+## Design Philosophy: Models Plan Content, Programs Enforce Delivery
 
-slide-creator is built around one observation: people usually spend a long time generating or discussing content first, then ask for slides at the very end. That is the worst possible moment to depend on raw conversation context. The model is already overloaded, style signals are diluted, and hard constraints get dropped.
+slide-creator serves the last step of a content workflow: turning an existing argument into a usable presentation. That step often arrives after a long conversation. The architecture preserves the original material and explicit choices, gives the model a compact content contract, and delegates repeated implementation to a renderer.
 
-The design philosophy of slide-creator is to protect that last mile.
-
-### 1. IR-first workflow, planning is optional
-
-The main workflow is now explicitly **IR-first workflow**:
-
-```
-user prompt → BRIEF.json → HTML → validate → eval
-```
-
-`--plan` exists to distill a durable `BRIEF.json`, not to force a human review step every time. `PLANNING.md` is optional, a human-readable view when someone explicitly wants to inspect structure before rendering.
-
-This matters because the generator should not carry the full chat history into the render step. `--generate` should execute against a small, hard truth source, not against a messy, late-stage conversation.
-
-The same rule applies to direct prompt generation. "Give content + preset and generate now" is still an IR-first path: materialize `BRIEF.json`, route native core presets, unified profile presets, and custom themes through `render_from_brief()`, then pass the strict pre-write validator before writing the final HTML.
-
-### 2. Public modes stay simple, internal pipeline stays strict
-
-Users should not need to think in six internal phases. The public mental model is deliberately small:
-
-- **Auto** for fast first draft
-- **Polish** for the quality-locked path
-
-Internally, the pipeline is stricter than the UI suggests. The real path is style discovery, BRIEF distillation, rendering, validation, and review. Simpler UX outside, stronger contract inside.
-
-This is why the README and the skill keep talking about Auto / Polish, while the repo still maintains explicit routing, review logic, and eval infrastructure.
-
-### 3. Progressive disclosure for model context
-
-A skill file loads into model context on every invocation. That means context is a product surface, not an implementation detail.
-
-slide-creator keeps `SKILL.md` as a thin router and pushes detail into references so each path loads only what it needs:
-
-```
---plan        → references/brief-template.json only
---generate    → references/generation-contract.md + main.py --model-context --preset <style>
-runtime reads → references/html-template.md + references/js-engine.md + one style file + base-css.md
-interactive   → references/workflow.md
-style picker  → references/style-index.md
+```mermaid
+flowchart LR
+    R["Explicit user preset"] --> V["Request and BRIEF checks"]
+    S["Original source"] --> M["Model organizes content"]
+    C["Compiled capability contract"] --> M
+    M --> B["BRIEF.json"]
+    B --> V
+    V --> G["Canonical renderer"]
+    G --> H["Pre-write gates"]
+    H --> O["Browser-native HTML"]
+    O --> Q["Review and task evaluation"]
+    S --> Q
 ```
 
-The goal is not elegance for its own sake. It is to reduce context pressure so the model does not forget the important parts right before it renders.
+Review and evaluation run according to the requested workflow; ordinary generation does not automatically invoke an independent model judge. Each layer has a distinct responsibility.
 
-The model contract comes from the existing schema and style compiler. It contains no CSS or JavaScript source. The model writes BRIEF; the renderer reads the full style and runtime. Technical decks also use `references/technical-language.md`, with a project target of 80/100 for STE-aligned language. Chinese uses the same clarity principles. Full dictionary compliance needs a separate review. See `docs/design/2026-10-06-token-efficiency-plan.md` and `evals/token-efficiency/README.md` for the plan and live before/after eval commands.
+### 1. Separate content judgment from repeated implementation
 
-### 4. Show, don't tell, for visual choices
+The model organizes claims, evidence, narrative, exhibit intent, local facts, the closing request and speaker notes. The program loads the complete selected style and runtime, chooses concrete layouts, implements CSS and JavaScript, assembles export DOM, and validates the output before writing.
 
-Most users cannot reliably describe a visual direction in abstract language. They can react to concrete options immediately.
+This split reduces repeated source reads and implementation retries. A renderer defect belongs in the renderer; asking every new content task to inspect and patch runtime code would hide that defect and consume context. The generator follows `render_from_brief()` for native core presets, unified profile presets and supported custom themes.
 
-That is why slide-creator treats style selection as a preview problem, not a questionnaire problem. Show three strong directions. Let the user point. Then write the decision into `BRIEF.json`.
+Auto and Polish retain the same execution path. Auto produces a first draft; Polish adds deeper content and design review. Polish is an additional review workflow, not a guarantee of perfect source fidelity.
 
-This is also why style choice belongs before rendering. If style remains a vague instruction until the HTML step, it is too late.
+### 2. Treat BRIEF as a derived plan, not verified truth
 
-### 5. Zero-dependency runtime is part of the product
+Original material defines the facts. Explicit user choices define the requested output. `BRIEF.json` is the model's structured interpretation of both, so it can still contain a mistake. A valid schema does not make its claims true.
 
-The output is not a screenshot, and not a build artifact that still needs another toolchain. The output is a browser-native deck with:
+The plan keeps each page's claim, explanation, `supporting_facts`, numeric evidence and visual intent together. `numeric_facts` is an auxiliary index for binding values, not an extra set of table rows. `speaker_note` carries speaking guidance separately from audience-visible copy, and `desired_action` preserves the scope and timing of the closing request. Old BRIEF files retain documented fallbacks.
 
-- viewport-fitted slides
-- presenter mode
-- **Default-on** inline editing
-- keyboard navigation
-- self-contained runtime
+`--plan` creates this executable plan. `PLANNING.md` remains an optional human-readable view. Direct content-plus-style generation also materializes BRIEF first; it does not bypass the renderer to hand-author final HTML.
 
-The zero-dependency requirement forces discipline. If a deck only works after a bundler, remote font fetch, or extra runtime glue, the product has already missed its point.
+### 3. Compile a small model contract from complete implementation owners
 
-### 6. Validate before trust
+`SKILL.md` routes the task. The generation contract comes from the existing schema, style compiler, title profiles and capability registry, so the model receives field shapes, supported layouts, tokens and content rules without repeatedly reading implementation source.
 
-The system should catch failure before the user opens a broken deck.
+```text
+Model reads   → generation-contract.md + main.py --model-context --preset <style>
+Program reads → complete selected style, templates and shared runtime
+Technical use → technical-language.md when the content requires it
+Deeper design → relevant style/reference sections for a concrete missing decision
+```
 
-That is why slide-creator is moving quality checks earlier:
+The complete capability stays in the program. Context reduction must preserve evidence, conditions and necessary design choices; an arbitrary reference-read limit is not a substitute for a useful contract.
 
-- `--plan` creates a structured `BRIEF.json`
-- `--generate` renders from the IR instead of from the whole conversation
-- `validate-brief.py` checks the brief contract
-- `scripts/validate_html.py --strict` checks the runtime contract
-- evals score route / compression / render / efficiency
+### 4. Make explicit style choices independently enforceable
 
-The important design idea here is not "more tests". It is **better failure localization**. If a result is bad, we want to know whether the mistake happened in routing, compression, rendering, or polish. That feedback then improves the skill itself.
+When the user has not selected a style, offer suitable previews and recommendations. When a style is already explicit, preserve it instead of reopening the choice.
 
-**Validation positioning: pre-write gate, not optional review**
+Save that original selection in the task's `SLIDE_REQUEST.json` before authoring BRIEF. `--generate` checks the request independently of `BRIEF.style.preset`; a mismatch produces `PRESET MISMATCH` before output is written. The caller can also supply `--requested-preset` or `--request-file`. Aliases resolve against the actual style reference, and a conflicting argument cannot override the request file.
 
-validate.py should run inside `--generate`, but after rendering and before the final file is accepted. The right sequence is: assemble HTML → write temp file → run `python3 scripts/validate_html.py "$TMP_HTML" --strict` → fix/regenerate until pass → write final output. If you also want a single-deck eval artifact, add `--eval` or `--eval-out report.json` after the strict gate passes.
+This requires the caller to record the user's choice correctly. It is a program constraint on the supplied request, not a guarantee that natural-language interpretation is infallible. Correct BRIEF after a mismatch; do not rewrite the request to fit the model's choice. Unsupported styles are reported rather than silently substituted.
 
-This keeps validation out of planning and composition, but inside delivery:
-- No extra planning step → no extra LLM cognitive load during ideation
-- No extra style-file reads beyond the existing generation inputs
-- Hard failures stop bad output before handoff
-- Warnings can still feed polish / retry policy without pretending the deck is already valid
+### 5. Preserve meaning while fitting content to the page
 
-**Captured-run skill evals**
+Each page should carry complete local statements. Values stay attached to their source entities and units; targets remain targets, unknowns remain explicit, and interview clues do not become proven causes. A count of customers is not automatically a count of reviews, and an AND condition cannot become a single trigger.
 
-`scripts/run_evals.py` checks committed BRIEF/HTML artifacts and deterministic renderer behavior. It is a regression gate, not a full skill eval.
+Layout pressure calls for reflow, suitable exhibits and removal of complete verbatim duplicates. It does not justify clipping the last fact, inventing values, or repeating items to fill a fixed card count. Deduplication protects negation, decimal values, different conditions and the labels needed to interpret a metric. Unrelated units do not share a quantitative series; sparse material can explain the next test instead.
 
-For OpenAI-style captured-run skill evals, use:
+Titles need their own source review. A short headline can contradict a correct body by dropping a condition or changing the counted entity. Readability, contrast and visual rhythm are checked on the rendered result, with enough variety to support the argument rather than decoration alone.
 
-```bash
+### 6. Own the shared browser shell as well as the theme
+
+A theme owns its visual language and content composition. The generator owns the shared editing, notes, navigation, progress and playback contract. A starter that omits required shell elements receives them; a theme that already provides them keeps one copy. Actual Edit/Done and keyboard interaction verifies that the shell works.
+
+The delivered HTML runs in a browser without Python or a JavaScript build step, with local font fallback when network fonts are unavailable. The generator itself requires Python 3.10+ and its documented runtime dependencies. These are separate requirements.
+
+Capability routing distinguishes the five native core presets, the four default recommendations, contextual Chinese Chan, reference-backed profile renderers and custom themes. A reference file or a bundled asset alone does not prove executable rendering or historical demo parity. The current Cloudhub limitation is documented rather than described as validated support.
+
+### 7. Use complementary checks instead of one green score
+
+| Layer | Responsibility | Meaning of a pass |
+|---|---|---|
+| Request and BRIEF | Check the explicit preset and input structure | The supplied request and plan are compatible |
+| Pre-write gate | Check canonical provenance, required visible numbers and strict HTML/runtime rules | The output may be written under these program checks |
+| Real browser | Activate actual controllers; measure geometry and contrast; exercise notes, editing and playback | The tested interaction and viewport work |
+| Source review | Check entities, units, conjunctions, negation, targets, unknowns and headline strength | The reviewed content preserves its source |
+| Full model task | Capture the task from request through generation, checks and independent grading | The evaluated task has a recorded outcome and cost |
+| Release package | Extract the actual ZIP, install minimal dependencies and compare hosted bytes | The tested download corresponds to the release runtime |
+
+Complete execution, automated pass, source-review pass and release publication are distinct states. A high mean quality score cannot cancel a critical semantic error. Known headline issues remain documented even when automated checks pass.
+
+The ordinary CLI checks provenance, visible required numbers and strict HTML before writing. Requested single-deck `--eval` reports add diagnostics after that gate; they do not themselves prove a full model-task evaluation.
+
+### 8. Measure efficiency together with quality and research cost
+
+Optimization uses frozen inputs and implementation snapshots, fresh task workspaces, repeated model runs, real provider usage and independent grading. The same BRIEF rendered by two program versions isolates renderer behavior; it does not show what the model will author. Full prompt-to-deck runs answer the separate task-level question.
+
+Report input, cached input, uncached input, output and wall time, keeping QA/grading and calibration costs visible. Failed and slow samples remain in the results. Cached input is included in total tokens, so a reduction in total tokens is not directly a reduction in billed cost.
+
+Compare paired tasks and each task type, not just an overall average. Use inexpensive reproductions, focused regressions and fixed-input experiments before a complete validation round. Record research cost separately from per-deck savings; do not assemble a passing result from different versions' best samples.
+
+### 9. Improve the Skill through versioned failure evidence
+
+A discovered bug should identify the failed layer, preserve the original request and artifact, and become a regression input. Changes to contracts or generation behavior require appropriate task evaluation; checker defects require calibration of affected comparisons. Package-only and documentation checks must retain their narrower scope.
+
+The [Skill optimization methodology](docs/methodology/skill-optimization/README.md) provides reusable plan, evaluation and bug templates with an update log. The [efficiency evaluation guide](evals/token-efficiency/README.md) documents the actual measurement protocol. This feedback loop improves the program and contracts without making every user task redo the research.
+
+---
+
+## Evaluation and Maintenance
+
+These commands are for a full repository checkout with evaluation dependencies and, for model runs, an authenticated runner. The compact runtime ZIP intentionally excludes test and evaluation inputs.
+
+The current before/after protocol is documented in [evals/token-efficiency/README.md](evals/token-efficiency/README.md): freeze the task set and runtime, run baseline and candidate arms, then compare measured cost, quality and failures. Source-review dispositions remain alongside automated results.
+
+The older captured-run harness remains available:
+
+```sh
 python3 scripts/run-skill-evals.py --runner codex --run-live --format json --json-out .tmp-run/skill-evals/results.json
 ```
 
-This runs the prompt set in `evals/slide-skill-prompts.csv` through the selected runner, stores raw and normalized traces under `evals/artifacts/current/skill-runs/`, and scores each case across four categories:
+Its Supervisor, Generate Worker and Style Judge labels describe evaluation roles, not mandatory agents in ordinary deck generation. Fixture runs verify the harness; they are not model-task evidence. See the [captured-run architecture](docs/design/2026-05-17-slide-creator-captured-run-eval-architecture.md) for that separate protocol.
 
-- Outcome: deck task completion and valid HTML artifacts.
-- Process: skill routing, BRIEF/materialization evidence, reference loading, and strict validation evidence from normalized runner metrics.
-- Style: preset fit, slide rhythm, content fidelity, and structured rubric grading for positive captured-run cases.
-- Efficiency: command count, repeated failures, token budgets, and wall-clock budget.
+For the public preset delivery matrix:
 
-The live eval architecture is deliberately split into three roles:
-
-- Supervisor: selects cases, launches isolated workers, captures traces, writes baselines, and compares regressions.
-- Generate Worker: one fresh isolated worker per case; reads `SKILL.md`, a small reference set, writes `BRIEF.json`, renders HTML, and runs strict validation.
-- Style Judge: a separate grader that produces `style-rubric.json`; the generator does not self-grade style.
-
-All generation-worker shell commands and tokens count toward Efficiency. Subagents/fresh workers are for context isolation, not for hiding cost. The live worker prompt forbids broad repo searches, previous eval traces, existing decks, `tests/`, `demos/`, `evals/baselines/`, CLI discovery, Python introspection, symlinks, and writes outside the per-case artifact directory.
-
-Use fixture mode for deterministic local tests:
-
-```bash
-python3 scripts/run-skill-evals.py --runner fixture --case-id explicit-generate --normalized-trace tests/fixtures/skill-evals/explicit-generate-normalized.json --format json
-```
-
-`scripts/preset_release_gate.py` keeps captured-run evals optional. Add `--include-skill-evals` for deterministic release checks, or let `--runner codex --run-live` run only during a manual evaluation pass. Positive fixture cases use checked-in `tests/fixtures/skill-evals/*-style-rubric.json`; if a positive case has no rubric, the harness marks it `eval_complete: false` and fails the eval instead of hiding the gap behind a green score.
-
-When `--baseline-dir` contains `skill-evals.json`, the release gate automatically compares the new captured-run result against that baseline and fails on pass, completeness, total score, or category regressions. You can also run the comparator directly:
-
-```bash
-python3 scripts/compare-skill-eval-baseline.py \
-  --old evals/baselines/2026-05-17/skill-evals/skill-evals.json \
-  --new /path/to/candidate/skill-evals.json \
-  --format json
-```
-
-Before adding any new check, verify: does this check belong in the deterministic runtime gate? If it requires subjective taste judgment rather than contract validation, it should stay in review/eval instead of strict validate.
-
-For the full 22-preset delivery gate, run the slow path:
-
-```bash
+```sh
 python3 scripts/preset_release_gate.py \
   --suite evals/preset-surface-all/manifest.json \
-  --output-dir /tmp/slide-quality-full-slow-gate \
-  --browser-geometry \
-  --contract \
-  --export-smoke \
-  --mobile-geometry \
-  --ai-advised \
-  --promotion-gate \
-  --pptx-export
+  --output-dir .tmp-run/release-gate \
+  --contract --browser-geometry --mobile-geometry --export-smoke
 ```
 
-This gate blocks desktop/mobile geometry failures, missing PresetContract components, empty export slots, AI-advised content/rhythm proxy failures, unsupported style-native promotion, and real PPTX export/page-count failures.
-
-Desktop geometry is measured at three window shapes — `1600x900`, `1280x720`, and the real laptop window `1440x733` — in both window mode and play mode, because play mode pins slides to a fixed `1440x900` box whose geometry window mode never observes. Any text a slide box crops vertically fails as `browser-geometry-content-clipped`. To run that check on a single deck:
-
-```bash
-python3 scripts/browser_geometry_qa.py deck.html --mode both --laptop-window --strict
-```
-
-**Contract alignment: validators must match generation contracts**
-
-validate.py checks must align with actual contracts in SKILL.md / html-template.md / js-engine.md. For example:
-- Check hotzone → must use `.edit-hotzone` (class) not `id="hotzone"`
-- Check preset metadata → generated decks must emit a real `body[data-preset]`, not omit it or leave the template placeholder
-- Check external links → must allow Google Fonts (explicitly required by html-template.md)
-- Check watermark → must verify JS injection logic (not hardcoded position)
-
-Contract alignment isn't about doc syncing; it's about script validation: every validate.py change should run against demos to ensure checks match actual generation output.
-
-### 7. Against slide slop, visual and semantic
-
-Most AI slide failures are not dramatic. They are mediocre. Sparse pages, repeated layouts, weak titles, and generic structure. That is what makes decks feel machine-made.
-
-slide-creator treats this as a design problem and a content problem:
-
-- visual density must be intentional
-- layout rhythm must change
-- titles should carry judgments when the content type calls for it
-- numbers should surface early when the material has them
-- jargon should be translated for the audience
-
-The point is not to make every deck look busy. It is to avoid accidental emptiness and accidental vagueness.
-
-### 8. Extensible themes, but with a contract
-
-Custom themes are supported, but they are not prompt soup. The contract is explicit:
-
-- create `themes/your-theme/`
-- add `reference.md` for the design language
-- optionally add `starter.html` for complex systems
-
-This makes themes composable and reviewable. A theme is not just "use our brand colors". It is a reusable rendering contract.
-
-### 9. Content-type routing is a quality feature
-
-22 presets are useful only if the system helps users start in the right neighborhood.
-
-That is why slide-creator routes by content type, using the current generator-ready surface rather than the full design-reference library:
-
-```
-Data report / KPI dashboard → Data Story, Enterprise Dark, Swiss Modern
-Business pitch / VC deck    → Enterprise Dark, Blue Sky, Swiss Modern
-Developer tool / API docs   → Data Story, Blue Sky, Enterprise Dark
-Consulting / strategy       → Enterprise Dark, Swiss Modern, Data Story
-```
-
-Good defaults reduce rework. In practice, that means fewer bad first drafts, fewer style resets, and less wasted context.
-
-Phase 1 recommendation surface is intentionally narrower than the full preset library:
-
-- `Swiss Modern`
-- `Enterprise Dark`
-- `Data Story`
-- `Blue Sky`
-
-All built-in presets are explicitly renderable. The five native deterministic core presets are the most stable generation surface; only Swiss Modern, Enterprise Dark, Data Story, and Blue Sky are in the default recommendation surface, while Chinese Chan is contextual only. The remaining reference-backed presets use the unified profile renderer with the same BRIEF, shared runtime, strict validation, and eval/release gates. Profile-rendered presets are renderable, and they are demo-parity gated against the historical checked-in demos before being described as restored to historical style fidelity, but they are still not presented as native deterministic core or default recommendations.
+This checks deterministic rendering, contracts, actual geometry and export DOM. `--pptx-export` is a separate real-export check; `--demo-parity` and `--promotion-gate` address their separate style claims. Report which options actually ran. On a single HTML deck, `scripts/browser_geometry_qa.py deck.html --mode both --laptop-window --strict` checks both window and presentation surfaces.
 
 ---
 
