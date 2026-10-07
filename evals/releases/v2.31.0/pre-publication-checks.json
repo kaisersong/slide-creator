@@ -1,0 +1,137 @@
+{
+  "version": "2.31.0",
+  "date": "2026-10-08",
+  "gate": {
+    "pass": true,
+    "cases": 66,
+    "source": "immutable exactZIPruntime",
+    "archive_sha256": "319c0972dd608c209a971873eb1c28cb965057b5f9472af7594fc8f288f4bd44",
+    "baseline_compare": false,
+    "contract": true,
+    "desktop_window_present": true,
+    "mobile": true,
+    "export_DOM_smoke": true,
+    "PPTX_export": false
+  },
+  "regression": {
+    "passed": 2880,
+    "skipped": 114,
+    "deselected": 8,
+    "failed": 0
+  },
+  "targeted_real_navigation_tests": 3,
+  "package": {
+    "sha256": "319c0972dd608c209a971873eb1c28cb965057b5f9472af7594fc8f288f4bd44",
+    "bytes": 5029667,
+    "tracked_runtime_files": 138,
+    "restored_enterprise_files": [
+      "themes/cloudhub/assets/Cloudhub_slogan2025.png",
+      "themes/cloudhub/assets/README.md",
+      "themes/cloudhub/assets/cloudhub_blue.png",
+      "themes/cloudhub/assets/cloudhub_endpage.png",
+      "themes/cloudhub/assets/cloudhub_homepage.png",
+      "themes/cloudhub/assets/cloudhub_thanks.png",
+      "themes/cloudhub/assets/cloudhub_white.png",
+      "themes/cloudhub/reference.md",
+      "themes/cloudhub/starter.html",
+      "themes/kingdee/assets/homepage.png",
+      "themes/kingdee/assets/kingdee-blue.png",
+      "themes/kingdee/assets/kingdee-thanks.png",
+      "themes/kingdee/assets/kingdee-white.png",
+      "themes/kingdee/assets/kingdee_ColorWhitedynamic.gif",
+      "themes/kingdee/assets/kingdee_ColorWhitedynamic.gif.zip",
+      "themes/kingdee/assets/kingdee_Colordynamic.gif",
+      "themes/kingdee/assets/kingdee_catalogue.png",
+      "themes/kingdee/assets/kingdee_chapter.png",
+      "themes/kingdee/assets/kingdee_endpage.png",
+      "themes/kingdee/starter.html"
+    ]
+  },
+  "package_runtime_total_files": 158,
+  "runtime_index_bytes_match": true,
+  "package_browser": {
+    "scope": "9 extracted-package renders; geometry from completed latest immutable-package pass; editor retested through visible Edit/Done button; two desktop viewports,window/present; actual editor and playback;no new model calls or PPTX export",
+    "pass": true,
+    "cases": [
+      {
+        "case_id": "data-kpi-en",
+        "geometry_pass": true,
+        "notes_hidden_open_close": true,
+        "F5_playback": true,
+        "ArrowRight_page2": true,
+        "page_errors": 0
+      },
+      {
+        "case_id": "swiss-architecture-zh",
+        "geometry_pass": true,
+        "notes_hidden_open_close": true,
+        "F5_playback": true,
+        "ArrowRight_page2": true,
+        "page_errors": 0
+      },
+      {
+        "case_id": "blue-launch-zh",
+        "geometry_pass": true,
+        "notes_hidden_open_close": true,
+        "F5_playback": true,
+        "ArrowRight_page2": true,
+        "page_errors": 0
+      },
+      {
+        "case_id": "enterprise-security-en",
+        "geometry_pass": true,
+        "notes_hidden_open_close": true,
+        "F5_playback": true,
+        "ArrowRight_page2": true,
+        "page_errors": 0
+      },
+      {
+        "case_id": "chan-learning-zh",
+        "geometry_pass": true,
+        "notes_hidden_open_close": true,
+        "F5_playback": true,
+        "ArrowRight_page2": true,
+        "page_errors": 0
+      },
+      {
+        "case_id": "consulting-strategy-zh",
+        "geometry_pass": true,
+        "notes_hidden_open_close": true,
+        "F5_playback": true,
+        "ArrowRight_page2": true,
+        "page_errors": 0
+      },
+      {
+        "case_id": "fantasy-custom-zh",
+        "geometry_pass": true,
+        "notes_hidden_open_close": true,
+        "F5_playback": true,
+        "ArrowRight_page2": true,
+        "page_errors": 0
+      },
+      {
+        "case_id": "sparse-api-en",
+        "geometry_pass": true,
+        "notes_hidden_open_close": true,
+        "F5_playback": true,
+        "ArrowRight_page2": true,
+        "page_errors": 0
+      },
+      {
+        "case_id": "kingdee",
+        "geometry_pass": true,
+        "notes_hidden_open_close": true,
+        "F5_playback": true,
+        "ArrowRight_page2": true,
+        "page_errors": 0
+      }
+    ]
+  },
+  "known_issues": [
+    "Model headline counted entities and conjunctive conditions still require source review",
+    "Cloudhub preserved legacy assets; canonical5-page render still fails visual-variety gate; reproduced at v2.30.2"
+  ],
+  "model_metrics_scope": "Frozen optimization implementation f82e166,26/26auto,24/24preset;not new release model E2E",
+  "prior_release_sha256": "bdeee6d01d3604433885ee48f09018f8b43815b9f79b1e0a6c840ba88c1982a1",
+  "hosted_status": "Pending until actual publication; subsequent release-verification.json asset records observed remote checks"
+}

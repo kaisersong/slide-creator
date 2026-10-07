@@ -78,4 +78,4 @@
 
 本包的evidence-summary.json保留所引用结果的字段、原仓库路径和文件SHA-256，便于在原仓库追溯；摘要不替代原始收据。详细实验方案与结果在 `docs/design/2026-10-06-token-efficiency-plan.md`、`2026-10-06-visual-polish-results.md` 和 `2026-10-07-user-preset-guard-results.md`。
 
-性能差异与主题覆盖必须随结论说明；ASD-STE100使用项目对齐评分和中文适配，完整官方词典未核验，不构成标准认证。全部代码在隔离worktree，未合并或替换安装版。
+性能差异与主题覆盖必须随结论说明；ASD-STE100使用项目对齐评分和中文适配，完整官方词典未核验，不构成标准认证。上述评测结束时，代码仅在隔离worktree，尚未合并或替换安装版。后续发行不改写这些历史收据；发布状态与已知限制以仓库README和对应Release说明为准。
