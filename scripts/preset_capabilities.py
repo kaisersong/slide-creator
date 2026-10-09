@@ -72,12 +72,23 @@ CANONICAL_PRESET_NAMES = {
 }
 
 PRESET_NAME_ALIASES = {
+    "熔金流体": "molten-flow",
+    "molten flow": "molten-flow",
+    "星核跃迁": "stellar-vortex",
+    "stellar vortex": "stellar-vortex",
+    "极光封面": "shader-hero",
+    "shader hero": "shader-hero",
+    "aurora cover": "shader-hero",
+    "奇幻彩虹": "fantasy-rainbow",
     "fantasy rainbow": "fantasy-rainbow",
     "iridescence-convergence": "fantasy-rainbow",
     "neo-retro dev": "neo-retro dev deck",
 }
 
 CUSTOM_THEME_DISPLAY_NAMES = {
+    "molten-flow": "Molten Flow",
+    "stellar-vortex": "Stellar Vortex",
+    "shader-hero": "Shader Hero",
     "fantasy-rainbow": "Fantasy Rainbow",
 }
 

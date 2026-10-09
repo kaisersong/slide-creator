@@ -1,0 +1,174 @@
+{
+  "schema_version": 1,
+  "brief_id": "stellar-vortex-demo",
+  "mode": "auto",
+  "language": "zh-CN",
+  "title": "星核跃迁 · 向未知出发向未来跃迁",
+  "audience": "产品发布与品牌演示的创作者",
+  "desired_action": "用星核跃迁开启下一次演示",
+  "deck": {
+    "deck_type": "user-content",
+    "page_count": 6,
+    "output_format": "html-slides"
+  },
+  "style": {
+    "preset": "custom:stellar-vortex",
+    "tone": "克制、温暖、有记忆点",
+    "visual_density": "medium"
+  },
+  "content": {
+    "source_policy": "distill-only",
+    "must_include": [
+      "封面建立记忆点",
+      "正文保持清晰",
+      "风格默认即可使用"
+    ],
+    "must_avoid": [
+      "正文动效",
+      "虚构业务数字",
+      "复杂使用说明"
+    ],
+    "global_facts": [],
+    "optional_support": []
+  },
+  "narrative": {
+    "thesis": "用动态封面建立记忆点，以静态正文承载清晰表达。",
+    "page_roles": [
+      "cover",
+      "problem",
+      "workflow",
+      "feature",
+      "statement",
+      "closing"
+    ],
+    "slides": [
+      {
+        "slide_number": 1,
+        "role": "cover",
+        "title": "向未知出发\n向未来跃迁",
+        "key_point": "穿过粒子光场，看见新的可能。",
+        "claim": "穿过粒子光场，看见新的可能。",
+        "explanation": "穿过粒子光场，看见新的可能。",
+        "visual": "editorial typography",
+        "visual_intent": "hero",
+        "preferred_layout_family": "hero",
+        "supporting_facts": [
+          "深邃星场",
+          "旋转星核",
+          "向前而行"
+        ],
+        "speaker_note": "穿过粒子光场，看见新的可能。 深邃星场。旋转星核。向前而行",
+        "title_emphasis": "未来跃迁"
+      },
+      {
+        "slide_number": 2,
+        "role": "problem",
+        "title": "开场制造记忆，\n正文保持清晰",
+        "key_point": "视觉节奏，也是一种叙事。",
+        "claim": "视觉节奏，也是一种叙事。",
+        "explanation": "视觉节奏，也是一种叙事。",
+        "visual": "editorial typography",
+        "visual_intent": "comparison",
+        "preferred_layout_family": "comparison",
+        "supporting_facts": [
+          "封面：用光与色彩吸引注意",
+          "正文：用判断与证据推进故事",
+          "收尾：让下一步行动足够清楚"
+        ],
+        "speaker_note": "视觉节奏，也是一种叙事。 封面：用光与色彩吸引注意。正文：用判断与证据推进故事。收尾：让下一步行动足够清楚"
+      },
+      {
+        "slide_number": 3,
+        "role": "workflow",
+        "title": "动静之间，\n叙事自然推进",
+        "key_point": "每一页，都有自己的任务。",
+        "claim": "每一页，都有自己的任务。",
+        "explanation": "每一页，都有自己的任务。",
+        "visual": "editorial typography",
+        "visual_intent": "diagram",
+        "preferred_layout_family": "diagram",
+        "supporting_facts": [
+          "吸引：让观众愿意听下去",
+          "展开：让重要信息容易理解",
+          "行动：把共识变成下一步"
+        ],
+        "speaker_note": "每一页，都有自己的任务。 吸引：让观众愿意听下去。展开：让重要信息容易理解。行动：把共识变成下一步"
+      },
+      {
+        "slide_number": 4,
+        "role": "feature",
+        "title": "把注意力\n留给内容",
+        "key_point": "设计越克制，信息越有力量。",
+        "claim": "设计越克制，信息越有力量。",
+        "explanation": "设计越克制，信息越有力量。",
+        "visual": "editorial typography",
+        "visual_intent": "index",
+        "preferred_layout_family": "index",
+        "supporting_facts": [
+          "文字始终清晰可读",
+          "内容页保持安静",
+          "翻页之后，光暂时停下"
+        ],
+        "speaker_note": "设计越克制，信息越有力量。 文字始终清晰可读。内容页保持安静。翻页之后，光暂时停下"
+      },
+      {
+        "slide_number": 5,
+        "role": "statement",
+        "title": "好的演示，\n让内容被看见",
+        "key_point": "不必为每一页制造特效。",
+        "claim": "不必为每一页制造特效。",
+        "explanation": "不必为每一页制造特效。",
+        "visual": "editorial typography",
+        "visual_intent": "quote",
+        "preferred_layout_family": "quote",
+        "supporting_facts": [
+          "给开场一个记忆点，给内容一个清晰的舞台。"
+        ],
+        "speaker_note": "不必为每一页制造特效。 给开场一个记忆点，给内容一个清晰的舞台。"
+      },
+      {
+        "slide_number": 6,
+        "role": "closing",
+        "title": "下一次开场，\n从这里开始",
+        "key_point": "选择「星核跃迁」，让你的内容成为焦点。",
+        "claim": "选择「星核跃迁」，让你的内容成为焦点。",
+        "explanation": "选择「星核跃迁」，让你的内容成为焦点。",
+        "visual": "editorial typography",
+        "visual_intent": "closing",
+        "preferred_layout_family": "closing",
+        "supporting_facts": [
+          "把你的内容，变成值得记住的演示。"
+        ],
+        "speaker_note": "选择「星核跃迁」，让你的内容成为焦点。 把你的内容，变成值得记住的演示。",
+        "title_emphasis": "从这里开始"
+      }
+    ]
+  },
+  "runtime": {
+    "editing_mode": true,
+    "presenter_mode": true,
+    "watermark_mode": "injected-last-slide",
+    "export_intent": "none"
+  },
+  "plan_view": {
+    "emit_planning_view": false,
+    "planning_view_path": "PLANNING.md"
+  },
+  "timing": {
+    "estimate": {
+      "plan": "1-2 min",
+      "generate": "1-3 min",
+      "validate": "<1 min",
+      "polish": "0-2 min",
+      "total": "3-6 min"
+    },
+    "actual": {
+      "plan": "0m 00s",
+      "generate": "0m 00s",
+      "validate": "0m 00s",
+      "polish": "0m 00s",
+      "total": "0m 00s"
+    }
+  },
+  "notes": ""
+}

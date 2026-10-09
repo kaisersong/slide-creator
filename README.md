@@ -10,9 +10,9 @@ English | [简体中文](README.zh-CN.md)
 
 ---
 
-## Download v2.31.0
+## Download v2.32.0
 
-[Compact Skill runtime ZIP](https://github.com/kaisersong/slide-creator/releases/download/v2.31.0/kai-slide-creator-v2.31.0-skill-runtime.zip) · [Release and SHA-256](https://github.com/kaisersong/slide-creator/releases/tag/v2.31.0) · [Optimization methodology v1.0.1 ZIP](https://github.com/kaisersong/slide-creator/releases/download/v2.31.0/skill-optimization-methodology-v1.0.1.zip)
+[Compact Skill runtime ZIP](https://github.com/kaisersong/slide-creator/releases/download/v2.32.0/kai-slide-creator-v2.32.0-skill-runtime.zip) · [Release and SHA-256](https://github.com/kaisersong/slide-creator/releases/tag/v2.32.0) · [Optimization methodology v1.0.1 ZIP](https://github.com/kaisersong/slide-creator/releases/download/v2.31.0/skill-optimization-methodology-v1.0.1.zip)
 
 Read the [cross-Skill optimization guide](docs/methodology/skill-optimization/README.md), including plan, evaluation and bug templates. The methodology is packaged separately to keep research documents out of the normal generation context.
 
@@ -107,7 +107,7 @@ Original material defines the facts. Explicit user choices define the requested 
 
 The plan keeps each page's claim, explanation, `supporting_facts`, numeric evidence and visual intent together. `numeric_facts` is an auxiliary index for binding values, not an extra set of table rows. `speaker_note` carries speaking guidance separately from audience-visible copy, and `desired_action` preserves the scope and timing of the closing request. Old BRIEF files retain documented fallbacks.
 
-`--plan` creates this executable plan. `PLANNING.md` remains an optional human-readable view. Direct content-plus-style generation also materializes BRIEF first; it does not bypass the renderer to hand-author final HTML.
+`--plan` creates this executable plan. `PLANNING.md` remains an optional human-readable view. The same rule applies to direct prompt generation: materialize BRIEF first and use the renderer instead of hand-authoring final HTML.
 
 ### 3. Compile a small model contract from complete implementation owners
 
@@ -115,7 +115,7 @@ The plan keeps each page's claim, explanation, `supporting_facts`, numeric evide
 
 ```text
 Model reads   → generation-contract.md + main.py --model-context --preset <style>
-Program reads → complete selected style, templates and shared runtime
+Program reads → references/html-template.md + references/js-engine.md + one style file + base-css.md
 Technical use → technical-language.md when the content requires it
 Deeper design → relevant style/reference sections for a concrete missing decision
 ```
@@ -144,7 +144,7 @@ A theme owns its visual language and content composition. The generator owns the
 
 The delivered HTML runs in a browser without Python or a JavaScript build step, with local font fallback when network fonts are unavailable. The generator itself requires Python 3.10+ and its documented runtime dependencies. These are separate requirements.
 
-Capability routing distinguishes the five native core presets, the four default recommendations, contextual Chinese Chan, reference-backed profile renderers and custom themes. A reference file or a bundled asset alone does not prove executable rendering or historical demo parity. The current Cloudhub limitation is documented rather than described as validated support.
+Capability routing distinguishes the five native core presets, the four default recommendations, contextual Chinese Chan, reference-backed profile renderers and custom themes. Profile-rendered presets are renderable through the same program-owned path. A reference file or a bundled asset alone does not prove executable rendering or historical demo parity. The current Cloudhub limitation is documented rather than described as validated support.
 
 ### 7. Use complementary checks instead of one green score
 
@@ -188,6 +188,14 @@ The older captured-run harness remains available:
 ```sh
 python3 scripts/run-skill-evals.py --runner codex --run-live --format json --json-out .tmp-run/skill-evals/results.json
 ```
+
+From a source checkout, validate the harness with a recorded fixture:
+
+```bash
+python3 scripts/run-skill-evals.py --runner fixture --case-id explicit-generate --normalized-trace tests/fixtures/skill-evals/explicit-generate-normalized.json --format json
+```
+
+The captured-run scores cover Outcome, Process, Style and Efficiency. Fixture scores validate the harness and do not constitute new model-task evidence.
 
 Its Supervisor, Generate Worker and Style Judge labels describe evaluation roles, not mandatory agents in ordinary deck generation. Fixture runs verify the harness; they are not model-task evidence. See the [captured-run architecture](docs/design/2026-05-17-slide-creator-captured-run-eval-architecture.md) for that separate protocol.
 
@@ -394,7 +402,24 @@ Signature elements: grainy noise texture overlay · 3 animated blur orbs reposit
 
 Your theme appears as "Custom: your-theme" in the style picker.
 
-**Bundled custom themes:** `themes/fantasy-rainbow/` (generator-ready), `themes/ascii-stream/`, and `themes/kingdee/`
+**Bundled custom themes:** `themes/fantasy-rainbow/` (generator-ready), `themes/shader-hero/` (Aurora Cover), `themes/molten-flow/`, `themes/stellar-vortex/`, `themes/ascii-stream/`, and `themes/kingdee/`
+
+### Animated covers
+
+All four animate only the first slide; content and closing pages stay static. A single HTML plays offline by double-clicking, with no server or extra files. Aurora Cover automatically chooses WebGL2 for local files/HTTP and prefers WebGPU on supported HTTPS origins; the other covers use WebGL. Reduced motion, unavailable graphics and PPTX/PNG export retain a detailed static cover.
+
+| Name | Cover effect | Preview |
+|---|---|---|
+| Aurora Cover | Green/cyan curtains and flowing light filaments | [View](https://kaisersong.github.io/slide-creator/demos/shader-hero-zh.html) |
+| Fantasy Rainbow | Bright, flowing iridescent bands | [See showcase](#live-demo) |
+| Molten Flow | A twisting 3D gold ribbon with moving reflections | [View](https://kaisersong.github.io/slide-creator/demos/molten-flow-zh.html) |
+| Stellar Vortex | Cyan/violet star core with spiral particles; outer motion is six times slower than the core | [View](https://kaisersong.github.io/slide-creator/demos/stellar-vortex-zh.html) |
+
+Say **“which animated covers are available? Show me previews”**, **“use Molten Flow for this product launch”**, or **“use Stellar Vortex for this technology presentation.”** A request for an animated opening without another preference defaults to Aurora Cover. See [the cover catalog](references/animated-covers.md) for preset IDs and prompt examples.
+
+| Molten Flow | Stellar Vortex |
+|---|---|
+| [![Molten Flow](themes/molten-flow/cover.webp)](https://kaisersong.github.io/slide-creator/demos/molten-flow-zh.html) | [![Stellar Vortex](themes/stellar-vortex/cover.webp)](https://kaisersong.github.io/slide-creator/demos/stellar-vortex-zh.html) |
 
 ---
 
@@ -448,7 +473,7 @@ For PPTX/PNG export: `clawhub install kai-html-export` or `pip install playwrigh
 
 ## Runtime-only Skill ZIP
 
-Download [`kai-slide-creator-v2.31.0-skill-runtime.zip`](https://github.com/kaisersong/slide-creator/releases/download/v2.31.0/kai-slide-creator-v2.31.0-skill-runtime.zip) for a compact Skill installation bundle. Extract its top-level `kai-slide-creator/` folder into your agent's skills directory. The archive contains only `SKILL.md`, `main.py`, `scripts/`, `schemas/`, `references/`, and `themes/`; repository README files, demos, tests, eval fixtures, design documents, and Git metadata are excluded.
+Download [`kai-slide-creator-v2.32.0-skill-runtime.zip`](https://github.com/kaisersong/slide-creator/releases/download/v2.32.0/kai-slide-creator-v2.32.0-skill-runtime.zip) for a compact Skill installation bundle. Extract its top-level `kai-slide-creator/` folder into your agent's skills directory. The archive contains only `SKILL.md`, `main.py`, `scripts/`, `schemas/`, `references/`, and `themes/`; repository README files, demos, tests, eval fixtures, design documents, and Git metadata are excluded.
 
 ---
 
@@ -457,6 +482,8 @@ Cloudhub enterprise assets are retained from the previous package, but its legac
 ---
 
 ## Version History
+
+**v2.32.0** — Animated cover themes and offline playback: adds Aurora Cover, Molten Flow and Stellar Vortex alongside Fantasy Rainbow, with a four-cover catalog and friendly prompt routing. New cover effects animate only the first slide, support offline single-HTML and HTTP/IP playback through WebGL2, pause on content pages and suspended states, and retain detailed static posters for graphics failure, reduced motion, print and export. Stellar Vortex keeps its 24-second core orbit, with 72-second middle and 144-second outer orbits, shorter and dimmer peripheral trails. Includes shared lifecycle controls, canonical BRIEF rendering, static export, demos and an updated runtime ZIP.
 
 **v2.31.0** — Context and quality optimization: models author BRIEF while the program loads complete styles and runtime. Adds independent user-preset constraints, complete source facts and numeric entity binding, readable body text and exact-copy deduplication. The frozen optimization implementation passed all 26 automated runs on eight fixed task types, including correct styles in all 24 positive decks. Against the original baseline, median generation tokens fell 77.57%, median generation time fell 36.59%, and mean quality rose from 77.88 to 88.54. Headlines can still change counted entities or omit conjunctive conditions; important decks need source review. These results are bounded to the evaluated tasks and local CLI, rather than a guarantee across all tasks or installations. Includes a separately downloadable Skill optimization methodology v1.0.1 with templates. Release checks additionally repair narrow-screen layouts and custom-theme notes-panel visibility.
 
