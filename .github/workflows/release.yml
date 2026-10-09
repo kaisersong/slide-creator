@@ -2,6 +2,10 @@ name: Publish versioned runtime
 
 on:
   push:
+    branches:
+      - main
+    paths:
+      - '.github/workflows/release.yml'
     tags:
       - 'v*'
   workflow_dispatch:
@@ -33,6 +37,12 @@ jobs:
             exit 1
           fi
           git rev-parse "${TAG}" >/dev/null
+          # A workflow-registration push can publish an already explicit tag,
+          # but only when its runtime bytes match the branch that triggered it.
+          if [ "${GITHUB_REF_TYPE}" != tag ]; then
+            git diff --exit-code "${TAG}" HEAD -- SKILL.md main.py scripts schemas references themes
+            git checkout --detach "${TAG}"
+          fi
           test "$(git rev-parse "${TAG}^{commit}")" = "$(git rev-parse HEAD)"
           echo "VERSION=${VERSION}" >> "$GITHUB_ENV"
           echo "TAG=${TAG}" >> "$GITHUB_ENV"
