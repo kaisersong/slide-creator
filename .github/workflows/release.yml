@@ -1,0 +1,65 @@
+name: Publish versioned runtime
+
+on:
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: release-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+      - name: Verify version and explicit tag
+        shell: bash
+        run: |
+          VERSION=$(sed -n 's/^version: //p' SKILL.md)
+          TAG="v${VERSION}"
+          if [ "${GITHUB_REF_TYPE}" = tag ] && [ "${GITHUB_REF_NAME}" != "${TAG}" ]; then
+            echo "Tag and SKILL version disagree" >&2
+            exit 1
+          fi
+          git rev-parse "${TAG}" >/dev/null
+          test "$(git rev-parse "${TAG}^{commit}")" = "$(git rev-parse HEAD)"
+          echo "VERSION=${VERSION}" >> "$GITHUB_ENV"
+          echo "TAG=${TAG}" >> "$GITHUB_ENV"
+      - name: Build from repository runtime bytes
+        shell: bash
+        run: |
+          mkdir -p dist
+          curl --fail --silent --show-error --location https://github.com/kaisersong/slide-creator/releases/download/v2.31.0/kai-slide-creator-v2.31.0-skill-runtime.zip -o dist/previous-runtime.zip
+          python scripts/package-runtime.py --output-dir dist --previous-runtime dist/previous-runtime.zip --previous-sha256 319c0972dd608c209a971873eb1c28cb965057b5f9472af7594fc8f288f4bd44
+          python -m pip install -r scripts/requirements-runtime.txt
+          python check-doc-sync.py
+          python -m zipfile -e "dist/kai-slide-creator-${TAG}-skill-runtime.zip" dist/installed
+          for theme in shader-hero molten-flow stellar-vortex; do
+            python dist/installed/kai-slide-creator/main.py --generate --brief "demos/${theme}/BRIEF.json" --output "dist/${theme}-smoke.html"
+          done
+      - name: Publish release and runtime assets
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          NOTES="docs/design/2026-10-09-release-${TAG}.md"
+          if ! gh release view "${TAG}" >/dev/null 2>&1; then
+            if [ -f "${NOTES}" ]; then
+              gh release create "${TAG}" --verify-tag --draft --title "${TAG} · Animated cover themes and offline playback" --notes-file "${NOTES}"
+            else
+              gh release create "${TAG}" --verify-tag --draft --title "${TAG}" --generate-notes
+            fi
+          fi
+          gh release upload "${TAG}" "dist/kai-slide-creator-${TAG}-skill-runtime.zip" "dist/kai-slide-creator-${TAG}-skill-runtime.zip.sha256" "dist/runtime-manifest.json" --clobber
+          gh release edit "${TAG}" --draft=false --latest

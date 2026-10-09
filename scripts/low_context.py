@@ -8558,6 +8558,12 @@ def _render_custom_theme_slide(
     role_index: int,
 ) -> str:
     """Render a slide using theme-specific component classes from the style contract."""
+    effect_themes = {"shader hero": "shader-hero", "molten flow": "molten-flow", "stellar vortex": "stellar-vortex"}
+    effect_theme = effect_themes.get(_normalize_preset_name(style_contract.get("preset", "")))
+    if effect_theme:
+        from shader_hero_renderer import render_shader_hero_slide
+
+        return render_shader_hero_slide(spec, total, role_index=role_index, theme=effect_theme)
     if _normalize_preset_name(style_contract.get("preset", "")) in {
         "fantasy rainbow",
         "iridescence convergence",
@@ -8735,6 +8741,10 @@ def render_custom_theme_html(
         images = _extract_starter_image_urls(starter_path)
         theme_decor = _extract_starter_theme_decor(starter_path)
         theme_runtime = _extract_starter_theme_runtime(starter_path)
+        if theme_dir.name in {"shader-hero", "molten-flow", "stellar-vortex"} and brief["runtime"]["export_intent"] != "none":
+            # Export is a generation-time decision: no canvas or GPU setup in the artifact.
+            theme_decor = re.sub(r"<canvas\b[^>]*>.*?</canvas>", "", theme_decor, flags=re.DOTALL)
+            theme_runtime = ""
     else:
         starter_css = "\n\n".join(style_contract["css_blocks"]) + """
 

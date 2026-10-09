@@ -67,6 +67,9 @@ scripts/*
 !scripts/token-efficiency-eval.py
 !scripts/model_context.py
 !scripts/audience_readability.py
+!scripts/shader_hero_renderer.py
+!scripts/build-cover-themes.py
+!scripts/package-runtime.py
 !scripts/technical_language.py
 !docs/
 docs/*
@@ -104,3 +107,4 @@ evals/artifacts/token-efficiency/
 !scripts/requirements-runtime.txt
 
 !docs/design/2026-10-08-release-v2.31.0.md
+!docs/design/2026-10-09-release-v2.32.0.md

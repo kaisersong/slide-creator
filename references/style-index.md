@@ -2,6 +2,8 @@
 
 Read this file when the user is choosing a style preset (Phase 2).
 
+For animated first-slide requests, read `references/animated-covers.md`: the shipped cover-only choices are 极光封面 (`custom:shader-hero`), 奇幻彩虹 (`custom:fantasy-rainbow`), 熔金流体 (`custom:molten-flow`), and 星核跃迁 (`custom:stellar-vortex`). These are opt-in custom themes, separate from the built-in preset list below.
+
 ---
 
 ## Generator-Ready Recommendation Surface

@@ -10,9 +10,9 @@
 
 ---
 
-## 下载 v2.31.0
+## 下载 v2.32.0
 
-[精简 Skill 安装 ZIP](https://github.com/kaisersong/slide-creator/releases/download/v2.31.0/kai-slide-creator-v2.31.0-skill-runtime.zip) · [Release 与 SHA-256](https://github.com/kaisersong/slide-creator/releases/tag/v2.31.0) · [优化方法论 v1.0.1 ZIP](https://github.com/kaisersong/slide-creator/releases/download/v2.31.0/skill-optimization-methodology-v1.0.1.zip)
+[精简 Skill 安装 ZIP](https://github.com/kaisersong/slide-creator/releases/download/v2.32.0/kai-slide-creator-v2.32.0-skill-runtime.zip) · [Release 与 SHA-256](https://github.com/kaisersong/slide-creator/releases/tag/v2.32.0) · [优化方法论 v1.0.1 ZIP](https://github.com/kaisersong/slide-creator/releases/download/v2.31.0/skill-optimization-methodology-v1.0.1.zip)
 
 方法论正文、优化计划、评测报告与bug模板见[跨 Skill 优化指南](docs/methodology/skill-optimization/README.md)。运行包与方法包分开下载，研究文档不会占用正常生成上下文。
 
@@ -108,7 +108,7 @@ Auto 和 Polish 使用同一执行路径。Auto 先出第一稿，Polish 增加�
 
 计划把逐页 claim、explanation、`supporting_facts`、数值证据和 visual intent 放在一起。`numeric_facts` 是数值绑定的辅助索引，不应再作为额外表格行。`speaker_note` 将讲者指令与观众正文分开，`desired_action` 保留结尾请求的范围与时间。旧 BRIEF 继续使用已定义的 fallback。
 
-`--plan` 负责提炼可执行计划，`PLANNING.md` 只在需要时派生成人类可读视图。直接给内容和风格也先物化 BRIEF，再调用渲染程序，不绕过产品路径手拼最终 HTML。
+`--plan` 负责提炼可执行计划，`PLANNING.md` 只在需要时派生成人类可读视图。对于“直接给内容 + 风格，立刻生成”，也先物化 BRIEF，再调用渲染程序，不绕过产品路径手拼最终 HTML。
 
 ### 三、从完整实现的 owner 编译精简模型契约
 
@@ -116,7 +116,7 @@ Auto 和 Polish 使用同一执行路径。Auto 先出第一稿，Polish 增加�
 
 ```text
 模型读取 → generation-contract.md + main.py --model-context --preset <风格>
-程序读取 → 完整的所选风格、模板与共享 runtime
+程序读取 → references/html-template.md + references/js-engine.md + 单个风格文件 + base-css.md
 技术内容 → 按任务读取 technical-language.md
 深度设计 → 具体决策不在契约中时，再读取相关风格章节
 ```
@@ -145,7 +145,7 @@ Auto 和 Polish 使用同一执行路径。Auto 先出第一稿，Polish 增加�
 
 交付的 HTML 无需 Python 或 JavaScript 构建工具，直接由浏览器运行；网络字体不可用时回退本地字体。生成器本身则需要 Python 3.10+ 和已说明的运行依赖，这两类要求分别说明。
 
-能力路由区分五个 native core、四个默认推荐、按场景推荐的 Chinese Chan、reference-backed profile 和 custom theme。存在 reference 或打包了资产，不等于可执行渲染或历史 demo 保真已经通过。当前 Cloudhub 限制明确记录，不将其描述成已验证支持。
+能力路由区分五个 native core、四个默认推荐、按场景推荐的 Chinese Chan、reference-backed profile 和 custom theme。非核心 profile 可生成，也走程序负责的渲染路径。存在 reference 或打包了资产，不等于可执行渲染或历史 demo 保真已经通过。当前 Cloudhub 限制明确记录，不将其描述成已验证支持。
 
 ### 七、互补验证不能被一个绿色分数替代
 
@@ -189,6 +189,14 @@ Auto 和 Polish 使用同一执行路径。Auto 先出第一稿，Polish 增加�
 ```sh
 python3 scripts/run-skill-evals.py --runner codex --run-live --format json --json-out .tmp-run/skill-evals/results.json
 ```
+
+在源码仓库中，也可用已有 fixture 验证 harness：
+
+```bash
+python3 scripts/run-skill-evals.py --runner fixture --case-id explicit-generate --normalized-trace tests/fixtures/skill-evals/explicit-generate-normalized.json --format json
+```
+
+Captured-run 评分覆盖 Outcome、Process、Style 和 Efficiency 四类目标。Fixture 得分用于验证 harness，不代表新增的模型任务证据。
 
 其中 Supervisor、Generate Worker 和 Style Judge 描述评测角色，不代表普通生成必须调用多个 agent。Fixture 运行验证 harness，不是模型任务证据。该独立协议见[captured-run架构](docs/design/2026-05-17-slide-creator-captured-run-eval-architecture.md)。
 
@@ -393,7 +401,24 @@ python3 main.py --generate --brief BRIEF.json --output presentation.html --eval
 
 你的主题会以"Custom: 你的主题"出现在风格选择列表中。
 
-**内置自定义主题：** `themes/fantasy-rainbow/`（可直接生成）、`themes/ascii-stream/` 和 `themes/kingdee/`
+**内置自定义主题：** `themes/fantasy-rainbow/`（可直接生成）、`themes/shader-hero/`（极光封面）、`themes/molten-flow/`（熔金流体）、`themes/stellar-vortex/`（星核跃迁）、`themes/ascii-stream/` 和 `themes/kingdee/`
+
+### 动效封面
+
+四款都默认仅首页动态，正文与收尾静态。单 HTML 双击即可断网播放，无需启动服务或附加文件。极光封面的本地文件与 HTTP 自动使用 WebGL2，支持的 HTTPS 环境优先 WebGPU；其他款使用 WebGL。减少动态效果、图形不可用或 PPTX/PNG 导出时保留细节完整的静态封面。
+
+| 名称 | 首页效果 | 预览 |
+|---|---|---|
+| 极光封面 | 绿青极光帘幕与流动光丝 | [查看](https://kaisersong.github.io/slide-creator/demos/shader-hero-zh.html) |
+| 奇幻彩虹 | 明亮、流动的虹彩色带 | [看上方预览](#效果展示) |
+| 熔金流体 | 金色立体金属光带扭转，高光随表面流动 | [查看](https://kaisersong.github.io/slide-creator/demos/molten-flow-zh.html) |
+| 星核跃迁 | 蓝紫星核与螺旋粒子；最外层运动比中心慢六倍 | [查看](https://kaisersong.github.io/slide-creator/demos/stellar-vortex-zh.html) |
+
+用户直接说 **“有哪些动效封面？给我看预览”**、**“用熔金流体做产品发布演示”** 或 **“用星核跃迁做技术发布演示”** 即可。只要求动效首页而无其他偏好时默认极光封面。预设 ID 与提示词示例见[动效封面目录](references/animated-covers.md)。
+
+| 熔金流体 | 星核跃迁 |
+|---|---|
+| [![熔金流体](themes/molten-flow/cover.webp)](https://kaisersong.github.io/slide-creator/demos/molten-flow-zh.html) | [![星核跃迁](themes/stellar-vortex/cover.webp)](https://kaisersong.github.io/slide-creator/demos/stellar-vortex-zh.html) |
 
 ---
 
@@ -447,7 +472,7 @@ python3 -m venv .venv
 
 ## 仅运行所需的 Skill ZIP
 
-下载 [`kai-slide-creator-v2.31.0-skill-runtime.zip`](https://github.com/kaisersong/slide-creator/releases/download/v2.31.0/kai-slide-creator-v2.31.0-skill-runtime.zip)，即可获得精简的 Skill 安装包。将压缩包顶层的 `kai-slide-creator/` 目录解压到代理的 skills 目录。压缩包只包含 `SKILL.md`、`main.py`、`scripts/`、`schemas/`、`references/` 和 `themes/`；不会包含仓库 README、Demo、测试、eval fixture、设计文档和 Git 元数据。
+下载 [`kai-slide-creator-v2.32.0-skill-runtime.zip`](https://github.com/kaisersong/slide-creator/releases/download/v2.32.0/kai-slide-creator-v2.32.0-skill-runtime.zip)，即可获得精简的 Skill 安装包。将压缩包顶层的 `kai-slide-creator/` 目录解压到代理的 skills 目录。压缩包只包含 `SKILL.md`、`main.py`、`scripts/`、`schemas/`、`references/` 和 `themes/`；不会包含仓库 README、Demo、测试、eval fixture、设计文档和 Git 元数据。
 
 ---
 
@@ -456,6 +481,8 @@ python3 -m venv .venv
 ---
 
 ## 版本日志
+
+**v2.32.0** — 动效封面与离线播放：新增极光封面、熔金流体和星核跃迁，与既有奇幻彩虹形成四款目录，支持按用户名称和自然提示词选用。新增封面默认仅首页动态，单 HTML 断网双击和 HTTP/IP 自动使用 WebGL2；正文、后台、黑屏和打印时暂停，图形不可用、减少动态效果及导出时保留完整静态封面。星核保持中心24秒一圈，中层72秒、外围144秒，并缩短、减淡外围拖尾。同步提供共享生命周期、BRIEF 正式渲染、静态导出、演示和新版精简运行 ZIP。
 
 **v2.31.0** — 上下文与质量优化：模型只编写 BRIEF，程序加载完整风格和 runtime；新增独立用户风格约束、完整事实与数字对象绑定、正文可读性及同文排重修复。优化阶段冻结版本的8类任务、26次自动评测通过，24份正向稿风格均正确；相对原始基线生成token中位数降低77.57%、耗时降低36.59%、质量均分77.88→88.54。标题仍可能改变数量对象或省略并列条件，关键稿件需要来源复核；这些结果不代表所有任务或安装环境的质量保证。新增跨Skill优化方法论与模板，独立下载包更新到v1.0.1；发布检查补齐小屏布局和自定义主题备注面板的隐藏/打开规则。
 

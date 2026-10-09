@@ -1,7 +1,7 @@
 ---
 name: kai-slide-creator
 description: 生成HTML演示文稿/幻灯片 — 稳定生成器覆盖核心风格，播放/演讲者模式。适用于路演、产品发布、技术分享、方案宣讲等场景。
-version: 2.31.0
+version: 2.32.0
 metadata: {"openclaw":{"emoji":"🎞","os":["darwin","linux","windows"],"homepage":"https://github.com/kaisersong/slide-creator","requires":{"bins":["python3"]},"install":[]}}
 ---
 
@@ -39,6 +39,8 @@ metadata: {"openclaw":{"emoji":"🎞","os":["darwin","linux","windows"],"homepag
 
 
 ## 命令路由
+
+用户问“有哪些动效封面 / 动效首页”、要求看动效预览，或未指定风格但要求首页动态时，加载 `references/animated-covers.md`。用“极光封面 / 奇幻彩虹 / 熔金流体 / 星核跃迁”等用户名称介绍实际可用选项；只说“首页有动效”时默认极光封面，不再询问页数范围或 GPU 参数。
 
 `自动` (Auto) — 快速出稿 | `精修` (Polish) — 深度规划，自动执行 Review
 
@@ -133,6 +135,8 @@ metadata: {"openclaw":{"emoji":"🎞","os":["darwin","linux","windows"],"homepag
 - **支持层级**：默认推荐面与 support tier 定义在 `references/preset-support-tiers.json`
 - **内置风格文件位置**：统一在 `references/` 下；Blue Sky 例外，使用 `references/blue-sky-starter.html`
 - **自定义主题**：`themes/<name>/reference.md`
+- **极光封面**：用户说“用极光封面”即可选择 `custom:shader-hero`；默认仅首页动态，正文与收尾静态，不再询问动效页数范围或 GPU 参数。读取 `themes/shader-hero/reference.md` 并走 BRIEF 正式生成路径。
+- **动效封面目录**：`references/animated-covers.md`，列出当前四款的视觉区别、使用提示词与预览规则。
 
 - 风格选择器：`references/style-index.md`
 - 视口与共享 CSS：`references/base-css.md`
