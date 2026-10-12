@@ -751,6 +751,150 @@ def test_rendered_iridescence_deck_uses_distinct_reference_fidelity_scenes():
         assert forbidden not in html
 
 
+def test_iridescence_structured_roles_preserve_relationship_layouts():
+    from low_context import render_from_brief
+
+    brief = _brief()
+    roles_and_items = [
+        ("architecture-stack", [f"Layer {index}：detail" for index in range(1, 8)]),
+        ("call-chain", [f"Node {index}：interface" for index in range(1, 6)]),
+        ("dual-mode", ["Agent Loop：closed cognitive loop", "Workflow：fixed execution track"]),
+        ("workshop", [f"Card {index}：choice" for index in range(1, 13)]),
+        ("capability-landscape", [f"Capability {index}：detail" for index in range(1, 7)] + ["Runtime：route and execute", "Model / MaaS：foundation"]),
+        ("enterprise-comparison", [f"Dimension {index}｜Open source {index}｜Enterprise {index}" for index in range(1, 6)]),
+    ]
+    for slide, (role, items) in zip(brief["narrative"]["slides"][1:-1], roles_and_items):
+        slide["role"] = role
+        slide["supporting_facts"] = items
+    brief["narrative"]["page_roles"] = [slide["role"] for slide in brief["narrative"]["slides"]]
+
+    html, _, _ = render_from_brief(brief)
+    soup = BeautifulSoup(html, "html.parser")
+
+    assert len(soup.select(".iri-scene--architecture-stack .iri-architecture-layer")) == 5
+    assert len(soup.select(".iri-scene--architecture-stack .iri-architecture-guard")) == 2
+    assert len(soup.select(".iri-scene--call-chain .iri-chain-node")) == 5
+    assert len(soup.select(".iri-scene--dual-mode .iri-dual-track")) == 2
+    assert len(soup.select(".iri-scene--workshop-grid .iri-workshop-cell")) == 12
+    assert len(soup.select(".iri-scene--capability-landscape .iri-capability")) == 6
+    assert len(soup.select(".iri-scene--comparison-table .iri-comparison-row")) == 6
+
+    context_brief = _brief()
+    context_brief["narrative"]["slides"][1]["role"] = "enterprise-context"
+    context_brief["narrative"]["slides"][1]["supporting_facts"] = [f"Context {index}：detail" for index in range(1, 17)]
+    context_brief["narrative"]["page_roles"] = [slide["role"] for slide in context_brief["narrative"]["slides"]]
+    context_html, _, _ = render_from_brief(context_brief)
+    context_soup = BeautifulSoup(context_html, "html.parser")
+    assert len(context_soup.select(".iri-scene--context-matrix .iri-context-column")) == 2
+    assert len(context_soup.select(".iri-scene--context-matrix .iri-context-row")) == 16
+    assert len(context_soup.select('.iri-context-column[data-group-id]')) == 2
+    assert len(context_soup.select('.iri-context-row[data-node-id]')) == 16
+
+
+def test_iridescence_source_dense_scenes_preserve_nested_structure_without_tilt():
+    from low_context import render_from_brief, validate_brief_data
+
+    brief = _brief()
+    poll_slide = brief["narrative"]["slides"][1]
+    poll_slide["role"] = "interaction-poll"
+    poll_slide["structured_content"] = {
+        "kind": "interaction-flow-poll",
+        "direction": "left-to-right",
+        "groups": [
+            {
+                "id": "task",
+                "label": "任务",
+                "nodes": [
+                    {"id": "step-1", "label": "发起"},
+                    {"id": "step-2", "label": "提取"},
+                    {"id": "step-3", "label": "提交"},
+                ],
+            },
+            {
+                "id": "poll",
+                "label": "现场举手",
+                "nodes": [
+                    {"id": "option-a", "label": "A 容易"},
+                    {"id": "option-b", "label": "B 很难"},
+                ],
+            },
+        ],
+        "edges": [
+            {"from": "step-1", "to": "step-2", "relation": "ordered-before"},
+            {"from": "step-2", "to": "step-3", "relation": "ordered-before"},
+        ],
+    }
+
+    architecture_slide = brief["narrative"]["slides"][2]
+    architecture_slide["role"] = "architecture-stack"
+    architecture_slide["structured_content"] = {
+        "kind": "layered-architecture",
+        "direction": "top-to-bottom",
+        "groups": [
+            {"id": f"layer-{index}", "label": f"Layer {index}", "items": [f"Detail {index}"]}
+            for index in range(1, 6)
+        ],
+        "edges": [
+            {"from": f"layer-{index}", "to": f"layer-{index + 1}", "relation": "ordered-before"}
+            for index in range(1, 5)
+        ],
+        "rails": [
+            {"id": "security", "label": "安全与治理", "items": ["IAM"]},
+            {"id": "observability", "label": "可观测与优化", "items": ["Trace"]},
+        ],
+        "bands": [{"id": "loop", "label": "运行闭环", "items": ["反馈"]}],
+    }
+
+    chain_slide = brief["narrative"]["slides"][3]
+    chain_slide["role"] = "call-chain"
+    chain_slide["structured_content"] = {
+        "kind": "layered-call-graph",
+        "direction": "top-to-bottom",
+        "groups": [
+            {
+                "id": f"call-layer-{index}",
+                "label": "SaaS" if index == 5 else f"LAYER {index}",
+                "nodes": [{"id": f"node-{index}", "label": f"Node {index}", "items": [f"Item {index}"]}],
+            }
+            for index in range(1, 6)
+        ],
+        "edges": [
+            {
+                "from": f"call-layer-{index}",
+                "to": f"call-layer-{index + 1}",
+                "relation": "directed-edge",
+                "label": f"Handoff {index}",
+            }
+            for index in range(1, 5)
+        ],
+    }
+    brief["narrative"]["page_roles"] = [slide["role"] for slide in brief["narrative"]["slides"]]
+
+    assert validate_brief_data(brief) == []
+    html, _, _ = render_from_brief(brief)
+    soup = BeautifulSoup(html, "html.parser")
+
+    assert len(soup.select(".iri-scene--interaction-flow-poll .iri-interaction-step")) == 3
+    assert len(soup.select(".iri-scene--interaction-flow-poll .iri-poll")) == 1
+    assert len(soup.select(".iri-scene--interaction-flow-poll .iri-poll-option")) == 2
+    assert not soup.select(".iri-scene--interaction-flow-poll .iri-pipeline")
+    assert len(soup.select(".iri-scene--layered-architecture .iri-layered-architecture-layer")) == 5
+    assert len(soup.select(".iri-scene--layered-architecture .iri-architecture-rail")) == 2
+    assert len(soup.select(".iri-scene--layered-architecture .iri-architecture-band")) == 1
+    assert len(soup.select(".iri-scene--layered-call-graph .iri-call-graph-layer")) == 5
+    assert len(soup.select(".iri-scene--layered-call-graph [data-edge-from][data-edge-to]")) == 4
+
+    starter = STARTER.read_text(encoding="utf-8")
+    pipeline_rule = re.search(r"\.iri-pipeline\s*\{([^}]*)\}", starter, re.DOTALL)
+    assert pipeline_rule
+    assert "rotate(" not in pipeline_rule.group(1)
+    for selector in ("iri-interaction-layout", "iri-layered-architecture", "iri-layered-call-graph"):
+        rule = re.search(rf"\.{selector}\s*\{{([^}}]*)\}}", starter, re.DOTALL)
+        assert rule
+        assert "rotate(" not in rule.group(1)
+        assert "skew(" not in rule.group(1)
+
+
 def test_custom_theme_generation_eval_skips_missing_builtin_signature_contract():
     from low_context import render_from_brief
     from quality_eval import analyze_html_quality

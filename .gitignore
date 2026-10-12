@@ -71,6 +71,7 @@ scripts/*
 !scripts/build-cover-themes.py
 !scripts/package-runtime.py
 !scripts/technical_language.py
+!scripts/validate_source_fidelity.py
 !docs/
 docs/*
 !docs/design/

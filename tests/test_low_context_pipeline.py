@@ -24,6 +24,7 @@ from low_context import (  # noqa: E402
     _skill_version,
     _title_visual_units,
     BriefExtractionError,
+    BriefValidationError,
     build_render_packet,
     build_slide_spec,
     compile_style_contract,
@@ -1654,6 +1655,36 @@ def test_validate_brief_accepts_richer_low_context_v2_fields():
 
     errors = load_brief(BRIEF_TEMPLATE_JSON)
     assert errors["schema_version"] == 1
+
+
+def test_validate_brief_accepts_32_pages_and_rejects_41(tmp_path: Path):
+    template = read_json(ROOT / "references" / "brief-template.json")
+    source_slide = template["narrative"]["slides"][1]
+
+    for page_count, accepted in ((32, True), (41, False)):
+        brief = _clone_json(template)
+        slides = []
+        for slide_number in range(1, page_count + 1):
+            slide = _clone_json(source_slide)
+            slide["slide_number"] = slide_number
+            slide["role"] = "cover" if slide_number == 1 else "closing" if slide_number == page_count else f"content-{slide_number}"
+            slide["title"] = f"Long deck slide {slide_number}"
+            slides.append(slide)
+        brief["deck"]["page_count"] = page_count
+        brief["narrative"]["page_roles"] = [slide["role"] for slide in slides]
+        brief["narrative"]["slides"] = slides
+        path = tmp_path / f"brief-{page_count}.json"
+        write_json(path, brief)
+
+        if accepted:
+            assert load_brief(path)["deck"]["page_count"] == 32
+        else:
+            try:
+                load_brief(path)
+            except BriefValidationError as exc:
+                assert "brief.deck.page_count must be <= 40" in str(exc)
+            else:
+                raise AssertionError("expected a 41-page brief to fail validation")
 
 
 def test_data_story_chart_policy_required_fails_closed_without_slide_local_numeric_facts():
