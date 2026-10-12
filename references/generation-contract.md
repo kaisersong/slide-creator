@@ -5,7 +5,7 @@
 1. 保留用户明确指定的 preset；没有指定时按 SKILL 的推荐面选择。用户明确指定时，在写 BRIEF 前将原始选择保存为工作目录的 `SLIDE_REQUEST.json`：`{"version":1,"preset":"Strategy Consulting"}`（示例值必须替换为用户实际选择）。此文件是用户请求，不能为迁就 BRIEF 而修改；已有文件仅在用户明确改选时更新。未指定时不要创建锁定文件，旧任务的文件不应带入新任务。`--generate` 自动核对请求文件，选错会拒绝写出；修正 BRIEF 后重试，也可用 `--requested-preset "用户指定值"` 传入同样约束。程序会发现 custom themes，并从原始风格 compiler 给出契约：
    `python3 main.py --model-context --preset "Data Story"`
 2. 读取返回的 skeleton、允许布局与内容规则，填写一个完整 `BRIEF.json`。空 skeleton 只是字段形状，不能直接生成。页数 5–40；page_roles 和 slides 的长度等于 page_count，slide_number 连续从 1 开始。
-3. 每页保留 claim、explanation、visual_intent 和必要的 supporting_facts/numeric_facts。先把来源中的事实分配到页，再选不同的主要展示。以上字段都会进入观众可见的正文；讲者指令只写逐页 `speaker_note`。不要把“演讲备注/这一页/Explain that/Tell operators”放进正文。未提供 speaker_note 的旧 BRIEF 继续用 explanation 生成备注。不要为了减少 token 删除条件、风险、单位或未知值。
+3. 每页保留 claim、explanation、visual_intent 和必要的 supporting_facts/numeric_facts。先把来源中的事实分配到页，再选不同的主要展示。以上字段都会进入观众可见的正文；讲者指令只写逐页 `speaker_note`，且 speaker notes 不得出现在观众可见 DOM。不要把“演讲备注/这一页/Explain that/Tell operators”放进正文。未提供 speaker_note 的旧 BRIEF 继续用 explanation 生成备注。不要为了减少 token 删除条件、风险、单位或未知值。
 4. 高密度架构、流程或关系页使用 preset 契约允许的 `structured_content`，以稳定 ID 表达分组、节点、连线、横切栏和底部 band，并用 `source_refs` 绑定来源。并列项上限适用于普通列表，不得用它删除源稿关系或正文；高密度页应先压缩标题区、间距和装饰，不能隐藏、截断、滚动或用截图替代可编辑内容。
 5. 使用所选风格允许的展示。preferred_layout_family 填 hero/evidence/comparison/flow/close 等家族；具体 layout 由 renderer 决定。普通页面最多 5 条并列项；避免连续相同布局与标题页堆积。标题表达可被事实支持的判断，不能把目标写成已实现结果。区分观察、目标、建议与因果假设；访谈线索不能写成已证明的根因。保留原有主体、动作顺序和适用范围，不向证据补入推测的主体或条件。
 6. 技术文稿额外读取 `references/technical-language.md`，尽量达到该文件定义的 ASD-STE100 对齐项目评分 80/100；它是观察项，不能以丢失事实换取语言分数。商业或创意文稿不强制 STE。

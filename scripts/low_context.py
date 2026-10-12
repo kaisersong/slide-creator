@@ -475,8 +475,8 @@ def _validate_structured_entity(
     if not isinstance(value, dict):
         errors.append(f"{path} must be an object")
         return
-    required = {"id", "label"}
-    optional = {"description", "items", "tags", "source_refs"}
+    required = {"id"}
+    optional = {"label", "description", "items", "tags", "source_refs"}
     if allow_nodes:
         optional.add("nodes")
     _ensure_required_keys(value, path, errors, required)
@@ -1863,6 +1863,8 @@ def _preferred_layout_from_family(
 ) -> str | None:
     if not family:
         return None
+    if family == "bento" and "bento" in allowed_layouts:
+        return "bento"
     family_map = usage_rules.get("layout_family_map", {})
     layout_id = family_map.get(str(family).strip().lower())
     if layout_id in allowed_layouts:
@@ -2480,6 +2482,9 @@ def build_slide_spec(brief: dict[str, Any], packet: dict[str, Any] | None = None
     elif quality_tier == "tier2":
         preferred = [layout for layout in ("title_grid", "column_content", "contents_index", "pull_quote") if layout in allowed_layouts]
         layout_cycle = preferred or (allowed_layouts[:3] or layout_cycle)
+
+    if packet["canonical_preset"] == "Fantasy Rainbow" and "bento" in allowed_layouts and "bento" not in layout_cycle:
+        layout_cycle = [*layout_cycle, "bento"]
 
     specs: list[dict[str, Any]] = []
     previous_layouts: list[str] = []
@@ -8351,6 +8356,14 @@ def _iridescence_split_item(item: str) -> tuple[str, str]:
     return text, ""
 
 
+def _iridescence_split_middle_dot(item: str, *, label_parts: int = 1) -> tuple[str, str]:
+    text = str(item).strip()
+    parts = [part.strip() for part in text.split(" · ", label_parts)]
+    if len(parts) == label_parts + 1 and all(parts):
+        return f'{" · ".join(parts[:-1])} ·', parts[-1]
+    return _iridescence_split_item(text)
+
+
 def _iridescence_split_columns(item: str, *, count: int = 3) -> list[str]:
     """Split a structured row while preserving empty trailing columns."""
     text = str(item).strip()
@@ -8358,11 +8371,24 @@ def _iridescence_split_columns(item: str, *, count: int = 3) -> list[str]:
         if separator in text:
             columns = [part.strip() for part in text.split(separator, count - 1)]
             return (columns + [""] * count)[:count]
+    middle_dot_columns = [part.strip() for part in text.split(" · ", count - 1)]
+    if len(middle_dot_columns) == count and all(middle_dot_columns):
+        return [
+            *[f"{part} ·" for part in middle_dot_columns[:-1]],
+            middle_dot_columns[-1],
+        ]
     label, description = _iridescence_split_item(text)
     return [label, description, *([""] * max(0, count - 2))][:count]
 
 
 def _iridescence_title_lines(title: str) -> list[str]:
+    explicit_lines = [
+        _normalize_title_text(line)
+        for line in re.split(r"\r?\n", title)
+        if _normalize_title_text(line)
+    ]
+    if 1 < len(explicit_lines) <= 3:
+        return explicit_lines
     normalized = _normalize_title_text(title)
     if not normalized:
         return []
@@ -8433,13 +8459,28 @@ def _render_iridescence_theme_slide(spec: dict[str, Any], total: int, *, role_in
         "capability-landscape": "capability-landscape",
         "enterprise-comparison": "comparison-table",
     }
-    if role == "enterprise-context":
-        item_limit = 16
-    elif role in {"workshop", "workshop-reveal"}:
-        item_limit = 12
-    else:
-        item_limit = 8 if role in structured_roles else 6
-    items = _iridescence_display_items(spec, limit=item_limit)
+    role_item_limits = {
+        "architecture-stack": 8,
+        "enterprise-context": 16,
+        "call-chain": 5,
+        "process": 6,
+        "compiler-process": 5,
+        "permission-policy": 4,
+        "recovery-loop": 6,
+        "guardrails": 4,
+        "interaction-case": 6,
+        "evolution": 6,
+        "comparison": 2,
+        "formula": 2,
+        "debate": 2,
+        "dual-mode": 2,
+        "routing-comparison": 2,
+        "workshop": 12,
+        "workshop-reveal": 12,
+        "capability-landscape": 8,
+        "enterprise-comparison": 8,
+    }
+    items = _iridescence_display_items(spec, limit=role_item_limits.get(role, 6))
     notes = _escape(spec["speaker_note"])
     scene_order = (
         "hero",
@@ -8460,6 +8501,8 @@ def _render_iridescence_theme_slide(spec: dict[str, Any], total: int, *, role_in
         scene = "hero"
     elif role in closing_roles:
         scene = "closing"
+    elif layout_id == "bento":
+        scene = "bento"
     elif structured_kind in structured_scenes:
         scene = structured_scenes[structured_kind]
     elif role in structured_roles:
@@ -8545,7 +8588,7 @@ def _render_iridescence_theme_slide(spec: dict[str, Any], total: int, *, role_in
             phrase = ""
         elif not phrase or phrase not in title:
             phrase = _iridescence_fallback_title_emphasis(title, lines)
-        return "".join(f'<span class="iri-title-line">{emphasized_line(line, phrase)}</span>' for line in lines)
+        return "".join(f'<span class="iri-title-line title-line">{emphasized_line(line, phrase)}</span>' for line in lines)
 
     def header(*, level: int = 2, lead: bool = True) -> str:
         tag = "h1" if level == 1 else "h2"
@@ -8635,6 +8678,18 @@ def _render_iridescence_theme_slide(spec: dict[str, Any], total: int, *, role_in
             for index, item in enumerate(items[:6], start=1)
         )
         body = f'{header()}<div class="iri-pipeline">{steps}</div>'
+    elif scene == "bento":
+        cards = []
+        for index, item in enumerate(items, start=1):
+            label, description = _iridescence_split_item(item)
+            cards.append(
+                '<div class="iri-bento-card kd-reveal">'
+                f'<span class="iri-number {accent_cycle[(index - 1) % len(accent_cycle)]}">{index:02d}</span>'
+                f'<h3>{_escape(label)}</h3>'
+                + (f'<p>{_escape(description)}</p>' if description else "")
+                + '</div>'
+            )
+        body = f'{header()}<div class="iri-bento iri-bento--{len(cards)}">{"".join(cards)}</div>'
     elif scene == "spectrum":
         marker_cycle = (
             "iri-marker-primary",
@@ -8845,7 +8900,7 @@ def _render_iridescence_theme_slide(spec: dict[str, Any], total: int, *, role_in
                 if str(edge.get("from") or "") == group_id
                 and str(edge.get("to") or "") in {str(next_group.get("id") or "") for next_group in groups}
             )
-        body = f'{header(lead=False)}<div class="iri-layered-call-graph">{"".join(all_layers)}</div>'
+        body = f'{header()}<div class="iri-layered-call-graph">{"".join(all_layers)}</div>'
     elif scene == "architecture-stack":
         layers = "".join(
             '<div class="iri-architecture-layer kd-reveal">'
@@ -8896,8 +8951,14 @@ def _render_iridescence_theme_slide(spec: dict[str, Any], total: int, *, role_in
         )
         body = f'{header()}<div class="iri-call-chain">{nodes}</div>'
     elif scene == "dual-mode":
+        if role == "routing-comparison":
+            group_id = "routing-comparison"
+            node_ids = ("routing-agent-path", "routing-workflow-path")
+        else:
+            group_id = "dual-mode"
+            node_ids = ("agent-loop", "workflow")
         modes = "".join(
-            '<div class="iri-dual-track kd-reveal">'
+            f'<div class="iri-dual-track kd-reveal" data-node-id="{node_ids[index]}">'
             f'<span class="iri-number {accent_cycle[index % len(accent_cycle)]}">{index + 1:02d}</span>'
             f'<strong>{_escape(_iridescence_split_item(item)[0])}</strong>'
             f'<p>{_escape(_iridescence_split_item(item)[1])}</p>'
@@ -8905,10 +8966,13 @@ def _render_iridescence_theme_slide(spec: dict[str, Any], total: int, *, role_in
             '</div>'
             for index, item in enumerate(items[:2])
         )
-        body = f'{header()}<div class="iri-dual-mode">{modes}</div>'
+        body = (
+            f'{header()}<div class="iri-dual-mode" data-group-id="{group_id}" '
+            f'data-edge-from="{node_ids[0]}" data-edge-to="{node_ids[1]}" data-relation="parallel-tracks">{modes}</div>'
+        )
     elif scene == "workshop-grid":
         cells = "".join(
-            '<div class="iri-workshop-cell kd-reveal">'
+            f'<div class="iri-workshop-cell kd-reveal" data-node-id="workshop-card-{index:02d}">'
             f'<span class="iri-number {accent_cycle[(index - 1) % len(accent_cycle)]}">{index:02d}</span>'
             f'<strong>{_escape(_iridescence_split_item(item)[0])}</strong>'
             f'<p>{_escape(_iridescence_split_item(item)[1])}</p>'
@@ -8916,43 +8980,63 @@ def _render_iridescence_theme_slide(spec: dict[str, Any], total: int, *, role_in
             for index, item in enumerate(items[:12], start=1)
         )
         reveal_class = " iri-workshop--reveal" if role == "workshop-reveal" else ""
-        body = f'{header()}<div class="iri-workshop{reveal_class}">{cells}</div>'
+        body = f'{header()}<div class="iri-workshop{reveal_class}" data-group-id="workshop-cards">{cells}</div>'
     elif scene == "capability-landscape":
         capabilities = "".join(
-            '<div class="iri-capability kd-reveal">'
+            f'<div class="iri-capability kd-reveal" data-node-id="capability-module-{index:02d}">'
             f'<span class="iri-number iri-accent-text-primary">{index:02d}</span>'
-            f'<strong>{_escape(_iridescence_split_item(item)[0])}</strong>'
-            f'<p>{_escape(_iridescence_split_item(item)[1])}</p>'
+            f'<strong>{_escape(_iridescence_split_middle_dot(item, label_parts=2)[0])}</strong>'
+            f'<p>{_escape(_iridescence_split_middle_dot(item, label_parts=2)[1])}</p>'
             '</div>'
             for index, item in enumerate(items[:6], start=1)
         )
-        process = _iridescence_split_item(items[6]) if len(items) > 6 else ("运行流程", spec.get("key_point", ""))
-        foundation = _iridescence_split_item(items[7]) if len(items) > 7 else ("Model / MaaS", spec.get("claim", ""))
+        process = _iridescence_split_middle_dot(items[6]) if len(items) > 6 else ("运行流程", spec.get("key_point", ""))
+        foundation = _iridescence_split_middle_dot(items[7]) if len(items) > 7 else ("Model / MaaS", spec.get("claim", ""))
         body = (
             f'{header()}'
-            '<div class="iri-capability-landscape">'
-            f'<div class="iri-capability-grid">{capabilities}</div>'
-            '<div class="iri-capability-band kd-reveal">'
+            '<div class="iri-capability-landscape" data-group-id="capability-landscape">'
+            f'<div class="iri-capability-grid" data-group-id="capability-modules">{capabilities}</div>'
+            '<div class="iri-capability-band kd-reveal" data-node-id="capability-runtime" '
+            'data-edge-from="capability-runtime" data-edge-to="capability-modules" data-relation="executes">'
             f'<strong>{_escape(process[0])}</strong><span>{_escape(process[1])}</span>'
             '</div>'
-            '<div class="iri-capability-foundation kd-reveal">'
+            '<div class="iri-capability-foundation kd-reveal" data-node-id="capability-foundation" '
+            'data-edge-from="capability-foundation" data-edge-to="capability-runtime" data-relation="supports">'
             f'<strong>{_escape(foundation[0])}</strong><span>{_escape(foundation[1])}</span>'
             '</div></div>'
         )
     elif scene == "comparison-table":
+        has_source_headings = len(items) >= 7 and all(
+            columns[1] and not columns[2] for columns in map(_iridescence_split_columns, items[:2])
+        )
+        source_heading = _iridescence_split_columns(items[0]) if has_source_headings else ["开源 / 通用", "", ""]
+        enterprise_heading = _iridescence_split_columns(items[1]) if has_source_headings else ["企业级", "", ""]
+        comparison_items = items[2:7] if has_source_headings else items[:8]
+        conclusion = _iridescence_split_item(items[7]) if has_source_headings and len(items) > 7 else ("", "")
         rows = "".join(
-            '<div class="iri-comparison-row kd-reveal">'
-            f'<strong>{_escape(_iridescence_split_columns(item)[0])}</strong>'
-            f'<span>{_escape(_iridescence_split_columns(item)[1])}</span>'
-            f'<span>{_escape(_iridescence_split_columns(item)[2])}</span>'
+            f'<div class="iri-comparison-row kd-reveal" data-group-id="comparison-row-{index:02d}" '
+            f'data-edge-from="comparison-open-source-{index:02d}" data-edge-to="comparison-enterprise-{index:02d}" '
+            'data-relation="row-aligned">'
+            f'<strong data-node-id="comparison-dimension-{index:02d}">{_escape(_iridescence_split_columns(item)[0])}</strong>'
+            f'<span data-node-id="comparison-open-source-{index:02d}">{_escape(_iridescence_split_columns(item)[1])}</span>'
+            f'<span data-node-id="comparison-enterprise-{index:02d}">{_escape(_iridescence_split_columns(item)[2])}</span>'
             '</div>'
-            for item in items[:8]
+            for index, item in enumerate(comparison_items, start=1)
+        )
+        conclusion_html = (
+            '<div class="iri-comparison-conclusion kd-reveal">'
+            f'<strong>{_escape(conclusion[0])}</strong><span>{_escape(conclusion[1])}</span>'
+            '</div>'
+            if conclusion[0]
+            else ""
         )
         body = (
             f'{header()}'
-            '<div class="iri-comparison-table">'
-            '<div class="iri-comparison-row iri-comparison-head"><strong>维度</strong><span>开源 / 通用</span><span>企业级</span></div>'
-            f'{rows}</div>'
+            '<div class="iri-comparison-table" data-group-id="enterprise-comparison-table">'
+            '<div class="iri-comparison-row iri-comparison-head"><strong>维度</strong>'
+            f'<span><b>{_escape(source_heading[0])}</b><small>{_escape(source_heading[1])}</small></span>'
+            f'<span><b>{_escape(enterprise_heading[0])}</b><small>{_escape(enterprise_heading[1])}</small></span></div>'
+            f'{rows}{conclusion_html}</div>'
         )
     else:
         commands = "".join(
@@ -8982,6 +9066,12 @@ def _render_custom_theme_slide(
     role_index: int,
 ) -> str:
     """Render a slide using theme-specific component classes from the style contract."""
+    effect_themes = {"shader hero": "shader-hero", "molten flow": "molten-flow", "stellar vortex": "stellar-vortex"}
+    effect_theme = effect_themes.get(_normalize_preset_name(style_contract.get("preset", "")))
+    if effect_theme:
+        from shader_hero_renderer import render_shader_hero_slide
+
+        return render_shader_hero_slide(spec, total, role_index=role_index, theme=effect_theme)
     if _normalize_preset_name(style_contract.get("preset", "")) in {
         "fantasy rainbow",
         "iridescence convergence",
@@ -9159,6 +9249,10 @@ def render_custom_theme_html(
         images = _extract_starter_image_urls(starter_path)
         theme_decor = _extract_starter_theme_decor(starter_path)
         theme_runtime = _extract_starter_theme_runtime(starter_path)
+        if theme_dir.name in {"shader-hero", "molten-flow", "stellar-vortex"} and brief["runtime"]["export_intent"] != "none":
+            # Export is a generation-time decision: no canvas or GPU setup in the artifact.
+            theme_decor = re.sub(r"<canvas\b[^>]*>.*?</canvas>", "", theme_decor, flags=re.DOTALL)
+            theme_runtime = ""
     else:
         starter_css = "\n\n".join(style_contract["css_blocks"]) + """
 

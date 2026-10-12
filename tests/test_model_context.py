@@ -41,6 +41,17 @@ def test_unknown_preset_fails_closed():
         build_model_context("not-a-real-theme")
 
 
+def test_structured_schema_is_discoverable_only_for_the_supported_theme():
+    from jsonschema import validate
+
+    context = build_model_context("custom:fantasy-rainbow")
+    assert context["slide_optional"]["structured_content"] == "object"
+    validate({"kind": "layered-architecture", "groups": [{"id": "layer", "label": "Runtime"}]},
+             context["structured_content_schema"])
+    assert any("5-40" in rule for rule in context["rules"])
+    assert "structured_content" not in build_model_context("Data Story")["slide_optional"]
+
+
 def test_context_requires_preset():
     result = subprocess.run([sys.executable,str(ROOT/"main.py"),"--model-context"],capture_output=True,text=True)
     assert result.returncode != 0

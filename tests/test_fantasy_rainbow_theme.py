@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import copy
 import json
 import re
 import sys
@@ -78,6 +79,70 @@ def test_iridescence_theme_is_discoverable_and_renderable():
     assert capability.can_render is True
     assert capability.renderer_strategy == "custom_theme"
     assert capability.support_tier == "custom"
+
+
+def _brief_with_page_count(page_count: int) -> dict:
+    brief = _brief()
+    source = brief["narrative"]["slides"][5]
+    slides = []
+    for index in range(1, page_count + 1):
+        slide = copy.deepcopy(source)
+        slide["slide_number"] = index
+        slide["role"] = "cover" if index == 1 else "cta" if index == page_count else "feature"
+        slide["title"] = f"Page {index}"
+        slides.append(slide)
+    brief["deck"]["page_count"] = page_count
+    brief["narrative"]["slides"] = slides
+    brief["narrative"]["page_roles"] = [slide["role"] for slide in slides]
+    return brief
+
+
+def test_generation_brief_page_count_accepts_40_and_rejects_41():
+    from jsonschema import Draft202012Validator
+    from low_context import validate_brief_data
+
+    schema = json.loads((ROOT / "schemas" / "generation-brief.schema.json").read_text(encoding="utf-8"))
+    validator = Draft202012Validator(schema)
+    forty = _brief_with_page_count(40)
+    forty_one = _brief_with_page_count(41)
+
+    assert schema["properties"]["deck"]["properties"]["page_count"]["maximum"] == 40
+    assert list(validator.iter_errors(forty)) == []
+    assert validate_brief_data(forty) == []
+    assert any(error.validator == "maximum" for error in validator.iter_errors(forty_one))
+    assert any("page_count must be <= 40" in error for error in validate_brief_data(forty_one))
+
+
+def test_structured_content_is_optional_semantic_ir_and_survives_slide_spec():
+    from jsonschema import Draft202012Validator
+    from low_context import build_slide_spec, validate_brief_data
+
+    brief = _brief()
+    structured = {
+        "kind": "interaction-flow-poll",
+        "groups": [
+            {"id": "task", "nodes": [{"id": "step-1"}, {"id": "step-2", "source_refs": ["S2"]}]},
+            {"id": "poll", "source_refs": ["S3"], "nodes": [{"id": "option-a"}, {"id": "option-b"}]},
+        ],
+        "edges": [
+            {"from": "step-1", "to": "step-2", "relation": "ordered-before", "source_refs": ["S1"]}
+        ],
+    }
+    brief["narrative"]["slides"][1]["structured_content"] = structured
+    schema = json.loads((ROOT / "schemas" / "generation-brief.schema.json").read_text(encoding="utf-8"))
+
+    assert validate_brief_data(_brief()) == []
+    assert list(Draft202012Validator(schema).iter_errors(brief)) == []
+    assert validate_brief_data(brief) == []
+    assert build_slide_spec(brief)[1]["structured_content"] is structured
+
+    duplicate = copy.deepcopy(brief)
+    duplicate["narrative"]["slides"][1]["structured_content"]["groups"][1]["nodes"][0]["id"] = "step-1"
+    assert any("reuses structured id: step-1" in error for error in validate_brief_data(duplicate))
+
+    dangling = copy.deepcopy(brief)
+    dangling["narrative"]["slides"][1]["structured_content"]["edges"][0]["to"] = "missing"
+    assert any("references unknown structured id: missing" in error for error in validate_brief_data(dangling))
 
 
 def test_iridescence_reference_compiles_the_approved_contract():
@@ -893,6 +958,245 @@ def test_iridescence_source_dense_scenes_preserve_nested_structure_without_tilt(
         assert rule
         assert "rotate(" not in rule.group(1)
         assert "skew(" not in rule.group(1)
+
+
+def test_source_dense_page_contracts_preserve_p5_p12_p13_and_p17_evidence():
+    from low_context import _render_iridescence_theme_slide
+
+    p5 = _scene_spec(
+        slide_number=5,
+        role="interaction-case",
+        title="Interaction flow",
+        items=[],
+    )
+    p5["structured_content"] = {
+        "kind": "interaction-flow-poll",
+        "groups": [
+            {
+                "id": "task",
+                "label": "Task",
+                "source_refs": ["P5-task"],
+                "nodes": [
+                    {"id": "task-1", "label": "Start"},
+                    {"id": "task-2", "label": "Extract"},
+                    {"id": "task-3", "label": "Submit"},
+                ],
+            },
+            {
+                "id": "poll",
+                "label": "Poll",
+                "nodes": [
+                    {"id": "poll-a", "label": "A"},
+                    {"id": "poll-b", "label": "B"},
+                ],
+            },
+        ],
+        "edges": [
+            {"from": "task-1", "to": "task-2", "relation": "ordered-before"},
+            {"from": "task-2", "to": "task-3", "relation": "ordered-before"},
+        ],
+    }
+    p5_soup = BeautifulSoup(_render_iridescence_theme_slide(p5, 32, role_index=4), "html.parser")
+    assert len(p5_soup.select("#slide-5 .iri-interaction-step")) == 3
+    assert len(p5_soup.select('#slide-5 .iri-poll[data-group-id="poll"]')) == 1
+    assert len(p5_soup.select("#slide-5 .iri-poll-option")) == 2
+    assert p5_soup.select_one('[data-group-id="task"][data-source-ref="P5-task"]')
+
+    p12 = _scene_spec(slide_number=12, role="architecture-stack", title="Five layers", items=[])
+    p12["structured_content"] = {
+        "kind": "layered-architecture",
+        "groups": [
+            {"id": f"layer-{index}", "label": f"Layer {index}", "source_refs": [f"P12-{index}"]}
+            for index in range(1, 6)
+        ],
+        "edges": [
+            {"from": f"layer-{index}", "to": f"layer-{index + 1}", "relation": "feeds"}
+            for index in range(1, 5)
+        ],
+        "rails": [
+            {"id": "security-rail", "label": "Security"},
+            {"id": "observability-rail", "label": "Observability"},
+        ],
+        "bands": [{"id": "runtime-loop", "label": "Runtime loop"}],
+    }
+    p12_soup = BeautifulSoup(_render_iridescence_theme_slide(p12, 32, role_index=11), "html.parser")
+    assert len(p12_soup.select("#slide-12 .iri-layered-architecture-layer")) == 5
+    assert len(p12_soup.select("#slide-12 .iri-architecture-rail")) == 2
+    assert len(p12_soup.select("#slide-12 .iri-architecture-band")) == 1
+    assert p12_soup.select_one('[data-edge-from="layer-1"][data-edge-to="layer-2"][data-relation="feeds"]')
+
+    p13 = _scene_spec(slide_number=13, role="call-chain", title="Layered call graph", items=[])
+    p13["structured_content"] = {
+        "kind": "layered-call-graph",
+        "groups": [
+            {"id": "call-layer-1", "label": "LAYER1", "nodes": [{"id": "activity-workflow", "label": "Activity-Workflow"}]},
+            {
+                "id": "call-layer-2",
+                "label": "LAYER2",
+                "nodes": [{"id": "l2", "label": "L2"}, {"id": "l3", "label": "L3"}],
+            },
+            {"id": "call-layer-3", "label": "LAYER3", "nodes": [{"id": "supplier-flow", "label": "supplier flow"}]},
+            {
+                "id": "call-layer-4",
+                "label": "LAYER4",
+                "nodes": [
+                    {"id": f"mcp-cluster-{index}", "label": f"MCP cluster {index}"}
+                    for index in range(1, 5)
+                ],
+            },
+            {"id": "saas-foundation", "label": "SaaS", "items": ["Foundation"]},
+        ],
+        "edges": [
+            {"from": "call-layer-1", "to": "call-layer-2", "relation": "handoff", "label": "Activity handoff"},
+            {"from": "call-layer-2", "to": "call-layer-3", "relation": "handoff", "label": "L2/L3 handoff"},
+            {"from": "call-layer-3", "to": "call-layer-4", "relation": "handoff", "label": "supplier handoff"},
+            {"from": "call-layer-4", "to": "saas-foundation", "relation": "handoff", "label": "SaaS handoff"},
+            {"from": "l2", "to": "l3", "relation": "internal-call"},
+            {"from": "mcp-cluster-1", "to": "mcp-cluster-2", "relation": "cluster-call"},
+        ],
+    }
+    p13_soup = BeautifulSoup(_render_iridescence_theme_slide(p13, 32, role_index=12), "html.parser")
+    p13_text = p13_soup.get_text(" ", strip=True)
+    for expected in ("LAYER1", "LAYER2", "LAYER3", "LAYER4", "SaaS", "Activity-Workflow", "L2", "L3", "supplier flow"):
+        assert expected in p13_text
+    assert len(p13_soup.select('[data-node-id^="mcp-cluster-"]')) == 4
+    assert len(p13_soup.select(".iri-call-graph-handoff[data-edge-from][data-edge-to][data-relation]")) == 4
+    assert p13_soup.select_one(".iri-call-graph-layer--foundation[data-group-id='saas-foundation']")
+
+    p17 = _scene_spec(
+        slide_number=17,
+        role="enterprise-context",
+        title="Business and environment context",
+        items=[f"Context {index}：Detail {index}" for index in range(1, 17)],
+    )
+    p17_soup = BeautifulSoup(_render_iridescence_theme_slide(p17, 32, role_index=16), "html.parser")
+    business = p17_soup.select_one('[data-group-id="business-context"]')
+    environment = p17_soup.select_one('[data-group-id="environment-context"]')
+    assert business and environment
+    assert [node["data-node-id"] for node in business.select("[data-node-id]")] == [
+        f"business-context-{index}" for index in range(1, 9)
+    ]
+    assert [node["data-node-id"] for node in environment.select("[data-node-id]")] == [
+        f"environment-context-{index}" for index in range(1, 9)
+    ]
+
+
+def test_relation_markers_are_stable_on_p20_p26_p27_p28_and_p29():
+    from low_context import _render_iridescence_theme_slide
+
+    p20 = _scene_spec(
+        slide_number=20,
+        role="dual-mode",
+        title="Two modes",
+        items=["Agent Loop：adaptive", "Workflow：fixed"],
+    )
+    p20_soup = BeautifulSoup(_render_iridescence_theme_slide(p20, 32, role_index=19), "html.parser")
+    relation = p20_soup.select_one(
+        '#slide-20 [data-group-id="dual-mode"][data-edge-from="agent-loop"]'
+        '[data-edge-to="workflow"][data-relation="parallel-tracks"]'
+    )
+    assert relation
+    assert {node["data-node-id"] for node in relation.select("[data-node-id]")} == {"agent-loop", "workflow"}
+
+    routing = _scene_spec(
+        slide_number=21,
+        role="routing-comparison",
+        title="Routing modes",
+        items=["Agent route：adaptive", "Workflow route：fixed"],
+    )
+    routing_soup = BeautifulSoup(_render_iridescence_theme_slide(routing, 32, role_index=20), "html.parser")
+    assert routing_soup.select_one('[data-group-id="routing-comparison"]')
+    assert {node["data-node-id"] for node in routing_soup.select(".iri-dual-track")} == {
+        "routing-agent-path",
+        "routing-workflow-path",
+    }
+
+    workshop_items = [f"Card {index}：Choice {index}" for index in range(1, 13)]
+    workshop_orders = []
+    for slide_number, role in ((26, "workshop"), (27, "workshop-reveal")):
+        spec = _scene_spec(slide_number=slide_number, role=role, title=role, items=workshop_items)
+        soup = BeautifulSoup(_render_iridescence_theme_slide(spec, 32, role_index=slide_number - 1), "html.parser")
+        group = soup.select_one('[data-group-id="workshop-cards"]')
+        assert group
+        order = [node["data-node-id"] for node in group.select(".iri-workshop-cell")]
+        assert order == [f"workshop-card-{index:02d}" for index in range(1, 13)]
+        workshop_orders.append(order)
+    assert workshop_orders[0] == workshop_orders[1]
+
+    p28 = _scene_spec(
+        slide_number=28,
+        role="capability-landscape",
+        title="Capability landscape",
+        items=[f"Module {index}：Detail {index}" for index in range(1, 7)]
+        + ["Runtime：route and execute", "Foundation：models"],
+    )
+    p28_soup = BeautifulSoup(_render_iridescence_theme_slide(p28, 32, role_index=27), "html.parser")
+    assert p28_soup.select_one('[data-group-id="capability-landscape"]')
+    modules = p28_soup.select_one('[data-group-id="capability-modules"]')
+    assert modules
+    assert [node["data-node-id"] for node in modules.select(".iri-capability")] == [
+        f"capability-module-{index:02d}" for index in range(1, 7)
+    ]
+    assert p28_soup.select_one(
+        '[data-node-id="capability-foundation"][data-edge-from="capability-foundation"]'
+        '[data-edge-to="capability-runtime"][data-relation="supports"]'
+    )
+    assert p28_soup.select_one(
+        '[data-node-id="capability-runtime"][data-edge-from="capability-runtime"]'
+        '[data-edge-to="capability-modules"][data-relation="executes"]'
+    )
+
+    p29 = _scene_spec(
+        slide_number=29,
+        role="enterprise-comparison",
+        title="Enterprise comparison",
+        items=[
+            "OS Harness｜Open source",
+            "Enterprise Harness｜Enterprise",
+            *[f"Dimension {index}｜Open {index}｜Enterprise {index}" for index in range(1, 6)],
+            "Conclusion：Execution responsibility matters",
+        ],
+    )
+    p29_soup = BeautifulSoup(_render_iridescence_theme_slide(p29, 32, role_index=28), "html.parser")
+    assert p29_soup.select_one('[data-group-id="enterprise-comparison-table"]')
+    assert p29_soup.select_one(".iri-comparison-head").get_text(" ", strip=True) == "维度 OS Harness Open source Enterprise Harness Enterprise"
+    assert p29_soup.select_one(".iri-comparison-conclusion").get_text(" ", strip=True) == "Conclusion Execution responsibility matters"
+    rows = p29_soup.select('.iri-comparison-row[data-relation="row-aligned"]')
+    assert len(rows) == 5
+    for index, row in enumerate(rows, start=1):
+        assert row["data-group-id"] == f"comparison-row-{index:02d}"
+        assert row.select_one(f'[data-node-id="comparison-dimension-{index:02d}"]')
+        assert row.select_one(f'[data-node-id="comparison-open-source-{index:02d}"]')
+        assert row.select_one(f'[data-node-id="comparison-enterprise-{index:02d}"]')
+
+
+def test_content_bearing_scene_css_is_orthogonal_and_has_no_inner_scrolling():
+    starter = STARTER.read_text(encoding="utf-8")
+    style = re.search(r"<style>(.*?)</style>", starter, re.DOTALL)
+    assert style
+    css = style.group(1)
+    content_classes = (
+        "iri-pipeline",
+        "iri-bento",
+        "iri-interaction-layout",
+        "iri-interaction-flow",
+        "iri-poll",
+        "iri-layered-architecture",
+        "iri-architecture-rails",
+        "iri-architecture-bands",
+        "iri-layered-call-graph",
+        "iri-context-matrix",
+        "iri-call-chain",
+        "iri-dual-mode",
+        "iri-workshop",
+        "iri-capability-landscape",
+        "iri-comparison-table",
+    )
+    assert "rotate(" not in css
+    assert "skew(" not in css
+    for selector, declarations in re.findall(r"([^{}]+)\{([^{}]*)\}", css, re.DOTALL):
+        if any(f".{class_name}" in selector for class_name in content_classes):
+            assert not re.search(r"overflow(?:-x|-y)?\s*:\s*(?:auto|scroll|hidden)", declarations)
 
 
 def test_custom_theme_generation_eval_skips_missing_builtin_signature_contract():

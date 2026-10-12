@@ -25,6 +25,7 @@ ORDER_RELATIONS = {
     "dom_order",
     "order",
     "ordered",
+    "ordered_before",
     "precedes",
     "sequence",
     "sequence_before",
@@ -159,13 +160,12 @@ def _non_empty_string(value: Any, label: str) -> str:
 
 
 def _read_threshold(coverage: dict[str, Any], name: str) -> float:
-    thresholds = coverage.get("thresholds", {})
-    if thresholds is None:
-        thresholds = {}
+    thresholds = coverage.get("thresholds")
     if not isinstance(thresholds, dict):
         raise CoverageError("thresholds must be an object")
-    value = coverage.get(f"{name}_threshold", thresholds.get(name, MIN_RETENTION))
-    result = _number(value, f"thresholds.{name}")
+    if name not in thresholds:
+        raise CoverageError(f"thresholds.{name} is required")
+    result = _number(thresholds[name], f"thresholds.{name}")
     if not MIN_RETENTION <= result <= 1.0:
         raise CoverageError(
             f"thresholds.{name} must be between {MIN_RETENTION:.2f} and 1.0"
@@ -213,13 +213,13 @@ def _validate_coverage(raw: Any) -> tuple[dict[str, Any], float, float]:
             for optional in ("selector", "source_ref"):
                 if optional in unit:
                     _non_empty_string(unit[optional], f"{unit_prefix}.{optional}")
+            if "source_ref" in unit and len(unit["source_ref"].split()) != 1:
+                raise CoverageError(f"{unit_prefix}.source_ref must be one token")
             if "selector" in unit:
                 try:
                     _select(BeautifulSoup("<div></div>", "html.parser"), unit["selector"])
                 except Exception as exc:
                     raise CoverageError(f"{unit_prefix}.selector is invalid: {exc}") from exc
-        if sum(float(unit["weight"]) for unit in units) <= 0:
-            raise CoverageError(f"{prefix}.units must have positive total weight")
 
         relations = slide.get("relations")
         if not isinstance(relations, list):
@@ -243,11 +243,9 @@ def _validate_coverage(raw: Any) -> tuple[dict[str, Any], float, float]:
             _number(relation.get("weight"), f"{relation_prefix}.weight", minimum=0.0)
             if not isinstance(relation.get("protected"), bool):
                 raise CoverageError(f"{relation_prefix}.protected must be a boolean")
-        if relations and sum(float(relation["weight"]) for relation in relations) <= 0:
-            raise CoverageError(f"{prefix}.relations must have positive total weight")
 
     expected_numbers = list(range(1, len(slides) + 1))
-    actual_numbers = sorted(seen_slide_numbers)
+    actual_numbers = [slide["slide_number"] for slide in slides]
     if actual_numbers != expected_numbers:
         raise CoverageError(
             f"slide_number values must be consecutive from 1: expected {expected_numbers}, "
@@ -288,6 +286,8 @@ def _css_hidden_tags(soup: BeautifulSoup) -> set[int]:
 
 def _is_note_element(tag: Tag, slide: Tag) -> bool:
     if tag is not slide and tag.has_attr("data-notes"):
+        return True
+    if tag.name.casefold() in {"speaker-note", "speaker-notes"}:
         return True
     if tag.has_attr("data-speaker-note") or tag.has_attr("data-speaker-notes"):
         return True
@@ -414,19 +414,19 @@ def _evaluate_units(
             for candidate in candidates
             if expected and expected in _visible_text(candidate, slide, css_hidden)
         ]
-        enforce_single_use = unit.get("source_ref") is not None
         available = [
             candidate
             for candidate in matching
-            if not enforce_single_use or id(candidate) not in consumed_source_nodes
+            if not candidate.has_attr("data-source-ref")
+            or id(candidate) not in consumed_source_nodes
         ]
         matched = bool(available)
         evidence = available[0] if matched else None
-        if matched and enforce_single_use and evidence is not None:
+        if matched and evidence is not None and evidence.has_attr("data-source-ref"):
             consumed_source_nodes.add(id(evidence))
         if matched:
             reason = "matched_normalized_visible_text"
-        elif matching and enforce_single_use:
+        elif matching and any(candidate.has_attr("data-source-ref") for candidate in matching):
             reason = "source_ref_evidence_already_used"
         elif not candidates and unit.get("source_ref") is not None:
             reason = "visible_source_ref_not_found"
@@ -452,7 +452,7 @@ def _evaluate_units(
         for unit, result in zip(units, final_results)
         if result["matched"]
     )
-    score = matched_weight / total_weight
+    score = matched_weight / total_weight if total_weight else 1.0
     missing_protected = [
         result["id"]
         for result in final_results
@@ -493,7 +493,7 @@ def _evaluate_relation(
 ) -> tuple[bool, str, str | None]:
     visible_tags = [
         tag
-        for tag in slide.find_all(True)
+        for tag in [slide, *slide.find_all(True)]
         if isinstance(tag, Tag) and _is_visible(tag, slide, css_hidden)
     ]
     sources = [
@@ -506,8 +506,10 @@ def _evaluate_relation(
         for tag in visible_tags
         if relation["to"] in {tag.get("data-node-id"), tag.get("data-group-id")}
     ]
-    edges = [tag for tag in visible_tags if tag.has_attr("data-edge-from") or tag.has_attr("data-edge-to")]
+    if not sources or not targets:
+        return False, "visible_relation_endpoint_not_found", None
 
+    edges = [tag for tag in visible_tags if tag.has_attr("data-edge-from") or tag.has_attr("data-edge-to")]
     correct_edges = [
         tag
         for tag in edges
@@ -549,8 +551,6 @@ def _evaluate_relation(
         has_target = any(_is_descendant_or_self(target, container) for target in targets)
         if has_source and has_target:
             return True, "relation_container", _describe_node(container)
-    if not sources or not targets:
-        return False, "visible_relation_endpoint_not_found", None
     return False, "explicit_relation_binding_not_found", None
 
 
@@ -600,7 +600,7 @@ def _evaluate_relations(
         for relation, result in zip(relations, results)
         if result["matched"]
     )
-    score = matched_weight / total_weight
+    score = matched_weight / total_weight if total_weight else 1.0
     missing_protected = [
         result["id"]
         for result in results
@@ -631,9 +631,11 @@ def validate_source_fidelity(
     html_text: str,
     coverage_data: Any,
     *,
-    html_path: str | None = None,
-    coverage_path: str | None = None,
+    html_path: str | Path | None = None,
+    coverage_path: str | Path | None = None,
 ) -> dict[str, Any]:
+    if not isinstance(html_text, str):
+        raise CoverageError("html_text must be a string")
     coverage, text_threshold, relation_threshold = _validate_coverage(coverage_data)
     soup = BeautifulSoup(html_text, "html.parser")
     css_hidden = _css_hidden_tags(soup)
@@ -675,8 +677,8 @@ def validate_source_fidelity(
         "pass": not failed_slides,
         "matching_mode": "normalized_exact_visible_text_and_explicit_dom_relations",
         "semantic_matching": False,
-        "html": html_path,
-        "coverage": coverage_path,
+        "html": str(html_path) if html_path is not None else None,
+        "coverage": str(coverage_path) if coverage_path is not None else None,
         "thresholds": {
             "text_retention": text_threshold,
             "relation_retention": relation_threshold,
@@ -695,11 +697,13 @@ def validate_source_fidelity(
                 ),
             },
             "weighted_average": {
-                "text_retention": round(text_matched / text_total, 6),
+                "text_retention": (
+                    round(text_matched / text_total, 6) if text_total else 1.0
+                ),
                 "relation_retention": (
                     round(relation_matched / relation_total, 6)
                     if relation_total
-                    else None
+                    else (1.0 if relation_reports else None)
                 ),
             },
         },
@@ -746,7 +750,7 @@ def main(argv: list[str] | None = None) -> int:
             coverage_path=str(args.coverage),
         )
         exit_code = 0 if report["pass"] else 1
-    except (OSError, json.JSONDecodeError, CoverageError) as exc:
+    except (OSError, UnicodeError, json.JSONDecodeError, CoverageError) as exc:
         report = _error_report(str(exc), args.html, args.coverage)
         exit_code = 2
 

@@ -109,12 +109,13 @@ def test_valid_deck_passes_and_reports_macro_and_weighted_scores(tmp_path: Path)
                 unit(
                     "claim-1",
                     "Revenue reached 120 million USD.",
-                    weight=2,
+                    weight=7,
                     protected=True,
                     source_ref="claim-1",
                 ),
                 unit("quote-1", "Build for trust.", protected=True),
                 unit("author-1", "Ada Example", protected=True),
+                unit("minor-omission", "Optional appendix detail"),
             ],
             [
                 relation(
@@ -140,11 +141,11 @@ def test_valid_deck_passes_and_reports_macro_and_weighted_scores(tmp_path: Path)
     assert completed.returncode == 0
     assert report["pass"] is True
     assert report["summary"]["macro_average"] == {
-        "text_retention": 1.0,
+        "text_retention": 0.95,
         "relation_retention": 1.0,
     }
     assert report["summary"]["weighted_average"] == {
-        "text_retention": 1.0,
+        "text_retention": 0.916667,
         "relation_retention": 1.0,
     }
 
@@ -215,9 +216,14 @@ def test_hidden_duplicate_text_does_not_count(tmp_path: Path):
     html = """
     <style>.ghost { display: none !important; }</style>
     <section class="slide">
+      <!-- Confidential baseline 17 kg -->
+      <script>Confidential baseline 17 kg</script>
+      <template>Confidential baseline 17 kg</template>
+      <noscript>Confidential baseline 17 kg</noscript>
       <span class="ghost">Confidential baseline 17 kg</span>
       <span aria-hidden="true">Confidential baseline 17 kg</span>
       <span hidden>Confidential baseline 17 kg</span>
+      <span style="display: none">Confidential baseline 17 kg</span>
       <span style="visibility: hidden">Confidential baseline 17 kg</span>
       <p>Visible summary</p>
     </section>
@@ -313,7 +319,7 @@ def test_single_source_ref_node_cannot_cover_two_distinct_units(tmp_path: Path):
                     "beta",
                     "Beta statement.",
                     protected=True,
-                    source_ref="source-line-1",
+                    selector='[data-source-ref~="source-line-1"]',
                 ),
             ],
         )
@@ -347,3 +353,41 @@ def test_group_endpoints_and_multi_value_source_refs_are_supported(tmp_path: Pat
 
     assert completed.returncode == 0
     assert report["pass"] is True
+
+
+def test_containment_and_dom_order_relation_types_are_supported(tmp_path: Path):
+    html = """
+    <section class="slide">
+      <div data-group-id="parent"><span data-node-id="child">Child</span></div>
+      <div data-group-id="later">Later</div>
+    </section>
+    """
+    source_coverage = coverage(
+        slide(
+            1,
+            [unit("copy", "Child Later", protected=True)],
+            [
+                relation("nested", "contains", "parent", "child", protected=True),
+                relation("ordered", "before", "parent", "later", protected=True),
+            ],
+        )
+    )
+
+    completed, report = run_gate(tmp_path, html, source_coverage)
+
+    assert completed.returncode == 0
+    methods = [item["method"] for item in report["slides"][0]["relations"]["relations"]]
+    assert methods == ["dom_containment", "dom_order"]
+
+
+def test_missing_required_threshold_is_invalid_input(tmp_path: Path):
+    source_coverage = coverage(slide(1, [unit("copy", "Visible")]))
+    del source_coverage["thresholds"]["relation_retention"]
+
+    completed, report = run_gate(
+        tmp_path, '<section class="slide">Visible</section>', source_coverage
+    )
+
+    assert completed.returncode == 2
+    assert report["pass"] is False
+    assert report["errors"] == ["thresholds.relation_retention is required"]

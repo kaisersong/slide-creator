@@ -2,10 +2,6 @@ name: Publish versioned runtime
 
 on:
   push:
-    branches:
-      - main
-    paths:
-      - '.github/workflows/release.yml'
     tags:
       - 'v*'
   workflow_dispatch:
@@ -37,8 +33,8 @@ jobs:
             exit 1
           fi
           git rev-parse "${TAG}" >/dev/null
-          # A workflow-registration push can publish an already explicit tag,
-          # but only when its runtime bytes match the branch that triggered it.
+          # Manual dispatch can publish an already explicit tag only when its
+          # runtime bytes match the selected branch.
           if [ "${GITHUB_REF_TYPE}" != tag ]; then
             git diff --exit-code "${TAG}" HEAD -- SKILL.md main.py scripts schemas references themes
             git checkout --detach "${TAG}"
@@ -50,8 +46,8 @@ jobs:
         shell: bash
         run: |
           mkdir -p dist
-          curl --fail --silent --show-error --location https://github.com/kaisersong/slide-creator/releases/download/v2.31.0/kai-slide-creator-v2.31.0-skill-runtime.zip -o dist/previous-runtime.zip
-          python scripts/package-runtime.py --output-dir dist --previous-runtime dist/previous-runtime.zip --previous-sha256 319c0972dd608c209a971873eb1c28cb965057b5f9472af7594fc8f288f4bd44
+          curl --fail --silent --show-error --location https://github.com/kaisersong/slide-creator/releases/download/v2.32.0/kai-slide-creator-v2.32.0-skill-runtime.zip -o dist/previous-runtime.zip
+          python scripts/package-runtime.py --output-dir dist --previous-runtime dist/previous-runtime.zip --previous-sha256 051fe4f21c2d2a3d5fcaa1d55a993e07f040f0839959bcbc7d2bcb4aa9a4119a
           python -m pip install -r scripts/requirements-runtime.txt
           python check-doc-sync.py
           python -m zipfile -e "dist/kai-slide-creator-${TAG}-skill-runtime.zip" dist/installed
@@ -63,10 +59,10 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         shell: bash
         run: |
-          NOTES="docs/design/2026-10-09-release-${TAG}.md"
+          NOTES=$(find docs/design -maxdepth 1 -name "*-release-${TAG}.md" -print -quit)
           if ! gh release view "${TAG}" >/dev/null 2>&1; then
             if [ -f "${NOTES}" ]; then
-              gh release create "${TAG}" --verify-tag --draft --title "${TAG} · Animated cover themes and offline playback" --notes-file "${NOTES}"
+              gh release create "${TAG}" --verify-tag --draft --title "${TAG}" --notes-file "${NOTES}"
             else
               gh release create "${TAG}" --verify-tag --draft --title "${TAG}" --generate-notes
             fi

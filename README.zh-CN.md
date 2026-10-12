@@ -10,9 +10,9 @@
 
 ---
 
-## 下载 v2.32.0
+## 下载 v2.33.0
 
-[精简 Skill 安装 ZIP](https://github.com/kaisersong/slide-creator/releases/download/v2.32.0/kai-slide-creator-v2.32.0-skill-runtime.zip) · [Release 与 SHA-256](https://github.com/kaisersong/slide-creator/releases/tag/v2.32.0) · [优化方法论 v1.0.1 ZIP](https://github.com/kaisersong/slide-creator/releases/download/v2.31.0/skill-optimization-methodology-v1.0.1.zip)
+[精简 Skill 安装 ZIP](https://github.com/kaisersong/slide-creator/releases/download/v2.33.0/kai-slide-creator-v2.33.0-skill-runtime.zip) · [Release 与 SHA-256](https://github.com/kaisersong/slide-creator/releases/tag/v2.33.0) · [优化方法论 v1.0.1 ZIP](https://github.com/kaisersong/slide-creator/releases/download/v2.31.0/skill-optimization-methodology-v1.0.1.zip)
 
 方法论正文、优化计划、评测报告与bug模板见[跨 Skill 优化指南](docs/methodology/skill-optimization/README.md)。运行包与方法包分开下载，研究文档不会占用正常生成上下文。
 
@@ -472,7 +472,7 @@ python3 -m venv .venv
 
 ## 仅运行所需的 Skill ZIP
 
-下载 [`kai-slide-creator-v2.32.0-skill-runtime.zip`](https://github.com/kaisersong/slide-creator/releases/download/v2.32.0/kai-slide-creator-v2.32.0-skill-runtime.zip)，即可获得精简的 Skill 安装包。将压缩包顶层的 `kai-slide-creator/` 目录解压到代理的 skills 目录。压缩包只包含 `SKILL.md`、`main.py`、`scripts/`、`schemas/`、`references/` 和 `themes/`；不会包含仓库 README、Demo、测试、eval fixture、设计文档和 Git 元数据。
+下载 [`kai-slide-creator-v2.33.0-skill-runtime.zip`](https://github.com/kaisersong/slide-creator/releases/download/v2.33.0/kai-slide-creator-v2.33.0-skill-runtime.zip)，即可获得精简的 Skill 安装包。将压缩包顶层的 `kai-slide-creator/` 目录解压到代理的 skills 目录。压缩包只包含 `SKILL.md`、`main.py`、`scripts/`、`schemas/`、`references/` 和 `themes/`；不会包含仓库 README、Demo、测试、eval fixture、设计文档和 Git 元数据。
 
 ---
 
@@ -481,6 +481,8 @@ python3 -m venv .venv
 ---
 
 ## 版本日志
+
+**v2.33.0** — 源稿保真与结构化关系页：整合本地在途工作，BRIEF 支持 5–40 页，奇幻彩虹新增分层架构、调用图、互动流程与投票等结构化内容，同时保留 bento 商业布局。新增独立逐页正文与关系保真检查，受保护事实必须全部命中；同步修复模型契约字段和发布运行包。 验证范围及历史 profile 门禁限制见[发布说明](docs/design/2026-10-12-release-v2.33.0.md)。
 
 **v2.32.0** — 动效封面与离线播放：新增极光封面、熔金流体和星核跃迁，与既有奇幻彩虹形成四款目录，支持按用户名称和自然提示词选用。新增封面默认仅首页动态，单 HTML 断网双击和 HTTP/IP 自动使用 WebGL2；正文、后台、黑屏和打印时暂停，图形不可用、减少动态效果及导出时保留完整静态封面。星核保持中心24秒一圈，中层72秒、外围144秒，并缩短、减淡外围拖尾。同步提供共享生命周期、BRIEF 正式渲染、静态导出、演示和新版精简运行 ZIP。
 

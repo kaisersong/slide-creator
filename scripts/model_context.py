@@ -29,6 +29,12 @@ def build_model_context(preset: str) -> dict[str, Any]:
     template["timing"] = {kind:{key:"not measured" for key in ("plan","generate","validate","polish","total")} for kind in ("estimate","actual")}
     schema = json.loads((ROOT / "schemas/generation-brief.schema.json").read_text())
     slide_shape = schema["properties"]["narrative"]["properties"]["slides"]["items"]
+    def optional_shape(value: dict[str, Any]) -> Any:
+        if "$ref" in value:
+            value = schema["$defs"][value["$ref"].rsplit("/", 1)[-1]]
+        return {"enum": value["enum"]} if "enum" in value else value["type"]
+
+    structured_supported = capability.canonical_preset == "Fantasy Rainbow"
     return {
         "contract_version":1, "preset":preset, "canonical_preset":capability.canonical_preset,
         "renderer_strategy":capability.renderer_strategy, "support_tier":capability.support_tier,
@@ -38,10 +44,14 @@ def build_model_context(preset: str) -> dict[str, Any]:
         "color_tokens":{key:value for key,value in contract["tokens"].items() if any(s in key for s in ("bg","text","accent","red","navy"))},
         "brief_skeleton":template,
         "slide_required":slide_shape["required"],
-        "slide_optional":{key: ({"enum":value["enum"]} if "enum" in value else value["type"])
-                          for key,value in slide_shape["properties"].items() if key not in slide_shape["required"]},
+        "slide_optional":{key: optional_shape(value)
+                          for key,value in slide_shape["properties"].items()
+                          if key not in slide_shape["required"] and (key != "structured_content" or structured_supported)},
+        **({"structured_content_schema": {"$ref": "#/$defs/structuredContent", "$defs": {
+            key: schema["$defs"][key] for key in ("structuredContent", "structuredGroup", "structuredNode", "structuredEdge")
+        }}} if structured_supported else {}),
         "rules":[
-            "Fill every empty field and create page_roles/slides for all requested pages (5-20). The skeleton is not a valid final BRIEF.",
+            "Fill every empty field and create page_roles/slides for all requested pages (5-40). The skeleton is not a valid final BRIEF.",
             "Use slide claim, explanation, visual_intent, supporting_facts and numeric_facts to preserve source evidence and rich content.",
             "Put all complete local evidence statements, including measurements, in supporting_facts. numeric_facts is an auxiliary index for metric binding, not additional table rows.",
             "One main claim and one main exhibit per page. Use varied layout families; do not reduce evidence to title-only slides.",

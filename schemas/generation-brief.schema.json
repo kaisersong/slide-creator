@@ -386,8 +386,7 @@
       "type": "object",
       "additionalProperties": false,
       "required": [
-        "id",
-        "label"
+        "id"
       ],
       "properties": {
         "id": {
@@ -432,8 +431,7 @@
       "type": "object",
       "additionalProperties": false,
       "required": [
-        "id",
-        "label"
+        "id"
       ],
       "properties": {
         "id": {
