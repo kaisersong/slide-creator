@@ -7,7 +7,7 @@ When a user asks which animated covers exist, wants previews, or describes a mov
 | 用户名称 | BRIEF.style.preset | 首页效果 | 正文风格 |
 |---|---|---|---|
 | 极光封面 / Aurora Cover | custom:shader-hero | 夜空中的绿青极光帘幕、光丝与缓慢流动的褶皱 | 米白编辑风正文，深色收尾 |
-| 奇幻彩虹 / Fantasy Rainbow | custom:fantasy-rainbow | 满屏流动的虹彩色带与光场 | 白底编辑风正文，近黑收尾 |
+| 奇幻彩虹 / Fantasy Rainbow | custom:fantasy-rainbow | 满屏流动的虹彩色带与光场 | 白底商业正文，水平流程与 Bento 卡片，近黑收尾 |
 | 熔金流体 / Molten Flow | custom:molten-flow | 黑底金橙色立体金属光带，持续扭转与高光流动 | 暖米白正文，深棕收尾 |
 | 星核跃迁 / Stellar Vortex | custom:stellar-vortex | 蓝紫星核、旋转光环与穿行粒子，空间纵深强 | 冷白正文，靛蓝收尾 |
 

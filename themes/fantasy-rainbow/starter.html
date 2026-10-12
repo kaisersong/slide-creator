@@ -228,7 +228,7 @@ p, li { text-wrap: pretty; }
 .iri-fracture-side h3 { margin: 0 0 20px; font: 600 12px var(--iri-mono); letter-spacing: .14em; text-transform: uppercase; }
 .iri-fracture-item { padding: 16px 0; border-top: 1px solid rgba(10,10,18,.42); font-size: clamp(15px, 1.25vw, 19px); font-weight: 650; }
 .iri-fracture-scar { position: relative; }
-.iri-fracture-scar::before { content: ""; position: absolute; left: 50%; top: -5%; bottom: -5%; width: 5px; transform: skew(-14deg); background: #0a0a12; box-shadow: 10px 0 0 var(--iri-accent-blue); }
+.iri-fracture-scar::before { content: ""; position: absolute; left: 50%; top: 0; bottom: 0; width: 2px; background: #0a0a12; box-shadow: 8px 0 0 var(--iri-accent-blue); }
 
 /* 03 — convergence */
 .iri-scene--convergence { align-items: center; text-align: center; }
@@ -251,11 +251,28 @@ p, li { text-wrap: pretty; }
 .iri-field span:last-child { font-size: clamp(14px, 1.08vw, 17px); }
 
 /* 05 — pipeline */
-.iri-pipeline { width: min(88vw, 1260px); display: grid; grid-template-columns: repeat(6, 1fr); transform: rotate(-2deg); border-top: 2px solid var(--iri-ink); border-bottom: 2px solid var(--iri-ink); }
+.iri-pipeline { width: min(88vw, 1260px); display: grid; grid-auto-flow: column; grid-auto-columns: minmax(0, 1fr); border-top: 2px solid var(--iri-ink); border-bottom: 2px solid var(--iri-ink); }
 .iri-pipeline-step { min-height: 190px; padding: 22px 16px; border-right: 1px solid rgba(10,10,18,.4); display: grid; align-content: space-between; background: #fff; }
 .iri-pipeline-step:last-child { border-right: 0; }
 .iri-pipeline-step span { font: 700 10px var(--iri-mono); letter-spacing: .16em; }
 .iri-pipeline-step strong { font-size: clamp(14px, 1.22vw, 19px); line-height: 1.25; }
+
+/* Bento — Blue Sky's mixed-size grid, on restrained business paper. */
+.iri-scene--bento > .iri-copy { width: 100% !important; max-width: 1310px; }
+.iri-scene--bento > .iri-copy .iri-headline { line-height: 1.12 !important; }
+.iri-bento { width: 100%; max-width: 1310px; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); grid-auto-rows: minmax(clamp(104px, 15vh, 148px), auto); gap: 14px; }
+.iri-bento-card { min-width: 0; padding: clamp(16px, 1.8vw, 26px); border: 1px solid var(--iri-line); border-radius: 12px; background: #fff; display: flex; flex-direction: column; align-items: flex-start; overflow-wrap: anywhere; }
+.iri-bento-card .iri-number { font-size: 11px; letter-spacing: .12em; }
+.iri-bento-card h3 { margin: 12px 0 0; color: var(--iri-ink); font-size: clamp(18px, 1.75vw, 27px); line-height: 1.2; letter-spacing: -.025em; }
+.iri-bento-card p { margin: 10px 0 0; color: var(--iri-ink-soft); font-size: clamp(14px, 1.12vw, 17px); line-height: 1.5; }
+.iri-bento--1 { grid-template-columns: 1fr; }
+.iri-bento--2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.iri-bento--3 > :first-child, .iri-bento--4 > :first-child, .iri-bento--5 > :first-child { grid-column: span 2; grid-row: span 2; }
+.iri-bento--3 > :not(:first-child), .iri-bento--4 > :nth-child(2) { grid-column: span 2; }
+.iri-bento--6 > :nth-child(1), .iri-bento--6 > :nth-child(2), .iri-bento--6 > :nth-child(3), .iri-bento--6 > :nth-child(6) { grid-column: span 2; }
+.iri-bento--6 > :nth-child(3) { grid-row: span 2; }
+.iri-bento-card:first-child { background: var(--iri-tint-blue); }
+.iri-bento-card:first-child h3 { font-size: clamp(24px, 2.4vw, 36px); }
 
 /* 06 — spectrum */
 .iri-spectrum { width: min(92vw, 1320px); display: grid; grid-template-columns: 300px 1fr; gap: 54px; align-items: end; }
@@ -453,10 +470,13 @@ body.presenting.presenting-black::after {
   .iri-headline { font-size: clamp(48px, 7.2vw, 76px); }
   .iri-fracture-grid { grid-template-columns: 1fr 46px 1fr; gap: 14px; }
   .iri-brief-layout, .iri-spectrum, .iri-closing-layout { grid-template-columns: 1fr 1fr; gap: 28px; }
-  .iri-pipeline { grid-template-columns: repeat(3, 1fr); transform: rotate(-1deg); }
+  .iri-pipeline { grid-template-columns: repeat(3, minmax(0, 1fr)); grid-auto-flow: row; }
   .iri-pipeline-step { min-height: 118px; }
   .iri-gates { gap: 10px; }
   .iri-gate { min-height: 250px; padding: 18px 14px; }
+  .iri-bento { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+  .iri-bento > .iri-bento-card { grid-column: auto; grid-row: auto; }
+  .iri-bento > .iri-bento-card:first-child { grid-column: 1 / -1; }
 }
 
 /* Short laptop windows: real browser windows leave 730-860px of usable height, and the

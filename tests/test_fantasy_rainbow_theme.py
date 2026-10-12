@@ -6,6 +6,7 @@ import sys
 from pathlib import Path
 
 from bs4 import BeautifulSoup
+import pytest
 
 
 ROOT = Path(__file__).resolve().parent.parent
@@ -95,6 +96,7 @@ def test_iridescence_reference_compiles_the_approved_contract():
         "pull_quote",
         "toc",
         "cta_close",
+        "bento",
     ]
     for token in (
         "--ic-bg",
@@ -121,6 +123,45 @@ def test_iridescence_reference_compiles_the_approved_contract():
     assert "https://" not in reference
     assert "@font-face" not in reference
     assert not re.search(r"\b(?:TODO|TBD|LOREM)\b", reference, re.IGNORECASE)
+
+
+@pytest.mark.parametrize("count", range(1, 7))
+@pytest.mark.parametrize("preset", ["custom:fantasy-rainbow", "奇幻彩虹", "custom:iridescence-convergence"])
+def test_business_bento_is_rendered_from_brief_with_all_local_facts(count, preset):
+    from low_context import render_from_brief, build_slide_spec
+
+    brief = _brief()
+    brief["style"]["preset"] = preset
+    slide = brief["narrative"]["slides"][3]
+    slide["preferred_layout_family"] = "bento"
+    slide["supporting_facts"] = [f"业务 {index}：证据 <{index}> & 条件" for index in range(count)]
+    html, packet, _ = render_from_brief(brief)
+    spec = build_slide_spec(brief, packet)[3]
+    assert spec["layout_id"] == "bento"
+    soup = BeautifulSoup(html, "html.parser")
+    rendered = soup.select_one('#slide-4.iri-scene--bento[data-export-role="bento"]')
+    assert rendered is not None
+    cards = rendered.select(".iri-bento-card")
+    assert len(cards) == count
+    assert [card.h3.get_text() for card in cards] == [f"业务 {index}" for index in range(count)]
+    assert [card.p.get_text() for card in cards] == [f"证据 <{index}> & 条件" for index in range(count)]
+    assert soup.select_one('#slide-1.iri-scene--hero') is not None
+    assert soup.select_one('.iri-scene--closing') is not None
+
+
+def test_business_bento_preference_survives_low_detail_brief():
+    from low_context import render_from_brief, assess_quality_tier
+
+    brief = _brief()
+    brief["content"]["must_include"] = ["本地事实"]
+    brief["content"]["must_avoid"] = ["编造数据"]
+    brief["narrative"]["thesis"] = "演示主题"
+    for slide in brief["narrative"]["slides"]:
+        slide["key_point"] = "关键观点"
+    assert assess_quality_tier(brief) == "tier2"
+    brief["narrative"]["slides"][3]["preferred_layout_family"] = "bento"
+    html, _, _ = render_from_brief(brief)
+    assert BeautifulSoup(html, "html.parser").select_one('#slide-4.iri-scene--bento') is not None
 
 
 def test_iridescence_starter_has_self_contained_runtime_contract():

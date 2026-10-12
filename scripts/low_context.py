@@ -1759,6 +1759,8 @@ def _preferred_layout_from_family(
 ) -> str | None:
     if not family:
         return None
+    if family == "bento" and "bento" in allowed_layouts:
+        return "bento"
     family_map = usage_rules.get("layout_family_map", {})
     layout_id = family_map.get(str(family).strip().lower())
     if layout_id in allowed_layouts:
@@ -2376,6 +2378,9 @@ def build_slide_spec(brief: dict[str, Any], packet: dict[str, Any] | None = None
     elif quality_tier == "tier2":
         preferred = [layout for layout in ("title_grid", "column_content", "contents_index", "pull_quote") if layout in allowed_layouts]
         layout_cycle = preferred or (allowed_layouts[:3] or layout_cycle)
+
+    if packet["canonical_preset"] == "Fantasy Rainbow" and "bento" in allowed_layouts and "bento" not in layout_cycle:
+        layout_cycle = [*layout_cycle, "bento"]
 
     specs: list[dict[str, Any]] = []
     previous_layouts: list[str] = []
@@ -8309,6 +8314,8 @@ def _render_iridescence_theme_slide(spec: dict[str, Any], total: int, *, role_in
         scene = "hero"
     elif role in closing_roles:
         scene = "closing"
+    elif layout_id == "bento":
+        scene = "bento"
     else:
         # Cycle through the middle scenes so decks longer than the scene list
         # keep alternating compositions instead of repeating the last one.
@@ -8442,6 +8449,18 @@ def _render_iridescence_theme_slide(spec: dict[str, Any], total: int, *, role_in
             for index, item in enumerate(items[:6], start=1)
         )
         body = f'{header()}<div class="iri-pipeline">{steps}</div>'
+    elif scene == "bento":
+        cards = []
+        for index, item in enumerate(items, start=1):
+            label, description = _iridescence_split_item(item)
+            cards.append(
+                '<div class="iri-bento-card kd-reveal">'
+                f'<span class="iri-number {accent_cycle[(index - 1) % len(accent_cycle)]}">{index:02d}</span>'
+                f'<h3>{_escape(label)}</h3>'
+                + (f'<p>{_escape(description)}</p>' if description else "")
+                + '</div>'
+            )
+        body = f'{header()}<div class="iri-bento iri-bento--{len(cards)}">{"".join(cards)}</div>'
     elif scene == "spectrum":
         marker_cycle = (
             "iri-marker-primary",

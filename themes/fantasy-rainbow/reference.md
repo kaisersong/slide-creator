@@ -42,9 +42,15 @@ The display stack is `Space Grotesk`, `Noto Sans SC`, `Helvetica Neue`, Arial, a
 
 ## Layout Types
 
-Use canonical layout roles: `title_grid`, `contents_index`, `column_content`, `stat_block`, `geometric_diagram`, `data_table`, `pull_quote`, `toc`, `cta_close`. The renderer maps them to reference-fidelity scenes: hero, fracture, convergence, brief, pipeline, spectrum, contract, gates, runtime, modes, use-cases, and closing.
+Use canonical layout roles: `title_grid`, `contents_index`, `column_content`, `stat_block`, `geometric_diagram`, `data_table`, `pull_quote`, `toc`, `cta_close`, `bento`. The renderer maps them to reference-fidelity scenes: hero, fracture, convergence, brief, pipeline, spectrum, contract, gates, runtime, modes, use-cases, bento, and closing.
 
 The safe area is 42–66px horizontally and 42–64px vertically at 1440×900. Every scene uses a different composition while preserving one editorial headline anchor. Only the hero preserves an uninterrupted region of the light field; content scenes preserve uninterrupted white space instead.
+
+### Business content layouts
+
+Keep content text, panels, process strips, and dividers upright and aligned to a horizontal/vertical grid. Do not rotate or skew content containers, text, or comparison dividers. Cover shader bands may remain diagonal.
+
+Use `preferred_layout_family: "bento"` in a BRIEF slide for capabilities, solution summaries, or business use cases. The canonical renderer emits the bento layout regardless of the content page’s position in the deck. Borrow Blue Sky’s mixed-size card composition: one prominent card with supporting smaller cards, handling one through six facts without empty placeholder cards. Keep facts in source order; split a fact at a colon or em dash into its heading and description. Use white paper, thin ink borders, modest 12px corner rounding, and a blue tint on the leading card. Card text stays ink; only small indices use text-safe accent colors. Do not borrow Blue Sky’s glass backgrounds or cloud/orb decoration. On narrow screens use two columns with the leading card spanning the row. Keep bento pages interspersed with report, comparison, and workflow pages.
 
 ## Signature Elements
 
@@ -53,9 +59,10 @@ The safe area is 42–66px horizontally and 42–64px vertically at 1440×900. E
 - `.iri-facts` and `.iri-fact` — facts separated by thin rules, never cards.
 - `.iri-panel` — square black surface reserved for commands and code.
 - `.iri-rule` — one-pixel structural divider.
+- `.iri-bento` and `.iri-bento-card` — mixed-size business summary cards on white paper; an optional content composition.
 - `#iridescence-canvas` — the single full-viewport canvas, visible and animated only behind the cover.
 
-Legacy `.ic-orbit`, `.ic-prism`, `.ic-hero-metric`, glass cards, technical grids, rounded card walls, and decorative gradient orbs are forbidden.
+Legacy `.ic-orbit`, `.ic-prism`, `.ic-hero-metric`, glass cards, technical grids, repetitive equal-size rounded card walls, and decorative gradient orbs are forbidden.
 
 ## Background
 
@@ -113,5 +120,6 @@ Legacy `.ic-orbit`, `.ic-prism`, `.ic-hero-metric`, glass cards, technical grids
 - Only the cover shows the light field. Slides 2–11 read as opaque white editorial report pages; slide 12 reads as a dark closing surface.
 - No technical grid, decorative orbit, glass card, pill kicker, high-opacity page background, or shader whitening remains.
 - Adjacent content pages change composition, hierarchy, and text anchoring while retaining a disciplined black-on-white report language.
+- Business content stays upright: horizontal workflows and vertical comparison dividers; use preferred_layout_family="bento" for a mixed-size capability, solution, or use-case summary.
 - The single canvas, fallback, prefers-reduced-motion, WebGL lifecycle, and @media print paths stay testable.
 - The visual safe area remains intact at 1280×720 and 1440×900.

@@ -228,7 +228,7 @@ p, li { text-wrap: pretty; }
 .iri-fracture-side h3 { margin: 0 0 20px; font: 600 12px var(--iri-mono); letter-spacing: .14em; text-transform: uppercase; }
 .iri-fracture-item { padding: 16px 0; border-top: 1px solid rgba(10,10,18,.42); font-size: clamp(15px, 1.25vw, 19px); font-weight: 650; }
 .iri-fracture-scar { position: relative; }
-.iri-fracture-scar::before { content: ""; position: absolute; left: 50%; top: -5%; bottom: -5%; width: 5px; transform: skew(-14deg); background: #0a0a12; box-shadow: 10px 0 0 var(--iri-accent-blue); }
+.iri-fracture-scar::before { content: ""; position: absolute; left: 50%; top: 0; bottom: 0; width: 2px; background: #0a0a12; box-shadow: 8px 0 0 var(--iri-accent-blue); }
 
 /* 03 — convergence */
 .iri-scene--convergence { align-items: center; text-align: center; }
@@ -251,11 +251,28 @@ p, li { text-wrap: pretty; }
 .iri-field span:last-child { font-size: clamp(14px, 1.08vw, 17px); }
 
 /* 05 — pipeline */
-.iri-pipeline { width: min(88vw, 1260px); display: grid; grid-template-columns: repeat(6, 1fr); transform: rotate(-2deg); border-top: 2px solid var(--iri-ink); border-bottom: 2px solid var(--iri-ink); }
+.iri-pipeline { width: min(88vw, 1260px); display: grid; grid-auto-flow: column; grid-auto-columns: minmax(0, 1fr); border-top: 2px solid var(--iri-ink); border-bottom: 2px solid var(--iri-ink); }
 .iri-pipeline-step { min-height: 190px; padding: 22px 16px; border-right: 1px solid rgba(10,10,18,.4); display: grid; align-content: space-between; background: #fff; }
 .iri-pipeline-step:last-child { border-right: 0; }
 .iri-pipeline-step span { font: 700 10px var(--iri-mono); letter-spacing: .16em; }
 .iri-pipeline-step strong { font-size: clamp(14px, 1.22vw, 19px); line-height: 1.25; }
+
+/* Bento — Blue Sky's mixed-size grid, on restrained business paper. */
+.iri-scene--bento > .iri-copy { width: 100% !important; max-width: 1310px; }
+.iri-scene--bento > .iri-copy .iri-headline { line-height: 1.12 !important; }
+.iri-bento { width: 100%; max-width: 1310px; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); grid-auto-rows: minmax(clamp(104px, 15vh, 148px), auto); gap: 14px; }
+.iri-bento-card { min-width: 0; padding: clamp(16px, 1.8vw, 26px); border: 1px solid var(--iri-line); border-radius: 12px; background: #fff; display: flex; flex-direction: column; align-items: flex-start; overflow-wrap: anywhere; }
+.iri-bento-card .iri-number { font-size: 11px; letter-spacing: .12em; }
+.iri-bento-card h3 { margin: 12px 0 0; color: var(--iri-ink); font-size: clamp(18px, 1.75vw, 27px); line-height: 1.2; letter-spacing: -.025em; }
+.iri-bento-card p { margin: 10px 0 0; color: var(--iri-ink-soft); font-size: clamp(14px, 1.12vw, 17px); line-height: 1.5; }
+.iri-bento--1 { grid-template-columns: 1fr; }
+.iri-bento--2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.iri-bento--3 > :first-child, .iri-bento--4 > :first-child, .iri-bento--5 > :first-child { grid-column: span 2; grid-row: span 2; }
+.iri-bento--3 > :not(:first-child), .iri-bento--4 > :nth-child(2) { grid-column: span 2; }
+.iri-bento--6 > :nth-child(1), .iri-bento--6 > :nth-child(2), .iri-bento--6 > :nth-child(3), .iri-bento--6 > :nth-child(6) { grid-column: span 2; }
+.iri-bento--6 > :nth-child(3) { grid-row: span 2; }
+.iri-bento-card:first-child { background: var(--iri-tint-blue); }
+.iri-bento-card:first-child h3 { font-size: clamp(24px, 2.4vw, 36px); }
 
 /* 06 — spectrum */
 .iri-spectrum { width: min(92vw, 1320px); display: grid; grid-template-columns: 300px 1fr; gap: 54px; align-items: end; }
@@ -397,6 +414,7 @@ body:has(.iri-scene--closing.visible) #brand-mark { color: rgba(247,247,251,.72)
   transition: opacity .2s ease;
 }
 body:hover #present-btn { opacity: 1; pointer-events: auto; }
+body.presenting #counter, body.presenting #slide-counter { display: none !important; }
 body.presenting.presenting-black::after {
   content: "";
   position: fixed;
@@ -452,10 +470,42 @@ body.presenting.presenting-black::after {
   .iri-headline { font-size: clamp(48px, 7.2vw, 76px); }
   .iri-fracture-grid { grid-template-columns: 1fr 46px 1fr; gap: 14px; }
   .iri-brief-layout, .iri-spectrum, .iri-closing-layout { grid-template-columns: 1fr 1fr; gap: 28px; }
-  .iri-pipeline { grid-template-columns: repeat(3, 1fr); transform: rotate(-1deg); }
+  .iri-pipeline { grid-template-columns: repeat(3, minmax(0, 1fr)); grid-auto-flow: row; }
   .iri-pipeline-step { min-height: 118px; }
   .iri-gates { gap: 10px; }
   .iri-gate { min-height: 250px; padding: 18px 14px; }
+  .iri-bento { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+  .iri-bento > .iri-bento-card { grid-column: auto; grid-row: auto; }
+  .iri-bento > .iri-bento-card:first-child { grid-column: 1 / -1; }
+}
+
+/* Short laptop windows: real browser windows leave 730-860px of usable height, and the
+   scene blocks below carry fixed min-heights that only fit a 900px+ window. Play mode is
+   unaffected — it pins slides to a fixed 1440x900 box. */
+@media (max-height: 860px) {
+  .iri-scene { padding: clamp(20px, 3.2vh, 42px) clamp(30px, 3.9vw, 56px); }
+  .iri-runtime-stage { min-height: 0; }
+  .iri-runtime-screen { padding: 18px 22px; }
+  .iri-brief-code { min-height: 0; padding: clamp(16px, 2.2vw, 26px); }
+  .iri-pipeline-step { min-height: 0; padding: 14px 12px; }
+  .iri-contract-layer { padding: 11px 0; gap: 16px; }
+  .iri-fracture-item { padding: 10px 0; }
+  .iri-field { padding: 9px 0; }
+  .iri-fact { padding-top: 9px; }
+  .iri-fact strong { margin-top: 5px; }
+}
+
+@media (max-height: 780px) {
+  .iri-scene { padding: clamp(16px, 2.6vh, 32px) clamp(26px, 3.5vw, 48px); }
+  .iri-runtime-screen { padding: 14px 18px; }
+  .iri-runtime-screen strong { font-size: clamp(26px, 3.1vw, 46px); }
+  .iri-key { min-height: 0; padding: 12px 14px; }
+  .iri-key b { font-size: 15px; }
+  .iri-key span { margin-top: 6px; }
+  .iri-contract-layer { padding: 8px 0; gap: 12px; }
+  .iri-mode { min-height: 0; padding: 18px 22px; }
+  .iri-quadrant { min-height: 0; padding: 14px 16px; }
+  .iri-pipeline-step { min-height: 0; padding: 11px 10px; }
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -535,13 +585,7 @@ body.presenting .slide-credit { display: none !important; }
 
 <section class="slide slide-content iri-scene iri-scene--convergence layout-geometric_diagram preset-fantasy-rainbow-content" id="slide-3" data-notes="workflow: 规划、生成、验证、浏览器检查形成闭环" aria-label="workflow" data-export-role="geometric_diagram" data-page-bucket="content"><div class="iri-convergence-core"><span class="iri-label">03 / 05 · LAST MILE</span><h2 class="iri-headline kd-reveal">从 BRIEF 到成品，只保留关键步骤</h2><span class="iri-convergence-word iri-accent-primary" aria-hidden="true">LAST MILE</span><div class="iri-convergence-lines"><div class="iri-fact kd-reveal"><span class="iri-fact-index iri-accent-text-primary">01</span><strong>规划</strong></div><div class="iri-fact kd-reveal"><span class="iri-fact-index iri-accent-text-secondary">02</span><strong>从 BRIEF 到成品</strong></div><div class="iri-fact kd-reveal"><span class="iri-fact-index iri-accent-text-tertiary">03</span><strong>BRIEF 到 HTML</strong></div></div></div><span class="slide-num-label">03 / 05</span></section>
 
-<section class="slide slide-content iri-scene iri-scene--brief layout-title_grid preset-fantasy-rainbow-content" id="slide-4" data-notes="capabilities: 标准运行时让演示稿可直接使用，也方便继续修改" aria-label="capabilities" data-export-role="title_grid" data-page-bucket="content"><div class="iri-brief-layout"><div class="iri-panel iri-brief-code kd-reveal"><strong>BRIEF.json</strong><pre>{
-  "audience": "...",
-  "deck": { "style": "..." },
-  "content": { ... },
-  "narrative": { "slides": [ ... ] },
-  "runtime": { ... }
-}</pre></div><div><div class="iri-copy"><span class="iri-label">04 / 05 · capabilities</span><h2 class="iri-headline kd-reveal">播放、导航、编辑，一个文件全部具备</h2><p class="iri-lead kd-reveal">标准运行时让演示稿可直接使用，也方便继续修改</p></div><div class="iri-field-list"><div class="iri-field kd-reveal"><span class="iri-number iri-accent-text-primary">01</span><code class="iri-accent-text-primary">audience</code><span>决定受众与期望动作</span></div><div class="iri-field kd-reveal"><span class="iri-number iri-accent-text-primary">02</span><code class="iri-accent-text-primary">deck.style</code><span>锁定页数、语言和 preset</span></div><div class="iri-field kd-reveal"><span class="iri-number iri-accent-text-primary">03</span><code class="iri-accent-text-primary">content</code><span>固定必须包含的事实与边界</span></div><div class="iri-field kd-reveal"><span class="iri-number iri-accent-text-primary">04</span><code class="iri-accent-text-primary">narrative.slides</code><span>逐页声明角色、断言和证据</span></div><div class="iri-field kd-reveal"><span class="iri-number iri-accent-text-primary">05</span><code class="iri-accent-text-primary">runtime</code><span>约束播放、编辑、备注与耗时</span></div></div></div></div><span class="slide-num-label">04 / 05</span></section>
+<section class="slide slide-content iri-scene iri-scene--bento layout-bento preset-fantasy-rainbow-content" id="slide-4" data-notes="capabilities: 标准运行时让演示稿可直接使用，也方便继续修改" aria-label="capabilities" data-export-role="bento" data-page-bucket="content"><div class="iri-copy"><span class="iri-label">04 / 05 · capabilities</span><h2 class="iri-headline kd-reveal"><span class="iri-title-line">播放、导航、编辑，</span><span class="iri-title-line">一个文件全部具备</span></h2><p class="iri-lead kd-reveal">标准运行时让演示稿可直接使用，也方便继续修改</p></div><div class="iri-bento iri-bento--5"><div class="iri-bento-card kd-reveal"><span class="iri-number iri-accent-text-primary">01</span><h3>audience</h3><p>决定受众与期望动作</p></div><div class="iri-bento-card kd-reveal"><span class="iri-number iri-accent-text-secondary">02</span><h3>deck.style</h3><p>锁定页数、语言和 preset</p></div><div class="iri-bento-card kd-reveal"><span class="iri-number iri-accent-text-tertiary">03</span><h3>content</h3><p>固定必须包含的事实与边界</p></div><div class="iri-bento-card kd-reveal"><span class="iri-number iri-accent-text-primary">04</span><h3>narrative.slides</h3><p>逐页声明角色、断言和证据</p></div><div class="iri-bento-card kd-reveal"><span class="iri-number iri-accent-text-secondary">05</span><h3>runtime</h3><p>约束播放、编辑、备注与耗时</p></div></div><span class="slide-num-label">04 / 05</span></section>
 
 <section class="slide slide-closing iri-scene iri-scene--closing layout-pull_quote" id="slide-5" data-notes="closing: 先生成，再用浏览器完成最后一公里" aria-label="closing" data-export-role="pull_quote" data-page-bucket="closing"><div class="iri-closing-layout"><div class="iri-copy"><span class="iri-label">GET STARTED · SLIDE CREATOR</span><h2 class="iri-headline kd-reveal">把下一份内容，变成真正能讲的 deck</h2><p class="iri-lead kd-reveal">先生成，再用浏览器完成最后一公里</p><div class="iri-closing-note">Protect the last mile from content to deck.</div></div><div class="iri-command-stack"><div class="iri-panel iri-command kd-reveal">先生成</div><div class="iri-panel iri-command kd-reveal">把下一份内容</div><div class="iri-panel iri-command kd-reveal">slide-creator 是什么</div></div></div><span class="slide-num-label">05 / 05</span></section>
 <div class="edit-hotzone"></div>
