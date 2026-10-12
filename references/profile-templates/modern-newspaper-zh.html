@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+<!-- Program-owned profile template. Regenerate with scripts/build-profile-templates.py. -->
+<html><head>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;700;900&amp;family=Source+Serif+4:wght@400;600&amp;family=IBM+Plex+Mono:wght@400;500&amp;family=Noto+Sans+SC:wght@400;700&amp;display=swap" rel="stylesheet"/>
+<style>
+        /* ===========================================
+           CSS CUSTOM PROPERTIES — Modern Newspaper
+           =========================================== */
+        :root {
+            --bg: #f7f5f0;
+            --bg-dark: #111111;
+            --text: #111111;
+            --text-muted: #555555;
+            --yellow: #FFCC00;
+            --red: #FF3333;
+            --rule: #111111;
+            --font-display: 'Oswald', 'Noto Sans SC', 'Arial Narrow', sans-serif;
+            --font-body: 'Source Serif 4', 'Noto Sans SC', Georgia, serif;
+            --font-mono: 'IBM Plex Mono', 'Noto Sans SC', monospace;
+            --accent: var(--yellow);
+            --text-on-card: #111111;
+            --title-size: clamp(2rem, 6vw, 5rem);
+            --subtitle-size: clamp(0.875rem, 2vw, 1.25rem);
+            --body-size: clamp(0.75rem, 1.5vw, 1.125rem);
+            --slide-padding: clamp(1.5rem, 4vw, 4rem);
+            --content-gap: clamp(1rem, 2vw, 2rem);
+            --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+            --duration-normal: 0.6s;
+        }
+
+        /* Reset */
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+        html { scroll-snap-type: y mandatory; height: 100%; }
+        body { font-family: var(--font-body); background: var(--bg); color: var(--text); height: 100%; }
+        body[data-export-progress="false"] .progress-bar,
+        body[data-export-progress="false"] .nav-dots { display: none !important; }
+
+        /* Slide container — functional only, no visuals */
+        .slide {
+            width: 100vw; height: 100vh; height: 100dvh;
+            scroll-snap-align: start; display: flex; flex-direction: column;
+            position: relative; overflow: hidden;
+        }
+
+        .slide-content { flex: 1; display: flex; flex-direction: column; justify-content: center; max-height: 100%; overflow: hidden; padding: var(--slide-padding); }
+
+        /* Responsive breakpoints */
+        @media (max-height: 700px) { :root { --slide-padding: clamp(0.75rem, 3vw, 2rem); --content-gap: clamp(0.4rem, 1.5vw, 1rem); --title-size: clamp(1.25rem, 4.5vw, 2.5rem); } }
+        @media (max-height: 600px) { :root { --slide-padding: clamp(0.5rem, 2.5vw, 1.5rem); --title-size: clamp(1.1rem, 4vw, 2rem); --body-size: clamp(0.7rem, 1.2vw, 0.95rem); } .nav-dots, .keyboard-hint, .decorative { display: none; } }
+        @media (max-height: 500px) { :root { --slide-padding: clamp(0.4rem, 2vw, 1rem); --title-size: clamp(1rem, 3.5vw, 1.5rem); } }
+        @media (max-width: 600px) { .grid { grid-template-columns: 1fr; } }
+        @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.2s !important; } html { scroll-behavior: auto; } }
+
+        /* Scroll-triggered animations */
+        .reveal { opacity: 0; transform: translateY(24px); transition: opacity 0.7s var(--ease-out-expo), transform 0.7s var(--ease-out-expo); }
+        .slide.visible .reveal { opacity: 1; transform: translateY(0); }
+        .reveal:nth-child(1) { transition-delay: 0.05s; }
+        .reveal:nth-child(2) { transition-delay: 0.15s; }
+        .reveal:nth-child(3) { transition-delay: 0.25s; }
+        .reveal:nth-child(4) { transition-delay: 0.35s; }
+        .reveal:nth-child(5) { transition-delay: 0.42s; }
+        .reveal:nth-child(6) { transition-delay: 0.49s; }
+
+        /* Image constraints */
+        .slide-image { max-width: 100%; max-height: min(50vh, 400px); object-fit: contain; border-radius: 8px; }
+        .card, .container, .content-box { max-width: min(90vw, 1000px); max-height: min(80vh, 700px); }
+
+        /* Contrast fallback */
+        .bl[style*="background:#f"], .bl[style*="background: #f"], .bl[style*="background:#e"], .bl[style*="background: #e"], .card[style*="background:#f"], .card[style*="background: #f"], .card[style*="background:#e"], .card[style*="background: #e"], [style*="background:#fff"], [style*="background: #fff"] { color: #1e293b !important; }
+        .bl[style*="background:#f"] li, .bl[style*="background: #f"] li, .bl[style*="background:#e"] li, .bl[style*="background: #e"] li, .card[style*="background:#f"] li, .card[style*="background: #f"] li, .card[style*="background:#e"] li, .card[style*="background: #e"] li, [style*="background:#fff"] li, [style*="background: #fff"] li { color: #334155 !important; }
+
+        /* Grid */
+        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 250px), 1fr)); gap: clamp(0.5rem, 1.5vw, 1rem); }
+
+        /* ═══════════════════════════════════════════════════════
+           Modern Newspaper — Signature Elements
+           ═══════════════════════════════════════════════════════ */
+
+        /* Typography */
+        .np-headline {
+            font-family: 'Oswald', 'Noto Sans SC', 'Arial Narrow', sans-serif;
+            font-weight: 900;
+            text-transform: uppercase;
+            letter-spacing: -0.02em;
+            line-height: 0.92;
+            color: var(--text);
+        }
+        .np-headline-lg { font-size: clamp(4rem, 12vw, 9rem); }
+        .np-headline-sm { font-size: clamp(1.5rem, 4vw, 3rem); }
+
+        .np-subhead {
+            font-family: 'Oswald', 'Noto Sans SC', sans-serif;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+            font-size: clamp(1rem, 2.5vw, 1.8rem);
+        }
+
+        .np-body {
+            font-family: 'Source Serif 4', 'Noto Sans SC', Georgia, serif;
+            max-width: 38ch;
+            line-height: 1.7;
+            color: var(--text-muted);
+            font-size: clamp(0.65rem, 1vw, 0.85rem);
+        }
+
+        .np-stamp {
+            font-family: 'IBM Plex Mono', 'Noto Sans SC', monospace;
+            font-size: clamp(0.55rem, 0.8vw, 0.72rem);
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            color: var(--text-muted);
+        }
+
+        /* Accent bars */
+        .np-bar-h {
+            width: 100%;
+            height: 10px;
+            background: var(--yellow);
+        }
+        .np-bar-v {
+            width: 8px;
+            height: 100%;
+            background: var(--yellow);
+            flex-shrink: 0;
+        }
+
+        /* Rules */
+        .np-rule {
+            width: 1px;
+            background: var(--rule);
+            align-self: stretch;
+            margin: 0 clamp(16px, 2.5vw, 40px);
+        }
+        .np-rule-h {
+            width: 100%;
+            height: 1px;
+            background: var(--rule);
+        }
+
+        /* Dark variant */
+        .np-dark {
+            background: var(--bg-dark);
+            color: #f7f5f0;
+        }
+        .np-dark .np-body { color: rgba(247,245,240,0.6); }
+        .np-dark .np-stamp { color: rgba(247,245,240,0.4); }
+        .np-dark .np-rule { background: rgba(247,245,240,0.2); }
+
+        /* Accent text */
+        .np-red { color: var(--red); }
+        .np-yellow-text { color: var(--yellow); }
+
+        /* Big number with stroke */
+        .big-num {
+            color: transparent;
+            -webkit-text-stroke: 3px var(--text);
+            font-family: 'Oswald', 'Noto Sans SC', sans-serif;
+            font-weight: 900;
+        }
+
+        /* Ghost number (background decoration) */
+        .np-ghost {
+            position: absolute;
+            font-family: 'Oswald', 'Noto Sans SC', sans-serif;
+            font-weight: 900;
+            font-size: clamp(12rem, 30vw, 28rem);
+            color: rgba(0,0,0,0.05);
+            line-height: 1;
+            pointer-events: none;
+            user-select: none;
+        }
+
+        /* Numbered list */
+        .np-numbered {
+            list-style: none;
+            counter-reset: np-counter;
+        }
+        .np-numbered li {
+            counter-increment: np-counter;
+            font-family: 'Oswald', 'Noto Sans SC', sans-serif;
+            font-size: clamp(0.9rem, 1.8vw, 1.4rem);
+            font-weight: 700;
+            padding: 0.3rem 0;
+            display: flex;
+            align-items: baseline;
+            gap: 0.5rem;
+        }
+        .np-numbered li::before {
+            content: counter(np-counter, decimal-leading-zero);
+            color: var(--yellow);
+            font-size: clamp(1.2rem, 2vw, 2rem);
+            font-weight: 900;
+            min-width: 2ch;
+        }
+
+        /* Terminal-style command block */
+        .np-cmd {
+            font-family: 'IBM Plex Mono', 'Noto Sans SC', monospace;
+            font-size: clamp(0.8rem, 1.5vw, 1.1rem);
+            background: var(--bg-dark);
+            color: #f7f5f0;
+            padding: 0.6rem 1.2rem;
+            border-left: 4px solid var(--yellow);
+            display: inline-block;
+        }
+
+        /* PRESENTATION MODE */
+        #present-btn { position: fixed; bottom: 1.5rem; right: 1.5rem; z-index: 9997; width: 44px; height: 44px; border-radius: 50%; background: rgba(0,0,0,0.5); color: rgba(255,255,255,0.8); border: 1.5px solid rgba(255,255,255,0.2); font-size: 1rem; cursor: pointer; backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); display: flex; align-items: center; justify-content: center; opacity: 0; transition: opacity 0.2s; pointer-events: none; }
+        body:hover #present-btn { opacity: 1; pointer-events: auto; }
+        #present-btn:hover { background: rgba(0,0,0,0.78); }
+
+        #present-counter { display: none; position: fixed; bottom: 1.4rem; left: 50%; transform: translateX(-50%); z-index: 9997; font-size: 0.65rem; letter-spacing: 0.14em; font-family: system-ui, sans-serif; color: rgba(255,255,255,0.28); }
+
+        body.presenting { background: #000 !important; overflow: hidden !important; }
+        body.presenting .slide { position: fixed !important; inset: 0; width: 100vw !important; height: 100vh !important; transform-origin: center center; scroll-snap-align: none !important; display: none !important; }
+        body.presenting .slide.p-on { display: flex !important; }
+        body.presenting #present-btn { display: none !important; }
+        body.presenting #present-counter { display: block; }
+        body.presenting.presenting-black .slide { visibility: hidden !important; }
+        body.presenting.presenting-black::after { content: ''; position: fixed; inset: 0; background: #000; z-index: 99999; }
+
+        .slide-credit { position: absolute; bottom: 6px; right: 12px; font-size: 9px; color: var(--text-secondary, #999); opacity: 0.35; pointer-events: none; z-index: 1; font-family: system-ui, sans-serif; }
+        body.presenting .slide-credit { display: none !important; }
+
+        /* Edit mode */
+        .edit-hotzone { position: fixed; top: 0; left: 0; width: 80px; height: 80px; z-index: 10000; cursor: pointer; }
+        .edit-toggle { position: fixed; top: 16px; left: 16px; opacity: 0; pointer-events: none; transition: opacity 0.3s ease; z-index: 10001; background: var(--bg-dark); color: var(--bg); border: none; padding: 6px 12px; font-size: 0.7rem; font-family: 'IBM Plex Mono', monospace; letter-spacing: 0.08em; text-transform: uppercase; cursor: pointer; }
+        .edit-toggle.show { opacity: 1; pointer-events: auto; }
+        .edit-toggle.active { opacity: 1; pointer-events: auto; background: var(--yellow); color: var(--text); }
+
+        #notes-panel { display: none; position: fixed; bottom: 0; left: 0; right: 0; z-index: 9998; background: rgba(17,17,17,0.94); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); border-top: 1px solid rgba(247,245,240,0.08); }
+        #notes-panel.active { display: flex; flex-direction: column; }
+        #notes-panel-header { display: flex; align-items: center; justify-content: space-between; padding: 0.45rem 1.4rem; cursor: pointer; user-select: none; }
+        #notes-panel-header:hover { background: rgba(247,245,240,0.03); }
+        #notes-panel-label { flex: 1; font-size: 0.58rem; letter-spacing: 0.16em; text-transform: uppercase; color: rgba(247,245,240,0.3); }
+        #notes-drag-hint { flex: 1; display: flex; justify-content: center; }
+        #notes-drag-hint::after { content: ''; display: block; width: 36px; height: 3px; border-radius: 2px; background: rgba(247,245,240,0.25); }
+        #notes-panel-header:hover #notes-drag-hint::after { background: rgba(247,245,240,0.45); }
+        #notes-collapse-btn { flex: 1; text-align: right; font-size: 1rem; color: rgba(247,245,240,0.4); background: none; border: none; cursor: pointer; transition: color 0.15s, transform 0.2s; }
+        #notes-collapse-btn:hover { color: rgba(247,245,240,0.85); }
+        #notes-body { padding: 0 1.4rem 0.75rem; }
+        #notes-panel.collapsed #notes-body { display: none; }
+        #notes-panel.collapsed #notes-collapse-btn { transform: rotate(180deg); }
+        #notes-textarea { width: 100%; height: 72px; min-height: 48px; max-height: 200px; resize: vertical; background: transparent; border: none; outline: none; color: rgba(247,245,240,0.75); font-size: 0.88rem; line-height: 1.65; font-family: system-ui, sans-serif; }
+        #notes-textarea::placeholder { color: rgba(247,245,240,0.18); }
+
+        /* Slide number label */
+        .slide-num-label {
+            position: absolute;
+            bottom: 28px;
+            right: 36px;
+            font-size: 11px;
+            font-weight: 500;
+            font-family: 'IBM Plex Mono', monospace;
+            color: rgba(0,0,0,0.18);
+        }
+        .slide-num-label.light { color: rgba(247,245,240,0.2); }
+
+        /* Brand mark */
+        #brand-mark {
+            position: fixed;
+            top: 20px;
+            left: 28px;
+            font-weight: 800;
+            font-size: 15px;
+            z-index: 1000;
+            font-family: 'IBM Plex Mono', monospace;
+            color: var(--text-muted);
+            letter-spacing: 0.05em;
+        }
+
+        /* Progress bar */
+        .progress-bar {
+            position: fixed; top: 0; left: 0; height: 3px;
+            background: var(--accent); width: 0%; z-index: 100; transition: width 0.3s ease;
+        }
+
+        /* Nav dots */
+        .nav-dots {
+            position: fixed; right: 1.5rem; top: 50%; transform: translateY(-50%);
+            display: flex; flex-direction: column; gap: 8px; z-index: 100;
+        }
+        .nav-dots button {
+            width: 8px; height: 8px; border-radius: 50%; border: none; cursor: pointer;
+            transition: all 0.3s; background: rgba(0,0,0,0.15);
+        }
+    </style>
+</head><body>
+<section aria-label="Title slide" class="slide title-slide" data-notes="产品封面页。kai-slide-creator 的产品名和核心主张。使用 Cover/Masthead 布局：左上角期刊印章，黄色横条，超大标题占满底部左侧。" id="slide-1">
+<div class="np-stamp reveal" style="position:absolute;top:clamp(24px,4vw,64px);left:clamp(24px,4vw,64px);">VOL.02 · NO.01 · 2026</div>
+<div class="np-ghost" style="top:5%;right:-5%;">01</div>
+<div class="preset-modern-newspaper-content" style="position:absolute;bottom:clamp(40px,8vh,120px);left:clamp(24px,4vw,64px);max-width:70%;">
+<div class="np-bar-h reveal" style="width:clamp(60px,10vw,120px);margin-bottom:clamp(12px,2vw,24px);"></div>
+<h1 class="np-headline np-headline-lg reveal" style="font-size:clamp(3.5rem,11vw,8rem);">slide-creator</h1>
+<p class="np-subhead reveal" style="color:var(--text-muted);margin-top:clamp(8px,1vw,16px);font-size:clamp(0.9rem,2vw,1.5rem);font-weight:400;text-transform:none;letter-spacing:0;max-width:50ch;">零依赖 HTML 演示文稿，21 种设计预设，纯浏览器运行</p>
+</div>
+<div class="slide-num-label">1 / 8</div>
+</section>
+<section aria-label="Problem slide" class="slide" data-notes="现有工具的三大痛点：复杂工具链、通用 AI 美学、平台锁定。左右分栏布局，左侧黑色面板，右侧新闻纸背景正文。" id="slide-2">
+<div class="np-stamp reveal" style="position:absolute;top:clamp(20px,3vw,48px);right:clamp(24px,4vw,64px);">THE PROBLEM</div>
+<div class="preset-modern-newspaper-content" style="display:flex;width:100%;height:100%;">
+<div class="np-dark" style="width:40%;padding:clamp(24px,4vw,64px);display:flex;flex-direction:column;justify-content:center;">
+<div class="np-bar-v reveal" style="position:absolute;left:0;top:0;"></div>
+<h2 class="np-headline np-headline-sm reveal" style="color:#f7f5f0;font-size:clamp(2rem,5vw,4rem);line-height:0.95;">通用工具<br/>无法产出<br/>专业设计</h2>
+</div>
+<div style="width:60%;padding:clamp(24px,4vw,64px);display:flex;flex-direction:column;justify-content:center;gap:clamp(12px,2vw,24px);">
+<ol class="np-numbered reveal">
+<li>复杂工具链 — 学 PPT、Keynote、Figma 各一套，效率低下</li>
+<li>通用 AI 美学 — 紫色渐变配 Inter 字体，千篇一律</li>
+<li>平台锁定 — 离线无法演示，导出丢失排版效果</li>
+</ol>
+<p class="np-body reveal" style="margin-top:clamp(8px,1vw,16px);">演示文稿是高频刚需，但大多数工具要么太重、要么太丑。</p>
+</div>
+</div>
+<div class="slide-num-label">2 / 8</div>
+</section>
+<section aria-label="Discovery slide" class="slide" data-notes="看图选风格而非描述风格。三步流程：给主题 → 生成3个预览 → 选择。水平步骤布局。" id="slide-3">
+<div class="np-stamp reveal" style="position:absolute;top:clamp(20px,3vw,48px);left:clamp(24px,4vw,64px);">DISCOVERY</div>
+<div class="np-ghost" style="bottom:-10%;left:5%;">03</div>
+<h2 class="np-headline np-headline-sm reveal" style="position:absolute;top:clamp(60px,10vh,120px);left:clamp(24px,4vw,64px);font-size:clamp(2rem,5vw,3.5rem);">看图选风格，不靠描述</h2>
+<div class="preset-modern-newspaper-content" style="display:flex;gap:clamp(12px,2vw,24px);position:absolute;bottom:clamp(40px,8vh,100px);left:clamp(24px,4vw,64px);right:clamp(24px,4vw,64px);">
+<div class="reveal" style="flex:1;padding:clamp(16px,2vw,32px);border-top:4px solid var(--yellow);">
+<div class="np-stamp" style="margin-bottom:8px;">STEP 01</div>
+<p class="np-body" style="max-width:100%;color:var(--text);font-weight:600;">告诉 AI 你的主题和受众</p>
+</div>
+<div class="reveal" style="flex:1;padding:clamp(16px,2vw,32px);border-top:4px solid var(--text);">
+<div class="np-stamp" style="margin-bottom:8px;">STEP 02</div>
+<p class="np-body" style="max-width:100%;color:var(--text);font-weight:600;">AI 生成 3 个不同风格的预览页</p>
+</div>
+<div class="reveal" style="flex:1;padding:clamp(16px,2vw,32px);border-top:4px solid var(--yellow);">
+<div class="np-stamp" style="margin-bottom:8px;">STEP 03</div>
+<p class="np-body" style="max-width:100%;color:var(--text);font-weight:600;">看图选择，一键生成完整版</p>
+</div>
+</div>
+<div class="slide-num-label">3 / 8</div>
+</section>
+<section aria-label="Solution slide" class="slide" data-notes="21 种设计预设是核心卖点。大数字 21 占据画面，辅以少量说明文字。极简，大量留白。" id="slide-4">
+<div class="np-stamp reveal" style="position:absolute;top:clamp(20px,3vw,48px);right:clamp(24px,4vw,64px);">THE SOLUTION</div>
+<div class="preset-modern-newspaper-content" style="display:flex;align-items:center;height:100%;padding:clamp(24px,4vw,64px);">
+<div style="flex:1;">
+<div class="big-num reveal" style="font-size:clamp(8rem,22vw,18rem);line-height:0.85;">21</div>
+<p class="np-stamp reveal" style="margin-top:clamp(4px,1vw,12px);">种设计预设</p>
+</div>
+<div class="np-rule reveal"></div>
+<div style="flex:1;padding-left:clamp(16px,3vw,48px);">
+<p class="np-body reveal" style="color:var(--text);font-size:clamp(0.85rem,1.5vw,1.1rem);max-width:40ch;">Bold Signal、Aurora Mesh、Terminal Green、Enterprise Dark……每一种都是完整的设计系统，不是换色模板。</p>
+<p class="np-body reveal" style="margin-top:clamp(8px,1vw,16px);max-width:35ch;">没有通用 AI 美学。没有千篇一律的紫色渐变。</p>
+</div>
+</div>
+<div class="slide-num-label">4 / 8</div>
+</section>
+<section aria-label="Workflow slide" class="slide" data-notes="三个命令完成全部流程：plan → generate → present。使用命令块组件展示。Split Column 布局，左侧深色面板，右侧命令列表。" id="slide-5">
+<div class="preset-modern-newspaper-content" style="display:flex;width:100%;height:100%;">
+<div class="np-dark" style="width:35%;padding:clamp(24px,4vw,64px);display:flex;flex-direction:column;justify-content:center;position:relative;">
+<div class="np-bar-v reveal" style="position:absolute;left:0;top:0;"></div>
+<h2 class="np-headline np-headline-sm reveal" style="color:#f7f5f0;font-size:clamp(1.8rem,4vw,3rem);">三个命令<br/>完成全部</h2>
+<div class="np-bar-h reveal" style="width:40px;margin-top:clamp(12px,2vw,24px);"></div>
+</div>
+<div style="width:65%;padding:clamp(24px,4vw,64px);display:flex;flex-direction:column;justify-content:center;gap:clamp(12px,1.5vw,20px);">
+<div class="reveal">
+<div class="np-stamp" style="margin-bottom:6px;">PLAN</div>
+<div class="np-cmd reveal">/slide-creator --plan "产品发布"</div>
+<p class="np-body" style="margin-top:4px;">生成 BRIEF.json，不接触 HTML</p>
+</div>
+<div class="reveal">
+<div class="np-stamp" style="margin-bottom:6px;">GENERATE</div>
+<div class="np-cmd reveal">/slide-creator --generate</div>
+<p class="np-body" style="margin-top:4px;">读取大纲，注入风格签名，输出完整 HTML</p>
+</div>
+<div class="reveal">
+<div class="np-stamp" style="margin-bottom:6px;">PRESENT</div>
+<div class="np-cmd reveal">F5 / 点击 ▶</div>
+<p class="np-body" style="margin-top:4px;">全屏播放，P 键打开演讲者模式</p>
+</div>
+</div>
+</div>
+<div class="slide-num-label">5 / 8</div>
+</section>
+<section aria-label="Features slide" class="slide" data-notes="2x2 网格展示四个核心功能：播放模式、演讲者模式、浏览器编辑、PPTX 导出。每个格子有序号 + 标题 + 说明。" id="slide-6">
+<div class="np-stamp reveal" style="position:absolute;top:clamp(20px,3vw,48px);left:clamp(24px,4vw,64px);">CORE FEATURES</div>
+<h2 class="np-headline np-headline-sm reveal" style="position:absolute;top:clamp(60px,10vh,110px);left:clamp(24px,4vw,64px);font-size:clamp(1.5rem,3.5vw,2.5rem);">四项核心能力</h2>
+<div class="preset-modern-newspaper-content" style="display:grid;grid-template-columns:1fr 1fr;gap:clamp(8px,1.5vw,16px);position:absolute;top:clamp(120px,20vh,180px);left:clamp(24px,4vw,64px);right:clamp(24px,4vw,64px);bottom:clamp(40px,6vh,80px);">
+<div class="reveal" style="padding:clamp(12px,2vw,24px);border-left:3px solid var(--yellow);">
+<div class="np-stamp">01</div>
+<p class="np-body" style="color:var(--text);font-weight:700;margin:4px 0;">播放模式</p>
+<p class="np-body">F5 全屏，自动缩放适配，控制栏隐藏</p>
+</div>
+<div class="reveal" style="padding:clamp(12px,2vw,24px);border-left:3px solid var(--text);">
+<div class="np-stamp">02</div>
+<p class="np-body" style="color:var(--text);font-weight:700;margin:4px 0;">演讲者模式</p>
+<p class="np-body">P 键同步窗口：备注、计时器、页数</p>
+</div>
+<div class="reveal" style="padding:clamp(12px,2vw,24px);border-left:3px solid var(--text);">
+<div class="np-stamp">03</div>
+<p class="np-body" style="color:var(--text);font-weight:700;margin:4px 0;">浏览器编辑</p>
+<p class="np-body">E 键进入编辑，Ctrl+S 保存，无需 IDE</p>
+</div>
+<div class="reveal" style="padding:clamp(12px,2vw,24px);border-left:3px solid var(--yellow);">
+<div class="np-stamp">04</div>
+<p class="np-body" style="color:var(--text);font-weight:700;margin:4px 0;">PPTX 导出</p>
+<p class="np-body">像素级 PNG 或原生可编辑文字两种模式</p>
+</div>
+</div>
+<div class="slide-num-label">6 / 8</div>
+</section>
+<section aria-label="Installation slide" class="slide" data-notes="两种安装方式：Claude Code 和 OpenClaw。每行一个命令。Feature Story 布局，标题锚定左下角，右上留白。" id="slide-7">
+<div class="np-ghost" style="top:-5%;right:5%;">07</div>
+<div style="position:absolute;top:clamp(20px,3vw,48px);right:clamp(24px,4vw,64px);">
+<div class="np-stamp reveal">INSTALL</div>
+</div>
+<div class="preset-modern-newspaper-content" style="position:absolute;bottom:clamp(40px,8vh,100px);left:clamp(24px,4vw,64px);max-width:65%;">
+<div class="np-bar-h reveal" style="width:30px;margin-bottom:clamp(8px,1.5vw,16px);"></div>
+<h2 class="np-headline np-headline-sm reveal" style="font-size:clamp(1.5rem,3.5vw,2.5rem);margin-bottom:clamp(16px,2vw,32px);">一行命令，安装即用</h2>
+<div style="display:flex;flex-direction:column;gap:clamp(12px,1.5vw,20px);">
+<div class="reveal">
+<div class="np-stamp" style="margin-bottom:6px;">CLAUDE CODE</div>
+<div class="np-cmd">/install https://github.com/kaisersong/slide-creator</div>
+</div>
+<div class="reveal">
+<div class="np-stamp" style="margin-bottom:6px;">OPENCLAW</div>
+<div class="np-cmd">clawhub install kai-slide-creator</div>
+</div>
+</div>
+</div>
+<div class="slide-num-label">7 / 8</div>
+</section>
+<section aria-label="CTA slide" class="slide np-dark" data-notes="深色收尾页。黄色横条顶部全宽。白色标题底部左侧。mono CTA 底部右侧。呼应封面布局但暗色。" id="slide-8">
+<div class="np-bar-h reveal" style="position:absolute;top:0;left:0;width:100%;"></div>
+<div class="np-ghost" style="top:10%;right:-2%;color:rgba(247,245,240,0.04);">END</div>
+<div class="preset-modern-newspaper-content" style="position:absolute;bottom:clamp(40px,8vh,100px);left:clamp(24px,4vw,64px);">
+<div class="np-bar-h reveal" style="width:40px;margin-bottom:clamp(12px,2vw,24px);"></div>
+<h2 class="np-headline np-headline-sm reveal" style="color:#f7f5f0;font-size:clamp(2rem,5vw,4rem);">现在就开始</h2>
+<div class="np-cmd reveal" style="margin-top:clamp(12px,2vw,24px);border-left-color:var(--yellow);">/slide-creator</div>
+</div>
+<div style="position:absolute;bottom:clamp(28px,4vh,56px);right:clamp(24px,4vw,64px);">
+<div class="np-stamp reveal" style="color:rgba(247,245,240,0.3);">VOL.02 · NO.01</div>
+</div>
+<div class="slide-num-label light">8 / 8</div>
+</section>
+</body></html>

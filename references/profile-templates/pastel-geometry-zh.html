@@ -1,0 +1,521 @@
+<!DOCTYPE html>
+<!-- Program-owned profile template. Regenerate with scripts/build-profile-templates.py. -->
+<html><head>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;700;800&amp;family=Noto+Sans+SC:wght@400;500;700&amp;display=swap" rel="stylesheet"/>
+<style>
+        body { background-color: #c8d9e6; }
+        :root {
+            --bg-primary: #c8d9e6;
+            --card-bg: #faf9f7;
+            --pill-pink: #f0b4d4;
+            --pill-mint: #a8d4c4;
+            --pill-sage: #8fad9a;
+            --pill-lavender: #9b8dc4;
+            --pill-sky: #7bb8d4;
+            --pill-peach: #f0c4a0;
+            --text-primary: #1a1a1a;
+            --text-secondary: #666666;
+            --accent: #f0b4d4;
+            --font-display: 'Plus Jakarta Sans', 'Noto Sans SC', sans-serif;
+            --font-body: 'Plus Jakarta Sans', 'Noto Sans SC', sans-serif;
+            --title-size: clamp(1.5rem, 5vw, 4rem);
+            --h2-size: clamp(1.25rem, 3.5vw, 2.5rem);
+            --body-size: clamp(0.75rem, 1.5vw, 1.125rem);
+            --small-size: clamp(0.65rem, 1vw, 0.875rem);
+            --slide-padding: clamp(1rem, 4vw, 4rem);
+            --content-gap: clamp(0.5rem, 2vw, 2rem);
+        }
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+        html { scroll-snap-type: y mandatory; height: 100%; }
+        body { font-family: var(--font-body); background: var(--bg-primary); color: var(--text-primary); height: 100%; }
+        body[data-export-progress="false"] .progress-bar,
+        body[data-export-progress="false"] .nav-dots { display: none !important; }
+
+        .slide { width: 100vw; height: 100vh; height: 100dvh; overflow: hidden; scroll-snap-align: start; display: flex; flex-direction: column; position: relative; }
+        .slide-content { flex: 1; display: flex; flex-direction: column; justify-content: center; max-height: 100%; overflow: hidden; padding: var(--slide-padding); position: relative; z-index: 2; }
+
+        /* -- Signature Elements: Pastel Geometry -- */
+        .geo-accent { position: absolute; border-radius: 50%; opacity: 0.08; pointer-events: none; }
+        .pill { display: inline-block; background: var(--pill-pink); color: #fff; font-family: var(--font-display); font-size: 10px; font-weight: 700; padding: 5px 14px; border-radius: 20px; text-transform: uppercase; letter-spacing: 0.08em; }
+        .pill.mint { background: var(--pill-mint); }
+        .pill.sage { background: var(--pill-sage); }
+        .pill.lavender { background: var(--pill-lavender); }
+        .pill.sky { background: var(--pill-sky); }
+        .pill.peach { background: var(--pill-peach); }
+        .pill.outline { background: transparent; border: 2px solid var(--pill-pink); color: var(--text-primary); }
+        .pill.outline.mint { border-color: var(--pill-mint); }
+        .pill.outline.lavender { border-color: var(--pill-lavender); }
+        .pill.small { font-size: 9px; padding: 4px 10px; }
+
+        .pastel-card { background: var(--card-bg); border-radius: 20px; box-shadow: 0 4px 32px rgba(100,120,140,0.18); padding: clamp(24px, 3vw, 40px); }
+
+        .pills { position: absolute; right: 20px; top: 50%; transform: translateY(-50%); display: flex; flex-direction: column; gap: 6px; z-index: 1; }
+        .pill-bar { width: 12px; border-radius: 6px; }
+        .pill-bar:nth-child(1) { height: 40px; background: var(--pill-pink); }
+        .pill-bar:nth-child(2) { height: 80px; background: var(--pill-mint); }
+        .pill-bar:nth-child(3) { height: 120px; background: var(--pill-sage); }
+        .pill-bar:nth-child(4) { height: 80px; background: var(--pill-lavender); }
+        .pill-bar:nth-child(5) { height: 60px; background: var(--pill-sky); }
+        .pill-bar:nth-child(6) { height: 40px; background: var(--pill-peach); }
+
+        .card-content { padding-right: clamp(56px, 6vw, 80px); z-index: 10; }
+
+        .divider { width: 40px; height: 4px; border-radius: 2px; }
+        .divider.pink { background: var(--pill-pink); }
+        .divider.mint { background: var(--pill-mint); }
+        .divider.lavender { background: var(--pill-lavender); }
+
+        .stat-num { font-family: var(--font-display); font-weight: 800; font-size: clamp(3rem, 8vw, 6rem); letter-spacing: -0.02em; color: var(--text-primary); line-height: 1; }
+
+        .reveal { opacity: 0; transform: translateY(16px) scale(0.97); transition: opacity 0.4s cubic-bezier(0.34, 1.56, 0.64, 1), transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1); }
+        .slide.visible .reveal { opacity: 1; transform: translateY(0) scale(1); }
+        .reveal:nth-child(1) { transition-delay: 0.05s; }
+        .reveal:nth-child(2) { transition-delay: 0.12s; }
+        .reveal:nth-child(3) { transition-delay: 0.2s; }
+        .reveal:nth-child(4) { transition-delay: 0.3s; }
+        .reveal:nth-child(5) { transition-delay: 0.4s; }
+        .reveal:nth-child(6) { transition-delay: 0.5s; }
+
+        /* -- Per-slide CSS -- */
+        #slide-1 { flex-direction: column; }
+        #slide-1 .hero-inner { display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; height: 100%; padding: 0 clamp(40px, 7vw, 80px); position: relative; z-index: 2; }
+        #slide-1 .hero-badge { margin-bottom: 24px; }
+        #slide-1 .hero-title { font-family: var(--font-display); font-weight: 800; font-size: clamp(2.8rem, 6.5vw, 5.5rem); line-height: 1.05; letter-spacing: -0.03em; color: var(--text-primary); }
+        #slide-1 .hero-title .accent { color: var(--pill-lavender); }
+        #slide-1 .hero-sub { font-size: clamp(0.9rem, 1.6vw, 1.2rem); color: var(--text-secondary); margin-top: 16px; max-width: 520px; line-height: 1.7; }
+        #slide-1 .hero-stats { display: flex; gap: 32px; margin-top: 36px; }
+        #slide-1 .hero-stat { text-align: center; }
+        #slide-1 .hero-stat-num { font-family: var(--font-display); font-weight: 800; font-size: clamp(1.8rem, 3.5vw, 3rem); color: var(--pill-lavender); }
+        #slide-1 .hero-stat-label { font-size: 11px; color: var(--text-secondary); margin-top: 4px; text-transform: uppercase; letter-spacing: 0.06em; }
+        #slide-1 .geo-accent-1 { width: clamp(180px, 22vw, 320px); height: clamp(180px, 22vw, 320px); background: var(--pill-pink); right: 8%; top: 12%; }
+        #slide-1 .geo-accent-2 { width: clamp(100px, 12vw, 180px); height: clamp(100px, 12vw, 180px); background: var(--pill-mint); left: 6%; bottom: 18%; }
+        #slide-1 .geo-accent-3 { width: clamp(60px, 7vw, 100px); height: clamp(60px, 7vw, 100px); background: var(--pill-lavender); left: 18%; top: 22%; border-radius: 16%; }
+
+        #slide-2 { flex-direction: row; }
+        #slide-2 .left-panel { width: 42%; display: flex; flex-direction: column; justify-content: center; padding: clamp(32px, 5vw, 60px); position: relative; z-index: 2; }
+        #slide-2 .right-panel { width: 58%; display: flex; flex-direction: column; justify-content: center; padding: clamp(32px, 5vw, 60px); position: relative; z-index: 2; }
+        #slide-2 .left-panel .section-num { font-family: var(--font-display); font-size: clamp(1.2rem, 2.5vw, 2rem); font-weight: 800; color: var(--pill-lavender); margin-bottom: 12px; }
+        #slide-2 .pain-item { background: var(--card-bg); border-radius: 16px; padding: clamp(16px, 2vw, 24px); box-shadow: 0 2px 16px rgba(100,120,140,0.1); margin-bottom: 12px; }
+        #slide-2 .pain-item h3 { font-size: clamp(0.85rem, 1.2vw, 1rem); font-weight: 700; margin-bottom: 4px; }
+        #slide-2 .pain-item p { font-size: var(--small-size); color: var(--text-secondary); line-height: 1.55; }
+        #slide-2 .geo-accent-1 { width: clamp(120px, 16vw, 240px); height: clamp(120px, 16vw, 240px); background: var(--pill-peach); right: 4%; bottom: 10%; }
+
+        #slide-3 { flex-direction: column; }
+        #slide-3 .steps-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: clamp(16px, 2vw, 28px); margin-top: clamp(24px, 3vw, 40px); }
+        #slide-3 .step-block { background: var(--card-bg); border-radius: 16px; padding: clamp(20px, 2.5vw, 32px); box-shadow: 0 2px 16px rgba(100,120,140,0.1); text-align: center; }
+        #slide-3 .step-block .step-icon { width: 48px; height: 48px; border-radius: 50%; margin: 0 auto 16px; display: flex; align-items: center; justify-content: center; font-family: var(--font-display); font-weight: 800; font-size: 1.2rem; color: #fff; }
+        #slide-3 .step-block:nth-child(1) .step-icon { background: var(--pill-pink); }
+        #slide-3 .step-block:nth-child(2) .step-icon { background: var(--pill-mint); }
+        #slide-3 .step-block:nth-child(3) .step-icon { background: var(--pill-lavender); }
+        #slide-3 .step-block h3 { font-size: clamp(0.9rem, 1.3vw, 1.1rem); font-weight: 700; margin-bottom: 6px; }
+        #slide-3 .step-block p { font-size: var(--small-size); color: var(--text-secondary); line-height: 1.55; }
+        #slide-3 .geo-accent-1 { width: clamp(80px, 10vw, 160px); height: clamp(80px, 10vw, 160px); background: var(--pill-pink); left: 5%; top: 15%; border-radius: 20%; }
+        #slide-3 .geo-accent-2 { width: clamp(60px, 8vw, 120px); height: clamp(60px, 8vw, 120px); background: var(--pill-sky); right: 8%; bottom: 12%; }
+
+        #slide-4 { flex-direction: column; }
+        #slide-4 .preset-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 140px), 1fr)); gap: clamp(8px, 1.2vw, 14px); margin-top: clamp(20px, 2.5vw, 36px); }
+        #slide-4 .preset-card { background: var(--card-bg); border-radius: 12px; padding: clamp(12px, 1.5vw, 20px); box-shadow: 0 2px 12px rgba(100,120,140,0.08); text-align: center; transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1); }
+        #slide-4 .preset-card:hover { transform: scale(1.05); }
+        #slide-4 .preset-card .preset-dot { width: 16px; height: 16px; border-radius: 50%; margin: 0 auto 8px; }
+        #slide-4 .preset-card:nth-child(6n+1) .preset-dot { background: var(--pill-pink); }
+        #slide-4 .preset-card:nth-child(6n+2) .preset-dot { background: var(--pill-mint); }
+        #slide-4 .preset-card:nth-child(6n+3) .preset-dot { background: var(--pill-sage); }
+        #slide-4 .preset-card:nth-child(6n+4) .preset-dot { background: var(--pill-lavender); }
+        #slide-4 .preset-card:nth-child(6n+5) .preset-dot { background: var(--pill-sky); }
+        #slide-4 .preset-card:nth-child(6n+6) .preset-dot { background: var(--pill-peach); }
+        #slide-4 .preset-card span { font-size: var(--small-size); font-weight: 500; }
+        #slide-4 .geo-accent-1 { width: clamp(140px, 18vw, 280px); height: clamp(140px, 18vw, 280px); background: var(--pill-lavender); right: 6%; top: 8%; }
+
+        #slide-5 { flex-direction: column; }
+        #slide-5 .flow-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: clamp(16px, 2vw, 28px); margin-top: clamp(24px, 3vw, 40px); }
+        #slide-5 .flow-card { background: var(--card-bg); border-radius: 16px; padding: clamp(20px, 2.5vw, 32px); box-shadow: 0 2px 16px rgba(100,120,140,0.1); position: relative; }
+        #slide-5 .flow-card .flow-num { font-family: var(--font-display); font-weight: 800; font-size: clamp(1.5rem, 2.5vw, 2.2rem); color: var(--pill-lavender); margin-bottom: 12px; }
+        #slide-5 .flow-card h3 { font-size: clamp(0.85rem, 1.2vw, 1rem); font-weight: 700; margin-bottom: 8px; }
+        #slide-5 .flow-card .cmd-block { background: #1a2530; color: var(--pill-mint); border-radius: 8px; padding: 10px 14px; font-family: 'Plus Jakarta Sans', 'Noto Sans SC', monospace; font-size: clamp(11px, 1vw, 13px); }
+        #slide-5 .flow-connector { position: absolute; right: -16px; top: 50%; transform: translateY(-50%); width: 24px; height: 2px; background: var(--pill-lavender); opacity: 0.3; }
+        #slide-5 .geo-accent-1 { width: clamp(70px, 9vw, 140px); height: clamp(70px, 9vw, 140px); background: var(--pill-mint); left: 4%; bottom: 15%; border-radius: 16%; }
+        #slide-5 .geo-accent-2 { width: clamp(50px, 6vw, 90px); height: clamp(50px, 6vw, 90px); background: var(--pill-peach); right: 14%; top: 18%; }
+
+        #slide-6 { flex-direction: column; }
+        #slide-6 .feat-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: clamp(12px, 1.5vw, 20px); margin-top: clamp(20px, 2.5vw, 36px); }
+        #slide-6 .feat-card { background: var(--card-bg); border-radius: 16px; padding: clamp(18px, 2.5vw, 28px); box-shadow: 0 2px 16px rgba(100,120,140,0.1); }
+        #slide-6 .feat-card .feat-icon { width: 36px; height: 36px; border-radius: 10px; margin-bottom: 12px; display: flex; align-items: center; justify-content: center; font-weight: 800; color: #fff; font-size: 0.9rem; }
+        #slide-6 .feat-card:nth-child(1) .feat-icon { background: var(--pill-pink); }
+        #slide-6 .feat-card:nth-child(2) .feat-icon { background: var(--pill-mint); }
+        #slide-6 .feat-card:nth-child(3) .feat-icon { background: var(--pill-lavender); }
+        #slide-6 .feat-card:nth-child(4) .feat-icon { background: var(--pill-sky); }
+        #slide-6 .feat-card h3 { font-size: clamp(0.9rem, 1.2vw, 1.05rem); font-weight: 700; margin-bottom: 6px; }
+        #slide-6 .feat-card p { font-size: var(--small-size); color: var(--text-secondary); line-height: 1.55; }
+        #slide-6 .geo-accent-1 { width: clamp(100px, 13vw, 200px); height: clamp(100px, 13vw, 200px); background: var(--pill-sage); right: 5%; bottom: 8%; border-radius: 24%; }
+
+        #slide-7 { flex-direction: column; }
+        #slide-7 .install-blocks { display: flex; flex-direction: column; gap: clamp(14px, 1.8vw, 24px); margin-top: clamp(20px, 2.5vw, 36px); max-width: 680px; }
+        #slide-7 .install-card { background: var(--card-bg); border-radius: 16px; padding: clamp(18px, 2.5vw, 28px); box-shadow: 0 2px 16px rgba(100,120,140,0.1); }
+        #slide-7 .install-card .install-label { font-size: clamp(10px, 0.9vw, 12px); font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; color: var(--text-secondary); margin-bottom: 8px; }
+        #slide-7 .install-card .cmd-text { background: #1a2530; color: var(--pill-mint); border-radius: 8px; padding: 10px 14px; font-family: 'Plus Jakarta Sans', 'Noto Sans SC', monospace; font-size: clamp(11px, 1vw, 13px); }
+        #slide-7 .install-card .link-text { font-size: var(--small-size); color: var(--pill-lavender); margin-top: 8px; font-weight: 500; }
+        #slide-7 .geo-accent-1 { width: clamp(90px, 11vw, 170px); height: clamp(90px, 11vw, 170px); background: var(--pill-pink); left: 6%; top: 20%; }
+        #slide-7 .geo-accent-2 { width: clamp(50px, 6vw, 100px); height: clamp(50px, 6vw, 100px); background: var(--pill-sky); right: 10%; bottom: 22%; border-radius: 16%; }
+
+        #slide-8 { flex-direction: column; }
+        #slide-8 .cta-inner { display: flex; flex-direction: column; align-items: flex-start; justify-content: center; height: 100%; padding: 0 clamp(40px, 7vw, 80px); position: relative; z-index: 2; }
+        #slide-8 .cta-badge { margin-bottom: 24px; }
+        #slide-8 h2 { font-family: var(--font-display); font-weight: 800; font-size: clamp(2.4rem, 5.5vw, 4.5rem); line-height: 1.1; letter-spacing: -0.03em; color: var(--text-primary); margin-bottom: 36px; }
+        #slide-8 h2 .accent { color: var(--pill-lavender); }
+        #slide-8 .cta-command { font-family: var(--font-display); font-size: clamp(1.4rem, 2.8vw, 2.4rem); font-weight: 800; background: linear-gradient(135deg, var(--pill-pink), var(--pill-lavender)); color: #fff; padding: 14px 32px; border-radius: 12px; display: inline-block; margin-bottom: 24px; letter-spacing: 0.02em; }
+        #slide-8 .cta-sub { font-size: var(--small-size); color: var(--text-secondary); line-height: 1.75; max-width: 420px; }
+        #slide-8 .cta-stats { display: flex; gap: 28px; margin-top: 28px; }
+        #slide-8 .cta-stat { text-align: center; }
+        #slide-8 .cta-stat-num { font-family: var(--font-display); font-weight: 800; font-size: clamp(1.2rem, 2vw, 1.8rem); color: var(--pill-lavender); }
+        #slide-8 .cta-stat-label { font-size: 10px; color: var(--text-secondary); margin-top: 2px; text-transform: uppercase; letter-spacing: 0.06em; }
+        #slide-8 .geo-accent-1 { width: clamp(200px, 25vw, 380px); height: clamp(200px, 25vw, 380px); background: var(--pill-lavender); right: 4%; top: 6%; }
+        #slide-8 .geo-accent-2 { width: clamp(100px, 13vw, 200px); height: clamp(100px, 13vw, 200px); background: var(--pill-mint); left: 8%; bottom: 10%; border-radius: 20%; }
+        #slide-8 .geo-accent-3 { width: clamp(60px, 8vw, 130px); height: clamp(60px, 8vw, 130px); background: var(--pill-peach); left: 22%; top: 18%; border-radius: 14%; }
+
+        /* -- Universal UI -- */
+        #brand-mark { position: fixed; top: 20px; left: 28px; font-weight: 800; font-size: 15px; z-index: 1000; font-family: var(--font-display); color: var(--text-secondary); }
+        .slide-num-label { position: absolute; bottom: 28px; right: 36px; font-size: 11px; font-weight: 500; color: rgba(0,0,0,0.18); }
+        .slide-num-label.light { color: rgba(255,255,255,0.2); }
+        .nav-dots { position: fixed; right: 1.5rem; top: 50%; transform: translateY(-50%); display: flex; flex-direction: column; gap: 8px; z-index: 100; }
+        .progress-bar { position: fixed; top: 0; left: 0; height: 3px; background: linear-gradient(90deg, var(--pill-pink), var(--pill-mint), var(--pill-lavender)); width: 0%; z-index: 100; transition: width 0.3s ease; }
+
+        /* -- Present Mode -- */
+        #present-btn { position: fixed; bottom: 1.5rem; right: 1.5rem; z-index: 9997; width: 44px; height: 44px; border-radius: 50%; background: rgba(255,255,255,0.85); color: var(--text-primary); border: 1.5px solid rgba(0,0,0,0.1); font-size: 1rem; cursor: pointer; backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); display: flex; align-items: center; justify-content: center; opacity: 0; transition: opacity 0.2s; pointer-events: none; }
+        body:hover #present-btn { opacity: 1; pointer-events: auto; }
+        #present-btn:hover { background: rgba(255,255,255,1); }
+        #present-counter { display: none; position: fixed; bottom: 1.4rem; left: 50%; transform: translateX(-50%); z-index: 9997; font-size: 0.65rem; letter-spacing: 0.14em; font-family: system-ui, sans-serif; color: rgba(0,0,0,0.28); }
+        body.presenting { background: #000 !important; overflow: hidden !important; }
+        body.presenting .slide { position: fixed !important; inset: 0; width: 100vw !important; height: 100vh !important; transform-origin: center center; scroll-snap-align: none !important; display: none !important; }
+        body.presenting .slide.p-on { display: flex !important; }
+        body.presenting #present-btn { display: none !important; }
+        body.presenting #present-counter { display: block; }
+        body.presenting.presenting-black .slide { visibility: hidden !important; }
+        body.presenting.presenting-black::after { content: ''; position: fixed; inset: 0; background: #000; z-index: 99999; }
+        .slide-credit { position: absolute; bottom: 8px; right: 14px; font-size: 9px; color: rgba(0,0,0,0.35); opacity: 0.35; pointer-events: none; z-index: 1; font-family: system-ui, sans-serif; }
+        body.presenting .slide-credit { display: none !important; }
+
+        /* -- Edit Mode -- */
+        .edit-hotzone { position: fixed; top: 0; left: 0; width: 80px; height: 80px; z-index: 10000; cursor: pointer; }
+        .edit-toggle { position: fixed; top: 16px; left: 16px; opacity: 0; pointer-events: none; transition: opacity 0.3s ease; z-index: 10001; background: var(--pill-pink); color: #fff; border: none; padding: 6px 14px; border-radius: 4px; font-family: var(--font-display); font-size: 11px; font-weight: 700; cursor: pointer; text-transform: uppercase; letter-spacing: 0.05em; }
+        .edit-toggle.show { opacity: 1; pointer-events: auto; }
+        .edit-toggle.active { opacity: 1; pointer-events: auto; background: var(--pill-pink); color: #fff; }
+        #notes-panel { display: none; position: fixed; bottom: 0; left: 0; right: 0; z-index: 9998; background: rgba(250,249,247,0.94); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); border-top: 1px solid rgba(0,0,0,0.08); }
+        #notes-panel.active { display: flex; flex-direction: column; }
+        #notes-panel-header { display: flex; align-items: center; justify-content: space-between; padding: 0.45rem 1.4rem; cursor: pointer; user-select: none; }
+        #notes-panel-header:hover { background: rgba(0,0,0,0.03); }
+        #notes-panel-label { flex: 1; font-size: 0.58rem; letter-spacing: 0.16em; text-transform: uppercase; color: rgba(0,0,0,0.3); }
+        #notes-drag-hint { flex: 1; display: flex; justify-content: center; }
+        #notes-drag-hint::after { content: ''; display: block; width: 36px; height: 3px; border-radius: 2px; background: rgba(0,0,0,0.25); }
+        #notes-panel-header:hover #notes-drag-hint::after { background: rgba(0,0,0,0.45); }
+        #notes-collapse-btn { flex: 1; text-align: right; font-size: 1rem; color: rgba(0,0,0,0.4); background: none; border: none; cursor: pointer; transition: color 0.15s, transform 0.2s; }
+        #notes-collapse-btn:hover { color: rgba(0,0,0,0.85); }
+        #notes-panel.collapsed #notes-body { display: none; }
+        #notes-panel.collapsed #notes-collapse-btn { transform: rotate(180deg); }
+        #notes-body { padding: 0 1.4rem 0.75rem; }
+        #notes-textarea { width: 100%; height: 72px; min-height: 48px; max-height: 200px; resize: vertical; background: transparent; border: none; outline: none; color: rgba(0,0,0,0.75); font-size: 0.88rem; line-height: 1.65; font-family: system-ui, sans-serif; }
+        #notes-textarea::placeholder { color: rgba(0,0,0,0.18); }
+
+        /* -- Responsive -- */
+        @media (max-height: 700px) { :root { --slide-padding: clamp(0.75rem, 3vw, 2rem); --content-gap: clamp(0.4rem, 1.5vw, 1rem); --title-size: clamp(1.25rem, 4.5vw, 2.5rem); } }
+        @media (max-height: 600px) { :root { --slide-padding: clamp(0.5rem, 2.5vw, 1.5rem); --title-size: clamp(1.1rem, 4vw, 2rem); --body-size: clamp(0.7rem, 1.2vw, 0.95rem); } .nav-dots, .keyboard-hint, .decorative, .geo-accent { display: none; } }
+        @media (max-height: 500px) { :root { --slide-padding: clamp(0.4rem, 2vw, 1rem); --title-size: clamp(1rem, 3.5vw, 1.5rem); } }
+        @media (max-width: 600px) {
+            #slide-3 .steps-grid, #slide-5 .flow-row { grid-template-columns: 1fr; }
+            #slide-6 .feat-grid { grid-template-columns: 1fr; }
+            #slide-4 .preset-grid { grid-template-columns: repeat(2, 1fr); }
+            #slide-1 .hero-stats { gap: 16px; }
+            .pills { display: none; }
+            .card-content { padding-right: var(--slide-padding); }
+        }
+        @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.2s !important; } html { scroll-behavior: auto; } }
+
+        /* -- Utility -- */
+        h1 { font-size: var(--title-size); font-weight: 800; line-height: 1.05; }
+        h2 { font-size: var(--h2-size); font-weight: 800; line-height: 1.15; }
+        .body-muted { font-size: var(--body-size); color: var(--text-secondary); margin-top: 6px; }
+        .body-text { font-size: var(--body-size); color: var(--text-secondary); }
+        .mono-label { font-size: 11px; font-weight: 700; color: var(--pill-lavender); text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 10px; }
+        .section-num { font-family: var(--font-display); font-weight: 800; font-size: clamp(1.2rem, 2.5vw, 2rem); }
+        .tag { margin-bottom: 12px; }
+        .tag + h2 { margin-top: 0; }
+    </style>
+</head><body>
+<section aria-label="Hero" class="slide" data-notes="slide-creator: 零依赖 HTML 演示文稿生成器, 21 种设计预设, 三分钟出稿, 为 Claude Code 和 OpenClaw 而生" id="slide-1">
+<div class="geo-accent geo-accent-1"></div>
+<div class="geo-accent geo-accent-2"></div>
+<div class="geo-accent geo-accent-3"></div>
+<div class="pills">
+<div class="pill-bar"></div>
+<div class="pill-bar"></div>
+<div class="pill-bar"></div>
+<div class="pill-bar"></div>
+<div class="pill-bar"></div>
+<div class="pill-bar"></div>
+</div>
+<div class="hero-inner card-content">
+<span class="pill reveal hero-badge">slide-creator</span>
+<h1 class="hero-title reveal preset-pastel-geometry-content">用三<span class="accent">分钟</span>,<br/>做一份好演示</h1>
+<p class="hero-sub reveal">零依赖 HTML 演示文稿, 21 种设计预设, 为 Claude Code 和 OpenClaw 而生</p>
+<div class="hero-stats reveal">
+<div class="hero-stat">
+<div class="hero-stat-num">21</div>
+<div class="hero-stat-label">设计预设</div>
+</div>
+<div class="hero-stat">
+<div class="hero-stat-num">0</div>
+<div class="hero-stat-label">外部依赖</div>
+</div>
+<div class="hero-stat">
+<div class="hero-stat-num">3min</div>
+<div class="hero-stat-label">出稿时间</div>
+</div>
+</div>
+</div>
+<span class="slide-num-label">01 / 08</span>
+</section>
+<section aria-label="Problem" class="slide" data-notes="当前演示文稿制作面临三大痛点: 工具链冗长, AI 生成不稳定, 平台锁定" id="slide-2">
+<div class="geo-accent geo-accent-1"></div>
+<div class="pills">
+<div class="pill-bar"></div>
+<div class="pill-bar"></div>
+<div class="pill-bar"></div>
+<div class="pill-bar"></div>
+<div class="pill-bar"></div>
+<div class="pill-bar"></div>
+</div>
+<div class="left-panel card-content">
+<span class="section-num reveal">01</span>
+<div class="divider pink reveal" style="margin: 12px 0;"></div>
+<h2 class="reveal preset-pastel-geometry-content">做演示, 不该这么累</h2>
+<p class="body-muted reveal">好内容值得更好的呈现方式</p>
+</div>
+<div class="right-panel card-content">
+<div class="pain-item reveal">
+<h3>工具链冗长</h3>
+<p>PPT 写内容, Figma 排版, 开发者嵌入, 三套工具三遍工作</p>
+</div>
+<div class="pain-item reveal">
+<h3>AI 结果不稳定</h3>
+<p>同一个提示词, 每次生成不同风格, 通用 AI 审美无法品牌化</p>
+</div>
+<div class="pain-item reveal">
+<h3>平台锁定</h3>
+<p>依赖云端导出, 离线无法使用, 格式受限</p>
+</div>
+</div>
+<span class="slide-num-label">02 / 08</span>
+</section>
+<section aria-label="Discovery" class="slide" data-notes="风格探索流程: 描述主题后生成三个风格预览, 点击选中, 用眼睛选而非用语言描述" id="slide-3">
+<div class="geo-accent geo-accent-1"></div>
+<div class="geo-accent geo-accent-2"></div>
+<div class="pills">
+<div class="pill-bar"></div>
+<div class="pill-bar"></div>
+<div class="pill-bar"></div>
+<div class="pill-bar"></div>
+<div class="pill-bar"></div>
+<div class="pill-bar"></div>
+</div>
+<div class="slide-content card-content preset-pastel-geometry-content">
+<span class="pill mint small reveal tag">Discovery</span>
+<h2 class="reveal">三个预览锁定视觉风格</h2>
+<p class="body-muted reveal">用眼睛选, 不用描述</p>
+<div class="steps-grid">
+<div class="step-block reveal">
+<div class="step-icon">1</div>
+<h3>描述主题</h3>
+<p>告诉 slide-creator 你要讲什么, 受众是谁</p>
+</div>
+<div class="step-block reveal">
+<div class="step-icon">2</div>
+<h3>看预览</h3>
+<p>系统生成 3 种风格预览, 直观感受差异</p>
+</div>
+<div class="step-block reveal">
+<div class="step-icon">3</div>
+<h3>选中出稿</h3>
+<p>点击喜欢的那个, 完整演示文稿即刻生成</p>
+</div>
+</div>
+</div>
+<span class="slide-num-label">03 / 08</span>
+</section>
+<section aria-label="Solution" class="slide" data-notes="21 种设计预设覆盖商业路演、技术分享、创意展示等场景, 每种预设都有独特视觉语言, 拒绝通用 AI 审美" id="slide-4">
+<div class="geo-accent geo-accent-1"></div>
+<div class="pills">
+<div class="pill-bar"></div>
+<div class="pill-bar"></div>
+<div class="pill-bar"></div>
+<div class="pill-bar"></div>
+<div class="pill-bar"></div>
+<div class="pill-bar"></div>
+</div>
+<div class="slide-content card-content preset-pastel-geometry-content">
+<span class="pill lavender small reveal tag">Presets</span>
+<h2 class="reveal">21 种预设, 拒绝通用 AI 审美</h2>
+<div class="preset-grid reveal">
+<div class="preset-card"><div class="preset-dot"></div><span>Bold Signal</span></div>
+<div class="preset-card"><div class="preset-dot"></div><span>Blue Sky</span></div>
+<div class="preset-card"><div class="preset-dot"></div><span>Aurora Mesh</span></div>
+<div class="preset-card"><div class="preset-dot"></div><span>Chinese Chan</span></div>
+<div class="preset-card"><div class="preset-dot"></div><span>Creative Voltage</span></div>
+<div class="preset-card"><div class="preset-dot"></div><span>Dark Botanical</span></div>
+<div class="preset-card"><div class="preset-dot"></div><span>Data Story</span></div>
+<div class="preset-card"><div class="preset-dot"></div><span>Electric Studio</span></div>
+<div class="preset-card"><div class="preset-dot"></div><span>Enterprise Dark</span></div>
+<div class="preset-card"><div class="preset-dot"></div><span>Glassmorphism</span></div>
+<div class="preset-card"><div class="preset-dot"></div><span>Modern Newspaper</span></div>
+<div class="preset-card"><div class="preset-dot"></div><span>Neo-Brutalism</span></div>
+<div class="preset-card"><div class="preset-dot"></div><span>Neo-Retro Dev</span></div>
+<div class="preset-card"><div class="preset-dot"></div><span>Neon Cyber</span></div>
+<div class="preset-card"><div class="preset-dot"></div><span>Notebook Tabs</span></div>
+<div class="preset-card"><div class="preset-dot"></div><span>Paper &amp; Ink</span></div>
+<div class="preset-card"><div class="preset-dot"></div><span>Pastel Geometry</span></div>
+<div class="preset-card"><div class="preset-dot"></div><span>Split Pastel</span></div>
+<div class="preset-card"><div class="preset-dot"></div><span>Swiss Modern</span></div>
+<div class="preset-card"><div class="preset-dot"></div><span>Terminal Green</span></div>
+<div class="preset-card"><div class="preset-dot"></div><span>Vintage Editorial</span></div>
+</div>
+</div>
+<span class="slide-num-label">04 / 08</span>
+</section>
+<section aria-label="Workflow" class="slide" data-notes="三步出稿流程: 描述主题, 选择风格预览, 打开 HTML 演示文稿" id="slide-5">
+<div class="geo-accent geo-accent-1"></div>
+<div class="geo-accent geo-accent-2"></div>
+<div class="pills">
+<div class="pill-bar"></div>
+<div class="pill-bar"></div>
+<div class="pill-bar"></div>
+<div class="pill-bar"></div>
+<div class="pill-bar"></div>
+<div class="pill-bar"></div>
+</div>
+<div class="slide-content card-content preset-pastel-geometry-content">
+<span class="pill small reveal tag">Workflow</span>
+<h2 class="reveal">三步出稿, 从想法到演示</h2>
+<div class="flow-row">
+<div class="flow-card reveal">
+<div class="flow-num">01</div>
+<h3>描述主题</h3>
+<div class="cmd-block">/slide-creator [主题]</div>
+<div class="flow-connector"></div>
+</div>
+<div class="flow-card reveal">
+<div class="flow-num">02</div>
+<h3>选择风格</h3>
+<div class="cmd-block">预览三种风格, 点击选中</div>
+<div class="flow-connector"></div>
+</div>
+<div class="flow-card reveal">
+<div class="flow-num">03</div>
+<h3>打开演示</h3>
+<div class="cmd-block">open presentation.html</div>
+</div>
+</div>
+</div>
+<span class="slide-num-label">05 / 08</span>
+</section>
+<section aria-label="Features" class="slide" data-notes="四个核心功能: F5 全屏播放, E 键编辑, P 键演讲者模式, PPTX 导出" id="slide-6">
+<div class="geo-accent geo-accent-1"></div>
+<div class="pills">
+<div class="pill-bar"></div>
+<div class="pill-bar"></div>
+<div class="pill-bar"></div>
+<div class="pill-bar"></div>
+<div class="pill-bar"></div>
+<div class="pill-bar"></div>
+</div>
+<div class="slide-content card-content preset-pastel-geometry-content">
+<span class="pill sage small reveal tag">Features</span>
+<h2 class="reveal">播放, 编辑, 演讲, 导出</h2>
+<div class="feat-grid">
+<div class="feat-card reveal">
+<div class="feat-icon">F5</div>
+<h3>F5 全屏播放</h3>
+<p>视口自适应缩放, 1440x900 画布适配任意屏幕尺寸</p>
+</div>
+<div class="feat-card reveal">
+<div class="feat-icon">E</div>
+<h3>E 键浏览器编辑</h3>
+<p>左上角热区触发编辑模式, 直接在浏览器中修改文字</p>
+</div>
+<div class="feat-card reveal">
+<div class="feat-icon">P</div>
+<h3>P 键演讲者模式</h3>
+<p>同步窗口显示备注, 计时器, 页数, BroadcastChannel 联动</p>
+</div>
+<div class="feat-card reveal">
+<div class="feat-icon">PPTX</div>
+<h3>PPTX 导出</h3>
+<p>像素级图片模式或原生可编辑模式, 独立 skill 支持</p>
+</div>
+</div>
+</div>
+<span class="slide-num-label">06 / 08</span>
+</section>
+<section aria-label="Install" class="slide" data-notes="支持 Claude Code 和 OpenClaw 两种安装方式, 一行命令即可使用" id="slide-7">
+<div class="geo-accent geo-accent-1"></div>
+<div class="geo-accent geo-accent-2"></div>
+<div class="pills">
+<div class="pill-bar"></div>
+<div class="pill-bar"></div>
+<div class="pill-bar"></div>
+<div class="pill-bar"></div>
+<div class="pill-bar"></div>
+<div class="pill-bar"></div>
+</div>
+<div class="slide-content card-content preset-pastel-geometry-content">
+<span class="pill outline lavender small reveal tag">Install</span>
+<h2 class="reveal">一行命令安装, 两种方式可选</h2>
+<div class="install-blocks">
+<div class="install-card reveal">
+<div class="install-label">Claude Code</div>
+<div class="cmd-text">告诉 Claude "安装 github.com/kaisersong/slide-creator"</div>
+</div>
+<div class="install-card reveal">
+<div class="install-label">OpenClaw</div>
+<div class="cmd-text">clawhub install kai-slide-creator</div>
+</div>
+<div class="reveal">
+<p class="link-text">ClawHub 页面: clawhub.ai/skills/kai-slide-creator</p>
+</div>
+</div>
+</div>
+<span class="slide-num-label">07 / 08</span>
+</section>
+<section aria-label="CTA" class="slide" data-notes="立即开始使用 /slide-creator 命令创建演示文稿, 适用于 Claude Code 和 OpenClaw" id="slide-8">
+<div class="geo-accent geo-accent-1"></div>
+<div class="geo-accent geo-accent-2"></div>
+<div class="geo-accent geo-accent-3"></div>
+<div class="pills">
+<div class="pill-bar"></div>
+<div class="pill-bar"></div>
+<div class="pill-bar"></div>
+<div class="pill-bar"></div>
+<div class="pill-bar"></div>
+<div class="pill-bar"></div>
+</div>
+<div class="cta-inner card-content">
+<span class="pill reveal cta-badge">开始使用</span>
+<h2 class="reveal preset-pastel-geometry-content">你的下一个演示,<br/><span class="accent">从这里开始</span></h2>
+<div class="cta-command reveal">/slide-creator</div>
+<p class="cta-sub reveal">适用于 Claude Code 和 OpenClaw<br/>完全在浏览器中运行, 无构建步骤, 无订阅</p>
+<div class="cta-stats reveal">
+<div class="cta-stat">
+<div class="cta-stat-num">21</div>
+<div class="cta-stat-label">预设</div>
+</div>
+<div class="cta-stat">
+<div class="cta-stat-num">0</div>
+<div class="cta-stat-label">依赖</div>
+</div>
+<div class="cta-stat">
+<div class="cta-stat-num">1</div>
+<div class="cta-stat-label">个文件</div>
+</div>
+</div>
+</div>
+<span class="slide-num-label">08 / 08</span>
+</section>
+</body></html>

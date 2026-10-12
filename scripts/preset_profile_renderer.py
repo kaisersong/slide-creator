@@ -17,6 +17,10 @@ from audience_readability import unique_facts
 
 PROFILE_FAMILY_REGISTRY = {preset: spec.family for preset, spec in PROFILE_SPECS.items()}
 
+
+class ProfileTemplateError(RuntimeError):
+    """The installed runtime lacks a required profile content template."""
+
 PROFILE_LAYOUTS = {
     "editorial_static": ("profile_masthead", "profile_columns", "profile_pullquote", "profile_index", "profile_close"),
     "signal_pitch": ("profile_hero", "profile_signal_grid", "profile_split", "profile_timeline", "profile_close"),
@@ -414,7 +418,7 @@ def profile_auto_contrast_script() -> str:
 def _discover_root() -> Path:
     here = Path(__file__).resolve().parent
     for candidate in [here, *here.parents]:
-        if (candidate / "demos").is_dir() and (candidate / "references").is_dir() and (candidate / "schemas").is_dir():
+        if (candidate / "references").is_dir() and (candidate / "schemas").is_dir():
             return candidate
     return here.parent
 
@@ -603,9 +607,9 @@ def _profile_demo_path(profile_spec: PresetProfileSpec, language: str) -> Path |
         return None
     preferred = "zh" if language.lower().startswith("zh") else "en"
     candidates = [
-        ROOT / "demos" / f"{demo_slug}-{preferred}.html",
-        ROOT / "demos" / f"{demo_slug}-zh.html",
-        ROOT / "demos" / f"{demo_slug}-en.html",
+        ROOT / "references" / "profile-templates" / f"{demo_slug}-{preferred}.html",
+        ROOT / "references" / "profile-templates" / f"{demo_slug}-zh.html",
+        ROOT / "references" / "profile-templates" / f"{demo_slug}-en.html",
     ]
     for path in candidates:
         if path.exists():
@@ -3262,6 +3266,10 @@ def build_preset_profile_payload(
     total = len(specs)
     language = str(brief.get("language", ""))
     demo_path = _profile_demo_path(profile_spec, language)
+    if demo_path is None:
+        raise ProfileTemplateError(
+            f"Runtime profile template missing for {canonical_preset}; reinstall the complete Skill runtime package"
+        )
     if demo_path is not None:
         css = _extract_demo_css(demo_path, profile_spec)
         sections_html = _render_demo_derived_sections(

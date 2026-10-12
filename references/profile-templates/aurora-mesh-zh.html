@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<!-- Program-owned profile template. Regenerate with scripts/build-profile-templates.py. -->
+<html><head>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@700&amp;family=DM+Sans:wght@400;500&amp;family=Noto+Sans+SC:wght@400;700&amp;display=swap" rel="stylesheet"/>
+<style>
+body { background-color: #0a0a1a; }
+
+:root {
+    --bg-primary: #0a0a1a;
+    --accent: #00f5c4;
+    --text-primary: #ffffff;
+    --text-body: rgba(255,255,255,0.70);
+    --text-muted: rgba(255,255,255,0.45);
+    --card-bg: rgba(255,255,255,0.05);
+    --card-border: rgba(255,255,255,0.10);
+    --divider: rgba(255,255,255,0.15);
+    --font-display: 'Space Grotesk', 'Noto Sans SC', sans-serif;
+    --font-body: 'DM Sans', 'Noto Sans SC', sans-serif;
+    --title-size: clamp(2.5rem, 7vw, 6rem);
+    --h2-size: clamp(1.5rem, 3.5vw, 2.5rem);
+    --subtitle-size: clamp(1rem, 2vw, 1.4rem);
+    --body-size: clamp(0.75rem, 1.5vw, 1.125rem);
+    --slide-padding: clamp(2rem, 5vw, 5rem);
+    --content-gap: clamp(1rem, 2vw, 2rem);
+}
+
+/* Reset */
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+html { scroll-snap-type: y mandatory; height: 100%; }
+body {
+    font-family: var(--font-body);
+    background-color: #0a0a1a;
+    background-image:
+        radial-gradient(ellipse at 20% 50%, rgba(120,40,200,0.40) 0%, transparent 60%),
+        radial-gradient(ellipse at 80% 20%, rgba(0,180,255,0.30) 0%, transparent 50%),
+        radial-gradient(ellipse at 60% 80%, rgba(0,255,180,0.20) 0%, transparent 50%);
+    background-size: 200% 200%;
+    animation: auroraDrift 20s ease-in-out infinite alternate;
+    color: var(--text-primary);
+    height: 100%;
+}
+
+@keyframes auroraDrift {
+    0%   { background-position: 0% 50%; }
+    33%  { background-position: 50% 20%; }
+    66%  { background-position: 80% 80%; }
+    100% { background-position: 100% 50%; }
+}
+
+body[data-export-progress="false"] .progress-bar,
+body[data-export-progress="false"] .nav-dots { display: none !important; }
+
+/* Slide */
+.slide {
+    width: 100vw; height: 100vh; height: 100dvh;
+    scroll-snap-align: start; display: flex; flex-direction: column;
+    position: relative; overflow: hidden;
+    background: transparent;
+}
+
+/* Aurora slide containers */
+.aurora-slide {
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    width: 100%; height: 100%; padding: var(--slide-padding); text-align: center;
+}
+.aurora-content {
+    width: 100%; max-width: min(90vw, 800px); text-align: left;
+}
+.aurora-title {
+    font-family: var(--font-display);
+    font-size: clamp(2.5rem, 7vw, 6rem);
+    font-weight: 700; letter-spacing: -0.03em; line-height: 1.05; color: #ffffff;
+}
+.aurora-subtitle {
+    font-size: clamp(1rem, 2vw, 1.4rem); color: rgba(255,255,255,0.70);
+    margin-top: 1rem; line-height: 1.6;
+}
+.aurora-card {
+    background: rgba(255,255,255,0.05); backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid var(--card-border); border-radius: 16px;
+    padding: clamp(20px, 3vw, 36px);
+}
+.aurora-card.active {
+    border-color: rgba(0,245,196,0.40);
+    background: rgba(255,255,255,0.08);
+}
+.aurora-divider {
+    height: 1px; background: rgba(0,245,196,0.3); border: none;
+    margin: 16px 0;
+}
+.aurora-accent, .aurora-emphasis { color: #00f5c4; font-weight: 600; }
+.aurora-badge {
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 4px 14px; background: rgba(0,245,196,0.12);
+    border: 1px solid rgba(0,245,196,0.30); border-radius: 9999px;
+    font-size: clamp(0.65rem, 1vw, 0.75rem); font-weight: 600;
+    letter-spacing: 0.12em; text-transform: uppercase; color: #00f5c4;
+}
+.aurora-stat {
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    background-image: linear-gradient(135deg, #00f5c4, #00b4ff);
+    font-family: var(--font-display);
+    font-size: clamp(3rem, 10vw, 8rem); font-weight: 700; line-height: 1;
+}
+
+/* Components */
+.stat-row { display: flex; gap: clamp(3rem, 6vw, 6rem); justify-content: center; align-items: flex-start; }
+.stat-col { display: flex; flex-direction: column; align-items: center; }
+.stat-sub { font-size: clamp(0.75rem, 1.2vw, 1rem); color: rgba(255,255,255,0.45); margin-top: 8px; }
+.hero-stat {
+    font-family: var(--font-display); font-weight: 700; font-size: clamp(28px, 4vw, 48px);
+    letter-spacing: -0.03em; color: var(--accent); line-height: 1;
+}
+.hero-stat-label {
+    font-size: clamp(11px, 1.2vw, 13px); font-weight: 500;
+    color: var(--text-body); text-transform: uppercase; letter-spacing: 0.06em; margin-top: 4px;
+}
+.step-item { display: flex; align-items: flex-start; gap: 16px; margin-bottom: clamp(16px, 2vw, 28px); }
+.step-num { font-family: var(--font-display); font-weight: 700; font-size: clamp(24px, 3vw, 40px); color: #00f5c4; line-height: 1; flex-shrink: 0; width: 48px; }
+.step-text { font-size: clamp(14px, 1.4vw, 17px); line-height: 1.5; color: var(--text-body); }
+.step-title { font-weight: 500; color: #fff; font-size: clamp(16px, 1.6vw, 20px); margin-bottom: 4px; }
+.feat-grid { display: grid; grid-template-columns: 1fr 1fr; gap: clamp(12px, 2vw, 20px); }
+.install-row { display: flex; gap: clamp(16px, 2vw, 24px); margin-top: clamp(16px, 2vw, 28px); flex-wrap: wrap; }
+.install-item { flex: 1; min-width: 280px; }
+.install-label { font-size: 10px; font-weight: 600; letter-spacing: 0.18em; text-transform: uppercase; color: rgba(255,255,255,0.35); margin-bottom: 10px; }
+.code-block { background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08); padding: 14px 18px; border-radius: 8px; font-family: 'DM Sans', 'Noto Sans SC', monospace; font-size: clamp(13px, 1.2vw, 15px); color: rgba(255,255,255,0.75); }
+.feat-card-title { font-weight: 600; font-size: clamp(14px, 1.4vw, 17px); color: #fff; margin-bottom: 6px; }
+.feat-card-desc { font-size: clamp(12px, 1.2vw, 15px); color: rgba(255,255,255,0.5); line-height: 1.5; }
+.cta-pill { display: inline-block; background: #00f5c4; color: #0a0a1a; font-family: var(--font-display); font-weight: 700; font-size: clamp(18px, 2vw, 26px); padding: 18px 40px; border-radius: 12px; text-decoration: none; }
+
+/* Reveal */
+.reveal { opacity: 0; transform: translateY(20px); transition: opacity 0.7s cubic-bezier(0.16,1,0.3,1), transform 0.7s cubic-bezier(0.16,1,0.3,1); }
+.slide.visible .reveal { opacity: 1; transform: translateY(0); }
+.reveal:nth-child(1) { transition-delay: 0.05s; }
+.reveal:nth-child(2) { transition-delay: 0.15s; }
+.reveal:nth-child(3) { transition-delay: 0.25s; }
+.reveal:nth-child(4) { transition-delay: 0.35s; }
+
+ul { list-style: none; }
+li { margin-bottom: 0.8em; line-height: 1.5; color: var(--text-body); font-size: clamp(14px, 1.4vw, 17px); }
+
+/* ═══════════════════════════════════════════
+   Per-slide CSS
+   ═══════════════════════════════════════════ */
+
+/* P2: Problem — subtitle as H2 heading */
+#slide-2 .aurora-subtitle.h2-title {
+    font-size: clamp(1.8rem, 4vw, 3.5rem); margin-top: 0.8rem; color: #fff;
+    font-weight: 700; font-family: var(--font-display); letter-spacing: -0.02em;
+}
+/* P3: Discovery — subtitle heading + style badge items */
+#slide-3 .aurora-subtitle.h2-title {
+    font-size: clamp(1.8rem, 4vw, 3.5rem); margin-top: 0.8rem; color: #fff;
+    font-weight: 700; font-family: var(--font-display); letter-spacing: -0.02em;
+}
+#slide-3 .style-name { font-weight: 700; }
+#slide-3 .style-desc { font-size: 13px; color: var(--text-muted); }
+/* P4: Solution — stat row spacing + uniform size */
+#slide-4 .stat-row { margin-top: clamp(24px, 3vw, 48px); }
+#slide-4 .aurora-stat { font-size: clamp(3rem, 7vw, 5rem); }
+/* P5: Workflow — subtitle heading */
+#slide-5 .aurora-subtitle.h2-title {
+    font-size: clamp(1.8rem, 4vw, 3.5rem); margin-top: 0.8rem; color: #fff;
+    font-weight: 700; font-family: var(--font-display); letter-spacing: -0.02em;
+}
+/* P6: Features — wider content + subtitle heading */
+#slide-6 .aurora-content { max-width: min(90vw, 850px); }
+#slide-6 .aurora-subtitle.h2-title {
+    font-size: clamp(1.8rem, 4vw, 3.5rem); margin-top: 0.8rem; color: #fff;
+    font-weight: 700; font-family: var(--font-display); letter-spacing: -0.02em;
+}
+/* P7: Install — subtitle heading */
+#slide-7 .aurora-subtitle.h2-title {
+    font-size: clamp(1.8rem, 4vw, 3.5rem); margin-top: 0.8rem; color: #fff;
+    font-weight: 700; font-family: var(--font-display); letter-spacing: -0.02em;
+}
+/* P8: CTA — sub text */
+#slide-8 .cta-sub { font-size: clamp(13px, 1.2vw, 16px); color: rgba(255,255,255,0.45); margin-top: 12px; }
+
+/* ═══════════════════════════════════════════
+   Universal UI Elements
+   ═══════════════════════════════════════════ */
+#brand-mark { position: fixed; top: 20px; left: 28px; font-family: 'Space Grotesk', sans-serif; font-weight: 700; font-size: 15px; color: #00f5c4; z-index: 1000; }
+.progress-bar { position: fixed; top: 0; left: 0; height: 3px; background: var(--accent); width: 0%; z-index: 100; transition: width 0.3s ease; }
+.nav-dots { position: fixed; right: 1.5rem; top: 50%; transform: translateY(-50%); display: flex; flex-direction: column; gap: 8px; z-index: 100; }
+
+/* ═══════════════════════════════════════════
+   Present Mode
+   ═══════════════════════════════════════════ */
+#present-btn { position: fixed; bottom: 1.5rem; right: 1.5rem; z-index: 9997; width: 44px; height: 44px; border-radius: 50%; background: rgba(0,0,0,0.5); color: rgba(255,255,255,0.8); border: 1.5px solid rgba(255,255,255,0.2); font-size: 1rem; cursor: pointer; backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); display: flex; align-items: center; justify-content: center; opacity: 0; transition: opacity 0.2s; pointer-events: none; }
+body:hover #present-btn { opacity: 1; pointer-events: auto; }
+#present-btn:hover { background: rgba(0,0,0,0.78); }
+#present-counter { display: none; position: fixed; bottom: 1.4rem; left: 50%; transform: translateX(-50%); z-index: 9997; font-size: 0.65rem; letter-spacing: 0.14em; font-family: system-ui, sans-serif; color: rgba(255,255,255,0.28); }
+body.presenting { background: #000 !important; overflow: hidden !important; }
+body.presenting .slide { position: fixed !important; inset: 0; width: 100vw !important; height: 100vh !important; transform-origin: center center; scroll-snap-align: none !important; display: none !important; }
+body.presenting .slide.p-on { display: flex !important; }
+body.presenting #present-btn { display: none !important; }
+body.presenting #present-counter { display: block; }
+body.presenting.presenting-black .slide { visibility: hidden !important; }
+body.presenting.presenting-black::after { content: ''; position: fixed; inset: 0; background: #000; z-index: 99999; }
+.slide-credit { position: absolute; bottom: 8px; right: 14px; font-size: 9px; color: var(--text-muted, #999); opacity: 0.35; pointer-events: none; z-index: 1; font-family: system-ui, sans-serif; }
+body.presenting .slide-credit { display: none !important; }
+
+/* ═══════════════════════════════════════════
+   Edit Mode
+   ═══════════════════════════════════════════ */
+.edit-hotzone { position: fixed; top: 0; left: 0; width: 80px; height: 80px; z-index: 10000; cursor: pointer; }
+.edit-toggle { position: fixed; top: 16px; left: 16px; opacity: 0; pointer-events: none; transition: opacity 0.3s ease; z-index: 10001; padding: 6px 14px; border-radius: 4px; border: 1px solid rgba(255,255,255,0.15); background: rgba(0,0,0,0.6); color: #fff; font-size: 12px; cursor: pointer; font-family: 'DM Sans', sans-serif; }
+.edit-toggle.show { opacity: 1; pointer-events: auto; }
+.edit-toggle.active { opacity: 1; pointer-events: auto; background: var(--accent); color: #0a0a1a; border-color: var(--accent); }
+#notes-panel { display: none; position: fixed; bottom: 0; left: 0; right: 0; z-index: 9998; background: rgba(8,8,18,0.94); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); border-top: 1px solid rgba(255,255,255,0.08); }
+#notes-panel.active { display: flex; flex-direction: column; }
+#notes-panel-header { display: flex; align-items: center; justify-content: space-between; padding: 0.45rem 1.4rem; cursor: pointer; user-select: none; }
+#notes-panel-header:hover { background: rgba(255,255,255,0.03); }
+#notes-panel-label { flex: 1; font-size: 0.58rem; letter-spacing: 0.16em; text-transform: uppercase; color: rgba(255,255,255,0.3); }
+#notes-drag-hint { flex: 1; display: flex; justify-content: center; }
+#notes-drag-hint::after { content: ''; display: block; width: 36px; height: 3px; border-radius: 2px; background: rgba(255,255,255,0.25); }
+#notes-collapse-btn { flex: 1; text-align: right; font-size: 1rem; color: rgba(255,255,255,0.4); background: none; border: none; cursor: pointer; transition: color 0.15s, transform 0.2s; }
+#notes-collapse-btn:hover { color: rgba(255,255,255,0.85); }
+#notes-body { padding: 0 1.4rem 0.75rem; }
+#notes-panel.collapsed #notes-body { display: none; }
+#notes-panel.collapsed #notes-collapse-btn { transform: rotate(180deg); }
+#notes-textarea { width: 100%; height: 72px; min-height: 48px; max-height: 200px; resize: vertical; background: transparent; border: none; outline: none; color: rgba(255,255,255,0.75); font-size: 0.88rem; line-height: 1.65; font-family: system-ui, sans-serif; }
+#notes-textarea::placeholder { color: rgba(255,255,255,0.18); }
+
+/* ═══════════════════════════════════════════
+   Responsive
+   ═══════════════════════════════════════════ */
+@media (max-width: 768px) {
+    .stat-row { flex-direction: column; gap: clamp(1.5rem, 3vw, 2rem); align-items: center; }
+    .stat-divider { width: clamp(60px, 10vw, 100px); height: 1px; }
+    .feat-grid { grid-template-columns: 1fr !important; }
+    .install-row { flex-direction: column; }
+    .aurora-stat { font-size: clamp(3rem, 12vw, 5rem) !important; }
+}
+@media (max-height: 700px) { :root { --slide-padding: clamp(1rem, 3vw, 3rem); } }
+@media (max-height: 600px) { :root { --slide-padding: clamp(0.75rem, 2.5vw, 2rem); } .nav-dots { display: none; } }
+@media (max-height: 500px) { :root { --slide-padding: clamp(0.5rem, 2vw, 1.5rem); } }
+@media (max-width: 600px) { .feat-grid { grid-template-columns: 1fr; } }
+@media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.2s !important; } }
+</style>
+</head><body>
+<section aria-label="Hero" class="slide" data-notes="slide-creator 是零依赖 HTML 演示文稿生成器，提供 21 种设计预设。" id="slide-1">
+<div class="aurora-slide">
+<span class="aurora-badge reveal">开源 · Claude Code · OpenClaw</span>
+<h1 class="aurora-title reveal preset-aurora-mesh-content">slide<span class="aurora-accent">-creator</span></h1>
+<p class="aurora-subtitle reveal">为 Claude Code 和 OpenClaw 打造零依赖 HTML 演示文稿</p>
+<div class="stat-row reveal">
+<div class="stat-col">
+<span class="hero-stat">21</span>
+<span class="hero-stat-label">预设风格</span>
+</div>
+<div class="stat-col">
+<span class="hero-stat">0</span>
+<span class="hero-stat-label">外部依赖</span>
+</div>
+<div class="stat-col">
+<span class="hero-stat">∞</span>
+<span class="hero-stat-label">幻灯片</span>
+</div>
+</div>
+<span class="slide-num-label light">01</span>
+</div>
+</section>
+<section aria-label="Problem" class="slide" data-notes="现有演示工具的四大痛点：复杂工具链、通用AI审美、平台锁定、模板同质化。" id="slide-2">
+<div class="aurora-slide">
+<div class="aurora-content">
+<span class="aurora-badge reveal">Problem</span>
+<h2 class="aurora-subtitle reveal h2-title preset-aurora-mesh-content">演示工具越做越复杂，结果千篇一律</h2>
+<div class="aurora-divider reveal"></div>
+<ul>
+<li class="reveal">复杂工具链 — 安装配置半天，还没开始做内容</li>
+<li class="reveal">通用 AI 审美 — 每份演示看起来都一样，缺乏品牌辨识度</li>
+<li class="reveal">平台锁定 — 离开特定软件就无法查看或编辑</li>
+<li class="reveal">模板同质化 — 选来选去都是那几个通用模板</li>
+</ul>
+<span class="slide-num-label light">02</span>
+</div>
+</div>
+</section>
+<section aria-label="Discovery" class="slide" data-notes="看图选风格而非描述风格，生成预览后直观选择。" id="slide-3">
+<div class="aurora-slide">
+<div class="aurora-content">
+<span class="aurora-badge reveal">Discovery</span>
+<h2 class="aurora-subtitle reveal h2-title preset-aurora-mesh-content">看图选风格，而非描述风格</h2>
+<div class="aurora-divider reveal"></div>
+<div class="aurora-card reveal">
+<div class="feat-grid">
+<div><span class="aurora-accent style-name">Bold Signal</span><br/><span class="style-desc">数据驱动、高对比</span></div>
+<div><span class="aurora-accent style-name">Aurora Mesh</span><br/><span class="style-desc">专业品牌、毛玻璃卡片</span></div>
+<div><span class="aurora-accent style-name">Neon Cyber</span><br/><span class="style-desc">开发者、赛博朋克</span></div>
+<div><span class="aurora-accent style-name">Swiss Modern</span><br/><span class="style-desc">研究、思想领导力</span></div>
+</div>
+</div>
+<span class="slide-num-label light">03</span>
+</div>
+</div>
+</section>
+<section aria-label="Solution" class="slide" data-notes="21 种预设风格，100% 浏览器运行，3 分钟快速出稿。" id="slide-4">
+<div class="aurora-slide preset-aurora-mesh-content">
+<span class="aurora-badge reveal">Solution</span>
+<div class="stat-row reveal">
+<div class="stat-col">
+<span class="aurora-stat">21</span>
+<span class="aurora-subtitle stat-sub">预设风格</span>
+<span class="stat-sub">每种都有独立视觉签名</span>
+</div>
+<div class="stat-divider"></div>
+<div class="stat-col">
+<span class="aurora-stat">100%</span>
+<span class="aurora-subtitle stat-sub">浏览器运行</span>
+<span class="stat-sub">零服务器，零依赖</span>
+</div>
+<div class="stat-divider"></div>
+<div class="stat-col">
+<span class="aurora-stat">3min</span>
+<span class="aurora-subtitle stat-sub">快速出稿</span>
+<span class="stat-sub">从想法到完整演示</span>
+</div>
+</div>
+<span class="slide-num-label light">04</span>
+</div>
+</section>
+<section aria-label="Workflow" class="slide" data-notes="三个命令完成全流程：创建规划、选择风格、生成并打开。" id="slide-5">
+<div class="aurora-slide">
+<div class="aurora-content">
+<span class="aurora-badge reveal">Workflow</span>
+<h2 class="aurora-subtitle reveal h2-title preset-aurora-mesh-content">三个命令，从想法到演示</h2>
+<div class="aurora-divider reveal"></div>
+<div class="aurora-card reveal">
+<div class="step-item">
+<span class="step-num">01</span>
+<div>
+<div class="step-title">创建规划</div>
+<div class="code-block">/slide-creator --plan "产品发布"</div>
+</div>
+</div>
+<div class="step-item">
+<span class="step-num">02</span>
+<div>
+<div class="step-title">选择风格</div>
+<div class="step-text">从 3 个预览中直观选择最匹配的视觉风格</div>
+</div>
+</div>
+<div class="step-item">
+<span class="step-num">03</span>
+<div>
+<div class="step-title">生成并打开</div>
+<div class="code-block">/slide-creator --generate</div>
+</div>
+</div>
+</div>
+<span class="slide-num-label light">05</span>
+</div>
+</div>
+</section>
+<section aria-label="Features" class="slide" data-notes="四个核心能力：视口适配、浏览器内编辑、PPTX 导出、两阶段规划。" id="slide-6">
+<div class="aurora-slide">
+<div class="aurora-content">
+<span class="aurora-badge reveal">Features</span>
+<h2 class="aurora-subtitle reveal h2-title preset-aurora-mesh-content">四个核心能力，覆盖完整工作流</h2>
+<div class="aurora-divider reveal"></div>
+<div class="feat-grid">
+<div class="aurora-card reveal">
+<div class="feat-card-title">视口适配</div>
+<div class="feat-card-desc">每张幻灯片精确填满视口，clamp() 响应式字号，零溢出</div>
+</div>
+<div class="aurora-card reveal">
+<div class="feat-card-title">浏览器内编辑</div>
+<div class="feat-card-desc">E 键进入编辑模式，实时修改文字和备注，Ctrl+S 保存</div>
+</div>
+<div class="aurora-card reveal">
+<div class="feat-card-title">PPTX 导出</div>
+<div class="feat-card-desc">图片模式像素级还原，Native 模式文字可编辑</div>
+</div>
+<div class="aurora-card reveal">
+<div class="feat-card-title">两阶段规划</div>
+<div class="feat-card-desc">自动模式快速出稿，精修模式深度规划叙事结构</div>
+</div>
+</div>
+<span class="slide-num-label light">06</span>
+</div>
+</div>
+</section>
+<section aria-label="Install" class="slide" data-notes="Claude Code 和 OpenClaw 两种安装方式。" id="slide-7">
+<div class="aurora-slide">
+<div class="aurora-content">
+<span class="aurora-badge reveal">Install</span>
+<h2 class="aurora-subtitle reveal h2-title preset-aurora-mesh-content">一行命令，立即开始</h2>
+<div class="aurora-divider reveal"></div>
+<div class="aurora-card reveal">
+<div class="install-row">
+<div class="install-item">
+<div class="install-label">Claude Code</div>
+<div class="code-block">安装 https://github.com/kaisersong/slide-creator</div>
+</div>
+<div class="install-item">
+<div class="install-label">OpenClaw</div>
+<div class="code-block">clawhub install kai-slide-creator</div>
+</div>
+</div>
+</div>
+<span class="slide-num-label light">07</span>
+</div>
+</div>
+</section>
+<section aria-label="CTA" class="slide" data-notes="使用 /slide-creator 命令立即生成你的第一份演示文稿。" id="slide-8">
+<div class="aurora-slide">
+<span class="aurora-badge reveal">Ready?</span>
+<h1 class="aurora-title reveal preset-aurora-mesh-content">一个命令，创建无限可能</h1>
+<p class="aurora-subtitle reveal">纯浏览器运行 · 零依赖 · 21 种风格任你选择</p>
+<div class="aurora-divider reveal"></div>
+<span class="cta-pill reveal">/slide-creator</span>
+<span class="cta-sub reveal">支持 Claude Code 和 OpenClaw</span>
+<span class="slide-num-label light">08</span>
+</div>
+</section>
+</body></html>

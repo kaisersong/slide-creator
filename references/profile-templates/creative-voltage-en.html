@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<!-- Program-owned profile template. Regenerate with scripts/build-profile-templates.py. -->
+<html><head>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;700;800&amp;family=Space+Mono:wght@400;700&amp;display=swap" rel="stylesheet"/>
+<style>
+        :root {
+            --bg-primary: #1a1a2e;
+            --bg-blue: #0066ff;
+            --accent-neon: #d4ff00;
+            --text-primary: #ffffff;
+            --text-secondary: rgba(255,255,255,0.7);
+            --font-display: 'Syne', sans-serif;
+            --font-body: 'Syne', sans-serif;
+            --font-mono: 'Space Mono', monospace;
+            --title-size: clamp(1.5rem, 5vw, 4rem);
+            --h2-size: clamp(1.25rem, 3.5vw, 2.5rem);
+            --body-size: clamp(0.75rem, 1.5vw, 1.125rem);
+            --small-size: clamp(0.65rem, 1vw, 0.875rem);
+            --slide-padding: clamp(1rem, 4vw, 4rem);
+            --content-gap: clamp(0.5rem, 2vw, 2rem);
+            --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+            --duration-normal: 0.6s;
+        }
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+        html { scroll-snap-type: y mandatory; height: 100%; }
+        body { font-family: var(--font-body); background: var(--bg-primary); color: var(--text-primary); height: 100%; }
+
+        .voltage-halftone { position: absolute; inset: 0; background-image: radial-gradient(circle, rgba(255,255,255,0.08) 1px, transparent 1px); background-size: 12px 12px; pointer-events: none; opacity: 0.5; z-index: 0; }
+        .voltage-glow { box-shadow: 0 0 20px rgba(212,255,0,0.3), 0 0 40px rgba(212,255,0,0.1); }
+
+        .slide { width: 100vw; height: 100vh; height: 100dvh; padding: var(--slide-padding); scroll-snap-align: start; display: flex; flex-direction: column; justify-content: center; position: relative; overflow: hidden; background: var(--bg-primary); }
+        .slide-content { flex: 1; display: flex; flex-direction: column; justify-content: center; max-height: 100%; overflow: hidden; position: relative; z-index: 1; }
+
+        @media (max-height: 700px) { :root { --slide-padding: clamp(0.75rem, 3vw, 2rem); --content-gap: clamp(0.4rem, 1.5vw, 1rem); --title-size: clamp(1.25rem, 4.5vw, 2.5rem); } }
+        @media (max-height: 600px) { :root { --slide-padding: clamp(0.5rem, 2.5vw, 1.5rem); --title-size: clamp(1.1rem, 4vw, 2rem); --body-size: clamp(0.7rem, 1.2vw, 0.95rem); } .nav-dots, .keyboard-hint, .decorative { display: none; } }
+        @media (max-height: 500px) { :root { --slide-padding: clamp(0.4rem, 2vw, 1rem); --title-size: clamp(1rem, 3.5vw, 1.5rem); } }
+        @media (max-width: 600px) { .voltage-split { grid-template-columns: 1fr !important; } }
+        @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.2s !important; } html { scroll-behavior: auto; } }
+
+        .reveal { opacity: 0; transform: translateY(20px); transition: opacity var(--duration-normal) var(--ease-out-expo), transform var(--duration-normal) var(--ease-out-expo); }
+        .slide.visible .reveal { opacity: 1; transform: translateY(0); }
+        .reveal:nth-child(1) { transition-delay: 0.05s; }
+        .reveal:nth-child(2) { transition-delay: 0.15s; }
+        .reveal:nth-child(3) { transition-delay: 0.25s; }
+        .reveal:nth-child(4) { transition-delay: 0.35s; }
+
+        .voltage-neon-badge { display: inline-block; background: var(--accent-neon); color: var(--bg-primary); padding: 4px 12px; border-radius: 4px; font-family: var(--font-mono); font-size: clamp(10px, 1.1vw, 12px); font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; }
+        .voltage-title { font-family: var(--font-display); font-size: var(--title-size); font-weight: 800; color: var(--text-primary); line-height: 1.05; }
+        .voltage-body { font-family: var(--font-body); font-size: var(--body-size); font-weight: 400; color: var(--text-secondary); line-height: 1.6; }
+        .voltage-mono { font-family: var(--font-mono); font-size: var(--small-size); color: var(--accent-neon); }
+        .voltage-split { display: grid; grid-template-columns: 1fr 1fr; gap: 0; height: 100%; border-radius: 12px; overflow: hidden; }
+        .voltage-blue-panel { background: var(--bg-blue); padding: clamp(24px, 4vw, 60px); display: flex; flex-direction: column; justify-content: center; }
+        .voltage-dark-panel { background: var(--bg-primary); padding: clamp(24px, 4vw, 60px); display: flex; flex-direction: column; justify-content: center; }
+        .voltage-callout { border: 2px solid var(--accent-neon); border-radius: 8px; padding: clamp(16px, 2.5vw, 24px); background: rgba(212,255,0,0.05); }
+        .voltage-diamond { position: absolute; width: clamp(40px, 6vw, 60px); height: clamp(40px, 6vw, 60px); background: var(--accent-neon); transform: rotate(45deg); opacity: 0.08; pointer-events: none; }
+        .voltage-stat { font-family: var(--font-display); font-size: clamp(2rem, 5vw, 4rem); font-weight: 800; color: var(--accent-neon); line-height: 1; }
+        .voltage-features { list-style: none; padding: 0; }
+        .voltage-features li { padding: 0.5rem 0; border-bottom: 1px solid rgba(255,255,255,0.08); font-size: var(--body-size); color: var(--text-secondary); display: flex; align-items: center; gap: 0.75rem; }
+        .voltage-features li::before { content: '\25C6'; color: var(--accent-neon); font-size: 0.7em; flex-shrink: 0; }
+        .voltage-step { display: flex; gap: 1rem; align-items: flex-start; }
+        .voltage-step-num { font-family: var(--font-mono); font-size: var(--small-size); color: var(--accent-neon); background: rgba(212,255,0,0.1); border: 1px solid rgba(212,255,0,0.3); border-radius: 4px; padding: 2px 8px; flex-shrink: 0; }
+        .voltage-step-text { font-size: var(--body-size); color: var(--text-secondary); line-height: 1.6; }
+        .voltage-card { border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; padding: clamp(16px, 2vw, 24px); background: rgba(0,102,255,0.08); transition: border-color 0.3s; }
+        .voltage-card:hover { border-color: var(--accent-neon); }
+        .voltage-card h3 { font-family: var(--font-display); font-weight: 700; font-size: clamp(0.9rem, 1.5vw, 1.1rem); margin-bottom: 0.5rem; }
+        .voltage-card p { font-size: var(--small-size); color: var(--text-secondary); line-height: 1.5; }
+        kbd { display: inline-block; background: rgba(212,255,0,0.12); border: 1px solid rgba(212,255,0,0.3); border-radius: 4px; padding: 2px 8px; font-family: var(--font-mono); font-size: 0.85em; color: var(--accent-neon); }
+        .cmd { font-family: var(--font-mono); background: rgba(0,102,255,0.15); border: 1px solid rgba(0,102,255,0.3); border-radius: 4px; padding: 2px 8px; font-size: 0.85em; color: var(--accent-neon); }
+
+        #present-btn { position: fixed; bottom: 1.5rem; right: 1.5rem; z-index: 9997; width: 44px; height: 44px; border-radius: 50%; background: rgba(0,0,0,0.5); color: rgba(255,255,255,0.8); border: 1.5px solid rgba(255,255,255,0.2); font-size: 1rem; cursor: pointer; backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); display: flex; align-items: center; justify-content: center; opacity: 0; transition: opacity 0.2s; pointer-events: none; }
+        body:hover #present-btn { opacity: 1; pointer-events: auto; }
+        #present-btn:hover { background: rgba(0,0,0,0.78); }
+        #present-counter { display: none; position: fixed; bottom: 1.4rem; left: 50%; transform: translateX(-50%); z-index: 9997; font-size: 0.65rem; letter-spacing: 0.14em; font-family: system-ui, sans-serif; color: rgba(255,255,255,0.28); }
+        body.presenting { background: #000 !important; overflow: hidden !important; }
+        body.presenting .slide { position: fixed !important; inset: 0; width: 100vw !important; height: 100vh !important; transform-origin: center center; scroll-snap-align: none !important; display: none !important; }
+        body.presenting .slide.p-on { display: flex !important; }
+        body.presenting #present-btn { display: none !important; }
+        body.presenting #present-counter { display: block; }
+        body.presenting.presenting-black .slide { visibility: hidden !important; }
+        body.presenting.presenting-black::after { content: ''; position: fixed; inset: 0; background: #000; z-index: 99999; }
+
+        .slide-credit { position: absolute; bottom: 8px; right: 14px; font-size: 9px; color: var(--text-secondary, #999); opacity: 0.35; pointer-events: none; z-index: 1; font-family: system-ui, sans-serif; }
+        body.presenting .slide-credit { display: none !important; }
+
+        .edit-hotzone { position: fixed; top: 0; left: 0; width: 80px; height: 80px; z-index: 10000; cursor: pointer; }
+        .edit-toggle { position: fixed; top: 16px; left: 16px; opacity: 0; pointer-events: none; transition: opacity 0.3s ease; z-index: 10001; background: rgba(0,0,0,0.5); color: rgba(255,255,255,0.8); border: 1.5px solid rgba(255,255,255,0.2); border-radius: 6px; padding: 6px 14px; font-size: 0.8rem; cursor: pointer; backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); }
+        .edit-toggle.show { opacity: 1; pointer-events: auto; }
+        .edit-toggle.active { opacity: 1; pointer-events: auto; background: var(--accent-neon); color: var(--bg-primary); border-color: var(--accent-neon); }
+        #notes-panel { display: none; position: fixed; bottom: 0; left: 0; right: 0; z-index: 9998; background: rgba(8, 8, 18, 0.94); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); border-top: 1px solid rgba(255,255,255,0.08); }
+        #notes-panel.active { display: flex; flex-direction: column; }
+        #notes-panel-header { display: flex; align-items: center; justify-content: space-between; padding: 0.45rem 1.4rem; cursor: pointer; user-select: none; }
+        #notes-panel-label { flex: 1; font-size: 0.58rem; letter-spacing: 0.16em; text-transform: uppercase; color: rgba(255,255,255,0.3); }
+        #notes-drag-hint { flex: 1; display: flex; justify-content: center; }
+        #notes-drag-hint::after { content: ''; display: block; width: 36px; height: 3px; border-radius: 2px; background: rgba(255,255,255,0.25); }
+        #notes-collapse-btn { flex: 1; text-align: right; font-size: 1rem; color: rgba(255,255,255,0.4); background: none; border: none; cursor: pointer; transition: color 0.15s, transform 0.2s; }
+        #notes-collapse-btn:hover { color: rgba(255,255,255,0.85); }
+        #notes-body { padding: 0 1.4rem 0.75rem; }
+        #notes-panel.collapsed #notes-body { display: none; }
+        #notes-panel.collapsed #notes-collapse-btn { transform: rotate(180deg); }
+        #notes-textarea { width: 100%; height: 72px; min-height: 48px; max-height: 200px; resize: vertical; background: transparent; border: none; outline: none; color: rgba(255,255,255,0.75); font-size: 0.88rem; line-height: 1.65; font-family: system-ui, sans-serif; caret-color: var(--accent-neon); }
+        #notes-textarea::placeholder { color: rgba(255,255,255,0.18); }
+    </style>
+</head><body>
+<section aria-label="Title" class="slide" data-notes="Open with energy. This is slide-creator — 21 presets, zero dependencies, pure browser.">
+<div class="voltage-halftone"></div>
+<div class="voltage-diamond" style="top: 10%; left: 5%;"></div>
+<div class="voltage-diamond" style="bottom: 15%; right: 8%;"></div>
+<div class="slide-content preset-creative-voltage-content">
+<div class="reveal voltage-neon-badge">Zero Dependency · Pure Browser</div>
+<h1 class="reveal voltage-title" style="margin-top: 1rem;">slide-creator</h1>
+<p class="reveal voltage-body" style="margin-top: 0.75rem; font-size: clamp(1rem, 2vw, 1.5rem);">21 design presets. Play, present, edit — all in HTML.</p>
+<p class="reveal voltage-mono" style="margin-top: 1rem;">v2.16.0 · kai-slide-creator</p>
+</div>
+</section>
+<section aria-label="What is slide-creator" class="slide" data-notes="The core idea: generate standalone HTML presentations. No framework, no build step.">
+<div class="voltage-halftone"></div>
+<div class="slide-content preset-creative-voltage-content">
+<div class="voltage-split">
+<div class="voltage-blue-panel">
+<h2 class="reveal voltage-title" style="font-size: clamp(1.5rem, 3.5vw, 2.5rem);">What is slide-creator?</h2>
+<p class="reveal voltage-body" style="margin-top: 1rem;">A skill that generates self-contained HTML presentations. Zero external dependencies. Runs in any browser. 21 distinct visual styles — each one intentional, none generic.</p>
+</div>
+<div class="voltage-dark-panel">
+<ul class="reveal voltage-features">
+<li>No frameworks, no build step</li>
+<li>21 design presets, not one generic theme</li>
+<li>Playback mode — F5 fullscreen</li>
+<li>Presenter mode — notes, timer, sync</li>
+<li>Edit mode — E key, Ctrl+S save</li>
+</ul>
+</div>
+</div>
+</div>
+</section>
+<section aria-label="21 Design Presets" class="slide" data-notes="Show the breadth: 21 presets organized by use case. Not just color swaps — real architectural differences.">
+<div class="voltage-halftone"></div>
+<div class="slide-content preset-creative-voltage-content">
+<span class="reveal voltage-neon-badge">21 Presets</span>
+<h2 class="reveal voltage-title" style="font-size: clamp(1.5rem, 3.5vw, 2.5rem); margin-top: 0.75rem;">21 design presets — pick by mood, not color</h2>
+<div class="reveal" style="display: grid; grid-template-columns: repeat(3, 1fr); gap: clamp(8px, 1.5vw, 16px); margin-top: 1.5rem;">
+<div class="voltage-card"><h3>Bold Signal</h3><p>Orange on dark gradient. Assertive.</p></div>
+<div class="voltage-card"><h3>Blue Sky</h3><p>Light, airy, horizontal scroll.</p></div>
+<div class="voltage-card"><h3>Aurora Mesh</h3><p>Animated color fields.</p></div>
+<div class="voltage-card"><h3>Terminal Green</h3><p>Monospace + scanlines.</p></div>
+<div class="voltage-card"><h3>Glassmorphism</h3><p>Frosted glass layers.</p></div>
+<div class="voltage-card"><h3>Enterprise Dark</h3><p>Boardroom ready.</p></div>
+<div class="voltage-card"><h3>Data Story</h3><p>Chart-first narrative.</p></div>
+<div class="voltage-card"><h3>Swiss Modern</h3><p>Grid discipline, type-led.</p></div>
+<div class="voltage-card"><h3>+ 13 more</h3><p>Neo-Brutalism, Neon Cyber, Vintage Editorial…</p></div>
+</div>
+</div>
+</section>
+<section aria-label="Visual Style Exploration" class="slide" data-notes="The unique workflow: generate 3 previews, pick by looking at them, not describing them.">
+<div class="voltage-halftone"></div>
+<div class="slide-content preset-creative-voltage-content">
+<h2 class="reveal voltage-title" style="font-size: clamp(1.5rem, 3.5vw, 2.5rem);">See it before you commit</h2>
+<div class="voltage-callout reveal" style="margin-top: 1.5rem;">
+<p class="voltage-body">Generate 3 style previews for the same content. Pick by looking — not by describing colors in words. Visual exploration beats verbal description every time.</p>
+</div>
+<div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; margin-top: 1.5rem;">
+<div class="reveal voltage-card" style="text-align: center;">
+<div class="voltage-mono" style="margin-bottom: 0.5rem;">Preview A</div>
+<div style="height: 60px; background: linear-gradient(135deg, #0066ff, #1a1a2e); border-radius: 6px;"></div>
+</div>
+<div class="reveal voltage-card" style="text-align: center;">
+<div class="voltage-mono" style="margin-bottom: 0.5rem;">Preview B</div>
+<div style="height: 60px; background: linear-gradient(135deg, #d4ff00, #0066ff); border-radius: 6px;"></div>
+</div>
+<div class="reveal voltage-card" style="text-align: center;">
+<div class="voltage-mono" style="margin-bottom: 0.5rem;">Preview C</div>
+<div style="height: 60px; background: linear-gradient(135deg, #1a1a2e, #0066ff); border-radius: 6px;"></div>
+</div>
+</div>
+</div>
+</section>
+<section aria-label="Core Modes" class="slide" data-notes="Play, Present, Edit — three modes in one file.">
+<div class="preset-creative-voltage-content" style="max-width:900px;width:100%;">
+<div class="reveal a-label" style="margin-bottom:12px;">Core Modes</div>
+<div class="reveal a-h2">Play, Present, Edit — One File</div>
+<div style="display:flex;gap:clamp(16px,3vw,32px);justify-content:center;margin-top:clamp(20px,3vw,36px);">
+<div class="reveal g" style="text-align:center;padding:20px;"><div class="stat"><div class="num" style="font-size:clamp(2rem,5vw,4rem);">F5</div><div class="label">Play</div></div><div class="a-body" style="font-size:clamp(0.65rem,1vw,0.75rem);margin-top:8px;">Fullscreen, auto-scale</div></div>
+<div class="reveal g" style="text-align:center;padding:20px;"><div class="stat"><div class="num" style="font-size:clamp(2rem,5vw,4rem);">P</div><div class="label">Present</div></div><div class="a-body" style="font-size:clamp(0.65rem,1vw,0.75rem);margin-top:8px;">Notes, timer, sync</div></div>
+<div class="reveal g" style="text-align:center;padding:20px;"><div class="stat"><div class="num" style="font-size:clamp(2rem,5vw,4rem);">E</div><div class="label">Edit</div></div><div class="a-body" style="font-size:clamp(0.65rem,1vw,0.75rem);margin-top:8px;">contenteditable, Ctrl+S</div></div>
+</div>
+</div>
+</section>
+<section aria-label="Commands" class="slide" data-notes="Three commands: plan, generate, review.">
+<div class="preset-creative-voltage-content" style="max-width:900px;width:100%;">
+<div class="reveal a-label" style="margin-bottom:12px;">Commands</div>
+<div class="reveal a-h2">Three Commands, One Pipeline</div>
+<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:clamp(12px,2vw,20px);margin-top:clamp(16px,2vw,24px);">
+<div class="reveal g"><div class="a-label" style="margin-bottom:6px;">01 Plan</div><div class="cmd">/slide-creator --plan</div><div class="a-body" style="font-size:clamp(0.65rem,1vw,0.75rem);">Generate outline</div></div>
+<div class="reveal g"><div class="a-label" style="margin-bottom:6px;">02 Generate</div><div class="cmd">/slide-creator --generate</div><div class="a-body" style="font-size:clamp(0.65rem,1vw,0.75rem);">Build with checks</div></div>
+<div class="reveal g"><div class="a-label" style="margin-bottom:6px;">03 Review</div><div class="cmd">/slide-creator --review</div><div class="a-body" style="font-size:clamp(0.65rem,1vw,0.75rem);">Inspect and fix</div></div>
+</div>
+</div>
+</section>
+<section aria-label="Zero Deps" class="slide" data-notes="Zero dependencies, pure browser.">
+<div class="preset-creative-voltage-content" style="max-width:900px;width:100%;text-align:center;">
+<div class="reveal a-label" style="margin-bottom:12px;">Foundation</div>
+<div class="reveal a-h2" style="text-align:center;">Nothing Between You and the Browser</div>
+<div style="display:flex;gap:clamp(24px,4vw,48px);justify-content:center;margin-top:clamp(20px,3vw,36px);">
+<div class="reveal stat"><div class="num">0</div><div class="label">Dependencies</div></div>
+<div class="reveal stat"><div class="num">21</div><div class="label">Presets</div></div>
+<div class="reveal stat"><div class="num">1</div><div class="label">Requirement</div></div>
+</div>
+<div class="reveal a-body" style="text-align:center;margin-top:16px;color:var(--text-muted, var(--text-m, #64748b));">HTML, CSS, JavaScript. That is all.</div>
+</div>
+</section>
+<section aria-label="CTA" class="slide" data-notes="Call to action.">
+<div class="preset-creative-voltage-content" style="max-width:900px;width:100%;text-align:center;">
+<div class="reveal"><span class="pill" style="margin-bottom:16px;">Start Now</span></div>
+<div class="reveal a-title">Start with a Preset</div>
+<div class="reveal" style="margin-top:12px;"><div class="cmd" style="text-align:center;font-size:clamp(0.9rem,1.5vw,1.2rem);">/slide-creator</div></div>
+<div class="reveal a-subtitle" style="margin-top:12px;text-align:center;">Tell Claude to install kai-slide-creator</div>
+</div>
+</section>
+</body></html>

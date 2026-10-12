@@ -15,7 +15,7 @@ from preset_capabilities import (
     get_preset_render_capability,
     resolve_style_reference_path,
 )
-from preset_profile_renderer import build_preset_profile_payload, profile_auto_contrast_script
+from preset_profile_renderer import ProfileTemplateError, build_preset_profile_payload, profile_auto_contrast_script
 from preset_support import preset_support_tier
 from title_profiles import profile_allows_explicit_line_control, resolve_title_profile
 from audience_readability import unique_facts, copy_key, non_repeating_copy, apply_audience_readability
@@ -8243,13 +8243,16 @@ def render_unified_profile_html(
 ) -> str:
     capability = get_preset_render_capability(brief["style"]["preset"])
     specs = build_slide_spec(brief, packet)
-    payload = build_preset_profile_payload(
-        brief=brief,
-        packet=packet,
-        style_contract=style_contract,
-        capability=capability,
-        specs=specs,
-    )
+    try:
+        payload = build_preset_profile_payload(
+            brief=brief,
+            packet=packet,
+            style_contract=style_contract,
+            capability=capability,
+            specs=specs,
+        )
+    except ProfileTemplateError as exc:
+        raise RenderError(str(exc)) from exc
     packet["body_classes"] = list(payload.body_classes)
     packet["body_data_attrs"] = payload.body_data_attrs
     packet["style_family"] = payload.style_signature["family"]

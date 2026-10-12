@@ -1,0 +1,8 @@
+-r requirements-runtime.txt
+# Release validation tools; these are not required for ordinary generation.
+pytest==9.1.1
+jsonschema==4.26.0
+PyYAML==6.0.3
+Pillow==12.3.0
+playwright==1.63.0
+python-pptx==1.0.2

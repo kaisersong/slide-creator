@@ -1,0 +1,534 @@
+<!DOCTYPE html>
+<!-- Program-owned profile template. Regenerate with scripts/build-profile-templates.py. -->
+<html><head>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Archivo+Black:wght@900&amp;family=Space+Grotesk:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
+<style>
+
+:root { --slide-count: 8; }
+
+/* ═══════════════════════════════════════════════
+   BOLD SIGNAL DESIGN TOKENS
+   ═══════════════════════════════════════════════ */
+:root {
+  --bg-primary:    #1a1a1a;
+  --bg-gradient:   linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 50%, #1a1a1a 100%);
+  --card-bg:       #FF5722;
+  --text-primary:  #ffffff;
+  --text-on-card:  #ffffff;
+  --text-muted:    rgba(255,255,255,0.4);
+  --text-body:     rgba(255,255,255,0.6);
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html { scroll-snap-type: y mandatory; height: 100%; }
+
+body {
+  font-family: "Space Grotesk", -apple-system, sans-serif;
+  background: var(--bg-gradient);
+  color: var(--text-primary);
+  height: 100%;
+}
+
+.slide {
+  width: 100vw; height: 100vh; height: 100dvh;
+  padding: clamp(1.5rem, 4vw, 4rem);
+  scroll-snap-align: start;
+  position: relative; overflow: hidden;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+}
+
+/* ── Typography ── */
+.bold-title {
+  font-family: "Archivo Black", sans-serif;
+  font-size: clamp(2rem, 6vw, 5rem);
+  font-weight: 900; line-height: 1.05;
+  letter-spacing: -0.02em;
+  color: var(--text-primary);
+}
+
+.bold-h2 {
+  font-family: "Archivo Black", sans-serif;
+  font-size: clamp(1.4rem, 3.5vw, 2.5rem);
+  font-weight: 900; line-height: 1.1;
+  letter-spacing: -0.015em;
+  color: var(--text-primary);
+}
+
+.bold-body {
+  font-size: clamp(0.8rem, 1.4vw, 1.05rem);
+  font-weight: 400; color: var(--text-body);
+  line-height: 1.65;
+}
+
+.bold-label {
+  font-size: clamp(0.6rem, 1vw, 0.7rem);
+  font-weight: 600; text-transform: uppercase;
+  letter-spacing: 0.12em; color: var(--text-muted);
+}
+
+/* ── Signature Elements ── */
+.slide::after {
+  content: ''; position: absolute; inset: 0;
+  background-image:
+    linear-gradient(rgba(255,87,34,0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,87,34,0.04) 1px, transparent 1px);
+  background-size: 60px 60px;
+  pointer-events: none; z-index: 0;
+}
+#slide-8::after { display: none; }
+
+.slide > .slide-num,
+.slide > .breadcrumb,
+.slide-content { position: relative; z-index: 1; }
+
+.slide-num {
+  position: absolute; top: 20px; left: 44px;
+  font-family: "Archivo Black", sans-serif;
+  font-size: 120px; line-height: 1;
+  color: var(--card-bg); opacity: 0.12;
+  user-select: none; pointer-events: none;
+}
+
+.breadcrumb {
+  position: absolute; top: 1.5rem; right: 2rem;
+  font-size: 13px; font-weight: 600;
+  letter-spacing: 0.06em; color: var(--text-muted);
+}
+.breadcrumb .sep { opacity: 0.3; margin: 0 4px; }
+.breadcrumb .active { color: var(--card-bg); }
+
+.badge {
+  display: inline-flex; align-items: center;
+  padding: 9px 20px; background: var(--card-bg);
+  color: var(--text-on-card); font-family: "Archivo Black", sans-serif;
+  font-size: 13px; letter-spacing: 0.04em;
+}
+.badge.outline {
+  background: transparent; border: 1.5px solid rgba(255,87,34,0.4);
+  color: rgba(255,255,255,0.55);
+}
+
+.corner-accent {
+  position: absolute; top: 0; left: 0;
+  width: 100px; height: 3px; background: var(--card-bg);
+}
+
+.big-num-bg {
+  position: absolute; top: -10px; right: 40px;
+  font-family: "Archivo Black", sans-serif; font-size: 38vw;
+  line-height: 1; color: rgba(255,87,34,0.04);
+  user-select: none; pointer-events: none;
+}
+
+.deco-text {
+  position: absolute; right: -40px; bottom: -60px;
+  font-family: "Archivo Black", sans-serif; font-size: 36vw;
+  line-height: 1; color: rgba(255,255,255,0.06);
+  user-select: none; pointer-events: none;
+}
+
+/* ── Components ── */
+.bold-hero-card {
+  background: var(--card-bg);
+  border-radius: 8px;
+  padding: clamp(24px, 4vw, 48px);
+  color: var(--text-on-card);
+}
+
+.bold-section-num {
+  font-family: "Archivo Black", sans-serif;
+  font-size: clamp(14px, 1.8vw, 20px);
+  color: var(--card-bg); opacity: 0.9;
+}
+
+.bold-ghost-number {
+  position: absolute;
+  font-size: clamp(6rem, 12vw, 10rem);
+  font-family: "Archivo Black", sans-serif;
+  color: var(--card-bg); opacity: 0.08;
+  pointer-events: none; user-select: none;
+  right: -0.05em; bottom: -0.05em;
+}
+
+.bold-stat {
+  text-align: center; padding: clamp(16px, 2vw, 24px) 0;
+}
+.bold-stat .num {
+  font-family: "Archivo Black", sans-serif;
+  font-size: clamp(2rem, 4vw, 3.5rem);
+  font-weight: 900; color: var(--card-bg);
+}
+.bold-stat .label {
+  font-size: clamp(0.6rem, 1vw, 0.75rem);
+  letter-spacing: 0.15em; text-transform: uppercase;
+  color: var(--text-muted); margin-top: 4px;
+}
+
+.bold-step {
+  border: 2px solid var(--card-bg);
+  border-radius: 4px;
+  padding: 8px 16px;
+  text-align: center;
+  font-size: clamp(12px, 1.3vw, 16px);
+}
+.bold-step.active {
+  background: var(--card-bg);
+  color: var(--text-on-card);
+}
+
+.bold-bullet-list { list-style: none; padding: 0; }
+.bold-bullet-list li {
+  padding: clamp(6px, 1vw, 10px) 0;
+  font-size: clamp(0.8rem, 1.3vw, 0.95rem);
+  line-height: 1.6; color: var(--text-body);
+}
+.bold-bullet-list li::before {
+  content: '\25B8';
+  color: var(--card-bg);
+  margin-right: 0.5em;
+}
+
+.bold-card {
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 6px;
+  padding: clamp(16px, 2.5vw, 24px);
+  background: rgba(255,255,255,0.03);
+}
+
+kbd {
+  display: inline-block; padding: 2px 8px;
+  font-size: 0.8em; font-weight: 600;
+  background: rgba(255,255,255,0.08);
+  border: 1px solid rgba(255,255,255,0.2);
+  border-radius: 3px; color: var(--text-primary);
+  vertical-align: middle;
+}
+
+.cmd {
+  padding: clamp(8px, 1.5vw, 14px) clamp(12px, 2vw, 18px);
+  border: 1px solid rgba(255,255,255,0.15);
+  border-radius: 4px;
+  font-family: "Space Grotesk", monospace;
+  font-size: clamp(0.75rem, 1.2vw, 0.9rem);
+  color: var(--text-primary); line-height: 1.6;
+  background: rgba(255,255,255,0.03);
+}
+.cmd::before { content: '$ '; color: var(--text-muted); }
+
+/* ── Reveal ── */
+.reveal {
+  opacity: 0; transform: translateY(24px);
+  transition: opacity 0.6s cubic-bezier(0.16,1,0.3,1),
+              transform 0.6s cubic-bezier(0.16,1,0.3,1);
+}
+.slide.visible .reveal { opacity: 1; transform: translateY(0); }
+.reveal:nth-child(1) { transition-delay: 0.08s; }
+.reveal:nth-child(2) { transition-delay: 0.18s; }
+.reveal:nth-child(3) { transition-delay: 0.28s; }
+.reveal:nth-child(4) { transition-delay: 0.38s; }
+
+/* ── Progress bar ── */
+.progress-bar {
+  position: fixed; top: 0; left: 0; height: 3px; z-index: 100;
+  background: var(--card-bg); width: 0%; transition: width 0.6s ease;
+}
+
+/* ── Nav dots ── */
+.nav-dots {
+  position: fixed; right: 1.5rem; top: 50%; transform: translateY(-50%);
+  display: flex; flex-direction: column; gap: 12px; z-index: 100;
+}
+.nav-dots button {
+  width: 8px; height: 8px; border-radius: 50%;
+  border: none; cursor: pointer;
+  background: var(--text-muted); transition: all 0.3s ease;
+}
+.nav-dots button.active {
+  background: var(--card-bg); transform: scale(1.5);
+}
+
+/* ── Responsive ── */
+@media (max-height: 700px) {
+  .slide { padding: clamp(1rem, 3vw, 2rem); }
+  .bold-title { font-size: clamp(1.5rem, 5vw, 3.5rem); }
+}
+@media (max-height: 600px) {
+  .nav-dots { display: none; }
+  .bold-title { font-size: clamp(1.2rem, 4vw, 2.5rem); }
+}
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.2s !important; }
+}
+
+/* ── Present Mode ── */
+#present-btn {
+  position: fixed; bottom: 1.5rem; right: 1.5rem; z-index: 9997;
+  width: 44px; height: 44px; border-radius: 50%;
+  background: rgba(255,255,255,0.1); color: rgba(255,255,255,0.8);
+  border: 1.5px solid rgba(255,255,255,0.2);
+  font-size: 1rem; cursor: pointer;
+  backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+  display: flex; align-items: center; justify-content: center;
+  opacity: 0; transition: opacity 0.2s; pointer-events: none;
+}
+body:hover #present-btn { opacity: 1; pointer-events: auto; }
+
+#present-counter {
+  display: none; position: fixed; bottom: 1.4rem; left: 50%;
+  transform: translateX(-50%); z-index: 9997;
+  font-size: 0.65rem; letter-spacing: 0.14em;
+  color: var(--text-muted); opacity: 0.5;
+}
+
+body.presenting { background: #000 !important; overflow: hidden !important; }
+body.presenting .slide { position: fixed !important; inset: 0; width: 100vw !important; height: 100vh !important; transform-origin: center center; scroll-snap-align: none !important; display: none !important; }
+body.presenting .slide.p-on { display: flex !important; }
+body.presenting #present-btn { display: none !important; }
+body.presenting #present-counter { display: block; }
+body.presenting .slide-credit { display: none !important; }
+body.presenting .nav-dots { display: none !important; }
+
+.slide-credit {
+  position: absolute; bottom: 8px; right: 14px;
+  font-size: 9px; color: var(--text-muted);
+  opacity: 0.35; pointer-events: none; z-index: 1;
+  font-family: system-ui, sans-serif;
+}
+
+/* ── Edit Mode ── */
+.edit-hotzone {
+  position: fixed; top: 0; left: 0;
+  width: 80px; height: 80px; z-index: 10000; cursor: pointer;
+}
+.edit-toggle {
+  position: fixed; top: 16px; left: 16px;
+  opacity: 0; pointer-events: none;
+  transition: opacity 0.3s ease; z-index: 10001;
+  background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.15);
+  border-radius: 3px; padding: 3px 8px; font-size: 0.65rem;
+  color: var(--text-muted); cursor: pointer; font-family: system-ui, sans-serif;
+}
+.edit-toggle.show { opacity: 1; pointer-events: auto; }
+.edit-toggle.active { opacity: 1; pointer-events: auto; background: var(--card-bg); color: var(--text-on-card); border-color: var(--card-bg); }
+
+#notes-panel {
+  display: none; position: fixed; bottom: 0; left: 0; right: 0;
+  z-index: 9998; background: #222;
+  border-top: 1px solid rgba(255,255,255,0.1);
+}
+#notes-panel.active { display: flex; flex-direction: column; }
+#notes-panel-header {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0.45rem 1.4rem; cursor: pointer; user-select: none;
+}
+#notes-panel-label {
+  flex: 1; font-size: 0.58rem; letter-spacing: 0.16em;
+  text-transform: uppercase; color: var(--text-muted);
+}
+#notes-collapse-btn {
+  flex: 1; text-align: right; font-size: 1rem;
+  color: var(--text-muted); background: none; border: none; cursor: pointer;
+}
+#notes-panel.collapsed #notes-collapse-btn { transform: rotate(180deg); }
+#notes-textarea {
+  width: 100%; height: 72px; min-height: 48px; max-height: 200px;
+  resize: vertical; background: transparent; border: none; outline: none;
+  color: var(--text-primary); font-size: 0.88rem; line-height: 1.65;
+  font-family: system-ui, sans-serif; padding: 0 1.4rem 0.75rem;
+}
+</style>
+</head><body>
+<section class="slide" data-notes="Welcome. kai-slide-creator — 21 design presets, zero dependencies.">
+<div class="reveal bold-ghost-number" style="opacity: 0.04; font-size: clamp(10rem, 16vw, 16rem);">01</div>
+<div class="slide-content preset-bold-signal-content" style="width: 100%; max-width: 1000px; display: flex; flex-direction: column; position: relative;">
+<div class="reveal bold-hero-card" style="max-width: 700px;">
+<div class="reveal bold-label" style="color: rgba(255,255,255,0.5); margin-bottom: 12px;">v2.16.0</div>
+<div class="reveal bold-title" style="color: var(--text-on-card); font-size: clamp(1.8rem, 5vw, 3.5rem);">kai-slide-creator</div>
+<div class="reveal bold-body" style="color: rgba(255,255,255,0.7); margin-top: 12px; line-height: 1.7;">
+      Zero-Dependency HTML Presentations.<br/>
+      21 design presets. Pure browser.
+    </div>
+</div>
+<div class="reveal" style="display: flex; gap: 24px; margin-top: 24px;">
+<span class="reveal bold-label">21 PRESETS</span>
+<span class="reveal bold-label">ZERO DEPS</span>
+<span class="reveal bold-label">BROWSER ONLY</span>
+</div>
+</div>
+</section>
+<section class="slide" data-notes="Presentation tools are bloated. AI generators produce generic slides.">
+<div class="reveal bold-ghost-number">02</div>
+<div class="slide-content preset-bold-signal-content" style="width: 100%; max-width: 1000px; display: flex; flex-direction: column; position: relative;">
+<div class="reveal bold-label" style="margin-bottom: 8px;">The Problem</div>
+<div class="reveal bold-h2" style="margin-bottom: 16px;">Clarity Lost in Bloat</div>
+<div class="reveal bold-body" style="max-width: 700px; line-height: 1.8;">
+    Presentation tools ship with feature lists nobody reads. Template marketplaces recycle the same layouts with different fonts. AI generators produce slides that all look the same — polished, generic, forgettable.
+  </div>
+<div class="reveal bold-body" style="max-width: 700px; margin-top: 16px;">
+    We started from a simpler premise: <span style="color: var(--card-bg); font-weight: 600;">content needs room to breathe</span>. The space between elements communicates as much as the elements themselves.
+  </div>
+</div>
+</section>
+<section class="slide" data-notes="21 complete design languages, not color swaps.">
+<div class="reveal bold-ghost-number">03</div>
+<div class="slide-content preset-bold-signal-content" style="width: 100%; max-width: 1000px; display: flex; flex-direction: column; position: relative;">
+<div class="reveal bold-label" style="margin-bottom: 8px;">The Way</div>
+<div class="reveal bold-h2" style="margin-bottom: 16px;">Twenty-One Paths, One Principle</div>
+<div class="reveal" style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+<div class="reveal bold-card">
+<div class="reveal bold-label" style="color: var(--card-bg); margin-bottom: 4px;">01</div>
+<div class="reveal" style="font-weight: 600; margin-bottom: 4px;">Bold Signal</div>
+<div class="reveal bold-body" style="font-size: 0.75rem;">Conviction. Dark canvas, colored focal points.</div>
+</div>
+<div class="reveal bold-card">
+<div class="reveal bold-label" style="color: var(--card-bg); margin-bottom: 4px;">02</div>
+<div class="reveal" style="font-weight: 600; margin-bottom: 4px;">Blue Sky</div>
+<div class="reveal bold-body" style="font-size: 0.75rem;">Clarity. Light gradients, glass cards.</div>
+</div>
+<div class="reveal bold-card">
+<div class="reveal bold-label" style="color: var(--card-bg); margin-bottom: 4px;">03</div>
+<div class="reveal" style="font-weight: 600; margin-bottom: 4px;">Terminal Green</div>
+<div class="reveal bold-body" style="font-size: 0.75rem;">Craft. Monospace, scanlines, green phosphor.</div>
+</div>
+<div class="reveal bold-card">
+<div class="reveal bold-label" style="color: var(--card-bg); margin-bottom: 4px;">04</div>
+<div class="reveal" style="font-weight: 600; margin-bottom: 4px;">Enterprise Dark</div>
+<div class="reveal bold-body" style="font-size: 0.75rem;">Structure. Professional, data-driven.</div>
+</div>
+<div class="reveal bold-card">
+<div class="reveal bold-label" style="color: var(--card-bg); margin-bottom: 4px;">05</div>
+<div class="reveal" style="font-weight: 600; margin-bottom: 4px;">Aurora Mesh</div>
+<div class="reveal bold-body" style="font-size: 0.75rem;">Motion. Animated gradients, glass panels.</div>
+</div>
+<div class="reveal bold-card">
+<div class="reveal bold-label" style="color: var(--card-bg); margin-bottom: 4px;">06</div>
+<div class="reveal" style="font-weight: 600; margin-bottom: 4px;">Modern Newspaper</div>
+<div class="reveal bold-body" style="font-size: 0.75rem;">Narrative. Editorial typography, grid layout.</div>
+</div>
+</div>
+<div class="reveal bold-body" style="margin-top: 16px;">
+    Each preset is a <span style="color: var(--card-bg); font-weight: 600;">complete design language</span>, not a color swap. Fonts, spacing, components, rhythm — all cohesive.
+  </div>
+</div>
+</section>
+<section class="slide" data-notes="Three modes, one file, no dependencies.">
+<div class="reveal bold-ghost-number">04</div>
+<div class="slide-content preset-bold-signal-content" style="width: 100%; max-width: 1000px; display: flex; flex-direction: column; position: relative;">
+<div class="reveal bold-label" style="margin-bottom: 8px;">Structure</div>
+<div class="reveal bold-h2" style="margin-bottom: 24px;">Three Modes, One File</div>
+<div class="reveal" style="display: flex; gap: clamp(24px, 4vw, 48px); justify-content: center;">
+<div class="reveal bold-stat">
+<div class="num" style="font-size: clamp(3rem, 5vw, 5rem);">F5</div>
+<div class="label">Play</div>
+</div>
+<div class="reveal bold-stat">
+<div class="num" style="font-size: clamp(3rem, 5vw, 5rem);">P</div>
+<div class="label">Present</div>
+</div>
+<div class="reveal bold-stat">
+<div class="num" style="font-size: clamp(3rem, 5vw, 5rem);">E</div>
+<div class="label">Edit</div>
+</div>
+</div>
+<div class="reveal bold-body" style="text-align: center; margin-top: 16px;">
+    Fullscreen playback · Speaker notes · In-browser editing
+  </div>
+</div>
+</section>
+<section class="slide" data-notes="Three modes, all keyboard-driven. F5 plays, P opens presenter, E edits.">
+<div class="reveal bold-ghost-number">05</div>
+<div class="slide-content preset-bold-signal-content" style="width: 100%; max-width: 1000px; display: flex; flex-direction: column; position: relative;">
+<div class="reveal bold-label" style="margin-bottom: 8px;">Modes</div>
+<div class="reveal bold-h2" style="margin-bottom: 24px;">Play, Present, Edit — One File</div>
+<div class="reveal" style="display: flex; gap: clamp(20px, 4vw, 40px); justify-content: center;">
+<div class="reveal bold-card" style="text-align: center; padding: 20px;">
+<div class="reveal" style="font-size: clamp(2rem, 4vw, 3.5rem); font-weight: 900; color: var(--card-bg); margin-bottom: 8px;">F5</div>
+<div class="reveal" style="font-weight: 600; margin-bottom: 4px;">Play</div>
+<div class="reveal bold-body" style="font-size: 0.75rem;">Fullscreen, auto-scale, controls hide</div>
+</div>
+<div class="reveal bold-card" style="text-align: center; padding: 20px;">
+<div class="reveal" style="font-size: clamp(2rem, 4vw, 3.5rem); font-weight: 900; color: var(--card-bg); margin-bottom: 8px;">P</div>
+<div class="reveal" style="font-weight: 600; margin-bottom: 4px;">Present</div>
+<div class="reveal bold-body" style="font-size: 0.75rem;">Notes, timer, sync via BroadcastChannel</div>
+</div>
+<div class="reveal bold-card" style="text-align: center; padding: 20px;">
+<div class="reveal" style="font-size: clamp(2rem, 4vw, 3.5rem); font-weight: 900; color: var(--card-bg); margin-bottom: 8px;">E</div>
+<div class="reveal" style="font-weight: 600; margin-bottom: 4px;">Edit</div>
+<div class="reveal bold-body" style="font-size: 0.75rem;">contenteditable, Ctrl+S saves the file</div>
+</div>
+</div>
+<div class="reveal bold-body" style="text-align: center; margin-top: 16px; color: var(--text-muted);">
+    No media player. No PowerPoint. Just the browser.
+  </div>
+</div>
+</section>
+<section class="slide" data-notes="Three commands cover the full lifecycle.">
+<div class="reveal bold-ghost-number">06</div>
+<div class="slide-content preset-bold-signal-content" style="width: 100%; max-width: 1000px; display: flex; flex-direction: column; position: relative;">
+<div class="reveal bold-label" style="margin-bottom: 8px;">Commands</div>
+<div class="reveal bold-h2" style="margin-bottom: 16px;">Three Commands, One Pipeline</div>
+<div class="reveal" style="display: flex; gap: 16px; max-width: 700px;">
+<div class="reveal bold-card" style="padding: 20px 24px; border-left: 4px solid var(--card-bg);">
+<div class="reveal" style="font-weight: 600; margin-bottom: 4px;">1. Plan</div>
+<div class="reveal bold-body" style="font-size: 0.75rem; color: var(--text-on-card);">/slide-creator --plan</div>
+<div class="reveal bold-body" style="font-size: 0.75rem; color: var(--text-muted); margin-top: 4px;">Generate editable outline</div>
+</div>
+<div class="reveal bold-card" style="padding: 20px 24px;">
+<div class="reveal" style="font-weight: 600; margin-bottom: 4px;">2. Generate</div>
+<div class="reveal bold-body" style="font-size: 0.75rem;">/slide-creator --generate</div>
+<div class="reveal bold-body" style="font-size: 0.75rem; color: var(--text-muted); margin-top: 4px;">Pick style, auto-build</div>
+</div>
+<div class="reveal bold-card" style="padding: 20px 24px;">
+<div class="reveal" style="font-weight: 600; margin-bottom: 4px;">3. Review</div>
+<div class="reveal bold-body" style="font-size: 0.75rem;">/slide-creator --review</div>
+<div class="reveal bold-body" style="font-size: 0.75rem; color: var(--text-muted); margin-top: 4px;">16 quality checks</div>
+</div>
+</div>
+<div class="reveal bold-body" style="max-width: 700px; margin-top: 16px;">
+    Or skip planning — give content + style, <span style="color: var(--card-bg); font-weight: 600;">generate immediately</span>.
+  </div>
+</div>
+</section>
+<section class="slide" data-notes="No npm, no server, no build tools.">
+<div class="reveal bold-ghost-number">07</div>
+<div class="slide-content preset-bold-signal-content" style="width: 100%; max-width: 1000px; display: flex; flex-direction: column; position: relative;">
+<div class="reveal bold-label" style="margin-bottom: 8px;">Foundation</div>
+<div class="reveal bold-h2" style="margin-bottom: 24px;">Nothing Between You and the Browser</div>
+<div class="reveal" style="display: flex; gap: clamp(24px, 4vw, 48px); justify-content: center;">
+<div class="reveal bold-stat">
+<div class="num">0</div>
+<div class="label">Dependencies</div>
+</div>
+<div class="reveal bold-stat">
+<div class="num">1</div>
+<div class="label">Requirement</div>
+</div>
+<div class="reveal bold-stat">
+<div class="num">21</div>
+<div class="label">Presets</div>
+</div>
+</div>
+<div class="reveal bold-body" style="text-align: center; margin-top: 16px; color: var(--text-muted);">
+    HTML, CSS, JavaScript. That is all. Python 3 to generate.
+  </div>
+</div>
+</section>
+<section class="slide" data-notes="Start with a preset. Let the content speak.">
+<div class="reveal bold-ghost-number" style="opacity: 0.04; font-size: clamp(10rem, 16vw, 16rem);">08</div>
+<div class="slide-content preset-bold-signal-content" style="width: 100%; max-width: 1000px; display: flex; flex-direction: column; align-items: center; position: relative;">
+<div class="reveal bold-hero-card" style="max-width: 600px; text-align: center;">
+<div class="reveal bold-title" style="color: var(--text-on-card); font-size: clamp(1.4rem, 3.5vw, 2.5rem); margin-bottom: 12px;">Start with a Preset</div>
+<div class="reveal bold-body" style="color: rgba(255,255,255,0.6);">Let the content speak for itself</div>
+</div>
+<div class="reveal cmd" style="margin-top: 20px; font-size: clamp(0.75rem, 1.2vw, 0.9rem);">
+    /slide-creator "your topic" --style "Bold Signal"
+  </div>
+<div class="reveal bold-body" style="margin-top: 12px; color: var(--text-muted); font-size: 0.8rem;">
+    Tell Claude: install kai-slide-creator
+  </div>
+</div>
+</section>
+</body></html>

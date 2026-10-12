@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<!-- Program-owned profile template. Regenerate with scripts/build-profile-templates.py. -->
+<html><head>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant:wght@400;600&amp;family=IBM+Plex+Sans:wght@300;400&amp;family=Noto+Sans+SC:wght@400;700&amp;display=swap" rel="stylesheet"/>
+<style>
+        body { background-color: #0f0f0f; }
+        :root {
+            --bg-primary: #0f0f0f;
+            --text-primary: #e8e4df;
+            --text-secondary: #9a9590;
+            --accent-warm: #d4a574;
+            --accent-pink: #e8b4b8;
+            --accent-gold: #c9b896;
+            --font-display: 'Cormorant', 'Noto Sans SC', serif;
+            --font-body: 'IBM Plex Sans', 'Noto Sans SC', sans-serif;
+            --title-size: clamp(2rem, 5vw, 4rem);
+            --h2-size: clamp(1.5rem, 3.5vw, 2.5rem);
+            --body-size: clamp(0.8125rem, 1.4vw, 1rem);
+            --small-size: clamp(0.625rem, 1.1vw, 0.75rem);
+            --slide-padding: clamp(1.5rem, 4vw, 4rem);
+            --content-gap: clamp(0.75rem, 1.8vw, 1.5rem);
+        }
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+        html { scroll-snap-type: y mandatory; height: 100%; }
+        body { font-family: var(--font-body); background: var(--bg-primary); color: var(--text-primary); height: 100%; }
+        body[data-export-progress="false"] .progress-bar,
+        body[data-export-progress="false"] .nav-dots { display: none !important; }
+
+        .slide { width: 100vw; height: 100vh; height: 100dvh; overflow: hidden; scroll-snap-align: start; display: flex; flex-direction: column; position: relative; }
+        .slide-content { flex: 1; display: flex; flex-direction: column; justify-content: center; max-height: 100%; overflow: hidden; padding: var(--slide-padding); position: relative; z-index: 2; }
+
+        /* ── Signature Elements: Dark Botanical ── */
+        .orb { position: absolute; border-radius: 50%; filter: blur(80px); pointer-events: none; opacity: 0; transition: opacity 1.2s ease; }
+        .slide.visible .orb { opacity: 1; }
+        .orb-pink { background: radial-gradient(circle, rgba(232,180,184,0.18), transparent 70%); }
+        .orb-gold { background: radial-gradient(circle, rgba(201,184,150,0.15), transparent 70%); }
+        .orb-terra { background: radial-gradient(circle, rgba(212,165,116,0.12), transparent 70%); }
+        .accent-line { position: absolute; left: clamp(32px, 6vw, 72px); top: 20%; height: 60%; width: 1px; background: linear-gradient(to bottom, transparent, #c9b896 30%, #e8b4b8 70%, transparent); opacity: 0; transform: scaleY(0); transform-origin: top; transition: opacity 0.8s ease 0.3s, transform 0.8s ease 0.3s; }
+        .slide.visible .accent-line { opacity: 0.4; transform: scaleY(1); }
+        .slide-label { font-family: 'Cormorant', 'Noto Sans SC', serif; font-style: italic; font-size: clamp(11px, 1.2vw, 14px); letter-spacing: 0.25em; text-transform: uppercase; color: #c9b896; }
+        .divider { width: 48px; height: 1px; background: linear-gradient(90deg, #c9b896, #e8b4b8); margin: auto; }
+        .badge { padding: 8px 20px; border: 1px solid #2a2520; border-radius: 2px; font-family: 'Cormorant', serif; font-size: clamp(11px, 1.2vw, 13px); color: #9a9590; }
+        .badge strong { font-weight: 600; color: #c9b896; font-size: clamp(13px, 1.4vw, 16px); }
+        .pain-list { list-style: none; }
+        .pain-list li::before { content: '—'; color: #e8b4b8; font-family: 'Cormorant', serif; margin-right: 12px; }
+        .steps { list-style: none; counter-reset: step; }
+        .step-num { counter-increment: step; font-family: 'Cormorant', 'Noto Sans SC', serif; font-style: italic; font-size: clamp(1.25rem, 2.5vw, 2rem); color: #c9b896; }
+        .step-num::before { content: counter(step); }
+        .feature-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 260px), 1fr)); gap: clamp(12px, 1.5vw, 20px); }
+        .feature { border: 1px solid #1e1e1e; border-left: 1px solid #c9b896; background: rgba(255,255,255,0.015); padding: clamp(16px, 2vw, 24px); border-radius: 2px; }
+        .code-block { background: #0a0a0a; border: 1px solid #1e1e1e; border-left: 2px solid #c9b896; padding: 12px 18px; border-radius: 2px; font-family: 'IBM Plex Mono', monospace; font-size: clamp(11px, 1.1vw, 13px); color: #9a9590; }
+        .preset-tag { display: inline-block; padding: 6px 14px; border: 1px solid #2a2520; border-radius: 2px; font-size: clamp(10px, 1vw, 12px); color: #9a9590; transition: all 0.3s; }
+        .preset-tag:hover, .preset-tag.current { border-color: #c9b896; color: #c9b896; }
+        .preset-tag.current { background: rgba(201,184,150,0.1); }
+        .reveal { opacity: 0; transform: translateY(20px); transition: opacity 0.8s ease, transform 0.8s ease; }
+        .slide.visible .reveal { opacity: 1; transform: translateY(0); }
+        .reveal-1 { transition-delay: 0.1s; }
+        .reveal-2 { transition-delay: 0.25s; }
+        .reveal-3 { transition-delay: 0.4s; }
+        .reveal-4 { transition-delay: 0.55s; }
+        .reveal-5 { transition-delay: 0.7s; }
+
+        /* ── Per-slide CSS ── */
+        #slide-1 { justify-content: center; align-items: center; text-align: center; }
+        #slide-1 .hero-title { font-family: 'Cormorant', serif; font-style: italic; font-size: clamp(3rem, 7vw, 6rem); font-weight: 400; line-height: 1.1; color: #e8e4df; margin-bottom: 24px; }
+        #slide-1 .hero-sub { font-family: 'IBM Plex Sans', sans-serif; font-size: clamp(13px, 1.4vw, 16px); font-weight: 300; color: #9a9590; max-width: 480px; line-height: 1.7; margin-bottom: 32px; }
+        #slide-1 .hero-badges { display: flex; gap: 12px; flex-wrap: wrap; justify-content: center; }
+
+        #slide-2 { flex-direction: row; }
+        #slide-2 .left-col { flex: 0 0 42%; display: flex; flex-direction: column; justify-content: center; padding: var(--slide-padding); position: relative; }
+        #slide-2 .right-col { flex: 1; display: flex; flex-direction: column; justify-content: center; padding: var(--slide-padding); }
+        #slide-2 h2 { font-family: 'Cormorant', 'Noto Sans SC', serif; font-style: italic; font-size: var(--h2-size); color: #e8e4df; line-height: 1.2; margin-top: 12px; }
+
+        #slide-3, #slide-4, #slide-5, #slide-6, #slide-7 { justify-content: center; }
+        #slide-3 h2, #slide-4 h2, #slide-5 h2, #slide-6 h2, #slide-7 h2 { font-family: 'Cormorant', 'Noto Sans SC', serif; font-style: italic; font-size: var(--h2-size); color: #e8e4df; line-height: 1.2; }
+        #slide-3 .steps-row, #slide-5 .steps-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: clamp(16px, 2vw, 28px); margin-top: clamp(24px, 3vw, 40px); }
+        #slide-3 .step-item, #slide-5 .step-item { text-align: center; }
+        #slide-3 .step-item p, #slide-5 .step-item p { font-size: var(--body-size); color: #9a9590; margin-top: 8px; }
+        #slide-5 .step-item .code-block { margin-top: 12px; }
+
+        #slide-4 .preset-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 140px), 1fr)); gap: 10px; margin-top: clamp(20px, 2.5vw, 32px); }
+
+        #slide-6 .feature-grid { margin-top: clamp(20px, 2.5vw, 32px); }
+        #slide-6 .feature h3 { font-family: 'Cormorant', 'Noto Sans SC', serif; font-style: italic; font-size: clamp(1rem, 1.5vw, 1.25rem); color: #c9b896; margin-bottom: 8px; }
+        #slide-6 .feature p { font-size: var(--body-size); color: #9a9590; line-height: 1.6; }
+
+        #slide-7 .install-col { max-width: 680px; margin: 0 auto; }
+        #slide-7 .install-block { margin-bottom: clamp(16px, 2vw, 28px); }
+        #slide-7 .install-label { font-family: 'Cormorant', serif; font-style: italic; font-size: clamp(11px, 1.2vw, 14px); color: #c9b896; letter-spacing: 0.15em; text-transform: uppercase; margin-bottom: 8px; }
+        #slide-7 .code-block { text-align: left; }
+
+        #slide-8 { justify-content: center; align-items: center; text-align: center; }
+        #slide-8 .cta-cmd { font-family: 'IBM Plex Mono', monospace; font-size: clamp(1.25rem, 2.5vw, 2rem); color: #c9b896; font-weight: 400; margin-bottom: 16px; }
+        #slide-8 .cta-sub { font-family: 'Cormorant', serif; font-style: italic; font-size: clamp(0.875rem, 1.5vw, 1.125rem); color: #9a9590; }
+
+        .pain-list li { font-size: var(--body-size); color: #9a9590; line-height: 1.7; margin-bottom: 12px; }
+
+        /* ── Universal UI ── */
+        #brand-mark { position: fixed; top: 20px; left: 28px; font-weight: 600; font-size: 15px; z-index: 1000; font-family: 'Cormorant', serif; font-style: italic; color: rgba(232,228,223,0.4); }
+        .slide-num-label { position: absolute; bottom: 28px; right: 36px; font-size: 11px; font-weight: 400; font-family: 'IBM Plex Sans', sans-serif; color: rgba(232,228,223,0.2); }
+        .nav-dots { position: fixed; right: 1.5rem; top: 50%; transform: translateY(-50%); display: flex; flex-direction: column; gap: 8px; z-index: 100; }
+        .progress-bar { position: fixed; top: 0; left: 0; height: 3px; background: #c9b896; width: 0%; z-index: 100; transition: width 0.35s ease; }
+
+        /* ── Present Mode ── */
+        #present-btn { position: fixed; bottom: 1.5rem; right: 1.5rem; z-index: 9997; width: 44px; height: 44px; border-radius: 50%; background: rgba(15,15,15,0.8); color: rgba(232,228,223,0.7); border: 1px solid rgba(232,228,223,0.15); font-size: 1rem; cursor: pointer; backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); display: flex; align-items: center; justify-content: center; opacity: 0; transition: opacity 0.2s; pointer-events: none; }
+        body:hover #present-btn { opacity: 1; pointer-events: auto; }
+        #present-btn:hover { background: rgba(30,30,30,0.9); }
+        #present-counter { display: none; position: fixed; bottom: 1.4rem; left: 50%; transform: translateX(-50%); z-index: 9997; font-size: 0.65rem; letter-spacing: 0.14em; font-family: system-ui, sans-serif; color: rgba(232,228,223,0.28); }
+        body.presenting { background: #000 !important; overflow: hidden !important; }
+        body.presenting .slide { position: fixed !important; inset: 0; width: 100vw !important; height: 100vh !important; transform-origin: center center; scroll-snap-align: none !important; display: none !important; }
+        body.presenting .slide.p-on { display: flex !important; }
+        body.presenting #present-btn { display: none !important; }
+        body.presenting #present-counter { display: block; }
+        body.presenting.presenting-black .slide { visibility: hidden !important; }
+        body.presenting.presenting-black::after { content: ''; position: fixed; inset: 0; background: #000; z-index: 99999; }
+        .slide-credit { position: absolute; bottom: 8px; right: 14px; font-size: 9px; color: rgba(232,228,223,0.35); opacity: 0.35; pointer-events: none; z-index: 1; font-family: system-ui, sans-serif; }
+        body.presenting .slide-credit { display: none !important; }
+
+        /* ── Edit Mode ── */
+        .edit-hotzone { position: fixed; top: 0; left: 0; width: 80px; height: 80px; z-index: 10000; cursor: pointer; }
+        .edit-toggle { position: fixed; top: 16px; left: 16px; opacity: 0; pointer-events: none; transition: opacity 0.3s ease; z-index: 10001; background: #c9b896; color: #0f0f0f; border: none; padding: 6px 14px; border-radius: 2px; font-family: 'Cormorant', serif; font-style: italic; font-size: 12px; font-weight: 600; cursor: pointer; }
+        .edit-toggle.show { opacity: 1; pointer-events: auto; }
+        .edit-toggle.active { opacity: 1; pointer-events: auto; background: #c9b896; color: #0f0f0f; }
+        #notes-panel { display: none; position: fixed; bottom: 0; left: 0; right: 0; z-index: 9998; background: rgba(8,8,18,0.94); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); border-top: 1px solid rgba(232,228,223,0.08); }
+        #notes-panel.active { display: flex; flex-direction: column; }
+        #notes-panel-header { display: flex; align-items: center; justify-content: space-between; padding: 0.45rem 1.4rem; cursor: pointer; user-select: none; }
+        #notes-panel-header:hover { background: rgba(255,255,255,0.03); }
+        #notes-panel-label { flex: 1; font-size: 0.58rem; letter-spacing: 0.16em; text-transform: uppercase; color: rgba(255,255,255,0.3); }
+        #notes-drag-hint { flex: 1; display: flex; justify-content: center; }
+        #notes-drag-hint::after { content: ''; display: block; width: 36px; height: 3px; border-radius: 2px; background: rgba(255,255,255,0.25); }
+        #notes-panel-header:hover #notes-drag-hint::after { background: rgba(255,255,255,0.45); }
+        #notes-collapse-btn { flex: 1; text-align: right; font-size: 1rem; color: rgba(255,255,255,0.4); background: none; border: none; cursor: pointer; transition: color 0.15s, transform 0.2s; }
+        #notes-collapse-btn:hover { color: rgba(255,255,255,0.85); }
+        #notes-body { padding: 0 1.4rem 0.75rem; }
+        #notes-panel.collapsed #notes-body { display: none; }
+        #notes-panel.collapsed #notes-collapse-btn { transform: rotate(180deg); }
+        #notes-textarea { width: 100%; height: 72px; min-height: 48px; max-height: 200px; resize: vertical; background: transparent; border: none; outline: none; color: rgba(255,255,255,0.75); font-size: 0.88rem; line-height: 1.65; font-family: system-ui, sans-serif; }
+        #notes-textarea::placeholder { color: rgba(255,255,255,0.18); }
+
+        /* ── Responsive ── */
+        @media (max-height: 700px) { :root { --slide-padding: clamp(0.75rem, 3vw, 2rem); --content-gap: clamp(0.4rem, 1.5vw, 1rem); --title-size: clamp(1.25rem, 4.5vw, 2.5rem); } }
+        @media (max-height: 600px) { :root { --slide-padding: clamp(0.5rem, 2.5vw, 1.5rem); --title-size: clamp(1.1rem, 4vw, 2rem); --body-size: clamp(0.7rem, 1.2vw, 0.95rem); } .nav-dots, .keyboard-hint, .decorative { display: none; } }
+        @media (max-height: 500px) { :root { --slide-padding: clamp(0.4rem, 2vw, 1rem); --title-size: clamp(1rem, 3.5vw, 1.5rem); } }
+        @media (max-width: 600px) { #slide-2 { flex-direction: column; } #slide-3 .steps-row, #slide-5 .steps-row, #slide-6 .feature-grid { grid-template-columns: 1fr; } }
+        @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.2s !important; } html { scroll-behavior: auto; } }
+    </style>
+</head><body>
+<section aria-label="Hero" class="slide" data-notes="slide-creator: 零依赖 HTML 演示文稿, 21 种预设, 三分钟出稿" id="slide-1">
+<div class="orb orb-terra" style="top:-8%;right:-5%;width:clamp(200px,35vw,450px);height:clamp(200px,35vw,450px);"></div>
+<div class="orb orb-pink" style="bottom:5%;left:-3%;width:clamp(180px,28vw,380px);height:clamp(180px,28vw,380px);"></div>
+<div class="accent-line"></div>
+<div class="slide-content preset-dark-botanical-content">
+<div class="slide-label reveal reveal-1">slide-creator</div>
+<h1 class="hero-title reveal reveal-2">零依赖,<br/>无需构建</h1>
+<p class="hero-sub reveal reveal-3">HTML 演示文稿生成工具, 为 Claude Code 和 OpenClaw 设计。<br/>选风格, 出稿, 发布。</p>
+<div class="hero-badges reveal reveal-4">
+<span class="badge"><strong>21</strong> 种预设</span>
+<span class="badge"><strong>0</strong> 个依赖</span>
+<span class="badge"><strong>3min</strong> 出稿</span>
+</div>
+</div>
+<span class="slide-num-label">01 / 08</span>
+</section>
+<section aria-label="Problem" class="slide" data-notes="当前演示文稿工具链冗长、AI 生成风格不稳定、平台锁定" id="slide-2">
+<div class="orb orb-gold" style="top:10%;right:-5%;width:clamp(150px,25vw,320px);height:clamp(150px,25vw,320px);"></div>
+<div class="left-col">
+<div class="slide-label reveal reveal-1">问题</div>
+<h2 class="reveal reveal-2 preset-dark-botanical-content">演示文稿<br/>不应该需要<br/>构建系统</h2>
+</div>
+<div class="right-col">
+<ul class="pain-list reveal reveal-3">
+<li>复杂的工具链 — npm install、Webpack 配置、300MB node_modules</li>
+<li>通用输出 — 每个 AI 演示都是 Inter 字体 + 紫色渐变</li>
+<li>平台锁定 — 封闭平台、导出限制、月费订阅</li>
+</ul>
+</div>
+<span class="slide-num-label">02 / 08</span>
+</section>
+<section aria-label="Discovery" class="slide" data-notes="风格探索: 描述主题, 生成三个预览, 点击选中" id="slide-3">
+<div class="orb orb-pink" style="bottom:-8%;right:5%;width:clamp(180px,30vw,400px);height:clamp(180px,30vw,400px);"></div>
+<div class="slide-content preset-dark-botanical-content">
+<div class="slide-label reveal reveal-1">Discovery</div>
+<h2 class="reveal reveal-2">三个预览锁定视觉风格</h2>
+<div class="steps-row">
+<div class="step-item reveal reveal-3">
+<div class="step-num"></div>
+<p>描述演示主题</p>
+</div>
+<div class="step-item reveal reveal-4">
+<div class="step-num"></div>
+<p>生成 3 个风格预览</p>
+</div>
+<div class="step-item reveal reveal-5">
+<div class="step-num"></div>
+<p>点击选中出稿</p>
+</div>
+</div>
+</div>
+<span class="slide-num-label">03 / 08</span>
+</section>
+<section aria-label="Solution" class="slide" data-notes="21 种设计预设, 覆盖商业路演、技术分享、创意展示" id="slide-4">
+<div class="orb orb-terra" style="top:-5%;left:-5%;width:clamp(200px,32vw,420px);height:clamp(200px,32vw,420px);"></div>
+<div class="slide-content preset-dark-botanical-content">
+<div class="slide-label reveal reveal-1">Presets</div>
+<h2 class="reveal reveal-2">21 种预设, 拒绝通用 AI 审美</h2>
+<div class="preset-grid reveal reveal-3">
+<span class="preset-tag current">Bold Signal</span>
+<span class="preset-tag">Blue Sky</span>
+<span class="preset-tag">Aurora Mesh</span>
+<span class="preset-tag">Chinese Chan</span>
+<span class="preset-tag">Creative Voltage</span>
+<span class="preset-tag current">Dark Botanical</span>
+<span class="preset-tag">Data Story</span>
+<span class="preset-tag">Electric Studio</span>
+<span class="preset-tag">Enterprise Dark</span>
+<span class="preset-tag">Glassmorphism</span>
+<span class="preset-tag">Modern Newspaper</span>
+<span class="preset-tag">Neo-Brutalism</span>
+<span class="preset-tag">Neo-Retro Dev</span>
+<span class="preset-tag">Neon Cyber</span>
+<span class="preset-tag">Notebook Tabs</span>
+<span class="preset-tag">Paper &amp; Ink</span>
+<span class="preset-tag">Pastel Geometry</span>
+<span class="preset-tag">Split Pastel</span>
+<span class="preset-tag">Swiss Modern</span>
+<span class="preset-tag">Terminal Green</span>
+<span class="preset-tag">Vintage Editorial</span>
+</div>
+</div>
+<span class="slide-num-label">04 / 08</span>
+</section>
+<section aria-label="Workflow" class="slide" data-notes="三步出稿: 描述、选风格、打开浏览器" id="slide-5">
+<div class="orb orb-gold" style="bottom:10%;left:5%;width:clamp(160px,26vw,350px);height:clamp(160px,26vw,350px);"></div>
+<div class="slide-content preset-dark-botanical-content">
+<div class="slide-label reveal reveal-1">Workflow</div>
+<h2 class="reveal reveal-2">三步出稿</h2>
+<div class="steps-row">
+<div class="step-item reveal reveal-3">
+<div class="step-num"></div>
+<div class="code-block">/slide-creator [描述主题]</div>
+</div>
+<div class="step-item reveal reveal-4">
+<div class="step-num"></div>
+<div class="code-block">选择风格预览</div>
+</div>
+<div class="step-item reveal reveal-5">
+<div class="step-num"></div>
+<div class="code-block">open presentation.html</div>
+</div>
+</div>
+</div>
+<span class="slide-num-label">05 / 08</span>
+</section>
+<section aria-label="Features" class="slide" data-notes="核心功能: F5 播放、E 键编辑、P 键演讲者模式、PPTX 导出" id="slide-6">
+<div class="orb orb-pink" style="top:-5%;right:-5%;width:clamp(180px,28vw,380px);height:clamp(180px,28vw,380px);"></div>
+<div class="slide-content preset-dark-botanical-content">
+<div class="slide-label reveal reveal-1">Features</div>
+<h2 class="reveal reveal-2">播放、编辑、演讲者、导出</h2>
+<div class="feature-grid">
+<div class="feature reveal reveal-3">
+<h3>F5 全屏播放</h3>
+<p>视口自适应缩放, 1440x900 画布适配任意屏幕</p>
+</div>
+<div class="feature reveal reveal-4">
+<h3>E 键浏览器编辑</h3>
+<p>左上角热区触发编辑模式, contenteditable 直接修改</p>
+</div>
+<div class="feature reveal reveal-3">
+<h3>P 键演讲者模式</h3>
+<p>同步窗口显示备注、计时器、页数</p>
+</div>
+<div class="feature reveal reveal-4">
+<h3>PPTX 导出</h3>
+<p>像素级图片模式或 Native 可编辑模式</p>
+</div>
+</div>
+</div>
+<span class="slide-num-label">06 / 08</span>
+</section>
+<section aria-label="Install" class="slide" data-notes="安装方式: Claude Code 或 OpenClaw 一行命令" id="slide-7">
+<div class="orb orb-terra" style="bottom:5%;right:10%;width:clamp(150px,24vw,320px);height:clamp(150px,24vw,320px);"></div>
+<div class="slide-content preset-dark-botanical-content">
+<div class="install-col">
+<div class="slide-label reveal reveal-1">Install</div>
+<h2 class="reveal reveal-2">一行命令安装</h2>
+<div class="install-block reveal reveal-3">
+<div class="install-label">Claude Code</div>
+<div class="code-block">告诉 Claude「安装 github.com/kaisersong/slide-creator」</div>
+</div>
+<div class="install-block reveal reveal-4">
+<div class="install-label">OpenClaw</div>
+<div class="code-block">clawhub install kai-slide-creator</div>
+</div>
+</div>
+</div>
+<span class="slide-num-label">07 / 08</span>
+</section>
+<section aria-label="CTA" class="slide" data-notes="立即开始使用 /slide-creator" id="slide-8">
+<div class="orb orb-gold" style="top:10%;left:10%;width:clamp(160px,26vw,340px);height:clamp(160px,26vw,340px);"></div>
+<div class="orb orb-pink" style="bottom:-8%;right:-3%;width:clamp(140px,22vw,300px);height:clamp(140px,22vw,300px);"></div>
+<div class="slide-content preset-dark-botanical-content">
+<div class="cta-cmd reveal reveal-1">/slide-creator</div>
+<p class="cta-sub reveal reveal-2">适用于 Claude Code 和 OpenClaw<br/>完全在浏览器中运行</p>
+</div>
+<span class="slide-num-label">08 / 08</span>
+</section>
+</body></html>

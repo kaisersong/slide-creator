@@ -1,0 +1,536 @@
+<!DOCTYPE html>
+<!-- Program-owned profile template. Regenerate with scripts/build-profile-templates.py. -->
+<html><head>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700;800;900&amp;family=Noto+Sans+SC:wght@400;500;700;900&amp;display=swap" rel="stylesheet"/>
+<style>
+        /* ===========================================
+           NEO-BRUTALISM STYLE
+           =========================================== */
+        :root {
+            --bg: #FFEB3B;
+            --text: #000000;
+            --btn-bg: #000000;
+            --btn-text: #FFEB3B;
+            --title-size: clamp(1.5rem, 5vw, 4rem);
+            --h2-size: clamp(1.25rem, 3.5vw, 2.5rem);
+            --body-size: clamp(0.75rem, 1.5vw, 1.125rem);
+            --small-size: clamp(0.65rem, 1vw, 0.875rem);
+            --slide-padding: clamp(1rem, 4vw, 4rem);
+            --content-gap: clamp(0.5rem, 2vw, 2rem);
+        }
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+        html { scroll-snap-type: y mandatory; height: 100%; }
+        body {
+            font-family: "Space Grotesk", "Noto Sans SC", -apple-system, sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            height: 100%;
+        }
+        body[data-export-progress="false"] .progress-bar,
+        body[data-export-progress="false"] .nav-dots { display: none !important; }
+
+        /* Dot pattern overlay */
+        body::before {
+            content: '';
+            position: fixed;
+            inset: 0;
+            background-image: radial-gradient(circle, rgba(0,0,0,0.08) 1px, transparent 1px);
+            background-size: 12px 12px;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        /* Viewport fitting */
+        .slide { width: 100vw; height: 100vh; height: 100dvh; overflow: hidden; scroll-snap-align: start; display: flex; flex-direction: column; position: relative; }
+        .slide-content { flex: 1; display: flex; flex-direction: column; justify-content: center; max-height: 100%; overflow: hidden; padding: var(--slide-padding); position: relative; z-index: 2; }
+
+        /* ===========================================
+           SIGNATURE ELEMENTS
+           =========================================== */
+        .brute-card {
+            background: #ffffff;
+            border: 3px solid #000000;
+            border-radius: 0;
+            box-shadow: 4px 4px 0 #000000;
+            padding: clamp(1rem, 2vw, 1.5rem);
+        }
+        .brute-card:hover {
+            box-shadow: 2px 2px 0 #000000;
+            transform: translate(2px, 2px);
+            transition: none;
+        }
+        .brute-btn {
+            display: inline-block;
+            background: #000000;
+            color: var(--bg);
+            border: 3px solid #000000;
+            border-radius: 0;
+            box-shadow: 3px 3px 0 #000000;
+            padding: 10px 20px;
+            font-weight: 800;
+            font-size: clamp(0.8rem, 1.2vw, 1rem);
+            letter-spacing: 0.02em;
+            cursor: pointer;
+            text-transform: uppercase;
+        }
+        .brute-btn:hover {
+            transform: translate(2px, 2px);
+            box-shadow: 1px 1px 0 #000000;
+            transition: none;
+        }
+        .brute-tag {
+            display: inline-block;
+            background: #000000;
+            color: var(--bg);
+            border: 2px solid #000000;
+            border-radius: 0;
+            padding: 2px 8px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+        }
+        .stripe {
+            background: repeating-linear-gradient(-45deg, #000 0px, #000 2px, transparent 2px, transparent 10px);
+            opacity: 0.12;
+            position: absolute;
+            pointer-events: none;
+        }
+        .eyebrow {
+            font-weight: 800;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            border-left: 4px solid #000;
+            padding-left: 0.8rem;
+        }
+        .heavy-rule { border-top: 3px solid #000; }
+        .rotated { transform: rotate(-1.5deg); }
+        .code-block {
+            background: #000;
+            color: #FFEB3B;
+            font-family: 'Courier New', monospace;
+            border: 3px solid #000;
+            box-shadow: 4px 4px 0 #000;
+            padding: clamp(0.75rem, 1.5vw, 1.25rem);
+            font-size: clamp(0.75rem, 1.2vw, 1rem);
+            font-weight: 700;
+        }
+        .cta-cmd {
+            font-weight: 900;
+            background: #000;
+            color: #FFEB3B;
+            box-shadow: 6px 6px 0 rgba(0,0,0,0.3);
+            font-family: 'Courier New', monospace;
+            padding: clamp(0.75rem, 2vw, 1.5rem) clamp(1.25rem, 3vw, 3rem);
+            display: inline-block;
+            font-size: clamp(1.25rem, 3vw, 2.5rem);
+        }
+        .preset-tag {
+            display: inline-block;
+            border: 2px solid #000;
+            background: #fff;
+            box-shadow: 2px 2px 0 #000;
+            padding: 4px 10px;
+            font-size: clamp(0.65rem, 1vw, 0.8rem);
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+        .preset-tag.current { background: #000; color: #FFEB3B; }
+        .dot {
+            width: 10px; height: 10px;
+            background: #000;
+            border-radius: 0;
+            display: inline-block;
+        }
+        .dot.active { height: 20px; }
+
+        .brute-title {
+            font-size: clamp(3rem, 10vw, 9rem);
+            font-weight: 900;
+            line-height: 0.95;
+            letter-spacing: -0.02em;
+            text-transform: uppercase;
+            color: #000000;
+        }
+        .brute-h2 {
+            font-size: clamp(1.5rem, 4vw, 3.5rem);
+            font-weight: 800;
+            line-height: 1.05;
+            color: #000000;
+        }
+        .brute-body {
+            font-size: clamp(0.9rem, 1.5vw, 1.1rem);
+            font-weight: 500;
+            line-height: 1.5;
+            color: #000000;
+        }
+        .brute-slide {
+            background: var(--bg);
+            padding: clamp(2rem, 4vw, 4rem);
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+            position: relative;
+            overflow: hidden;
+        }
+        .brute-list { list-style: none; display: flex; flex-direction: column; gap: 0; }
+        .brute-list li {
+            border-top: 2px solid #000;
+            padding: 0.75rem 0;
+            display: grid;
+            grid-template-columns: 2.5rem 1fr;
+            gap: 0.75rem;
+            align-items: start;
+        }
+        .brute-list li:last-child { border-bottom: 2px solid #000; }
+        .brute-list .num {
+            font-size: 0.75rem;
+            font-weight: 800;
+            padding-top: 0.15em;
+        }
+
+        /* ===========================================
+           ANIMATIONS
+           =========================================== */
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        .reveal { opacity: 0; transition: opacity 0.2s linear; }
+        .slide.visible .reveal { opacity: 1; }
+        .reveal:nth-child(1) { transition-delay: 0.0s; }
+        .reveal:nth-child(2) { transition-delay: 0.05s; }
+        .reveal:nth-child(3) { transition-delay: 0.10s; }
+        .reveal:nth-child(4) { transition-delay: 0.15s; }
+        .reveal:nth-child(5) { transition-delay: 0.20s; }
+        .reveal:nth-child(6) { transition-delay: 0.25s; }
+
+        /* ===========================================
+           UNIVERSAL UI
+           =========================================== */
+        #brand-mark { position: fixed; top: 20px; left: 28px; font-weight: 800; font-size: 15px; z-index: 1000; font-family: "Space Grotesk", "Noto Sans SC", sans-serif; color: #000000; }
+        .slide-num-label { position: absolute; bottom: 28px; right: 36px; font-size: 11px; font-weight: 500; font-family: "Space Grotesk", "Noto Sans SC", sans-serif; color: rgba(0,0,0,0.18); }
+        .slide-num-label.light { color: rgba(255,255,255,0.2); }
+        .nav-dots { position: fixed; right: 1.5rem; top: 50%; transform: translateY(-50%); display: flex; flex-direction: column; gap: 8px; z-index: 100; }
+        .progress-bar { position: fixed; top: 0; left: 0; height: 3px; background: #000; width: 0%; z-index: 100; transition: width 0.3s ease; }
+
+        /* ===========================================
+           PRESENT MODE
+           =========================================== */
+        #present-btn { position: fixed; bottom: 1.5rem; right: 1.5rem; z-index: 9997; width: 44px; height: 44px; border-radius: 0; background: #000; color: #FFEB3B; border: 3px solid #000; font-size: 1rem; cursor: pointer; display: flex; align-items: center; justify-content: center; opacity: 0; transition: opacity 0.2s; pointer-events: none; box-shadow: 3px 3px 0 rgba(0,0,0,0.2); }
+        body:hover #present-btn { opacity: 1; pointer-events: auto; }
+        #present-counter { display: none; position: fixed; bottom: 1.4rem; left: 50%; transform: translateX(-50%); z-index: 9997; font-size: 0.65rem; letter-spacing: 0.14em; font-family: "Space Grotesk", sans-serif; color: rgba(0,0,0,0.28); }
+        body.presenting { background: #000 !important; overflow: hidden !important; }
+        body.presenting .slide { position: fixed !important; inset: 0; width: 100vw !important; height: 100vh !important; transform-origin: center center; scroll-snap-align: none !important; display: none !important; }
+        body.presenting .slide.p-on { display: flex !important; }
+        body.presenting #present-btn { display: none !important; }
+        body.presenting #present-counter { display: block; }
+        body.presenting.presenting-black .slide { visibility: hidden !important; }
+        body.presenting.presenting-black::after { content: ''; position: fixed; inset: 0; background: #000; z-index: 99999; }
+        .slide-credit { position: absolute; bottom: 8px; right: 14px; font-size: 9px; color: rgba(0,0,0,0.35); opacity: 0.35; pointer-events: none; z-index: 1; font-family: system-ui, sans-serif; }
+        body.presenting .slide-credit { display: none !important; }
+
+        /* ===========================================
+           EDIT MODE
+           =========================================== */
+        .edit-hotzone { position: fixed; top: 0; left: 0; width: 80px; height: 80px; z-index: 10000; cursor: pointer; }
+        .edit-toggle { position: fixed; top: 16px; left: 16px; opacity: 0; pointer-events: none; transition: opacity 0.3s ease; z-index: 10001; background: #000; color: #FFEB3B; border: 2px solid #000; padding: 6px 14px; font-family: "Space Grotesk", "Noto Sans SC", sans-serif; font-size: 12px; font-weight: 800; text-transform: uppercase; cursor: pointer; }
+        .edit-toggle.show { opacity: 1; pointer-events: auto; }
+        .edit-toggle.active { opacity: 1; pointer-events: auto; }
+        #notes-panel { display: none; position: fixed; bottom: 0; left: 0; right: 0; z-index: 9998; background: rgba(0,0,0,0.95); border-top: 3px solid #FFEB3B; }
+        #notes-panel.active { display: flex; flex-direction: column; }
+        #notes-panel-header { display: flex; align-items: center; justify-content: space-between; padding: 0.45rem 1.4rem; cursor: pointer; user-select: none; }
+        #notes-panel-header:hover { background: rgba(255,235,59,0.03); }
+        #notes-panel-label { flex: 1; font-size: 0.58rem; letter-spacing: 0.16em; text-transform: uppercase; color: rgba(255,235,59,0.5); font-family: "Space Grotesk", sans-serif; }
+        #notes-drag-hint { flex: 1; display: flex; justify-content: center; }
+        #notes-drag-hint::after { content: ''; display: block; width: 36px; height: 3px; border-radius: 0; background: rgba(255,235,59,0.4); }
+        #notes-panel-header:hover #notes-drag-hint::after { background: rgba(255,235,59,0.7); }
+        #notes-collapse-btn { flex: 1; text-align: right; font-size: 1rem; color: rgba(255,235,59,0.4); background: none; border: none; cursor: pointer; }
+        #notes-collapse-btn:hover { color: rgba(255,235,59,0.85); }
+        #notes-body { padding: 0 1.4rem 0.75rem; }
+        #notes-panel.collapsed #notes-body { display: none; }
+        #notes-panel.collapsed #notes-collapse-btn { transform: rotate(180deg); }
+        #notes-textarea { width: 100%; height: 72px; min-height: 48px; max-height: 200px; resize: vertical; background: transparent; border: none; outline: none; color: rgba(255,235,59,0.75); font-size: 0.88rem; line-height: 1.65; font-family: system-ui, sans-serif; }
+        #notes-textarea::placeholder { color: rgba(255,235,59,0.18); }
+
+        /* ===========================================
+           RESPONSIVE
+           =========================================== */
+        @media (max-height: 700px) { :root { --slide-padding: clamp(0.75rem, 3vw, 2rem); --content-gap: clamp(0.4rem, 1.5vw, 1rem); --title-size: clamp(1.25rem, 4.5vw, 2.5rem); } }
+        @media (max-height: 600px) { :root { --slide-padding: clamp(0.5rem, 2.5vw, 1.5rem); --title-size: clamp(1.1rem, 4vw, 2rem); --body-size: clamp(0.7rem, 1.2vw, 0.95rem); } .nav-dots, .keyboard-hint, .decorative { display: none; } }
+        @media (max-height: 500px) { :root { --slide-padding: clamp(0.4rem, 2vw, 1rem); --title-size: clamp(1rem, 3.5vw, 1.5rem); } }
+        @media (max-width: 600px) { #slide-2, #slide-5 { flex-direction: column; } #slide-3 .style-cards, #slide-6 .feature-grid { grid-template-columns: 1fr; } }
+        @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.2s !important; } html { scroll-behavior: auto; } }
+
+        /* ===========================================
+           PER-SLIDE LAYOUT
+           =========================================== */
+
+        /* Slide 1: Hero -- brute-hero, bottom-anchored */
+        #slide-1 { flex-direction: column; justify-content: flex-end; padding: clamp(2rem, 4vw, 4rem); }
+        #slide-1 .hero-badge { margin-bottom: auto; }
+        #slide-1 .hero-bottom { margin-bottom: clamp(1rem, 3vw, 3rem); }
+        #slide-1 .brute-title { margin-bottom: clamp(0.5rem, 1.5vw, 1rem); }
+        #slide-1 .hero-subtitle { font-size: clamp(0.875rem, 1.8vw, 1.5rem); font-weight: 500; line-height: 1.5; color: #000; margin-bottom: clamp(1rem, 2vw, 2rem); }
+        #slide-1 .hero-kpi { display: flex; gap: clamp(0.5rem, 1.5vw, 1.5rem); flex-wrap: wrap; }
+        #slide-1 .hero-kpi-item { background: #fff; border: 3px solid #000; box-shadow: 3px 3px 0 #000; padding: 6px 14px; font-weight: 900; font-size: clamp(0.7rem, 1.2vw, 1rem); }
+        #slide-1 .hero-kpi-item strong { font-size: clamp(1.5rem, 4vw, 3rem); display: block; line-height: 1; }
+
+        /* Slide 2: Problem -- brute-split */
+        #slide-2 { flex-direction: row; }
+        #slide-2 .left-panel { flex: 0 0 40%; display: flex; flex-direction: column; justify-content: center; padding: var(--slide-padding); position: relative; z-index: 2; }
+        #slide-2 .right-panel { flex: 1; display: flex; flex-direction: column; justify-content: center; padding: var(--slide-padding); position: relative; z-index: 2; }
+        #slide-2 .left-panel .brute-h2 { margin-top: clamp(0.5rem, 1.5vw, 1rem); }
+
+        /* Slide 3: Discovery -- brute-cards */
+        #slide-3 { justify-content: center; }
+        #slide-3 .style-cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 240px), 1fr)); gap: clamp(0.75rem, 2vw, 1.5rem); margin-top: clamp(1.5rem, 3vw, 3rem); }
+        #slide-3 .style-card { background: #fff; border: 3px solid #000; box-shadow: 4px 4px 0 #000; padding: clamp(1rem, 2vw, 1.5rem); }
+        #slide-3 .style-card.active { background: #000; color: #FFEB3B; }
+        #slide-3 .style-card.active .style-card-label { color: #FFEB3B; }
+        #slide-3 .style-card-preview { height: clamp(60px, 10vh, 120px); border: 2px solid #000; margin-bottom: clamp(0.5rem, 1vw, 1rem); }
+        #slide-3 .style-card-label { font-size: clamp(0.65rem, 1vw, 0.75rem); font-weight: 800; text-transform: uppercase; letter-spacing: 0.1em; color: #000; margin-top: 8px; }
+        #slide-3 .style-card-title { font-weight: 900; font-size: clamp(0.85rem, 1.3vw, 1.1rem); }
+
+        /* Slide 4: Solution -- brute-stat */
+        #slide-4 { justify-content: center; align-items: center; }
+        #slide-4 .stat-number { font-size: clamp(5rem, 18vw, 14rem); font-weight: 900; color: #000; line-height: 0.9; letter-spacing: -0.04em; }
+        #slide-4 .stat-label { font-size: clamp(1rem, 2vw, 1.5rem); font-weight: 700; margin-top: clamp(0.5rem, 1.5vw, 1rem); }
+
+        /* Slide 5: Workflow -- brute-split */
+        #slide-5 { flex-direction: row; }
+        #slide-5 .left-panel { flex: 0 0 38%; display: flex; flex-direction: column; justify-content: center; padding: var(--slide-padding); position: relative; z-index: 2; }
+        #slide-5 .right-panel { flex: 1; display: flex; flex-direction: column; justify-content: center; padding: var(--slide-padding); position: relative; z-index: 2; }
+        #slide-5 .step-block { margin-bottom: clamp(0.75rem, 1.5vw, 1.5rem); }
+        #slide-5 .step-num { font-weight: 900; font-size: clamp(1.5rem, 3vw, 2.5rem); color: #000; }
+        #slide-5 .step-desc { font-weight: 500; font-size: var(--body-size); margin-top: 4px; }
+        #slide-5 .step-code { margin-top: 6px; }
+
+        /* Slide 6: Features -- brute-cards 2x2 */
+        #slide-6 { justify-content: center; }
+        #slide-6 .feature-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: clamp(0.75rem, 1.5vw, 1.25rem); margin-top: clamp(1.5rem, 3vw, 2.5rem); }
+        #slide-6 .feature-card { background: #fff; border: 3px solid #000; box-shadow: 4px 4px 0 #000; padding: clamp(0.75rem, 1.5vw, 1.25rem); }
+        #slide-6 .feature-card:hover { box-shadow: 2px 2px 0 #000; transform: translate(2px, 2px); transition: none; }
+        #slide-6 .feature-icon { font-size: clamp(1.5rem, 3vw, 2.5rem); font-weight: 900; margin-bottom: 8px; }
+        #slide-6 .feature-card h3 { font-weight: 800; font-size: clamp(0.85rem, 1.3vw, 1.15rem); margin-bottom: 6px; }
+        #slide-6 .feature-card p { font-size: var(--small-size); font-weight: 500; line-height: 1.5; }
+
+        /* Slide 7: Install -- brute-list */
+        #slide-7 { justify-content: center; }
+        #slide-7 .install-section { max-width: min(90vw, 700px); }
+        #slide-7 .install-block { margin-top: clamp(1.5rem, 3vw, 2.5rem); }
+        #slide-7 .install-platform { font-weight: 800; font-size: clamp(0.75rem, 1.2vw, 1rem); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 8px; }
+        #slide-7 .install-cmd { margin-top: 6px; }
+
+        /* Slide 8: CTA -- dark brutalist */
+        #slide-8 { background: #000; }
+        #slide-8 .cta-content { max-width: min(90vw, 800px); margin: 0 auto; text-align: center; }
+        #slide-8 .cta-tag { background: #FFEB3B; color: #000; border: 2px solid #FFEB3B; display: inline-block; padding: 2px 10px; font-size: 0.7rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: clamp(1rem, 2vw, 2rem); }
+        #slide-8 .cta-headline { font-size: clamp(2rem, 7vw, 6rem); font-weight: 900; color: #FFEB3B; line-height: 1; letter-spacing: -0.02em; margin-bottom: clamp(0.5rem, 1.5vw, 1rem); }
+        #slide-8 .cta-sub { font-size: clamp(0.875rem, 1.5vw, 1.25rem); color: rgba(255,235,59,0.6); font-weight: 500; margin-bottom: clamp(1.5rem, 3vw, 3rem); }
+        #slide-8 .cta-rule { border-top: 3px solid #FFEB3B; opacity: 0.3; margin-bottom: clamp(1.5rem, 3vw, 3rem); }
+        #slide-8 .cta-cmd-light { background: #FFEB3B; color: #000; font-weight: 900; font-family: 'Courier New', monospace; padding: clamp(0.75rem, 2vw, 1.5rem) clamp(1.5rem, 4vw, 4rem); font-size: clamp(1rem, 2.5vw, 2rem); display: inline-block; box-shadow: 6px 6px 0 rgba(255,235,59,0.3); margin-bottom: clamp(0.5rem, 1.5vw, 1rem); }
+        #slide-8 .cta-note { font-size: var(--small-size); color: rgba(255,235,59,0.4); }
+
+        /* Stripe positioning per slide */
+        #slide-1 .stripe { width:100%; height:30%; top:0; left:0; }
+        #slide-2 .stripe { right:0; top:10%; width:45%; height:80%; }
+        #slide-3 .stripe { top:0; left:0; width:20%; height:20%; }
+        #slide-4 .stripe { top:50%; left:50%; transform:translate(-50%,-50%); width:70%; height:70%; }
+        #slide-5 .stripe { left:0; top:5%; width:15%; height:90%; }
+        #slide-8 .stripe { bottom:0; right:0; width:30%; height:40%; opacity:0.06; background:repeating-linear-gradient(-45deg,#FFEB3B 0px,#FFEB3B 2px,transparent 2px,transparent 10px); }
+
+        /* Slide 3 style card previews */
+        #slide-3 .style-card:nth-child(1) .style-card-preview { background:#FFEB3B; }
+        #slide-3 .style-card:nth-child(2) .style-card-preview { background:#1a1a2e; }
+        #slide-3 .style-card:nth-child(3) .style-card-preview { background:#fff; border:1px solid #e0e0e0; }
+
+        /* Slide 4 centering */
+        #slide-4 .slide-content { align-items:center; text-align:center; }
+
+        /* Slide 4 heavy rule */
+        #slide-4 .heavy-rule { width:60px; margin:1.5rem auto; }
+
+        /* Slide 4 preset tag row */
+        #slide-4 .preset-row { display:flex; gap:8px; flex-wrap:wrap; justify-content:center; }
+
+        /* Slide 8 content centering */
+        #slide-8 .slide-content { align-items:center; }
+
+        /* Slide 5 step tag spacing */
+        #slide-5 .step-block .brute-tag { margin-top:6px; }
+    </style>
+</head><body>
+<section aria-label="Hero" class="slide" data-notes="slide-creator：零依赖 HTML 演示文稿，21 种预设，三分钟出稿。所有工具都在浏览器里，没有 node_modules。" id="slide-1">
+<div class="stripe"></div>
+<div class="hero-badge reveal">
+<span class="brute-tag">CLAUDE CODE 工具</span>
+</div>
+<div class="hero-bottom">
+<h1 class="brute-title reveal preset-neo-brutalism-content">幻灯片<br/>不该这么重</h1>
+<p class="hero-subtitle reveal">零依赖 HTML 演示文稿。一个文件，一个浏览器，<br/>搞定所有演示。选风格，出稿，发布。</p>
+<div class="hero-kpi reveal">
+<div class="hero-kpi-item"><strong>21</strong>种预设</div>
+<div class="hero-kpi-item"><strong>0</strong>个依赖</div>
+<div class="hero-kpi-item"><strong>3min</strong>出稿</div>
+</div>
+</div>
+<span class="slide-num-label">01 / 08</span>
+</section>
+<section aria-label="Problem" class="slide" data-notes="三个痛点：工具链复杂、AI 生成千篇一律、平台锁定用户。" id="slide-2">
+<div class="stripe"></div>
+<div class="left-panel">
+<div class="eyebrow reveal">01</div>
+<h2 class="brute-h2 reveal preset-neo-brutalism-content">做 PPT 不需要<br/>装 300MB 依赖</h2>
+</div>
+<div class="right-panel">
+<ul class="brute-list reveal">
+<li>
+<span class="num">01</span>
+<span><strong>工具链太长</strong> -- npm install、Webpack 配置、node_modules 比 PPT 还大</span>
+</li>
+<li>
+<span class="num">02</span>
+<span><strong>AI 千篇一律</strong> -- 通用 AI 输出全是 Inter 字体 + 紫色渐变，没有辨识度</span>
+</li>
+<li>
+<span class="num">03</span>
+<span><strong>平台锁定</strong> -- 封闭格式、导出限制、月费订阅，你的内容不在你手里</span>
+</li>
+</ul>
+</div>
+<span class="slide-num-label">02 / 08</span>
+</section>
+<section aria-label="Discovery" class="slide" data-notes="看图选风格：描述主题后生成三个预览，点击选中即刻出稿，不靠文字描述。" id="slide-3">
+<div class="stripe"></div>
+<div class="slide-content preset-neo-brutalism-content">
+<div class="eyebrow reveal">02</div>
+<h2 class="brute-h2 reveal">看图选风格，不靠描述</h2>
+<div class="style-cards">
+<div class="style-card active reveal">
+<div class="style-card-preview"></div>
+<div class="style-card-title">粗边框、硬阴影</div>
+<div class="style-card-label">Neo-Brutalism</div>
+</div>
+<div class="style-card reveal">
+<div class="style-card-preview"></div>
+<div class="style-card-title">深色、有机光斑</div>
+<div class="style-card-label">Dark Botanical</div>
+</div>
+<div class="style-card reveal">
+<div class="style-card-preview"></div>
+<div class="style-card-title">大字号、红色分隔线</div>
+<div class="style-card-label">Swiss Modern</div>
+</div>
+</div>
+</div>
+<span class="slide-num-label">03 / 08</span>
+</section>
+<section aria-label="Solution" class="slide" data-notes="21 种预设覆盖商业路演、技术分享、创意展示，拒绝通用 AI 美学。" id="slide-4">
+<div class="stripe"></div>
+<div class="slide-content preset-neo-brutalism-content">
+<div class="eyebrow reveal">03</div>
+<div class="stat-number reveal">21</div>
+<div class="stat-label reveal">种设计预设，没有通用 AI 审美</div>
+<hr class="heavy-rule reveal"/>
+<div class="preset-row reveal">
+<span class="preset-tag current">Neo-Brutalism</span>
+<span class="preset-tag">Blue Sky</span>
+<span class="preset-tag">Dark Botanical</span>
+<span class="preset-tag">Terminal Green</span>
+<span class="preset-tag">Chinese Chan</span>
+<span class="preset-tag">Neon Cyber</span>
+<span class="preset-tag">+15</span>
+</div>
+</div>
+<span class="slide-num-label">04 / 08</span>
+</section>
+<section aria-label="Workflow" class="slide" data-notes="三个命令完成全部流程：描述主题、选风格、打开浏览器。" id="slide-5">
+<div class="stripe"></div>
+<div class="left-panel">
+<div class="eyebrow reveal">04</div>
+<h2 class="brute-h2 reveal preset-neo-brutalism-content">三个命令，<br/>三步出稿</h2>
+</div>
+<div class="right-panel">
+<div class="step-block reveal">
+<div class="step-num">01</div>
+<div class="step-desc">描述你的演示主题</div>
+<div class="code-block step-code">/slide-creator 你的主题</div>
+</div>
+<div class="step-block reveal">
+<div class="step-num">02</div>
+<div class="step-desc">从三个预览中选择风格</div>
+<div class="brute-tag">点击选中</div>
+</div>
+<div class="step-block reveal">
+<div class="step-num">03</div>
+<div class="step-desc">在浏览器中打开演示</div>
+<div class="code-block step-code">open presentation.html</div>
+</div>
+</div>
+<span class="slide-num-label">05 / 08</span>
+</section>
+<section aria-label="Features" class="slide" data-notes="四项核心能力：视口自适应、浏览器内编辑、PPTX 导出、两阶段流程。" id="slide-6">
+<div class="slide-content preset-neo-brutalism-content">
+<div class="eyebrow reveal">05</div>
+<h2 class="brute-h2 reveal">能播、能改、能导出</h2>
+<div class="feature-grid">
+<div class="feature-card reveal">
+<div class="feature-icon">F5</div>
+<h3>全屏播放</h3>
+<p>1440x900 画布，视口自适应缩放，F5 进入全屏模式</p>
+</div>
+<div class="feature-card reveal">
+<div class="feature-icon">E</div>
+<h3>浏览器内编辑</h3>
+<p>左上热区触发 contenteditable，直接在浏览器里改文案</p>
+</div>
+<div class="feature-card reveal">
+<div class="feature-icon">P</div>
+<h3>演讲者模式</h3>
+<p>同步窗口显示备注、计时器、当前页数，演讲不慌</p>
+</div>
+<div class="feature-card reveal">
+<div class="feature-icon">EXP</div>
+<h3>PPTX 导出</h3>
+<p>像素级图片模式或 Native 可编辑模式，兼容 PowerPoint</p>
+</div>
+</div>
+</div>
+<span class="slide-num-label">06 / 08</span>
+</section>
+<section aria-label="Install" class="slide" data-notes="安装方式：Claude Code 对话中安装或 OpenClaw clawhub install 命令。" id="slide-7">
+<div class="slide-content preset-neo-brutalism-content">
+<div class="install-section">
+<div class="eyebrow reveal">安装</div>
+<h2 class="brute-h2 reveal">一行命令，装好即用</h2>
+<div class="install-block">
+<div class="install-platform reveal">Claude Code</div>
+<div class="code-block install-cmd reveal">告诉 Claude「安装 github.com/kaisersong/slide-creator」</div>
+</div>
+<div class="install-block">
+<div class="install-platform reveal">OpenClaw</div>
+<div class="code-block install-cmd reveal">clawhub install kai-slide-creator</div>
+</div>
+</div>
+</div>
+<span class="slide-num-label">07 / 08</span>
+</section>
+<section aria-label="CTA" class="slide" data-notes="行动号召：立即使用 /slide-creator 开始创建你的演示文稿。" id="slide-8">
+<div class="stripe"></div>
+<div class="slide-content preset-neo-brutalism-content">
+<div class="cta-content">
+<div class="cta-tag reveal">slide-creator</div>
+<h2 class="cta-headline reveal">现在就开始</h2>
+<p class="cta-sub reveal">适用于 Claude Code 和 OpenClaw<br/>完全在浏览器中运行，零依赖</p>
+<hr class="cta-rule reveal"/>
+<div class="reveal">
+<div class="cta-cmd-light">/slide-creator</div>
+</div>
+<div class="cta-note reveal">输入命令，描述你的演示，三分钟出稿</div>
+</div>
+</div>
+<span class="slide-num-label light">08 / 08</span>
+</section>
+</body></html>

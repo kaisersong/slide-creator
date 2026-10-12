@@ -1,0 +1,515 @@
+<!DOCTYPE html>
+<!-- Program-owned profile template. Regenerate with scripts/build-profile-templates.py. -->
+<html><head>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&amp;display=swap" rel="stylesheet"/>
+<style>
+        body { background-color: #0a0f1c; }
+
+        :root {
+            --bg: #0a0f1c;
+            --bg-panel: #0e1525;
+            --border-glow: rgba(0, 255, 204, 0.25);
+            --cyan: #00ffcc;
+            --magenta: #ff00aa;
+            --text: #e0f0ff;
+            --text-muted: rgba(224, 240, 255, 0.5);
+            --grid: rgba(0, 255, 204, 0.04);
+            --title-size: clamp(2rem, 6vw, 5rem);
+            --h2-size: clamp(1.25rem, 3.5vw, 2.5rem);
+            --body-size: clamp(0.75rem, 1.5vw, 1.125rem);
+            --small-size: clamp(0.65rem, 1vw, 0.875rem);
+            --slide-padding: clamp(1rem, 4vw, 4rem);
+            --content-gap: clamp(0.5rem, 2vw, 2rem);
+            --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+            --duration-normal: 0.6s;
+        }
+
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+        html { scroll-snap-type: y mandatory; height: 100%; }
+        body {
+            font-family: "Satoshi", -apple-system, sans-serif;
+            -webkit-font-smoothing: antialiased;
+            color: var(--text);
+            height: 100%;
+        }
+
+        /* === Signature Elements: Grid + Scanline overlays === */
+        body::before {
+            content: ''; position: fixed; inset: 0; z-index: 0; pointer-events: none;
+            background-image: linear-gradient(rgba(0,255,204,0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0,255,204,0.03) 1px, transparent 1px);
+            background-size: 50px 50px;
+        }
+        body::after {
+            content: ''; position: fixed; inset: 0; z-index: 1; pointer-events: none;
+            background: repeating-linear-gradient(0deg, transparent, transparent 2px,
+                rgba(0,255,204,0.01) 2px, rgba(0,255,204,0.01) 4px);
+        }
+
+        /* === Signature Elements: Animations === */
+        @keyframes neonPulse {
+            0%, 100% { text-shadow: 0 0 20px rgba(0,255,204,0.5), 0 0 40px rgba(0,255,204,0.2); }
+            50% { text-shadow: 0 0 80px rgba(0,255,204,0.3), 0 0 120px rgba(0,255,204,0.1); }
+        }
+        @keyframes magentaPulse {
+            0%, 100% { text-shadow: 0 0 20px rgba(255,0,170,0.5), 0 0 40px rgba(255,0,170,0.2); }
+            50% { text-shadow: 0 0 80px rgba(255,0,170,0.3), 0 0 120px rgba(255,0,170,0.1); }
+        }
+        @keyframes borderPulse {
+            0%, 100% { box-shadow: 0 0 16px rgba(0,255,204,0.15), inset 0 0 16px rgba(0,255,204,0.03); }
+            50% { box-shadow: 0 0 24px rgba(0,255,204,0.25), inset 0 0 24px rgba(0,255,204,0.06); }
+        }
+        @keyframes glitch-1 {
+            0%, 92% { clip-path: inset(0 0 0 0); transform: none; }
+            93% { clip-path: inset(20% 0 60% 0); transform: translate(-4px, 1px); }
+            95% { clip-path: inset(60% 0 20% 0); transform: translate(4px, -2px); }
+            97% { clip-path: inset(40% 0 40% 0); transform: translate(-2px, 0); }
+            98%, 100% { clip-path: inset(0 0 0 0); transform: none; }
+        }
+        @keyframes glitch-2 {
+            0%, 90% { clip-path: inset(0 0 0 0); transform: none; opacity: 0; }
+            91% { clip-path: inset(60% 0 20% 0); transform: translate(4px, -2px); opacity: 0.8; }
+            94% { clip-path: inset(20% 0 60% 0); transform: translate(-4px, 1px); opacity: 0.6; }
+            96% { clip-path: inset(0 0 0 0); transform: none; opacity: 0; }
+            100% { clip-path: inset(0 0 0 0); transform: none; opacity: 0; }
+        }
+        @keyframes particleDrift {
+            0% { transform: translateY(0) scale(0); opacity: 0; }
+            10% { opacity: 1; transform: translateY(-10vh) scale(1); }
+            90% { opacity: 0.5; }
+            100% { transform: translateY(-100vh) scale(0.5); opacity: 0; }
+        }
+
+        /* === Signature Elements: Required CSS Classes === */
+        .cyber-title {
+            font-family: "Clash Display", sans-serif;
+            font-size: clamp(32px, 6vw, 64px);
+            font-weight: 700;
+            color: var(--text);
+            line-height: 1.05;
+            letter-spacing: -0.01em;
+            position: relative;
+            text-shadow: 0 0 16px rgba(0,255,204,0.35), 0 0 48px rgba(0,255,204,0.1);
+            animation: neonPulse 3s ease-in-out infinite;
+        }
+        .cyber-title[data-text]::before,
+        .cyber-title[data-text]::after {
+            content: attr(data-text);
+            position: absolute;
+            inset: 0;
+        }
+        .cyber-title[data-text]::before {
+            color: var(--cyan);
+            animation: glitch-1 8s infinite;
+        }
+        .cyber-title[data-text]::after {
+            color: var(--magenta);
+            animation: glitch-2 8s infinite;
+        }
+
+        .cyber-label {
+            font-family: "JetBrains Mono", monospace;
+            font-size: clamp(10px, 1.1vw, 12px);
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.2em;
+            color: var(--cyan);
+            animation: neonPulse 3s ease-in-out infinite;
+        }
+
+        .cyber-heading {
+            font-family: "Clash Display", sans-serif;
+            font-size: var(--h2-size);
+            font-weight: 700;
+            color: var(--text);
+            line-height: 1.15;
+            text-shadow: 0 0 16px rgba(0,255,204,0.35), 0 0 48px rgba(0,255,204,0.1);
+        }
+        .cyber-heading .accent {
+            color: var(--cyan);
+            animation: neonPulse 3s ease-in-out infinite;
+        }
+        .cyber-heading .mg {
+            color: var(--magenta);
+            animation: magentaPulse 3s ease-in-out infinite;
+        }
+
+        .cyber-card {
+            background: var(--bg-panel);
+            border: 1px solid var(--border-glow);
+            padding: clamp(16px, 2.5vw, 24px);
+            position: relative;
+            clip-path: polygon(0 0, calc(100% - 14px) 0, 100% 14px, 100% 100%, 0 100%);
+            animation: borderPulse 4s ease-in-out infinite;
+        }
+        .cyber-card::before {
+            content: ''; position: absolute; top: 0; left: 0;
+            width: 40px; height: 2px; background: var(--cyan);
+        }
+        .cyber-card::after {
+            content: ''; position: absolute; top: 0; left: 0;
+            width: 2px; height: 40px; background: var(--cyan);
+        }
+
+        .corner-br {
+            position: relative;
+        }
+        .corner-br::before {
+            content: ''; position: absolute; bottom: 0; right: 0;
+            width: 20px; height: 2px; background: var(--cyan); opacity: 0.4;
+        }
+        .corner-br::after {
+            content: ''; position: absolute; bottom: 0; right: 0;
+            width: 2px; height: 20px; background: var(--cyan); opacity: 0.4;
+        }
+
+        .corner-tl {
+            position: relative;
+        }
+        .corner-tl::before {
+            content: ''; position: absolute; top: 0; left: 0;
+            width: 20px; height: 2px; background: var(--cyan); opacity: 0.4;
+        }
+        .corner-tl::after {
+            content: ''; position: absolute; top: 0; left: 0;
+            width: 2px; height: 20px; background: var(--cyan); opacity: 0.4;
+        }
+
+        .neon-divider {
+            height: 2px;
+            background: linear-gradient(90deg, var(--cyan), var(--magenta));
+        }
+
+        .neon-mono {
+            font-family: "JetBrains Mono", monospace;
+            font-size: clamp(10px, 1.1vw, 12px);
+            color: var(--text-muted);
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+        }
+
+        .neon-body {
+            font-family: "Satoshi", sans-serif;
+            font-size: var(--body-size);
+            color: var(--text);
+            line-height: 1.6;
+        }
+
+        .particle {
+            position: fixed;
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 0;
+            animation: particleDrift linear infinite;
+        }
+
+        /* === Viewport fitting === */
+        .slide {
+            width: 100vw; height: 100vh; height: 100dvh;
+            overflow: hidden; scroll-snap-align: start;
+            display: flex; flex-direction: column;
+            position: relative; z-index: 2;
+            background: var(--bg);
+        }
+        .slide-content {
+            flex: 1; display: flex; flex-direction: column;
+            justify-content: center; max-height: 100%;
+            overflow: hidden; padding: var(--slide-padding);
+            position: relative; z-index: 3;
+        }
+
+        /* Grid layout */
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(min(100%, 220px), 1fr));
+            gap: clamp(0.5rem, 1.5vw, 1rem);
+        }
+
+        /* Reveal animations */
+        .reveal {
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.5s ease, transform 0.5s cubic-bezier(0.16,1,0.3,1);
+        }
+        .slide.visible .reveal { opacity: 1; transform: translateY(0); }
+        .reveal:nth-child(1) { transition-delay: 0.05s; }
+        .reveal:nth-child(2) { transition-delay: 0.15s; }
+        .reveal:nth-child(3) { transition-delay: 0.25s; }
+        .reveal:nth-child(4) { transition-delay: 0.35s; }
+
+        /* Responsive */
+        @media (max-height: 700px) {
+            :root { --slide-padding: clamp(0.75rem, 3vw, 2rem); --content-gap: clamp(0.4rem, 1.5vw, 1rem); --title-size: clamp(1.25rem, 4.5vw, 2.5rem); }
+        }
+        @media (max-height: 600px) {
+            :root { --slide-padding: clamp(0.5rem, 2.5vw, 1.5rem); --title-size: clamp(1.1rem, 4vw, 2rem); --body-size: clamp(0.7rem, 1.2vw, 0.95rem); }
+            .nav-dots, .keyboard-hint, .decorative { display: none; }
+        }
+        @media (max-height: 500px) {
+            :root { --slide-padding: clamp(0.4rem, 2vw, 1rem); --title-size: clamp(1rem, 3.5vw, 1.5rem); }
+        }
+        @media (max-width: 600px) {
+            .grid { grid-template-columns: 1fr; }
+        }
+        @media (prefers-reduced-motion: reduce) {
+            *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.2s !important; }
+        }
+
+        .card, .container, .content-box { max-width: min(90vw, 1000px); max-height: min(80vh, 700px); }
+
+        /* Presentation mode */
+        #present-btn { position: fixed; bottom: 1.5rem; right: 1.5rem; z-index: 9997; width: 44px; height: 44px; border-radius: 50%; background: rgba(0,0,0,0.5); color: rgba(255,255,255,0.8); border: 1.5px solid var(--border-glow); font-size: 1rem; cursor: pointer; backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); display: flex; align-items: center; justify-content: center; opacity: 0; transition: opacity 0.2s; pointer-events: none; box-shadow: 0 0 8px rgba(0,255,204,0.3); }
+        body:hover #present-btn { opacity: 1; pointer-events: auto; }
+        #present-btn:hover { background: rgba(0,255,204,0.2); }
+        #present-counter { display: none; position: fixed; bottom: 1.4rem; left: 50%; transform: translateX(-50%); z-index: 9997; font-size: 0.65rem; letter-spacing: 0.14em; font-family: "JetBrains Mono", monospace; color: var(--text-muted); }
+        body.presenting { background: #000 !important; overflow: hidden !important; }
+        body.presenting .slide { position: fixed !important; inset: 0; width: 100vw !important; height: 100vh !important; transform-origin: center center; scroll-snap-align: none !important; display: none !important; }
+        body.presenting .slide.p-on { display: flex !important; }
+        body.presenting #present-btn { display: none !important; }
+        body.presenting #present-counter { display: block; }
+        body.presenting.presenting-black .slide { visibility: hidden !important; }
+        body.presenting.presenting-black::after { content: ''; position: fixed; inset: 0; background: #000; z-index: 99999; }
+        .slide-credit { position: absolute; bottom: 8px; right: 14px; font-size: 9px; color: var(--text-muted); opacity: 0.35; pointer-events: none; z-index: 1; font-family: "JetBrains Mono", monospace; }
+        body.presenting .slide-credit { display: none !important; }
+
+        /* Progress bar */
+        .progress-bar { background: linear-gradient(90deg, var(--cyan), var(--magenta)) !important; box-shadow: 0 0 8px rgba(0,255,204,0.6); }
+
+        /* Edit mode */
+        .edit-hotzone { position: fixed; top: 0; left: 0; width: 80px; height: 80px; z-index: 10000; cursor: pointer; }
+        .edit-toggle { position: fixed; top: 16px; left: 16px; opacity: 0; pointer-events: none; transition: opacity 0.3s ease; z-index: 10001; border: 1px solid var(--border-glow); background: var(--bg-panel); color: var(--cyan); border-radius: 0; padding: 6px 14px; font-size: 13px; font-family: "JetBrains Mono", monospace; cursor: pointer; clip-path: polygon(0 0, calc(100% - 10px) 0, 100% 10px, 100% 100%, 0 100%); }
+        .edit-toggle.show { opacity: 1; pointer-events: auto; }
+        .edit-toggle.active { opacity: 1; pointer-events: auto; background: rgba(0,255,204,0.15); color: var(--cyan); }
+        #notes-panel { display: none; position: fixed; bottom: 0; left: 0; right: 0; z-index: 9998; background: rgba(8,8,18,0.94); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); border-top: 1px solid var(--border-glow); }
+        #notes-panel.active { display: flex; flex-direction: column; }
+        #notes-panel-header { display: flex; align-items: center; justify-content: space-between; padding: 0.45rem 1.4rem; cursor: pointer; user-select: none; }
+        #notes-panel-header:hover { background: rgba(0,255,204,0.03); }
+        #notes-panel-label { flex: 1; font-size: 0.58rem; letter-spacing: 0.16em; text-transform: uppercase; color: var(--text-muted); font-family: "JetBrains Mono", monospace; }
+        #notes-drag-hint { flex: 1; display: flex; justify-content: center; }
+        #notes-drag-hint::after { content: ''; display: block; width: 36px; height: 3px; border-radius: 2px; background: rgba(0,255,204,0.25); }
+        #notes-panel-header:hover #notes-drag-hint::after { background: rgba(0,255,204,0.45); }
+        #notes-collapse-btn { flex: 1; text-align: right; font-size: 1rem; color: rgba(255,255,255,0.4); background: none; border: none; cursor: pointer; transition: color 0.15s, transform 0.2s; }
+        #notes-collapse-btn:hover { color: rgba(0,255,204,0.85); }
+        #notes-body { padding: 0 1.4rem 0.75rem; }
+        #notes-panel.collapsed #notes-body { display: none; }
+        #notes-panel.collapsed #notes-collapse-btn { transform: rotate(180deg); }
+        #notes-textarea { width: 100%; height: 72px; min-height: 48px; max-height: 200px; resize: vertical; background: transparent; border: none; outline: none; color: rgba(255,255,255,0.75); font-size: 0.88rem; line-height: 1.65; font-family: "JetBrains Mono", monospace; }
+        #notes-textarea::placeholder { color: rgba(255,255,255,0.18); }
+    </style>
+</head><body>
+<section aria-label="Title slide" class="slide" data-notes="封面页">
+<div class="slide-content preset-neon-cyber-content" style="align-items:center; text-align:center;">
+<div class="reveal" style="margin-bottom:clamp(1rem, 3vw, 2rem);">
+<span class="cyber-label">// ZERO-DEPENDENCY HTML PRESENTATIONS</span>
+</div>
+<h1 class="reveal cyber-title" data-text="kai-slide-creator" style="margin-bottom:clamp(0.5rem, 1.5vw, 1rem);">kai-slide-creator</h1>
+<p class="reveal neon-body" style="max-width:min(90vw, 560px); margin: 0 auto clamp(1.5rem, 3vw, 2.5rem); color: var(--text-muted);">21 种设计预设，拒绝通用 AI 审美。纯浏览器运行，无需安装任何工具链。</p>
+<div class="reveal neon-divider" style="width:min(80vw, 400px); margin: 0 auto clamp(1.5rem, 3vw, 2rem);"></div>
+<div class="reveal" style="display:flex; gap:clamp(1.5rem, 4vw, 3rem); justify-content:center; flex-wrap:wrap;">
+<div class="corner-br" style="text-align:center; padding:clamp(0.8rem, 2vw, 1.5rem);">
+<div style="font-family:'Clash Display'; font-size:clamp(2.5rem, 6vw, 4rem); font-weight:700; color:var(--cyan); animation:neonPulse 3s ease-in-out infinite;">0</div>
+<div class="neon-mono" style="margin-top:0.3rem;">DEPENDENCIES</div>
+</div>
+<div class="corner-br" style="text-align:center; padding:clamp(0.8rem, 2vw, 1.5rem);">
+<div style="font-family:'Clash Display'; font-size:clamp(2.5rem, 6vw, 4rem); font-weight:700; color:var(--magenta); animation:magentaPulse 3s ease-in-out infinite;">21</div>
+<div class="neon-mono" style="margin-top:0.3rem;">PRESETS</div>
+</div>
+</div>
+</div>
+</section>
+<section aria-label="Slide 2" class="slide" data-notes="三大痛点">
+<div class="slide-content preset-neon-cyber-content">
+<div class="reveal"><span class="cyber-label">// PROBLEM DIAGNOSTICS</span></div>
+<h2 class="reveal cyber-heading" style="margin-bottom:clamp(1rem, 2.5vw, 1.8rem);">传统工具的 <span class="mg">三个死结</span></h2>
+<div class="reveal grid" style="grid-template-columns: 1fr 1fr 1fr;">
+<div class="cyber-card corner-br">
+<div class="neon-mono" style="margin-bottom:0.6rem;">ERR:TOOLCHAIN</div>
+<h3 style="font-family:'Clash Display'; font-size:var(--body-size); font-weight:700; margin-bottom:0.4rem;">复杂工具链</h3>
+<p class="neon-body" style="font-size:var(--small-size); color:var(--text-muted);">PowerPoint + Keynote + Figma，三个软件才能做一套演示。</p>
+</div>
+<div class="cyber-card corner-br">
+<div class="neon-mono" style="margin-bottom:0.6rem;">ERR:AESTHETIC</div>
+<h3 style="font-family:'Clash Display'; font-size:var(--body-size); font-weight:700; margin-bottom:0.4rem;">通用 AI 美学</h3>
+<p class="neon-body" style="font-size:var(--small-size); color:var(--text-muted);">所有 AI 生成的幻灯片看起来都一样，紫色渐变 + Inter 字体。</p>
+</div>
+<div class="cyber-card corner-br">
+<div class="neon-mono" style="margin-bottom:0.6rem;">ERR:LOCKED</div>
+<h3 style="font-family:'Clash Display'; font-size:var(--body-size); font-weight:700; margin-bottom:0.4rem;">平台锁定</h3>
+<p class="neon-body" style="font-size:var(--small-size); color:var(--text-muted);">PPTX 离开 Office 生态就崩，字体动画布局全错位。</p>
+</div>
+</div>
+</div>
+</section>
+<section aria-label="Slide 3" class="slide" data-notes="风格发现流程">
+<div class="slide-content preset-neon-cyber-content" style="flex-direction:row; gap:clamp(1rem, 3vw, 3rem);">
+<div style="flex:0 0 clamp(40px, 1px, 2px); display:flex; justify-content:center;">
+<div style="width:2px; background:linear-gradient(180deg, var(--cyan), var(--magenta)); border-radius:1px;"></div>
+</div>
+<div style="flex:1;">
+<div class="reveal"><span class="cyber-label">// STYLE DISCOVERY</span></div>
+<h2 class="reveal cyber-heading" style="margin-bottom:clamp(0.8rem, 2vw, 1.5rem);">看图选风格，<span class="accent">反应先于描述</span></h2>
+<p class="reveal neon-body" style="color:var(--text-muted); margin-bottom:clamp(1rem, 2.5vw, 1.8rem);">生成 3 个风格预览，凭直觉选一个。不需要学会描述你想要什么。</p>
+<div class="reveal" style="display:flex; gap:clamp(0.6rem, 1.5vw, 1rem); flex-wrap:wrap;">
+<div class="cyber-card" style="flex:1; min-width:140px; text-align:center; padding:clamp(0.8rem, 1.5vw, 1.2rem);">
+<div style="height:clamp(50px, 8vw, 70px); border-radius:4px; background:linear-gradient(135deg,#0a0f1c,#0e1525); margin-bottom:0.5rem; border:1px solid var(--border-glow);"></div>
+<span class="neon-mono" style="font-size:10px;">NEON CYBER</span>
+</div>
+<div class="cyber-card" style="flex:1; min-width:140px; text-align:center; padding:clamp(0.8rem, 1.5vw, 1.2rem);">
+<div style="height:clamp(50px, 8vw, 70px); border-radius:4px; background:linear-gradient(135deg,#0a0a0a,#1a1a2e); margin-bottom:0.5rem; border:1px solid rgba(100,100,120,0.2);"></div>
+<span class="neon-mono" style="font-size:10px;">ENTERPRISE DARK</span>
+</div>
+<div class="cyber-card" style="flex:1; min-width:140px; text-align:center; padding:clamp(0.8rem, 1.5vw, 1.2rem);">
+<div style="height:clamp(50px, 8vw, 70px); border-radius:4px; background:linear-gradient(135deg,#f5f3ee,#e8d4c0); margin-bottom:0.5rem; border:1px solid rgba(0,0,0,0.1);"></div>
+<span class="neon-mono" style="font-size:10px;">VINTAGE EDITORIAL</span>
+</div>
+</div>
+</div>
+</div>
+</section>
+<section aria-label="Slide 4" class="slide" data-notes="21 种预设">
+<div class="slide-content preset-neon-cyber-content">
+<div class="reveal"><span class="cyber-label">// ALL PRESETS LOADED</span></div>
+<h2 class="reveal cyber-heading" style="margin-bottom:clamp(0.8rem, 2vw, 1.2rem);">21 种预设，<span class="accent">没有两个长得一样</span></h2>
+<div class="reveal grid" style="grid-template-columns: repeat(auto-fit, minmax(min(100%, 140px), 1fr)); gap: clamp(0.4rem, 1vw, 0.8rem);">
+<div class="cyber-card" style="padding:clamp(0.5rem, 1vw, 0.8rem); text-align:center; animation:none;">
+<div style="height:3px; border-radius:2px; background:linear-gradient(90deg,#00ffcc,#ff00aa); margin-bottom:0.4rem;"></div>
+<span style="font-family:'JetBrains Mono'; font-size:var(--small-size); color:var(--text-muted);">Neon Cyber</span>
+</div>
+<div class="cyber-card" style="padding:clamp(0.5rem, 1vw, 0.8rem); text-align:center; animation:none;">
+<div style="height:3px; border-radius:2px; background:linear-gradient(90deg,#e63946,#f4a261); margin-bottom:0.4rem;"></div>
+<span style="font-family:'JetBrains Mono'; font-size:var(--small-size); color:var(--text-muted);">Bold Signal</span>
+</div>
+<div class="cyber-card" style="padding:clamp(0.5rem, 1vw, 0.8rem); text-align:center; animation:none;">
+<div style="height:3px; border-radius:2px; background:linear-gradient(90deg,#667eea,#764ba2); margin-bottom:0.4rem;"></div>
+<span style="font-family:'JetBrains Mono'; font-size:var(--small-size); color:var(--text-muted);">Aurora Mesh</span>
+</div>
+<div class="cyber-card" style="padding:clamp(0.5rem, 1vw, 0.8rem); text-align:center; animation:none;">
+<div style="height:3px; border-radius:2px; background:linear-gradient(90deg,#a8edea,#fed6e3); margin-bottom:0.4rem;"></div>
+<span style="font-family:'JetBrains Mono'; font-size:var(--small-size); color:var(--text-muted);">Glassmorphism</span>
+</div>
+<div class="cyber-card" style="padding:clamp(0.5rem, 1vw, 0.8rem); text-align:center; animation:none;">
+<div style="height:3px; border-radius:2px; background:linear-gradient(90deg,#0a0a0a,#333); margin-bottom:0.4rem;"></div>
+<span style="font-family:'JetBrains Mono'; font-size:var(--small-size); color:var(--text-muted);">Terminal Green</span>
+</div>
+<div class="cyber-card" style="padding:clamp(0.5rem, 1vw, 0.8rem); text-align:center; animation:none;">
+<div style="height:3px; border-radius:2px; background:linear-gradient(90deg,#f5f3ee,#e8d4c0); margin-bottom:0.4rem;"></div>
+<span style="font-family:'JetBrains Mono'; font-size:var(--small-size); color:var(--text-muted);">Vintage Editorial</span>
+</div>
+<div class="cyber-card" style="padding:clamp(0.5rem, 1vw, 0.8rem); text-align:center; animation:none;">
+<div style="height:3px; border-radius:2px; background:linear-gradient(90deg,#1a1a2e,#16213e); margin-bottom:0.4rem;"></div>
+<span style="font-family:'JetBrains Mono'; font-size:var(--small-size); color:var(--text-muted);">Enterprise Dark</span>
+</div>
+<div class="cyber-card" style="padding:clamp(0.5rem, 1vw, 0.8rem); text-align:center; animation:none;">
+<div style="height:3px; border-radius:2px; background:linear-gradient(90deg,#fff,#f0f0f0); margin-bottom:0.4rem;"></div>
+<span style="font-family:'JetBrains Mono'; font-size:var(--small-size); color:var(--text-muted);">Swiss Modern</span>
+</div>
+<div class="cyber-card" style="padding:clamp(0.5rem, 1vw, 0.8rem); text-align:center; animation:none;">
+<div style="height:3px; border-radius:2px; background:linear-gradient(90deg,#fce4ec,#f3e5f5); margin-bottom:0.4rem;"></div>
+<span style="font-family:'JetBrains Mono'; font-size:var(--small-size); color:var(--text-muted);">Split Pastel</span>
+</div>
+<div class="cyber-card" style="padding:clamp(0.5rem, 1vw, 0.8rem); text-align:center; animation:none;">
+<div style="height:3px; border-radius:2px; background:linear-gradient(90deg,#ffecd2,#fcb69f); margin-bottom:0.4rem;"></div>
+<span style="font-family:'JetBrains Mono'; font-size:var(--small-size); color:var(--text-muted);">Paper &amp; Ink</span>
+</div>
+<div class="cyber-card" style="padding:clamp(0.5rem, 1vw, 0.8rem); text-align:center; animation:none;">
+<div style="height:3px; border-radius:2px; background:linear-gradient(90deg,#2d3436,#636e72); margin-bottom:0.4rem;"></div>
+<span style="font-family:'JetBrains Mono'; font-size:var(--small-size); color:var(--text-muted);">Chinese Chan</span>
+</div>
+<div class="cyber-card" style="padding:clamp(0.5rem, 1vw, 0.8rem); text-align:center; animation:none;">
+<div style="height:3px; border-radius:2px; background:linear-gradient(90deg,#ff6b6b,#ffd93d); margin-bottom:0.4rem;"></div>
+<span style="font-family:'JetBrains Mono'; font-size:var(--small-size); color:var(--text-muted);">Neo-Brutalism</span>
+</div>
+</div>
+<div class="reveal" style="text-align:center; margin-top:clamp(0.5rem, 1.5vw, 1rem);">
+<span class="neon-mono" style="color:var(--cyan);">+ 9 MORE PRESETS LOADED</span>
+</div>
+</div>
+</section>
+<section aria-label="Slide 5" class="slide" data-notes="三步工作流">
+<div class="slide-content preset-neon-cyber-content" style="flex-direction:row; gap:clamp(1.5rem, 4vw, 3rem);">
+<div style="flex:0.4; display:flex; flex-direction:column; justify-content:center;">
+<div class="reveal"><span class="cyber-label">// WORKFLOW</span></div>
+<h2 class="reveal cyber-heading">三个命令，<br/><span class="mg">从想法到演示</span></h2>
+</div>
+<div style="flex:0.6; display:flex; flex-direction:column; gap:clamp(0.8rem, 2vw, 1.2rem); justify-content:center;">
+<div class="reveal cyber-card" style="display:flex; align-items:center; gap:clamp(0.8rem, 2vw, 1.2rem);">
+<div style="width:clamp(32px, 4vw, 48px); height:clamp(32px, 4vw, 48px); border-radius:50%; border:1px solid var(--border-glow); display:flex; align-items:center; justify-content:center; font-family:'Clash Display'; font-weight:700; color:var(--cyan); flex-shrink:0; font-size:clamp(14px, 1.8vw, 20px); animation:neonPulse 3s ease-in-out infinite;">1</div>
+<div>
+<h3 style="font-family:'Clash Display'; font-size:var(--body-size); font-weight:700; margin-bottom:0.2rem;">描述你的内容</h3>
+<p class="neon-body" style="font-size:var(--small-size); color:var(--text-muted);">用自然语言告诉 Claude 你要讲什么。</p>
+</div>
+</div>
+<div class="reveal cyber-card" style="display:flex; align-items:center; gap:clamp(0.8rem, 2vw, 1.2rem);">
+<div style="width:clamp(32px, 4vw, 48px); height:clamp(32px, 4vw, 48px); border-radius:50%; border:1px solid var(--border-glow); display:flex; align-items:center; justify-content:center; font-family:'Clash Display'; font-weight:700; color:var(--magenta); flex-shrink:0; font-size:clamp(14px, 1.8vw, 20px); animation:magentaPulse 3s ease-in-out infinite;">2</div>
+<div>
+<h3 style="font-family:'Clash Display'; font-size:var(--body-size); font-weight:700; margin-bottom:0.2rem;">挑选一种风格</h3>
+<p class="neon-body" style="font-size:var(--small-size); color:var(--text-muted);">3 个视觉预览，看图选择，不用学设计术语。</p>
+</div>
+</div>
+<div class="reveal cyber-card" style="display:flex; align-items:center; gap:clamp(0.8rem, 2vw, 1.2rem);">
+<div style="width:clamp(32px, 4vw, 48px); height:clamp(32px, 4vw, 48px); border-radius:50%; border:1px solid var(--border-glow); display:flex; align-items:center; justify-content:center; font-family:'Clash Display'; font-weight:700; color:var(--cyan); flex-shrink:0; font-size:clamp(14px, 1.8vw, 20px); animation:neonPulse 3s ease-in-out infinite;">3</div>
+<div>
+<h3 style="font-family:'Clash Display'; font-size:var(--body-size); font-weight:700; margin-bottom:0.2rem;">打开浏览器演示</h3>
+<p class="neon-body" style="font-size:var(--small-size); color:var(--text-muted);">生成的 HTML 零依赖，双击即播放。</p>
+</div>
+</div>
+</div>
+</div>
+</section>
+<section aria-label="Slide 6" class="slide" data-notes="核心功能">
+<div class="slide-content preset-neon-cyber-content">
+<div class="reveal"><span class="cyber-label">// CAPABILITIES</span></div>
+<h2 class="reveal cyber-heading" style="margin-bottom:clamp(1rem, 2.5vw, 1.5rem);">四个能力，<span class="accent">覆盖全流程</span></h2>
+<div class="reveal grid" style="grid-template-columns: 1fr 1fr;">
+<div class="cyber-card corner-br" style="text-align:center;">
+<div style="font-size:clamp(1.5rem, 3vw, 2rem); color:var(--cyan); animation:neonPulse 3s ease-in-out infinite; margin-bottom:0.5rem;">▶</div>
+<h3 style="font-family:'Clash Display'; font-size:var(--body-size); font-weight:700; margin-bottom:0.3rem;">播放模式</h3>
+<p class="neon-body" style="font-size:var(--small-size); color:var(--text-muted);">F5 全屏，自动缩放适配任何屏幕。</p>
+</div>
+<div class="cyber-card corner-br" style="text-align:center;">
+<div style="font-size:clamp(1.5rem, 3vw, 2rem); color:var(--magenta); animation:magentaPulse 3s ease-in-out infinite; margin-bottom:0.5rem;">✎</div>
+<h3 style="font-family:'Clash Display'; font-size:var(--body-size); font-weight:700; margin-bottom:0.3rem;">浏览器内编辑</h3>
+<p class="neon-body" style="font-size:var(--small-size); color:var(--text-muted);">E 键进入，直接改文字和内容。</p>
+</div>
+<div class="cyber-card corner-br" style="text-align:center;">
+<div style="font-size:clamp(1.5rem, 3vw, 2rem); color:var(--cyan); animation:neonPulse 3s ease-in-out infinite; margin-bottom:0.5rem;">⇩</div>
+<h3 style="font-family:'Clash Display'; font-size:var(--body-size); font-weight:700; margin-bottom:0.3rem;">PPTX 导出</h3>
+<p class="neon-body" style="font-size:var(--small-size); color:var(--text-muted);">原生模式或图片模式，按需导出。</p>
+</div>
+<div class="cyber-card corner-br" style="text-align:center;">
+<div style="font-size:clamp(1.5rem, 3vw, 2rem); color:var(--magenta); animation:magentaPulse 3s ease-in-out infinite; margin-bottom:0.5rem;">☶</div>
+<h3 style="font-family:'Clash Display'; font-size:var(--body-size); font-weight:700; margin-bottom:0.3rem;">演讲者模式</h3>
+<p class="neon-body" style="font-size:var(--small-size); color:var(--text-muted);">P 键打开，备注、计时器同步显示。</p>
+</div>
+</div>
+</div>
+</section>
+<section aria-label="Slide 7" class="slide" data-notes="安装方式">
+<div class="slide-content preset-neon-cyber-content" style="align-items:center; text-align:center;">
+<div class="reveal"><span class="cyber-label">// INSTALLATION</span></div>
+<h2 class="reveal cyber-heading" style="margin-bottom:clamp(1rem, 3vw, 2rem);">两种方式，<span class="mg">一行命令安装</span></h2>
+<div class="reveal" style="display:flex; gap:clamp(1rem, 3vw, 2rem); flex-wrap:wrap; justify-content:center; max-width:min(90vw, 700px);">
+<div class="cyber-card" style="flex:1; min-width:240px; text-align:left;">
+<div class="neon-mono" style="margin-bottom:0.6rem; color:var(--cyan);">SYS://CLAUDE_CODE</div>
+<div style="background:rgba(0,255,204,0.05); border-left:2px solid var(--cyan); padding:clamp(0.5rem, 1vw, 0.8rem); font-family:'JetBrains Mono'; font-size:var(--small-size); color:var(--text); word-break:break-all;">
+                        安装 https://github.com/<br/>kaisersong/slide-creator
+                    </div>
+</div>
+<div class="cyber-card" style="flex:1; min-width:240px; text-align:left;">
+<div class="neon-mono" style="margin-bottom:0.6rem; color:var(--magenta);">SYS://OPENCLAW</div>
+<div style="background:rgba(255,0,170,0.05); border-left:2px solid var(--magenta); padding:clamp(0.5rem, 1vw, 0.8rem); font-family:'JetBrains Mono'; font-size:var(--small-size); color:var(--text);">
+                        clawhub install kai-slide-creator
+                    </div>
+</div>
+</div>
+</div>
+</section>
+<section aria-label="Slide 8" class="slide" data-notes="行动号召">
+<div class="slide-content preset-neon-cyber-content" style="align-items:center; text-align:center;">
+<h1 class="reveal cyber-title" data-text="/slide-creator" style="margin-bottom:clamp(0.8rem, 2vw, 1.5rem);">/slide-creator</h1>
+<p class="reveal neon-body" style="color:var(--text-muted); margin-bottom:clamp(1.5rem, 3vw, 2.5rem); max-width:min(90vw, 480px);">对 Claude 说这句话，从想法到成品。</p>
+<div class="reveal neon-divider" style="width:min(60vw, 300px); margin:0 auto clamp(1rem, 2vw, 1.5rem);"></div>
+<div class="reveal neon-mono" style="opacity:0.3;">// TRANSMISSION COMPLETE</div>
+</div>
+</section>
+</body></html>

@@ -1,0 +1,815 @@
+<!DOCTYPE html>
+<!-- Program-owned profile template. Regenerate with scripts/build-profile-templates.py. -->
+<html><head>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@800;900&amp;family=IBM+Plex+Mono:wght@400;600&amp;family=IBM+Plex+Sans:wght@400;500&amp;family=Noto+Sans+SC:wght@400;500;700;900&amp;display=swap" rel="stylesheet"/>
+<style>
+    /* ===========================================
+       NEO-RETRO DEV: Theme Variables
+       =========================================== */
+    :root {
+        --bg: #f5f2e8;
+        --grid: rgba(80, 100, 170, 0.10);
+        --text: #111111;
+        --pink: #FF3C7E;
+        --yellow: #FFE14D;
+        --cyan: #00C8FF;
+        --border: #111111;
+        --block-bg: #ffffff;
+        --block-dark: #1a1a1a;
+        --green: #22c55e;
+        --accent: #FFE14D;
+        --title-size: clamp(1.5rem, 5vw, 4rem);
+        --h2-size: clamp(1.25rem, 3.5vw, 2.5rem);
+        --body-size: clamp(0.75rem, 1.5vw, 1.125rem);
+        --small-size: clamp(0.65rem, 1vw, 0.875rem);
+        --slide-padding: clamp(1rem, 4vw, 4rem);
+        --content-gap: clamp(0.5rem, 2vw, 2rem);
+    }
+
+    /* ===========================================
+       VIEWPORT FITTING: MANDATORY
+       =========================================== */
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+    html, body { height: 100%; }
+    html { scroll-snap-type: y mandatory; height: 100%; }
+
+    body {
+        background-color: var(--bg);
+        background-image:
+            linear-gradient(var(--grid) 1px, transparent 1px),
+            linear-gradient(90deg, var(--grid) 1px, transparent 1px);
+        background-size: 24px 24px;
+        font-family: "IBM Plex Sans", "Noto Sans SC", -apple-system, sans-serif;
+        color: var(--text);
+    }
+
+    body[data-export-progress="false"] .progress-bar,
+    body[data-export-progress="false"] .nav-dots { display: none !important; }
+
+    .slide {
+        width: 100vw;
+        height: 100vh;
+        height: 100dvh;
+        overflow: hidden;
+        scroll-snap-align: start;
+        display: flex;
+        flex-direction: column;
+        position: relative;
+    }
+
+    .slide-content {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        max-height: 100%;
+        overflow: hidden;
+        padding: var(--slide-padding);
+        position: relative;
+        z-index: 2;
+    }
+
+    /* ===========================================
+       Signature Elements: Neo-Retro Dev
+       =========================================== */
+
+    .block {
+        background: var(--block-bg);
+        border: 3px solid var(--border);
+        border-radius: 0;
+        box-shadow: 4px 4px 0 var(--border);
+        padding: clamp(0.8rem, 2vw, 1.5rem);
+        transition: box-shadow 0.1s, transform 0.1s;
+    }
+    .block:hover { box-shadow: 2px 2px 0 var(--border); transform: translate(2px, 2px); }
+
+    .block-dark {
+        background: var(--block-dark);
+        color: #f7f5f0;
+        border: 3px solid var(--border);
+        border-radius: 0;
+        box-shadow: 4px 4px 0 var(--border);
+        padding: clamp(0.8rem, 2vw, 1.5rem);
+    }
+
+    .accent-pink { border-top: 5px solid var(--pink); }
+    .accent-yellow { border-top: 5px solid var(--yellow); }
+    .accent-cyan { border-top: 5px solid var(--cyan); }
+
+    .badge {
+        display: inline-block;
+        background: var(--yellow);
+        border: 2px solid var(--border);
+        border-radius: 0;
+        padding: 4px 12px;
+        font-family: "IBM Plex Mono", "Noto Sans SC", monospace;
+        font-size: clamp(10px, 1.1vw, 13px);
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+    }
+    .badge-pink { background: var(--pink); color: #fff; }
+    .badge-cyan { background: var(--cyan); color: #000; }
+
+    .hl {
+        background: var(--yellow);
+        border: 1.5px solid var(--border);
+        padding: 0 4px;
+        display: inline;
+    }
+    .hl-pink { background: var(--pink); color: #fff; border-color: var(--pink); }
+    .hl-cyan { background: var(--cyan); border-color: var(--cyan); }
+
+    .headline {
+        font-family: "Barlow Condensed", "Noto Sans SC", sans-serif;
+        font-size: clamp(28px, 6vw, 56px);
+        font-weight: 900;
+        text-transform: uppercase;
+        letter-spacing: -0.01em;
+        line-height: 1.0;
+        color: var(--text);
+    }
+
+    .h-xl { font-size: clamp(3rem, 9vw, 7.5rem); }
+    .h-lg { font-size: clamp(2rem, 6vw, 5rem); }
+    .h-md { font-size: clamp(1.4rem, 3.5vw, 3rem); }
+    .h-sm { font-size: clamp(1rem, 2.5vw, 1.8rem); }
+
+    .body-text {
+        font-family: "IBM Plex Sans", "Noto Sans SC", sans-serif;
+        font-size: clamp(0.8rem, 1.4vw, 1rem);
+        line-height: 1.6;
+        color: #444;
+    }
+
+    .comment {
+        font-family: "IBM Plex Mono", "Noto Sans SC", monospace;
+        font-size: clamp(11px, 1.2vw, 14px);
+        color: #666;
+        line-height: 1.5;
+    }
+    .comment::before { content: '// '; color: #999; }
+
+    .bc { font-family: "Barlow Condensed", "Noto Sans SC", sans-serif; font-weight: 900; }
+    .mono { font-family: "IBM Plex Mono", "Noto Sans SC", monospace; }
+
+    .code-block {
+        background: var(--block-dark);
+        color: #f7f5f0;
+        border: 3px solid var(--border);
+        border-radius: 0;
+        box-shadow: 4px 4px 0 var(--border);
+        padding: clamp(12px, 2vw, 20px);
+        font-family: "IBM Plex Mono", monospace;
+        font-size: clamp(12px, 1.3vw, 15px);
+        line-height: 1.6;
+        white-space: pre-wrap;
+        word-break: break-all;
+    }
+
+    /* Reveal animations */
+    .reveal {
+        opacity: 0;
+        transform: translateY(20px);
+        transition: opacity 0.5s cubic-bezier(0.16,1,0.3,1), transform 0.5s cubic-bezier(0.16,1,0.3,1);
+    }
+    .slide.visible .reveal { opacity: 1; transform: translateY(0); }
+    .reveal:nth-child(1) { transition-delay: 0.05s; }
+    .reveal:nth-child(2) { transition-delay: 0.12s; }
+    .reveal:nth-child(3) { transition-delay: 0.19s; }
+    .reveal:nth-child(4) { transition-delay: 0.26s; }
+    .reveal:nth-child(5) { transition-delay: 0.33s; }
+    .reveal:nth-child(6) { transition-delay: 0.40s; }
+    .reveal:nth-child(7) { transition-delay: 0.47s; }
+
+    /* ===========================================
+       SLIDE LAYOUTS
+       =========================================== */
+
+    /* SLIDE 1: HERO */
+    #slide-1 { justify-content: center; }
+    #slide-1 .title-block { max-width: 780px; }
+    #slide-1 .stat-row { display: flex; gap: 1rem; flex-wrap: wrap; margin-top: 1.2rem; }
+    #slide-1 .badge-row { margin-bottom: 1rem; }
+
+    /* SLIDE 2: ARCHITECTURE */
+    #slide-2 { justify-content: center; }
+    #slide-2 .arch-block { margin-bottom: 1.2rem; }
+    #slide-2 .arch-title { margin-bottom: 1.5rem; }
+    #slide-2 .arch-max { max-width: 720px; }
+    .arch-layer {
+        display: flex; align-items: center; justify-content: space-between;
+        padding: clamp(0.7rem, 1.5vh, 1.2rem) clamp(1rem, 2vw, 1.8rem);
+        border: 3px solid var(--border);
+        position: relative;
+    }
+    .arch-layer + .arch-layer { margin-top: -3px; }
+    .arch-layer .layer-label {
+        font-family: "Barlow Condensed", "Noto Sans SC", sans-serif;
+        font-weight: 800; font-size: clamp(1rem, 2.5vw, 1.8rem);
+        text-transform: uppercase; letter-spacing: -0.01em;
+    }
+    .arch-arrow {
+        display: flex; justify-content: center;
+        font-family: "IBM Plex Mono", monospace;
+        font-size: clamp(1.2rem, 2.5vw, 2rem);
+        color: var(--text); line-height: 1; padding: 4px 0;
+    }
+
+    /* SLIDE 3: FEATURE CARDS */
+    #slide-3 { justify-content: center; }
+    #slide-3 .badge-row { margin-bottom: 1rem; }
+    #slide-3 .arch-title { margin-bottom: 1.2rem; }
+    .cards-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 1rem;
+    }
+    .feat-card {
+        background: var(--block-bg);
+        border: 3px solid var(--border);
+        box-shadow: 4px 4px 0 var(--border);
+        padding: clamp(1rem, 2vw, 1.5rem);
+        display: flex; flex-direction: column; gap: 0.5rem;
+    }
+    .feat-card .card-top { display: flex; justify-content: space-between; align-items: flex-start; }
+    .feat-icon {
+        width: 36px; height: 36px;
+        border: 2px solid var(--border);
+        display: flex; align-items: center; justify-content: center;
+        font-size: 1.1rem;
+        flex-shrink: 0;
+    }
+    .feat-card .body-text { font-size: clamp(0.7rem, 1.2vw, 0.88rem); margin-top: 0.3rem; }
+    @media (max-width: 700px) { .cards-grid { grid-template-columns: 1fr; } }
+
+    /* SLIDE 4: BEFORE/AFTER */
+    #slide-4 { flex-direction: row; padding: 0; }
+    .ba-panel {
+        flex: 1;
+        padding: var(--slide-padding);
+        display: flex; flex-direction: column; justify-content: center;
+        position: relative;
+    }
+    .ba-panel + .ba-panel { border-left: 4px solid var(--border); }
+    .ba-header {
+        font-family: "IBM Plex Mono", monospace;
+        font-weight: 600;
+        font-size: clamp(0.65rem, 1.1vw, 0.85rem);
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        margin-bottom: clamp(1rem, 2.5vh, 2rem);
+    }
+    .ba-header.bad { color: #999; }
+    .ba-header.good { color: var(--green); }
+    .ba-list { list-style: none; display: flex; flex-direction: column; gap: 0.6rem; }
+    .ba-list li {
+        font-family: "IBM Plex Mono", "Noto Sans SC", monospace;
+        font-size: clamp(0.7rem, 1.2vw, 0.9rem);
+        padding: 0.5rem 0.8rem;
+        border: 2px solid var(--border);
+        background: var(--block-bg);
+        box-shadow: 2px 2px 0 var(--border);
+    }
+    .ba-list li.plus { border-left: 4px solid var(--green); }
+    .ba-list li.minus { border-left: 4px solid #999; text-decoration: line-through; color: #888; }
+
+    /* SLIDE 5: MANIFESTO */
+    #slide-5 { justify-content: center; align-items: flex-start; }
+    #slide-5 .manifesto-block {
+        background: var(--block-dark);
+        border: 3px solid var(--border);
+        box-shadow: 6px 6px 0 var(--border);
+        padding: clamp(1.5rem, 4vw, 3.5rem);
+        max-width: 780px;
+    }
+    #slide-5 .manifesto-headline { color: #f7f5f0; }
+    #slide-5 .points-list { list-style: none; display: flex; flex-direction: column; gap: 0.4rem; margin-top: 1.5rem; }
+    #slide-5 .points-list li { color: rgba(247,245,240,0.6); }
+
+    /* SLIDE 6: COMMAND TABLE */
+    #slide-6 { justify-content: center; }
+    #slide-6 .badge-row { margin-bottom: 1rem; }
+    #slide-6 .arch-title { margin-bottom: 1.2rem; }
+    .cmd-table { width: 100%; border-collapse: collapse; }
+    .cmd-table tr { border-bottom: 2px solid var(--border); }
+    .cmd-table tr:first-child { border-top: 2px solid var(--border); }
+    .cmd-table td {
+        padding: clamp(0.7rem, 1.5vh, 1.2rem) clamp(0.8rem, 1.5vw, 1.2rem);
+        vertical-align: top;
+    }
+    .cmd-table td:first-child {
+        font-family: "IBM Plex Mono", monospace;
+        font-size: clamp(0.7rem, 1.2vw, 0.9rem);
+        font-weight: 600;
+        white-space: nowrap;
+        background: var(--block-bg);
+        border-right: 2px solid var(--border);
+        width: 35%;
+    }
+    .cmd-table td:last-child { width: 65%; }
+    .cmd-table tr:nth-child(odd) td { background: var(--bg); }
+    .cmd-table tr:nth-child(even) td { background: rgba(255,255,255,0.5); }
+    .cmd-table tr:nth-child(odd) td:first-child { background: var(--block-bg); }
+    .cmd-pink { color: var(--pink); }
+    .cmd-cyan { color: var(--cyan); }
+    .cmd-green { color: var(--green); }
+    .cmd-block-wrap { padding: 0; overflow: hidden; }
+
+    /* Arch layer tints */
+    .arch-tint-yellow { background: rgba(255,225,77,0.15); }
+    .arch-tint-pink { background: rgba(255,60,126,0.1); }
+    .arch-tint-cyan { background: rgba(0,200,255,0.1); }
+
+    /* Metric variants */
+    .metric-num-pink { color: var(--pink); }
+
+    /* Badge overrides */
+    .badge-cyan-bg { background: var(--cyan); }
+    .badge-yellow-bg { background: var(--yellow); }
+
+    /* CTA step row */
+    .step-row { display: flex; gap: 0.5rem; flex-wrap: wrap; margin-bottom: 1rem; }
+    .step-arrow { align-self: center; }
+
+    /* CTA faded comment */
+    .comment-faded { color: rgba(247,245,240,0.5); }
+
+    /* SLIDE 7: METRICS */
+    #slide-7 { justify-content: center; }
+    #slide-7 .badge-row { margin-bottom: 1rem; }
+    #slide-7 .arch-title { margin-bottom: 1.2rem; }
+    .metrics-grid {
+        display: grid; grid-template-columns: repeat(3, 1fr);
+        gap: 1.5rem;
+    }
+    .metric-block {
+        background: var(--block-bg);
+        border: 3px solid var(--border);
+        box-shadow: 4px 4px 0 var(--border);
+        padding: clamp(1rem, 2vw, 1.5rem);
+        display: flex; flex-direction: column; gap: 0.5rem;
+    }
+    .metric-num {
+        font-family: "Barlow Condensed", "Noto Sans SC", sans-serif;
+        font-weight: 900;
+        font-size: clamp(3.5rem, 8vw, 6.5rem);
+        line-height: 1;
+        text-transform: uppercase;
+    }
+    .px-bar-wrap { display: flex; flex-direction: column; gap: 4px; margin-top: 0.8rem; }
+    .px-bar-row { display: flex; align-items: center; gap: 8px; }
+    .px-bar {
+        height: 18px;
+        border: 2px solid var(--border);
+    }
+    .px-label {
+        font-family: "IBM Plex Mono", monospace;
+        font-size: clamp(0.55rem, 0.9vw, 0.72rem);
+        white-space: nowrap;
+    }
+    .metric-checks { margin-top: 0.8rem; }
+    .metric-checks .comment { margin-bottom: 0.2rem; }
+
+    /* SLIDE 8: CTA */
+    #slide-8 { justify-content: center; align-items: flex-start; }
+    #slide-8 .close-block {
+        background: var(--block-dark);
+        border: 3px solid var(--border);
+        box-shadow: 6px 6px 0 var(--border);
+        padding: clamp(1.5rem, 3vw, 2.5rem);
+        max-width: 680px;
+    }
+    #slide-8 .close-badge { margin-bottom: 1rem; }
+    #slide-8 .close-headline { color: #f7f5f0; margin-bottom: 1.2rem; }
+    #slide-8 .close-accent { color: var(--yellow); }
+    #slide-8 .code-wrap {
+        border: 2px solid rgba(255,255,255,0.15);
+        padding: 0.8rem 1.2rem;
+        margin-bottom: 1rem;
+        background: rgba(0,0,0,0.3);
+    }
+    #slide-8 .code-text { font-size: clamp(0.6rem, 1.1vw, 0.82rem); color: rgba(247,245,240,0.85); word-break: break-all; }
+
+    /* ===========================================
+       Universal UI
+       =========================================== */
+    #brand-mark {
+        position: fixed;
+        top: 20px;
+        left: 28px;
+        font-family: "IBM Plex Mono", "Noto Sans SC", monospace;
+        font-weight: 600;
+        font-size: 15px;
+        z-index: 1000;
+        color: rgba(17, 17, 17, 0.4);
+    }
+    .slide-num-label {
+        position: absolute;
+        bottom: 28px;
+        right: 36px;
+        font-family: "IBM Plex Mono", monospace;
+        font-size: 11px;
+        font-weight: 500;
+        color: rgba(17, 17, 17, 0.18);
+    }
+    .nav-dots {
+        position: fixed;
+        right: 1.5rem;
+        top: 50%;
+        transform: translateY(-50%);
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        z-index: 100;
+    }
+    .nav-dots button {
+        width: 10px; height: 10px;
+        border: 2px solid var(--border);
+        background: transparent;
+        cursor: pointer;
+        transition: all 0.2s;
+        padding: 0;
+    }
+    .nav-dots button.active {
+        background: var(--yellow);
+        box-shadow: 2px 2px 0 var(--border);
+    }
+    .progress-bar {
+        position: fixed;
+        top: 0;
+        left: 0;
+        height: 5px;
+        background: var(--pink);
+        border-right: 2px solid var(--border);
+        width: 0%;
+        z-index: 200;
+        transition: width 0.3s;
+    }
+
+    /* ===========================================
+       Present Mode
+       =========================================== */
+    #present-btn {
+        position: fixed;
+        bottom: 1.5rem;
+        right: 1.5rem;
+        z-index: 9997;
+        width: 44px;
+        height: 44px;
+        border-radius: 0;
+        background: var(--border);
+        color: var(--yellow);
+        border: 2px solid var(--border);
+        font-size: 1rem;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        opacity: 0;
+        transition: opacity 0.2s;
+        pointer-events: none;
+        box-shadow: 2px 2px 0 var(--pink);
+    }
+    body:hover #present-btn { opacity: 1; pointer-events: auto; }
+    #present-btn:hover { box-shadow: none; transform: translate(2px, 2px); }
+    #present-counter {
+        display: none;
+        position: fixed;
+        bottom: 1.4rem;
+        left: 50%;
+        transform: translateX(-50%);
+        z-index: 9997;
+        font-size: 0.65rem;
+        letter-spacing: 0.14em;
+        font-family: "IBM Plex Mono", monospace;
+        color: rgba(17, 17, 17, 0.28);
+    }
+    body.presenting { background: #000 !important; overflow: hidden !important; }
+    body.presenting .slide { position: fixed !important; inset: 0; width: 100vw !important; height: 100vh !important; transform-origin: center center; scroll-snap-align: none !important; display: none !important; }
+    body.presenting .slide.p-on { display: flex !important; }
+    body.presenting #present-btn { display: none !important; }
+    body.presenting #present-counter { display: block; }
+    body.presenting.presenting-black .slide { visibility: hidden !important; }
+    body.presenting.presenting-black::after { content: ''; position: fixed; inset: 0; background: #000; z-index: 99999; }
+    .slide-credit {
+        position: absolute;
+        bottom: 8px;
+        right: 14px;
+        font-size: 9px;
+        color: rgba(17, 17, 17, 0.35);
+        opacity: 0.35;
+        pointer-events: none;
+        z-index: 1;
+        font-family: "IBM Plex Mono", monospace;
+    }
+    body.presenting .slide-credit { display: none !important; }
+
+    /* ===========================================
+       Edit Mode
+       =========================================== */
+    .edit-hotzone { position: fixed; top: 0; left: 0; width: 80px; height: 80px; z-index: 10000; cursor: pointer; }
+    .edit-toggle {
+        position: fixed; top: 16px; left: 16px;
+        opacity: 0; pointer-events: none;
+        transition: opacity 0.3s; z-index: 10001;
+        font-family: "IBM Plex Mono", monospace;
+        font-size: 0.65rem; letter-spacing: 0.08em;
+        text-transform: uppercase;
+        background: var(--block-bg); color: var(--text);
+        border: 2px solid var(--border);
+        box-shadow: 2px 2px 0 var(--border);
+        padding: 6px 12px; cursor: pointer;
+    }
+    .edit-toggle.show { opacity: 1; pointer-events: auto; }
+    .edit-toggle.active {
+        opacity: 1; pointer-events: auto;
+        background: var(--yellow);
+        box-shadow: none; transform: translate(2px, 2px);
+    }
+
+    #notes-panel {
+        display: none; position: fixed; bottom: 0; left: 0; right: 0;
+        z-index: 9998;
+        background: rgba(8,8,8,0.95);
+        border-top: 3px solid var(--border);
+    }
+    #notes-panel.active { display: flex; flex-direction: column; }
+    #notes-panel-header {
+        display: flex; align-items: center; justify-content: space-between;
+        padding: 0.45rem 1.4rem; cursor: pointer; user-select: none;
+    }
+    #notes-panel-header:hover { background: rgba(255,255,255,0.03); }
+    #notes-panel-label {
+        flex: 1; font-family: "IBM Plex Mono", monospace;
+        font-size: 0.58rem; letter-spacing: 0.16em;
+        text-transform: uppercase; color: rgba(255,255,255,0.3);
+    }
+    #notes-drag-hint { flex: 1; display: flex; justify-content: center; }
+    #notes-drag-hint::after {
+        content: ''; display: block; width: 36px; height: 3px;
+        background: rgba(255,255,255,0.25);
+    }
+    #notes-panel-header:hover #notes-drag-hint::after { background: rgba(255,255,255,0.45); }
+    #notes-collapse-btn {
+        flex: 1; text-align: right; font-size: 1rem;
+        color: rgba(255,255,255,0.4); background: none; border: none; cursor: pointer;
+        transition: color 0.15s, transform 0.2s;
+    }
+    #notes-panel.collapsed #notes-body { display: none; }
+    #notes-panel.collapsed #notes-collapse-btn { transform: rotate(180deg); }
+    #notes-body { padding: 0 1.4rem 0.75rem; }
+    #notes-textarea {
+        width: 100%; height: 72px; min-height: 48px; max-height: 200px;
+        resize: vertical; background: transparent; border: none; outline: none;
+        color: rgba(255,255,255,0.75); font-size: 0.88rem; line-height: 1.65;
+        font-family: "IBM Plex Mono", monospace; caret-color: var(--yellow);
+    }
+    #notes-textarea::placeholder { color: rgba(255,255,255,0.18); }
+
+    /* ===========================================
+       Responsive
+       =========================================== */
+    @media (max-height: 700px) {
+        :root { --slide-padding: clamp(0.75rem, 3vw, 2rem); --content-gap: clamp(0.4rem, 1.5vw, 1rem); --title-size: clamp(1.25rem, 4.5vw, 2.5rem); }
+    }
+    @media (max-height: 600px) {
+        :root { --slide-padding: clamp(0.5rem, 2.5vw, 1.5rem); --title-size: clamp(1.1rem, 4vw, 2rem); --body-size: clamp(0.7rem, 1.2vw, 0.95rem); }
+        .nav-dots, .keyboard-hint, .decorative { display: none; }
+    }
+    @media (max-height: 500px) {
+        :root { --slide-padding: clamp(0.4rem, 2vw, 1rem); --title-size: clamp(1rem, 3.5vw, 1.5rem); }
+    }
+    @media (max-width: 600px) {
+        #slide-4 { flex-direction: column; }
+        .cards-grid { grid-template-columns: 1fr; }
+        .metrics-grid { grid-template-columns: 1fr; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+        *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.2s !important; }
+        html { scroll-behavior: auto; }
+    }
+    </style>
+</head><body>
+<section aria-label="Title" class="slide" data-notes="Slide Creator: Claude Code 零依赖 HTML 演示文稿生成器，21 种预设样式，三分钟出稿" id="slide-1">
+<div class="slide-content preset-neo-retro-dev-deck-content">
+<div class="title-block">
+<div class="badge-row reveal">
+<span class="badge">Claude Code 技能</span>
+<span class="badge badge-pink">v2.18</span>
+</div>
+<div class="block reveal">
+<div class="headline h-xl">SLIDE-CREATOR</div>
+</div>
+<div class="reveal">
+<span class="comment">Claude Code 零依赖 HTML 演示文稿</span>
+</div>
+<div class="stat-row reveal">
+<div class="block">
+<span class="headline h-sm">21 <span class="hl">种样式</span></span>
+</div>
+<div class="block">
+<span class="headline h-sm">零 <span class="hl-pink">依赖</span></span>
+</div>
+<div class="block">
+<span class="headline h-sm">1 <span class="hl-cyan">HTML 文件</span></span>
+</div>
+</div>
+</div>
+</div>
+<span class="slide-num-label">01 / 08</span>
+</section>
+<section aria-label="Architecture" class="slide" data-notes="三步流程：原始内容输入 → 技能分析样式 → 输出零依赖 HTML 文件。任何浏览器都能打开" id="slide-2">
+<div class="slide-content preset-neo-retro-dev-deck-content">
+<div class="arch-block reveal">
+<span class="badge">系统架构</span>
+</div>
+<div class="headline h-md arch-title reveal">工作原理</div>
+<div class="arch-max reveal">
+<div class="arch-layer arch-tint-yellow">
+<div>
+<div class="layer-label headline h-sm">你的内容</div>
+<div class="comment">笔记、文档、BRIEF.json、图片、PPTX</div>
+</div>
+<span class="badge">输入</span>
+</div>
+<div class="arch-arrow reveal">↓</div>
+<div class="arch-layer arch-tint-pink">
+<div>
+<div class="headline h-sm">/SLIDE-CREATOR</div>
+<div class="comment">样式发现 → 布局生成 → 代码质量检查</div>
+</div>
+<span class="badge badge-pink">技能</span>
+</div>
+<div class="arch-arrow reveal">↓</div>
+<div class="arch-layer arch-tint-cyan">
+<div>
+<div class="headline h-sm">PRESENTATION.HTML</div>
+<div class="comment">内联 CSS + JS · 内联编辑 · 演讲者模式 · PPTX 导出</div>
+</div>
+<span class="badge badge-cyan">输出</span>
+</div>
+</div>
+</div>
+<span class="slide-num-label">02 / 08</span>
+</section>
+<section aria-label="Features" class="slide" data-notes="三大核心功能：21 种精心设计的预设样式、E 键浏览器内编辑、P 键演讲者模式带备注和计时器" id="slide-3">
+<div class="slide-content preset-neo-retro-dev-deck-content">
+<div class="badge-row reveal"><span class="badge">核心功能</span></div>
+<div class="headline h-md arch-title reveal">你将获得什么</div>
+<div class="cards-grid reveal">
+<div class="feat-card accent-yellow">
+<div class="card-top">
+<div class="headline h-sm">21 种样式</div>
+<div class="feat-icon">🎨</div>
+</div>
+<div class="comment">精心设计的预设样式</div>
+<p class="body-text">Bold Signal、Swiss Modern、Terminal Green、Chinese Chan、Neo-Retro Dev 以及 16 种其他样式。每种都有独特的布局变体。</p>
+</div>
+<div class="feat-card accent-pink">
+<div class="card-top">
+<div class="headline h-sm">内联编辑</div>
+<div class="feat-icon">✎</div>
+</div>
+<div class="comment">按 E 在浏览器中编辑</div>
+<p class="body-text">点击任何文本，就地编辑。Ctrl+S 保存回 HTML 文件。无需外部编辑器。</p>
+</div>
+<div class="feat-card accent-cyan">
+<div class="card-top">
+<div class="headline h-sm">演讲者模式</div>
+<div class="feat-icon">🎤</div>
+</div>
+<div class="comment">按 P 打开演讲者视图</div>
+<p class="body-text">演讲者备注 + 计时器 + 导航。通过 BroadcastChannel 同步。离线可用。</p>
+</div>
+</div>
+</div>
+<span class="slide-num-label">03 / 08</span>
+</section>
+<section aria-label="Before and after" class="slide" data-notes="对比：选择工具的痛苦（选平台、装依赖、CDN、反复调提示词）vs slide-creator 的简洁（一条命令、一个文件、零依赖）" id="slide-4">
+<div class="ba-panel reveal preset-neo-retro-dev-deck-content">
+<div class="ba-header bad">// 之前 -- 没有 slide-creator</div>
+<ul class="ba-list">
+<li class="minus">选择工具（Canva? Keynote? Miro?）</li>
+<li class="minus">npm install reveal.js 或 impress.js</li>
+<li class="minus">每张幻灯片依赖 3 个 CDN 库</li>
+<li class="minus">反复调整 AI 提示词，直到输出看起来不错</li>
+<li class="minus">导出 → 字体损坏、图片丢失</li>
+</ul>
+</div>
+<div class="ba-panel reveal">
+<div class="ba-header good">// 之后 -- 使用 slide-creator</div>
+<ul class="ba-list">
+<li class="plus"><span class="mono">/slide-creator</span></li>
+<li class="plus">从 21 种预设中选择样式</li>
+<li class="plus">获得 <strong>presentation.html</strong></li>
+<li class="plus">零依赖 · 离线运行</li>
+<li class="plus">内联编辑 · 导出 PPTX · 完成</li>
+</ul>
+</div>
+<span class="slide-num-label">04 / 08</span>
+</section>
+<section aria-label="Philosophy" class="slide" data-notes="核心哲学：演示文稿不应该需要构建管道。一个文件，任何浏览器，任何地方" id="slide-5">
+<div class="slide-content preset-neo-retro-dev-deck-content">
+<div class="manifesto-block reveal">
+<div class="headline h-xl manifesto-headline">一个命令。<br/>一个 <span class="hl">文件</span>。<br/>零 借口。</div>
+<ul class="points-list">
+<li class="comment">无需 npm install、无 CDN、无构建管道</li>
+<li class="comment">提交前展示 3 个视觉样式预览</li>
+<li class="comment">每张幻灯片完全适应一个视口 -- 无需滚动</li>
+<li class="comment">离线工作 · 在浏览器中编辑 · 导出 PPTX</li>
+</ul>
+</div>
+</div>
+<span class="slide-num-label">05 / 08</span>
+</section>
+<section aria-label="Commands" class="slide" data-notes="四个命令：交互式创建、生成规划、从规划生成、导出 PPTX" id="slide-6">
+<div class="slide-content preset-neo-retro-dev-deck-content">
+<div class="badge-row reveal"><span class="badge">参考</span></div>
+<div class="headline h-md arch-title reveal">命令</div>
+<div class="block reveal cmd-block-wrap">
+<table class="cmd-table">
+<tr>
+<td><span class="cmd-pink">/slide-creator</span></td>
+<td><span class="body-text">交互式：样式发现 → 内容 → 生成。最适合从零开始。</span></td>
+</tr>
+<tr>
+<td><span class="mono">/slide-creator</span> <span class="cmd-pink">--plan</span></td>
+<td><span class="body-text">创建 BRIEF.json IR。在生成 HTML 前停止；如需给人审阅，再派生 PLANNING 视图。</span></td>
+</tr>
+<tr>
+<td><span class="mono">/slide-creator</span> <span class="cmd-cyan">--generate</span></td>
+<td><span class="body-text">读取 BRIEF.json，跳过提问，生成 HTML。从 IR 快速到演示文稿。</span></td>
+</tr>
+<tr>
+<td><span class="mono">/slide-creator</span> <span class="cmd-green">--export pptx</span></td>
+<td><span class="body-text">通过系统 Chrome 截屏每张幻灯片 → 组装 .pptx。无需 Node.js。</span></td>
+</tr>
+</table>
+</div>
+</div>
+<span class="slide-num-label">06 / 08</span>
+</section>
+<section aria-label="Metrics" class="slide" data-notes="数据说话：21 种预设样式，1 个输出文件，0 个 npm 依赖" id="slide-7">
+<div class="slide-content preset-neo-retro-dev-deck-content">
+<div class="badge-row reveal"><span class="badge">数字说话</span></div>
+<div class="headline h-md arch-title reveal">统计数据</div>
+<div class="metrics-grid reveal">
+<div class="metric-block accent-yellow">
+<div class="metric-num">21</div>
+<div class="headline h-sm">种样式</div>
+<div class="comment">精心设计的预设</div>
+<div class="px-bar-wrap">
+<div class="px-bar-row"><div class="px-bar" style="width:100%;background:var(--yellow);"></div><span class="px-label">深色主题</span></div>
+<div class="px-bar-row"><div class="px-bar" style="width:76%;background:var(--yellow);opacity:0.7;"></div><span class="px-label">浅色主题</span></div>
+<div class="px-bar-row"><div class="px-bar" style="width:48%;background:var(--yellow);opacity:0.4;"></div><span class="px-label">特色款</span></div>
+</div>
+</div>
+<div class="metric-block accent-pink">
+<div class="metric-num metric-num-pink">1</div>
+<div class="headline h-sm">HTML 文件</div>
+<div class="comment">输出格式</div>
+<div class="metric-checks">
+<div class="comment">内联 CSS ✓</div>
+<div class="comment">内联 JS ✓</div>
+<div class="comment">无 CDN 调用 ✓</div>
+<div class="comment">离线运行 ✓</div>
+</div>
+</div>
+<div class="metric-block accent-cyan">
+<div class="metric-num">0</div>
+<div class="headline h-sm">NPM 依赖</div>
+<div class="comment">运行时需求</div>
+<div class="metric-checks">
+<div class="comment">无 node_modules</div>
+<div class="comment">无 package.json</div>
+<div class="comment">无构建步骤</div>
+<div class="comment">仅 HTML</div>
+</div>
+</div>
+</div>
+</div>
+<span class="slide-num-label">07 / 08</span>
+</section>
+<section aria-label="Get started" class="slide" data-notes="30 秒内开始使用：git clone → /slide-creator → 发布" id="slide-8">
+<div class="slide-content preset-neo-retro-dev-deck-content">
+<div class="close-block reveal">
+<div class="close-badge"><span class="badge badge-pink">安装</span></div>
+<div class="headline h-lg close-headline">开始使用<br/><span class="close-accent">只需 30 秒</span></div>
+<div class="code-wrap">
+<span class="mono code-text">git clone https://github.com/kaisersong/slide-creator ~/.claude/skills/slide-creator</span>
+</div>
+<div class="step-row">
+<span class="badge badge-cyan-bg">第一步：克隆</span>
+<span class="mono step-arrow">→</span>
+<span class="badge badge-yellow-bg">第二步：/slide-creator</span>
+<span class="mono step-arrow">→</span>
+<span class="badge badge-pink">第三步：发布</span>
+</div>
+<div class="comment comment-faded">无构建步骤 · 无配置 · 直接运行</div>
+</div>
+</div>
+<span class="slide-num-label">08 / 08</span>
+</section>
+</body></html>

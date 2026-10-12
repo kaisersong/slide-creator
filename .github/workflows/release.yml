@@ -46,14 +46,32 @@ jobs:
         shell: bash
         run: |
           mkdir -p dist
-          curl --fail --silent --show-error --location https://github.com/kaisersong/slide-creator/releases/download/v2.32.0/kai-slide-creator-v2.32.0-skill-runtime.zip -o dist/previous-runtime.zip
-          python scripts/package-runtime.py --output-dir dist --previous-runtime dist/previous-runtime.zip --previous-sha256 051fe4f21c2d2a3d5fcaa1d55a993e07f040f0839959bcbc7d2bcb4aa9a4119a
-          python -m pip install -r scripts/requirements-runtime.txt
+          python -m pip install -r scripts/requirements-release.txt
+          python scripts/build-profile-templates.py --check
+          curl --fail --silent --show-error --location https://github.com/kaisersong/slide-creator/releases/download/v2.33.0/kai-slide-creator-v2.33.0-skill-runtime.zip -o dist/previous-runtime.zip
+          python scripts/package-runtime.py --output-dir dist --previous-runtime dist/previous-runtime.zip --previous-sha256 2361555dc22ea13527cf80b2a4647eb2cf5e1a7a8025f3317743468b5ba712bf
           python check-doc-sync.py
           python -m zipfile -e "dist/kai-slide-creator-${TAG}-skill-runtime.zip" dist/installed
           for theme in shader-hero molten-flow stellar-vortex; do
             python dist/installed/kai-slide-creator/main.py --generate --brief "demos/${theme}/BRIEF.json" --output "dist/${theme}-smoke.html"
           done
+      - name: Verify installed profiles and complete release gate
+        shell: bash
+        run: |
+          python -m playwright install --with-deps chromium
+          python -m pytest -q tests/test_installed_profile_templates.py
+          python dist/installed/kai-slide-creator/scripts/preset_release_gate.py \
+            --suite "${GITHUB_WORKSPACE}/evals/preset-surface-all/manifest.json" \
+            --output-dir dist/release-gate \
+            --browser-geometry --mobile-geometry --export-smoke
+          python -c 'import json; r=json.load(open("dist/release-gate/release-gate-report.json")); assert r["gate"]["passed"] and r["summary"]["pass_count"] == 66 and r["summary"]["fail_count"] == 0'
+      - name: Preserve release gate evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: release-gate-${{ github.run_id }}
+          path: dist/release-gate
+          if-no-files-found: ignore
       - name: Publish release and runtime assets
         env:
           GH_TOKEN: ${{ github.token }}

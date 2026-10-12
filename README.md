@@ -10,9 +10,9 @@ English | [简体中文](README.zh-CN.md)
 
 ---
 
-## Download v2.33.0
+## Download v2.33.1
 
-[Compact Skill runtime ZIP](https://github.com/kaisersong/slide-creator/releases/download/v2.33.0/kai-slide-creator-v2.33.0-skill-runtime.zip) · [Release and SHA-256](https://github.com/kaisersong/slide-creator/releases/tag/v2.33.0) · [Optimization methodology v1.0.1 ZIP](https://github.com/kaisersong/slide-creator/releases/download/v2.31.0/skill-optimization-methodology-v1.0.1.zip)
+[Compact Skill runtime ZIP](https://github.com/kaisersong/slide-creator/releases/download/v2.33.1/kai-slide-creator-v2.33.1-skill-runtime.zip) · [Release and SHA-256](https://github.com/kaisersong/slide-creator/releases/tag/v2.33.1) · [Optimization methodology v1.0.1 ZIP](https://github.com/kaisersong/slide-creator/releases/download/v2.31.0/skill-optimization-methodology-v1.0.1.zip)
 
 Read the [cross-Skill optimization guide](docs/methodology/skill-optimization/README.md), including plan, evaluation and bug templates. The methodology is packaged separately to keep research documents out of the normal generation context.
 
@@ -473,7 +473,7 @@ For PPTX/PNG export: `clawhub install kai-html-export` or `pip install playwrigh
 
 ## Runtime-only Skill ZIP
 
-Download [`kai-slide-creator-v2.33.0-skill-runtime.zip`](https://github.com/kaisersong/slide-creator/releases/download/v2.33.0/kai-slide-creator-v2.33.0-skill-runtime.zip) for a compact Skill installation bundle. Extract its top-level `kai-slide-creator/` folder into your agent's skills directory. The archive contains only `SKILL.md`, `main.py`, `scripts/`, `schemas/`, `references/`, and `themes/`; repository README files, demos, tests, eval fixtures, design documents, and Git metadata are excluded.
+Download [`kai-slide-creator-v2.33.1-skill-runtime.zip`](https://github.com/kaisersong/slide-creator/releases/download/v2.33.1/kai-slide-creator-v2.33.1-skill-runtime.zip) for a compact Skill installation bundle. Extract its top-level `kai-slide-creator/` folder into your agent's skills directory. The archive contains only `SKILL.md`, `main.py`, `scripts/`, `schemas/`, `references/`, and `themes/`; repository README files, demos, tests, eval fixtures, design documents, and Git metadata are excluded.
 
 ---
 
@@ -482,6 +482,8 @@ Cloudhub enterprise assets are retained from the previous package, but its legac
 ---
 
 ## Version History
+
+**v2.33.1** — Fixes all 17 installed profile presets by shipping their English and Chinese layout templates as runtime assets. Removes the dependency on repository demos and rejects incomplete packages. Asset checksums and the complete 66-case gate are required before publication. See [release verification](docs/design/2026-10-12-release-v2.33.1.md).
 
 **v2.33.0** — Source fidelity and structured relationships: integrates local work, expands BRIEF to 5–40 pages, and adds layered architecture, call graphs, interaction flows and polls to Fantasy Rainbow while preserving business bento layouts. Adds independent per-slide text and relationship checks with mandatory protected facts, repairs model-context schema discovery, and updates the runtime package. See the [release verification and inherited profile limitations](docs/design/2026-10-12-release-v2.33.0.md).
 

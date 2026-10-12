@@ -1,0 +1,448 @@
+<!DOCTYPE html>
+<!-- Program-owned profile template. Regenerate with scripts/build-profile-templates.py. -->
+<html><head>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,700;0,9..144,900;1,9..144,700&amp;family=Work+Sans:wght@400;500;600&amp;family=Noto+Sans+SC:wght@400;700&amp;display=swap" rel="stylesheet"/>
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+body { background-color: #f5f3ee; }
+
+:root {
+  --bg-cream: #f5f3ee;
+  --text-primary: #1a1a1a;
+  --text-secondary: #555;
+  --accent-warm: #e8d4c0;
+  --accent-burgundy: #8b2635;
+}
+
+html { scroll-snap-type: y mandatory; height: 100%; }
+body { height: 100%; font-family: 'Work Sans', 'Noto Sans SC', sans-serif; background: #f5f3ee; color: #1a1a1a; }
+
+.slide {
+  width: 100vw; height: 100vh; height: 100dvh;
+  scroll-snap-align: start; overflow: hidden;
+  position: relative; display: flex; flex-direction: column;
+  background: #f5f3ee;
+}
+
+/* DECORATIVE CIRCLE */
+.deco-circle {
+  position: absolute; border-radius: 50%;
+  border: 1.5px solid rgba(26,26,26,0.12); pointer-events: none;
+}
+
+/* HORIZONTAL RULE */
+.rule { width: 100%; height: 1px; background: #1a1a1a; margin: 20px 0; opacity: 0.15; }
+.rule-thick { width: 48px; height: 3px; background: #8b2635; margin: 12px 0 20px; }
+
+/* SECTION INDICATOR */
+.section-id {
+  font-family: 'Fraunces', serif; font-size: clamp(11px, 1.4vw, 13px);
+  font-weight: 700; letter-spacing: 0.12em;
+  color: #8b2635; text-transform: uppercase; margin-bottom: 8px;
+}
+
+/* TYPOGRAPHY */
+.display-title {
+  font-family: 'Fraunces', serif; font-size: clamp(64px, 11vw, 120px);
+  font-weight: 900; line-height: 0.9; color: #1a1a1a; letter-spacing: -0.04em; margin-bottom: 0;
+}
+.display-title em { font-style: italic; color: #8b2635; }
+
+.headline {
+  font-family: 'Fraunces', serif; font-size: clamp(34px, 5.5vw, 62px);
+  font-weight: 700; line-height: 1.08; color: #1a1a1a; letter-spacing: -0.03em; margin-bottom: 16px;
+}
+.pullquote {
+  font-family: 'Fraunces', serif; font-size: clamp(20px, 3vw, 30px);
+  font-weight: 700; font-style: italic; color: #1a1a1a; line-height: 1.3;
+  border-left: 3px solid #8b2635; padding-left: 20px; margin: 20px 0;
+}
+.body-text {
+  font-family: 'Work Sans', 'Noto Sans SC', sans-serif;
+  font-size: clamp(14px, 1.8vw, 17px); font-weight: 400; color: #555555; line-height: 1.75; max-width: 560px;
+}
+.sub-label {
+  font-size: clamp(10px, 1.3vw, 12px); font-weight: 600;
+  letter-spacing: 0.14em; text-transform: uppercase; color: #888; margin-bottom: 4px;
+}
+
+/* LAYOUT HELPERS */
+.content-wrapper {
+  flex: 1; min-height: 0; display: flex; flex-direction: column;
+  padding: clamp(40px, 6vh, 80px) clamp(32px, 6vw, 100px);
+  max-width: 900px; margin: 0 auto; width: 100%;
+  position: relative; z-index: 2;
+}
+.content-wrapper.center { justify-content: center; }
+.content-wrapper.space-between { justify-content: space-between; }
+
+/* BORDERED BOX */
+.bordered-box {
+  border: 2px solid #1a1a1a; padding: clamp(16px, 2.5vw, 28px);
+  margin: 16px 0; position: relative;
+}
+.bordered-box::before {
+  content: attr(data-label); position: absolute; top: -12px; left: 16px;
+  background: #f5f3ee; padding: 0 8px;
+  font-size: 11px; font-weight: 700; letter-spacing: 0.1em;
+  text-transform: uppercase; color: #8b2635;
+}
+
+/* PAIN POINT ROWS */
+.pain-row {
+  display: flex; align-items: flex-start; gap: 20px;
+  padding: 16px 0; border-bottom: 1px solid rgba(26,26,26,0.1);
+  opacity: 0; transform: translateX(-24px);
+  transition: opacity 0.6s ease, transform 0.6s ease;
+}
+.slide.visible .pain-row:nth-child(1) { opacity: 1; transform: translateX(0); transition-delay: 0.1s; }
+.slide.visible .pain-row:nth-child(2) { opacity: 1; transform: translateX(0); transition-delay: 0.22s; }
+.slide.visible .pain-row:nth-child(3) { opacity: 1; transform: translateX(0); transition-delay: 0.34s; }
+.pain-num {
+  font-family: 'Fraunces', serif; font-size: clamp(28px, 4vw, 42px);
+  font-weight: 900; color: rgba(26,26,26,0.1); line-height: 1; flex-shrink: 0; width: 48px;
+}
+.pain-title { font-family: 'Fraunces', serif; font-size: clamp(16px, 2.2vw, 20px); font-weight: 700; color: #1a1a1a; margin-bottom: 4px; }
+.pain-body { font-size: clamp(13px, 1.6vw, 15px); color: #666; line-height: 1.5; }
+
+/* STEPS */
+.step-editorial {
+  display: flex; gap: 24px; align-items: flex-start;
+  padding: 20px 0; border-bottom: 1px solid rgba(26,26,26,0.1);
+  opacity: 0; transform: translateY(16px);
+  transition: opacity 0.6s ease, transform 0.6s ease;
+}
+.slide.visible .step-editorial:nth-child(1) { opacity: 1; transform: translateY(0); transition-delay: 0.1s; }
+.slide.visible .step-editorial:nth-child(2) { opacity: 1; transform: translateY(0); transition-delay: 0.22s; }
+.slide.visible .step-editorial:nth-child(3) { opacity: 1; transform: translateY(0); transition-delay: 0.34s; }
+.step-ed-num { font-family: 'Fraunces', serif; font-size: 13px; font-weight: 700; color: #8b2635; width: 28px; flex-shrink: 0; padding-top: 2px; }
+.step-ed-title { font-family: 'Fraunces', serif; font-size: clamp(17px, 2.4vw, 21px); font-weight: 700; color: #1a1a1a; margin-bottom: 4px; }
+.step-ed-body { font-size: clamp(13px, 1.6vw, 15px); color: #666; line-height: 1.5; }
+
+/* PRESET GRID */
+.preset-grid { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 16px; }
+.preset-tag {
+  font-size: clamp(11px, 1.4vw, 13px); font-weight: 600;
+  padding: 5px 12px; border: 1.5px solid rgba(26,26,26,0.25); color: #1a1a1a; background: transparent;
+}
+.preset-tag.featured { border-color: #8b2635; color: #8b2635; background: rgba(139,38,53,0.05); }
+.preset-tag.dark { background: #1a1a1a; color: #f5f3ee; border-color: #1a1a1a; }
+
+/* FEATURE ROWS */
+.feature-row {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 14px 0; border-bottom: 1px solid rgba(26,26,26,0.1);
+  opacity: 0; transform: translateX(-16px);
+  transition: opacity 0.6s ease, transform 0.6s ease;
+}
+.slide.visible .feature-row:nth-child(1) { opacity: 1; transform: translateX(0); transition-delay: 0.08s; }
+.slide.visible .feature-row:nth-child(2) { opacity: 1; transform: translateX(0); transition-delay: 0.16s; }
+.slide.visible .feature-row:nth-child(3) { opacity: 1; transform: translateX(0); transition-delay: 0.24s; }
+.slide.visible .feature-row:nth-child(4) { opacity: 1; transform: translateX(0); transition-delay: 0.32s; }
+.feature-name { font-family: 'Fraunces', serif; font-size: clamp(16px, 2.2vw, 20px); font-weight: 700; }
+.feature-desc { font-size: clamp(12px, 1.5vw, 14px); color: #666; max-width: 300px; text-align: right; }
+.feature-badge { font-size: 11px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; background: #e8d4c0; color: #5a2a1a; padding: 3px 10px; }
+
+/* ANIMATIONS */
+.slide-content-anim { opacity: 0; transform: translateX(-30px); transition: opacity 0.6s ease, transform 0.6s ease; }
+.slide.visible .slide-content-anim { opacity: 1; transform: translateX(0); }
+.slide-content-anim.delay-1 { transition-delay: 0.1s; }
+.slide-content-anim.delay-2 { transition-delay: 0.2s; }
+.slide-content-anim.delay-3 { transition-delay: 0.3s; }
+
+.fade-in { opacity: 0; transition: opacity 0.6s ease; }
+.slide.visible .fade-in { opacity: 1; }
+.fade-in.delay-1 { transition-delay: 0.15s; }
+.fade-in.delay-2 { transition-delay: 0.3s; }
+.fade-in.delay-3 { transition-delay: 0.45s; }
+
+/* CODE */
+.code-mono {
+  font-family: 'Courier New', monospace; font-size: clamp(11px, 1.4vw, 13px); color: #1a1a1a;
+  background: #e8d4c0; padding: 12px 18px; display: block; margin: 8px 0; line-height: 1.5; word-break: break-all;
+}
+
+/* STATS */
+.stats-row { display: flex; gap: 40px; margin-top: 8px; }
+.stat-item { display: flex; flex-direction: column; }
+.stat-big { font-family: 'Fraunces', serif; font-size: clamp(36px, 5vw, 54px); font-weight: 900; color: #1a1a1a; line-height: 1; }
+.stat-small { font-size: 11px; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; color: #888; margin-top: 4px; }
+
+/* CTA */
+.cta-editorial {
+  display: inline-block; border: 2px solid #1a1a1a; padding: 14px 32px;
+  font-family: 'Work Sans', sans-serif; font-size: clamp(14px, 1.8vw, 16px);
+  font-weight: 600; color: #1a1a1a; text-decoration: none; cursor: pointer;
+  background: transparent; margin-top: 24px; transition: background 0.2s, color 0.2s;
+}
+.cta-editorial:hover { background: #1a1a1a; color: #f5f3ee; }
+.cta-accent { background: #8b2635; border-color: #8b2635; color: #fff; margin-left: 12px; }
+.cta-accent:hover { background: #6a1c28; }
+
+/* FOOTER */
+.slide-footer {
+  padding: 12px clamp(32px, 6vw, 100px);
+  display: flex; justify-content: space-between; align-items: center;
+  border-top: 1px solid rgba(26,26,26,0.1); position: relative; z-index: 2;
+}
+.footer-brand { font-family: 'Fraunces', serif; font-size: 14px; font-weight: 700; color: #1a1a1a; }
+.footer-num { font-size: 11px; color: #888; letter-spacing: 0.08em; }
+
+/* PROGRESS */
+#progress-bar { position: fixed; top: 0; left: 0; width: 0%; height: 2px; background: #8b2635; z-index: 100; transition: width 0.4s ease; }
+
+/* NAV DOTS */
+#nav-dots { position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%); display: flex; gap: 12px; z-index: 100; }
+.nav-dot {
+  width: 6px; height: 6px; border-radius: 50%; cursor: pointer; border: none;
+  background: rgba(26,26,26,0.2); transition: all 0.3s ease;
+}
+.nav-dot.active { background: #8b2635; transform: scale(1.4); }
+
+/* EDIT MODE */
+.edit-hotzone { position: fixed; top: 0; left: 0; width: 80px; height: 80px; z-index: 10000; cursor: pointer; }
+.edit-toggle {
+  position: fixed; top: 16px; left: 16px; opacity: 0; pointer-events: none;
+  transition: opacity 0.3s ease; z-index: 10001;
+  background: #8b2635; color: #fff; border: none; border-radius: 4px;
+  padding: 6px 14px; font-size: 0.8rem; cursor: pointer;
+}
+.edit-toggle.show { opacity: 1; pointer-events: auto; }
+.edit-toggle.active { background: #1a1a1a; }
+body.editing [contenteditable="true"] { outline: 1px dashed rgba(139,38,53,0.4); outline-offset: 4px; }
+
+#notes-panel {
+  display: none; position: fixed; bottom: 0; left: 0; right: 0; z-index: 9998;
+  background: rgba(245,243,238,0.97); backdrop-filter: blur(16px);
+  border-top: 1px solid rgba(26,26,26,0.12);
+}
+#notes-panel.active { display: flex; flex-direction: column; }
+#notes-panel-header {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0.45rem 1.4rem; cursor: pointer; user-select: none;
+}
+#notes-panel-header:hover { background: rgba(26,26,26,0.03); }
+#notes-panel-label { flex: 1; font-size: 0.58rem; letter-spacing: 0.16em; text-transform: uppercase; color: #888; }
+#notes-drag-hint::after { content: ''; display: block; width: 36px; height: 3px; border-radius: 2px; background: rgba(26,26,26,0.25); }
+#notes-collapse-btn { flex: 1; text-align: right; font-size: 1rem; color: #888; background: none; border: none; cursor: pointer; }
+#notes-body { padding: 0 1.4rem 0.75rem; }
+#notes-panel.collapsed #notes-body { display: none; }
+#notes-textarea {
+  width: 100%; height: 72px; min-height: 48px; background: transparent; border: none; outline: none;
+  color: #1a1a1a; font-size: 0.88rem; line-height: 1.65; font-family: 'Work Sans', sans-serif;
+}
+#notes-textarea::placeholder { color: #aaa; }
+
+/* WATERMARK */
+.slide-credit {
+  position: absolute; bottom: 8px; right: 14px;
+  font-size: 9px; color: #888; opacity: 0.35; pointer-events: none; z-index: 1;
+  font-family: system-ui, sans-serif;
+}
+
+/* PRESENT MODE */
+#present-btn {
+  position: fixed; bottom: 1.5rem; right: 1.5rem; z-index: 9997;
+  width: 44px; height: 44px; border-radius: 50%;
+  background: rgba(0,0,0,0.5); color: rgba(255,255,255,0.8);
+  border: 1.5px solid rgba(255,255,255,0.2);
+  font-size: 1rem; cursor: pointer;
+  backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+  display: flex; align-items: center; justify-content: center;
+  opacity: 0; transition: opacity 0.2s; pointer-events: none;
+}
+body:hover #present-btn { opacity: 1; pointer-events: auto; }
+#present-btn:hover { background: rgba(0,0,0,0.78); }
+#present-counter {
+  display: none; position: fixed; bottom: 1.4rem; left: 50%;
+  transform: translateX(-50%); z-index: 9997;
+  font-size: 0.65rem; letter-spacing: 0.14em; font-family: system-ui, sans-serif;
+  color: rgba(255,255,255,0.28);
+}
+body.presenting { background: #000 !important; overflow: hidden !important; }
+body.presenting .slide {
+  position: fixed !important; inset: 0;
+  width: var(--pdw, 1440px) !important; height: var(--pdh, 900px) !important;
+  transform-origin: top left;
+  transform: translate(var(--pox, 0px), var(--poy, 0px)) scale(var(--ps, 1)) !important;
+  scroll-snap-align: none !important; display: none !important;
+}
+body.presenting .slide.p-on { display: flex !important; }
+body.presenting #present-btn { display: none !important; }
+body.presenting #present-counter { display: block; }
+body.presenting.presenting-black .slide { visibility: hidden !important; }
+body.presenting.presenting-black::after { content: ''; position: fixed; inset: 0; background: #000; z-index: 99999; }
+body.presenting .slide-credit { display: none !important; }
+
+/* Real laptop browser windows leave 730-860px of usable height; without this tier the
+   dense workflow page pushes the running footer past the slide edge. */
+@media (max-height: 860px) {
+  .content-wrapper { padding: clamp(20px, 3.4vh, 56px) clamp(28px, 5.4vw, 84px); }
+  .slide-footer { padding: 8px clamp(28px, 5.4vw, 84px); }
+}
+
+@media (max-height: 600px) {
+  #nav-dots { display: none; }
+}
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.2s !important; }
+}
+</style>
+</head><body>
+<section class="slide" data-notes="欢迎观众，介绍 slide-creator 工具。">
+<div class="deco-circle" style="width:600px;height:600px;top:-200px;right:-200px;"></div>
+<div class="deco-circle" style="width:200px;height:200px;bottom:80px;left:60px;"></div>
+<div class="content-wrapper space-between preset-vintage-editorial-content">
+<div style="padding-top: clamp(20px,4vh,60px);">
+<div class="section-id slide-content-anim">工具介绍</div>
+<div class="rule-thick slide-content-anim delay-1"></div>
+<h1 class="display-title slide-content-anim delay-1">slide-<br/><em>creator</em></h1>
+<div class="rule slide-content-anim delay-2"></div>
+<p class="body-text fade-in delay-2" style="margin-top:16px; max-width:460px;">
+        为 Claude Code 和 OpenClaw 打造的零依赖 HTML 演示文稿工具。<br/>
+        我们开发这个工具，是因为现有的替代品实在是令人尴尬。
+      </p>
+<div class="stats-row fade-in delay-3">
+<div class="stat-item"><span class="stat-big">21</span><span class="stat-small">预设样式</span></div>
+<div class="stat-item"><span class="stat-big">0</span><span class="stat-small">依赖项</span></div>
+<div class="stat-item"><span class="stat-big">∞</span><span class="stat-small">幻灯片</span></div>
+</div>
+</div>
+</div>
+<div class="slide-footer"><span class="footer-brand">slide-creator</span><span class="footer-num">§01 / 08</span></div>
+</section>
+<section class="slide" data-notes="阐述当前痛点：工具链复杂、输出通用化、没有所有权。">
+<div class="deco-circle" style="width:400px;height:400px;top:50%;right:-120px;transform:translateY(-50%);"></div>
+<div class="content-wrapper space-between preset-vintage-editorial-content">
+<div>
+<div class="section-id slide-content-anim">问题所在</div>
+<div class="rule-thick slide-content-anim delay-1"></div>
+<h2 class="headline slide-content-anim delay-1" style="max-width:500px;">演示文稿不应该需要构建系统</h2>
+<div class="rule fade-in delay-2" style="opacity:0.15;"></div>
+<div class="fade-in delay-2" style="margin-top:8px;">
+<div class="pain-row"><div class="pain-num">01</div><div><div class="pain-title">复杂的工具链</div><div class="pain-body">npm install、webpack 配置、300MB node_modules——仅仅是为了制作幻灯片。太荒唐了。</div></div></div>
+<div class="pain-row"><div class="pain-num">02</div><div><div class="pain-title">通用化输出</div><div class="pain-body">每一份 AI 生成的演示都长得一样——Inter 字体、紫色渐变。你的品牌被抹去了。</div></div></div>
+<div class="pain-row"><div class="pain-num">03</div><div><div class="pain-title">没有所有权</div><div class="pain-body">封闭平台、导出限制、月度收费。你的幻灯片被扣为人质。</div></div></div>
+</div>
+</div>
+</div>
+<div class="slide-footer"><span class="footer-brand">slide-creator</span><span class="footer-num">§02 / 08</span></div>
+</section>
+<section class="slide" data-notes="核心洞察：风格发现应该看图选择，不是描述。">
+<div class="deco-circle" style="width:300px;height:300px;bottom:-80px;left:-80px;"></div>
+<div class="content-wrapper space-between preset-vintage-editorial-content">
+<div>
+<div class="section-id slide-content-anim">核心洞察</div>
+<div class="rule-thick slide-content-anim delay-1"></div>
+<h2 class="headline slide-content-anim delay-1">真正有效的风格发现</h2>
+<div class="pullquote fade-in delay-2">"你无法用言语描述设计偏好。"</div>
+<p class="body-text fade-in delay-2">slide-creator 生成 3 个视觉预览——你反应，不描述。没有色彩理论。没有字体名称。只是：就是这个。</p>
+<div style="margin-top:24px;">
+<div class="step-editorial"><div class="step-ed-num">I.</div><div><div class="step-ed-title">表达气质</div><div class="step-ed-body">告诉它你想要的氛围。温暖、锐利、活泼、严肃但不沉闷。</div></div></div>
+<div class="step-editorial"><div class="step-ed-num">II.</div><div><div class="step-ed-title">生成 3 个迷你预览</div><div class="step-ed-body">三种不同的视觉风格，并排展示，瞬间生成。</div></div></div>
+<div class="step-editorial"><div class="step-ed-num">III.</div><div><div class="step-ed-title">选择感觉对的那个</div><div class="step-ed-body">相信你的直觉。这就是全部要点。</div></div></div>
+</div>
+</div>
+</div>
+<div class="slide-footer"><span class="footer-brand">slide-creator</span><span class="footer-num">§03 / 08</span></div>
+</section>
+<section class="slide" data-notes="展示 21 款预设样式库，各有特色。">
+<div class="deco-circle" style="width:500px;height:500px;top:-150px;left:-150px;"></div>
+<div class="content-wrapper space-between preset-vintage-editorial-content">
+<div>
+<div class="section-id slide-content-anim">样式库</div>
+<div class="rule-thick slide-content-anim delay-1"></div>
+<h2 class="headline slide-content-anim delay-1" style="max-width:480px;">21 款精心设计的样式。<br/>没有平庸的 AI 美学。</h2>
+<p class="body-text fade-in delay-2">每一个预设都精心打磨，各具特色。从野兽派到植物风——每个故事都有它的声音。</p>
+<div class="preset-grid fade-in delay-2">
+<span class="preset-tag">Bold Signal</span><span class="preset-tag">Electric Studio</span>
+<span class="preset-tag">Creative Voltage</span><span class="preset-tag">Dark Botanical</span>
+<span class="preset-tag">Blue Sky</span><span class="preset-tag">Notebook Tabs</span>
+<span class="preset-tag">Pastel Geometry</span><span class="preset-tag">Split Pastel</span>
+<span class="preset-tag featured">Vintage Editorial ✦</span>
+<span class="preset-tag dark">Neon Cyber</span><span class="preset-tag dark">Terminal Green</span>
+<span class="preset-tag">Swiss Modern</span><span class="preset-tag">Paper &amp; Ink</span>
+<span class="preset-tag">Aurora Mesh</span><span class="preset-tag dark">Enterprise Dark</span>
+<span class="preset-tag">Glassmorphism</span><span class="preset-tag">Neo-Brutalism</span>
+<span class="preset-tag">Chinese Chan</span><span class="preset-tag dark">Data Story</span>
+<span class="preset-tag">Modern Newspaper</span><span class="preset-tag">Neo-Retro Dev</span>
+</div>
+</div>
+</div>
+<div class="slide-footer"><span class="footer-brand">slide-creator</span><span class="footer-num">§04 / 08</span></div>
+</section>
+<section class="slide" data-notes="三步工作流程：表达、预览、选择。">
+<div class="deco-circle" style="width:360px;height:360px;bottom:-80px;right:-80px;"></div>
+<div class="content-wrapper space-between preset-vintage-editorial-content">
+<div>
+<div class="section-id slide-content-anim">工作流程</div>
+<div class="rule-thick slide-content-anim delay-1"></div>
+<h2 class="headline slide-content-anim delay-1">从想法到演示文稿，只需几分钟</h2>
+<div style="margin-top:20px;">
+<div class="step-editorial"><div class="step-ed-num">I.</div><div><div class="step-ed-title">/slide-creator</div><div class="step-ed-body">回答几个问题。内容、气质、观众、语气。两分钟最多。</div></div></div>
+<div class="step-editorial"><div class="step-ed-num">II.</div><div><div class="step-ed-title">从 3 个预览中选择</div><div class="step-ed-body">对三种视觉风格做出反应。不需要色彩理论——我们保证。</div></div></div>
+<div class="step-editorial"><div class="step-ed-num">III.</div><div><div class="step-ed-title">打开你的 HTML</div><div class="step-ed-body">方向键、空格、滑动。在任何浏览器中运行。从不需要安装。</div></div></div>
+</div>
+<div class="bordered-box fade-in delay-3" data-label="我们的承诺" style="margin-top:24px;">
+<p class="body-text" style="max-width:100%; color:#1a1a1a;">从开始到完成不超过十分钟。我们计过时间。如果超时了，责怪你的内容——不是工具。</p>
+</div>
+</div>
+</div>
+<div class="slide-footer"><span class="footer-brand">slide-creator</span><span class="footer-num">§05 / 08</span></div>
+</section>
+<section class="slide" data-notes="核心功能：视口自适应、行内编辑、PPTX 导出、两阶段工作流。">
+<div class="deco-circle" style="width:280px;height:280px;top:60px;right:60px;"></div>
+<div class="content-wrapper space-between preset-vintage-editorial-content">
+<div>
+<div class="section-id slide-content-anim">功能详情</div>
+<div class="rule-thick slide-content-anim delay-1"></div>
+<h2 class="headline slide-content-anim delay-1">你需要的一切。<br/>没有多余的。</h2>
+<div class="rule fade-in delay-2" style="opacity:0.15; margin-top:20px;"></div>
+<div class="fade-in delay-2">
+<div class="feature-row"><div class="feature-name">视口自适应</div><div class="feature-desc">完美适配任何屏幕——笔记本电脑、电视、投影仪。</div></div>
+<div class="feature-row"><div class="feature-name">行内编辑</div><div style="text-align:right;"><div class="feature-badge">E 键 + Ctrl+S</div></div></div>
+<div class="feature-row"><div class="feature-name">PPTX 导出</div><div class="feature-desc">一键导出为 PowerPoint。完成。</div></div>
+<div class="feature-row" style="border-bottom:none;"><div class="feature-name">两阶段工作流</div><div style="text-align:right;"><div class="feature-badge">--plan → --generate</div></div></div>
+</div>
+</div>
+</div>
+<div class="slide-footer"><span class="footer-brand">slide-creator</span><span class="footer-num">§06 / 08</span></div>
+</section>
+<section class="slide" data-notes="两种安装方式：Claude Code 和 OpenClaw。">
+<div class="deco-circle" style="width:450px;height:450px;bottom:-150px;right:-100px;"></div>
+<div class="content-wrapper space-between preset-vintage-editorial-content">
+<div>
+<div class="section-id slide-content-anim">安装指南</div>
+<div class="rule-thick slide-content-anim delay-1"></div>
+<h2 class="headline slide-content-anim delay-1">两种开始方式。<br/>都只需三十秒。</h2>
+<div class="fade-in delay-2" style="margin-top:24px;">
+<div class="bordered-box" data-label="Claude Code">
+<span class="sub-label">git clone</span>
+<code class="code-mono">git clone https://github.com/kaisersong/slide-creator ~/.claude/skills/slide-creator</code>
+</div>
+<div class="bordered-box" data-label="OpenClaw">
+<span class="sub-label">clawhub install</span>
+<code class="code-mono">clawhub install kai-slide-creator</code>
+</div>
+</div>
+<p class="body-text fade-in delay-3" style="margin-top:16px; font-style:italic;">免费。开源。MIT 许可。无需注册。我们是认真的。</p>
+</div>
+</div>
+<div class="slide-footer"><span class="footer-brand">slide-creator</span><span class="footer-num">§07 / 08</span></div>
+</section>
+<section class="slide" data-notes="行动号召：开始使用 slide-creator。">
+<div class="deco-circle" style="width:700px;height:700px;bottom:-300px;right:-200px;"></div>
+<div class="deco-circle" style="width:120px;height:120px;top:80px;right:120px;"></div>
+<div class="content-wrapper center preset-vintage-editorial-content">
+<div class="section-id slide-content-anim">开始</div>
+<div class="rule-thick slide-content-anim delay-1"></div>
+<h2 class="display-title slide-content-anim delay-1" style="font-size:clamp(52px,9vw,100px);">你的下一份<br/>演示文稿<br/><em>从这里开始</em></h2>
+<div class="rule fade-in delay-2" style="opacity:0.15; margin-top:24px;"></div>
+<p class="body-text fade-in delay-2" style="margin-top:16px;">支持 Claude Code 和 OpenClaw。完全在浏览器中运行。<br/>无需安装——只需结果。</p>
+<div class="fade-in delay-3" style="margin-top:24px;">
+<code class="code-mono" style="display:inline-block; font-size:clamp(16px,2.5vw,22px); padding:16px 32px; border:2px solid #1a1a1a;">/slide-creator</code>
+</div>
+</div>
+<div class="slide-footer"><span class="footer-brand">slide-creator</span><span class="footer-num">§08 / 08</span></div>
+</section>
+</body></html>

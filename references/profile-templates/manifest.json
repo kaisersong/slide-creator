@@ -1,0 +1,175 @@
+{
+  "version": 1,
+  "presets": {
+    "Aurora Mesh": {
+      "en": {
+        "path": "references/profile-templates/aurora-mesh-en.html",
+        "sha256": "ebefa51b74f52c1e5278d4d6a0eec862d0bd7980a5c5e461035470b8d411d38f"
+      },
+      "zh": {
+        "path": "references/profile-templates/aurora-mesh-zh.html",
+        "sha256": "73cc54bbc876147c048d34216b7ac8f48744668f88c7bea09def195c975a0e45"
+      }
+    },
+    "Bold Signal": {
+      "en": {
+        "path": "references/profile-templates/bold-signal-en.html",
+        "sha256": "c7f18c86a3cfe704926d29a721c5dc14fb2d5e26b8fddb0fcac0a1f40cfc69f6"
+      },
+      "zh": {
+        "path": "references/profile-templates/bold-signal-zh.html",
+        "sha256": "0f515aa720f8b6cd42bb42ed6aba0b793c67e29d9a3cba7e1bc9d2af343829fb"
+      }
+    },
+    "Creative Voltage": {
+      "en": {
+        "path": "references/profile-templates/creative-voltage-en.html",
+        "sha256": "53a216bf0dca454e4c8a5a58d198c758d2190b26f485727b63163f941c3dc49c"
+      },
+      "zh": {
+        "path": "references/profile-templates/creative-voltage-zh.html",
+        "sha256": "96b3213283667a3e0e2556b3861c5528673457a5ad31ee057b89f5a53e4e568a"
+      }
+    },
+    "Dark Botanical": {
+      "en": {
+        "path": "references/profile-templates/dark-botanical-en.html",
+        "sha256": "31384d16801dc084ddb22ab046570d416e8d70a4b074b47c232954cae14a51a0"
+      },
+      "zh": {
+        "path": "references/profile-templates/dark-botanical-zh.html",
+        "sha256": "b61f465157c2c03a4327b2637420dc2f0af3125379f6c8e2d785770fce563fed"
+      }
+    },
+    "Electric Studio": {
+      "en": {
+        "path": "references/profile-templates/electric-studio-en.html",
+        "sha256": "1aeb39d0e4160cb1803d31770db90f4d938b38410a56dc7cc1ab290d2263a58e"
+      },
+      "zh": {
+        "path": "references/profile-templates/electric-studio-zh.html",
+        "sha256": "d4c1c8588db9c386483dda9cc984a29a01206ed3a7bcb5c8522e3078af767459"
+      }
+    },
+    "Glassmorphism": {
+      "en": {
+        "path": "references/profile-templates/glassmorphism-en.html",
+        "sha256": "f4c0a47c61d41aeed5f2801349ea07c852e258f6dece4523b02cf8f3d9d02ca5"
+      },
+      "zh": {
+        "path": "references/profile-templates/glassmorphism-zh.html",
+        "sha256": "11ee6f72941b2e40e21f6c560b057dc762bf925824b2310b95af979f50e199c4"
+      }
+    },
+    "Modern Newspaper": {
+      "en": {
+        "path": "references/profile-templates/modern-newspaper-en.html",
+        "sha256": "ac5af3071a853246f434eb8ed7cebba205412cbd63ceb20367079fa0ada5bbcf"
+      },
+      "zh": {
+        "path": "references/profile-templates/modern-newspaper-zh.html",
+        "sha256": "0927211d6d0c3a414b5f9e36ffcb6f36ba415bf5ab0b1d2b2a34b9f9e1f97a2f"
+      }
+    },
+    "Neo-Brutalism": {
+      "en": {
+        "path": "references/profile-templates/neo-brutalism-en.html",
+        "sha256": "e072c91aa47b162d49e6aa83a9ffa49525bbe2e5c6b59f4df21187417570e5f4"
+      },
+      "zh": {
+        "path": "references/profile-templates/neo-brutalism-zh.html",
+        "sha256": "fa56a38680640be1cfabfa57d09a3c7bca80b50a35498786176a13f6dfd189a8"
+      }
+    },
+    "Neo-Retro Dev Deck": {
+      "en": {
+        "path": "references/profile-templates/neo-retro-dev-en.html",
+        "sha256": "a8c666bafa12413c5b8d0a0b21ed30cdb1a67a2502e1e4ccddce114179e5bd96"
+      },
+      "zh": {
+        "path": "references/profile-templates/neo-retro-dev-zh.html",
+        "sha256": "dbc26af5cc6fc0d5de9bc02b78bf98caa531884439ea010ac4d7ea060c4602e0"
+      }
+    },
+    "Neon Cyber": {
+      "en": {
+        "path": "references/profile-templates/neon-cyber-en.html",
+        "sha256": "64c3ddbb2c2ae60a13df05875701dcf8894b347da6eaff2f3b3175a035e5f31a"
+      },
+      "zh": {
+        "path": "references/profile-templates/neon-cyber-zh.html",
+        "sha256": "87f4107fdcf10ba1bf7d4b9b519f783720f14fe0099b354bce04c83b3fff5352"
+      }
+    },
+    "Notebook Tabs": {
+      "en": {
+        "path": "references/profile-templates/notebook-tabs-en.html",
+        "sha256": "24f1d6c4fafa5815137dbf186f2f96ac56eb7401190898f08bc0da7c3622b279"
+      },
+      "zh": {
+        "path": "references/profile-templates/notebook-tabs-zh.html",
+        "sha256": "a2bb649dc874121570be47ace5c2e4fe375857be27f6fa44d5982f2bb3c60448"
+      }
+    },
+    "Paper & Ink": {
+      "en": {
+        "path": "references/profile-templates/paper-ink-en.html",
+        "sha256": "e63cbf582f5ac6731155b73f675ed46fdcc68d2c0ef9a0d68809ee2c81f687ab"
+      },
+      "zh": {
+        "path": "references/profile-templates/paper-ink-zh.html",
+        "sha256": "6f09f22ae140d2fc9eb81341c5f7021330ecc3c247900962a814b5969ab9cf09"
+      }
+    },
+    "Pastel Geometry": {
+      "en": {
+        "path": "references/profile-templates/pastel-geometry-en.html",
+        "sha256": "f95eefdbbc34a08347c1fbf6638efeb213c94e47e969533f91cae8acf903ce8f"
+      },
+      "zh": {
+        "path": "references/profile-templates/pastel-geometry-zh.html",
+        "sha256": "d04093f1b8dd59ff807b539f6f2fed3bc7ee938ed9d10027663154661db40c1b"
+      }
+    },
+    "Split Pastel": {
+      "en": {
+        "path": "references/profile-templates/split-pastel-en.html",
+        "sha256": "5d8d04a2f9837a89b994d6f6c4cf983598285b9a97d0b21315a2ff5ea7c12d69"
+      },
+      "zh": {
+        "path": "references/profile-templates/split-pastel-zh.html",
+        "sha256": "aaa6ea74dd30a09d4ef7f6db887fb94d60474a28f9a6de1a3dac3d92365f5850"
+      }
+    },
+    "Strategy Consulting": {
+      "en": {
+        "path": "references/profile-templates/strategy-consulting-en.html",
+        "sha256": "efee4c8085b3cc03aa66173d54d92def669dd4fb11fd2570e1369ecb818387de"
+      },
+      "zh": {
+        "path": "references/profile-templates/strategy-consulting-zh.html",
+        "sha256": "a94818b3eb9ff9d5d4201ee2be28c8b24aadce77f30bba5be649fb01b63e67df"
+      }
+    },
+    "Terminal Green": {
+      "en": {
+        "path": "references/profile-templates/terminal-green-en.html",
+        "sha256": "64d7166ac5d3b0ced1ced1f1bf71baa8fc981e40e76b993b118e4fa6b0bd89a1"
+      },
+      "zh": {
+        "path": "references/profile-templates/terminal-green-zh.html",
+        "sha256": "01ebfffe4ded404848ced24018f1d28e810b9ae0b20bf5525c90fe9ba7c406a4"
+      }
+    },
+    "Vintage Editorial": {
+      "en": {
+        "path": "references/profile-templates/vintage-editorial-en.html",
+        "sha256": "da159a017b56e41205c0535a0c3796ba5782769e0fc519d1dd267705a04b412e"
+      },
+      "zh": {
+        "path": "references/profile-templates/vintage-editorial-zh.html",
+        "sha256": "480e41d1537be52511419613d4a0ebc11ed54157282211b4ccd8e8264277c0a1"
+      }
+    }
+  }
+}

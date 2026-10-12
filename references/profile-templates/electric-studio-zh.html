@@ -1,0 +1,484 @@
+<!DOCTYPE html>
+<!-- Program-owned profile template. Regenerate with scripts/build-profile-templates.py. -->
+<html><head>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;700;800&amp;family=Noto+Sans+SC:wght@400;700&amp;display=swap" rel="stylesheet"/>
+<style>
+body { background-color: #0a0a0a; }
+
+:root {
+    --bg-dark: #0a0a0a;
+    --bg-white: #ffffff;
+    --bg-light: #f8f9ff;
+    --accent: #4361ee;
+    --accent-blue: #4361ee;
+    --text-dark: #0a0a0a;
+    --text-light: #ffffff;
+    --text-secondary: rgba(255,255,255,0.5);
+    --font-display: 'Manrope', 'Noto Sans SC', sans-serif;
+    --font-body: 'Manrope', 'Noto Sans SC', sans-serif;
+    --title-size: clamp(2rem, 6vw, 5rem);
+    --h2-size: clamp(1.25rem, 3.5vw, 2.5rem);
+    --subtitle-size: clamp(0.875rem, 2vw, 1.25rem);
+    --body-size: clamp(0.75rem, 1.5vw, 1.125rem);
+    --small-size: clamp(0.65rem, 1vw, 0.875rem);
+    --slide-padding: clamp(1.5rem, 4vw, 4rem);
+    --content-gap: clamp(1rem, 2vw, 2rem);
+    --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+    --duration-normal: 0.4s;
+}
+
+/* Reset */
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+html { scroll-snap-type: y mandatory; height: 100%; }
+body { font-family: var(--font-body); background: var(--bg-dark); color: var(--text-light); height: 100%; }
+body[data-export-progress="false"] .progress-bar,
+body[data-export-progress="false"] .nav-dots { display: none !important; }
+
+/* Slide */
+.slide {
+    width: 100vw; height: 100vh; height: 100dvh;
+    scroll-snap-align: start; display: flex; flex-direction: column;
+    position: relative; overflow: hidden;
+    background: var(--bg-dark);
+}
+.slide-content {
+    flex: 1; display: flex; flex-direction: column; justify-content: center;
+    max-height: 100%; overflow: hidden; padding: var(--slide-padding);
+}
+
+/* Panels */
+.left-panel {
+    flex: 0 0 58%; display: flex; flex-direction: column; justify-content: center;
+    padding: clamp(40px, 6vw, 80px) clamp(30px, 5vw, 60px) clamp(40px, 6vw, 80px) clamp(40px, 6vw, 80px);
+    position: relative;
+}
+.right-panel {
+    flex: 0 0 42%; display: flex; flex-direction: column; justify-content: center;
+    padding: clamp(40px, 6vw, 80px) clamp(30px, 4vw, 48px);
+    position: relative;
+}
+.top-panel {
+    flex: 0 0 52%; width: 100%; display: flex; flex-direction: column; justify-content: flex-end;
+    padding: clamp(30px, 5vw, 56px) clamp(40px, 6vw, 80px) clamp(24px, 3vw, 40px);
+    position: relative;
+}
+.bottom-panel {
+    flex: 0 0 48%; width: 100%; display: flex; flex-direction: column; justify-content: flex-start;
+    padding: clamp(24px, 3vw, 40px) clamp(40px, 6vw, 80px) clamp(30px, 5vw, 56px);
+    position: relative;
+}
+
+/* Signature Overlays */
+.left-panel::after {
+    content: ''; position: absolute; right: 0; top: 12%; bottom: 12%;
+    width: 4px; background: #4361ee;
+}
+.top-panel::after {
+    content: ''; position: absolute; bottom: 0; left: 8%; right: 8%;
+    height: 4px; background: #4361ee;
+}
+
+/* Typography */
+.elec-title {
+    font-family: 'Manrope', 'Noto Sans SC', sans-serif;
+    font-size: clamp(32px, 6vw, 64px);
+    font-weight: 800; line-height: 1.05;
+}
+.elec-body {
+    font-family: 'Manrope', 'Noto Sans SC', sans-serif;
+    font-size: clamp(14px, 1.5vw, 18px);
+    font-weight: 400; line-height: 1.6; opacity: 0.7;
+}
+.elec-label {
+    font-size: clamp(10px, 1.1vw, 12px); font-weight: 800;
+    text-transform: uppercase; letter-spacing: 0.15em;
+    color: #4361ee; margin-bottom: clamp(12px, 2vw, 24px);
+}
+.elec-quote-block {
+    border-left: 4px solid #4361ee; padding-left: clamp(16px, 2.5vw, 24px);
+    margin: clamp(16px, 2.5vw, 28px) 0;
+}
+.elec-stat-number {
+    font-family: 'Manrope', 'Noto Sans SC', sans-serif;
+    font-size: clamp(48px, 8vw, 96px); font-weight: 800; line-height: 1;
+}
+.elec-stat-label {
+    font-size: clamp(10px, 1.1vw, 13px); font-weight: 700;
+    letter-spacing: 0.15em; text-transform: uppercase;
+    color: #4361ee; margin-bottom: 8px;
+}
+
+/* Components */
+.label { font-size: 10px; font-weight: 700; letter-spacing: 0.22em; text-transform: uppercase; color: #4361ee; }
+.label.white { color: rgba(255,255,255,0.5); }
+.slide-num-label { position: absolute; bottom: 28px; right: 36px; font-size: 11px; font-weight: 500; color: rgba(0,0,0,0.18); }
+.slide-num-label.light { color: rgba(255,255,255,0.2); }
+.badge-pill {
+    display: inline-block; padding: 6px 16px;
+    border: 1.5px solid rgba(67,97,238,0.3); font-size: 12px;
+    font-weight: 600; color: #4361ee;
+}
+.badge-pill.dark { border-color: rgba(67,97,238,0.5); color: #4361ee; }
+.code-block {
+    background: #0a0a0a; padding: 14px 18px; border-radius: 4px;
+    font-family: 'Manrope', 'Noto Sans SC', monospace;
+    font-size: clamp(12px, 1.2vw, 14px); color: rgba(255,255,255,0.8);
+}
+.feat-name { font-weight: 600; font-size: clamp(14px, 1.4vw, 17px); line-height: 1.5; }
+.feat-name::before {
+    content: ''; display: inline-block; width: 6px; height: 6px;
+    background: #4361ee; border-radius: 50%; margin-right: 10px; vertical-align: middle;
+}
+.cta-pill {
+    display: inline-block; background: #fff; color: #4361ee;
+    font-family: 'Manrope', 'Noto Sans SC', sans-serif;
+    font-weight: 800; font-size: clamp(18px, 2vw, 26px);
+    padding: 18px 36px; border-radius: 4px; text-decoration: none;
+}
+.step-item { display: flex; align-items: flex-start; gap: 16px; margin-bottom: clamp(12px, 1.5vw, 20px); }
+.step-num {
+    font-family: 'Manrope', sans-serif; font-weight: 800;
+    font-size: clamp(20px, 2.5vw, 32px); color: #4361ee; line-height: 1;
+    flex-shrink: 0; width: 40px;
+}
+.step-text { font-size: clamp(13px, 1.3vw, 16px); line-height: 1.5; }
+
+/* Reveal animations */
+.reveal { opacity: 0; transform: translateY(18px); transition: opacity 0.4s ease, transform 0.4s ease; }
+.slide.visible .reveal { opacity: 1; transform: translateY(0); }
+.reveal:nth-child(1) { transition-delay: 0.05s; }
+.reveal:nth-child(2) { transition-delay: 0.13s; }
+.reveal:nth-child(3) { transition-delay: 0.21s; }
+.reveal:nth-child(4) { transition-delay: 0.29s; }
+
+/* Grid */
+.grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 250px), 1fr)); gap: clamp(0.5rem, 1.5vw, 1rem); }
+ul { list-style: none; }
+li { margin-bottom: 0.6em; line-height: 1.5; font-size: clamp(14px, 1.4vw, 17px); }
+
+/* ═══════════════════════════════════════════
+   Per-slide CSS
+   ═══════════════════════════════════════════ */
+
+/* P1: Hero — row split, dark left + white right */
+#slide-1 { flex-direction: row; }
+#slide-1 .left-panel { background: #0a0a0a; }
+#slide-1 .left-panel .elec-title { color: #ffffff; }
+#slide-1 .left-panel .elec-body { color: rgba(255,255,255,0.6); }
+#slide-1 .right-panel { background: #ffffff; }
+#slide-1 .right-panel .stat-group { display: flex; flex-direction: column; gap: clamp(16px, 2.5vw, 32px); }
+#slide-1 .stat-item { display: flex; flex-direction: column; }
+#slide-1 .stat-item .elec-stat-number { color: #4361ee; }
+#slide-1 .stat-item:nth-child(2) .elec-stat-number { color: #0a0a0a; }
+
+/* P2: Problem — column split, white top + dark bottom */
+#slide-2 { flex-direction: column; }
+#slide-2 .top-panel { background: #ffffff; }
+#slide-2 .top-panel .elec-title { color: #0a0a0a; }
+#slide-2 .bottom-panel { background: #0a0a0a; }
+#slide-2 .bottom-panel li { color: rgba(255,255,255,0.7); }
+
+/* P3: Discovery — row split, dark left + light right */
+#slide-3 { flex-direction: row; }
+#slide-3 .left-panel { background: #0a0a0a; }
+#slide-3 .left-panel .elec-title { color: #ffffff; }
+#slide-3 .left-panel .elec-body { color: rgba(255,255,255,0.6); }
+#slide-3 .right-panel { background: #f8f9ff; }
+#slide-3 .right-panel .badge-group { display: flex; flex-direction: column; gap: 12px; }
+#slide-3 .right-panel .badge-pill { border-color: rgba(67,97,238,0.3); }
+#slide-3 .right-panel .badge-desc { font-size: clamp(12px, 1.2vw, 15px); color: rgba(10,10,10,0.5); margin-left: 4px; }
+
+/* P4: Solution — single panel, dark, centered stats */
+#slide-4 { background: #0a0a0a; color: #ffffff; justify-content: center; align-items: center; }
+#slide-4 .slide-content { justify-content: center; align-items: center; text-align: center; }
+#slide-4 .stat-row { display: flex; gap: clamp(3rem, 6vw, 6rem); justify-content: center; align-items: flex-start; }
+#slide-4 .stat-col { display: flex; flex-direction: column; align-items: center; }
+#slide-4 .stat-col .elec-stat-number { color: #ffffff; }
+#slide-4 .stat-col .stat-sub { font-size: clamp(12px, 1.2vw, 15px); color: rgba(255,255,255,0.4); margin-top: 8px; }
+#slide-4 .stat-divider { width: 1px; height: clamp(60px, 8vw, 100px); background: rgba(255,255,255,0.1); }
+
+/* P5: Workflow — row split, white left + dark right */
+#slide-5 { flex-direction: row; }
+#slide-5 .left-panel { background: #ffffff; }
+#slide-5 .left-panel .elec-title { color: #0a0a0a; }
+#slide-5 .left-panel .elec-body { color: rgba(10,10,10,0.5); }
+#slide-5 .right-panel { background: #0a0a0a; }
+#slide-5 .right-panel .step-text { color: rgba(255,255,255,0.7); }
+#slide-5 .right-panel .code-block { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.08); }
+
+/* P6: Features — column split, dark top + white bottom */
+#slide-6 { flex-direction: column; }
+#slide-6 .top-panel { background: #0a0a0a; }
+#slide-6 .top-panel .elec-title { color: #ffffff; }
+#slide-6 .bottom-panel { background: #ffffff; }
+#slide-6 .bottom-panel .feat-grid { display: grid; grid-template-columns: 1fr 1fr; gap: clamp(16px, 2vw, 28px); }
+#slide-6 .bottom-panel .feat-card { padding: clamp(12px, 1.5vw, 20px); border-left: 3px solid #4361ee; }
+#slide-6 .bottom-panel .feat-card-title { font-weight: 700; font-size: clamp(14px, 1.4vw, 16px); color: #0a0a0a; margin-bottom: 4px; }
+#slide-6 .bottom-panel .feat-card-desc { font-size: clamp(12px, 1.2vw, 14px); color: rgba(10,10,10,0.5); line-height: 1.5; }
+
+/* P7: Install — single panel, white, quote style */
+#slide-7 { background: #ffffff; color: #0a0a0a; }
+#slide-7 .slide-content { justify-content: center; align-items: flex-start; max-width: min(90vw, 750px); margin: 0 auto; }
+#slide-7 .elec-title { color: #0a0a0a; }
+#slide-7 .install-row { display: flex; gap: clamp(16px, 2vw, 24px); margin-top: clamp(16px, 2vw, 28px); flex-wrap: wrap; }
+#slide-7 .install-item { flex: 1; min-width: 280px; }
+#slide-7 .install-label { font-size: 11px; font-weight: 700; letter-spacing: 0.18em; text-transform: uppercase; color: rgba(10,10,10,0.4); margin-bottom: 10px; }
+#slide-7 .code-block { background: #f4f5f9; color: #0a0a0a; border: 1px solid rgba(10,10,10,0.06); }
+
+/* P8: CTA — row split, dark left + white right */
+#slide-8 { flex-direction: row; }
+#slide-8 .left-panel { background: #0a0a0a; }
+#slide-8 .left-panel::after { background: rgba(255,255,255,0.08); }
+#slide-8 .left-panel .elec-title { color: #ffffff; }
+#slide-8 .left-panel .elec-body { color: rgba(255,255,255,0.6); }
+#slide-8 .right-panel { background: #ffffff; display: flex; flex-direction: column; justify-content: center; align-items: center; }
+#slide-8 .right-panel .cta-pill { margin-bottom: 12px; }
+#slide-8 .right-panel .cta-sub { font-size: clamp(12px, 1.2vw, 14px); color: rgba(10,10,10,0.4); }
+
+/* ═══════════════════════════════════════════
+   Universal UI Elements
+   ═══════════════════════════════════════════ */
+#brand-mark { position: fixed; top: 20px; left: 28px; font-family: 'Manrope', sans-serif; font-weight: 800; font-size: 15px; color: #4361ee; z-index: 1000; }
+.progress-bar { position: fixed; top: 0; left: 0; height: 3px; background: var(--accent); width: 0%; z-index: 100; transition: width 0.3s ease; }
+.nav-dots { position: fixed; right: 1.5rem; top: 50%; transform: translateY(-50%); display: flex; flex-direction: column; gap: 8px; z-index: 100; }
+
+/* ═══════════════════════════════════════════
+   Present Mode
+   ═══════════════════════════════════════════ */
+#present-btn { position: fixed; bottom: 1.5rem; right: 1.5rem; z-index: 9997; width: 44px; height: 44px; border-radius: 50%; background: rgba(0,0,0,0.5); color: rgba(255,255,255,0.8); border: 1.5px solid rgba(255,255,255,0.2); font-size: 1rem; cursor: pointer; backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); display: flex; align-items: center; justify-content: center; opacity: 0; transition: opacity 0.2s; pointer-events: none; }
+body:hover #present-btn { opacity: 1; pointer-events: auto; }
+#present-btn:hover { background: rgba(0,0,0,0.78); }
+#present-counter { display: none; position: fixed; bottom: 1.4rem; left: 50%; transform: translateX(-50%); z-index: 9997; font-size: 0.65rem; letter-spacing: 0.14em; font-family: system-ui, sans-serif; color: rgba(255,255,255,0.28); }
+body.presenting { background: #000 !important; overflow: hidden !important; }
+body.presenting .slide { position: fixed !important; inset: 0; width: 100vw !important; height: 100vh !important; transform-origin: center center; scroll-snap-align: none !important; display: none !important; }
+body.presenting .slide.p-on { display: flex !important; }
+body.presenting #present-btn { display: none !important; }
+body.presenting #present-counter { display: block; }
+body.presenting.presenting-black .slide { visibility: hidden !important; }
+body.presenting.presenting-black::after { content: ''; position: fixed; inset: 0; background: #000; z-index: 99999; }
+.slide-credit { position: absolute; bottom: 8px; right: 14px; font-size: 9px; color: var(--text-secondary, #999); opacity: 0.35; pointer-events: none; z-index: 1; font-family: system-ui, sans-serif; }
+body.presenting .slide-credit { display: none !important; }
+
+/* ═══════════════════════════════════════════
+   Edit Mode
+   ═══════════════════════════════════════════ */
+.edit-hotzone { position: fixed; top: 0; left: 0; width: 80px; height: 80px; z-index: 10000; cursor: pointer; }
+.edit-toggle { position: fixed; top: 16px; left: 16px; opacity: 0; pointer-events: none; transition: opacity 0.3s ease; z-index: 10001; padding: 6px 14px; border-radius: 4px; border: 1px solid rgba(255,255,255,0.15); background: rgba(0,0,0,0.6); color: #fff; font-size: 12px; cursor: pointer; font-family: 'Manrope', sans-serif; }
+.edit-toggle.show { opacity: 1; pointer-events: auto; }
+.edit-toggle.active { opacity: 1; pointer-events: auto; background: var(--accent); color: #fff; border-color: var(--accent); }
+#notes-panel { display: none; position: fixed; bottom: 0; left: 0; right: 0; z-index: 9998; background: rgba(8,8,18,0.94); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); border-top: 1px solid rgba(255,255,255,0.08); }
+#notes-panel.active { display: flex; flex-direction: column; }
+#notes-panel-header { display: flex; align-items: center; justify-content: space-between; padding: 0.45rem 1.4rem; cursor: pointer; user-select: none; }
+#notes-panel-header:hover { background: rgba(255,255,255,0.03); }
+#notes-panel-label { flex: 1; font-size: 0.58rem; letter-spacing: 0.16em; text-transform: uppercase; color: rgba(255,255,255,0.3); }
+#notes-drag-hint { flex: 1; display: flex; justify-content: center; }
+#notes-drag-hint::after { content: ''; display: block; width: 36px; height: 3px; border-radius: 2px; background: rgba(255,255,255,0.25); }
+#notes-collapse-btn { flex: 1; text-align: right; font-size: 1rem; color: rgba(255,255,255,0.4); background: none; border: none; cursor: pointer; transition: color 0.15s, transform 0.2s; }
+#notes-collapse-btn:hover { color: rgba(255,255,255,0.85); }
+#notes-body { padding: 0 1.4rem 0.75rem; }
+#notes-panel.collapsed #notes-body { display: none; }
+#notes-panel.collapsed #notes-collapse-btn { transform: rotate(180deg); }
+#notes-textarea { width: 100%; height: 72px; min-height: 48px; max-height: 200px; resize: vertical; background: transparent; border: none; outline: none; color: rgba(255,255,255,0.75); font-size: 0.88rem; line-height: 1.65; font-family: system-ui, sans-serif; }
+#notes-textarea::placeholder { color: rgba(255,255,255,0.18); }
+
+/* ═══════════════════════════════════════════
+   Responsive
+   ═══════════════════════════════════════════ */
+@media (max-width: 768px) {
+    .slide { flex-direction: column !important; }
+    .left-panel, .right-panel { flex: none !important; width: 100% !important; padding: clamp(24px, 4vw, 40px) !important; }
+    .top-panel, .bottom-panel { flex: none !important; padding: clamp(20px, 3vw, 32px) !important; }
+    #slide-6 .bottom-panel .feat-grid { grid-template-columns: 1fr; }
+    #slide-4 .stat-row { flex-direction: column; gap: clamp(1.5rem, 3vw, 2rem); }
+    #slide-4 .stat-divider { width: clamp(60px, 10vw, 100px); height: 1px; }
+}
+@media (max-height: 700px) { :root { --slide-padding: clamp(0.75rem, 3vw, 2rem); --content-gap: clamp(0.4rem, 1.5vw, 1rem); } }
+@media (max-height: 600px) { :root { --slide-padding: clamp(0.5rem, 2.5vw, 1.5rem); } .nav-dots { display: none; } }
+@media (max-height: 500px) { :root { --slide-padding: clamp(0.4rem, 2vw, 1rem); } }
+@media (max-width: 600px) { .grid { grid-template-columns: 1fr; } }
+@media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.2s !important; } }
+</style>
+</head><body>
+<section aria-label="Hero" class="slide" data-notes="slide-creator 是一个零依赖的 HTML 演示文稿生成器，提供 21 种设计预设，纯浏览器运行。" id="slide-1">
+<div class="left-panel">
+<span class="elec-label reveal">slide-creator v2.18</span>
+<h1 class="elec-title reveal preset-electric-studio-content">零依赖 HTML 演示文稿</h1>
+<p class="elec-body reveal">纯浏览器运行 · 21 种设计预设 · 拒绝通用 AI 审美</p>
+</div>
+<div class="right-panel">
+<div class="stat-group">
+<div class="stat-item reveal">
+<span class="elec-stat-label">预设风格</span>
+<span class="elec-stat-number">21</span>
+</div>
+<div class="stat-item reveal">
+<span class="elec-stat-label">外部依赖</span>
+<span class="elec-stat-number">0</span>
+</div>
+<div class="stat-item reveal">
+<span class="elec-stat-label">幻灯片</span>
+<span class="elec-stat-number">∞</span>
+</div>
+</div>
+<span class="slide-num-label">01</span>
+</div>
+</section>
+<section aria-label="Problem" class="slide" data-notes="现有演示工具要么依赖复杂工具链，要么产出千篇一律的 AI 审美效果。" id="slide-2">
+<div class="top-panel">
+<span class="elec-label reveal">Problem</span>
+<h2 class="elec-title reveal preset-electric-studio-content">演示工具越做越复杂，结果千篇一律</h2>
+</div>
+<div class="bottom-panel">
+<ul>
+<li class="feat-name reveal">复杂工具链 — 安装配置半天，还没开始做内容</li>
+<li class="feat-name reveal">通用 AI 审美 — 每份演示看起来都一样</li>
+<li class="feat-name reveal">平台锁定 — 离开特定软件就无法使用</li>
+<li class="feat-name reveal">模板同质化 — 选来选去都是那几个模板</li>
+</ul>
+<span class="slide-num-label light">02</span>
+</div>
+</section>
+<section aria-label="Discovery" class="slide" data-notes="看图选风格而非描述风格，生成 3 个预览后直观选择。" id="slide-3">
+<div class="left-panel">
+<span class="elec-label reveal">Discovery</span>
+<h2 class="elec-title reveal preset-electric-studio-content">看图选风格，而非描述风格</h2>
+<p class="elec-body reveal">生成 3 个预览，凭直觉选择最匹配的视觉风格</p>
+</div>
+<div class="right-panel">
+<div class="badge-group">
+<div class="reveal">
+<span class="badge-pill">Bold Signal</span>
+<span class="badge-desc">数据驱动、高对比</span>
+</div>
+<div class="reveal">
+<span class="badge-pill">Electric Studio</span>
+<span class="badge-desc">专业品牌、分屏设计</span>
+</div>
+<div class="reveal">
+<span class="badge-pill">Neon Cyber</span>
+<span class="badge-desc">开发者、赛博朋克</span>
+</div>
+<div class="reveal">
+<span class="badge-pill">Swiss Modern</span>
+<span class="badge-desc">研究、思想领导力</span>
+</div>
+</div>
+<span class="slide-num-label">03</span>
+</div>
+</section>
+<section aria-label="Solution" class="slide" data-notes="21 种预设风格，覆盖从数据报告到创意展示的完整场景。" id="slide-4">
+<div class="slide-content preset-electric-studio-content">
+<div class="elec-label reveal">Solution</div>
+<div class="stat-row reveal">
+<div class="stat-col">
+<span class="elec-stat-number">21</span>
+<span class="elec-stat-label">预设风格</span>
+<span class="stat-sub">每种都有独立视觉签名</span>
+</div>
+<div class="stat-divider"></div>
+<div class="stat-col">
+<span class="elec-stat-number">100%</span>
+<span class="elec-stat-label">浏览器运行</span>
+<span class="stat-sub">零服务器，零依赖</span>
+</div>
+<div class="stat-divider"></div>
+<div class="stat-col">
+<span class="elec-stat-number">3min</span>
+<span class="elec-stat-label">快速出稿</span>
+<span class="stat-sub">从想法到完整演示</span>
+</div>
+</div>
+<span class="slide-num-label light">04</span>
+</div>
+</section>
+<section aria-label="Workflow" class="slide" data-notes="三个命令完成全流程：创建规划、选择风格、打开演示。" id="slide-5">
+<div class="left-panel">
+<span class="elec-label reveal">Workflow</span>
+<h2 class="elec-title reveal preset-electric-studio-content">三个命令，从想法到演示</h2>
+<p class="elec-body reveal">无需复杂配置，打开终端即可开始</p>
+</div>
+<div class="right-panel">
+<div class="step-item reveal">
+<span class="step-num">01</span>
+<div>
+<div class="feat-name">创建规划</div>
+<div class="code-block">/slide-creator --plan "产品发布"</div>
+</div>
+</div>
+<div class="step-item reveal">
+<span class="step-num">02</span>
+<div>
+<div class="feat-name">选择风格</div>
+<div class="step-text">从 3 个预览中直观选择最匹配的视觉风格</div>
+</div>
+</div>
+<div class="step-item reveal">
+<span class="step-num">03</span>
+<div>
+<div class="feat-name">生成并打开</div>
+<div class="code-block">/slide-creator --generate</div>
+</div>
+</div>
+<span class="slide-num-label light">05</span>
+</div>
+</section>
+<section aria-label="Features" class="slide" data-notes="视口适配、编辑模式、PPTX 导出、两阶段规划四个核心能力。" id="slide-6">
+<div class="top-panel">
+<span class="elec-label reveal">Features</span>
+<h2 class="elec-title reveal preset-electric-studio-content">四个核心能力，覆盖完整工作流</h2>
+</div>
+<div class="bottom-panel">
+<div class="feat-grid">
+<div class="feat-card reveal">
+<div class="feat-card-title">视口适配</div>
+<div class="feat-card-desc">每张幻灯片精确填满视口，clamp() 响应式字号，零溢出</div>
+</div>
+<div class="feat-card reveal">
+<div class="feat-card-title">浏览器内编辑</div>
+<div class="feat-card-desc">E 键进入编辑模式，实时修改文字和备注，Ctrl+S 保存</div>
+</div>
+<div class="feat-card reveal">
+<div class="feat-card-title">PPTX 导出</div>
+<div class="feat-card-desc">图片模式像素级还原，Native 模式文字可编辑</div>
+</div>
+<div class="feat-card reveal">
+<div class="feat-card-title">两阶段规划</div>
+<div class="feat-card-desc">自动模式快速出稿，精修模式深度规划叙事结构</div>
+</div>
+</div>
+<span class="slide-num-label">06</span>
+</div>
+</section>
+<section aria-label="Install" class="slide" data-notes="Claude Code 和 OpenClaw 两种安装方式，一行命令即可开始。" id="slide-7">
+<div class="slide-content preset-electric-studio-content">
+<span class="elec-label reveal">Install</span>
+<div class="elec-quote-block reveal">
+<h2 class="elec-title">一行命令，立即开始</h2>
+</div>
+<div class="install-row">
+<div class="install-item reveal">
+<div class="install-label">Claude Code</div>
+<div class="code-block">安装 https://github.com/kaisersong/slide-creator</div>
+</div>
+<div class="install-item reveal">
+<div class="install-label">OpenClaw</div>
+<div class="code-block">clawhub install kai-slide-creator</div>
+</div>
+</div>
+<span class="slide-num-label">07</span>
+</div>
+</section>
+<section aria-label="CTA" class="slide" data-notes="使用 /slide-creator 命令立即生成你的第一份演示文稿。" id="slide-8">
+<div class="left-panel">
+<span class="elec-label reveal">Ready?</span>
+<h1 class="elec-title reveal preset-electric-studio-content">一个命令，创建无限可能</h1>
+<p class="elec-body reveal">纯浏览器运行，零依赖，21 种风格任你选择</p>
+</div>
+<div class="right-panel">
+<span class="cta-pill reveal">/slide-creator</span>
+<span class="cta-sub reveal">支持 Claude Code 和 OpenClaw</span>
+<span class="slide-num-label">08</span>
+</div>
+</section>
+</body></html>

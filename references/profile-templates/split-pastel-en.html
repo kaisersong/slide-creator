@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<!-- Program-owned profile template. Regenerate with scripts/build-profile-templates.py. -->
+<html><head>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+    --bg: #fef3c7;
+    --accent: #059669;
+    --text-primary: #064e3b;
+    --text-body: rgba(6,78,59,0.70);
+    --text-secondary: rgba(6,78,59,0.50);
+    --text-muted: rgba(6,78,59,0.35);
+    --card-bg: rgba(255,255,255,0.60);
+    --card-border: rgba(5,150,105,0.15);
+    --divider: rgba(5,150,105,0.20);
+    --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+    --duration-normal: 0.6s;
+}
+
+html { scroll-snap-type: y mandatory; height: 100%; }
+
+body {
+    height: 100%;
+    font-family: 'Nunito', system-ui, sans-serif;
+    color: var(--text-primary);
+}
+
+/* Background */
+body {
+    background: linear-gradient(135deg, #fef3c7 50%, #d1fae5 50%);
+}
+
+.slide {
+    width: 100vw; height: 100vh; height: 100dvh;
+    scroll-snap-align: start; overflow: hidden;
+    position: relative; display: flex;
+    flex-direction: column; align-items: center; justify-content: center;
+    padding: clamp(1.5rem, 4vw, 4rem);
+}
+
+.slide .content {
+    width: 100%; max-width: min(90vw, 800px);
+    padding: clamp(24px, 5vw, 64px);
+    position: relative; z-index: 1;
+}
+
+h1 { font-size: clamp(2rem, 5.5vw, 4rem); font-weight: 800; line-height: 1.1; letter-spacing: -0.02em; }
+h2 { font-size: clamp(1.4rem, 3.5vw, 2.4rem); font-weight: 700; line-height: 1.2; letter-spacing: -0.01em; }
+h3 { font-size: clamp(0.9rem, 1.6vw, 1.2rem); font-weight: 600; }
+p { font-size: clamp(0.82rem, 1.4vw, 1.05rem); line-height: 1.6; color: var(--text-body); }
+
+.pill {
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 4px 14px; border-radius: 999px;
+    font-size: 12px; font-weight: 600; letter-spacing: 0.05em;
+    background: rgba(5,150,105,0.10); color: #059669;
+    border: 1px solid rgba(5,150,105,0.25);
+}
+
+.reveal {
+    opacity: 0; transform: translateY(20px);
+    transition: opacity var(--duration-normal) var(--ease-out-expo),
+                transform var(--duration-normal) var(--ease-out-expo);
+}
+.slide.visible .reveal { opacity: 1; transform: translateY(0); }
+
+/* Progress bar */
+.progress-bar { position: fixed; top: 0; left: 0; height: 3px; background: var(--accent); width: 0%; z-index: 100; transition: width 0.3s ease; }
+
+/* Nav dots placeholder */
+.nav-dots {}
+
+
+/* ═══════════════════════════════════════════════
+   Present Mode — F5 / ▶ to enter, ESC to exit
+   ═══════════════════════════════════════════════ */
+#present-btn {
+  position: fixed; bottom: 1.5rem; right: 1.5rem; z-index: 9997;
+  width: 44px; height: 44px; border-radius: 50%;
+  background: rgba(0,0,0,0.50); color: rgba(255,255,255,0.80);
+  border: 1.5px solid rgba(255,255,255,0.20);
+  font-size: 1rem; cursor: pointer;
+  backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+  display: flex; align-items: center; justify-content: center;
+  opacity: 0; transition: opacity 0.2s; pointer-events: none;
+}
+body:hover #present-btn { opacity: 1; pointer-events: auto; }
+#present-btn:hover { background: rgba(0,0,0,0.78); }
+
+#present-counter {
+  display: none; position: fixed; bottom: 1.4rem; left: 50%;
+  transform: translateX(-50%); z-index: 9997;
+  font-size: 0.65rem; letter-spacing: 0.14em; font-family: system-ui, sans-serif;
+  color: rgba(255,255,255,0.28);
+}
+
+body.presenting { background: #111 !important; overflow: hidden !important; }
+body.presenting .slide {
+  position: fixed !important; inset: 0;
+  width: 100vw !important; height: 100vh !important;
+  transform-origin: center center;
+  display: none !important; margin: 0; padding: 0;
+}
+body.presenting .slide.p-on { display: flex !important; }
+body.presenting .slide.p-on .reveal { opacity: 1; transform: translateY(0); }
+body.presenting #present-btn { display: none !important; }
+body.presenting #present-counter { display: block; }
+body.presenting .nav-dots,
+body.presenting #slide-counter,
+body.presenting .orb,
+body.presenting #notes-panel,
+body.presenting .edit-hotzone,
+body.presenting .edit-toggle,
+body.presenting .keyboard-hint { display: none !important; }
+
+body.presenting.presenting-black { background: #000 !important; }
+body.presenting.presenting-black .slide { display: none !important; }
+
+
+.slide-credit {
+  position: absolute; bottom: 8px; right: 14px;
+  font-size: 9px; color: var(--text-secondary, #999);
+  opacity: 0.35; pointer-events: none; z-index: 1;
+  font-family: system-ui, sans-serif;
+}
+body.presenting .slide-credit { display: none; }
+
+
+.edit-hotzone {
+  position: fixed; top: 0; left: 0; width: 30px; height: 30px;
+  z-index: 9998; cursor: pointer;
+}
+.edit-toggle {
+  position: fixed; top: 12px; left: 12px; z-index: 9999;
+  padding: 6px 12px; border-radius: 8px; border: none;
+  background: rgba(0,0,0,0.50); color: rgba(255,255,255,0.70);
+  font-size: 0.75rem; cursor: pointer;
+  backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+  opacity: 0; transition: opacity 0.3s; pointer-events: none;
+}
+body:hover .edit-toggle { opacity: 1; pointer-events: auto; }
+body.editing .edit-toggle { opacity: 1; background: rgba(16,185,129,0.80); color: #fff; }
+
+#notes-panel {
+  position: fixed; bottom: 0; left: 0; right: 0; z-index: 9996;
+  background: rgba(0,0,0,0.85); backdrop-filter: blur(12px);
+  color: #fff; transform: translateY(100%); transition: transform 0.3s ease;
+  max-height: 40vh; display: flex; flex-direction: column;
+}
+#notes-panel.active { transform: translateY(0); }
+#notes-panel-header {
+  display: flex; align-items: center; gap: 8px;
+  padding: 8px 16px; border-bottom: 1px solid rgba(255,255,255,0.10);
+}
+#notes-panel-label { font-size: 0.7rem; letter-spacing: 0.1em; text-transform: uppercase; color: rgba(255,255,255,0.50); }
+#notes-body { flex: 1; padding: 8px; }
+#notes-textarea {
+  width: 100%; height: 100%; border: none; background: transparent;
+  color: rgba(255,255,255,0.75); font-size: 0.88rem; line-height: 1.65;
+  font-family: system-ui, sans-serif; resize: none; outline: none;
+}
+
+
+@media (max-height: 700px) {
+    :root { --slide-padding: clamp(0.75rem, 3vw, 2rem); }
+}
+@media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.2s !important; }
+}
+</style>
+</head><body>
+<section class="slide" data-notes="Welcome audience. Introduce slide-creator vision.">
+<div class="content preset-split-pastel-content" style="text-align:center;">
+<div class="reveal">
+<span class="pill">Open Source · Claude Code · OpenClaw</span>
+</div>
+<div class="reveal" style="transition-delay:0.1s">
+<h1>slide<span style="color:#059669;">-creator</span></h1>
+</div>
+<div class="reveal" style="transition-delay:0.2s; max-width:560px; margin:0 auto;">
+<p style="font-size:clamp(16px,2vw,22px); margin-bottom:clamp(20px,3vw,36px);">
+            Zero-dependency HTML presentations for<br/>Claude Code &amp; OpenClaw
+        </p>
+</div>
+<div class="reveal" style="transition-delay:0.3s">
+<div class="stats" style="justify-content:center; display:flex; gap:clamp(24px,4vw,48px);">
+<div class="stat">
+<span class="stat-value" style="font-size:clamp(2rem,5vw,3.5rem); font-weight:800; color:#059669;">21</span>
+<span class="stat-label" style="font-size:clamp(10px,1.2vw,13px); color:rgba(6,78,59,0.35); text-transform:uppercase; letter-spacing:0.08em;">Presets</span>
+</div>
+<div style="width:1px; background:rgba(5,150,105,0.20); align-self:stretch;"></div>
+<div class="stat">
+<span class="stat-value" style="font-size:clamp(2rem,5vw,3.5rem); font-weight:800; color:#059669;">0</span>
+<span class="stat-label" style="font-size:clamp(10px,1.2vw,13px); color:rgba(6,78,59,0.35); text-transform:uppercase; letter-spacing:0.08em;">Dependencies</span>
+</div>
+<div style="width:1px; background:rgba(5,150,105,0.20); align-self:stretch;"></div>
+<div class="stat">
+<span class="stat-value" style="font-size:clamp(2rem,5vw,3.5rem); font-weight:800; color:#059669;">∞</span>
+<span class="stat-label" style="font-size:clamp(10px,1.2vw,13px); color:rgba(6,78,59,0.35); text-transform:uppercase; letter-spacing:0.08em;">Slides</span>
+</div>
+</div>
+</div>
+<div class="reveal" style="transition-delay:0.4s; margin-top:clamp(20px,3vw,36px);">
+<p style="font-size:clamp(12px,1.3vw,15px); color:rgba(6,78,59,0.35); letter-spacing:0.06em; text-transform:uppercase;">Build the deck that closes the deal.</p>
+</div>
+</div>
+</section>
+<section class="slide" data-notes="Frame the problem: existing presentation tools are broken.">
+<div class="content preset-split-pastel-content">
+<div class="reveal">
+<span class="pill">The Problem</span>
+</div>
+<div class="reveal" style="transition-delay:0.1s">
+<h2 style="margin-top:clamp(12px,2vw,20px);">Presentations shouldn't<br/>require a <span style='"color:var(--accent)"'>build system</span></h2>
+</div>
+<div class="sep reveal" style="transition-delay:0.15s; height:1px; background:rgba(5,150,105,0.20); margin:clamp(12px,2vw,20px) 0;"></div>
+<div class="reveal" style="transition-delay:0.2s">
+<div style="display:grid; gap:clamp(16px,3vw,32px);">
+<div style="display:flex; gap:16px; align-items:start;">
+<div style="flex-shrink:0; width:32px; height:32px; border-radius:8px; background:rgba(5,150,105,0.10); display:flex; align-items:center; justify-content:center; font-size:16px;">⚙️</div>
+<div>
+<h3 style="font-size:clamp(14px,1.8vw,18px); font-weight:600; margin-bottom:4px;">Complex Toolchain</h3>
+<p style="font-size:clamp(13px,1.4vw,15px); color:rgba(6,78,59,0.70);">Node, Webpack, npm, plugins — just to make slides. Hours before you can present anything.</p>
+</div>
+</div>
+<div style="display:flex; gap:16px; align-items:start;">
+<div style="flex-shrink:0; width:32px; height:32px; border-radius:8px; background:rgba(5,150,105,0.10); display:flex; align-items:center; justify-content:center; font-size:16px;">📋</div>
+<div>
+<h3 style="font-size:clamp(14px,1.8vw,18px); font-weight:600; margin-bottom:4px;">Generic Output</h3>
+<p style="font-size:clamp(13px,1.4vw,15px); color:rgba(6,78,59,0.70);">Every deck looks like every other deck. Templates that scream "I used the same tool as everyone else."</p>
+</div>
+</div>
+<div style="display:flex; gap:16px; align-items:start;">
+<div style="flex-shrink:0; width:32px; height:32px; border-radius:8px; background:rgba(5,150,105,0.10); display:flex; align-items:center; justify-content:center; font-size:16px;">🔒</div>
+<div>
+<h3 style="font-size:clamp(14px,1.8vw,18px); font-weight:600; margin-bottom:4px;">No Ownership</h3>
+<p style="font-size:clamp(13px,1.4vw,15px); color:rgba(6,78,59,0.70);">Your slides live in someone else's cloud. Export is an afterthought. Vendor lock-in is the business model.</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<section class="slide" data-notes="Explain the style discovery workflow.">
+<div class="content preset-split-pastel-content">
+<div class="reveal">
+<span class="pill">Workflow</span>
+</div>
+<div class="reveal" style="transition-delay:0.1s">
+<h2 style="margin-top:clamp(12px,2vw,20px);">Style discovery that<br/><span style='"color:var(--accent)"'>actually works</span></h2>
+</div>
+<div class="sep reveal" style="transition-delay:0.15s; height:1px; background:rgba(5,150,105,0.20); margin:clamp(12px,2vw,20px) 0;"></div>
+<div class="reveal" style="transition-delay:0.2s">
+<p style="font-size:clamp(14px,1.6vw,17px); color:rgba(6,78,59,0.70);">Describe your mood. Get three visual previews. Pick what feels right — before a single slide is written.</p>
+</div>
+<div class="reveal" style="transition-delay:0.3s">
+<div style="background:rgba(255,255,255,0.60); border:1px solid rgba(5,150,105,0.15); border-radius:12px; padding:clamp(16px,3vw,24px);">
+<div style="font-size:24px; margin-bottom:8px;">🎨</div>
+<h3 style="font-size:clamp(13px,1.5vw,16px); font-weight:600;">Ask Mood</h3>
+<p style="font-size:clamp(12px,1.3vw,14px); color:rgba(6,78,59,0.70); margin-top:4px;">"Bold and minimal" or "warm and creative" — natural language input.</p>
+</div>
+<div style="background:rgba(255,255,255,0.60); border:1px solid rgba(5,150,105,0.15); border-radius:12px; padding:clamp(16px,3vw,24px);">
+<div style="font-size:24px; margin-bottom:8px;">👁</div>
+<h3 style="font-size:clamp(13px,1.5vw,16px); font-weight:600;">3 Mini Previews</h3>
+<p style="font-size:clamp(12px,1.3vw,14px); color:rgba(6,78,59,0.70); margin-top:4px;">Side-by-side renders of three matched styles before full generation.</p>
+</div>
+<div style="background:rgba(255,255,255,0.60); border:1px solid rgba(5,150,105,0.15); border-radius:12px; padding:clamp(16px,3vw,24px);">
+<div style="font-size:24px; margin-bottom:8px;">✓</div>
+<h3 style="font-size:clamp(13px,1.5vw,16px); font-weight:600;">Pick &amp; Build</h3>
+<p style="font-size:clamp(12px,1.3vw,14px); color:rgba(6,78,59,0.70); margin-top:4px;">Choose your style. The full presentation is generated in your chosen aesthetic.</p>
+</div>
+</div>
+</div>
+</section>
+<section class="slide" data-notes="Showcase all 21 presets. Highlight Split Pastel.">
+<div class="content preset-split-pastel-content">
+<div class="reveal">
+<span class="pill">21 Presets</span>
+</div>
+<div class="reveal" style="transition-delay:0.1s">
+<h2 style="margin-top:clamp(12px,2vw,20px);">Every presentation style,<br/><span style='"color:var(--accent)"'>already built</span></h2>
+</div>
+<div class="sep reveal" style="transition-delay:0.15s; height:1px; background:rgba(5,150,105,0.20); margin:clamp(12px,2vw,20px) 0;"></div>
+<div class="reveal" style="transition-delay:0.2s; display:flex; flex-wrap:wrap; gap:8px;">
+<span style="display:inline-block; padding:4px 12px; border-radius:999px; background:rgba(5,150,105,0.10); border:1px solid rgba(5,150,105,0.15); color:rgba(6,78,59,0.70); font-size:clamp(10px,1.2vw,13px); font-weight:500;">Aurora Mesh</span>
+<span style="display:inline-block; padding:4px 12px; border-radius:999px; background:rgba(5,150,105,0.10); border:1px solid rgba(5,150,105,0.15); color:rgba(6,78,59,0.70); font-size:clamp(10px,1.2vw,13px); font-weight:500;">Bold Signal</span>
+<span style="display:inline-block; padding:4px 12px; border-radius:999px; background:rgba(5,150,105,0.10); border:1px solid rgba(5,150,105,0.15); color:rgba(6,78,59,0.70); font-size:clamp(10px,1.2vw,13px); font-weight:500;">Blue Sky</span>
+<span style="display:inline-block; padding:4px 12px; border-radius:999px; background:rgba(5,150,105,0.10); border:1px solid rgba(5,150,105,0.15); color:rgba(6,78,59,0.70); font-size:clamp(10px,1.2vw,13px); font-weight:500;">Chinese Chan</span>
+<span style="display:inline-block; padding:4px 12px; border-radius:999px; background:rgba(5,150,105,0.10); border:1px solid rgba(5,150,105,0.15); color:rgba(6,78,59,0.70); font-size:clamp(10px,1.2vw,13px); font-weight:500;">Creative Voltage</span>
+<span style="display:inline-block; padding:4px 12px; border-radius:999px; background:rgba(5,150,105,0.10); border:1px solid rgba(5,150,105,0.15); color:rgba(6,78,59,0.70); font-size:clamp(10px,1.2vw,13px); font-weight:500;">Dark Botanical</span>
+<span style="display:inline-block; padding:4px 12px; border-radius:999px; background:rgba(5,150,105,0.10); border:1px solid rgba(5,150,105,0.15); color:rgba(6,78,59,0.70); font-size:clamp(10px,1.2vw,13px); font-weight:500;">Data Story</span>
+<span style="display:inline-block; padding:4px 12px; border-radius:999px; background:rgba(5,150,105,0.10); border:1px solid rgba(5,150,105,0.15); color:rgba(6,78,59,0.70); font-size:clamp(10px,1.2vw,13px); font-weight:500;">Electric Studio</span>
+<span style="display:inline-block; padding:4px 12px; border-radius:999px; background:rgba(5,150,105,0.10); border:1px solid rgba(5,150,105,0.15); color:rgba(6,78,59,0.70); font-size:clamp(10px,1.2vw,13px); font-weight:500;">Enterprise Dark</span>
+<span style="display:inline-block; padding:4px 12px; border-radius:999px; background:rgba(5,150,105,0.10); border:1px solid rgba(5,150,105,0.15); color:rgba(6,78,59,0.70); font-size:clamp(10px,1.2vw,13px); font-weight:500;">Glassmorphism</span>
+<span style="display:inline-block; padding:4px 12px; border-radius:999px; background:rgba(5,150,105,0.10); border:1px solid rgba(5,150,105,0.15); color:rgba(6,78,59,0.70); font-size:clamp(10px,1.2vw,13px); font-weight:500;">Modern Newspaper</span>
+<span style="display:inline-block; padding:4px 12px; border-radius:999px; background:rgba(5,150,105,0.10); border:1px solid rgba(5,150,105,0.15); color:rgba(6,78,59,0.70); font-size:clamp(10px,1.2vw,13px); font-weight:500;">Neo Brutalism</span>
+<span style="display:inline-block; padding:4px 12px; border-radius:999px; background:rgba(5,150,105,0.10); border:1px solid rgba(5,150,105,0.15); color:rgba(6,78,59,0.70); font-size:clamp(10px,1.2vw,13px); font-weight:500;">Neo Retro Dev</span>
+<span style="display:inline-block; padding:4px 12px; border-radius:999px; background:rgba(5,150,105,0.10); border:1px solid rgba(5,150,105,0.15); color:rgba(6,78,59,0.70); font-size:clamp(10px,1.2vw,13px); font-weight:500;">Neon Cyber</span>
+<span style="display:inline-block; padding:4px 12px; border-radius:999px; background:rgba(5,150,105,0.10); border:1px solid rgba(5,150,105,0.15); color:rgba(6,78,59,0.70); font-size:clamp(10px,1.2vw,13px); font-weight:500;">Notebook Tabs</span>
+<span style="display:inline-block; padding:4px 12px; border-radius:999px; background:rgba(5,150,105,0.10); border:1px solid rgba(5,150,105,0.15); color:rgba(6,78,59,0.70); font-size:clamp(10px,1.2vw,13px); font-weight:500;">Paper &amp; Ink</span>
+<span style="display:inline-block; padding:4px 12px; border-radius:999px; background:rgba(5,150,105,0.10); border:1px solid rgba(5,150,105,0.15); color:rgba(6,78,59,0.70); font-size:clamp(10px,1.2vw,13px); font-weight:500;">Pastel Geometry</span>
+<span style="display:inline-block; padding:4px 12px; border-radius:999px; background:rgba(5,150,105,0.10); border:1px solid rgba(5,150,105,0.25); color:#059669; font-size:clamp(10px,1.2vw,13px); font-weight:600;">Split Pastel ✦</span>
+<span style="display:inline-block; padding:4px 12px; border-radius:999px; background:rgba(5,150,105,0.10); border:1px solid rgba(5,150,105,0.15); color:rgba(6,78,59,0.70); font-size:clamp(10px,1.2vw,13px); font-weight:500;">Swiss Modern</span>
+<span style="display:inline-block; padding:4px 12px; border-radius:999px; background:rgba(5,150,105,0.10); border:1px solid rgba(5,150,105,0.15); color:rgba(6,78,59,0.70); font-size:clamp(10px,1.2vw,13px); font-weight:500;">Terminal Green</span>
+<span style="display:inline-block; padding:4px 12px; border-radius:999px; background:rgba(5,150,105,0.10); border:1px solid rgba(5,150,105,0.15); color:rgba(6,78,59,0.70); font-size:clamp(10px,1.2vw,13px); font-weight:500;">Vintage Editorial</span>
+</div>
+</div>
+</section>
+<section class="slide" data-notes="Explain present mode: F5, fullscreen, speaker notes.">
+<div class="content preset-split-pastel-content">
+<div class="reveal">
+<span class="pill">Present Mode</span>
+</div>
+<div class="reveal" style="transition-delay:0.1s">
+<h2 style="margin-top:clamp(12px,2vw,20px);">F5 to present.<br/><span style='"color:var(--accent)"'>Any screen, any size</span></h2>
+</div>
+<div class="sep reveal" style="transition-delay:0.15s; height:1px; background:rgba(5,150,105,0.20); margin:clamp(12px,2vw,20px) 0;"></div>
+<div class="reveal" style="transition-delay:0.2s">
+<div style="background:rgba(255,255,255,0.60); border:1px solid rgba(5,150,105,0.15); border-radius:12px; padding:clamp(16px,3vw,24px);">
+<div style="font-size:28px; margin-bottom:8px;">F5</div>
+<h3 style="font-size:clamp(13px,1.5vw,16px); font-weight:600;">Fullscreen</h3>
+<p style="font-size:clamp(12px,1.3vw,14px); color:rgba(6,78,59,0.70); margin-top:4px;">Slides scale to fill any display at 1440×900 aspect ratio.</p>
+</div>
+<div style="background:rgba(255,255,255,0.60); border:1px solid rgba(5,150,105,0.15); border-radius:12px; padding:clamp(16px,3vw,24px);">
+<div style="font-size:28px; margin-bottom:8px;">P</div>
+<h3 style="font-size:clamp(13px,1.5vw,16px); font-weight:600;">Presenter View</h3>
+<p style="font-size:clamp(12px,1.3vw,14px); color:rgba(6,78,59,0.70); margin-top:4px;">Separate window with notes, timer, and slide counter.</p>
+</div>
+<div style="background:rgba(255,255,255,0.60); border:1px solid rgba(5,150,105,0.15); border-radius:12px; padding:clamp(16px,3vw,24px);">
+<div style="font-size:28px; margin-bottom:8px;">B</div>
+<h3 style="font-size:clamp(13px,1.5vw,16px); font-weight:600;">Black Screen</h3>
+<p style="font-size:clamp(12px,1.3vw,14px); color:rgba(6,78,59,0.70); margin-top:4px;">Toggle black background during Q&amp;A to focus attention.</p>
+</div>
+</div>
+</div>
+</section>
+<section class="slide" data-notes="Explain edit mode: E key, contenteditable, save.">
+<div class="content preset-split-pastel-content">
+<div class="reveal">
+<span class="pill">Edit Mode</span>
+</div>
+<div class="reveal" style="transition-delay:0.1s">
+<h2 style="margin-top:clamp(12px,2vw,20px);">Edit in the browser.<br/><span style='"color:var(--accent)"'>Save to disk</span></h2>
+</div>
+<div class="sep reveal" style="transition-delay:0.15s; height:1px; background:rgba(5,150,105,0.20); margin:clamp(12px,2vw,20px) 0;"></div>
+<div class="reveal" style="transition-delay:0.2s">
+<div style="background:rgba(255,255,255,0.60); border:1px solid rgba(5,150,105,0.15); border-radius:12px; padding:clamp(16px,3vw,24px);">
+<div style="font-size:28px; margin-bottom:8px;">E</div>
+<h3 style="font-size:clamp(13px,1.5vw,16px); font-weight:600;">Toggle Edit</h3>
+<p style="font-size:clamp(12px,1.3vw,14px); color:rgba(6,78,59,0.70); margin-top:4px;">Hover the hotzone top-left. Click ✏ Edit. All text becomes editable.</p>
+</div>
+<div style="background:rgba(255,255,255,0.60); border:1px solid rgba(5,150,105,0.15); border-radius:12px; padding:clamp(16px,3vw,24px);">
+<div style="font-size:28px; margin-bottom:8px;">📝</div>
+<h3 style="font-size:clamp(13px,1.5vw,16px); font-weight:600;">Speaker Notes</h3>
+<p style="font-size:clamp(12px,1.3vw,14px); color:rgba(6,78,59,0.70); margin-top:4px;">Notes panel slides up from bottom. Notes sync to presenter view.</p>
+</div>
+<div style="background:rgba(255,255,255,0.60); border:1px solid rgba(5,150,105,0.15); border-radius:12px; padding:clamp(16px,3vw,24px);">
+<div style="font-size:28px; margin-bottom:8px;">⌘S</div>
+<h3 style="font-size:clamp(13px,1.5vw,16px); font-weight:600;">Save File</h3>
+<p style="font-size:clamp(12px,1.3vw,14px); color:rgba(6,78,59,0.70); margin-top:4px;">Ctrl+S downloads the edited HTML. Self-contained, zero dependencies.</p>
+</div>
+</div>
+</div>
+</section>
+<section class="slide" data-notes="How to install and use slide-creator.">
+<div class="content preset-split-pastel-content">
+<div class="reveal">
+<span class="pill">Getting Started</span>
+</div>
+<div class="reveal" style="transition-delay:0.1s">
+<h2 style="margin-top:clamp(12px,2vw,20px);">Three commands.<br/><span style='"color:var(--accent)"'>Zero friction</span></h2>
+</div>
+<div class="sep reveal" style="transition-delay:0.15s; height:1px; background:rgba(5,150,105,0.20); margin:clamp(12px,2vw,20px) 0;"></div>
+<div class="reveal" style="transition-delay:0.2s">
+<div style="background:rgba(255,255,255,0.60); border:1px solid rgba(5,150,105,0.15); border-radius:12px; padding:clamp(16px,3vw,24px); display:flex; align-items:center; gap:16px;">
+<div style="font-size:clamp(14px,1.5vw,18px); font-weight:800; color:#059669; font-family:monospace;">/slide-creator</div>
+<p style="font-size:clamp(13px,1.4vw,15px); color:rgba(6,78,59,0.70); flex:1;">Interactive mode — describe your mood, pick a style, get a deck</p>
+</div>
+<div style="background:rgba(255,255,255,0.60); border:1px solid rgba(5,150,105,0.15); border-radius:12px; padding:clamp(16px,3vw,24px); display:flex; align-items:center; gap:16px;">
+<div style="font-size:clamp(14px,1.5vw,18px); font-weight:800; color:#059669; font-family:monospace;">/slide-creator --plan</div>
+<p style="font-size:clamp(13px,1.4vw,15px); color:rgba(6,78,59,0.70); flex:1;">Generate outline — review and edit before building</p>
+</div>
+<div style="background:rgba(255,255,255,0.60); border:1px solid rgba(5,150,105,0.15); border-radius:12px; padding:clamp(16px,3vw,24px); display:flex; align-items:center; gap:16px;">
+<div style="font-size:clamp(14px,1.5vw,18px); font-weight:800; color:#059669; font-family:monospace;">/slide-creator --generate</div>
+<p style="font-size:clamp(13px,1.4vw,15px); color:rgba(6,78,59,0.70); flex:1;">Build from BRIEF.json — full HTML with all modes</p>
+</div>
+</div>
+</div>
+</section>
+<section class="slide" data-notes="Closing CTA. Install link and takeaway.">
+<div class="content preset-split-pastel-content" style="text-align:center;">
+<div class="reveal">
+<h1 style="font-size:clamp(2rem,5.5vw,4rem);">Stop making slides.<br/>Start telling stories.</h1>
+</div>
+<div class="sep reveal" style="transition-delay:0.1s; height:1px; background:rgba(5,150,105,0.20); margin:clamp(16px,3vw,28px) auto; width:60px;"></div>
+<div class="reveal" style="transition-delay:0.2s">
+<p style="font-size:clamp(14px,2vw,20px); color:rgba(6,78,59,0.70); max-width:520px; margin:0 auto;">
+            One HTML file. Every style. Any browser. No build step.
+        </p>
+</div>
+<div class="reveal" style="transition-delay:0.3s; margin-top:clamp(20px,3vw,36px);">
+<div style="font-size:clamp(13px,1.5vw,16px); font-family:monospace; background:rgba(255,255,255,0.60); border:1px solid rgba(5,150,105,0.15); border-radius:12px; padding:clamp(12px,2vw,20px); display:inline-block;">
+<span style="color:#059669;">$</span> clawhub install kai-slide-creator
+        </div>
+</div>
+<div class="reveal" style="transition-delay:0.4s; margin-top:clamp(12px,2vw,24px);">
+<p style="font-size:clamp(11px,1.2vw,14px); color:rgba(6,78,59,0.35); letter-spacing:0.04em;">github.com/kaisersong/slide-creator</p>
+</div>
+</div>
+</section>
+</body></html>

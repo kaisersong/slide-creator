@@ -31,6 +31,23 @@ def package(output_dir: Path, previous: Path | None, previous_sha256: str | None
         if stage != "0" or mode not in {"100644", "100755"}:
             raise ValueError(f"Unsupported staged entry: {path}")
         records[path] = (subprocess.check_output(["git", "show", ":" + path], cwd=ROOT), int(mode[-3:], 8))
+    manifest_path = "references/profile-templates/manifest.json"
+    if manifest_path not in records:
+        raise ValueError("Runtime profile template manifest is missing from the git index")
+    templates = json.loads(records[manifest_path][0])
+    support = json.loads(records["references/preset-support-tiers.json"][0])
+    expected_presets = support["policy"]["support_states"]["unified_profile_renderer"]
+    if templates.get("version") != 1 or set(templates.get("presets", {})) != set(expected_presets):
+        raise ValueError("Runtime profile templates do not match the supported preset registry")
+    for preset, languages in templates["presets"].items():
+        if set(languages) != {"en", "zh"}:
+            raise ValueError(f"Runtime profile languages incomplete: {preset}")
+        for template in languages.values():
+            path = template["path"]
+            if not path.startswith("references/profile-templates/") or path not in records:
+                raise ValueError(f"Runtime profile template missing from git index: {path}")
+            if hashlib.sha256(records[path][0]).hexdigest() != template["sha256"]:
+                raise ValueError(f"Runtime profile template checksum mismatch: {path}")
     preserved = []
     if previous:
         if not previous_sha256 or hashlib.sha256(previous.read_bytes()).hexdigest() != previous_sha256:

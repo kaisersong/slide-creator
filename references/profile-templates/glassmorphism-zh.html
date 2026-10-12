@@ -1,0 +1,490 @@
+<!DOCTYPE html>
+<!-- Program-owned profile template. Regenerate with scripts/build-profile-templates.py. -->
+<html><head>
+<style>
+        body { background-color: #667eea; }
+
+        :root {
+            --bg-gradient-1: #667eea;
+            --bg-gradient-2: #764ba2;
+            --bg-gradient-3: #f093fb;
+            --glass-bg: rgba(255, 255, 255, 0.15);
+            --glass-border: rgba(255, 255, 255, 0.30);
+            --glass-text-dark: #1a1a2e;
+            --glass-text-light: rgba(255,255,255,0.92);
+            --orb-purple: rgba(102,126,234,0.5);
+            --orb-pink: rgba(240,147,251,0.4);
+            --orb-mint: rgba(168,237,234,0.4);
+            --title-size: clamp(2rem, 6vw, 5rem);
+            --h2-size: clamp(1.25rem, 3.5vw, 2.5rem);
+            --body-size: clamp(0.75rem, 1.5vw, 1.125rem);
+            --small-size: clamp(0.65rem, 1vw, 0.875rem);
+            --slide-padding: clamp(1rem, 4vw, 4rem);
+            --content-gap: clamp(0.5rem, 2vw, 2rem);
+            --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+            --duration-normal: 0.6s;
+        }
+
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+        html { scroll-snap-type: y mandatory; height: 100%; }
+        body {
+            font-family: -apple-system, "SF Pro Display", BlinkMacSystemFont, "PingFang SC", "Noto Sans CJK SC", "Segoe UI", system-ui, sans-serif;
+            -webkit-font-smoothing: antialiased;
+            color: var(--glass-text-light);
+            height: 100%;
+        }
+
+        /* Viewport fitting */
+        .slide {
+            width: 100vw; height: 100vh; height: 100dvh;
+            overflow: hidden; scroll-snap-align: start;
+            display: flex; flex-direction: column;
+            position: relative;
+        }
+        .slide-content {
+            flex: 1; display: flex; flex-direction: column;
+            justify-content: center; max-height: 100%;
+            overflow: hidden; padding: var(--slide-padding);
+            position: relative; z-index: 1;
+        }
+
+        /* Gradient backgrounds — 3 modes cycling */
+        .slide-0 { background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%); }
+        .slide-1 { background: linear-gradient(135deg, #f8cdda 0%, #a6c1ee 50%, #1d6fa4 100%); }
+        .slide-2 { background: linear-gradient(135deg, #a8edea 0%, #fed6e3 50%, #a8edea 100%); }
+        .slide-3 { background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%); }
+        .slide-4 { background: linear-gradient(135deg, #f8cdda 0%, #a6c1ee 50%, #1d6fa4 100%); }
+        .slide-5 { background: linear-gradient(135deg, #a8edea 0%, #fed6e3 50%, #a8edea 100%); }
+        .slide-6 { background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%); }
+        .slide-7 { background: linear-gradient(135deg, #f8cdda 0%, #a6c1ee 50%, #1d6fa4 100%); }
+
+        /* Text theme switching */
+        .text-dark h1, .text-dark h2, .text-dark h3 { color: rgba(255,255,255,0.95); }
+        .text-dark p, .text-dark li, .text-dark span { color: rgba(255,255,255,0.82); }
+        .text-dark .glass-body { color: rgba(255,255,255,0.80); }
+
+        .text-light-theme h1, .text-light-theme h2, .text-light-theme h3 { color: #1a1a2e; }
+        .text-light-theme p, .text-light-theme li, .text-light-theme span { color: rgba(30,30,60,0.75); }
+        .text-light-theme .glass-body { color: rgba(30,30,60,0.80); }
+
+        /* Glass card components */
+        .glass-card {
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(20px) saturate(1.5);
+            -webkit-backdrop-filter: blur(20px) saturate(1.5);
+            border: 1px solid rgba(255, 255, 255, 0.30);
+            border-radius: 16px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.10);
+            padding: clamp(1.2rem, 2.5vw, 2rem);
+        }
+        .glass-item {
+            background: rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.20);
+            border-radius: 12px;
+            padding: clamp(0.75rem, 1.5vw, 1.2rem);
+        }
+        .text-light-theme .glass-card {
+            background: rgba(255, 255, 255, 0.35);
+            border: 1px solid rgba(255, 255, 255, 0.50);
+        }
+        .text-light-theme .glass-item {
+            background: rgba(255, 255, 255, 0.25);
+            border: 1px solid rgba(255, 255, 255, 0.40);
+        }
+
+        /* Blurred orbs */
+        .orb {
+            position: absolute; border-radius: 50%;
+            filter: blur(60px); pointer-events: none; z-index: 0;
+        }
+        .orb1 { width: 35vw; height: 35vw; background: var(--orb-purple); top: -10%; left: -5%; }
+        .orb2 { width: 28vw; height: 28vw; background: var(--orb-pink); bottom: -8%; right: -5%; }
+        .orb3 { width: 22vw; height: 22vw; background: var(--orb-mint); top: 30%; right: 15%; }
+
+        /* Pill badges */
+        .pill {
+            background: rgba(255,255,255,0.20); border-radius: 100px;
+            backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+            padding: clamp(4px, 0.5vw, 8px) clamp(12px, 1.5vw, 20px);
+            font-size: var(--small-size); font-weight: 600;
+            display: inline-block;
+        }
+        .pill-dark { background: rgba(0,0,0,0.15); }
+        .pill-light { background: rgba(255,255,255,0.30); }
+        .text-light-theme .pill { background: rgba(0,0,0,0.08); color: #1a1a2e; }
+
+        /* Icon circle */
+        .icon-circle {
+            width: clamp(32px, 4vw, 48px); height: clamp(32px, 4vw, 48px);
+            border-radius: 50%;
+            border: 1.5px solid rgba(255,255,255,0.45);
+            display: flex; align-items: center; justify-content: center;
+            background: rgba(255,255,255,0.12);
+            font-size: clamp(14px, 1.8vw, 20px); flex-shrink: 0;
+        }
+        .text-light-theme .icon-circle {
+            border-color: rgba(0,0,0,0.15);
+            background: rgba(255,255,255,0.3);
+        }
+
+        /* Stat card */
+        .stat-card { text-align: center; padding: clamp(1rem, 2vw, 1.5rem); }
+        .stat-num {
+            font-size: clamp(2rem, 5vw, 3.5rem);
+            font-weight: 700; line-height: 1;
+            background: linear-gradient(135deg, #fff 0%, rgba(255,255,255,0.7) 100%);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .text-light-theme .stat-num {
+            background: linear-gradient(135deg, #1a1a2e 0%, #764ba2 100%);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .stat-label { font-size: var(--small-size); opacity: 0.7; margin-top: 0.3rem; }
+
+        /* Tags */
+        .tag {
+            font-size: 11px; font-weight: 600; letter-spacing: 0.05em;
+            padding: 3px 10px; border-radius: 100px;
+            background: rgba(255,255,255,0.15);
+        }
+        .tag-highlight { background: rgba(240,147,251,0.4); }
+        .text-light-theme .tag { background: rgba(0,0,0,0.08); color: #1a1a2e; }
+
+        /* Separator */
+        .sep { border-top: 1px solid rgba(255,255,255,0.15); margin: 0.5rem 0; }
+
+        /* Step number */
+        .step-num {
+            width: clamp(28px, 3.5vw, 40px); height: clamp(28px, 3.5vw, 40px);
+            border-radius: 50%; display: flex; align-items: center; justify-content: center;
+            font-weight: 700; font-size: clamp(13px, 1.5vw, 18px); flex-shrink: 0;
+            background: rgba(255,255,255,0.20); border: 1px solid rgba(255,255,255,0.30);
+        }
+        .text-light-theme .step-num {
+            background: rgba(102,126,234,0.15); border-color: rgba(102,126,234,0.3);
+            color: #667eea;
+        }
+
+        /* Glass title & body */
+        .glass-title {
+            font-size: var(--title-size); font-weight: 700;
+            letter-spacing: -0.01em; line-height: 1.1;
+        }
+        .glass-body {
+            font-size: var(--body-size); line-height: 1.65; opacity: 0.85;
+        }
+
+        /* Grid */
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(min(100%, 220px), 1fr));
+            gap: clamp(0.5rem, 1.5vw, 1rem);
+        }
+
+        /* Animations */
+        .reveal {
+            opacity: 0; transform: translateY(16px);
+            transition: opacity 0.6s cubic-bezier(0.34,1.2,0.64,1),
+                        transform 0.6s cubic-bezier(0.34,1.2,0.64,1);
+        }
+        .slide.visible .reveal { opacity: 1; transform: translateY(0); }
+        .reveal:nth-child(1) { transition-delay: 0.08s; }
+        .reveal:nth-child(2) { transition-delay: 0.18s; }
+        .reveal:nth-child(3) { transition-delay: 0.28s; }
+        .reveal:nth-child(4) { transition-delay: 0.38s; }
+
+        /* Responsive */
+        @media (max-height: 700px) {
+            :root { --slide-padding: clamp(0.75rem, 3vw, 2rem); --content-gap: clamp(0.4rem, 1.5vw, 1rem); --title-size: clamp(1.25rem, 4.5vw, 2.5rem); }
+        }
+        @media (max-height: 600px) {
+            :root { --slide-padding: clamp(0.5rem, 2.5vw, 1.5rem); --title-size: clamp(1.1rem, 4vw, 2rem); --body-size: clamp(0.7rem, 1.2vw, 0.95rem); }
+            .nav-dots, .keyboard-hint, .decorative { display: none; }
+        }
+        @media (max-height: 500px) {
+            :root { --slide-padding: clamp(0.4rem, 2vw, 1rem); --title-size: clamp(1rem, 3.5vw, 1.5rem); }
+        }
+        @media (max-width: 600px) {
+            .grid { grid-template-columns: 1fr; }
+        }
+        @media (prefers-reduced-motion: reduce) {
+            *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.2s !important; }
+        }
+
+        /* Max constraints */
+        .card, .container, .content-box { max-width: min(90vw, 1000px); max-height: min(80vh, 700px); }
+
+        /* Presentation mode */
+        #present-btn { position: fixed; bottom: 1.5rem; right: 1.5rem; z-index: 9997; width: 44px; height: 44px; border-radius: 50%; background: rgba(0,0,0,0.5); color: rgba(255,255,255,0.8); border: 1.5px solid rgba(255,255,255,0.2); font-size: 1rem; cursor: pointer; backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); display: flex; align-items: center; justify-content: center; opacity: 0; transition: opacity 0.2s; pointer-events: none; }
+        body:hover #present-btn { opacity: 1; pointer-events: auto; }
+        #present-btn:hover { background: rgba(0,0,0,0.78); }
+        #present-counter { display: none; position: fixed; bottom: 1.4rem; left: 50%; transform: translateX(-50%); z-index: 9997; font-size: 0.65rem; letter-spacing: 0.14em; font-family: system-ui, sans-serif; color: rgba(255,255,255,0.28); }
+        body.presenting { background: #000 !important; overflow: hidden !important; }
+        body.presenting .slide { position: fixed !important; inset: 0; width: 100vw !important; height: 100vh !important; transform-origin: center center; scroll-snap-align: none !important; display: none !important; }
+        body.presenting .slide.p-on { display: flex !important; }
+        body.presenting #present-btn { display: none !important; }
+        body.presenting #present-counter { display: block; }
+        body.presenting.presenting-black .slide { visibility: hidden !important; }
+        body.presenting.presenting-black::after { content: ''; position: fixed; inset: 0; background: #000; z-index: 99999; }
+        .slide-credit { position: absolute; bottom: 8px; right: 14px; font-size: 9px; color: var(--glass-text-light, #999); opacity: 0.35; pointer-events: none; z-index: 1; font-family: system-ui, sans-serif; }
+        body.presenting .slide-credit { display: none !important; }
+
+        /* Edit mode */
+        .edit-hotzone { position: fixed; top: 0; left: 0; width: 80px; height: 80px; z-index: 10000; cursor: pointer; }
+        .edit-toggle { position: fixed; top: 16px; left: 16px; opacity: 0; pointer-events: none; transition: opacity 0.3s ease; z-index: 10001; border: none; background: rgba(255,255,255,0.15); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border-radius: 8px; padding: 6px 14px; font-size: 13px; color: inherit; cursor: pointer; }
+        .edit-toggle.show { opacity: 1; pointer-events: auto; }
+        .edit-toggle.active { opacity: 1; pointer-events: auto; background: var(--bg-gradient-1); color: #fff; }
+        #notes-panel { display: none; position: fixed; bottom: 0; left: 0; right: 0; z-index: 9998; background: rgba(8,8,18,0.94); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); border-top: 1px solid rgba(255,255,255,0.08); }
+        #notes-panel.active { display: flex; flex-direction: column; }
+        #notes-panel-header { display: flex; align-items: center; justify-content: space-between; padding: 0.45rem 1.4rem; cursor: pointer; user-select: none; }
+        #notes-panel-header:hover { background: rgba(255,255,255,0.03); }
+        #notes-panel-label { flex: 1; font-size: 0.58rem; letter-spacing: 0.16em; text-transform: uppercase; color: rgba(255,255,255,0.3); }
+        #notes-drag-hint { flex: 1; display: flex; justify-content: center; }
+        #notes-drag-hint::after { content: ''; display: block; width: 36px; height: 3px; border-radius: 2px; background: rgba(255,255,255,0.25); }
+        #notes-panel-header:hover #notes-drag-hint::after { background: rgba(255,255,255,0.45); }
+        #notes-collapse-btn { flex: 1; text-align: right; font-size: 1rem; color: rgba(255,255,255,0.4); background: none; border: none; cursor: pointer; transition: color 0.15s, transform 0.2s; }
+        #notes-collapse-btn:hover { color: rgba(255,255,255,0.85); }
+        #notes-body { padding: 0 1.4rem 0.75rem; }
+        #notes-panel.collapsed #notes-body { display: none; }
+        #notes-panel.collapsed #notes-collapse-btn { transform: rotate(180deg); }
+        #notes-textarea { width: 100%; height: 72px; min-height: 48px; max-height: 200px; resize: vertical; background: transparent; border: none; outline: none; color: rgba(255,255,255,0.75); font-size: 0.88rem; line-height: 1.65; font-family: system-ui, sans-serif; }
+        #notes-textarea::placeholder { color: rgba(255,255,255,0.18); }
+    </style>
+</head><body>
+<section aria-label="Title slide" class="slide slide-0 text-dark" data-export-role="glass_hero" data-notes="封面页，介绍 kai-slide-creator 核心主张">
+<div class="orb orb1"></div>
+<div class="orb orb2"></div>
+<div class="orb orb3"></div>
+<div class="slide-content preset-glassmorphism-content" style="align-items:center; text-align:center;">
+<div class="reveal">
+<span class="pill" style="margin-bottom: clamp(0.8rem, 2vw, 1.5rem);">零依赖 HTML 演示文稿</span>
+</div>
+<h1 class="reveal glass-title" style="margin-bottom: clamp(0.5rem, 1.5vw, 1rem);">kai-slide-creator</h1>
+<p class="reveal glass-body" style="max-width: min(90vw, 560px); margin-bottom: clamp(1rem, 3vw, 2rem);">21 种设计预设，拒绝通用 AI 审美。纯浏览器运行，无需安装任何工具链。</p>
+<div class="reveal" style="display: flex; gap: clamp(1rem, 3vw, 2rem); justify-content: center; flex-wrap: wrap;">
+<div class="glass-item stat-card">
+<div class="stat-num">0</div>
+<div class="stat-label">外部依赖</div>
+</div>
+<div class="glass-item stat-card">
+<div class="stat-num">21</div>
+<div class="stat-label">设计预设</div>
+</div>
+<div class="glass-item stat-card">
+<div class="stat-num" style="font-size: clamp(1.5rem, 4vw, 2.5rem);">∞</div>
+<div class="stat-label">幻灯片</div>
+</div>
+</div>
+</div>
+</section>
+<section aria-label="Slide 2" class="slide slide-1 text-light-theme" data-export-role="glass_split" data-notes="提出现有演示工具的三大痛点">
+<div class="orb orb1"></div>
+<div class="orb orb2"></div>
+<div class="slide-content preset-glassmorphism-content">
+<h2 class="reveal glass-title" style="font-size: var(--h2-size); margin-bottom: clamp(1rem, 2.5vw, 1.8rem);">传统演示工具的三个死结</h2>
+<div class="reveal grid" style="grid-template-columns: 1fr 1fr; gap: clamp(0.8rem, 2vw, 1.5rem);">
+<div class="glass-card">
+<div style="display:flex; align-items:center; gap:0.6rem; margin-bottom:0.6rem;">
+<div class="icon-circle">♦</div>
+<h3 style="font-size:var(--body-size); font-weight:700;">复杂工具链</h3>
+</div>
+<p class="glass-body" style="font-size: var(--small-size);">PowerPoint + Keynote + Figma，三个软件切换才能做一套演示。</p>
+</div>
+<div class="glass-card">
+<div style="display:flex; align-items:center; gap:0.6rem; margin-bottom:0.6rem;">
+<div class="icon-circle">★</div>
+<h3 style="font-size:var(--body-size); font-weight:700;">通用 AI 美学</h3>
+</div>
+<p class="glass-body" style="font-size: var(--small-size);">所有 AI 生成的幻灯片看起来都一样，紫色渐变 + Inter 字体。</p>
+</div>
+<div class="glass-card" style="grid-column: 1 / -1;">
+<div style="display:flex; align-items:center; gap:0.6rem; margin-bottom:0.6rem;">
+<div class="icon-circle">⚙</div>
+<h3 style="font-size:var(--body-size); font-weight:700;">平台锁定</h3>
+</div>
+<p class="glass-body" style="font-size: var(--small-size);">PPTX 文件离开 Office 生态就无法完整呈现，字体、动画、布局全部错位。</p>
+</div>
+</div>
+</div>
+</section>
+<section aria-label="Slide 3" class="slide slide-2 text-light-theme" data-export-role="glass_trio" data-notes="展示风格发现流程：看图选风格">
+<div class="orb orb1" style="background: rgba(102,126,234,0.3);"></div>
+<div class="orb orb2" style="background: rgba(240,147,251,0.25);"></div>
+<div class="slide-content preset-glassmorphism-content">
+<h2 class="reveal glass-title" style="font-size: var(--h2-size); margin-bottom: clamp(0.8rem, 2vw, 1.5rem);">看图选风格，反应先于描述</h2>
+<p class="reveal glass-body" style="margin-bottom: clamp(1rem, 2.5vw, 1.8rem);">生成 3 个风格预览，凭直觉选一个。不需要学会描述你想要什么。</p>
+<div class="reveal" style="display:flex; gap: clamp(0.8rem, 2vw, 1.5rem); flex-wrap:wrap;">
+<div class="glass-card" style="flex:1; min-width: 180px; text-align:center;">
+<div style="height:clamp(60px,10vw,90px); border-radius:8px; background:linear-gradient(135deg,#667eea,#764ba2); margin-bottom:0.6rem;"></div>
+<span class="tag">Glassmorphism</span>
+</div>
+<div class="glass-card" style="flex:1; min-width: 180px; text-align:center;">
+<div style="height:clamp(60px,10vw,90px); border-radius:8px; background:linear-gradient(135deg,#0a0a0a,#1a1a2e); margin-bottom:0.6rem;"></div>
+<span class="tag">Enterprise Dark</span>
+</div>
+<div class="glass-card" style="flex:1; min-width: 180px; text-align:center;">
+<div style="height:clamp(60px,10vw,90px); border-radius:8px; background:linear-gradient(135deg,#f5f3ee,#e8d4c0); margin-bottom:0.6rem;"></div>
+<span class="tag">Vintage Editorial</span>
+</div>
+</div>
+</div>
+</section>
+<section aria-label="Slide 4" class="slide slide-3 text-dark" data-export-role="glass_card" data-notes="展示全部21种预设风格">
+<div class="orb orb1"></div>
+<div class="orb orb3"></div>
+<div class="slide-content preset-glassmorphism-content">
+<h2 class="reveal glass-title" style="font-size: var(--h2-size); margin-bottom: clamp(0.8rem, 2vw, 1.2rem);">21 种预设，没有两个长得一样</h2>
+<div class="reveal grid" style="grid-template-columns: repeat(auto-fit, minmax(min(100%, 140px), 1fr)); gap: clamp(0.4rem, 1vw, 0.8rem);">
+<div class="glass-item" style="text-align:center; padding: clamp(0.5rem, 1vw, 0.8rem);">
+<div style="height:4px; border-radius:2px; background:linear-gradient(90deg,#e63946,#f4a261); margin-bottom:0.4rem;"></div>
+<span style="font-size:var(--small-size);">Bold Signal</span>
+</div>
+<div class="glass-item" style="text-align:center; padding: clamp(0.5rem, 1vw, 0.8rem);">
+<div style="height:4px; border-radius:2px; background:linear-gradient(90deg,#667eea,#764ba2); margin-bottom:0.4rem;"></div>
+<span style="font-size:var(--small-size);">Aurora Mesh</span>
+</div>
+<div class="glass-item" style="text-align:center; padding: clamp(0.5rem, 1vw, 0.8rem);">
+<div style="height:4px; border-radius:2px; background:linear-gradient(90deg,#f8cdda,#a6c1ee); margin-bottom:0.4rem;"></div>
+<span style="font-size:var(--small-size);">Blue Sky</span>
+</div>
+<div class="glass-item" style="text-align:center; padding: clamp(0.5rem, 1vw, 0.8rem);">
+<div style="height:4px; border-radius:2px; background:linear-gradient(90deg,#2d3436,#636e72); margin-bottom:0.4rem;"></div>
+<span style="font-size:var(--small-size);">Chinese Chan</span>
+</div>
+<div class="glass-item" style="text-align:center; padding: clamp(0.5rem, 1vw, 0.8rem);">
+<div style="height:4px; border-radius:2px; background:linear-gradient(90deg,#a8edea,#fed6e3); margin-bottom:0.4rem;"></div>
+<span style="font-size:var(--small-size);">Glassmorphism</span>
+</div>
+<div class="glass-item" style="text-align:center; padding: clamp(0.5rem, 1vw, 0.8rem);">
+<div style="height:4px; border-radius:2px; background:linear-gradient(90deg,#0a0a0a,#333); margin-bottom:0.4rem;"></div>
+<span style="font-size:var(--small-size);">Terminal Green</span>
+</div>
+<div class="glass-item" style="text-align:center; padding: clamp(0.5rem, 1vw, 0.8rem);">
+<div style="height:4px; border-radius:2px; background:linear-gradient(90deg,#f5f3ee,#e8d4c0); margin-bottom:0.4rem;"></div>
+<span style="font-size:var(--small-size);">Vintage Editorial</span>
+</div>
+<div class="glass-item" style="text-align:center; padding: clamp(0.5rem, 1vw, 0.8rem);">
+<div style="height:4px; border-radius:2px; background:linear-gradient(90deg,#ff6b6b,#ffd93d); margin-bottom:0.4rem;"></div>
+<span style="font-size:var(--small-size);">Neon Cyber</span>
+</div>
+<div class="glass-item" style="text-align:center; padding: clamp(0.5rem, 1vw, 0.8rem);">
+<div style="height:4px; border-radius:2px; background:linear-gradient(90deg,#1a1a2e,#16213e); margin-bottom:0.4rem;"></div>
+<span style="font-size:var(--small-size);">Enterprise Dark</span>
+</div>
+<div class="glass-item" style="text-align:center; padding: clamp(0.5rem, 1vw, 0.8rem);">
+<div style="height:4px; border-radius:2px; background:linear-gradient(90deg,#fff,#f0f0f0); margin-bottom:0.4rem;"></div>
+<span style="font-size:var(--small-size);">Swiss Modern</span>
+</div>
+<div class="glass-item" style="text-align:center; padding: clamp(0.5rem, 1vw, 0.8rem);">
+<div style="height:4px; border-radius:2px; background:linear-gradient(90deg,#fce4ec,#f3e5f5); margin-bottom:0.4rem;"></div>
+<span style="font-size:var(--small-size);">Split Pastel</span>
+</div>
+<div class="glass-item" style="text-align:center; padding: clamp(0.5rem, 1vw, 0.8rem);">
+<div style="height:4px; border-radius:2px; background:linear-gradient(90deg,#ffecd2,#fcb69f); margin-bottom:0.4rem;"></div>
+<span style="font-size:var(--small-size);">Paper &amp; Ink</span>
+</div>
+</div>
+<div class="reveal" style="text-align:center; margin-top: clamp(0.5rem, 1.5vw, 1rem);">
+<span class="pill" style="font-size:var(--small-size);">+ 另外 9 种预设</span>
+</div>
+</div>
+</section>
+<section aria-label="Slide 5" class="slide slide-4 text-light-theme" data-export-role="glass_card" data-notes="展示三步工作流程">
+<div class="orb orb2"></div>
+<div class="orb orb3"></div>
+<div class="slide-content preset-glassmorphism-content">
+<h2 class="reveal glass-title" style="font-size: var(--h2-size); margin-bottom: clamp(1rem, 2.5vw, 1.8rem); text-align:center;">三个命令，从想法到演示</h2>
+<div class="reveal" style="display:flex; flex-direction:column; gap: clamp(0.8rem, 2vw, 1.5rem); max-width: min(90vw, 700px); margin: 0 auto;">
+<div class="glass-card" style="display:flex; align-items:center; gap: clamp(0.8rem, 2vw, 1.2rem);">
+<div class="step-num">1</div>
+<div>
+<h3 style="font-size:var(--body-size); font-weight:700; margin-bottom:0.2rem;">描述你的内容</h3>
+<p class="glass-body" style="font-size:var(--small-size);">用自然语言告诉 Claude 你要讲什么。</p>
+</div>
+</div>
+<div class="glass-card" style="display:flex; align-items:center; gap: clamp(0.8rem, 2vw, 1.2rem);">
+<div class="step-num">2</div>
+<div>
+<h3 style="font-size:var(--body-size); font-weight:700; margin-bottom:0.2rem;">挑选一种风格</h3>
+<p class="glass-body" style="font-size:var(--small-size);">3 个视觉预览，看图选择，不用学设计术语。</p>
+</div>
+</div>
+<div class="glass-card" style="display:flex; align-items:center; gap: clamp(0.8rem, 2vw, 1.2rem);">
+<div class="step-num">3</div>
+<div>
+<h3 style="font-size:var(--body-size); font-weight:700; margin-bottom:0.2rem;">打开浏览器演示</h3>
+<p class="glass-body" style="font-size:var(--small-size);">生成的 HTML 零依赖，双击即播放。</p>
+</div>
+</div>
+</div>
+</div>
+</section>
+<section aria-label="Slide 6" class="slide slide-5 text-light-theme" data-export-role="glass_card" data-notes="展示核心功能：播放、编辑、导出">
+<div class="orb orb1" style="background: rgba(102,126,234,0.3);"></div>
+<div class="orb orb2" style="background: rgba(240,147,251,0.2);"></div>
+<div class="slide-content preset-glassmorphism-content">
+<h2 class="reveal glass-title" style="font-size: var(--h2-size); margin-bottom: clamp(1rem, 2.5vw, 1.5rem);">四个能力，覆盖演示全流程</h2>
+<div class="reveal grid" style="grid-template-columns: 1fr 1fr;">
+<div class="glass-card stat-card">
+<div class="icon-circle" style="margin:0 auto 0.6rem;">▶</div>
+<h3 style="font-size:var(--body-size); font-weight:700; margin-bottom:0.3rem;">播放模式</h3>
+<p class="glass-body" style="font-size:var(--small-size);">F5 全屏，自动缩放适配任何屏幕。</p>
+</div>
+<div class="glass-card stat-card">
+<div class="icon-circle" style="margin:0 auto 0.6rem;">✎</div>
+<h3 style="font-size:var(--body-size); font-weight:700; margin-bottom:0.3rem;">浏览器内编辑</h3>
+<p class="glass-body" style="font-size:var(--small-size);">E 键进入，直接改文字和内容。</p>
+</div>
+<div class="glass-card stat-card">
+<div class="icon-circle" style="margin:0 auto 0.6rem;">⇩</div>
+<h3 style="font-size:var(--body-size); font-weight:700; margin-bottom:0.3rem;">PPTX 导出</h3>
+<p class="glass-body" style="font-size:var(--small-size);">原生模式或图片模式，按需导出。</p>
+</div>
+<div class="glass-card stat-card">
+<div class="icon-circle" style="margin:0 auto 0.6rem;">☶</div>
+<h3 style="font-size:var(--body-size); font-weight:700; margin-bottom:0.3rem;">演讲者模式</h3>
+<p class="glass-body" style="font-size:var(--small-size);">P 键打开，备注、计时器同步显示。</p>
+</div>
+</div>
+</div>
+</section>
+<section aria-label="Slide 7" class="slide slide-6 text-dark" data-export-role="glass_split" data-notes="两种安装方式">
+<div class="orb orb1"></div>
+<div class="orb orb3"></div>
+<div class="slide-content preset-glassmorphism-content" style="align-items:center; text-align:center;">
+<h2 class="reveal glass-title" style="font-size: var(--h2-size); margin-bottom: clamp(1rem, 3vw, 2rem);">两种方式，一行命令安装</h2>
+<div class="reveal" style="display:flex; gap: clamp(1rem, 3vw, 2rem); flex-wrap:wrap; justify-content:center; max-width: min(90vw, 700px);">
+<div class="glass-card" style="flex:1; min-width:250px; text-align:left;">
+<span class="pill" style="margin-bottom:0.8rem; display:inline-block;">Claude Code</span>
+<div style="background:rgba(0,0,0,0.2); border-radius:8px; padding:clamp(0.6rem,1.2vw,1rem); font-family:monospace; font-size:var(--small-size); margin-top:0.6rem; word-break:break-all;">
+                        安装 https://github.com/<br/>kaisersong/slide-creator
+                    </div>
+</div>
+<div class="glass-card" style="flex:1; min-width:250px; text-align:left;">
+<span class="pill" style="margin-bottom:0.8rem; display:inline-block;">OpenClaw</span>
+<div style="background:rgba(0,0,0,0.2); border-radius:8px; padding:clamp(0.6rem,1.2vw,1rem); font-family:monospace; font-size:var(--small-size); margin-top:0.6rem;">
+                        clawhub install kai-slide-creator
+                    </div>
+</div>
+</div>
+</div>
+</section>
+<section aria-label="Slide 8" class="slide slide-7 text-dark" data-export-role="glass_hero" data-notes="行动号召">
+<div class="orb orb1"></div>
+<div class="orb orb2"></div>
+<div class="orb orb3"></div>
+<div class="slide-content preset-glassmorphism-content" style="align-items:center; text-align:center;">
+<h1 class="reveal glass-title" style="margin-bottom: clamp(0.8rem, 2vw, 1.5rem);">现在开始做你的演示</h1>
+<p class="reveal glass-body" style="margin-bottom: clamp(1.5rem, 3vw, 2.5rem); max-width: min(90vw, 480px);">对 Claude 说「/slide-creator」，从想法到成品。</p>
+<div class="reveal">
+<div class="glass-card" style="display:inline-block; padding: clamp(0.8rem, 1.5vw, 1.2rem) clamp(1.5rem, 3vw, 2.5rem);">
+<span style="font-family:monospace; font-size:var(--body-size); font-weight:700;">/slide-creator</span>
+</div>
+</div>
+</div>
+</section>
+</body></html>

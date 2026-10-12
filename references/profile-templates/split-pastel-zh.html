@@ -1,0 +1,448 @@
+<!DOCTYPE html>
+<!-- Program-owned profile template. Regenerate with scripts/build-profile-templates.py. -->
+<html><head>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;700;800&amp;family=Noto+Sans+SC:wght@400;500;700&amp;display=swap" rel="stylesheet"/>
+<style>
+        :root {
+            --bg-peach: #f5e6dc;
+            --bg-lavender: #e4dff0;
+            --text-dark: #1a1a1a;
+            --text-secondary: #666666;
+            --badge-mint: #c8f0d8;
+            --badge-yellow: #f0f0c8;
+            --badge-pink: #f0d4e0;
+            --badge-lavender: #d4cef5;
+            --badge-peach: #f5d4c4;
+            --accent: #c8f0d8;
+            --font-display: 'Outfit', 'Noto Sans SC', sans-serif;
+            --font-body: 'Outfit', 'Noto Sans SC', sans-serif;
+            --title-size: clamp(1.5rem, 5vw, 4rem);
+            --h2-size: clamp(1.25rem, 3.5vw, 2.5rem);
+            --body-size: clamp(0.75rem, 1.5vw, 1.125rem);
+            --small-size: clamp(0.65rem, 1vw, 0.875rem);
+            --slide-padding: clamp(1rem, 4vw, 4rem);
+            --content-gap: clamp(0.5rem, 2vw, 2rem);
+        }
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+        html { scroll-snap-type: y mandatory; height: 100%; }
+        body { font-family: var(--font-body); color: var(--text-dark); height: 100%; }
+        body[data-export-progress="false"] .progress-bar,
+        body[data-export-progress="false"] .nav-dots { display: none !important; }
+
+        /* Viewport Fitting */
+        .slide { width: 100vw; height: 100vh; height: 100dvh; overflow: hidden; scroll-snap-align: start; display: flex; flex-direction: column; position: relative; }
+        .slide-content { flex: 1; display: flex; flex-direction: column; justify-content: center; max-height: 100%; overflow: hidden; padding: var(--slide-padding); position: relative; z-index: 2; width: min(780px, 90vw); margin: 0 auto; text-align: center; }
+
+        /* Signature: Split Background */
+        .slide::before {
+            content: ''; position: absolute; inset: 0;
+            background: linear-gradient(to right, var(--bg-peach) 50%, var(--bg-lavender) 50%);
+            z-index: 0;
+        }
+        .slide::after {
+            content: ''; position: absolute; top: 0; right: 0;
+            width: 50%; height: 100%; z-index: 1; pointer-events: none;
+            background-image: radial-gradient(circle, rgba(100,80,160,0.12) 1.5px, transparent 1.5px);
+            background-size: 24px 24px;
+        }
+
+        /* Animations */
+        .slide-content { opacity: 0; transform: translateY(40px) scale(0.97); transition: opacity 0.5s cubic-bezier(0.34,1.2,0.64,1), transform 0.5s cubic-bezier(0.34,1.2,0.64,1); }
+        .slide.visible .slide-content { opacity: 1; transform: translateY(0) scale(1); }
+
+        .reveal { opacity: 0; transform: translateY(16px); transition: opacity 0.5s ease, transform 0.5s ease; }
+        .slide.visible .reveal { opacity: 1; transform: translateY(0); }
+
+        /* Components */
+        .badge {
+            display: inline-flex; align-items: center; gap: 6px;
+            padding: 6px 14px; border-radius: 100px;
+            font-size: clamp(10px, 1.1vw, 12px); font-weight: 700;
+        }
+        .badge-mint     { background: var(--badge-mint); color: var(--text-dark); }
+        .badge-yellow   { background: var(--badge-yellow); color: var(--text-dark); }
+        .badge-pink     { background: var(--badge-pink); color: var(--text-dark); }
+        .badge-lavender { background: var(--badge-lavender); color: var(--text-dark); }
+        .badge-peach    { background: var(--badge-peach); color: var(--text-dark); }
+
+        .card {
+            background: #fff; border-radius: 24px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.06);
+            padding: clamp(20px, 2.5vw, 32px);
+        }
+        .card:nth-child(1) { animation: cardIn 0.5s ease 0.05s both; }
+        .card:nth-child(2) { animation: cardIn 0.5s ease 0.12s both; }
+        .card:nth-child(3) { animation: cardIn 0.5s ease 0.19s both; }
+        .card:nth-child(4) { animation: cardIn 0.5s ease 0.26s both; }
+        @keyframes cardIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+
+        .grid-item {
+            background: #fff; border-radius: 16px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.05);
+            padding: clamp(14px, 1.8vw, 22px);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+        .grid-item:hover { transform: translateY(-2px); box-shadow: 0 6px 24px rgba(0,0,0,0.1); }
+
+        .step {
+            background: #fff; border-radius: 20px;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.06);
+            padding: clamp(18px, 2vw, 28px);
+            display: flex; align-items: flex-start; gap: 16px; text-align: left;
+        }
+        .step:nth-child(1) { animation: stepIn 0.5s ease 0.1s both; }
+        .step:nth-child(2) { animation: stepIn 0.5s ease 0.2s both; }
+        .step:nth-child(3) { animation: stepIn 0.5s ease 0.3s both; }
+        @keyframes stepIn { from { opacity: 0; transform: translateX(-20px); } to { opacity: 1; transform: translateX(0); } }
+
+        .step-num-mint, .step-num-lavender, .step-num-pink {
+            width: 36px; height: 36px; border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            font-weight: 800; font-size: clamp(13px, 1.3vw, 15px);
+            flex-shrink: 0;
+        }
+        .step-num-mint      { background: var(--badge-mint); }
+        .step-num-lavender  { background: var(--badge-lavender); }
+        .step-num-pink      { background: var(--badge-pink); }
+
+        .stat-pill {
+            background: #fff; border-radius: 100px;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+            padding: 12px 24px; text-align: center;
+        }
+        .stat-pill .stat-num { font-family: var(--font-display); font-size: clamp(1.5rem, 3vw, 2.5rem); font-weight: 800; line-height: 1; }
+        .stat-pill .stat-label { font-size: var(--small-size); color: var(--text-secondary); margin-top: 2px; }
+
+        .cta-btn {
+            display: inline-flex; align-items: center; justify-content: center;
+            padding: clamp(10px, 1.5vw, 14px) clamp(20px, 3vw, 32px);
+            border-radius: 9999px; font-weight: 700;
+            font-family: var(--font-display); font-size: clamp(12px, 1.3vw, 14px);
+            border: none; cursor: pointer; transition: transform 0.2s ease, box-shadow 0.2s ease;
+            text-decoration: none;
+        }
+        .cta-btn:hover { transform: translateY(-1px); }
+        .cta-primary { background: var(--text-dark); color: var(--bg-peach); }
+        .cta-secondary { background: var(--badge-lavender); color: var(--text-dark); }
+
+        .divider-line {
+            width: 48px; height: 3px; border-radius: 2px;
+            background: linear-gradient(90deg, var(--badge-mint), var(--badge-lavender));
+            margin: 16px auto;
+        }
+
+        .code-block {
+            background: var(--text-dark); color: var(--badge-mint);
+            padding: clamp(10px, 1.5vw, 16px) clamp(14px, 2vw, 22px);
+            border-radius: 12px; font-family: 'SF Mono', 'Fira Code', monospace;
+            font-size: clamp(11px, 1.2vw, 14px); line-height: 1.6;
+        }
+
+        .slide-label {
+            font-size: clamp(10px, 1.1vw, 12px); font-weight: 700;
+            text-transform: uppercase; letter-spacing: 0.1em;
+            color: var(--text-secondary);
+        }
+
+        /* Per-slide CSS */
+        #slide-1 .hero-kpis { display: flex; gap: clamp(16px, 3vw, 32px); margin-top: 32px; flex-wrap: wrap; justify-content: center; }
+        #slide-1 .hero-title-main { font-family: var(--font-display); font-size: clamp(2.5rem, 6vw, 5rem); font-weight: 800; line-height: 1.1; letter-spacing: -0.02em; }
+        #slide-1 .hero-title-main span { color: #b8a08a; }
+        #slide-1 .hero-sub { font-size: clamp(0.875rem, 1.5vw, 1.125rem); color: var(--text-secondary); line-height: 1.7; max-width: 480px; margin: 16px auto 0; }
+
+        #slide-2 { flex-direction: row; }
+        #slide-2 .left-panel { flex: 0 0 44%; display: flex; flex-direction: column; justify-content: center; padding: var(--slide-padding); position: relative; z-index: 2; }
+        #slide-2 .right-panel { flex: 1; display: flex; flex-direction: column; justify-content: center; padding: var(--slide-padding); position: relative; z-index: 2; }
+        #slide-2 h2 { font-family: var(--font-display); font-size: var(--h2-size); font-weight: 800; line-height: 1.2; }
+        #slide-2 .pain-item { display: flex; align-items: flex-start; gap: 12px; margin-bottom: 16px; }
+        #slide-2 .pain-icon { width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0; font-size: 14px; font-weight: 800; }
+        #slide-2 .pain-icon.pink   { background: var(--badge-pink); }
+        #slide-2 .pain-icon.yellow { background: var(--badge-yellow); }
+        #slide-2 .pain-icon.mint   { background: var(--badge-mint); }
+        #slide-2 .pain-text { font-size: var(--body-size); color: var(--text-dark); opacity: 0.75; line-height: 1.6; }
+
+        #slide-3 .preview-cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: clamp(12px, 2vw, 20px); margin-top: clamp(20px, 3vw, 36px); }
+        #slide-3 .preview-card { border-radius: 16px; padding: clamp(20px, 2.5vw, 32px) clamp(14px, 1.8vw, 20px); text-align: center; position: relative; overflow: hidden; }
+        #slide-3 .preview-card.style-a { background: linear-gradient(135deg, #f5e6dc, #f0d4c0); }
+        #slide-3 .preview-card.style-b { background: linear-gradient(135deg, #e4dff0, #d4cef5); }
+        #slide-3 .preview-card.style-c { background: linear-gradient(135deg, #c8f0d8, #b0e0c0); }
+        #slide-3 .preview-card .preview-label { font-size: clamp(11px, 1.2vw, 13px); font-weight: 700; margin-top: 12px; }
+        #slide-3 .preview-card .preview-dot { width: 40px; height: 40px; border-radius: 50%; margin: 0 auto 8px; }
+        #slide-3 .preview-card.style-a .preview-dot { background: #f0d4c0; }
+        #slide-3 .preview-card.style-b .preview-dot { background: #d4cef5; }
+        #slide-3 .preview-card.style-c .preview-dot { background: #b0e0c0; }
+
+        #slide-3 .preview-card .badge { margin-top: 8px; }
+
+        #slide-4 .preset-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 130px), 1fr)); gap: clamp(8px, 1.2vw, 12px); margin-top: clamp(16px, 2.5vw, 28px); }
+        #slide-4 .preset-chip { display: flex; align-items: center; justify-content: center; padding: 8px 12px; border-radius: 12px; font-size: clamp(10px, 1vw, 12px); font-weight: 600; background: #fff; box-shadow: 0 1px 6px rgba(0,0,0,0.04); transition: transform 0.2s; text-align: center; }
+        #slide-4 .preset-chip:hover { transform: scale(1.03); }
+        #slide-4 .preset-chip.active { background: var(--badge-mint); }
+
+        #slide-5 .steps-container { display: flex; flex-direction: column; gap: clamp(12px, 1.5vw, 18px); margin-top: clamp(20px, 3vw, 32px); max-width: 680px; margin-left: auto; margin-right: auto; text-align: left; }
+        #slide-5 .step h3 { font-family: var(--font-display); font-size: clamp(0.95rem, 1.5vw, 1.15rem); font-weight: 700; margin-bottom: 4px; }
+        #slide-5 .step p { font-size: var(--small-size); color: var(--text-secondary); line-height: 1.5; }
+        #slide-5 .step .code-inline { font-family: 'SF Mono', 'Fira Code', monospace; font-size: clamp(11px, 1.1vw, 13px); color: var(--text-dark); background: var(--badge-yellow); padding: 2px 8px; border-radius: 6px; display: inline-block; margin-top: 8px; }
+
+        #slide-6 .feature-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: clamp(12px, 1.8vw, 20px); margin-top: clamp(20px, 2.5vw, 32px); }
+        #slide-6 .feature-card h3 { font-family: var(--font-display); font-size: clamp(0.95rem, 1.5vw, 1.15rem); font-weight: 700; margin-bottom: 6px; }
+        #slide-6 .feature-card h3 .feat-icon { display: inline-block; width: 24px; height: 24px; border-radius: 6px; text-align: center; line-height: 24px; font-size: 12px; margin-right: 6px; }
+        #slide-6 .feature-card h3 .feat-icon.mint      { background: var(--badge-mint); }
+        #slide-6 .feature-card h3 .feat-icon.pink      { background: var(--badge-pink); }
+        #slide-6 .feature-card h3 .feat-icon.lavender  { background: var(--badge-lavender); }
+        #slide-6 .feature-card h3 .feat-icon.peach     { background: var(--badge-peach); }
+        #slide-6 .feature-card p { font-size: var(--small-size); color: var(--text-secondary); line-height: 1.55; }
+
+        #slide-7 .install-cards { display: flex; gap: clamp(16px, 2.5vw, 28px); margin-top: clamp(20px, 3vw, 36px); flex-wrap: wrap; justify-content: center; }
+        #slide-7 .install-card { flex: 1; min-width: 260px; max-width: 380px; text-align: center; }
+        #slide-7 .install-card .badge { margin-bottom: 12px; }
+        #slide-7 .install-card h3 { font-family: var(--font-display); font-size: clamp(1rem, 1.5vw, 1.25rem); font-weight: 700; margin-bottom: 12px; }
+        #slide-7 .install-card .code-block { margin-top: 12px; text-align: left; }
+
+        #slide-8 .cta-cmd { font-family: var(--font-display); font-size: clamp(1.5rem, 4vw, 3rem); font-weight: 800; color: var(--text-dark); margin: 20px 0 8px; }
+        #slide-8 .cta-sub { font-size: clamp(0.875rem, 1.5vw, 1.125rem); color: var(--text-secondary); line-height: 1.7; }
+
+        /* Universal UI */
+        #brand-mark { position: fixed; top: 20px; left: 28px; font-weight: 800; font-size: 15px; z-index: 1000; font-family: var(--font-display); color: rgba(26,26,26,0.35); }
+        .slide-num-label { position: absolute; bottom: 28px; right: 36px; font-size: 11px; font-weight: 500; font-family: var(--font-body); color: rgba(26,26,26,0.18); }
+        .nav-dots { position: fixed; right: 1.5rem; top: 50%; transform: translateY(-50%); display: flex; flex-direction: column; gap: 8px; z-index: 100; }
+        .nav-dots button { width: 8px; height: 8px; border-radius: 50%; border: none; cursor: pointer; transition: all 0.3s; }
+        .progress-bar { position: fixed; top: 0; left: 0; height: 3px; background: linear-gradient(90deg, var(--badge-mint), var(--badge-lavender)); width: 0%; z-index: 100; transition: width 0.35s ease; }
+
+        /* Present Mode */
+        #present-btn { position: fixed; bottom: 1.5rem; right: 1.5rem; z-index: 9997; width: 44px; height: 44px; border-radius: 50%; background: rgba(26,26,26,0.12); color: rgba(26,26,26,0.5); border: none; font-size: 1rem; cursor: pointer; display: flex; align-items: center; justify-content: center; opacity: 0; transition: opacity 0.2s; pointer-events: none; }
+        body:hover #present-btn { opacity: 1; pointer-events: auto; }
+        #present-btn:hover { background: rgba(26,26,26,0.2); }
+        #present-counter { display: none; position: fixed; bottom: 1.4rem; left: 50%; transform: translateX(-50%); z-index: 9997; font-size: 0.65rem; letter-spacing: 0.14em; font-family: var(--font-body); color: rgba(26,26,26,0.28); }
+        body.presenting { overflow: hidden !important; }
+        body.presenting .slide { position: fixed !important; inset: 0; width: 100vw !important; height: 100vh !important; transform-origin: center center; scroll-snap-align: none !important; display: none !important; }
+        body.presenting .slide.p-on { display: flex !important; }
+        body.presenting #present-btn { display: none !important; }
+        body.presenting #present-counter { display: block; }
+        body.presenting.presenting-black .slide { visibility: hidden !important; }
+        body.presenting.presenting-black::after { content: ''; position: fixed; inset: 0; background: #000; z-index: 99999; }
+        .slide-credit { position: absolute; bottom: 8px; right: 14px; font-size: 9px; color: rgba(26,26,26,0.3); opacity: 0.3; pointer-events: none; z-index: 1; font-family: var(--font-body); }
+        body.presenting .slide-credit { display: none !important; }
+
+        /* Edit Mode */
+        .edit-hotzone { position: fixed; top: 0; left: 0; width: 80px; height: 80px; z-index: 10000; cursor: pointer; }
+        .edit-toggle { position: fixed; top: 16px; left: 16px; opacity: 0; pointer-events: none; transition: opacity 0.3s ease; z-index: 10001; background: var(--text-dark); color: var(--bg-peach); border: none; padding: 6px 14px; border-radius: 100px; font-family: var(--font-display); font-size: 12px; font-weight: 700; cursor: pointer; }
+        .edit-toggle.show { opacity: 1; pointer-events: auto; }
+        .edit-toggle.active { opacity: 1; pointer-events: auto; }
+        #notes-panel { display: none; position: fixed; bottom: 0; left: 0; right: 0; z-index: 9998; background: rgba(26,26,26,0.94); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); border-top: 1px solid rgba(255,255,255,0.08); }
+        #notes-panel.active { display: flex; flex-direction: column; }
+        #notes-panel-header { display: flex; align-items: center; justify-content: space-between; padding: 0.45rem 1.4rem; cursor: pointer; user-select: none; }
+        #notes-panel-header:hover { background: rgba(255,255,255,0.03); }
+        #notes-panel-label { flex: 1; font-size: 0.58rem; letter-spacing: 0.16em; text-transform: uppercase; color: rgba(255,255,255,0.3); }
+        #notes-drag-hint { flex: 1; display: flex; justify-content: center; }
+        #notes-drag-hint::after { content: ''; display: block; width: 36px; height: 3px; border-radius: 2px; background: rgba(255,255,255,0.25); }
+        #notes-collapse-btn { flex: 1; text-align: right; font-size: 1rem; color: rgba(255,255,255,0.4); background: none; border: none; cursor: pointer; transition: color 0.15s, transform 0.2s; }
+        #notes-collapse-btn:hover { color: rgba(255,255,255,0.85); }
+        #notes-body { padding: 0 1.4rem 0.75rem; }
+        #notes-panel.collapsed #notes-body { display: none; }
+        #notes-panel.collapsed #notes-collapse-btn { transform: rotate(180deg); }
+        #notes-textarea { width: 100%; height: 72px; min-height: 48px; max-height: 200px; resize: vertical; background: transparent; border: none; outline: none; color: rgba(255,255,255,0.75); font-size: 0.88rem; line-height: 1.65; font-family: system-ui, sans-serif; }
+        #notes-textarea::placeholder { color: rgba(255,255,255,0.18); }
+
+        /* Responsive */
+        @media (max-height: 700px) { :root { --slide-padding: clamp(0.75rem, 3vw, 2rem); --content-gap: clamp(0.4rem, 1.5vw, 1rem); --title-size: clamp(1.25rem, 4.5vw, 2.5rem); } }
+        @media (max-height: 600px) { :root { --slide-padding: clamp(0.5rem, 2.5vw, 1.5rem); --title-size: clamp(1.1rem, 4vw, 2rem); --body-size: clamp(0.7rem, 1.2vw, 0.95rem); } .nav-dots, .keyboard-hint, .decorative { display: none; } }
+        @media (max-height: 500px) { :root { --slide-padding: clamp(0.4rem, 2vw, 1rem); --title-size: clamp(1rem, 3.5vw, 1.5rem); --body-size: clamp(0.65rem, 1vw, 0.85rem); } }
+        @media (max-width: 600px) {
+            #slide-2 { flex-direction: column; }
+            #slide-3 .preview-cards { grid-template-columns: 1fr; }
+            #slide-6 .feature-grid { grid-template-columns: 1fr; }
+            #slide-7 .install-cards { flex-direction: column; align-items: center; }
+        }
+        @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.2s !important; } }
+    </style>
+</head><body>
+<section aria-label="Hero Cover" class="slide" data-notes="slide-creator：零依赖 HTML 演示文稿，21 种预设，三分钟出稿" id="slide-1">
+<div class="slide-content preset-split-pastel-content">
+<div class="badge badge-mint reveal">slide-creator</div>
+<h1 class="hero-title-main reveal">用 HTML<br/><span>做演示</span></h1>
+<p class="hero-sub reveal">零依赖、零构建、零平台锁定。<br/>为 Claude Code 和 OpenClaw 设计的演示文稿工具。</p>
+<div class="hero-kpis reveal">
+<div class="stat-pill">
+<div class="stat-num">21</div>
+<div class="stat-label">种预设</div>
+</div>
+<div class="stat-pill">
+<div class="stat-num">0</div>
+<div class="stat-label">个依赖</div>
+</div>
+<div class="stat-pill">
+<div class="stat-num">3min</div>
+<div class="stat-label">出稿</div>
+</div>
+</div>
+</div>
+<span class="slide-num-label">01 / 08</span>
+</section>
+<section aria-label="Problem" class="slide" data-notes="现有工具的三大痛点：工具链复杂、AI 美学同质化、平台锁定" id="slide-2">
+<div class="left-panel">
+<div class="badge badge-pink reveal">问题</div>
+<h2 class="reveal preset-split-pastel-content">演示文稿<br/>不需要<br/>构建系统</h2>
+</div>
+<div class="right-panel">
+<div class="pain-item reveal">
+<div class="pain-icon pink">1</div>
+<div class="pain-text">复杂的工具链 -- npm install、Webpack 配置、300MB 的 node_modules，只为做几页幻灯片</div>
+</div>
+<div class="pain-item reveal">
+<div class="pain-icon yellow">2</div>
+<div class="pain-text">通用 AI 美学 -- 每个 AI 生成的演示都是 Inter 字体加紫色渐变，毫无辨识度</div>
+</div>
+<div class="pain-item reveal">
+<div class="pain-icon mint">3</div>
+<div class="pain-text">平台锁定 -- 封闭的 SaaS 平台、导出限制、月费订阅，内容不属于你</div>
+</div>
+</div>
+<span class="slide-num-label">02 / 08</span>
+</section>
+<section aria-label="Style Discovery" class="slide" data-notes="看图选风格：描述主题后生成 3 个预览，点击选中即可出稿" id="slide-3">
+<div class="slide-content preset-split-pastel-content">
+<div class="badge badge-lavender reveal">风格发现</div>
+<h2 class="reveal">三个预览锁定视觉风格</h2>
+<div class="preview-cards">
+<div class="preview-card style-a reveal">
+<div class="preview-dot"></div>
+<div class="preview-label">暖色柔和</div>
+<span class="badge badge-peach">Dark Botanical</span>
+</div>
+<div class="preview-card style-b reveal">
+<div class="preview-dot"></div>
+<div class="preview-label">冷色现代</div>
+<span class="badge badge-lavender">Split Pastel</span>
+</div>
+<div class="preview-card style-c reveal">
+<div class="preview-dot"></div>
+<div class="preview-label">清新自然</div>
+<span class="badge badge-mint">Blue Sky</span>
+</div>
+</div>
+</div>
+<span class="slide-num-label">03 / 08</span>
+</section>
+<section aria-label="Solution: 21 Presets" class="slide" data-notes="21 种设计预设，覆盖商业路演、技术分享、创意展示，拒绝通用 AI 审美" id="slide-4">
+<div class="slide-content preset-split-pastel-content">
+<div class="badge badge-yellow reveal">Presets</div>
+<h2 class="reveal">21 种预设，拒绝千篇一律</h2>
+<div class="preset-grid reveal">
+<div class="preset-chip">Bold Signal</div>
+<div class="preset-chip">Blue Sky</div>
+<div class="preset-chip">Aurora Mesh</div>
+<div class="preset-chip">Chinese Chan</div>
+<div class="preset-chip">Creative Voltage</div>
+<div class="preset-chip">Dark Botanical</div>
+<div class="preset-chip">Data Story</div>
+<div class="preset-chip">Electric Studio</div>
+<div class="preset-chip">Enterprise Dark</div>
+<div class="preset-chip">Glassmorphism</div>
+<div class="preset-chip">Modern Newspaper</div>
+<div class="preset-chip">Neo-Brutalism</div>
+<div class="preset-chip">Neo-Retro Dev</div>
+<div class="preset-chip">Neon Cyber</div>
+<div class="preset-chip">Notebook Tabs</div>
+<div class="preset-chip">Paper &amp; Ink</div>
+<div class="preset-chip">Pastel Geometry</div>
+<div class="preset-chip active">Split Pastel</div>
+<div class="preset-chip">Swiss Modern</div>
+<div class="preset-chip">Terminal Green</div>
+<div class="preset-chip">Vintage Editorial</div>
+</div>
+</div>
+<span class="slide-num-label">04 / 08</span>
+</section>
+<section aria-label="Workflow" class="slide" data-notes="三步出稿：调用 skill、选风格、打开浏览器演示" id="slide-5">
+<div class="slide-content preset-split-pastel-content">
+<div class="badge badge-mint reveal">Workflow</div>
+<h2 class="reveal">三个命令完成一切</h2>
+<div class="steps-container">
+<div class="step reveal">
+<div class="step-num-mint">1</div>
+<div>
+<h3>调用 Skill</h3>
+<p>在 Claude Code 中输入指令，描述演示主题和受众</p>
+<span class="code-inline">/slide-creator 产品发布会</span>
+</div>
+</div>
+<div class="step reveal">
+<div class="step-num-lavender">2</div>
+<div>
+<h3>选择风格</h3>
+<p>从生成的 3 个预览中挑选最合适的视觉风格</p>
+<span class="code-inline">选择 Split Pastel</span>
+</div>
+</div>
+<div class="step reveal">
+<div class="step-num-pink">3</div>
+<div>
+<h3>打开演示</h3>
+<p>在浏览器中打开 HTML 文件，F5 全屏播放</p>
+<span class="code-inline">open presentation.html</span>
+</div>
+</div>
+</div>
+</div>
+<span class="slide-num-label">05 / 08</span>
+</section>
+<section aria-label="Core Features" class="slide" data-notes="四项核心能力：视口适配、编辑模式、演讲者模式、PPTX 导出" id="slide-6">
+<div class="slide-content preset-split-pastel-content">
+<div class="badge badge-peach reveal">核心能力</div>
+<h2 class="reveal">播放、编辑、演讲、导出</h2>
+<div class="feature-grid">
+<div class="card feature-card reveal">
+<h3><span class="feat-icon mint">F5</span>全屏播放</h3>
+<p>视口自适应缩放，1440x900 画布适配任意屏幕，手势和键盘双导航</p>
+</div>
+<div class="card feature-card reveal">
+<h3><span class="feat-icon pink">E</span>浏览器编辑</h3>
+<p>左上角热区触发编辑模式，contenteditable 直接在页面上修改文字</p>
+</div>
+<div class="card feature-card reveal">
+<h3><span class="feat-icon lavender">P</span>演讲者模式</h3>
+<p>独立窗口显示备注、计时器和页数，BroadcastChannel 实时同步</p>
+</div>
+<div class="card feature-card reveal">
+<h3><span class="feat-icon peach">PPTX</span>导出</h3>
+<p>像素级图片模式或 Native 可编辑模式，一份 HTML 两种输出</p>
+</div>
+</div>
+</div>
+<span class="slide-num-label">06 / 08</span>
+</section>
+<section aria-label="Installation" class="slide" data-notes="两种安装方式：Claude Code 技能安装或 OpenClaw 命令行安装" id="slide-7">
+<div class="slide-content preset-split-pastel-content">
+<div class="badge badge-lavender reveal">安装</div>
+<h2 class="reveal">一行命令安装</h2>
+<div class="divider-line reveal"></div>
+<div class="install-cards">
+<div class="install-card reveal">
+<span class="badge badge-mint">Claude Code</span>
+<h3>告诉 Claude 安装</h3>
+<div class="code-block">告诉 Claude<br/>"安装 github.com/kaisersong/slide-creator"</div>
+</div>
+<div class="install-card reveal">
+<span class="badge badge-pink">OpenClaw</span>
+<h3>命令行一行安装</h3>
+<div class="code-block">clawhub install kai-slide-creator</div>
+</div>
+</div>
+</div>
+<span class="slide-num-label">07 / 08</span>
+</section>
+<section aria-label="CTA" class="slide" data-notes="立即开始使用 /slide-creator，适用于 Claude Code 和 OpenClaw" id="slide-8">
+<div class="slide-content preset-split-pastel-content">
+<div class="badge badge-mint reveal">开始使用</div>
+<div class="cta-cmd reveal">/slide-creator</div>
+<div class="divider-line reveal"></div>
+<p class="cta-sub reveal">适用于 Claude Code 和 OpenClaw<br/>完全在浏览器中运行，零依赖</p>
+<div class="reveal">
+<a class="cta-btn cta-primary" href="#">立即开始</a>
+</div>
+</div>
+<span class="slide-num-label">08 / 08</span>
+</section>
+</body></html>

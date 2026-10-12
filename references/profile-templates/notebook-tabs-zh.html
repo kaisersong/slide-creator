@@ -1,0 +1,870 @@
+<!DOCTYPE html>
+<!-- Program-owned profile template. Regenerate with scripts/build-profile-templates.py. -->
+<html><head>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:wght@400;700&amp;family=DM+Sans:wght@400;500;600&amp;family=Noto+Sans+SC:wght@400;500;700&amp;display=swap" rel="stylesheet"/>
+<style>
+        /* ===========================================
+           VIEWPORT FITTING: MANDATORY
+           =========================================== */
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+        html { scroll-snap-type: y mandatory; height: 100%; overflow-x: hidden; }
+        body { height: 100%; }
+        body[data-export-progress="false"] .progress-bar,
+        body[data-export-progress="false"] .nav-dots { display: none !important; }
+
+        .slide {
+            width: 100vw; height: 100vh; height: 100dvh;
+            overflow: hidden; scroll-snap-align: start;
+            display: flex; flex-direction: column; position: relative;
+        }
+        .slide-content {
+            flex: 1; display: flex; flex-direction: column; justify-content: center;
+            max-height: 100%; overflow: hidden; padding: var(--slide-padding);
+        }
+
+        /* ===========================================
+           NOTEBOOK TABS -- Style Tokens
+           =========================================== */
+        :root {
+            --bg-outer: #2d2d2d;
+            --bg-page: #f8f6f1;
+            --text-primary: #1a1a1a;
+            --text-secondary: #666666;
+            --tab-1: #98d4bb;
+            --tab-2: #c7b8ea;
+            --tab-3: #f4b8c5;
+            --tab-4: #a8d8ea;
+            --tab-5: #ffe6a7;
+            --tab-6: #f4c4a4;
+            --tab-7: #b4d4b4;
+            --tab-8: #f4b4a4;
+            --font-display: 'Bodoni Moda', 'Noto Sans SC', Georgia, serif;
+            --font-body: 'DM Sans', 'Noto Sans SC', sans-serif;
+            --title-size: clamp(2rem, 5vw, 3.5rem);
+            --h2-size: clamp(1.5rem, 3.5vw, 2.25rem);
+            --body-size: clamp(0.8125rem, 1.4vw, 1rem);
+            --small-size: clamp(0.6875rem, 1.1vw, 0.875rem);
+            --slide-padding: clamp(1.5rem, 4vw, 4rem);
+            --content-gap: clamp(0.75rem, 1.8vw, 1.5rem);
+        }
+
+        body {
+            font-family: var(--font-body);
+            background: var(--bg-outer);
+            color: var(--text-primary);
+        }
+
+        /* ── Paper Container ── */
+        .paper {
+            background: var(--bg-page);
+            border-radius: 8px;
+            box-shadow: 0 8px 48px rgba(0,0,0,0.5);
+            width: 90vw; max-width: 1100px;
+            margin: 0 auto; position: relative;
+            min-height: min(78vh, 680px);
+            z-index: 2;
+        }
+        /* Ruled lines */
+        .paper::after {
+            content: ''; position: absolute; inset: 0;
+            pointer-events: none; z-index: 1;
+            background-image: repeating-linear-gradient(to bottom, transparent, transparent 27px, rgba(0,0,0,0.05) 27px, rgba(0,0,0,0.05) 28px);
+            background-position: 0 56px;
+            border-radius: 8px;
+        }
+        /* Margin line */
+        .paper::before {
+            content: ''; position: absolute; left: 56px; top: 0; bottom: 0;
+            width: 1px; background: rgba(220,80,80,0.18);
+            z-index: 1; pointer-events: none;
+        }
+
+        /* Tabs — right edge */
+        .tabs {
+            position: absolute; right: calc(-1 * clamp(28px, 3.5vw, 44px));
+            top: 12px; bottom: 12px;
+            display: flex; flex-direction: column; gap: 6px; z-index: 3;
+        }
+        .tab {
+            writing-mode: vertical-rl; text-orientation: mixed;
+            padding: 10px 4px;
+            font-size: clamp(8px, 0.9vw, 11px);
+            font-weight: 600; letter-spacing: 0.08em;
+            border-radius: 4px 0 0 4px;
+            color: var(--text-primary); cursor: pointer;
+            opacity: 0.55; transition: all 0.3s ease;
+            white-space: nowrap;
+        }
+        .tab:hover { opacity: 0.8; }
+        .tab.active { opacity: 1; width: 64px; box-shadow: 2px 0 8px rgba(0,0,0,0.15); }
+        .tab[data-color="mint"] { background: var(--tab-1); }
+        .tab[data-color="lavender"] { background: var(--tab-2); }
+        .tab[data-color="pink"] { background: var(--tab-3); }
+        .tab[data-color="sky"] { background: var(--tab-4); }
+        .tab[data-color="cream"] { background: var(--tab-5); }
+        .tab[data-color="peach"] { background: var(--tab-6); }
+        .tab[data-color="sage"] { background: var(--tab-7); }
+        .tab[data-color="coral"] { background: var(--tab-8); }
+
+        /* Binder holes — left edge */
+        .binder-holes {
+            position: absolute; left: calc(-1 * 16px); top: 0; bottom: 0;
+            display: flex; flex-direction: column; justify-content: space-evenly; z-index: 3;
+        }
+        .hole {
+            width: 12px; height: 12px; border-radius: 50%;
+            background: var(--bg-outer);
+            box-shadow: inset 0 1px 3px rgba(0,0,0,0.5);
+        }
+
+        /* Content area */
+        .paper-content {
+            padding: clamp(1.5rem, 3vw, 2.5rem);
+            padding-left: 56px;
+            z-index: 2; position: relative;
+        }
+
+        /* ── Typography ── */
+        .nb-title {
+            font-family: var(--font-display); font-weight: 700;
+            color: var(--text-primary); line-height: 1.2;
+        }
+        .nb-body {
+            font-family: var(--font-body); font-weight: 400;
+            color: var(--text-primary); opacity: 0.75; line-height: 1.65;
+        }
+        .nb-label {
+            font-size: clamp(10px, 1.1vw, 12px); font-weight: 500;
+            text-transform: uppercase; letter-spacing: 0.1em;
+            color: var(--text-secondary);
+        }
+
+        /* ── Components ── */
+        .nb-rule {
+            height: 1px; background: rgba(0,0,0,0.08);
+            border: none; margin: var(--content-gap) 0;
+        }
+        .nb-steps { list-style: none; counter-reset: nb-step; }
+        .nb-steps li {
+            counter-increment: nb-step;
+            padding: 12px 0;
+            border-bottom: 1px solid rgba(0,0,0,0.04);
+            display: flex; gap: 16px; align-items: baseline;
+        }
+        .nb-steps li:last-child { border-bottom: none; }
+        .nb-steps li::before {
+            content: counter(nb-step, upper-roman);
+            font-family: var(--font-display); font-weight: 700;
+            font-size: clamp(16px, 1.8vw, 22px);
+            color: var(--text-secondary);
+            flex-shrink: 0; min-width: 32px;
+        }
+
+        .nb-card {
+            background: rgba(0,0,0,0.02);
+            border: 1px solid rgba(0,0,0,0.06);
+            border-radius: 6px;
+            padding: clamp(14px, 1.6vw, 20px);
+        }
+        .nb-card-title {
+            font-family: var(--font-display); font-weight: 700;
+            font-size: clamp(14px, 1.4vw, 17px);
+            color: var(--text-primary); margin-bottom: 6px;
+        }
+        .nb-card-body {
+            font-size: var(--small-size); color: var(--text-secondary); line-height: 1.55;
+        }
+
+        .nb-code {
+            background: rgba(0,0,0,0.04);
+            border-left: 3px solid var(--tab-1);
+            padding: 10px 16px; border-radius: 0 4px 4px 0;
+            font-family: 'SF Mono', 'Menlo', monospace;
+            font-size: clamp(11px, 1.1vw, 13px); color: var(--text-secondary);
+        }
+
+        .nb-btn {
+            display: inline-flex; align-items: center; gap: 8px;
+            padding: 12px 28px;
+            background: var(--tab-1); color: var(--text-primary);
+            font-family: var(--font-body); font-weight: 600;
+            font-size: clamp(13px, 1.3vw, 15px);
+            border: none; border-radius: 6px; cursor: pointer;
+            transition: transform 0.2s;
+        }
+        .nb-btn:hover { transform: translateY(-2px); }
+
+        .nb-pill {
+            display: inline-block; padding: 5px 16px; border-radius: 20px;
+            font-size: clamp(10px, 1vw, 12px); font-weight: 600;
+            letter-spacing: 0.06em; text-transform: uppercase;
+        }
+
+        .nb-stat {
+            font-family: var(--font-display); font-weight: 700;
+            font-size: clamp(28px, 4vw, 56px); line-height: 1;
+        }
+
+        /* ── Reveal Animation ── */
+        .reveal { opacity: 0; transform: translateY(20px); transition: opacity 0.5s ease, transform 0.5s ease; }
+        .slide.visible .reveal { opacity: 1; transform: translateY(0); }
+        .slide.visible .reveal:nth-child(1) { transition-delay: 0.1s; }
+        .slide.visible .reveal:nth-child(2) { transition-delay: 0.2s; }
+        .slide.visible .reveal:nth-child(3) { transition-delay: 0.3s; }
+        .slide.visible .reveal:nth-child(4) { transition-delay: 0.4s; }
+
+        /* ── Responsive ── */
+        @media (max-height: 700px) {
+            :root { --slide-padding: clamp(0.75rem, 3vw, 2rem); --content-gap: clamp(0.4rem, 1.5vw, 1rem); --title-size: clamp(1.25rem, 4.5vw, 2.5rem); }
+            .paper { min-height: auto; }
+        }
+        @media (max-height: 600px) {
+            :root { --slide-padding: clamp(0.5rem, 2.5vw, 1.5rem); --title-size: clamp(1.1rem, 4vw, 2rem); --body-size: clamp(0.7rem, 1.2vw, 0.95rem); }
+            .nav-dots, .keyboard-hint, .decorative { display: none; }
+            .tabs { display: none; }
+            .binder-holes { display: none; }
+        }
+        @media (max-height: 500px) {
+            :root { --slide-padding: clamp(0.4rem, 2vw, 1rem); --title-size: clamp(1rem, 3.5vw, 1.5rem); }
+        }
+        @media (max-width: 600px) {
+            .grid-3, .grid-2, .feat-grid { grid-template-columns: 1fr !important; }
+            .paper { width: 96vw; }
+        }
+        @media (prefers-reduced-motion: reduce) {
+            *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.2s !important; }
+            html { scroll-behavior: auto; }
+        }
+
+        /* ═══════════════════════════════════════════════
+           Per-slide CSS
+           ═══════════════════════════════════════════════ */
+
+        /* Slide 1: Hero — centered paper with stats */
+        #slide-1 { justify-content: center; align-items: center; }
+        #slide-1 .paper {
+            display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center;
+        }
+        #slide-1 .hero-brand {
+            font-family: var(--font-body); font-weight: 500;
+            font-size: clamp(12px, 1.2vw, 14px); letter-spacing: 0.15em;
+            text-transform: uppercase; color: var(--text-secondary); margin-bottom: 16px;
+        }
+        #slide-1 .hero-title {
+            font-family: var(--font-display); font-weight: 700;
+            font-size: var(--title-size); line-height: 1.15; margin-bottom: 16px;
+        }
+        #slide-1 .hero-title em { font-style: normal; color: var(--tab-1); }
+        #slide-1 .hero-sub {
+            font-size: var(--body-size); color: var(--text-secondary);
+            max-width: 480px; line-height: 1.7; margin-bottom: 28px;
+        }
+        #slide-1 .hero-stats { display: flex; gap: clamp(20px, 3vw, 40px); }
+        #slide-1 .hero-stat { text-align: center; }
+        #slide-1 .hero-stat .nb-stat { color: var(--tab-1); }
+        #slide-1 .hero-stat .nb-stat + .nb-label { margin-top: 4px; }
+
+        /* Slide 2: Architecture — layered workflow */
+        #slide-2 { justify-content: center; }
+        #slide-2 .arch-layers { display: flex; flex-direction: column; gap: 0; }
+        #slide-2 .arch-layer {
+            display: flex; align-items: center; gap: 12px;
+            padding: clamp(12px, 1.5vw, 18px) clamp(16px, 2vw, 24px);
+            border: 1px solid rgba(0,0,0,0.08);
+            background: rgba(0,0,0,0.015);
+        }
+        #slide-2 .arch-layer:not(:last-child) { margin-bottom: -1px; }
+        #slide-2 .arch-layer-badge {
+            font-size: var(--small-size); font-weight: 600;
+            padding: 4px 10px; border-radius: 4px;
+            letter-spacing: 0.05em; white-space: nowrap;
+        }
+        #slide-2 .arch-layer-body { flex: 1; }
+        #slide-2 .arch-layer-title {
+            font-family: var(--font-display); font-weight: 700;
+            font-size: clamp(14px, 1.5vw, 18px); margin-bottom: 2px;
+        }
+        #slide-2 .arch-layer-desc { font-size: var(--small-size); color: var(--text-secondary); }
+        #slide-2 .arch-arrow {
+            text-align: center; font-size: clamp(16px, 2vw, 24px);
+            color: var(--text-secondary); line-height: 1; padding: 4px 0;
+        }
+        #slide-2 .arch-layer:nth-child(1) .arch-layer-badge { background: rgba(152,212,187,0.2); color: var(--text-primary); }
+        #slide-2 .arch-layer:nth-child(3) .arch-layer-badge { background: rgba(244,184,197,0.2); color: var(--text-primary); }
+        #slide-2 .arch-layer:nth-child(5) .arch-layer-badge { background: rgba(168,216,234,0.2); color: var(--text-primary); }
+
+        /* Slide 3: Features — 3-card grid */
+        #slide-3 { justify-content: center; }
+        #slide-3 .feat-grid {
+            display: grid; grid-template-columns: repeat(3, 1fr);
+            gap: clamp(12px, 1.5vw, 20px); margin-top: clamp(16px, 2vw, 28px);
+        }
+        #slide-3 .feat-card {
+            padding: clamp(16px, 2vw, 24px);
+            border-radius: 6px;
+            border: 1px solid rgba(0,0,0,0.06);
+            background: rgba(0,0,0,0.015);
+            position: relative;
+        }
+        #slide-3 .feat-card::before {
+            content: ''; position: absolute; top: 0; left: 0; right: 0;
+            height: 3px; border-radius: 6px 6px 0 0;
+        }
+        #slide-3 .feat-card:nth-child(1)::before { background: var(--tab-1); }
+        #slide-3 .feat-card:nth-child(2)::before { background: var(--tab-3); }
+        #slide-3 .feat-card:nth-child(3)::before { background: var(--tab-4); }
+        #slide-3 .feat-icon {
+            width: 40px; height: 40px; border-radius: 8px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 18px; margin-bottom: 12px;
+        }
+        #slide-3 .feat-card:nth-child(1) .feat-icon { background: rgba(152,212,187,0.2); }
+        #slide-3 .feat-card:nth-child(2) .feat-icon { background: rgba(244,184,197,0.2); }
+        #slide-3 .feat-card:nth-child(3) .feat-icon { background: rgba(168,216,234,0.2); }
+        #slide-3 .feat-card h3 {
+            font-family: var(--font-display); font-weight: 700;
+            font-size: clamp(14px, 1.4vw, 17px); margin-bottom: 6px;
+        }
+        #slide-3 .feat-card p { font-size: var(--small-size); color: var(--text-secondary); line-height: 1.55; }
+
+        /* Slide 4: Before/After — split columns */
+        #slide-4 { justify-content: center; }
+        #slide-4 .ba-split { display: flex; gap: 0; }
+        #slide-4 .ba-col {
+            flex: 1; padding: clamp(16px, 2vw, 24px);
+        }
+        #slide-4 .ba-col:first-child {
+            border-right: 2px solid rgba(0,0,0,0.08);
+        }
+        #slide-4 .ba-header {
+            font-family: var(--font-display); font-weight: 700;
+            font-size: clamp(14px, 1.5vw, 18px); margin-bottom: 12px;
+            padding-bottom: 8px; border-bottom: 2px solid;
+        }
+        #slide-4 .ba-col:first-child .ba-header { border-color: var(--text-secondary); color: var(--text-secondary); }
+        #slide-4 .ba-col:last-child .ba-header { border-color: var(--tab-1); color: var(--tab-1); }
+        #slide-4 .ba-list { list-style: none; }
+        #slide-4 .ba-list li {
+            padding: 8px 0 8px 12px; margin-bottom: 8px;
+            font-size: var(--body-size); line-height: 1.55;
+            border-left: 2px solid;
+        }
+        #slide-4 .ba-col:first-child .ba-list li {
+            border-color: var(--text-secondary); color: var(--text-secondary);
+            text-decoration: line-through; opacity: 0.6;
+        }
+        #slide-4 .ba-col:last-child .ba-list li {
+            border-color: var(--tab-1); color: var(--text-primary);
+        }
+
+        /* Slide 5: Manifesto — dark block */
+        #slide-5 { justify-content: center; align-items: center; }
+        #slide-5 .paper { background: var(--bg-outer); color: #fff; }
+        #slide-5 .paper::before, #slide-5 .paper::after { display: none; }
+        #slide-5 .manifesto-text {
+            text-align: center; padding: clamp(24px, 4vw, 48px);
+        }
+        #slide-5 .manifesto-headline {
+            font-family: var(--font-display); font-weight: 700;
+            font-size: clamp(24px, 4vw, 48px); line-height: 1.2; margin-bottom: 24px;
+        }
+        #slide-5 .manifesto-headline em { font-style: normal; color: var(--tab-1); }
+        #slide-5 .manifesto-points { list-style: none; text-align: left; max-width: 520px; margin: 0 auto; }
+        #slide-5 .manifesto-points li {
+            padding: 10px 0; font-size: var(--body-size); color: rgba(255,255,255,0.65);
+            line-height: 1.55; border-bottom: 1px solid rgba(255,255,255,0.06);
+        }
+        #slide-5 .manifesto-points li:last-child { border-bottom: none; }
+
+        /* Slide 6: Commands — reference table */
+        #slide-6 { justify-content: center; }
+        #slide-6 .cmd-table { width: 100%; margin-top: clamp(16px, 2vw, 28px); }
+        #slide-6 .cmd-row {
+            display: flex; padding: clamp(10px, 1.2vw, 16px) 0;
+            border-bottom: 2px solid rgba(0,0,0,0.06);
+        }
+        #slide-6 .cmd-row:first-child { border-top: 2px solid rgba(0,0,0,0.06); }
+        #slide-6 .cmd-name {
+            flex: 0 0 35%; font-family: 'SF Mono', 'Menlo', monospace;
+            font-size: clamp(12px, 1.2vw, 14px); font-weight: 600;
+            padding-right: 16px; border-right: 2px solid rgba(0,0,0,0.06);
+        }
+        #slide-6 .cmd-desc { flex: 1; padding-left: 16px; font-size: var(--body-size); color: var(--text-secondary); line-height: 1.55; }
+        #slide-6 .cmd-row:nth-child(odd) { background: rgba(0,0,0,0.015); }
+
+        /* Slide 7: Metrics — 3 columns */
+        #slide-7 { justify-content: center; }
+        #slide-7 .metric-cols {
+            display: grid; grid-template-columns: repeat(3, 1fr);
+            gap: clamp(16px, 2vw, 32px); margin-top: clamp(16px, 2vw, 28px);
+        }
+        #slide-7 .metric-col { text-align: center; }
+        #slide-7 .metric-col .nb-stat { margin-bottom: 8px; }
+        #slide-7 .metric-col .nb-label { margin-bottom: 12px; }
+        #slide-7 .metric-bar {
+            height: 4px; border-radius: 2px; margin-top: 12px;
+            background: rgba(0,0,0,0.06); overflow: hidden;
+        }
+        #slide-7 .metric-bar-fill { height: 100%; border-radius: 2px; }
+        #slide-7 .metric-col:nth-child(1) .nb-stat { color: var(--tab-1); }
+        #slide-7 .metric-col:nth-child(1) .metric-bar-fill { background: var(--tab-1); width: 100%; }
+        #slide-7 .metric-col:nth-child(2) .nb-stat { color: var(--tab-3); }
+        #slide-7 .metric-col:nth-child(2) .metric-bar-fill { background: var(--tab-3); width: 85%; }
+        #slide-7 .metric-col:nth-child(3) .nb-stat { color: var(--tab-4); }
+        #slide-7 .metric-col:nth-child(3) .metric-bar-fill { background: var(--tab-4); width: 70%; }
+
+        /* Slide 8: CTA — dark action block */
+        #slide-8 { justify-content: center; align-items: center; }
+        #slide-8 .paper { background: var(--bg-outer); color: #fff; }
+        #slide-8 .paper::before, #slide-8 .paper::after { display: none; }
+        #slide-8 .cta-content { text-align: center; padding: clamp(24px, 4vw, 48px); }
+        #slide-8 .cta-badge {
+            display: inline-block; padding: 4px 14px; border-radius: 16px;
+            background: rgba(152,212,187,0.15); color: var(--tab-1);
+            font-size: clamp(10px, 1vw, 12px); font-weight: 600;
+            letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 16px;
+        }
+        #slide-8 .cta-headline {
+            font-family: var(--font-display); font-weight: 700;
+            font-size: clamp(24px, 4vw, 44px); line-height: 1.2; margin-bottom: 8px;
+        }
+        #slide-8 .cta-headline em { font-style: normal; color: var(--tab-1); }
+        #slide-8 .cta-sub { font-size: var(--body-size); color: rgba(255,255,255,0.55); margin-bottom: 20px; }
+        #slide-8 .cta-code {
+            display: inline-block; padding: 10px 20px; border-radius: 6px;
+            background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.1);
+            font-family: 'SF Mono', 'Menlo', monospace; font-size: clamp(12px, 1.2vw, 14px);
+            color: rgba(255,255,255,0.8); margin-bottom: 16px;
+        }
+        #slide-8 .cta-steps {
+            display: flex; justify-content: center; gap: 12px;
+            font-size: var(--small-size); color: rgba(255,255,255,0.45); margin-top: 12px;
+        }
+        #slide-8 .cta-steps span { white-space: nowrap; }
+
+        /* ═══════════════════════════════════════════════
+           Universal UI (Mandatory)
+           ═══════════════════════════════════════════════ */
+        #brand-mark {
+            position: fixed; top: 20px; left: 28px;
+            font-weight: 700; font-size: 15px; z-index: 1000;
+            color: rgba(255,255,255,0.6); font-family: var(--font-body);
+        }
+        .slide-num-label {
+            position: absolute; bottom: 28px; right: 36px;
+            font-size: 11px; font-weight: 500;
+            color: rgba(0,0,0,0.18); font-family: var(--font-body);
+        }
+        .slide-num-label.light { color: rgba(255,255,255,0.2); }
+        .nav-dots {
+            position: fixed; right: 1.5rem; top: 50%; transform: translateY(-50%);
+            display: flex; flex-direction: column; gap: 8px; z-index: 100;
+        }
+        .progress-bar {
+            position: fixed; top: 0; left: 0; height: 3px;
+            background: linear-gradient(90deg, var(--tab-1), var(--tab-2), var(--tab-3));
+            width: 0%; z-index: 100; transition: width 0.3s ease;
+        }
+
+        /* ═══════════════════════════════════════════════
+           Present Mode (Standard)
+           ═══════════════════════════════════════════════ */
+        #present-btn {
+            position: fixed; bottom: 1.5rem; right: 1.5rem; z-index: 9997;
+            width: 44px; height: 44px; border-radius: 50%;
+            background: rgba(0,0,0,0.5); color: rgba(255,255,255,0.8);
+            border: 1.5px solid rgba(255,255,255,0.2); font-size: 1rem; cursor: pointer;
+            backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+            display: flex; align-items: center; justify-content: center;
+            opacity: 0; transition: opacity 0.2s; pointer-events: none;
+        }
+        body:hover #present-btn { opacity: 1; pointer-events: auto; }
+        #present-btn:hover { background: rgba(0,0,0,0.78); }
+        #present-counter {
+            display: none; position: fixed; bottom: 1.4rem; left: 50%;
+            transform: translateX(-50%); z-index: 9997;
+            font-size: 0.65rem; letter-spacing: 0.14em;
+            font-family: system-ui, sans-serif; color: rgba(255,255,255,0.28);
+        }
+        body.presenting { background: #000 !important; overflow: hidden !important; }
+        body.presenting .slide {
+            position: fixed !important; inset: 0;
+            width: 100vw !important; height: 100vh !important;
+            transform-origin: center center; scroll-snap-align: none !important;
+            display: none !important;
+        }
+        body.presenting .slide.p-on { display: flex !important; }
+        body.presenting #present-btn { display: none !important; }
+        body.presenting #present-counter { display: block; }
+        body.presenting.presenting-black .slide { visibility: hidden !important; }
+        body.presenting.presenting-black::after { content: ''; position: fixed; inset: 0; background: #000; z-index: 99999; }
+        .slide-credit {
+            position: absolute; bottom: 8px; right: 14px; font-size: 9px;
+            color: var(--text-secondary, #999); opacity: 0.35; pointer-events: none; z-index: 1;
+            font-family: system-ui, sans-serif;
+        }
+        body.presenting .slide-credit { display: none !important; }
+
+        /* ═══════════════════════════════════════════════
+           Edit Mode (Standard)
+           ═══════════════════════════════════════════════ */
+        .edit-hotzone {
+            position: fixed; top: 0; left: 0; width: 80px; height: 80px;
+            z-index: 10000; cursor: pointer;
+        }
+        .edit-toggle {
+            position: fixed; top: 16px; left: 16px;
+            opacity: 0; pointer-events: none; transition: opacity 0.3s ease;
+            z-index: 10001;
+        }
+        .edit-toggle.show { opacity: 1; pointer-events: auto; }
+        .edit-toggle.active { opacity: 1; pointer-events: auto; background: var(--tab-1); color: var(--text-primary); }
+        #notes-panel {
+            display: none; position: fixed; bottom: 0; left: 0; right: 0; z-index: 9998;
+            background: rgba(45,45,45,0.94); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
+            border-top: 1px solid rgba(255,255,255,0.08);
+        }
+        #notes-panel.active { display: flex; flex-direction: column; }
+        #notes-panel-header {
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 0.45rem 1.4rem; cursor: pointer; user-select: none;
+        }
+        #notes-panel-header:hover { background: rgba(255,255,255,0.03); }
+        #notes-panel-label {
+            flex: 1; font-size: 0.58rem; letter-spacing: 0.16em;
+            text-transform: uppercase; color: rgba(255,255,255,0.3);
+        }
+        #notes-drag-hint { flex: 1; display: flex; justify-content: center; }
+        #notes-drag-hint::after {
+            content: ''; display: block; width: 36px; height: 3px;
+            border-radius: 2px; background: rgba(255,255,255,0.25);
+        }
+        #notes-panel-header:hover #notes-drag-hint::after { background: rgba(255,255,255,0.45); }
+        #notes-collapse-btn {
+            flex: 1; text-align: right; font-size: 1rem;
+            color: rgba(255,255,255,0.4); background: none; border: none; cursor: pointer;
+            transition: color 0.15s, transform 0.2s;
+        }
+        #notes-collapse-btn:hover { color: rgba(255,255,255,0.85); }
+        #notes-body { padding: 0 1.4rem 0.75rem; }
+        #notes-panel.collapsed #notes-body { display: none; }
+        #notes-panel.collapsed #notes-collapse-btn { transform: rotate(180deg); }
+        #notes-textarea {
+            width: 100%; height: 72px; min-height: 48px; max-height: 200px;
+            resize: vertical; background: transparent; border: none; outline: none;
+            color: rgba(255,255,255,0.75); font-size: 0.88rem;
+            line-height: 1.65; font-family: system-ui, sans-serif;
+        }
+        #notes-textarea::placeholder { color: rgba(255,255,255,0.18); }
+    </style>
+</head><body>
+<section aria-label="Hero" class="slide" data-notes="slide-creator 产品自我介绍：一个命令生成精美演示文稿，21 种设计预设，零学习成本。" id="slide-1">
+<div class="paper">
+<div class="binder-holes">
+<div class="hole"></div><div class="hole"></div><div class="hole"></div>
+</div>
+<div class="tabs">
+<div class="tab active" data-color="mint" data-index="0">封面</div>
+<div class="tab" data-color="lavender" data-index="1">架构</div>
+<div class="tab" data-color="pink" data-index="2">功能</div>
+<div class="tab" data-color="sky" data-index="3">对比</div>
+<div class="tab" data-color="cream" data-index="4">宣言</div>
+<div class="tab" data-color="peach" data-index="5">命令</div>
+<div class="tab" data-color="sage" data-index="6">数据</div>
+<div class="tab" data-color="coral" data-index="7">行动</div>
+</div>
+<div class="paper-content" style="display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;">
+<div class="hero-brand reveal">slide-creator</div>
+<h1 class="hero-title reveal preset-notebook-tabs-content"><em>笔记本的温度</em><br/>做成演示</h1>
+<p class="hero-sub reveal">一个命令，选一个风格，打开即用。没有 PPT 软件，没有模板市场，只有你和你的内容。</p>
+<div class="hero-stats reveal">
+<div class="hero-stat">
+<div class="nb-stat">21</div>
+<div class="nb-label">设计预设</div>
+</div>
+<div class="hero-stat">
+<div class="nb-stat">1</div>
+<div class="nb-label">HTML 文件</div>
+</div>
+<div class="hero-stat">
+<div class="nb-stat">0</div>
+<div class="nb-label">运行依赖</div>
+</div>
+</div>
+</div>
+</div>
+<span class="slide-num-label">01 / 08</span>
+</section>
+<section aria-label="Architecture" class="slide" data-notes="工作流程：你的内容 → slide-creator 处理 → HTML 输出" id="slide-2">
+<div class="paper">
+<div class="binder-holes">
+<div class="hole"></div><div class="hole"></div><div class="hole"></div>
+</div>
+<div class="tabs">
+<div class="tab" data-color="mint" data-index="0">封面</div>
+<div class="tab active" data-color="lavender" data-index="1">架构</div>
+<div class="tab" data-color="pink" data-index="2">功能</div>
+<div class="tab" data-color="sky" data-index="3">对比</div>
+<div class="tab" data-color="cream" data-index="4">宣言</div>
+<div class="tab" data-color="peach" data-index="5">命令</div>
+<div class="tab" data-color="sage" data-index="6">数据</div>
+<div class="tab" data-color="coral" data-index="7">行动</div>
+</div>
+<div class="paper-content">
+<div class="nb-label reveal">工作原理</div>
+<h2 class="nb-title reveal preset-notebook-tabs-content" style="font-size:var(--h2-size);margin-bottom:clamp(16px,2vw,28px);">从内容到演示，三层流水线</h2>
+<div class="arch-layers reveal">
+<div class="arch-layer">
+<div class="arch-layer-badge">INPUT</div>
+<div class="arch-layer-body">
+<div class="arch-layer-title">你的内容</div>
+<div class="arch-layer-desc">笔记、文档、图片、PPTX —— 任何格式都可以</div>
+</div>
+</div>
+<div class="arch-arrow">↓</div>
+<div class="arch-layer">
+<div class="arch-layer-badge">SKILL</div>
+<div class="arch-layer-body">
+<div class="arch-layer-title">/SLIDE-CREATOR</div>
+<div class="arch-layer-desc">样式发现 → 布局生成 → 代码质量检查</div>
+</div>
+</div>
+<div class="arch-arrow">↓</div>
+<div class="arch-layer">
+<div class="arch-layer-badge">OUTPUT</div>
+<div class="arch-layer-body">
+<div class="arch-layer-title">PRESENTATION.HTML</div>
+<div class="arch-layer-desc">内联 CSS + JS · 编辑模式 · 演讲者模式 · PPTX 导出</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<span class="slide-num-label">02 / 08</span>
+</section>
+<section aria-label="Features" class="slide" data-notes="核心功能：21 种预设、浏览器内编辑、演讲者模式" id="slide-3">
+<div class="paper">
+<div class="binder-holes">
+<div class="hole"></div><div class="hole"></div><div class="hole"></div>
+</div>
+<div class="tabs">
+<div class="tab" data-color="mint" data-index="0">封面</div>
+<div class="tab" data-color="lavender" data-index="1">架构</div>
+<div class="tab active" data-color="pink" data-index="2">功能</div>
+<div class="tab" data-color="sky" data-index="3">对比</div>
+<div class="tab" data-color="cream" data-index="4">宣言</div>
+<div class="tab" data-color="peach" data-index="5">命令</div>
+<div class="tab" data-color="sage" data-index="6">数据</div>
+<div class="tab" data-color="coral" data-index="7">行动</div>
+</div>
+<div class="paper-content">
+<div class="nb-label reveal">核心能力</div>
+<h2 class="nb-title reveal preset-notebook-tabs-content" style="font-size:var(--h2-size);margin-bottom:4px;">三个亮点，解决真问题</h2>
+<div class="feat-grid reveal">
+<div class="feat-card">
+<div class="feat-icon">🎨</div>
+<h3>21 种设计预设</h3>
+<p>每种风格有独立的设计语言：配色、字体、组件、动画。不是换个颜色就完事。</p>
+</div>
+<div class="feat-card">
+<div class="feat-icon">✎</div>
+<h3>浏览器内编辑</h3>
+<p>按 E 进入编辑模式，所有内容可现场修改。演讲者面板实时显示备注，无需额外软件。</p>
+</div>
+<div class="feat-card">
+<div class="feat-icon">🎥</div>
+<h3>演讲者模式</h3>
+<p>按 P 打开同步窗口：备注、计时器、页数、翻页。双屏演示的理想方案。</p>
+</div>
+</div>
+</div>
+</div>
+<span class="slide-num-label">03 / 08</span>
+</section>
+<section aria-label="Before/After" class="slide" data-notes="对比：旧工具链 vs slide-creator 一句话出稿" id="slide-4">
+<div class="paper">
+<div class="binder-holes">
+<div class="hole"></div><div class="hole"></div><div class="hole"></div>
+</div>
+<div class="tabs">
+<div class="tab" data-color="mint" data-index="0">封面</div>
+<div class="tab" data-color="lavender" data-index="1">架构</div>
+<div class="tab" data-color="pink" data-index="2">功能</div>
+<div class="tab active" data-color="sky" data-index="3">对比</div>
+<div class="tab" data-color="cream" data-index="4">宣言</div>
+<div class="tab" data-color="peach" data-index="5">命令</div>
+<div class="tab" data-color="sage" data-index="6">数据</div>
+<div class="tab" data-color="coral" data-index="7">行动</div>
+</div>
+<div class="paper-content">
+<div class="nb-label reveal">对比</div>
+<h2 class="nb-title reveal preset-notebook-tabs-content" style="font-size:var(--h2-size);margin-bottom:clamp(16px,2vw,28px);">旧工具链 vs 一个命令</h2>
+<div class="ba-split reveal">
+<div class="ba-col">
+<div class="ba-header">BEFORE</div>
+<ul class="ba-list">
+<li>npm install + 300MB node_modules</li>
+<li>Webpack / Vite 配置调试</li>
+<li>通用 AI 美学：Inter + 紫渐变</li>
+<li>平台锁定，封闭格式</li>
+</ul>
+</div>
+<div class="ba-col">
+<div class="ba-header">AFTER</div>
+<ul class="ba-list">
+<li>一个命令，零安装</li>
+<li>一个 HTML 文件，直接打开</li>
+<li>21 种独立设计语言</li>
+<li>纯浏览器运行，零依赖</li>
+</ul>
+</div>
+</div>
+</div>
+</div>
+<span class="slide-num-label">04 / 08</span>
+</section>
+<section aria-label="Manifesto" class="slide" data-notes="哲学：一个命令。一个文件。零借口。" id="slide-5">
+<div class="paper preset-notebook-tabs-content">
+<div class="binder-holes">
+<div class="hole"></div><div class="hole"></div><div class="hole"></div>
+</div>
+<div class="tabs">
+<div class="tab" data-color="mint" data-index="0">封面</div>
+<div class="tab" data-color="lavender" data-index="1">架构</div>
+<div class="tab" data-color="pink" data-index="2">功能</div>
+<div class="tab" data-color="sky" data-index="3">对比</div>
+<div class="tab active" data-color="cream" data-index="4">宣言</div>
+<div class="tab" data-color="peach" data-index="5">命令</div>
+<div class="tab" data-color="sage" data-index="6">数据</div>
+<div class="tab" data-color="coral" data-index="7">行动</div>
+</div>
+<div class="manifesto-text">
+<div class="nb-label reveal" style="color:rgba(255,255,255,0.35);margin-bottom:16px;">哲学</div>
+<div class="manifesto-headline reveal">
+                    一个命令。<br/>一个文件。<br/>零<em>借口</em>。
+                </div>
+<ul class="manifesto-points reveal">
+<li>不需要 npm install，不需要构建工具，不需要服务器</li>
+<li>不需要 PPT 软件，不需要模板市场，不需要设计技能</li>
+<li>不需要安装，不需要配置，不需要学习新格式</li>
+<li>只需要一个命令，一个浏览器，一个想法</li>
+</ul>
+</div>
+</div>
+<span class="slide-num-label light">05 / 08</span>
+</section>
+<section aria-label="Commands" class="slide" data-notes="命令参考：/slide-creator / --plan / --generate / --export" id="slide-6">
+<div class="paper">
+<div class="binder-holes">
+<div class="hole"></div><div class="hole"></div><div class="hole"></div>
+</div>
+<div class="tabs">
+<div class="tab" data-color="mint" data-index="0">封面</div>
+<div class="tab" data-color="lavender" data-index="1">架构</div>
+<div class="tab" data-color="pink" data-index="2">功能</div>
+<div class="tab" data-color="sky" data-index="3">对比</div>
+<div class="tab" data-color="cream" data-index="4">宣言</div>
+<div class="tab active" data-color="peach" data-index="5">命令</div>
+<div class="tab" data-color="sage" data-index="6">数据</div>
+<div class="tab" data-color="coral" data-index="7">行动</div>
+</div>
+<div class="paper-content">
+<div class="nb-label reveal">命令参考</div>
+<h2 class="nb-title reveal preset-notebook-tabs-content" style="font-size:var(--h2-size);margin-bottom:4px;">四个命令，覆盖全部流程</h2>
+<div class="cmd-table reveal">
+<div class="cmd-row">
+<div class="cmd-name" style="color:var(--tab-1);">/slide-creator</div>
+<div class="cmd-desc">交互式创建：描述主题 → 探索风格 → 生成 HTML</div>
+</div>
+<div class="cmd-row">
+<div class="cmd-name" style="color:var(--tab-2);">--plan</div>
+<div class="cmd-desc">生成 PLANNING.md 大纲，确认内容结构后再出稿</div>
+</div>
+<div class="cmd-row">
+<div class="cmd-name" style="color:var(--tab-3);">--generate</div>
+<div class="cmd-desc">从 PLANNING.md 生成完整 HTML，执行 16 项质量检查</div>
+</div>
+<div class="cmd-row">
+<div class="cmd-name" style="color:var(--tab-4);">--review</div>
+<div class="cmd-desc">审查已有 HTML，16 项检查点自动标记和修复</div>
+</div>
+</div>
+</div>
+</div>
+<span class="slide-num-label">06 / 08</span>
+</section>
+<section aria-label="Metrics" class="slide" data-notes="数据指标：21 styles / 1 file / 0 dependencies" id="slide-7">
+<div class="paper">
+<div class="binder-holes">
+<div class="hole"></div><div class="hole"></div><div class="hole"></div>
+</div>
+<div class="tabs">
+<div class="tab" data-color="mint" data-index="0">封面</div>
+<div class="tab" data-color="lavender" data-index="1">架构</div>
+<div class="tab" data-color="pink" data-index="2">功能</div>
+<div class="tab" data-color="sky" data-index="3">对比</div>
+<div class="tab" data-color="cream" data-index="4">宣言</div>
+<div class="tab" data-color="peach" data-index="5">命令</div>
+<div class="tab active" data-color="sage" data-index="6">数据</div>
+<div class="tab" data-color="coral" data-index="7">行动</div>
+</div>
+<div class="paper-content">
+<div class="nb-label reveal">核心数据</div>
+<h2 class="nb-title reveal preset-notebook-tabs-content" style="font-size:var(--h2-size);margin-bottom:4px;">三个数字说明一切</h2>
+<div class="metric-cols reveal">
+<div class="metric-col">
+<div class="nb-stat">21</div>
+<div class="nb-label">设计预设</div>
+<div class="nb-body">覆盖商业、技术、创意展示</div>
+<div class="metric-bar"><div class="metric-bar-fill"></div></div>
+</div>
+<div class="metric-col">
+<div class="nb-stat">1</div>
+<div class="nb-label">HTML 文件</div>
+<div class="nb-body">CSS + JS 全部内联，无外部依赖</div>
+<div class="metric-bar"><div class="metric-bar-fill"></div></div>
+</div>
+<div class="metric-col">
+<div class="nb-stat">0</div>
+<div class="nb-label">运行依赖</div>
+<div class="nb-body">纯浏览器运行，无需服务器</div>
+<div class="metric-bar"><div class="metric-bar-fill"></div></div>
+</div>
+</div>
+</div>
+</div>
+<span class="slide-num-label">07 / 08</span>
+</section>
+<section aria-label="CTA" class="slide" data-notes="行动号召：立即开始使用 slide-creator" id="slide-8">
+<div class="paper">
+<div class="binder-holes">
+<div class="hole"></div><div class="hole"></div><div class="hole"></div>
+</div>
+<div class="tabs">
+<div class="tab" data-color="mint" data-index="0">封面</div>
+<div class="tab" data-color="lavender" data-index="1">架构</div>
+<div class="tab" data-color="pink" data-index="2">功能</div>
+<div class="tab" data-color="sky" data-index="3">对比</div>
+<div class="tab" data-color="cream" data-index="4">宣言</div>
+<div class="tab" data-color="peach" data-index="5">命令</div>
+<div class="tab" data-color="sage" data-index="6">数据</div>
+<div class="tab active" data-color="coral" data-index="7">行动</div>
+</div>
+<div class="cta-content">
+<div class="cta-badge reveal">安装</div>
+<h2 class="cta-headline reveal preset-notebook-tabs-content">开始使用<em> slide-creator</em></h2>
+<p class="cta-sub reveal">只需 30 秒，无需注册，无需安装依赖</p>
+<div class="cta-code reveal">/slide-creator --preset "Notebook Tabs"</div>
+<div class="cta-steps reveal">
+<span>步骤 1：安装 skill</span>
+<span>→</span>
+<span>步骤 2：选择风格</span>
+<span>→</span>
+<span>步骤 3：打开演示</span>
+</div>
+</div>
+</div>
+<span class="slide-num-label light">08 / 08</span>
+</section>
+</body></html>
