@@ -7553,7 +7553,9 @@ def _blue_sky_watermark_script(*, preset: str, version: str) -> str:
 
 def _blue_sky_title_tag(tag: str, text: str, *, layout_id: str, extra_attrs: str = "") -> str:
     normalized = _normalize_title_text(text)
-    nowrap_limit = 18.5 if tag.lower() == "h1" else 22.5
+    # Content headers can sit in an 820px workflow column. Leave room for
+    # wider CJK fallback fonts instead of forcing a borderline title to overflow.
+    nowrap_limit = 18.5 if tag.lower() == "h1" else (20.0 if layout_id == "workflow" else 22.5)
     if _title_visual_units(normalized) <= nowrap_limit:
         attrs = 'class="gt reveal title-nowrap"'
         if extra_attrs:

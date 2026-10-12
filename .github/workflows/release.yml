@@ -60,10 +60,10 @@ jobs:
         run: |
           python -m playwright install --with-deps chromium
           python -m pytest -q tests/test_installed_profile_templates.py
-          python dist/installed/kai-slide-creator/scripts/preset_release_gate.py \
+          python dist/installed/kai-slide-creator/scripts/run-release-matrix.py \
             --suite "${GITHUB_WORKSPACE}/evals/preset-surface-all/manifest.json" \
             --output-dir dist/release-gate \
-            --browser-geometry --mobile-geometry --export-smoke
+            --jobs 3
           python -c 'import json; r=json.load(open("dist/release-gate/release-gate-report.json")); assert r["gate"]["passed"] and r["summary"]["pass_count"] == 66 and r["summary"]["fail_count"] == 0'
       - name: Preserve release gate evidence
         if: always()

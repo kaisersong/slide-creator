@@ -71,6 +71,7 @@ scripts/*
 !scripts/build-cover-themes.py
 !scripts/build-profile-templates.py
 !scripts/requirements-release.txt
+!scripts/run-release-matrix.py
 !scripts/package-runtime.py
 !scripts/technical_language.py
 !scripts/validate_source_fidelity.py
@@ -83,6 +84,7 @@ docs/design/*
 !docs/design/2026-10-06-quality-recovery-results.md
 !docs/design/2026-10-12-release-v2.33.0.md
 !docs/design/2026-10-12-release-v2.33.1.md
+!docs/design/2026-10-12-release-v2.33.2.md
 !docs/design/README.md
 !docs/design/2026-04-24-slide-creator-test-matrix.md
 !docs/design/2026-04-25-slide-creator-core-md-guard-design.md

@@ -10,9 +10,9 @@
 
 ---
 
-## 下载 v2.33.1
+## 下载 v2.33.2
 
-[精简 Skill 安装 ZIP](https://github.com/kaisersong/slide-creator/releases/download/v2.33.1/kai-slide-creator-v2.33.1-skill-runtime.zip) · [Release 与 SHA-256](https://github.com/kaisersong/slide-creator/releases/tag/v2.33.1) · [优化方法论 v1.0.1 ZIP](https://github.com/kaisersong/slide-creator/releases/download/v2.31.0/skill-optimization-methodology-v1.0.1.zip)
+[精简 Skill 安装 ZIP](https://github.com/kaisersong/slide-creator/releases/download/v2.33.2/kai-slide-creator-v2.33.2-skill-runtime.zip) · [Release 与 SHA-256](https://github.com/kaisersong/slide-creator/releases/tag/v2.33.2) · [优化方法论 v1.0.1 ZIP](https://github.com/kaisersong/slide-creator/releases/download/v2.31.0/skill-optimization-methodology-v1.0.1.zip)
 
 方法论正文、优化计划、评测报告与bug模板见[跨 Skill 优化指南](docs/methodology/skill-optimization/README.md)。运行包与方法包分开下载，研究文档不会占用正常生成上下文。
 
@@ -472,7 +472,7 @@ python3 -m venv .venv
 
 ## 仅运行所需的 Skill ZIP
 
-下载 [`kai-slide-creator-v2.33.1-skill-runtime.zip`](https://github.com/kaisersong/slide-creator/releases/download/v2.33.1/kai-slide-creator-v2.33.1-skill-runtime.zip)，即可获得精简的 Skill 安装包。将压缩包顶层的 `kai-slide-creator/` 目录解压到代理的 skills 目录。压缩包只包含 `SKILL.md`、`main.py`、`scripts/`、`schemas/`、`references/` 和 `themes/`；不会包含仓库 README、Demo、测试、eval fixture、设计文档和 Git 元数据。
+下载 [`kai-slide-creator-v2.33.2-skill-runtime.zip`](https://github.com/kaisersong/slide-creator/releases/download/v2.33.2/kai-slide-creator-v2.33.2-skill-runtime.zip)，即可获得精简的 Skill 安装包。将压缩包顶层的 `kai-slide-creator/` 目录解压到代理的 skills 目录。压缩包只包含 `SKILL.md`、`main.py`、`scripts/`、`schemas/`、`references/` 和 `themes/`；不会包含仓库 README、Demo、测试、eval fixture、设计文档和 Git 元数据。
 
 ---
 
@@ -481,6 +481,8 @@ python3 -m venv .venv
 ---
 
 ## 版本日志
+
+**v2.33.2** — 完整门禁修正版：包含 17 个 profile 安装包修复，并修正 Linux 中 Blue Sky 混合中英文标题强制单行造成的溢出。完整 66 例以独立进程并行验证，原案例与阈值不变；通过后才发布。详见[发布验收](docs/design/2026-10-12-release-v2.33.2.md)。
 
 **v2.33.1** — 修复安装包中的全部 17 个 profile preset：将中英文布局模板纳入正式运行资产，消除依赖源码 Demo 的通用布局回退。模板完整性、校验和与完整 66 例门禁成为发布前置条件；缺失模板时拒绝生成并保留已有产物。详见[发布验收](docs/design/2026-10-12-release-v2.33.1.md)。
 
