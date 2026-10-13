@@ -555,7 +555,16 @@ void main() {
         }
         this.drawCount++;
         document.body.dataset.shaderReady="true";
-      } catch (error) { this.fallback("gpu-draw-failed"); }
+      } catch (error) {
+        if (this.backend==="webgl2" && (error.message==="webgl-context-lost" || (this.glRenderer && this.glRenderer.gl.isContextLost()))) {
+          this.suspendWebGL();
+        } else { this.fallback("gpu-draw-failed"); }
+      }
+    }
+    suspendWebGL() {
+      this.glLost=true; this.ready=false; this.reason="webgl-context-lost";
+      if (this.glRenderer) this.glRenderer.dispose(); this.glRenderer=null;
+      this.sync();
     }
     sync() {
       this.active=this.isCoverActive();
@@ -572,9 +581,7 @@ void main() {
     }
     bind() {
       canvas.addEventListener("webglcontextlost",event => {
-        event.preventDefault(); this.glLost=true; this.ready=false; this.reason="webgl-context-lost";
-        if (this.glRenderer) this.glRenderer.dispose(); this.glRenderer=null;
-        this.sync();
+        event.preventDefault(); this.suspendWebGL();
       });
       canvas.addEventListener("webglcontextrestored",() => {
         this.glLost=false; this.reason=null; this.sync();
@@ -592,7 +599,7 @@ void main() {
       this.resizeObserver=new ResizeObserver(() => this.sync()); this.resizeObserver.observe(cover);
     }
     state() {
-      return {backend:this.backend,active:this.active,ready:this.ready,pending:this.pending,rafActive:Boolean(this.rafId),drawCount:this.drawCount,canvasHidden:canvas.hidden,reason:this.reason,reducedMotion:this.motion.matches};
+      return {backend:this.backend,active:this.active,ready:this.ready,pending:this.pending,failed:this.failed,glLost:this.glLost,rafActive:Boolean(this.rafId),drawCount:this.drawCount,canvasHidden:canvas.hidden,reason:this.reason,reducedMotion:this.motion.matches};
     }
   }
   const controller=new ShaderHeroController();

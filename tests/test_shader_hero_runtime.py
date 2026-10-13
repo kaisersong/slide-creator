@@ -276,3 +276,28 @@ def test_delayed_intersection_cannot_suspend_the_returned_cover(page):
     assert page.locator("#slide-1").evaluate("s => s.classList.contains('visible')")
     page.wait_for_function(f"window.__shaderHeroQA.state().drawCount > {before + 2}")
     assert state(page)["active"] and state(page)["rafActive"]
+
+
+def test_draw_before_context_loss_event_remains_recoverable(page):
+    start_gpu(page, "webgl2")
+    # loseContext() marks the GL context lost synchronously; its DOM event is
+    # queued. Force the draw that can occur between these two observations.
+    observed = page.evaluate("""() => {
+        if (!window.__shaderHeroQA.loseContext()) throw new Error('loss extension unavailable');
+        window.__shaderHeroQA.setTime(1);
+        const state = window.__shaderHeroQA.state();
+        window.__shaderHeroQA.setTime(null);
+        return state;
+    }""")
+    assert observed["glLost"] and not observed["ready"]
+    assert not observed["failed"]
+    page.wait_for_function("window.__shaderHeroQA.state().reason === 'webgl-context-lost'")
+    assert_stopped(page)
+    page.keyboard.press("ArrowRight")
+    page.wait_for_function("!window.__shaderHeroQA.state().active")
+    page.evaluate("window.__shaderHeroQA.restoreContext()")
+    page.wait_for_function("!window.__shaderHeroQA.state().glLost")
+    assert_stopped(page)
+    before = state(page)["drawCount"]
+    page.keyboard.press("ArrowLeft")
+    page.wait_for_function(f"window.__shaderHeroQA.state().rafActive && window.__shaderHeroQA.state().drawCount > {before}")
