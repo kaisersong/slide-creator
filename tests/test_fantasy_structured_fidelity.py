@@ -25,6 +25,31 @@ def test_all_structured_kinds_preserve_frozen_source_and_relations():
     assert report["pass"], report
 
 
+def test_relation_types_remain_metadata_and_explicit_labels_remain_visible():
+    from bs4 import BeautifulSoup
+    brief = json.loads((ROOT / "evals/fantasy-structured/BRIEF.json").read_text())
+    slide = brief["narrative"]["slides"][8]
+    html, _, _ = render_from_brief(brief)
+    edges = BeautifulSoup(html, "html.parser").select("#slide-9 .iri-interaction-edge")
+    assert [edge.get_text(strip=True) for edge in edges] == ["→", "→"]
+    assert all(edge["data-relation"] == "ordered-before" for edge in edges)
+    assert all(edge["data-geometry-target"] == "flow-edge" for edge in edges)
+    slide["structured_content"]["edges"][0]["label"] = "确认输入后执行下一步"
+    html, _, _ = render_from_brief(brief)
+    edge = BeautifulSoup(html, "html.parser").select_one("#slide-9 .iri-interaction-edge")
+    assert edge.get_text(strip=True) == "确认输入后执行下一步"
+    assert "has-edge-label" in edge["class"]
+
+
+def test_profile_fixture_is_explicitly_fictional():
+    brief = json.loads((ROOT / "evals/fantasy-structured/BRIEF.json").read_text())
+    identity, credentials = brief["narrative"]["slides"][0]["structured_content"]["groups"]
+    assert identity["label"] == "示例讲者"
+    assert identity["description"] == "Demo Speaker"
+    assert all("虚构" in value for value in identity["items"])
+    assert all("虚构" in node["label"] for node in credentials["nodes"])
+
+
 @pytest.mark.parametrize("kind", ["card-sequence", "card-grid", "paired-panels", "parallel-flows"])
 def test_generic_scene_root_nodes_keep_overridden_title_and_source_ref(kind):
     from bs4 import BeautifulSoup

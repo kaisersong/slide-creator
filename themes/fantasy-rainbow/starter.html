@@ -392,7 +392,7 @@ body > .iri-edge-overlay { display: none; }
 .iri-process-node { min-height: 58px; padding: 8px 6px; border: 1px solid #D17A00; background: #FFF7EA; display: grid; place-items: center; text-align: center; }
 .iri-process-node strong { color: #8E4300; font-size: clamp(11px, .84vw, 13px); }
 .iri-process-node p { margin: 0; font-size: 10px; }
-.iri-process-edge { display: grid; place-items: center; color: #D17A00; font: 700 17px var(--iri-mono); }
+.iri-process-edge { display: grid; place-items: center; color: #8E4300; font: 700 17px var(--iri-mono); }
 
 .iri-milestone-timeline { position: relative; width: min(94vw, 1360px); padding-top: 6px; }
 .iri-milestone-timeline > h3 { margin: 0 0 10px; font-size: 14px; }
@@ -464,6 +464,8 @@ body > .iri-edge-overlay { display: none; }
 .iri-interaction-step strong { font-size: clamp(16px, 1.25vw, 20px); }
 .iri-interaction-step p { margin: 0; font-size: clamp(11px, .88vw, 14px); line-height: 1.4; }
 .iri-interaction-edge { display: grid; place-items: center; color: var(--iri-accent-blue-text); font: 700 18px var(--iri-mono); }
+.iri-interaction-edge, .iri-process-edge, .iri-timeline-edge { min-width: 0; overflow-wrap: anywhere; text-align: center; }
+.iri-interaction-edge.has-edge-label, .iri-process-edge.has-edge-label, .iri-timeline-edge.has-edge-label { font-size: clamp(10px, .85vw, 13px); line-height: 1.3; }
 .iri-poll { padding: 18px 20px; background: var(--iri-tint-purple); display: grid; align-content: start; gap: 12px; }
 .iri-poll > span { color: var(--iri-accent-purple-text); font: 700 11px var(--iri-mono); letter-spacing: .12em; }
 .iri-poll > p { margin: 0; font-size: clamp(18px, 1.7vw, 26px); font-weight: 700; }

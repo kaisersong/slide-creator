@@ -8635,9 +8635,15 @@ def _render_iridescence_theme_slide(spec: dict[str, Any], total: int, *, role_in
         )
 
     def edge_markup(edge: dict[str, Any], class_name: str) -> str:
-        label = str(edge.get("label") or edge.get("relation") or "").strip()
+        label = str(edge.get("label") or "").strip() or "→"
+        label_class = " has-edge-label" if label not in {"→", "↓", "←", "↑"} else ""
+        geometry_attr = (
+            ' data-geometry-target="flow-edge"'
+            if class_name in {"iri-interaction-edge", "iri-process-edge", "iri-timeline-edge"}
+            else ""
+        )
         return (
-            f'<div class="{class_name}" data-edge-from="{_escape(str(edge.get("from") or ""))}" '
+            f'<div class="{class_name}{label_class}"{geometry_attr} data-edge-from="{_escape(str(edge.get("from") or ""))}" '
             f'data-edge-to="{_escape(str(edge.get("to") or ""))}" '
             f'data-relation="{_escape(str(edge.get("relation") or ""))}"{source_attrs(edge)}>'
             f'{_escape(label)}</div>'
