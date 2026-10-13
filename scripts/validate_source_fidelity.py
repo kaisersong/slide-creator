@@ -159,6 +159,12 @@ def _non_empty_string(value: Any, label: str) -> str:
     return value.strip()
 
 
+def _string_list(value: Any, label: str) -> list[str]:
+    if not isinstance(value, list) or not value:
+        raise CoverageError(f"{label} must be a non-empty array")
+    return [_non_empty_string(item, f"{label}[{index}]") for index, item in enumerate(value)]
+
+
 def _read_threshold(coverage: dict[str, Any], name: str) -> float:
     thresholds = coverage.get("thresholds")
     if not isinstance(thresholds, dict):
@@ -181,6 +187,8 @@ def _validate_coverage(raw: Any) -> tuple[dict[str, Any], float, float]:
     slides = raw.get("slides")
     if not isinstance(slides, list) or not slides:
         raise CoverageError("slides must be a non-empty array")
+    if "forbidden_text" in raw:
+        _string_list(raw["forbidden_text"], "forbidden_text")
 
     seen_slide_numbers: set[int] = set()
     for slide_index, slide in enumerate(slides):
@@ -193,6 +201,17 @@ def _validate_coverage(raw: Any) -> tuple[dict[str, Any], float, float]:
         if slide_number in seen_slide_numbers:
             raise CoverageError(f"duplicate slide_number: {slide_number}")
         seen_slide_numbers.add(slide_number)
+        if "forbidden_text" in slide:
+            _string_list(slide["forbidden_text"], f"{prefix}.forbidden_text")
+        if "forbidden_selectors" in slide:
+            selectors = _string_list(slide["forbidden_selectors"], f"{prefix}.forbidden_selectors")
+            for selector_index, selector in enumerate(selectors):
+                try:
+                    _select(BeautifulSoup("<div></div>", "html.parser"), selector)
+                except Exception as exc:
+                    raise CoverageError(
+                        f"{prefix}.forbidden_selectors[{selector_index}] is invalid: {exc}"
+                    ) from exc
 
         units = slide.get("units")
         if not isinstance(units, list) or not units:
@@ -471,6 +490,26 @@ def _evaluate_units(
     }
 
 
+def _evaluate_forbidden(
+    slide: Tag,
+    slide_coverage: dict[str, Any],
+    global_forbidden_text: list[str],
+    css_hidden: set[int],
+) -> dict[str, Any]:
+    visible_text = _visible_text(slide, slide, css_hidden)
+    forbidden_text = [*global_forbidden_text, *slide_coverage.get("forbidden_text", [])]
+    matched_text = [text for text in forbidden_text if _normalise_text(text) in visible_text]
+    matched_selectors: list[str] = []
+    for selector in slide_coverage.get("forbidden_selectors", []):
+        if any(_is_visible(tag, slide, css_hidden) for tag in _select(slide, selector)):
+            matched_selectors.append(selector)
+    return {
+        "pass": not matched_text and not matched_selectors,
+        "matched_text": matched_text,
+        "matched_selectors": matched_selectors,
+    }
+
+
 def _relation_marker_matches(tag: Tag, relation: dict[str, Any]) -> bool:
     raw = str(tag.get("data-relation", "")).strip().casefold()
     if not raw:
@@ -641,6 +680,7 @@ def validate_source_fidelity(
     css_hidden = _css_hidden_tags(soup)
     slides = _top_level_slides(soup)
     coverage_slides = sorted(coverage["slides"], key=lambda item: item["slide_number"])
+    global_forbidden_text = coverage.get("forbidden_text", [])
     if len(slides) != len(coverage_slides):
         raise CoverageError(
             f"HTML slide count ({len(slides)}) does not match coverage slide count "
@@ -655,12 +695,16 @@ def validate_source_fidelity(
         relation_report = _evaluate_relations(
             slide, slide_coverage["relations"], css_hidden, relation_threshold
         )
+        forbidden_report = _evaluate_forbidden(
+            slide, slide_coverage, global_forbidden_text, css_hidden
+        )
         slide_reports.append(
             {
                 "slide_number": slide_coverage["slide_number"],
-                "pass": text_report["pass"] and relation_report["pass"],
+                "pass": text_report["pass"] and relation_report["pass"] and forbidden_report["pass"],
                 "text": text_report,
                 "relations": relation_report,
+                "forbidden": forbidden_report,
             }
         )
 
@@ -675,7 +719,7 @@ def validate_source_fidelity(
 
     return {
         "pass": not failed_slides,
-        "matching_mode": "normalized_exact_visible_text_and_explicit_dom_relations",
+        "matching_mode": "normalized_exact_visible_text_explicit_dom_relations_and_forbidden_content",
         "semantic_matching": False,
         "html": str(html_path) if html_path is not None else None,
         "coverage": str(coverage_path) if coverage_path is not None else None,
@@ -714,7 +758,7 @@ def validate_source_fidelity(
 def _error_report(message: str, html_path: Path, coverage_path: Path) -> dict[str, Any]:
     return {
         "pass": False,
-        "matching_mode": "normalized_exact_visible_text_and_explicit_dom_relations",
+        "matching_mode": "normalized_exact_visible_text_explicit_dom_relations_and_forbidden_content",
         "semantic_matching": False,
         "html": str(html_path),
         "coverage": str(coverage_path),

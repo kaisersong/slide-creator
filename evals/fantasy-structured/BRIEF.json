@@ -1,0 +1,940 @@
+{
+  "schema_version": 1,
+  "brief_id": "slide-creator-auto-demo",
+  "mode": "auto",
+  "language": "zh-CN",
+  "title": "奇幻彩虹测试稿",
+  "audience": "正在评估是否采用 slide-creator 的产品经理和开发者",
+  "desired_action": "用真实内容试跑第一套 deck",
+  "deck": {
+    "deck_type": "product-demo",
+    "page_count": 15,
+    "output_format": "html-slides"
+  },
+  "style": {
+    "preset": "custom:fantasy-rainbow",
+    "tone": "清爽、可信、偏产品介绍",
+    "visual_density": "medium"
+  },
+  "content": {
+    "source_policy": "distill-only",
+    "must_include": [
+      "保留结构与原文"
+    ],
+    "must_avoid": [
+      "泛泛的开场",
+      "连续重复布局",
+      "与 thesis 无关的背景信息"
+    ]
+  },
+  "narrative": {
+    "thesis": "内容结构优先于场景装饰。",
+    "page_roles": [
+      "cover",
+      "content",
+      "content",
+      "content",
+      "content",
+      "content",
+      "content",
+      "content",
+      "content",
+      "content",
+      "content",
+      "content",
+      "content",
+      "content",
+      "cta"
+    ],
+    "slides": [
+      {
+        "slide_number": 1,
+        "role": "cover",
+        "title": "个人介绍",
+        "key_point": "用于验证评审修正。",
+        "visual": "source-faithful personal-profile",
+        "structured_content": {
+          "kind": "personal-profile",
+          "groups": [
+            {
+              "id": "identity",
+              "label": "示例讲者",
+              "description": "Demo Speaker",
+              "items": [
+                "示例研发负责人（虚构）"
+              ]
+            },
+            {
+              "id": "credentials",
+              "nodes": [
+                {
+                  "id": "award",
+                  "label": "示例创新奖（虚构）"
+                },
+                {
+                  "id": "tokens",
+                  "label": "演示数据量 100 万条（虚构）"
+                },
+                {
+                  "id": "tenure",
+                  "label": "示例工作经验 5 年（虚构）"
+                }
+              ]
+            }
+          ]
+        }
+      },
+      {
+        "slide_number": 2,
+        "role": "content",
+        "title": "问题一：进入职场独立完成第一个任务的挑战？",
+        "key_point": "用于验证评审修正。",
+        "visual": "source-faithful title-only",
+        "structured_content": {
+          "kind": "title-only"
+        }
+      },
+      {
+        "slide_number": 3,
+        "role": "content",
+        "title": "真实场景",
+        "key_point": "用于验证评审修正。",
+        "visual": "source-faithful challenge-flow",
+        "structured_content": {
+          "kind": "challenge-flow",
+          "direction": "left-to-right",
+          "groups": [
+            {
+              "id": "challenges",
+              "nodes": [
+                {
+                  "id": "challenge-1",
+                  "label": "Challenge 1"
+                },
+                {
+                  "id": "challenge-2",
+                  "label": "Challenge 2"
+                },
+                {
+                  "id": "challenge-3",
+                  "label": "Challenge 3"
+                },
+                {
+                  "id": "challenge-4",
+                  "label": "Challenge 4"
+                },
+                {
+                  "id": "challenge-5",
+                  "label": "Challenge 5"
+                }
+              ]
+            },
+            {
+              "id": "process",
+              "label": "端到端流程",
+              "nodes": [
+                {
+                  "id": "process-1",
+                  "label": "Step 1"
+                },
+                {
+                  "id": "process-2",
+                  "label": "Step 2"
+                },
+                {
+                  "id": "process-3",
+                  "label": "Step 3"
+                },
+                {
+                  "id": "process-4",
+                  "label": "Step 4"
+                },
+                {
+                  "id": "process-5",
+                  "label": "Step 5"
+                }
+              ]
+            }
+          ],
+          "edges": [
+            {
+              "from": "process-1",
+              "to": "process-2",
+              "relation": "ordered-before",
+              "label": "→"
+            },
+            {
+              "from": "process-2",
+              "to": "process-3",
+              "relation": "ordered-before",
+              "label": "→"
+            },
+            {
+              "from": "process-3",
+              "to": "process-4",
+              "relation": "ordered-before",
+              "label": "→"
+            },
+            {
+              "from": "process-4",
+              "to": "process-5",
+              "relation": "ordered-before",
+              "label": "→"
+            }
+          ]
+        }
+      },
+      {
+        "slide_number": 4,
+        "role": "content",
+        "title": "企业生产力阶段",
+        "key_point": "用于验证评审修正。",
+        "visual": "source-faithful milestone-timeline",
+        "structured_content": {
+          "kind": "milestone-timeline",
+          "direction": "left-to-right",
+          "groups": [
+            {
+              "id": "timeline",
+              "nodes": [
+                {
+                  "id": "milestone-1",
+                  "label": "Date 1"
+                },
+                {
+                  "id": "milestone-2",
+                  "label": "Date 2"
+                },
+                {
+                  "id": "milestone-3",
+                  "label": "Date 3"
+                },
+                {
+                  "id": "milestone-4",
+                  "label": "Date 4"
+                },
+                {
+                  "id": "milestone-5",
+                  "label": "Date 5"
+                }
+              ]
+            }
+          ],
+          "edges": [
+            {
+              "from": "milestone-1",
+              "to": "milestone-2",
+              "relation": "ordered-before",
+              "label": "→"
+            },
+            {
+              "from": "milestone-2",
+              "to": "milestone-3",
+              "relation": "ordered-before",
+              "label": "→"
+            },
+            {
+              "from": "milestone-3",
+              "to": "milestone-4",
+              "relation": "ordered-before",
+              "label": "→"
+            },
+            {
+              "from": "milestone-4",
+              "to": "milestone-5",
+              "relation": "ordered-before",
+              "label": "→"
+            }
+          ]
+        }
+      },
+      {
+        "slide_number": 5,
+        "role": "content",
+        "title": "Slide 8",
+        "key_point": "用于验证评审修正。",
+        "visual": "source-faithful three-column-conclusion",
+        "structured_content": {
+          "kind": "three-column-conclusion",
+          "groups": [
+            {
+              "id": "problems",
+              "nodes": [
+                {
+                  "id": "problem-0",
+                  "label": "Problem 0"
+                },
+                {
+                  "id": "problem-1",
+                  "label": "Problem 1"
+                },
+                {
+                  "id": "problem-2",
+                  "label": "Problem 2"
+                }
+              ]
+            }
+          ],
+          "bands": [
+            {
+              "id": "warning",
+              "label": "Warning"
+            },
+            {
+              "id": "conclusion",
+              "label": "Conclusion"
+            }
+          ]
+        }
+      },
+      {
+        "slide_number": 6,
+        "role": "content",
+        "title": "Slide 15",
+        "key_point": "用于验证评审修正。",
+        "visual": "source-faithful capability-bridge",
+        "structured_content": {
+          "kind": "capability-bridge",
+          "groups": [
+            {
+              "id": "capabilities",
+              "nodes": [
+                {
+                  "id": "capability-0",
+                  "label": "Capability 0"
+                },
+                {
+                  "id": "capability-1",
+                  "label": "Capability 1"
+                },
+                {
+                  "id": "capability-2",
+                  "label": "Capability 2"
+                },
+                {
+                  "id": "capability-3",
+                  "label": "Capability 3"
+                },
+                {
+                  "id": "capability-4",
+                  "label": "Capability 4"
+                }
+              ]
+            }
+          ],
+          "bands": [
+            {
+              "id": "bridge-conclusion",
+              "label": "Conclusion"
+            }
+          ]
+        }
+      },
+      {
+        "slide_number": 7,
+        "role": "content",
+        "title": "Slide 16",
+        "key_point": "用于验证评审修正。",
+        "visual": "source-faithful context-package",
+        "structured_content": {
+          "kind": "context-package",
+          "groups": [
+            {
+              "id": "package",
+              "label": "Package"
+            },
+            {
+              "id": "components",
+              "nodes": [
+                {
+                  "id": "component-0",
+                  "label": "Component 0"
+                },
+                {
+                  "id": "component-1",
+                  "label": "Component 1"
+                },
+                {
+                  "id": "component-2",
+                  "label": "Component 2"
+                },
+                {
+                  "id": "component-3",
+                  "label": "Component 3"
+                }
+              ]
+            }
+          ],
+          "bands": [
+            {
+              "id": "tool-directory",
+              "label": "Tools"
+            }
+          ]
+        }
+      },
+      {
+        "slide_number": 8,
+        "role": "content",
+        "title": "Slide 31",
+        "key_point": "用于验证评审修正。",
+        "visual": "source-faithful takeaway-stack",
+        "structured_content": {
+          "kind": "takeaway-stack",
+          "groups": [
+            {
+              "id": "principles",
+              "label": "Enterprise AI framing",
+              "nodes": [
+                {
+                  "id": "principle-0",
+                  "label": "Principle 0"
+                },
+                {
+                  "id": "principle-1",
+                  "label": "Principle 1"
+                },
+                {
+                  "id": "principle-2",
+                  "label": "Principle 2"
+                },
+                {
+                  "id": "principle-3",
+                  "label": "Principle 3"
+                }
+              ]
+            }
+          ],
+          "bands": [
+            {
+              "id": "formula",
+              "label": "Formula"
+            },
+            {
+              "id": "result",
+              "label": "Result"
+            },
+            {
+              "id": "cta",
+              "label": "CTA"
+            }
+          ]
+        }
+      },
+      {
+        "slide_number": 9,
+        "role": "content",
+        "title": "Interaction flow",
+        "key_point": "用于验证评审修正。",
+        "visual": "source-faithful interaction-flow-poll",
+        "structured_content": {
+          "kind": "interaction-flow-poll",
+          "groups": [
+            {
+              "id": "task",
+              "label": "Task",
+              "source_refs": [
+                "P5-task"
+              ],
+              "nodes": [
+                {
+                  "id": "task-1",
+                  "label": "Start"
+                },
+                {
+                  "id": "task-2",
+                  "label": "Extract"
+                },
+                {
+                  "id": "task-3",
+                  "label": "Submit"
+                }
+              ]
+            },
+            {
+              "id": "poll",
+              "label": "Poll",
+              "nodes": [
+                {
+                  "id": "poll-a",
+                  "label": "A"
+                },
+                {
+                  "id": "poll-b",
+                  "label": "B"
+                }
+              ]
+            }
+          ],
+          "edges": [
+            {
+              "from": "task-1",
+              "to": "task-2",
+              "relation": "ordered-before"
+            },
+            {
+              "from": "task-2",
+              "to": "task-3",
+              "relation": "ordered-before"
+            }
+          ]
+        }
+      },
+      {
+        "slide_number": 10,
+        "role": "content",
+        "title": "Five layers",
+        "key_point": "用于验证评审修正。",
+        "visual": "source-faithful layered-architecture",
+        "structured_content": {
+          "kind": "layered-architecture",
+          "groups": [
+            {
+              "id": "layer-1",
+              "label": "Layer 1",
+              "source_refs": [
+                "P12-1"
+              ]
+            },
+            {
+              "id": "layer-2",
+              "label": "Layer 2",
+              "source_refs": [
+                "P12-2"
+              ]
+            },
+            {
+              "id": "layer-3",
+              "label": "Layer 3",
+              "source_refs": [
+                "P12-3"
+              ]
+            },
+            {
+              "id": "layer-4",
+              "label": "Layer 4",
+              "source_refs": [
+                "P12-4"
+              ]
+            },
+            {
+              "id": "layer-5",
+              "label": "Layer 5",
+              "source_refs": [
+                "P12-5"
+              ]
+            }
+          ],
+          "edges": [
+            {
+              "from": "layer-1",
+              "to": "layer-2",
+              "relation": "feeds"
+            },
+            {
+              "from": "layer-2",
+              "to": "layer-3",
+              "relation": "feeds"
+            },
+            {
+              "from": "layer-3",
+              "to": "layer-4",
+              "relation": "feeds"
+            },
+            {
+              "from": "layer-4",
+              "to": "layer-5",
+              "relation": "feeds"
+            }
+          ],
+          "rails": [
+            {
+              "id": "security-rail",
+              "label": "Security"
+            },
+            {
+              "id": "observability-rail",
+              "label": "Observability"
+            }
+          ],
+          "bands": [
+            {
+              "id": "runtime-loop",
+              "label": "Runtime loop"
+            }
+          ]
+        }
+      },
+      {
+        "slide_number": 11,
+        "role": "content",
+        "title": "Layered call graph",
+        "key_point": "用于验证评审修正。",
+        "visual": "source-faithful layered-call-graph",
+        "structured_content": {
+          "kind": "layered-call-graph",
+          "groups": [
+            {
+              "id": "call-layer-1",
+              "label": "LAYER1",
+              "nodes": [
+                {
+                  "id": "activity-workflow",
+                  "label": "Activity-Workflow"
+                }
+              ]
+            },
+            {
+              "id": "call-layer-2",
+              "label": "LAYER2",
+              "nodes": [
+                {
+                  "id": "l2",
+                  "label": "L2"
+                },
+                {
+                  "id": "l3",
+                  "label": "L3"
+                }
+              ]
+            },
+            {
+              "id": "call-layer-3",
+              "label": "LAYER3",
+              "nodes": [
+                {
+                  "id": "supplier-flow",
+                  "label": "supplier flow"
+                }
+              ]
+            },
+            {
+              "id": "call-layer-4",
+              "label": "LAYER4",
+              "nodes": [
+                {
+                  "id": "mcp-cluster-1",
+                  "label": "MCP cluster 1"
+                },
+                {
+                  "id": "mcp-cluster-2",
+                  "label": "MCP cluster 2"
+                },
+                {
+                  "id": "mcp-cluster-3",
+                  "label": "MCP cluster 3"
+                },
+                {
+                  "id": "mcp-cluster-4",
+                  "label": "MCP cluster 4"
+                }
+              ]
+            },
+            {
+              "id": "saas-foundation",
+              "label": "SaaS",
+              "items": [
+                "Foundation"
+              ]
+            }
+          ],
+          "edges": [
+            {
+              "from": "call-layer-1",
+              "to": "call-layer-2",
+              "relation": "handoff",
+              "label": "Activity handoff"
+            },
+            {
+              "from": "call-layer-2",
+              "to": "call-layer-3",
+              "relation": "handoff",
+              "label": "L2/L3 handoff"
+            },
+            {
+              "from": "call-layer-3",
+              "to": "call-layer-4",
+              "relation": "handoff",
+              "label": "supplier handoff"
+            },
+            {
+              "from": "call-layer-4",
+              "to": "saas-foundation",
+              "relation": "handoff",
+              "label": "SaaS handoff"
+            },
+            {
+              "from": "l2",
+              "to": "l3",
+              "relation": "internal-call"
+            },
+            {
+              "from": "mcp-cluster-1",
+              "to": "mcp-cluster-2",
+              "relation": "cluster-call"
+            }
+          ]
+        }
+      },
+      {
+        "slide_number": 12,
+        "role": "content",
+        "title": "旧标题不应覆盖结构标题",
+        "key_point": "结构化内容",
+        "visual": "source-faithful card-sequence",
+        "structured_content": {
+          "kind": "card-sequence",
+          "badge": "SOURCE",
+          "title": "结构保真：card-sequence",
+          "description": "保留原始分组、节点和执行方向。",
+          "direction": "left-to-right",
+          "groups": [
+            {
+              "id": "input",
+              "label": "输入与约束",
+              "nodes": [
+                {
+                  "id": "request",
+                  "badge": "01",
+                  "label": "业务请求",
+                  "description": "调用前核验权限",
+                  "items": [
+                    "来源可追溯"
+                  ],
+                  "source_refs": [
+                    "request-source"
+                  ]
+                },
+                {
+                  "id": "execute",
+                  "badge": "02",
+                  "label": "执行动作",
+                  "description": "保留操作顺序",
+                  "tags": [
+                    "审计"
+                  ]
+                }
+              ]
+            }
+          ],
+          "edges": [
+            {
+              "from": "request",
+              "to": "execute",
+              "relation": "ordered-before",
+              "label": "授权后执行"
+            }
+          ],
+          "bands": [
+            {
+              "id": "result",
+              "label": "验收条件",
+              "description": "正文完整且关系可见"
+            }
+          ]
+        }
+      },
+      {
+        "slide_number": 13,
+        "role": "content",
+        "title": "旧标题不应覆盖结构标题",
+        "key_point": "结构化内容",
+        "visual": "source-faithful card-grid",
+        "structured_content": {
+          "kind": "card-grid",
+          "badge": "SOURCE",
+          "title": "结构保真：card-grid",
+          "description": "保留原始分组、节点和执行方向。",
+          "direction": "left-to-right",
+          "groups": [
+            {
+              "id": "input",
+              "label": "输入与约束",
+              "nodes": [
+                {
+                  "id": "request",
+                  "badge": "01",
+                  "label": "业务请求",
+                  "description": "调用前核验权限",
+                  "items": [
+                    "来源可追溯"
+                  ],
+                  "source_refs": [
+                    "request-source"
+                  ]
+                },
+                {
+                  "id": "execute",
+                  "badge": "02",
+                  "label": "执行动作",
+                  "description": "保留操作顺序",
+                  "tags": [
+                    "审计"
+                  ]
+                }
+              ]
+            }
+          ],
+          "edges": [
+            {
+              "from": "request",
+              "to": "execute",
+              "relation": "ordered-before",
+              "label": "授权后执行"
+            }
+          ],
+          "bands": [
+            {
+              "id": "result",
+              "label": "验收条件",
+              "description": "正文完整且关系可见"
+            }
+          ]
+        }
+      },
+      {
+        "slide_number": 14,
+        "role": "content",
+        "title": "旧标题不应覆盖结构标题",
+        "key_point": "结构化内容",
+        "visual": "source-faithful paired-panels",
+        "structured_content": {
+          "kind": "paired-panels",
+          "badge": "SOURCE",
+          "title": "结构保真：paired-panels",
+          "description": "保留原始分组、节点和执行方向。",
+          "direction": "left-to-right",
+          "groups": [
+            {
+              "id": "input",
+              "label": "输入与约束",
+              "nodes": [
+                {
+                  "id": "request",
+                  "badge": "01",
+                  "label": "业务请求",
+                  "description": "调用前核验权限",
+                  "items": [
+                    "来源可追溯"
+                  ],
+                  "source_refs": [
+                    "request-source"
+                  ]
+                },
+                {
+                  "id": "execute",
+                  "badge": "02",
+                  "label": "执行动作",
+                  "description": "保留操作顺序",
+                  "tags": [
+                    "审计"
+                  ]
+                }
+              ]
+            }
+          ],
+          "edges": [
+            {
+              "from": "request",
+              "to": "execute",
+              "relation": "ordered-before",
+              "label": "授权后执行"
+            }
+          ],
+          "bands": [
+            {
+              "id": "result",
+              "label": "验收条件",
+              "description": "正文完整且关系可见"
+            }
+          ]
+        }
+      },
+      {
+        "slide_number": 15,
+        "role": "cta",
+        "title": "旧标题不应覆盖结构标题",
+        "key_point": "结构化内容",
+        "visual": "source-faithful parallel-flows",
+        "structured_content": {
+          "kind": "parallel-flows",
+          "badge": "SOURCE",
+          "title": "结构保真：parallel-flows",
+          "description": "保留原始分组、节点和执行方向。",
+          "direction": "left-to-right",
+          "groups": [
+            {
+              "id": "input",
+              "label": "输入与约束",
+              "nodes": [
+                {
+                  "id": "request",
+                  "badge": "01",
+                  "label": "业务请求",
+                  "description": "调用前核验权限",
+                  "items": [
+                    "来源可追溯"
+                  ],
+                  "source_refs": [
+                    "request-source"
+                  ]
+                },
+                {
+                  "id": "execute",
+                  "badge": "02",
+                  "label": "执行动作",
+                  "description": "保留操作顺序",
+                  "tags": [
+                    "审计"
+                  ]
+                }
+              ]
+            }
+          ],
+          "edges": [
+            {
+              "from": "request",
+              "to": "execute",
+              "relation": "ordered-before",
+              "label": "授权后执行"
+            }
+          ],
+          "bands": [
+            {
+              "id": "result",
+              "label": "验收条件",
+              "description": "正文完整且关系可见"
+            }
+          ]
+        }
+      }
+    ]
+  },
+  "runtime": {
+    "editing_mode": true,
+    "presenter_mode": true,
+    "watermark_mode": "injected-last-slide",
+    "export_intent": "none"
+  },
+  "plan_view": {
+    "emit_planning_view": false,
+    "planning_view_path": "PLANNING.md"
+  },
+  "timing": {
+    "estimate": {
+      "plan": "1-2 min",
+      "generate": "1-3 min",
+      "validate": "<1 min",
+      "polish": "0-2 min",
+      "total": "3-6 min"
+    },
+    "actual": {
+      "plan": "0m 00s",
+      "generate": "0m 00s",
+      "validate": "0m 00s",
+      "polish": "0m 00s",
+      "total": "0m 00s"
+    }
+  },
+  "notes": ""
+}

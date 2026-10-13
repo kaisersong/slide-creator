@@ -145,6 +145,33 @@ def test_structured_content_is_optional_semantic_ir_and_survives_slide_spec():
     assert any("references unknown structured id: missing" in error for error in validate_brief_data(dangling))
 
 
+def test_source_faithful_structured_kinds_validate_with_title_only_groups_optional():
+    from jsonschema import Draft202012Validator
+    from low_context import validate_brief_data
+
+    schema = json.loads((ROOT / "schemas" / "generation-brief.schema.json").read_text(encoding="utf-8"))
+    validator = Draft202012Validator(schema)
+    fixtures = {
+        "personal-profile": [{"id": "identity"}, {"id": "credentials"}],
+        "challenge-flow": [{"id": "challenges"}, {"id": "process"}],
+        "milestone-timeline": [{"id": "timeline"}],
+        "three-column-conclusion": [{"id": "problems"}],
+        "capability-bridge": [{"id": "capabilities"}],
+        "context-package": [{"id": "package"}, {"id": "components"}],
+        "takeaway-stack": [{"id": "principles"}],
+    }
+    for kind, groups in fixtures.items():
+        brief = _brief()
+        brief["narrative"]["slides"][1]["structured_content"] = {"kind": kind, "groups": groups}
+        assert list(validator.iter_errors(brief)) == []
+        assert validate_brief_data(brief) == []
+
+    title_only = _brief()
+    title_only["narrative"]["slides"][1]["structured_content"] = {"kind": "title-only"}
+    assert list(validator.iter_errors(title_only)) == []
+    assert validate_brief_data(title_only) == []
+
+
 def test_iridescence_reference_compiles_the_approved_contract():
     from low_context import compile_style_contract
 
@@ -940,6 +967,9 @@ def test_iridescence_source_dense_scenes_preserve_nested_structure_without_tilt(
     soup = BeautifulSoup(html, "html.parser")
 
     assert len(soup.select(".iri-scene--interaction-flow-poll .iri-interaction-step")) == 3
+    assert len(soup.select(".iri-scene--interaction-flow-poll .iri-interaction-edge")) == 2
+    interaction_sequence = soup.select_one(".iri-scene--interaction-flow-poll .iri-interaction-steps")
+    assert ["iri-interaction-step" in child.get("class", []) for child in interaction_sequence.find_all(recursive=False)] == [True, False, True, False, True]
     assert len(soup.select(".iri-scene--interaction-flow-poll .iri-poll")) == 1
     assert len(soup.select(".iri-scene--interaction-flow-poll .iri-poll-option")) == 2
     assert not soup.select(".iri-scene--interaction-flow-poll .iri-pipeline")
@@ -958,6 +988,152 @@ def test_iridescence_source_dense_scenes_preserve_nested_structure_without_tilt(
         assert rule
         assert "rotate(" not in rule.group(1)
         assert "skew(" not in rule.group(1)
+
+
+def test_source_native_profile_title_challenge_and_timeline_scenes():
+    from low_context import _render_iridescence_theme_slide
+
+    profile = _scene_spec(slide_number=2, role="profile", title="个人介绍", items=[])
+    profile["structured_content"] = {
+        "kind": "personal-profile",
+        "groups": [
+            {
+                "id": "identity",
+                "label": "示例讲者",
+                "description": "Demo Speaker",
+                "items": ["示例研发负责人（虚构）"],
+            },
+            {
+                "id": "credentials",
+                "nodes": [
+                    {"id": "award", "label": "示例创新奖（虚构）"},
+                    {"id": "tokens", "label": "演示数据量 100 万条（虚构）"},
+                    {"id": "tenure", "label": "示例工作经验 5 年（虚构）"},
+                ],
+            },
+        ],
+    }
+    profile_soup = BeautifulSoup(_render_iridescence_theme_slide(profile, 32, role_index=1), "html.parser")
+    assert profile_soup.select_one(".iri-scene--personal-profile")
+    assert profile_soup.select_one('[data-group-id="identity"]')
+    assert len(profile_soup.select(".iri-profile-fact[data-node-id]")) == 3
+
+    title_only = _scene_spec(slide_number=3, role="title", title="问题一：进入职场独立完成第一个任务的挑战？", items=[])
+    title_only["layout_id"] = "bento"
+    title_only["structured_content"] = {"kind": "title-only"}
+    title_soup = BeautifulSoup(_render_iridescence_theme_slide(title_only, 32, role_index=2), "html.parser")
+    assert title_soup.select_one(".iri-scene--title-only")
+    assert not title_soup.select(".iri-bento, .iri-lead, .iri-convergence-word")
+    assert "用于验证评审修正。" not in title_soup.get_text(" ", strip=True)
+
+    challenge = _scene_spec(slide_number=6, role="problem-complexity", title="真实场景", items=[])
+    challenge["structured_content"] = {
+        "kind": "challenge-flow",
+        "direction": "left-to-right",
+        "groups": [
+            {
+                "id": "challenges",
+                "nodes": [{"id": f"challenge-{index}", "label": f"Challenge {index}"} for index in range(1, 6)],
+            },
+            {
+                "id": "process",
+                "label": "端到端流程",
+                "nodes": [{"id": f"process-{index}", "label": f"Step {index}"} for index in range(1, 6)],
+            },
+        ],
+        "edges": [
+            {"from": f"process-{index}", "to": f"process-{index + 1}", "relation": "ordered-before", "label": "→"}
+            for index in range(1, 5)
+        ],
+    }
+    challenge_soup = BeautifulSoup(_render_iridescence_theme_slide(challenge, 32, role_index=5), "html.parser")
+    assert len(challenge_soup.select(".iri-challenge-bar")) == 5
+    assert len(challenge_soup.select(".iri-process-node")) == 5
+    assert len(challenge_soup.select(".iri-process-edge[data-edge-from][data-edge-to]")) == 4
+
+    timeline = _scene_spec(slide_number=7, role="timeline", title="企业生产力阶段", items=[])
+    timeline["structured_content"] = {
+        "kind": "milestone-timeline",
+        "direction": "left-to-right",
+        "groups": [
+            {
+                "id": "timeline",
+                "nodes": [{"id": f"milestone-{index}", "label": f"Date {index}"} for index in range(1, 6)],
+            }
+        ],
+        "edges": [
+            {"from": f"milestone-{index}", "to": f"milestone-{index + 1}", "relation": "ordered-before", "label": "→"}
+            for index in range(1, 5)
+        ],
+    }
+    timeline_soup = BeautifulSoup(_render_iridescence_theme_slide(timeline, 32, role_index=6), "html.parser")
+    assert len(timeline_soup.select(".iri-timeline-milestone")) == 5
+    assert len(timeline_soup.select(".iri-timeline-edge[data-edge-from][data-edge-to]")) == 4
+    assert "LAST MILE" not in " ".join(
+        soup.get_text(" ", strip=True) for soup in (profile_soup, title_soup, challenge_soup, timeline_soup)
+    )
+
+
+def test_source_native_later_scene_hierarchies_do_not_fall_back_to_scene_cycle():
+    from low_context import _render_iridescence_theme_slide
+
+    fixtures = (
+        (
+            8,
+            "enterprise-problem",
+            "three-column-conclusion",
+            [{"id": "problems", "nodes": [{"id": f"problem-{i}", "label": f"Problem {i}"} for i in range(3)]}],
+            [{"id": "warning", "label": "Warning"}, {"id": "conclusion", "label": "Conclusion"}],
+            ".iri-problem-column",
+            3,
+        ),
+        (
+            15,
+            "capability-bridge",
+            "capability-bridge",
+            [{"id": "capabilities", "nodes": [{"id": f"capability-{i}", "label": f"Capability {i}"} for i in range(5)]}],
+            [{"id": "bridge-conclusion", "label": "Conclusion"}],
+            ".iri-bridge-column",
+            5,
+        ),
+        (
+            16,
+            "context-package",
+            "context-package",
+            [
+                {"id": "package", "label": "Package"},
+                {"id": "components", "nodes": [{"id": f"component-{i}", "label": f"Component {i}"} for i in range(4)]},
+            ],
+            [{"id": "tool-directory", "label": "Tools"}],
+            ".iri-context-package-card",
+            4,
+        ),
+        (
+            31,
+            "takeaway",
+            "takeaway-stack",
+            [{"id": "principles", "label": "Enterprise AI framing", "nodes": [{"id": f"principle-{i}", "label": f"Principle {i}"} for i in range(4)]}],
+            [
+                {"id": "formula", "label": "Formula"},
+                {"id": "result", "label": "Result"},
+                {"id": "cta", "label": "CTA"},
+            ],
+            ".iri-takeaway-principle",
+            4,
+        ),
+    )
+    for slide_number, role, kind, groups, bands, selector, expected_count in fixtures:
+        slide = _scene_spec(slide_number=slide_number, role=role, title=f"Slide {slide_number}", items=[])
+        slide["structured_content"] = {"kind": kind, "groups": groups, "bands": bands}
+        soup = BeautifulSoup(
+            _render_iridescence_theme_slide(slide, 32, role_index=slide_number - 1),
+            "html.parser",
+        )
+        assert soup.select_one(f".iri-scene--{kind}")
+        assert len(soup.select(selector)) == expected_count
+        if kind == "takeaway-stack":
+            assert soup.select_one(".iri-takeaway-frame").get_text(" ", strip=True) == "Enterprise AI framing"
+        assert not soup.select(".iri-convergence-word, .iri-pipeline, .iri-spectrum, .iri-use-cases")
 
 
 def test_source_dense_page_contracts_preserve_p5_p12_p13_and_p17_evidence():
@@ -1178,6 +1354,23 @@ def test_content_bearing_scene_css_is_orthogonal_and_has_no_inner_scrolling():
     content_classes = (
         "iri-pipeline",
         "iri-bento",
+        "iri-profile-layout",
+        "iri-title-only",
+        "iri-challenge-flow",
+        "iri-challenge-list",
+        "iri-process-strip",
+        "iri-process-sequence",
+        "iri-milestone-timeline",
+        "iri-timeline-sequence",
+        "iri-three-column-conclusion",
+        "iri-problem-columns",
+        "iri-conclusion-bands",
+        "iri-capability-bridge",
+        "iri-bridge-columns",
+        "iri-context-package",
+        "iri-context-package-grid",
+        "iri-takeaway-stack",
+        "iri-takeaway-principles",
         "iri-interaction-layout",
         "iri-interaction-flow",
         "iri-poll",

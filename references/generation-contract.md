@@ -9,7 +9,7 @@
 4. 高密度架构、流程或关系页使用 preset 契约允许的 `structured_content`，以稳定 ID 表达分组、节点、连线、横切栏和底部 band，并用 `source_refs` 绑定来源。并列项上限适用于普通列表，不得用它删除源稿关系或正文；高密度页应先压缩标题区、间距和装饰，不能隐藏、截断、滚动或用截图替代可编辑内容。
 5. 使用所选风格允许的展示。preferred_layout_family 填 hero/evidence/comparison/flow/close 等家族；具体 layout 由 renderer 决定。普通页面最多 5 条并列项；避免连续相同布局与标题页堆积。标题表达可被事实支持的判断，不能把目标写成已实现结果。区分观察、目标、建议与因果假设；访谈线索不能写成已证明的根因。保留原有主体、动作顺序和适用范围，不向证据补入推测的主体或条件。
 6. 技术文稿额外读取 `references/technical-language.md`，尽量达到该文件定义的 ASD-STE100 对齐项目评分 80/100；它是观察项，不能以丢失事实换取语言分数。商业或创意文稿不强制 STE。
-7. 运行 `python3 main.py --generate --brief BRIEF.json --output deck.html`。这个命令已验证 BRIEF，并在写最终文件前执行 strict gate。成功后不用重复运行相同 validator；失败时根据具体错误修正 BRIEF 再生成。若任务要求逐页源稿保真，另运行 `python3 scripts/validate_source_fidelity.py deck.html content-coverage.json --report fidelity-report.json`；每页正文和关系分别达到阈值，受保护数字、单位、条件、权限、接口与归属必须全部命中。严禁绕过 gate、手拼 HTML 或修改 runtime 来使当前任务通过。
+7. 运行 `python3 main.py --generate --brief BRIEF.json --output deck.html`。这个命令已验证 BRIEF，并在写最终文件前执行 strict gate。成功后不用重复运行相同 validator；失败时根据具体错误修正 BRIEF 再生成。若任务要求逐页源稿保真，另运行 `python3 scripts/validate_source_fidelity.py deck.html content-coverage.json --report fidelity-report.json`；每页正文和关系分别达到阈值，受保护数字、单位、条件、权限、接口与归属必须全部命中。`forbidden_text` 可声明全稿或单页禁止出现的可见文案，`forbidden_selectors` 可用于纯标题页等负向结构门禁；隐藏节点和 `aria-hidden` 装饰不计入命中。严禁绕过 gate、手拼 HTML 或修改 runtime 来使当前任务通过。
 
 正常生成不必读取 `html-template.md`、`js-engine.md`、`base-css.md`、完整 starter 或 renderer 源码。只有某个设计决策不在契约中时，按需读取选中 preset 的有关章节；实现错误必须明确报告，不能让每次内容任务都改生成器。`title-quality.md` 与 `impeccable-anti-patterns.md` 供深度精修/review 按需读取，基本要求已写入本契约。
 

@@ -1,0 +1,1225 @@
+{
+  "thresholds": {
+    "text_retention": 0.9,
+    "relation_retention": 0.9
+  },
+  "forbidden_text": [
+    "LAST MILE"
+  ],
+  "slides": [
+    {
+      "slide_number": 1,
+      "units": [
+        {
+          "id": "p1-u1",
+          "text": "个人介绍",
+          "protected": true,
+          "weight": 1
+        },
+        {
+          "id": "p1-u2",
+          "text": "示例讲者",
+          "protected": true,
+          "weight": 1
+        },
+        {
+          "id": "p1-u3",
+          "text": "Demo Speaker",
+          "protected": true,
+          "weight": 1
+        },
+        {
+          "id": "p1-u4",
+          "text": "示例研发负责人（虚构）",
+          "protected": true,
+          "weight": 1
+        },
+        {
+          "id": "p1-u5",
+          "text": "示例创新奖（虚构）",
+          "protected": true,
+          "weight": 1
+        },
+        {
+          "id": "p1-u6",
+          "text": "演示数据量 100 万条（虚构）",
+          "protected": true,
+          "weight": 1
+        },
+        {
+          "id": "p1-u7",
+          "text": "示例工作经验 5 年（虚构）",
+          "protected": true,
+          "weight": 1
+        }
+      ],
+      "relations": []
+    },
+    {
+      "slide_number": 2,
+      "units": [
+        {
+          "id": "p2-u1",
+          "text": "问题一：进入职场独立完成第一个任务的挑战？",
+          "protected": true,
+          "weight": 1
+        }
+      ],
+      "relations": [],
+      "forbidden_selectors": [
+        ".iri-lead",
+        ".iri-fact",
+        ".iri-convergence-word"
+      ]
+    },
+    {
+      "slide_number": 3,
+      "units": [
+        {
+          "id": "p3-u1",
+          "text": "真实场景",
+          "protected": true,
+          "weight": 1
+        },
+        {
+          "id": "p3-u2",
+          "text": "Challenge 1",
+          "protected": true,
+          "weight": 1
+        },
+        {
+          "id": "p3-u3",
+          "text": "Challenge 2",
+          "protected": true,
+          "weight": 1
+        },
+        {
+          "id": "p3-u4",
+          "text": "Challenge 3",
+          "protected": true,
+          "weight": 1
+        },
+        {
+          "id": "p3-u5",
+          "text": "Challenge 4",
+          "protected": true,
+          "weight": 1
+        },
+        {
+          "id": "p3-u6",
+          "text": "Challenge 5",
+          "protected": true,
+          "weight": 1
+        },
+        {
+          "id": "p3-u7",
+          "text": "端到端流程",
+          "protected": true,
+          "weight": 1
+        },
+        {
+          "id": "p3-u8",
+          "text": "Step 1",
+          "protected": true,
+          "weight": 1
+        },
+        {
+          "id": "p3-u9",
+          "text": "Step 2",
+          "protected": true,
+          "weight": 1
+        },
+        {
+          "id": "p3-u10",
+          "text": "Step 3",
+          "protected": true,
+          "weight": 1
+        },
+        {
+          "id": "p3-u11",
+          "text": "Step 4",
+          "protected": true,
+          "weight": 1
+        },
+        {
+          "id": "p3-u12",
+          "text": "Step 5",
+          "protected": true,
+          "weight": 1
+        },
+        {
+          "id": "p3-u13",
+          "text": "→",
+          "protected": true,
+          "weight": 1
+        }
+      ],
+      "relations": [
+        {
+          "id": "p3-r1",
+          "type": "ordered-before",
+          "from": "process-1",
+          "to": "process-2",
+          "protected": true,
+          "weight": 1
+        },
+        {
+          "id": "p3-r2",
+          "type": "ordered-before",
+          "from": "process-2",
+          "to": "process-3",
+          "protected": true,
+          "weight": 1
+        },
+        {
+          "id": "p3-r3",
+          "type": "ordered-before",
+          "from": "process-3",
+          "to": "process-4",
+          "protected": true,
+          "weight": 1
+        },
+        {
+          "id": "p3-r4",
+          "type": "ordered-before",
+          "from": "process-4",
+          "to": "process-5",
+          "protected": true,
+          "weight": 1
+        }
+      ]
+    },
+    {
+      "slide_number": 4,
+      "units": [
+        {
+          "id": "p4-u1",
+          "text": "企业生产力阶段",
+          "protected": true,
+          "weight": 1
+        },
+        {
+          "id": "p4-u2",
+          "text": "Date 1",
+          "protected": true,
+          "weight": 1
+        },
+        {
+          "id": "p4-u3",
+          "text": "Date 2",
+          "protected": true,
+          "weight": 1
+        },
+        {
+          "id": "p4-u4",
+          "text": "Date 3",
+          "protected": true,
+          "weight": 1
+        },
+        {
+          "id": "p4-u5",
+          "text": "Date 4",
+          "protected": true,
+          "weight": 1
+        },
+        {
+          "id": "p4-u6",
+          "text": "Date 5",
+          "protected": true,
+          "weight": 1
+        },
+        {
+          "id": "p4-u7",
+          "text": "→",
+          "protected": true,
+          "weight": 1
+        }
+      ],
+      "relations": [
+        {
+          "id": "p4-r1",
+          "type": "ordered-before",
+          "from": "milestone-1",
+          "to": "milestone-2",
+          "protected": true,
+          "weight": 1
+        },
+        {
+          "id": "p4-r2",
+          "type": "ordered-before",
+          "from": "milestone-2",
+          "to": "milestone-3",
+          "protected": true,
+          "weight": 1
+        },
+        {
+          "id": "p4-r3",
+          "type": "ordered-before",
+          "from": "milestone-3",
+          "to": "milestone-4",
+          "protected": true,
+          "weight": 1
+        },
+        {
+          "id": "p4-r4",
+          "type": "ordered-before",
+          "from": "milestone-4",
+          "to": "milestone-5",
+          "protected": true,
+          "weight": 1
+        }
+      ]
+    },
+    {
+      "slide_number": 5,
+      "units": [
+        {
+          "id": "p5-u1",
+          "text": "Slide 8",
+          "protected": true,
+          "weight": 1
+        },
+        {
+          "id": "p5-u2",
+          "text": "Problem 0",
+          "protected": true,
+          "weight": 1
+        },
+        {
+          "id": "p5-u3",
+          "text": "Problem 1",
+          "protected": true,
+          "weight": 1
+        },
+        {
+          "id": "p5-u4",
+          "text": "Problem 2",
+          "protected": true,
+          "weight": 1
+        },
+        {
+          "id": "p5-u5",
+          "text": "Warning",
+          "protected": true,
+          "weight": 1
+        },
+        {
+          "id": "p5-u6",
+          "text": "Conclusion",
+          "protected": true,
+          "weight": 1
+        }
+      ],
+      "relations": []
+    },
+    {
+      "slide_number": 6,
+      "units": [
+        {
+          "id": "p6-u1",
+          "text": "Slide 15",
+          "protected": true,
+          "weight": 1
+        },
+        {
+          "id": "p6-u2",
+          "text": "Capability 0",
+          "protected": true,
+          "weight": 1
+        },
+        {
+          "id": "p6-u3",
+          "text": "Capability 1",
+          "protected": true,
+          "weight": 1
+        },
+        {
+          "id": "p6-u4",
+          "text": "Capability 2",
+          "protected": true,
+          "weight": 1
+        },
+        {
+          "id": "p6-u5",
+          "text": "Capability 3",
+          "protected": true,
+          "weight": 1
+        },
+        {
+          "id": "p6-u6",
+          "text": "Capability 4",
+          "protected": true,
+          "weight": 1
+        },
+        {
+          "id": "p6-u7",
+          "text": "Conclusion",
+          "protected": true,
+          "weight": 1
+        }
+      ],
+      "relations": []
+    },
+    {
+      "slide_number": 7,
+      "units": [
+        {
+          "id": "p7-u1",
+          "text": "Slide 16",
+          "protected": true,
+          "weight": 1
+        },
+        {
+          "id": "p7-u2",
+          "text": "Package",
+          "protected": true,
+          "weight": 1
+        },
+        {
+          "id": "p7-u3",
+          "text": "Component 0",
+          "protected": true,
+          "weight": 1
+        },
+        {
+          "id": "p7-u4",
+          "text": "Component 1",
+          "protected": true,
+          "weight": 1
+        },
+        {
+          "id": "p7-u5",
+          "text": "Component 2",
+          "protected": true,
+          "weight": 1
+        },
+        {
+          "id": "p7-u6",
+          "text": "Component 3",
+          "protected": true,
+          "weight": 1
+        },
+        {
+          "id": "p7-u7",
+          "text": "Tools",
+          "protected": true,
+          "weight": 1
+        }
+      ],
+      "relations": []
+    },
+    {
+      "slide_number": 8,
+      "units": [
+        {
+          "id": "p8-u1",
+          "text": "Slide 31",
+          "protected": true,
+          "weight": 1
+        },
+        {
+          "id": "p8-u2",
+          "text": "Enterprise AI framing",
+          "protected": true,
+          "weight": 1
+        },
+        {
+          "id": "p8-u3",
+          "text": "Principle 0",
+          "protected": true,
+          "weight": 1
+        },
+        {
+          "id": "p8-u4",
+          "text": "Principle 1",
+          "protected": true,
+          "weight": 1
+        },
+        {
+          "id": "p8-u5",
+          "text": "Principle 2",
+          "protected": true,
+          "weight": 1
+        },
+        {
+          "id": "p8-u6",
+          "text": "Principle 3",
+          "protected": true,
+          "weight": 1
+        },
+        {
+          "id": "p8-u7",
+          "text": "Formula",
+          "protected": true,
+          "weight": 1
+        },
+        {
+          "id": "p8-u8",
+          "text": "Result",
+          "protected": true,
+          "weight": 1
+        },
+        {
+          "id": "p8-u9",
+          "text": "CTA",
+          "protected": true,
+          "weight": 1
+        }
+      ],
+      "relations": []
+    },
+    {
+      "slide_number": 9,
+      "units": [
+        {
+          "id": "p9-u1",
+          "text": "Interaction flow",
+          "protected": true,
+          "weight": 1
+        },
+        {
+          "id": "p9-u2",
+          "text": "Task",
+          "protected": true,
+          "weight": 1
+        },
+        {
+          "id": "p9-u3",
+          "text": "Start",
+          "protected": true,
+          "weight": 1
+        },
+        {
+          "id": "p9-u4",
+          "text": "Extract",
+          "protected": true,
+          "weight": 1
+        },
+        {
+          "id": "p9-u5",
+          "text": "Submit",
+          "protected": true,
+          "weight": 1
+        },
+        {
+          "id": "p9-u6",
+          "text": "Poll",
+          "protected": true,
+          "weight": 1
+        },
+        {
+          "id": "p9-u7",
+          "text": "A",
+          "protected": true,
+          "weight": 1
+        },
+        {
+          "id": "p9-u8",
+          "text": "B",
+          "protected": true,
+          "weight": 1
+        }
+      ],
+      "relations": [
+        {
+          "id": "p9-r1",
+          "type": "ordered-before",
+          "from": "task-1",
+          "to": "task-2",
+          "protected": true,
+          "weight": 1
+        },
+        {
+          "id": "p9-r2",
+          "type": "ordered-before",
+          "from": "task-2",
+          "to": "task-3",
+          "protected": true,
+          "weight": 1
+        }
+      ]
+    },
+    {
+      "slide_number": 10,
+      "units": [
+        {
+          "id": "p10-u1",
+          "text": "Five layers",
+          "protected": true,
+          "weight": 1
+        },
+        {
+          "id": "p10-u2",
+          "text": "Layer 1",
+          "protected": true,
+          "weight": 1
+        },
+        {
+          "id": "p10-u3",
+          "text": "Layer 2",
+          "protected": true,
+          "weight": 1
+        },
+        {
+          "id": "p10-u4",
+          "text": "Layer 3",
+          "protected": true,
+          "weight": 1
+        },
+        {
+          "id": "p10-u5",
+          "text": "Layer 4",
+          "protected": true,
+          "weight": 1
+        },
+        {
+          "id": "p10-u6",
+          "text": "Layer 5",
+          "protected": true,
+          "weight": 1
+        },
+        {
+          "id": "p10-u7",
+          "text": "Security",
+          "protected": true,
+          "weight": 1
+        },
+        {
+          "id": "p10-u8",
+          "text": "Observability",
+          "protected": true,
+          "weight": 1
+        },
+        {
+          "id": "p10-u9",
+          "text": "Runtime loop",
+          "protected": true,
+          "weight": 1
+        }
+      ],
+      "relations": [
+        {
+          "id": "p10-r1",
+          "type": "feeds",
+          "from": "layer-1",
+          "to": "layer-2",
+          "protected": true,
+          "weight": 1
+        },
+        {
+          "id": "p10-r2",
+          "type": "feeds",
+          "from": "layer-2",
+          "to": "layer-3",
+          "protected": true,
+          "weight": 1
+        },
+        {
+          "id": "p10-r3",
+          "type": "feeds",
+          "from": "layer-3",
+          "to": "layer-4",
+          "protected": true,
+          "weight": 1
+        },
+        {
+          "id": "p10-r4",
+          "type": "feeds",
+          "from": "layer-4",
+          "to": "layer-5",
+          "protected": true,
+          "weight": 1
+        }
+      ]
+    },
+    {
+      "slide_number": 11,
+      "units": [
+        {
+          "id": "p11-u1",
+          "text": "Layered call graph",
+          "protected": true,
+          "weight": 1
+        },
+        {
+          "id": "p11-u2",
+          "text": "LAYER1",
+          "protected": true,
+          "weight": 1
+        },
+        {
+          "id": "p11-u3",
+          "text": "Activity-Workflow",
+          "protected": true,
+          "weight": 1
+        },
+        {
+          "id": "p11-u4",
+          "text": "LAYER2",
+          "protected": true,
+          "weight": 1
+        },
+        {
+          "id": "p11-u5",
+          "text": "L2",
+          "protected": true,
+          "weight": 1
+        },
+        {
+          "id": "p11-u6",
+          "text": "L3",
+          "protected": true,
+          "weight": 1
+        },
+        {
+          "id": "p11-u7",
+          "text": "LAYER3",
+          "protected": true,
+          "weight": 1
+        },
+        {
+          "id": "p11-u8",
+          "text": "supplier flow",
+          "protected": true,
+          "weight": 1
+        },
+        {
+          "id": "p11-u9",
+          "text": "LAYER4",
+          "protected": true,
+          "weight": 1
+        },
+        {
+          "id": "p11-u10",
+          "text": "MCP cluster 1",
+          "protected": true,
+          "weight": 1
+        },
+        {
+          "id": "p11-u11",
+          "text": "MCP cluster 2",
+          "protected": true,
+          "weight": 1
+        },
+        {
+          "id": "p11-u12",
+          "text": "MCP cluster 3",
+          "protected": true,
+          "weight": 1
+        },
+        {
+          "id": "p11-u13",
+          "text": "MCP cluster 4",
+          "protected": true,
+          "weight": 1
+        },
+        {
+          "id": "p11-u14",
+          "text": "SaaS",
+          "protected": true,
+          "weight": 1
+        },
+        {
+          "id": "p11-u15",
+          "text": "Foundation",
+          "protected": true,
+          "weight": 1
+        },
+        {
+          "id": "p11-u16",
+          "text": "Activity handoff",
+          "protected": true,
+          "weight": 1
+        },
+        {
+          "id": "p11-u17",
+          "text": "L2/L3 handoff",
+          "protected": true,
+          "weight": 1
+        },
+        {
+          "id": "p11-u18",
+          "text": "supplier handoff",
+          "protected": true,
+          "weight": 1
+        },
+        {
+          "id": "p11-u19",
+          "text": "SaaS handoff",
+          "protected": true,
+          "weight": 1
+        }
+      ],
+      "relations": [
+        {
+          "id": "p11-r1",
+          "type": "handoff",
+          "from": "call-layer-1",
+          "to": "call-layer-2",
+          "protected": true,
+          "weight": 1
+        },
+        {
+          "id": "p11-r2",
+          "type": "handoff",
+          "from": "call-layer-2",
+          "to": "call-layer-3",
+          "protected": true,
+          "weight": 1
+        },
+        {
+          "id": "p11-r3",
+          "type": "handoff",
+          "from": "call-layer-3",
+          "to": "call-layer-4",
+          "protected": true,
+          "weight": 1
+        },
+        {
+          "id": "p11-r4",
+          "type": "handoff",
+          "from": "call-layer-4",
+          "to": "saas-foundation",
+          "protected": true,
+          "weight": 1
+        },
+        {
+          "id": "p11-r5",
+          "type": "internal-call",
+          "from": "l2",
+          "to": "l3",
+          "protected": true,
+          "weight": 1
+        },
+        {
+          "id": "p11-r6",
+          "type": "cluster-call",
+          "from": "mcp-cluster-1",
+          "to": "mcp-cluster-2",
+          "protected": true,
+          "weight": 1
+        }
+      ]
+    },
+    {
+      "slide_number": 12,
+      "units": [
+        {
+          "id": "p12-u1",
+          "text": "结构保真：card-sequence",
+          "protected": true,
+          "weight": 1
+        },
+        {
+          "id": "p12-u2",
+          "text": "SOURCE",
+          "protected": true,
+          "weight": 1
+        },
+        {
+          "id": "p12-u3",
+          "text": "保留原始分组、节点和执行方向。",
+          "protected": true,
+          "weight": 1
+        },
+        {
+          "id": "p12-u4",
+          "text": "输入与约束",
+          "protected": true,
+          "weight": 1
+        },
+        {
+          "id": "p12-u5",
+          "text": "01",
+          "protected": true,
+          "weight": 1
+        },
+        {
+          "id": "p12-u6",
+          "text": "业务请求",
+          "protected": true,
+          "weight": 1
+        },
+        {
+          "id": "p12-u7",
+          "text": "调用前核验权限",
+          "protected": true,
+          "weight": 1
+        },
+        {
+          "id": "p12-u8",
+          "text": "来源可追溯",
+          "protected": true,
+          "weight": 1
+        },
+        {
+          "id": "p12-u9",
+          "text": "02",
+          "protected": true,
+          "weight": 1
+        },
+        {
+          "id": "p12-u10",
+          "text": "执行动作",
+          "protected": true,
+          "weight": 1
+        },
+        {
+          "id": "p12-u11",
+          "text": "保留操作顺序",
+          "protected": true,
+          "weight": 1
+        },
+        {
+          "id": "p12-u12",
+          "text": "审计",
+          "protected": true,
+          "weight": 1
+        },
+        {
+          "id": "p12-u13",
+          "text": "授权后执行",
+          "protected": true,
+          "weight": 1
+        },
+        {
+          "id": "p12-u14",
+          "text": "验收条件",
+          "protected": true,
+          "weight": 1
+        },
+        {
+          "id": "p12-u15",
+          "text": "正文完整且关系可见",
+          "protected": true,
+          "weight": 1
+        }
+      ],
+      "relations": [
+        {
+          "id": "p12-r1",
+          "type": "ordered-before",
+          "from": "request",
+          "to": "execute",
+          "protected": true,
+          "weight": 1
+        }
+      ]
+    },
+    {
+      "slide_number": 13,
+      "units": [
+        {
+          "id": "p13-u1",
+          "text": "结构保真：card-grid",
+          "protected": true,
+          "weight": 1
+        },
+        {
+          "id": "p13-u2",
+          "text": "SOURCE",
+          "protected": true,
+          "weight": 1
+        },
+        {
+          "id": "p13-u3",
+          "text": "保留原始分组、节点和执行方向。",
+          "protected": true,
+          "weight": 1
+        },
+        {
+          "id": "p13-u4",
+          "text": "输入与约束",
+          "protected": true,
+          "weight": 1
+        },
+        {
+          "id": "p13-u5",
+          "text": "01",
+          "protected": true,
+          "weight": 1
+        },
+        {
+          "id": "p13-u6",
+          "text": "业务请求",
+          "protected": true,
+          "weight": 1
+        },
+        {
+          "id": "p13-u7",
+          "text": "调用前核验权限",
+          "protected": true,
+          "weight": 1
+        },
+        {
+          "id": "p13-u8",
+          "text": "来源可追溯",
+          "protected": true,
+          "weight": 1
+        },
+        {
+          "id": "p13-u9",
+          "text": "02",
+          "protected": true,
+          "weight": 1
+        },
+        {
+          "id": "p13-u10",
+          "text": "执行动作",
+          "protected": true,
+          "weight": 1
+        },
+        {
+          "id": "p13-u11",
+          "text": "保留操作顺序",
+          "protected": true,
+          "weight": 1
+        },
+        {
+          "id": "p13-u12",
+          "text": "审计",
+          "protected": true,
+          "weight": 1
+        },
+        {
+          "id": "p13-u13",
+          "text": "授权后执行",
+          "protected": true,
+          "weight": 1
+        },
+        {
+          "id": "p13-u14",
+          "text": "验收条件",
+          "protected": true,
+          "weight": 1
+        },
+        {
+          "id": "p13-u15",
+          "text": "正文完整且关系可见",
+          "protected": true,
+          "weight": 1
+        }
+      ],
+      "relations": [
+        {
+          "id": "p13-r1",
+          "type": "ordered-before",
+          "from": "request",
+          "to": "execute",
+          "protected": true,
+          "weight": 1
+        }
+      ]
+    },
+    {
+      "slide_number": 14,
+      "units": [
+        {
+          "id": "p14-u1",
+          "text": "结构保真：paired-panels",
+          "protected": true,
+          "weight": 1
+        },
+        {
+          "id": "p14-u2",
+          "text": "SOURCE",
+          "protected": true,
+          "weight": 1
+        },
+        {
+          "id": "p14-u3",
+          "text": "保留原始分组、节点和执行方向。",
+          "protected": true,
+          "weight": 1
+        },
+        {
+          "id": "p14-u4",
+          "text": "输入与约束",
+          "protected": true,
+          "weight": 1
+        },
+        {
+          "id": "p14-u5",
+          "text": "01",
+          "protected": true,
+          "weight": 1
+        },
+        {
+          "id": "p14-u6",
+          "text": "业务请求",
+          "protected": true,
+          "weight": 1
+        },
+        {
+          "id": "p14-u7",
+          "text": "调用前核验权限",
+          "protected": true,
+          "weight": 1
+        },
+        {
+          "id": "p14-u8",
+          "text": "来源可追溯",
+          "protected": true,
+          "weight": 1
+        },
+        {
+          "id": "p14-u9",
+          "text": "02",
+          "protected": true,
+          "weight": 1
+        },
+        {
+          "id": "p14-u10",
+          "text": "执行动作",
+          "protected": true,
+          "weight": 1
+        },
+        {
+          "id": "p14-u11",
+          "text": "保留操作顺序",
+          "protected": true,
+          "weight": 1
+        },
+        {
+          "id": "p14-u12",
+          "text": "审计",
+          "protected": true,
+          "weight": 1
+        },
+        {
+          "id": "p14-u13",
+          "text": "授权后执行",
+          "protected": true,
+          "weight": 1
+        },
+        {
+          "id": "p14-u14",
+          "text": "验收条件",
+          "protected": true,
+          "weight": 1
+        },
+        {
+          "id": "p14-u15",
+          "text": "正文完整且关系可见",
+          "protected": true,
+          "weight": 1
+        }
+      ],
+      "relations": [
+        {
+          "id": "p14-r1",
+          "type": "ordered-before",
+          "from": "request",
+          "to": "execute",
+          "protected": true,
+          "weight": 1
+        }
+      ]
+    },
+    {
+      "slide_number": 15,
+      "units": [
+        {
+          "id": "p15-u1",
+          "text": "结构保真：parallel-flows",
+          "protected": true,
+          "weight": 1
+        },
+        {
+          "id": "p15-u2",
+          "text": "SOURCE",
+          "protected": true,
+          "weight": 1
+        },
+        {
+          "id": "p15-u3",
+          "text": "保留原始分组、节点和执行方向。",
+          "protected": true,
+          "weight": 1
+        },
+        {
+          "id": "p15-u4",
+          "text": "输入与约束",
+          "protected": true,
+          "weight": 1
+        },
+        {
+          "id": "p15-u5",
+          "text": "01",
+          "protected": true,
+          "weight": 1
+        },
+        {
+          "id": "p15-u6",
+          "text": "业务请求",
+          "protected": true,
+          "weight": 1
+        },
+        {
+          "id": "p15-u7",
+          "text": "调用前核验权限",
+          "protected": true,
+          "weight": 1
+        },
+        {
+          "id": "p15-u8",
+          "text": "来源可追溯",
+          "protected": true,
+          "weight": 1
+        },
+        {
+          "id": "p15-u9",
+          "text": "02",
+          "protected": true,
+          "weight": 1
+        },
+        {
+          "id": "p15-u10",
+          "text": "执行动作",
+          "protected": true,
+          "weight": 1
+        },
+        {
+          "id": "p15-u11",
+          "text": "保留操作顺序",
+          "protected": true,
+          "weight": 1
+        },
+        {
+          "id": "p15-u12",
+          "text": "审计",
+          "protected": true,
+          "weight": 1
+        },
+        {
+          "id": "p15-u13",
+          "text": "授权后执行",
+          "protected": true,
+          "weight": 1
+        },
+        {
+          "id": "p15-u14",
+          "text": "验收条件",
+          "protected": true,
+          "weight": 1
+        },
+        {
+          "id": "p15-u15",
+          "text": "正文完整且关系可见",
+          "protected": true,
+          "weight": 1
+        }
+      ],
+      "relations": [
+        {
+          "id": "p15-r1",
+          "type": "ordered-before",
+          "from": "request",
+          "to": "execute",
+          "protected": true,
+          "weight": 1
+        }
+      ]
+    }
+  ]
+}

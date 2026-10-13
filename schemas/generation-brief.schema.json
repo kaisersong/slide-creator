@@ -393,6 +393,10 @@
           "type": "string",
           "minLength": 1
         },
+        "badge": {
+          "type": "string",
+          "minLength": 1
+        },
         "label": {
           "type": "string",
           "minLength": 1
@@ -518,17 +522,40 @@
       "type": "object",
       "additionalProperties": false,
       "required": [
-        "kind",
-        "groups"
+        "kind"
       ],
       "properties": {
         "kind": {
           "type": "string",
           "enum": [
+            "personal-profile",
+            "title-only",
+            "challenge-flow",
+            "milestone-timeline",
+            "three-column-conclusion",
+            "capability-bridge",
+            "context-package",
+            "takeaway-stack",
             "interaction-flow-poll",
             "layered-architecture",
-            "layered-call-graph"
+            "layered-call-graph",
+            "card-sequence",
+            "card-grid",
+            "paired-panels",
+            "parallel-flows"
           ]
+        },
+        "badge": {
+          "type": "string",
+          "minLength": 1
+        },
+        "title": {
+          "type": "string",
+          "minLength": 1
+        },
+        "description": {
+          "type": "string",
+          "minLength": 1
         },
         "direction": {
           "type": "string",
@@ -537,11 +564,26 @@
             "left-to-right"
           ]
         },
+        "items": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
         "groups": {
           "type": "array",
           "minItems": 1,
           "items": {
             "$ref": "#/$defs/structuredGroup"
+          }
+        },
+        "nodes": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "$ref": "#/$defs/structuredNode"
           }
         },
         "edges": {
@@ -565,7 +607,33 @@
             "$ref": "#/$defs/structuredGroup"
           }
         }
-      }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "kind": {
+                "enum": [
+                  "title-only",
+                  "card-sequence",
+                  "card-grid",
+                  "paired-panels",
+                  "parallel-flows"
+                ]
+              }
+            },
+            "required": [
+              "kind"
+            ]
+          },
+          "then": {},
+          "else": {
+            "required": [
+              "groups"
+            ]
+          }
+        }
+      ]
     },
     "timingBlock": {
       "type": "object",

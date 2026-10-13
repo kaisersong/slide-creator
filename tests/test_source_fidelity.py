@@ -238,6 +238,39 @@ def test_hidden_duplicate_text_does_not_count(tmp_path: Path):
     assert report["slides"][0]["text"]["units"][0]["matched"] is False
 
 
+def test_global_forbidden_text_fails_only_when_visible(tmp_path: Path):
+    html = """
+    <section class="slide"><h1>Question only</h1><div aria-hidden="true">LAST MILE</div></section>
+    <section class="slide"><h1>Another title</h1><p>LAST MILE</p></section>
+    """
+    source_coverage = coverage(
+        slide(1, [unit("title-1", "Question only", protected=True)]),
+        slide(2, [unit("title-2", "Another title", protected=True)]),
+    )
+    source_coverage["forbidden_text"] = ["LAST MILE"]
+
+    completed, report = run_gate(tmp_path, html, source_coverage)
+
+    assert completed.returncode == 1
+    assert report["slides"][0]["forbidden"]["pass"] is True
+    assert report["slides"][1]["forbidden"]["matched_text"] == ["LAST MILE"]
+
+
+def test_title_only_forbidden_selectors_reject_visible_supporting_content(tmp_path: Path):
+    html = '<section class="slide"><h1>Only this title</h1><p class="iri-lead">Extra prompt</p></section>'
+    source_coverage = coverage(
+        {
+            **slide(1, [unit("title", "Only this title", protected=True)]),
+            "forbidden_selectors": [".iri-lead", ".iri-fact", ".iri-convergence-word"],
+        }
+    )
+
+    completed, report = run_gate(tmp_path, html, source_coverage)
+
+    assert completed.returncode == 1
+    assert report["slides"][0]["forbidden"]["matched_selectors"] == [".iri-lead"]
+
+
 def test_reversed_directed_relation_fails(tmp_path: Path):
     html = """
     <section class="slide">

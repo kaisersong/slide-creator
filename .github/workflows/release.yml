@@ -48,8 +48,8 @@ jobs:
           mkdir -p dist
           python -m pip install -r scripts/requirements-release.txt
           python scripts/build-profile-templates.py --check
-          curl --fail --silent --show-error --location https://github.com/kaisersong/slide-creator/releases/download/v2.33.0/kai-slide-creator-v2.33.0-skill-runtime.zip -o dist/previous-runtime.zip
-          python scripts/package-runtime.py --output-dir dist --previous-runtime dist/previous-runtime.zip --previous-sha256 2361555dc22ea13527cf80b2a4647eb2cf5e1a7a8025f3317743468b5ba712bf
+          curl --fail --silent --show-error --location https://github.com/kaisersong/slide-creator/releases/download/v2.33.2/kai-slide-creator-v2.33.2-skill-runtime.zip -o dist/previous-runtime.zip
+          python scripts/package-runtime.py --output-dir dist --previous-runtime dist/previous-runtime.zip --previous-sha256 bb8ee2fa8b21a9dc1a6bbed54c775b618d8ee9a2773c2e13b24d880a6f2ba23b
           python check-doc-sync.py
           python -m zipfile -e "dist/kai-slide-creator-${TAG}-skill-runtime.zip" dist/installed
           for theme in shader-hero molten-flow stellar-vortex; do
@@ -59,7 +59,10 @@ jobs:
         shell: bash
         run: |
           python -m playwright install --with-deps chromium
-          python -m pytest -q tests/test_installed_profile_templates.py
+          python -m pytest -q -m "not slow"
+          python dist/installed/kai-slide-creator/scripts/verify-structured-scenes.py \
+            --fixtures "${GITHUB_WORKSPACE}/evals/fantasy-structured" \
+            --output-dir dist/release-gate/structured-scenes
           python dist/installed/kai-slide-creator/scripts/run-release-matrix.py \
             --suite "${GITHUB_WORKSPACE}/evals/preset-surface-all/manifest.json" \
             --output-dir dist/release-gate \
