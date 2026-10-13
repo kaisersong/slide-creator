@@ -232,6 +232,8 @@ def test_document_visibility_suspends_and_resumes(page, backend):
 
 
 def test_webgl_context_restoration_waits_for_visible_cover(page):
+    console = []
+    page.on("console", lambda message: console.append(message.text))
     start_gpu(page, "webgl2")
     assert page.evaluate("window.__shaderHeroQA.loseContext()")
     page.wait_for_function("window.__shaderHeroQA.state().reason === 'webgl-context-lost'")
@@ -242,7 +244,18 @@ def test_webgl_context_restoration_waits_for_visible_cover(page):
     page.wait_for_function("window.__shaderHeroQA.state().reason === null")
     assert_stopped(page)
     page.keyboard.press("ArrowLeft")
-    page.wait_for_function("window.__shaderHeroQA.state().rafActive")
+    try:
+        page.wait_for_function("window.__shaderHeroQA.state().rafActive")
+    except Exception:
+        print("SHADER_RESTORE_DIAGNOSTICS", json.dumps({
+            "state": state(page),
+            "viewport": page.evaluate("""() => ({scrollY, innerHeight, hidden:document.hidden,
+                slides:[...document.querySelectorAll('.slide')].map(s => ({id:s.id,
+                    classes:s.className,top:s.getBoundingClientRect().top,
+                    bottom:s.getBoundingClientRect().bottom}))})"""),
+            "console": console,
+        }))
+        raise
 
 
 def test_delayed_intersection_cannot_suspend_the_returned_cover(page):
