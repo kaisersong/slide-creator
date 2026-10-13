@@ -243,3 +243,23 @@ def test_webgl_context_restoration_waits_for_visible_cover(page):
     assert_stopped(page)
     page.keyboard.press("ArrowLeft")
     page.wait_for_function("window.__shaderHeroQA.state().rafActive")
+
+
+def test_delayed_intersection_cannot_suspend_the_returned_cover(page):
+    page.add_init_script("""
+        const NativeObserver = window.IntersectionObserver;
+        window.IntersectionObserver = class extends NativeObserver {
+            constructor(callback, options) {
+                super(callback, options);
+                if (options && options.threshold === 0.5) window.__navigationObserver = callback;
+            }
+        };
+    """)
+    start_gpu(page, "webgl2")
+    before = state(page)["drawCount"]
+    page.evaluate("""window.__navigationObserver([
+        {target: document.getElementById('slide-2'), isIntersecting: true}
+    ])""")
+    assert page.locator("#slide-1").evaluate("s => s.classList.contains('visible')")
+    page.wait_for_function(f"window.__shaderHeroQA.state().drawCount > {before + 2}")
+    assert state(page)["active"] and state(page)["rafActive"]

@@ -11,6 +11,8 @@ class SlidePresentation {
     constructor() {
         this.slides = document.querySelectorAll('.slide');
         this.currentSlide = 0;
+        this.pendingSlide = null;
+        document.addEventListener('pointerdown', () => { this.pendingSlide = null; }, { passive: true });
         this.channel = new BroadcastChannel('slide-creator-presenter');
         this.slides[0]?.classList.add('visible');
         this.slides[0]?.querySelectorAll('.reveal').forEach(function(r) { r.classList.add('visible'); });
@@ -42,15 +44,22 @@ class SlidePresentation {
     setupObserver() {
         const observer = new IntersectionObserver((entries) => {
             if (document.body.classList.contains('presenting')) return;
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    this.currentSlide = [...this.slides].indexOf(entry.target);
-                    if (this.currentSlide < 0) return;
-                    this.setActiveSlide(this.currentSlide);
-                    this.updateProgress(); this.updateDots(); this.broadcastState();
-                    this.updateNotesPanel();
-                }
+            const midpoint = window.innerHeight / 2;
+            const entry = entries.find(candidate => {
+                if (!candidate.isIntersecting) return false;
+                if (this.pendingSlide !== null && candidate.target !== this.slides[this.pendingSlide]) return false;
+                // Observer notifications can lag behind a reversed smooth scroll.
+                // Confirm the actual viewport before changing the keyboard target.
+                const rect = candidate.target.getBoundingClientRect();
+                return rect.top <= midpoint && rect.bottom > midpoint;
             });
+            if (!entry) return;
+            this.currentSlide = [...this.slides].indexOf(entry.target);
+            if (this.currentSlide < 0) return;
+            this.pendingSlide = null;
+            this.setActiveSlide(this.currentSlide);
+            this.updateProgress(); this.updateDots(); this.broadcastState();
+            this.updateNotesPanel();
         }, { threshold: 0.5 });
         this.slides.forEach(s => observer.observe(s));
     }
@@ -67,7 +76,7 @@ class SlidePresentation {
 
     setupTouch() {
         let startY = 0, startX = 0;
-        document.addEventListener('touchstart', e => { startY = e.touches[0].clientY; startX = e.touches[0].clientX; }, { passive: true });
+        document.addEventListener('touchstart', e => { this.pendingSlide = null; startY = e.touches[0].clientY; startX = e.touches[0].clientX; }, { passive: true });
         document.addEventListener('touchend', e => {
             const dy = startY - e.changedTouches[0].clientY;
             const dx = Math.abs(startX - e.changedTouches[0].clientX);
@@ -147,6 +156,7 @@ class SlidePresentation {
         const idx = Math.max(0, Math.min(index, this.slides.length - 1));
         const moved = idx !== this.currentSlide;
         this.currentSlide = idx;
+        this.pendingSlide = moved ? idx : null;
         this.setActiveSlide(idx);
         this.slides[idx]?.scrollIntoView({ behavior: moved ? 'smooth' : 'auto' });
         this.updateProgress(); this.updateDots(); this.broadcastState();
@@ -348,6 +358,7 @@ class PresentMode {
     enter() {
         if (this.active) return;
         this.active = true;
+        this.ctrl.pendingSlide = null;
         document.body.classList.add('presenting');
         if (document.documentElement.requestFullscreen) document.documentElement.requestFullscreen().catch(() => {});
         this._scale();

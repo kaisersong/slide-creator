@@ -220,7 +220,7 @@ body[data-preset="Strategy Consulting"] .sc-rule-table th { text-align:left; pad
 body[data-preset="Strategy Consulting"] .sc-quote-block { font-size:28px; line-height:1.5; }
 body[data-preset="Strategy Consulting"] .sc-evidence-card .sc-metric { font-size:20px; margin-bottom:12px; }
 </style></head>
-<body data-export-progress="true" data-preset="Shader Hero" data-generator="kai-slide-creator" data-generator-version="2.34.0" data-render-path="brief-canonical" data-brief-hash="sha256:944128a1938df64553279f6e3a6c37f36c5fe43181d1fc776c22dc8ccf40ddc0" data-runtime-path="shared-js-engine" data-validate-strict="pass" data-preset-generation-status="custom" data-renderer-strategy="custom_theme">
+<body data-export-progress="true" data-preset="Shader Hero" data-generator="kai-slide-creator" data-generator-version="2.34.1" data-render-path="brief-canonical" data-brief-hash="sha256:944128a1938df64553279f6e3a6c37f36c5fe43181d1fc776c22dc8ccf40ddc0" data-runtime-path="shared-js-engine" data-validate-strict="pass" data-preset-generation-status="custom" data-renderer-strategy="custom_theme">
 <span id="brand-mark">让第一眼成为记忆点</span>
 <canvas id="shader-hero-canvas" aria-hidden="true" hidden></canvas><nav class="nav-dots" aria-label="Slide navigation"></nav><div class="progress-bar" aria-hidden="true"></div>
 <section class="slide sh-scene sh-scene--cover layout-title_grid" id="slide-1" data-notes="一束流动的光，为好内容打开舞台。 流动的极光。克制的留白。清晰的表达" aria-label="让第一眼
@@ -258,6 +258,8 @@ class SlidePresentation {
     constructor() {
         this.slides = document.querySelectorAll('.slide');
         this.currentSlide = 0;
+        this.pendingSlide = null;
+        document.addEventListener('pointerdown', () => { this.pendingSlide = null; }, { passive: true });
         this.channel = new BroadcastChannel('slide-creator-presenter');
         this.slides[0]?.classList.add('visible');
         this.slides[0]?.querySelectorAll('.reveal').forEach(function(r) { r.classList.add('visible'); });
@@ -289,15 +291,22 @@ class SlidePresentation {
     setupObserver() {
         const observer = new IntersectionObserver((entries) => {
             if (document.body.classList.contains('presenting')) return;
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    this.currentSlide = [...this.slides].indexOf(entry.target);
-                    if (this.currentSlide < 0) return;
-                    this.setActiveSlide(this.currentSlide);
-                    this.updateProgress(); this.updateDots(); this.broadcastState();
-                    this.updateNotesPanel();
-                }
+            const midpoint = window.innerHeight / 2;
+            const entry = entries.find(candidate => {
+                if (!candidate.isIntersecting) return false;
+                if (this.pendingSlide !== null && candidate.target !== this.slides[this.pendingSlide]) return false;
+                // Observer notifications can lag behind a reversed smooth scroll.
+                // Confirm the actual viewport before changing the keyboard target.
+                const rect = candidate.target.getBoundingClientRect();
+                return rect.top <= midpoint && rect.bottom > midpoint;
             });
+            if (!entry) return;
+            this.currentSlide = [...this.slides].indexOf(entry.target);
+            if (this.currentSlide < 0) return;
+            this.pendingSlide = null;
+            this.setActiveSlide(this.currentSlide);
+            this.updateProgress(); this.updateDots(); this.broadcastState();
+            this.updateNotesPanel();
         }, { threshold: 0.5 });
         this.slides.forEach(s => observer.observe(s));
     }
@@ -314,7 +323,7 @@ class SlidePresentation {
 
     setupTouch() {
         let startY = 0, startX = 0;
-        document.addEventListener('touchstart', e => { startY = e.touches[0].clientY; startX = e.touches[0].clientX; }, { passive: true });
+        document.addEventListener('touchstart', e => { this.pendingSlide = null; startY = e.touches[0].clientY; startX = e.touches[0].clientX; }, { passive: true });
         document.addEventListener('touchend', e => {
             const dy = startY - e.changedTouches[0].clientY;
             const dx = Math.abs(startX - e.changedTouches[0].clientX);
@@ -394,6 +403,7 @@ class SlidePresentation {
         const idx = Math.max(0, Math.min(index, this.slides.length - 1));
         const moved = idx !== this.currentSlide;
         this.currentSlide = idx;
+        this.pendingSlide = moved ? idx : null;
         this.setActiveSlide(idx);
         this.slides[idx]?.scrollIntoView({ behavior: moved ? 'smooth' : 'auto' });
         this.updateProgress(); this.updateDots(); this.broadcastState();
@@ -581,6 +591,7 @@ class PresentMode {
     enter() {
         if (this.active) return;
         this.active = true;
+        this.ctrl.pendingSlide = null;
         document.body.classList.add('presenting');
         if (document.documentElement.requestFullscreen) document.documentElement.requestFullscreen().catch(() => {});
         this._scale();
@@ -638,7 +649,7 @@ new PresentMode(new SlidePresentation());
     var last = slides[slides.length - 1];
     var credit = document.createElement('div');
     credit.className = 'slide-credit';
-    credit.textContent = 'By kai-slide-creator v2.34.0 · Shader Hero';
+    credit.textContent = 'By kai-slide-creator v2.34.1 · Shader Hero';
     last.appendChild(credit);
 })();
 

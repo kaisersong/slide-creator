@@ -55,14 +55,24 @@ jobs:
           for theme in shader-hero molten-flow stellar-vortex; do
             python dist/installed/kai-slide-creator/main.py --generate --brief "demos/${theme}/BRIEF.json" --output "dist/${theme}-smoke.html"
           done
-      - name: Verify installed profiles and complete release gate
+      - name: Install browser for release verification
         shell: bash
         run: |
           python -m playwright install --with-deps chromium
-          python -m pytest -q -m "not slow"
+      - name: Run complete non-slow regression
+        shell: bash
+        run: |
+          mkdir -p dist/release-gate
+          python -m pytest -q -m "not slow" --junitxml=dist/release-gate/pytest.xml
+      - name: Verify installed structured scenes
+        shell: bash
+        run: |
           python dist/installed/kai-slide-creator/scripts/verify-structured-scenes.py \
             --fixtures "${GITHUB_WORKSPACE}/evals/fantasy-structured" \
             --output-dir dist/release-gate/structured-scenes
+      - name: Verify all original 66 installed preset cases
+        shell: bash
+        run: |
           python dist/installed/kai-slide-creator/scripts/run-release-matrix.py \
             --suite "${GITHUB_WORKSPACE}/evals/preset-surface-all/manifest.json" \
             --output-dir dist/release-gate \
