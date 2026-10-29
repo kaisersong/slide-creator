@@ -50,6 +50,7 @@ jobs:
           python scripts/build-profile-templates.py --check
           curl --fail --silent --show-error --location https://github.com/kaisersong/slide-creator/releases/download/v2.33.2/kai-slide-creator-v2.33.2-skill-runtime.zip -o dist/previous-runtime.zip
           python scripts/package-runtime.py --output-dir dist --previous-runtime dist/previous-runtime.zip --previous-sha256 bb8ee2fa8b21a9dc1a6bbed54c775b618d8ee9a2773c2e13b24d880a6f2ba23b
+          python -c 'import sys; from pathlib import Path; size = Path(sys.argv[1]).stat().st_size; assert size < 5_000_000, f"Lingee runtime ZIP must be below 5,000,000 bytes, got {size}"' "dist/kai-slide-creator-${TAG}-skill-runtime.zip"
           python check-doc-sync.py
           python -m zipfile -e "dist/kai-slide-creator-${TAG}-skill-runtime.zip" dist/installed
           for theme in shader-hero molten-flow stellar-vortex; do

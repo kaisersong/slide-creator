@@ -473,7 +473,7 @@ For PPTX/PNG export: `clawhub install kai-html-export` or `pip install playwrigh
 
 ## Runtime-only Skill ZIP
 
-Download [`kai-slide-creator-v2.34.5-skill-runtime.zip`](https://github.com/kaisersong/slide-creator/releases/download/v2.34.5/kai-slide-creator-v2.34.5-skill-runtime.zip) for a compact Skill installation bundle. Extract its top-level `kai-slide-creator/` folder into your agent's skills directory. The archive contains only `SKILL.md`, `main.py`, `scripts/`, `schemas/`, `references/`, and `themes/`; repository README files, demos, tests, eval fixtures, design documents, and Git metadata are excluded.
+Download [`kai-slide-creator-v2.34.5-skill-runtime.zip`](https://github.com/kaisersong/slide-creator/releases/download/v2.34.5/kai-slide-creator-v2.34.5-skill-runtime.zip) for a compact Skill installation bundle. Release ZIPs must be strictly below 5,000,000 bytes for Lingee installation; packaging removes only verified duplicate asset archives and retains the original animations. Extract its top-level `kai-slide-creator/` folder into your agent's skills directory. The archive contains only `SKILL.md`, `main.py`, `scripts/`, `schemas/`, `references/`, and `themes/`; repository README files, demos, tests, eval fixtures, design documents, and Git metadata are excluded.
 
 ---
 

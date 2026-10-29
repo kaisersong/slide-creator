@@ -472,7 +472,7 @@ python3 -m venv .venv
 
 ## 仅运行所需的 Skill ZIP
 
-下载 [`kai-slide-creator-v2.34.5-skill-runtime.zip`](https://github.com/kaisersong/slide-creator/releases/download/v2.34.5/kai-slide-creator-v2.34.5-skill-runtime.zip)，即可获得精简的 Skill 安装包。将压缩包顶层的 `kai-slide-creator/` 目录解压到代理的 skills 目录。压缩包只包含 `SKILL.md`、`main.py`、`scripts/`、`schemas/`、`references/` 和 `themes/`；不会包含仓库 README、Demo、测试、eval fixture、设计文档和 Git 元数据。
+下载 [`kai-slide-creator-v2.34.5-skill-runtime.zip`](https://github.com/kaisersong/slide-creator/releases/download/v2.34.5/kai-slide-creator-v2.34.5-skill-runtime.zip)，即可获得精简的 Skill 安装包。为支持灵基安装，发布 ZIP 必须严格小于 5,000,000 字节；打包仅移除已验证重复的素材压缩副本，保留原始动效。将压缩包顶层的 `kai-slide-creator/` 目录解压到代理的 skills 目录。压缩包只包含 `SKILL.md`、`main.py`、`scripts/`、`schemas/`、`references/` 和 `themes/`；不会包含仓库 README、Demo、测试、eval fixture、设计文档和 Git 元数据。
 
 ---
 
