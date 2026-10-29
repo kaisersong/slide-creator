@@ -8030,7 +8030,7 @@ def _render_blue_sky_slide(
     if layout_id == "chapter" and spec.get("supporting_facts") and role not in {"chapter", "section"}:
         # A content page must not become an empty chapter interstitial simply
         # because its semantic role (for example solution) maps to chapter.
-        layout_id = "comparison"
+        layout_id = "bento" if role == "discovery" else "comparison"
     title_text = str(spec["title"])
     key_point = _escape(spec.get("key_point", ""))
     speaker_note = _escape(spec.get("speaker_note", ""))
