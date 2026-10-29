@@ -196,7 +196,7 @@ body {
 /* Optional: summary paragraph (1-2 sentences) between title and cards */
 /* Row 2: three evidence cards (each may include metric + label + short description) */
 /* Row 3: recommendation box */
-/* NOTE: Do NOT use flex:1 on evidence-row — cards should take natural height, not stretch to fill the slide */
+/* The evidence row fills the remaining content height; distribute readable evidence within it. */
 ```
 
 ### 2. Framework Matrix (2×2 quadrant)
@@ -782,7 +782,7 @@ body {
 - 不使用渐变、阴影（最多 1px border）、圆角不超过 6px
 - 所有数字使用 `font-variant-numeric: tabular-nums`
 - Harvey ball 和交通灯是唯一装饰元素
-- 信息密度高 — 每页可承载更多文字（相比其他风格）
+- 信息密度高，但不能以缩小字体换取更多内容；超过 5 条证据或两行标题时拆页。
 - 数据来源必须标注在页面底部（`.sc-source`）
 - 内容节奏：避免仅有图表的空洞页面，图表页应搭配描述段落或摘要行
 
@@ -842,3 +842,238 @@ body {
 ## Best For
 
 战略咨询报告 · 尽职调查 · 管理层汇报 · 董事会材料 · 商业计划书 · 方案评估与推荐 · 任何需要"金字塔原理"结构化表达的场景
+
+
+## Canvas Sizing Contract
+
+The following CSS is the authoritative viewport and typography layer, applied after historical demo CSS and shared compatibility rules. The program synchronizes it into both language demos and packaged profile templates with `python3 scripts/build-profile-templates.py`. Keep the white / navy palette and canonical `.sc-*` components.
+
+- Size text against both width and height: at 1440 × 900, action titles are about 44px, body copy 30px, table text 27px, labels 22px. Presentation pins the same scale to its 1440 × 900 canvas.
+- Use the full content rectangle between the title and footer: evidence, tables, panels and conclusions stretch into remaining height. Avoid a centered miniature content block.
+- Use `.sc-heading` for title and optional explanation, then one flexible exhibit. Two/four facts use two columns; three use three; the fifth spans the last row. Never turn ordinal labels into oversized metrics.
+- Use `.sc-dense` only for four/five longer facts. If source copy still exceeds the canvas, split the page; preserve all conditions and numbers. Do not crop text or clamp lines.
+- The final typography layer must win over shared `audience-copy`, title-fit and short-window rules; unrelated presets keep their existing behavior.
+
+```css
+/* Strategy Consulting canvas contract */
+body[data-preset="Strategy Consulting"] {
+    --sc-unit: min(1vw, 1.6vh);
+    --sc-title-size: calc(var(--sc-unit) * 3.05);
+    --sc-body-size: calc(var(--sc-unit) * 2.05);
+    --sc-table-size: calc(var(--sc-unit) * 1.85);
+    --sc-label-size: calc(var(--sc-unit) * 1.5);
+    --sc-metric-size: calc(var(--sc-unit) * 4.2);
+    --sc-gap: calc(var(--sc-unit) * 1.6);
+    --sc-inset: calc(var(--sc-unit) * 4.2);
+    --sc-top: calc(var(--sc-unit) * 5.6);
+    --sc-bottom: calc(var(--sc-unit) * 4.2);
+    font-variant-numeric: tabular-nums;
+}
+/* Presentation uses a fixed 1440 x 900 design canvas, independent of the window. */
+body.presenting[data-preset="Strategy Consulting"] { --sc-unit: 14.4px; }
+body[data-preset="Strategy Consulting"] .slide {
+    padding: var(--sc-top) var(--sc-inset) var(--sc-bottom) !important;
+    background: var(--bg);
+}
+body[data-preset="Strategy Consulting"] .slide > .slide-content,
+body[data-preset="Strategy Consulting"] .slide > .profile-content {
+    display: flex !important;
+    flex-direction: column;
+    flex: 1;
+    width: 100%;
+    height: 100%;
+    min-height: 0;
+    max-width: none;
+    padding: 0 !important;
+    gap: var(--sc-gap) !important;
+    justify-content: flex-start;
+}
+body[data-preset="Strategy Consulting"] .strategy-consulting-block {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    min-height: 0;
+    width: 100%;
+    gap: var(--sc-gap);
+}
+body[data-preset="Strategy Consulting"] .sc-fact-panel { border-top-color: var(--accent); }
+body[data-preset="Strategy Consulting"] .sc-fact-panel .sc-panel-label { color: var(--accent); }
+body[data-preset="Strategy Consulting"] .sc-heading { display: grid; gap: var(--sc-gap); flex: none; }
+body[data-preset="Strategy Consulting"] .slide :is(h1, h2, .sc-action-title, .profile-fit-title) {
+    font-size: var(--sc-title-size) !important;
+    line-height: 1.3 !important;
+    font-weight: 700;
+    letter-spacing: -.025em;
+    color: var(--text);
+    max-width: 100% !important;
+    margin: 0;
+    padding-bottom: calc(var(--sc-unit) * 1.2);
+    border-bottom: 2px solid var(--accent);
+    flex: none;
+}
+body[data-preset="Strategy Consulting"] .slide .title-line {
+    display: inline !important;
+    white-space: normal !important;
+}
+body[data-preset="Strategy Consulting"] .slide .title-line + .title-line::before { content: ' '; }
+body[data-preset="Strategy Consulting"] .slide :is(p, li, .sc-body, .sc-metric-label, .sc-thing-body) {
+    font-size: var(--sc-body-size) !important;
+    line-height: 1.48 !important;
+    max-width: none !important;
+    overflow-wrap: break-word;
+    color: var(--text);
+}
+body[data-preset="Strategy Consulting"] .slide :is(.sc-section-header, .sc-panel-label, .sc-quote-attribution) {
+    font-size: var(--sc-label-size) !important;
+    letter-spacing: .04em;
+}
+body[data-preset="Strategy Consulting"] .sc-evidence-row {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    grid-auto-rows: 1fr;
+    flex: 1;
+    margin: 0 !important;
+    min-height: 0;
+    gap: var(--sc-gap);
+    align-items: stretch;
+}
+body[data-preset="Strategy Consulting"] .sc-evidence-row--2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+body[data-preset="Strategy Consulting"] .sc-evidence-row--1 { grid-template-columns: minmax(0, 1fr); }
+body[data-preset="Strategy Consulting"] .sc-evidence-row[data-fact-count="5"] > :last-child { grid-column: 1 / -1; }
+body[data-preset="Strategy Consulting"] :is(.sc-evidence-card, .sc-pillar, .sc-before-panel, .sc-after-panel, .sc-thing) {
+    min-width: 0;
+    padding: calc(var(--sc-unit) * 1.8);
+    border-radius: 0;
+}
+body[data-preset="Strategy Consulting"] .sc-evidence-card {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: calc(var(--sc-unit) * 1.2);
+    border-top: 3px solid var(--accent);
+}
+body[data-preset="Strategy Consulting"] .slide .sc-metric {
+    font-size: var(--sc-metric-size) !important;
+    line-height: 1.16;
+    margin: 0;
+    color: var(--accent);
+}
+/* Ordinal labels are wayfinding, not evidence metrics. */
+body[data-preset="Strategy Consulting"] .slide .sc-evidence-card--fact .sc-metric {
+    font-size: var(--sc-label-size) !important;
+}
+body[data-preset="Strategy Consulting"] .slide .sc-metric-label {
+    text-transform: none;
+    letter-spacing: normal;
+    margin: 0;
+}
+body[data-preset="Strategy Consulting"] .sc-evidence-card > p { margin: 0; }
+body[data-preset="Strategy Consulting"] .sc-reco-box {
+    flex: none;
+    font-size: var(--sc-table-size);
+    line-height: 1.45;
+    padding: calc(var(--sc-unit) * 1.25) calc(var(--sc-unit) * 1.6);
+    border-radius: 0;
+}
+body[data-preset="Strategy Consulting"] :is(.sc-before-after, .sc-three-things, .sc-quote-evidence) {
+    flex: 1;
+    min-height: 0;
+    align-items: stretch;
+    gap: var(--sc-gap);
+}
+body[data-preset="Strategy Consulting"] .sc-quote-evidence { grid-template-columns: minmax(0, .9fr) minmax(0, 1.1fr); }
+body[data-preset="Strategy Consulting"] :is(.sc-before-panel, .sc-after-panel) { gap: var(--sc-gap); }
+body[data-preset="Strategy Consulting"] .sc-panel-label { padding-bottom: var(--sc-gap); border-bottom: 1px solid var(--border); }
+body[data-preset="Strategy Consulting"] :is(.sc-before-panel, .sc-after-panel) ul {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-evenly;
+    gap: var(--sc-gap);
+    flex: 1;
+    margin: 0;
+    padding-left: 1.1em;
+}
+body[data-preset="Strategy Consulting"] .sc-quote-block {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    font-size: calc(var(--sc-unit) * 2.5);
+    line-height: 1.5;
+    padding: calc(var(--sc-unit) * 2);
+}
+body[data-preset="Strategy Consulting"] .sc-quote-text { font-size: inherit; font-style: normal; }
+body[data-preset="Strategy Consulting"] .sc-quote-evidence > ol {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-evenly;
+    padding-left: 1.4em;
+    gap: var(--sc-gap);
+}
+body[data-preset="Strategy Consulting"] .sc-thing { justify-content: center; gap: var(--sc-gap); }
+body[data-preset="Strategy Consulting"] .sc-thing-title { font-size: var(--sc-body-size); }
+body[data-preset="Strategy Consulting"] .sc-evidence-stack { justify-content: center; gap: var(--sc-gap); }
+body[data-preset="Strategy Consulting"] :is(.sc-table, .sc-fact-table) {
+    width: 100%;
+    flex: 1;
+    table-layout: fixed;
+    border-collapse: collapse;
+    font-size: var(--sc-table-size);
+}
+body[data-preset="Strategy Consulting"] .slide :is(.sc-table, .sc-fact-table) :is(td, th) {
+    font-size: var(--sc-table-size) !important;
+    line-height: 1.45 !important;
+    padding: calc(var(--sc-unit) * 1.1) calc(var(--sc-unit) * 1.3);
+    vertical-align: middle;
+    border-bottom: 1px solid var(--border);
+    overflow-wrap: break-word;
+}
+body[data-preset="Strategy Consulting"] .sc-fact-table td:first-child { width: 8%; color: var(--accent); }
+body[data-preset="Strategy Consulting"] .sc-rule-table td:first-child { width: 58%; }
+body[data-preset="Strategy Consulting"] .sc-fact-table th { background: var(--accent); color: var(--bg); text-align: left; }
+body[data-preset="Strategy Consulting"] .sc-fact-table tr:nth-child(even) td { background: var(--bg-card); }
+body[data-preset="Strategy Consulting"] .sc-close-facts {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-evenly;
+    flex: 1;
+    gap: var(--sc-gap);
+    padding-left: 1.2em;
+}
+body[data-preset="Strategy Consulting"] .slide .sc-source {
+    position: absolute;
+    bottom: calc(var(--sc-unit) * 1.3);
+    left: var(--sc-inset);
+    max-width: 78%;
+    font-size: calc(var(--sc-unit) * .95) !important;
+    line-height: 1.4 !important;
+}
+body[data-preset="Strategy Consulting"] .profile-eyebrow { display: none; }
+body[data-preset="Strategy Consulting"] #brand-mark { left: var(--sc-inset); top: calc(var(--sc-unit) * 1.8); }
+body[data-preset="Strategy Consulting"] #slide-counter { right: var(--sc-inset); top: calc(var(--sc-unit) * 1.8); }
+body[data-preset="Strategy Consulting"] .slide-num-label { right: var(--sc-inset); bottom: calc(var(--sc-unit) * 1.3); }
+/* Dense exhibits use the table scale; do not reduce unrelated presets' body type. */
+body[data-preset="Strategy Consulting"] .slide .sc-dense :is(p, li, .sc-metric-label) { font-size: var(--sc-table-size) !important; }
+@media (max-width: 600px) {
+    body:not(.presenting)[data-preset="Strategy Consulting"] {
+        --sc-unit: 6px;
+        --sc-title-size: 26px;
+        --sc-body-size: 18px;
+        --sc-table-size: 17px;
+        --sc-label-size: 14px;
+        --sc-gap: 14px;
+        --sc-inset: 20px;
+        --sc-top: 48px;
+        --sc-bottom: 36px;
+    }
+    body:not(.presenting)[data-preset="Strategy Consulting"] .slide .sc-evidence-row {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+    body:not(.presenting)[data-preset="Strategy Consulting"] .slide .sc-evidence-row > :last-child:nth-child(odd) { grid-column: 1 / -1; }
+    body:not(.presenting)[data-preset="Strategy Consulting"] .slide :is(.sc-before-after, .sc-quote-evidence) { grid-template-columns: 1fr; }
+    body:not(.presenting)[data-preset="Strategy Consulting"] .slide .sc-quote-block { font-size: 20px; }
+    body:not(.presenting)[data-preset="Strategy Consulting"] .slide :is(.sc-fact-table, .sc-fact-table tbody) { display: block; }
+    body:not(.presenting)[data-preset="Strategy Consulting"] .slide .sc-fact-table tr { display: grid; grid-template-columns: 1fr; }
+    body:not(.presenting)[data-preset="Strategy Consulting"] .slide .sc-fact-table td { display: block; width: 100%; padding: 7px 10px; }
+    body:not(.presenting)[data-preset="Strategy Consulting"] .slide .sc-fact-table:not(.sc-rule-table) td:first-child { display: none; }
+}
+```

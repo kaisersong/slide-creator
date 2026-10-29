@@ -8027,6 +8027,10 @@ def _render_blue_sky_slide(
     role = str(spec["role"])
     role_attr = _escape(role)
     layout_id = str(spec.get("layout_id") or "bento")
+    if layout_id == "chapter" and spec.get("supporting_facts") and role not in {"chapter", "section"}:
+        # A content page must not become an empty chapter interstitial simply
+        # because its semantic role (for example solution) maps to chapter.
+        layout_id = "comparison"
     title_text = str(spec["title"])
     key_point = _escape(spec.get("key_point", ""))
     speaker_note = _escape(spec.get("speaker_note", ""))
@@ -8142,7 +8146,7 @@ def _render_blue_sky_slide(
         return f"""
     <!-- slide {slide_number}: {role} -->
     <section class="slide" id="slide-{slide_number}" data-notes="{speaker_note}" aria-label="{role_attr}" data-export-role="{role_attr}">
-      <div style="text-align:center;max-width:900px;width:100%;">
+      <div class="blue-content">
         <span class="pill" style="margin-bottom:14px;display:inline-block;">Start</span>
         {section_title}
         <p style="font-size:1rem;color:var(--text-secondary);margin:14px auto 22px;max-width:620px;">{key_point}</p>
@@ -8180,7 +8184,7 @@ def _render_blue_sky_slide(
         return f"""
     <!-- slide {slide_number}: {role} -->
     <section class="slide" id="slide-{slide_number}" data-notes="{speaker_note}" aria-label="{role_attr}" data-export-role="{role_attr}">
-      <div style="max-width:860px;width:100%;">
+      <div class="blue-content">
         <span class="pill" style="margin-bottom:14px;display:inline-block;">Chapter {role_index:02d}</span>
         {section_title}
         <div class="divider"></div>
@@ -8203,11 +8207,11 @@ def _render_blue_sky_slide(
         return f"""
     <!-- slide {slide_number}: {role} -->
     <section class="slide" id="slide-{slide_number}" data-notes="{speaker_note}" aria-label="{role_attr}" data-export-role="{role_attr}">
-      <div style="max-width:820px;width:100%;">
+      <div class="blue-content">
         <span class="pill" style="margin-bottom:14px;display:inline-block;">Chapter {role_index:02d}</span>
         {section_title}
         <div class="divider"></div>
-        <div style="display:flex;flex-direction:column;gap:11px;">{steps_html}
+        <div class="blue-workflow">{steps_html}
         </div>
         <p style="margin-top:14px;color:var(--text-secondary);font-size:0.9rem;">{key_point}</p>
       </div>
@@ -8223,11 +8227,12 @@ def _render_blue_sky_slide(
             body_html = _render_blue_sky_preset_body(all_items)
         else:
             cards_html = _render_blue_sky_bento_cards(spec, all_items)
-            body_html = f'<div class="bento" style="grid-auto-rows:132px;">{cards_html}</div>'
+            rows_class = " blue-bento--three-rows" if len(all_items[:6]) >= 5 else ""
+            body_html = f'<div class="bento{rows_class}">{cards_html}</div>'
         return f"""
     <!-- slide {slide_number}: {role} -->
     <section class="slide" id="slide-{slide_number}" data-notes="{speaker_note}" aria-label="{role_attr}" data-export-role="{role_attr}">
-      <div style="max-width:940px;width:100%;">
+      <div class="blue-content">
         <span class="pill" style="margin-bottom:14px;display:inline-block;">Chapter {role_index:02d}</span>
         {section_title}
         <div class="divider"></div>
@@ -8246,11 +8251,11 @@ def _render_blue_sky_slide(
         return f"""
     <!-- slide {slide_number}: {role} -->
     <section class="slide" id="slide-{slide_number}" data-notes="{speaker_note}" aria-label="{role_attr}" data-export-role="{role_attr}">
-      <div style="max-width:860px;width:100%;">
+      <div class="blue-content">
         <span class="pill" style="margin-bottom:14px;display:inline-block;">Chapter {role_index:02d}</span>
         {section_title}
         <div class="divider"></div>
-        <div class="g" style="padding:0;overflow:hidden;"><table class="ctable"><thead><tr><th>#</th><th>证据</th></tr></thead><tbody>{table_rows}</tbody></table></div>
+        <div class="g blue-table-panel" style="padding:0;overflow:hidden;"><table class="ctable"><thead><tr><th>#</th><th>证据</th></tr></thead><tbody>{table_rows}</tbody></table></div>
         <p style="margin-top:14px;color:var(--text-secondary);font-size:0.9rem;">{key_point}</p>
       </div>
     </section>""".strip()
@@ -8259,7 +8264,7 @@ def _render_blue_sky_slide(
     return f"""
     <!-- slide {slide_number}: {role} -->
     <section class="slide" id="slide-{slide_number}" data-notes="{speaker_note}" aria-label="{role_attr}" data-export-role="{role_attr}">
-      <div style="max-width:860px;width:100%;">
+      <div class="blue-content">
         <span class="pill" style="margin-bottom:14px;display:inline-block;">Chapter {role_index:02d}</span>
         {section_title}
         <div class="divider"></div>
@@ -8664,7 +8669,7 @@ def _render_iridescence_theme_slide(spec: dict[str, Any], total: int, *, role_in
         return (
             f'<svg class="iri-edge-overlay {class_name}" role="img" aria-label="Directed relationships" preserveAspectRatio="none">'
             f'<defs><marker id="{_escape(marker_id)}" viewBox="0 0 8 8" refX="7" refY="4" '
-            'markerWidth="5" markerHeight="5" orient="auto-start-reverse">'
+            'markerUnits="userSpaceOnUse" markerWidth="6" markerHeight="6" orient="auto-start-reverse">'
             '<path d="M 0 0 L 8 4 L 0 8 z"></path></marker></defs>'
             f'{paths}</svg>'
         )
@@ -8732,11 +8737,13 @@ def _render_iridescence_theme_slide(spec: dict[str, Any], total: int, *, role_in
 
     def title_markup(title_override: str | None = None) -> str:
         title = str(spec["title"]) if title_override is None else title_override
+        if scene not in {"hero", "closing"}:
+            # Content titles use the full responsive measure; fixed display
+            # line breaks create orphan lines when the content canvas expands.
+            return _escape(title)
         lines = _iridescence_title_lines(title)
         phrase = str(spec.get("title_emphasis") or "").strip()
-        if scene not in {"hero", "closing"}:
-            phrase = ""
-        elif not phrase or phrase not in title:
+        if not phrase or phrase not in title:
             phrase = _iridescence_fallback_title_emphasis(title, lines)
         return "".join(f'<span class="iri-title-line title-line">{emphasized_line(line, phrase)}</span>' for line in lines)
 
@@ -8794,11 +8801,11 @@ def _render_iridescence_theme_slide(spec: dict[str, Any], total: int, *, role_in
         )
     elif scene == "convergence":
         body = (
+            '<span class="iri-convergence-word iri-accent-primary" aria-hidden="true">LAST MILE</span>'
             '<div class="iri-convergence-core">'
             f'<span class="iri-label">{slide_number:02d} / {total:02d} · LAST MILE</span>'
             f'<h2 class="iri-headline kd-reveal">{title_markup()}</h2>'
-            '<span class="iri-convergence-word iri-accent-primary" aria-hidden="true">LAST MILE</span>'
-            f'<div class="iri-convergence-lines">{facts(items[:3])}</div>'
+            f'<div class="iri-convergence-lines" data-fact-count="{min(5, len(items))}">{facts(items[:5])}</div>'
             '</div>'
         )
     elif scene == "brief":
@@ -9854,6 +9861,8 @@ def render_from_brief(brief: dict[str, Any]) -> tuple[str, dict[str, Any], dict[
         )
     html_text = _annotate_preset_content_scope(html_text, preset)
     html_text = apply_audience_readability(_annotate_page_buckets(html_text))
+    from diagram_arrows import refine_diagram_arrows
+    html_text = refine_diagram_arrows(html_text, preset)
     return html_text, packet, style_contract
 
 

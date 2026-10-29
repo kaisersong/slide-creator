@@ -421,6 +421,101 @@ body.presenting #notes-panel { display: none !important; }
 }
 #notes-textarea::placeholder { color: rgba(255,255,255,0.18); }
 
+/* Content canvas: proportional typography and full-height exhibits.
+   At 1440 x 900: headings 44px, body 27px, dense cards/tables 22px.
+   Use .blue-content for content pages and flexible exhibits. Do not reinstate
+   narrow pixel caps or fixed bento row heights. Cover/chapter retain their rhythm. */
+body[data-preset="Blue Sky"] {
+  --blue-unit: min(1vw, 1.6vh);
+  --blue-title: calc(var(--blue-unit) * 3.05);
+  --blue-body: calc(var(--blue-unit) * 1.85);
+  --blue-detail: calc(var(--blue-unit) * 1.55);
+  --blue-gap: calc(var(--blue-unit) * 1.35);
+}
+body.presenting[data-preset="Blue Sky"] { --blue-unit: 14.4px; }
+body[data-preset="Blue Sky"] .slide:not(.cover):not(.chapter) {
+  padding: calc(var(--blue-unit) * 4.8) calc(var(--blue-unit) * 4.4) calc(var(--blue-unit) * 4.2);
+  align-items: stretch;
+  justify-content: flex-start;
+}
+body[data-preset="Blue Sky"] .cover h1 { font-size: calc(var(--blue-unit) * 4.8) !important; max-width: 100%; line-height: 1.15; }
+body[data-preset="Blue Sky"] .cover .title-line { white-space: normal !important; }
+body[data-preset="Blue Sky"] .blue-content {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+  width: 100%;
+  max-width: none !important;
+  gap: var(--blue-gap);
+}
+body[data-preset="Blue Sky"] .blue-content > .pill { align-self: flex-start; margin: 0 !important; }
+body[data-preset="Blue Sky"] .blue-content > h2 {
+  font-size: var(--blue-title) !important;
+  line-height: 1.25;
+  margin: 0;
+  flex: none;
+  text-wrap: balance;
+}
+body[data-preset="Blue Sky"] .blue-content .title-line { display: inline; white-space: normal; }
+body[data-preset="Blue Sky"] .blue-content .title-line + .title-line::before { content: ' '; }
+body[data-preset="Blue Sky"] .blue-content .divider { margin: 0; flex: none; }
+body[data-preset="Blue Sky"] .blue-content :is(p, li, h4, .audience-copy) {
+  font-size: var(--blue-body) !important;
+  line-height: 1.45 !important;
+  max-width: none !important;
+}
+body[data-preset="Blue Sky"] .blue-content > p { margin: 0 !important; flex: none; }
+body[data-preset="Blue Sky"] .blue-content > :is(.cols2, .cols3, .cols4, .bento, .bl, .blue-workflow, .g) {
+  flex: 1;
+  min-height: 0;
+}
+body[data-preset="Blue Sky"] .blue-content :is(.cols2, .cols3, .cols4, .bento) { gap: var(--blue-gap); align-items: stretch; }
+body[data-preset="Blue Sky"] .blue-content :is(.g, .layer) { padding: calc(var(--blue-unit) * 1.4) !important; min-width: 0; }
+body[data-preset="Blue Sky"] .blue-content .g { display: flex; flex-direction: column; justify-content: center; gap: calc(var(--blue-gap) * .7); }
+body[data-preset="Blue Sky"] .blue-content .bento {
+  grid-auto-rows: minmax(0, 1fr) !important;
+  grid-template-rows: repeat(2, minmax(0, 1fr));
+}
+body[data-preset="Blue Sky"] .blue-content .blue-bento--three-rows { grid-template-rows: repeat(3, minmax(0, 1fr)); }
+body[data-preset="Blue Sky"] .blue-content .bento :is(p, h4, .audience-copy) { font-size: var(--blue-detail) !important; }
+body[data-preset="Blue Sky"] .blue-content .bento h4 { font-weight: 700; }
+body[data-preset="Blue Sky"] .blue-content .stat { font-size: calc(var(--blue-unit) * 3.5) !important; }
+body[data-preset="Blue Sky"] .blue-content .bl { justify-content: space-evenly; gap: var(--blue-gap); }
+body[data-preset="Blue Sky"] .blue-workflow { display: flex; flex-direction: column; gap: var(--blue-gap); }
+body[data-preset="Blue Sky"] .blue-workflow > .layer { flex: 1; align-items: center; }
+body[data-preset="Blue Sky"] .blue-content .ctable { height: 100%; table-layout: fixed; }
+body[data-preset="Blue Sky"] .blue-content .ctable :is(td, th) {
+  font-size: var(--blue-detail) !important;
+  line-height: 1.45 !important;
+  padding: calc(var(--blue-unit) * 1) calc(var(--blue-unit) * 1.3);
+  vertical-align: middle;
+  overflow-wrap: break-word;
+}
+body[data-preset="Blue Sky"] .blue-content .ctable :is(td, th):first-child { width: 7%; }
+body[data-preset="Blue Sky"] .blue-content > .blue-table-panel { padding: 0 !important; }
+@media (max-width: 720px) {
+  body:not(.presenting)[data-preset="Blue Sky"] { --blue-unit: 6px; --blue-title: 27px; --blue-body: 18px; --blue-detail: 16px; --blue-gap: 12px; }
+  body:not(.presenting)[data-preset="Blue Sky"] .slide:not(.cover):not(.chapter) { padding: 48px 20px 42px; }
+  body:not(.presenting)[data-preset="Blue Sky"] .blue-content .bento { grid-template-columns: repeat(2, minmax(0, 1fr)); grid-template-rows: none; grid-auto-rows: minmax(0, 1fr) !important; }
+  body:not(.presenting)[data-preset="Blue Sky"] .blue-content .bento > .g { grid-column: auto !important; grid-row: auto !important; }
+  body:not(.presenting)[data-preset="Blue Sky"] .blue-content .bento > .g:last-child:nth-child(odd) { grid-column: 1 / -1 !important; }
+}
+
+
+/* Diagram arrows: small heads and hairline connectors, independent of body type. */
+body[data-preset="Blue Sky"] .slide :is(.diagram-arrow, .flow-arrow, .connector-arrow, .diagram-connector-arrow) {
+  font-size: 12px !important;
+  font-weight: 400 !important;
+  line-height: 1 !important;
+}
+body[data-preset="Blue Sky"] .slide svg :is([marker-end], [marker-start], [marker-mid]) {
+  stroke-width: 1.25px !important;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  vector-effect: non-scaling-stroke;
+}
+
 </style>
 </head>
 <body>

@@ -153,13 +153,6 @@ body[data-preset="Data Story"] .ds-stage-grid--evidence { display:flex; flex-dir
 body[data-preset="Data Story"] .ds-stage-grid--evidence .ds-stage-card { display:grid; grid-template-columns:100px minmax(0,1fr); border:0; border-bottom:1px solid var(--axis-line,#c8d1dc); background:transparent; padding:14px 0; }
 body[data-preset="Data Story"] .ds-stage-grid--evidence .ds-stage-copy { grid-column:2; }
 body[data-preset="Data Story"] .ds-stage-card.ds-insight { border-left:3px solid var(--chart-primary,#3b82f6) !important; background:rgba(59,130,246,0.08) !important; }
-body[data-preset="Strategy Consulting"] .sc-fact-table { border-collapse:collapse; width:100%; }
-body[data-preset="Strategy Consulting"] .sc-fact-table td { border-bottom:1px solid var(--border,#c8d1dc); padding:16px; vertical-align:top; }
-body[data-preset="Strategy Consulting"] .sc-fact-table td:first-child { width:55px; color:#1b3a6b; }
-body[data-preset="Strategy Consulting"] .sc-rule-table { table-layout:fixed; }
-body[data-preset="Strategy Consulting"] .sc-rule-table td:first-child { width:58%; }
-body[data-preset="Strategy Consulting"] .sc-rule-table th { text-align:left; padding:12px 16px; color:#1b3a6b; }
-body[data-preset="Strategy Consulting"] .sc-quote-block { font-size:28px; line-height:1.5; }
-body[data-preset="Strategy Consulting"] .sc-evidence-card .sc-metric { font-size:20px; margin-bottom:12px; }
+/* Strategy Consulting typography and exhibits are owned by its canvas contract. */
 """
     return html.replace("</head>", '<style id="audience-readability">' + css + "</style></head>", 1)

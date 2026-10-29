@@ -79,6 +79,18 @@ def test_consulting_explicit_facts_clear_demo_copy_and_preserve_four_steps():
         assert "PowerPoint" not in text and "60秒" not in text and "2.24.3" not in text
 
 
+def test_blue_solution_with_local_facts_does_not_become_a_title_only_chapter():
+    from low_context import _render_blue_sky_slide
+    facts = ["Use the business owner's identity.", "Keep approval state after interruption.",
+             "Retain inventory reservations.", "Record the authoritative receipt."]
+    value = spec(facts)
+    value.update(slide_number=3, role="solution", layout_id="chapter")
+    soup = BeautifulSoup(_render_blue_sky_slide(value, 5, language="en", role_index=2), "html.parser")
+    assert soup.select_one(".blue-content")
+    assert not soup.select_one(".slide.chapter")
+    assert all(fact in soup.get_text(" ", strip=True) for fact in facts)
+
+
 def test_enterprise_split_keeps_expiry_explanation_and_fourth_risk():
     facts = ["Condition: a token leaks.", "Action: revoke it before replacement.",
              "Operators must revoke the old token.", "Remaining risk: the leaked token is still valid."]

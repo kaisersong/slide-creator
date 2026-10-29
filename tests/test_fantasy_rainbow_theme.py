@@ -1561,6 +1561,10 @@ def test_iridescence_renderer_emits_restrained_accent_semantics():
         "html.parser",
     )
     assert convergence.select_one(".iri-convergence-word.iri-accent-primary")
+    ghost = convergence.select_one(".iri-convergence-word")
+    assert ghost.get("aria-hidden") == "true"
+    assert "slide" in ghost.parent.get("class", [])
+    assert not convergence.select_one(".iri-convergence-core .iri-convergence-word")
     assert [accents(node) for node in convergence.select(".iri-fact-index")] == [
         {"iri-accent-text-primary"},
         {"iri-accent-text-secondary"},
@@ -1784,7 +1788,11 @@ def test_reviewed_titles_use_semantic_line_breaks_and_cover_only_runtime():
             ),
             "html.parser",
         )
-        assert len(soup.select(".iri-title-line")) >= 2
+        if soup.select_one(".iri-scene--closing"):
+            assert len(soup.select(".iri-title-line")) >= 2
+        else:
+            assert soup.select_one(".iri-headline").get_text() == title
+            assert not soup.select(".iri-title-line")
 
     closing = BeautifulSoup(
         _render_iridescence_theme_slide(

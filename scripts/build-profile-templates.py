@@ -5,6 +5,7 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
+import re
 from pathlib import Path
 
 from bs4 import BeautifulSoup
@@ -42,6 +43,20 @@ def main() -> int:
         manifest["presets"][preset] = {}
         for language in ("en", "zh"):
             name = f"{slug}-{language}.html"
+            if preset == "Strategy Consulting":
+                reference = (ROOT / "references/strategy-consulting.md").read_text(encoding="utf-8")
+                canvas_css = re.search(r"```css\n(/\* Strategy Consulting canvas contract \*/.*?)```", reference, re.S).group(1)
+                demo = ROOT / "demos" / name
+                original = demo.read_text(encoding="utf-8")
+                updated = re.sub(r'\n<style id="consulting-canvas">.*?</style>\n', '\n', original, flags=re.S)
+                updated = re.sub(r'<div class="reveal" style="display:grid;grid-template-columns:repeat\(3,1fr\);[^"]*">',
+                                 '<div class="reveal sc-evidence-row">', updated)
+                updated = updated.replace("</head>", '<style id="consulting-canvas">\n' + canvas_css + '</style>\n</head>', 1)
+                if args.check:
+                    if original != updated:
+                        failures.append("demos/" + name)
+                else:
+                    demo.write_text(updated, encoding="utf-8")
             rendered = extract(ROOT / "demos" / name)
             target = target_dir / name
             manifest["presets"][preset][language] = {

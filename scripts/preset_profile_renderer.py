@@ -636,7 +636,8 @@ def _demo_font_imports(soup: BeautifulSoup) -> str:
 def _extract_demo_css(demo_path: Path, profile_spec: PresetProfileSpec) -> str:
     soup = _demo_soup(str(demo_path))
     imports = _demo_font_imports(soup)
-    css_blocks = [style.get_text("\n") for style in soup.find_all("style")]
+    css_blocks = [style.get_text("\n") for style in soup.find_all("style")
+                  if style.get("id") != "consulting-canvas"]
     profile_ink = READABLE_PROFILE_INK.get(profile_spec.preset, "var(--text-primary, var(--text, #111111))")
     compatibility = f"""
 body[data-renderer-strategy="unified_profile"][data-profile-spec="{_slugify(profile_spec.preset)}"] {{
@@ -1855,6 +1856,18 @@ def _hydrate_demo_section(
     content_scope = _ensure_profile_content_scope(soup, section)
     if content_scope is not None:
         _append_class(content_scope, f"preset-{slug}-content")
+    if canonical_preset == "Strategy Consulting":
+        # Historical summary templates used an anonymous inline grid. Give it
+        # the same flexible exhibit contract as newly rendered local facts.
+        for card in section.select(".sc-evidence-card"):
+            parent = card.parent
+            if len(parent.select(":scope > .sc-evidence-card")) > 1:
+                _append_class(parent, "sc-evidence-row")
+        for heading in section.select("h1, h2"):
+            # The canvas owns the available title measure. Let the browser
+            # balance full source text instead of retaining demo line breaks.
+            if heading.select(".title-line"):
+                heading.string = heading.get_text(" ", strip=True)
     _ensure_component_richness(section)
     _ensure_glass_orbs(soup, section, profile_spec)
     _mark_presentational_empty_decor(section)
@@ -2360,20 +2373,22 @@ def _render_strategy_consulting_body(spec: dict[str, Any], *, layout: str, canon
     if local:
         title = str(spec.get("title", ""))
         key_point = str(spec.get("key_point", ""))
-        header = (_title_markup("h2", "sc-action-title reveal", title)
-                  + f'<p class="sc-body reveal">{_escape(key_point)}</p>')
-        columns = 2 if len(local) in (2, 4) else min(3, len(local))
+        header = ('<header class="sc-heading">'
+                  + f'<h2 class="sc-action-title profile-fit-title reveal">{_escape(title)}</h2>'
+                  + f'<p class="sc-body reveal">{_escape(key_point)}</p></header>')
+        fact_count = min(5, len(local))
+        columns = 2 if fact_count in (2, 4, 5) else min(3, fact_count)
         cards = ''.join(
-            '<article class="sc-evidence-card reveal">'
+            '<article class="sc-evidence-card sc-evidence-card--fact reveal">'
             f'<div class="sc-metric">{index:02d}</div>'
-            f'<div class="sc-metric-label" style="text-transform:none;letter-spacing:0;font-size:clamp(1rem,1.8vw,1.35rem);line-height:1.5">{_escape(fact)}</div>'
-            '<p></p></article>' for index, fact in enumerate(local[:5], 1))
-        grid = f'<div class="sc-evidence-row" style="display:grid;grid-template-columns:repeat({columns},minmax(0,1fr));gap:24px">{cards}</div>'
+            f'<div class="sc-metric-label">{_escape(fact)}</div>'
+            '</article>' for index, fact in enumerate(local[:5], 1))
+        grid = f'<div class="sc-evidence-row sc-evidence-row--{columns}" data-fact-count="{len(local[:5])}">{cards}</div>'
         if layout == "consulting_split":
             split = max(1, (len(local) + 1) // 2)
             panels = ''.join(
-                '<div class="sc-before-panel" style="border-top-color:var(--accent)">'
-                f'<div class="sc-panel-label" style="color:var(--accent)">{index:02d}</div>'
+                '<div class="sc-before-panel sc-fact-panel">'
+                f'<div class="sc-panel-label">{index:02d}</div>'
                 '<ul>' + ''.join('<li>' + _escape(fact) + '</li>' for fact in group) + '</ul></div>'
                 for index, group in enumerate((local[:split], local[split:]), 1) if group)
             grid = '<div class="sc-before-after reveal">' + panels + '</div>'
@@ -2396,7 +2411,8 @@ def _render_strategy_consulting_body(spec: dict[str, Any], *, layout: str, canon
                 grid = '<table class="sc-fact-table sc-rule-table reveal"><thead><tr><th>' + ('条件' if zh else 'Condition') + '</th><th>' + ('行动' if zh else 'Action') + '</th></tr></thead><tbody>' + ''.join(rule_rows) + '</tbody></table>'
             if plain_rows:
                 grid += '<ul class="sc-close-facts reveal">' + ''.join(plain_rows) + '</ul>'
-        return '<div class="strategy-consulting-block">' + header + grid + '</div>'
+        dense = ' sc-dense' if len(local) >= 4 else ''
+        return f'<div class="strategy-consulting-block{dense}">' + header + grid + '</div>'
     title = str(spec.get("title", ""))
     key_point = _compact(str(spec.get("key_point", "")), limit=160)
     items = _items_for_spec(spec, minimum=4)
@@ -2422,9 +2438,11 @@ def _render_strategy_consulting_body(spec: dict[str, Any], *, layout: str, canon
         )
     source = '<div class="sc-source">Source: BRIEF.json</div>'
     header = (
+        '<header class="sc-heading">'
         '<div class="sc-section-header reveal">Analysis</div>'
         f'<h2 class="sc-action-title reveal">{_escape(title)}</h2>'
         f'<p class="sc-body reveal">{_escape(key_point)}</p>'
+        '</header>'
     )
 
     if layout == "consulting_exec" or spec.get("role") == "cover":
@@ -3300,6 +3318,12 @@ def build_preset_profile_payload(
         css = _profile_css(canonical_preset, family, slug, profile_spec)
         sections_html = "\n\n".join(sections)
         renderer_source = "generic-profile"
+    if canonical_preset == "Strategy Consulting":
+        # The reference owns canvas sizing. Apply it after historical demo and
+        # generic profile compatibility CSS, for installed and source runtimes.
+        canvas_css = next(block for block in style_contract["css_blocks"]
+                          if "/* Strategy Consulting canvas contract */" in block)
+        css += "\n\n" + canvas_css
     signature_hash = _style_signature_hash(canonical_preset, family, markers)
     return PresetProfilePayload(
         canonical_preset=canonical_preset,

@@ -2500,7 +2500,8 @@ def test_blue_sky_slide_creator_intro_uses_demo_level_component_rhythm():
     assert all("grid-column" in card.get("style", "") for card in feature_cards[:6])
     assert all("grid-row" in card.get("style", "") for card in feature_cards[:6])
     feature_grid_style = features_slide.select_one(".bento").get("style", "")
-    assert "grid-auto-rows:132px" in feature_grid_style
+    assert "grid-auto-rows" not in feature_grid_style
+    assert features_slide.select_one(".blue-content > .bento") is not None
     assert features_slide.select_one(".bento + p") is None
     assert "Content-type Routing" in features_slide.get_text(" ", strip=True)
     assert "22 22 Design Presets" not in features_slide.get_text(" ", strip=True)

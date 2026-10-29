@@ -144,11 +144,11 @@
     "Strategy Consulting": {
       "en": {
         "path": "references/profile-templates/strategy-consulting-en.html",
-        "sha256": "efee4c8085b3cc03aa66173d54d92def669dd4fb11fd2570e1369ecb818387de"
+        "sha256": "3dccd0c6d8bf524cd4eeaa3df450da0fb041de071604dcf4db8f9fcc2deb527b"
       },
       "zh": {
         "path": "references/profile-templates/strategy-consulting-zh.html",
-        "sha256": "a94818b3eb9ff9d5d4201ee2be28c8b24aadce77f30bba5be649fb01b63e67df"
+        "sha256": "3049e0d2985704d87514fc4b627e641edd7f6902d0e34f8cf7a36e0a28c298b3"
       }
     },
     "Terminal Green": {

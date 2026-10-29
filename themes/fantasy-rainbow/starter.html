@@ -983,6 +983,106 @@ body.presenting.presenting-black::after {
   #iridescence-canvas, #brand-mark, .nav-dots, .progress-bar, #present-btn, #present-counter, .edit-hotzone, .edit-toggle, #notes-panel { display: none !important; }
   .slide { width: 16in !important; height: 9in !important; min-height: 9in !important; break-after: page; page-break-after: always; }
 }
+/* Editorial content canvas; cover and dark closing keep their own display scale. */
+body[data-preset="Fantasy Rainbow"] {
+  --iri-unit: min(1vw, 1.6vh);
+  --iri-content-title: calc(var(--iri-unit) * 3.4);
+  --iri-body-size: calc(var(--iri-unit) * 1.85);
+  --iri-detail-size: calc(var(--iri-unit) * 1.5);
+  --iri-content-gap: calc(var(--iri-unit) * 1.7);
+}
+body.presenting[data-preset="Fantasy Rainbow"] { --iri-unit: 14.4px; }
+body[data-preset="Fantasy Rainbow"] .iri-scene:not(.iri-scene--hero):not(.iri-scene--closing) {
+  padding: calc(var(--iri-unit) * 4.8) calc(var(--iri-unit) * 4.4) calc(var(--iri-unit) * 4.2);
+  justify-content: flex-start;
+  gap: var(--iri-content-gap);
+}
+body[data-preset="Fantasy Rainbow"] .iri-scene:not(.iri-scene--hero):not(.iri-scene--closing) > .iri-copy { width: 100%; max-width: none; margin: 0; }
+body[data-preset="Fantasy Rainbow"] .iri-scene:not(.iri-scene--hero):not(.iri-scene--closing) .iri-headline {
+  max-width: none;
+  font-size: var(--iri-content-title);
+  line-height: 1.18;
+  letter-spacing: -.03em;
+}
+body[data-preset="Fantasy Rainbow"] .iri-scene:not(.iri-scene--hero):not(.iri-scene--closing) .iri-title-line { display: inline; }
+body[data-preset="Fantasy Rainbow"] .iri-scene:not(.iri-scene--hero):not(.iri-scene--closing) .iri-title-line + .iri-title-line::before { content: ' '; }
+body[data-preset="Fantasy Rainbow"] .iri-scene:not(.iri-scene--hero):not(.iri-scene--closing) .iri-lead {
+  max-width: none;
+  font-size: var(--iri-body-size) !important;
+  line-height: 1.45 !important;
+  margin-top: var(--iri-content-gap);
+}
+body[data-preset="Fantasy Rainbow"] .iri-scene > :is(.iri-fracture-grid, .iri-convergence-core, .iri-brief-layout, .iri-pipeline, .iri-field-list, .iri-contract, .iri-gates, .iri-bento, .iri-use-cases) {
+  width: 100%; max-width: none; flex: 1; min-height: 0;
+}
+body[data-preset="Fantasy Rainbow"] .iri-scene :is(.iri-fracture-item, .iri-field > span:last-child, .iri-fact strong, .iri-contract-layer p, .iri-gate small) {
+  font-size: var(--iri-body-size) !important;
+  line-height: 1.45 !important;
+}
+body[data-preset="Fantasy Rainbow"] .iri-scene :is(.iri-bento-card p, .iri-bento-card h3, .iri-pipeline-step p, .iri-use-case p) {
+  font-size: var(--iri-detail-size) !important;
+  line-height: 1.45 !important;
+}
+body[data-preset="Fantasy Rainbow"] .iri-scene .iri-bento { align-content: stretch; grid-auto-rows: minmax(0, 1fr); }
+body[data-preset="Fantasy Rainbow"] .iri-scene .iri-bento-card { display: flex; flex-direction: column; justify-content: center; }
+body[data-preset="Fantasy Rainbow"] .iri-fracture-side { align-content: stretch; }
+body[data-preset="Fantasy Rainbow"] .iri-fracture-item { display: flex; align-items: center; }
+body[data-preset="Fantasy Rainbow"] .iri-scene--convergence { text-align: left; align-items: stretch; }
+body[data-preset="Fantasy Rainbow"] .iri-convergence-core { z-index: 1; display: flex; flex-direction: column; gap: var(--iri-content-gap); }
+body[data-preset="Fantasy Rainbow"] .iri-convergence-core .iri-headline { margin: 0; }
+body[data-preset="Fantasy Rainbow"] .iri-convergence-lines { flex: 1; align-items: stretch; gap: var(--iri-content-gap); margin: 0; }
+body[data-preset="Fantasy Rainbow"] .iri-convergence-lines:is([data-fact-count="4"], [data-fact-count="5"]) { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+body[data-preset="Fantasy Rainbow"] .iri-convergence-lines[data-fact-count="5"] > :last-child { grid-column: 1 / -1; }
+body[data-preset="Fantasy Rainbow"] .iri-convergence-lines .iri-fact { display: flex; flex-direction: column; justify-content: center; gap: var(--iri-content-gap); }
+/* Ghost is a slide-level ornament, outside the reading order and layout flow. */
+body[data-preset="Fantasy Rainbow"] .iri-convergence-word {
+  position: absolute;
+  right: calc(var(--iri-unit) * 3.2);
+  bottom: calc(var(--iri-unit) * 2.8);
+  margin: 0;
+  font-size: calc(var(--iri-unit) * 7);
+  line-height: 1.1;
+  letter-spacing: -.05em;
+  opacity: .12;
+  z-index: 0;
+  pointer-events: none;
+  user-select: none;
+}
+@media (max-width: 720px) {
+  body:not(.presenting)[data-preset="Fantasy Rainbow"] { --iri-unit: 6px; --iri-content-title: 28px; --iri-body-size: 18px; --iri-detail-size: 16px; --iri-content-gap: 14px; }
+  body:not(.presenting)[data-preset="Fantasy Rainbow"] .iri-scene:not(.iri-scene--hero):not(.iri-scene--closing) { padding: 48px 20px 42px; }
+  body:not(.presenting)[data-preset="Fantasy Rainbow"] .iri-scene--hero .iri-facts { width: 100%; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
+  body:not(.presenting)[data-preset="Fantasy Rainbow"] .iri-scene--hero .iri-fact { min-width: 0; }
+  body:not(.presenting)[data-preset="Fantasy Rainbow"] .iri-scene .iri-convergence-lines { grid-template-columns: 1fr; }
+  body:not(.presenting)[data-preset="Fantasy Rainbow"] .iri-convergence-word { font-size: 44px; bottom: 18px; right: 18px; }
+}
+
+
+/* Diagram arrows: small heads and hairline connectors, independent of body type. */
+body[data-preset="Fantasy Rainbow"] .slide :is(.diagram-arrow, .flow-arrow, .connector-arrow, .diagram-connector-arrow) {
+  font-size: 12px !important;
+  font-weight: 400 !important;
+  line-height: 1 !important;
+}
+body[data-preset="Fantasy Rainbow"] .slide svg :is([marker-end], [marker-start], [marker-mid]) {
+  stroke-width: 1.25px !important;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  vector-effect: non-scaling-stroke;
+}
+body[data-preset="Fantasy Rainbow"] .slide :is(.iri-process-edge, .iri-timeline-edge, .iri-interaction-edge):not(.has-edge-label),
+body[data-preset="Fantasy Rainbow"] .slide .iri-layered-architecture-edge::after,
+body[data-preset="Fantasy Rainbow"] .slide .iri-call-graph-node--workflow::after,
+body[data-preset="Fantasy Rainbow"] .slide .iri-call-graph-node--data::after,
+body[data-preset="Fantasy Rainbow"] .slide .iri-chain-node::after {
+  font-size: 12px;
+  font-weight: 400;
+  line-height: 1;
+}
+body[data-preset="Fantasy Rainbow"] .slide .iri-call-graph-handoff::after { font-size: 9px; }
+body[data-preset="Fantasy Rainbow"] .slide .iri-chain-node::after { width: 16px; right: -8px; }
+body[data-preset="Fantasy Rainbow"] .iri-edge-path { stroke-width: 1.25; stroke-dasharray: 3 4; }
+
 </style>
 </head>
 <body data-preset="Fantasy Rainbow">

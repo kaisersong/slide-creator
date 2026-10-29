@@ -952,9 +952,13 @@ def test_strategy_consulting_cards_do_not_repeat_label_as_body():
         label = card.select_one(".sc-metric-label")
         body = card.select_one("p")
         assert label is not None
-        assert body is not None
-
-        assert body.get_text(" ", strip=True) != label.get_text(" ", strip=True)
+        assert label.get_text(" ", strip=True)
+        if "sc-evidence-card--fact" in card.get("class", []):
+            # A full source fact needs no duplicate or empty body paragraph.
+            assert body is None
+        else:
+            assert body is not None
+            assert body.get_text(" ", strip=True) != label.get_text(" ", strip=True)
 
 
 def test_strategy_consulting_profile_uses_white_canvas_and_visible_sc_components():
