@@ -35,10 +35,23 @@ def test_corrupt_tail_preserves_partial_evidence(tmp_path):
 
 def test_snapshot_contains_runtime_and_refuses_replacement(tmp_path):
     import pytest
-    root = Path(__file__).parents[1]
+    import subprocess
+    root = tmp_path / "repo"
+    root.mkdir()
+    subprocess.run(["git", "init", "-q"], cwd=root, check=True)
+    (root / "scripts").mkdir()
+    original = b"# frozen validator fixture\n"
+    (root / "scripts/validate_html.py").write_bytes(original)
+    (root / "evals").mkdir()
+    (root / "evals/local.json").write_text("{}")
+    subprocess.run(["git", "add", "."], cwd=root, check=True)
+    subprocess.run(["git", "-c", "user.name=Snapshot Test", "-c", "user.email=snapshot@example.test",
+                    "commit", "-qm", "snapshot fixture"], cwd=root, check=True)
+    revision = subprocess.check_output(["git", "rev-parse", "HEAD"], cwd=root, text=True).strip()
+    (root / "scripts/validate_html.py").write_text("# later working tree bytes\n")
     out = tmp_path / "baseline"
-    EVAL.freeze(root, out, "9e999874b2107c3a8a727962151c61d275f74bf3")
-    assert (out / "scripts/validate_html.py").exists()
+    EVAL.freeze(root, out, revision)
+    assert (out / "scripts/validate_html.py").read_bytes() == original
     assert not (out / "evals").exists()
     with pytest.raises(ValueError):
         EVAL.freeze(root, out)

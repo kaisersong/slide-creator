@@ -10,9 +10,9 @@ English | [简体中文](README.zh-CN.md)
 
 ---
 
-## Download v2.34.4
+## Download v2.34.5
 
-[Compact Skill runtime ZIP](https://github.com/kaisersong/slide-creator/releases/download/v2.34.4/kai-slide-creator-v2.34.4-skill-runtime.zip) · [Release and SHA-256](https://github.com/kaisersong/slide-creator/releases/tag/v2.34.4) · [Optimization methodology v1.0.1 ZIP](https://github.com/kaisersong/slide-creator/releases/download/v2.31.0/skill-optimization-methodology-v1.0.1.zip)
+[Compact Skill runtime ZIP](https://github.com/kaisersong/slide-creator/releases/download/v2.34.5/kai-slide-creator-v2.34.5-skill-runtime.zip) · [Release and SHA-256](https://github.com/kaisersong/slide-creator/releases/tag/v2.34.5) · [Optimization methodology v1.0.1 ZIP](https://github.com/kaisersong/slide-creator/releases/download/v2.31.0/skill-optimization-methodology-v1.0.1.zip)
 
 Read the [cross-Skill optimization guide](docs/methodology/skill-optimization/README.md), including plan, evaluation and bug templates. The methodology is packaged separately to keep research documents out of the normal generation context.
 
@@ -473,7 +473,7 @@ For PPTX/PNG export: `clawhub install kai-html-export` or `pip install playwrigh
 
 ## Runtime-only Skill ZIP
 
-Download [`kai-slide-creator-v2.34.4-skill-runtime.zip`](https://github.com/kaisersong/slide-creator/releases/download/v2.34.4/kai-slide-creator-v2.34.4-skill-runtime.zip) for a compact Skill installation bundle. Extract its top-level `kai-slide-creator/` folder into your agent's skills directory. The archive contains only `SKILL.md`, `main.py`, `scripts/`, `schemas/`, `references/`, and `themes/`; repository README files, demos, tests, eval fixtures, design documents, and Git metadata are excluded.
+Download [`kai-slide-creator-v2.34.5-skill-runtime.zip`](https://github.com/kaisersong/slide-creator/releases/download/v2.34.5/kai-slide-creator-v2.34.5-skill-runtime.zip) for a compact Skill installation bundle. Extract its top-level `kai-slide-creator/` folder into your agent's skills directory. The archive contains only `SKILL.md`, `main.py`, `scripts/`, `schemas/`, `references/`, and `themes/`; repository README files, demos, tests, eval fixtures, design documents, and Git metadata are excluded.
 
 ---
 
@@ -483,7 +483,7 @@ Cloudhub enterprise assets are retained from the previous package, but its legac
 
 ## Version History
 
-**v2.34.4** — Improves Strategy Consulting, Blue Sky, and Fantasy Rainbow content layouts and canvas-scaled typography. Last Mile becomes a corner ghost; diagram connectors use small arrowheads and fine strokes.
+**v2.34.5** — Improves Strategy Consulting, Blue Sky, and Fantasy Rainbow content layouts and canvas-scaled typography. Last Mile becomes a corner ghost; diagram connectors use small arrowheads and fine strokes.
 
 **v2.34.2** — Includes all local structured-scene work and navigation fixes, and keeps pre-event WebGL context loss recoverable. Linux restoration diagnostics reproduced the blocked v2.34.0/v2.34.1 releases; see [release verification](docs/design/2026-10-13-release-v2.34.2.md).
 
